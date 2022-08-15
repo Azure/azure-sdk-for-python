@@ -1,5 +1,29 @@
 # Release History
 
+## 1.2.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.2.0 (2022-05-31)
+ - GA release
+
+## 1.2.0b1 (2022-03-31)
+
+### Bugs Fixed
+
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+
+### Other Changes
+
+- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
+
 ## 1.1.0 (2020-11-24)
 
 - The is the GA release containing the following changes:

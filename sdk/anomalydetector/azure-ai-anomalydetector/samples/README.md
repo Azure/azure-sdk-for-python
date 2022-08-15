@@ -20,6 +20,7 @@ These sample programs show common scenarios for the Anomaly Detector client's of
 |[sample_detect_entire_series_anomaly.py][sample_detect_entire_series_anomaly] |Detecting anomalies in the entire time series.|
 |[sample_detect_last_point_anomaly.py][sample_detect_last_point_anomaly] |Detecting the anomaly status of the latest data point.|
 |[sample_detect_change_point.py][sample_detect_change_point] |Detecting change points in the entire time series.|
+|[sample_multivariate_detect.py][sample_multivariate_detect] |Detecting anomalies in the multivariate time series.|
 
 ## Prerequisites
 * Python 2.7 or 3.5 or higher is required to use this package.
@@ -54,6 +55,7 @@ what you can do with the Azure Anomaly Detector client library.
 [azure_anomaly_detector_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesAnomalyDetector
 [python-fr-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cognitiveservices-anomalydetector/0.3.0/index.html
 
-[sample_detect_entire_series_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_entire_series_anomaly.py
-[sample_detect_last_point_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_last_point_anomaly.py
-[sample_detect_change_point]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_change_point.py
+[sample_detect_entire_series_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_entire_series_anomaly.py
+[sample_detect_last_point_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_last_point_anomaly.py
+[sample_detect_change_point]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_change_point.py
+[sample_multivariate_detect]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_multivariate_detect.py

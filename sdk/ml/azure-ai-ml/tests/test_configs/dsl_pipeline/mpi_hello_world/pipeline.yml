@@ -1,0 +1,13 @@
+type: pipeline
+description: "Show the MPI training environment"
+
+jobs:
+  tf_job:
+    type: command
+    component: file:./component.yml
+    compute: azureml:cpu-cluster
+    resources:
+      instance_count: 2
+    distribution:
+      type: mpi
+      process_count_per_instance: 1

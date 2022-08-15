@@ -1,4 +1,5 @@
 -e ../../../tools/azure-sdk-tools
--e ../../keyvault/azure-mgmt-keyvault
--e ../../network/azure-mgmt-network
+azure-mgmt-keyvault<9.0.0
+azure-mgmt-network<19.0.0
 -e ../../../tools/azure-devtools
+../../identity/azure-identity

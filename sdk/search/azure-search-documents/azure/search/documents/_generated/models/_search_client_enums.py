@@ -6,27 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Answers(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Do not return answers for the query.
+    NONE = "none"
+    #: Extracts answer candidates from the contents of the documents returned in response to a query
+    #: expressed as a question in natural language.
+    EXTRACTIVE = "extractive"
+
+class AutocompleteMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to get shingles
     and 'oneTermWithContext' to use the current context in producing autocomplete terms.
     """
@@ -43,7 +36,15 @@ class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: terms could include 'washington medicaid' and 'washington medical'.
     ONE_TERM_WITH_CONTEXT = "oneTermWithContext"
 
-class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Captions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Do not return captions for the query.
+    NONE = "none"
+    #: Extracts captions from the matching documents that contain passages relevant to the search
+    #: query.
+    EXTRACTIVE = "extractive"
+
+class IndexActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operation to perform on a document in an indexing batch.
     """
 
@@ -62,9 +63,196 @@ class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: document, use merge instead and set the field explicitly to null.
     DELETE = "delete"
 
-class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class QueryAnswerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter is only valid if the query type is 'semantic'. If set, the query returns answers
+    extracted from key passages in the highest ranked documents. The number of answers returned can
+    be configured by appending the pipe character '|' followed by the 'count-:code:`<number of
+    answers>`' option after the answers parameter value, such as 'extractive|count-3'. Default
+    count is 1.
+    """
+
+    #: Do not return answers for the query.
+    NONE = "none"
+    #: Extracts answer candidates from the contents of the documents returned in response to a query
+    #: expressed as a question in natural language.
+    EXTRACTIVE = "extractive"
+
+class QueryCaptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter is only valid if the query type is 'semantic'. If set, the query returns
+    captions extracted from key passages in the highest ranked documents. When Captions is set to
+    'extractive', highlighting is enabled by default, and can be configured by appending the pipe
+    character '|' followed by the 'highlight-<true/false>' option, such as
+    'extractive|highlight-true'. Defaults to 'None'.
+    """
+
+    #: Do not return captions for the query.
+    NONE = "none"
+    #: Extracts captions from the matching documents that contain passages relevant to the search
+    #: query.
+    EXTRACTIVE = "extractive"
+
+class QueryLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The language of the query.
+    """
+
+    #: Query language not specified.
+    NONE = "none"
+    #: Query language value for English (United States).
+    EN_US = "en-us"
+    #: Query language value for English (Great Britain).
+    EN_GB = "en-gb"
+    #: Query language value for English (India).
+    EN_IN = "en-in"
+    #: Query language value for English (Canada).
+    EN_CA = "en-ca"
+    #: Query language value for English (Australia).
+    EN_AU = "en-au"
+    #: Query language value for French (France).
+    FR_FR = "fr-fr"
+    #: Query language value for French (Canada).
+    FR_CA = "fr-ca"
+    #: Query language value for German (Germany).
+    DE_DE = "de-de"
+    #: Query language value for Spanish (Spain).
+    ES_ES = "es-es"
+    #: Query language value for Spanish (Mexico).
+    ES_MX = "es-mx"
+    #: Query language value for Chinese (China).
+    ZH_CN = "zh-cn"
+    #: Query language value for Chinese (Taiwan).
+    ZH_TW = "zh-tw"
+    #: Query language value for Portuguese (Brazil).
+    PT_BR = "pt-br"
+    #: Query language value for Portuguese (Portugal).
+    PT_PT = "pt-pt"
+    #: Query language value for Italian (Italy).
+    IT_IT = "it-it"
+    #: Query language value for Japanese (Japan).
+    JA_JP = "ja-jp"
+    #: Query language value for Korean (Korea).
+    KO_KR = "ko-kr"
+    #: Query language value for Russian (Russia).
+    RU_RU = "ru-ru"
+    #: Query language value for Czech (Czech Republic).
+    CS_CZ = "cs-cz"
+    #: Query language value for Dutch (Belgium).
+    NL_BE = "nl-be"
+    #: Query language value for Dutch (Netherlands).
+    NL_NL = "nl-nl"
+    #: Query language value for Hungarian (Hungary).
+    HU_HU = "hu-hu"
+    #: Query language value for Polish (Poland).
+    PL_PL = "pl-pl"
+    #: Query language value for Swedish (Sweden).
+    SV_SE = "sv-se"
+    #: Query language value for Turkish (Turkey).
+    TR_TR = "tr-tr"
+    #: Query language value for Hindi (India).
+    HI_IN = "hi-in"
+    #: Query language value for Arabic (Saudi Arabia).
+    AR_SA = "ar-sa"
+    #: Query language value for Arabic (Egypt).
+    AR_EG = "ar-eg"
+    #: Query language value for Arabic (Morocco).
+    AR_MA = "ar-ma"
+    #: Query language value for Arabic (Kuwait).
+    AR_KW = "ar-kw"
+    #: Query language value for Arabic (Jordan).
+    AR_JO = "ar-jo"
+    #: Query language value for Danish (Denmark).
+    DA_DK = "da-dk"
+    #: Query language value for Norwegian (Norway).
+    NO_NO = "no-no"
+    #: Query language value for Bulgarian (Bulgaria).
+    BG_BG = "bg-bg"
+    #: Query language value for Croatian (Croatia).
+    HR_HR = "hr-hr"
+    #: Query language value for Croatian (Bosnia and Herzegovina).
+    HR_BA = "hr-ba"
+    #: Query language value for Malay (Malaysia).
+    MS_MY = "ms-my"
+    #: Query language value for Malay (Brunei Darussalam).
+    MS_BN = "ms-bn"
+    #: Query language value for Slovenian (Slovenia).
+    SL_SL = "sl-sl"
+    #: Query language value for Tamil (India).
+    TA_IN = "ta-in"
+    #: Query language value for Vietnamese (Viet Nam).
+    VI_VN = "vi-vn"
+    #: Query language value for Greek (Greece).
+    EL_GR = "el-gr"
+    #: Query language value for Romanian (Romania).
+    RO_RO = "ro-ro"
+    #: Query language value for Icelandic (Iceland).
+    IS_IS = "is-is"
+    #: Query language value for Indonesian (Indonesia).
+    ID_ID = "id-id"
+    #: Query language value for Thai (Thailand).
+    TH_TH = "th-th"
+    #: Query language value for Lithuanian (Lithuania).
+    LT_LT = "lt-lt"
+    #: Query language value for Ukrainian (Ukraine).
+    UK_UA = "uk-ua"
+    #: Query language value for Latvian (Latvia).
+    LV_LV = "lv-lv"
+    #: Query language value for Estonian (Estonia).
+    ET_EE = "et-ee"
+    #: Query language value for Catalan (Spain).
+    CA_ES = "ca-es"
+    #: Query language value for Finnish (Finland).
+    FI_FI = "fi-fi"
+    #: Query language value for Serbian (Bosnia and Herzegovina).
+    SR_BA = "sr-ba"
+    #: Query language value for Serbian (Montenegro).
+    SR_ME = "sr-me"
+    #: Query language value for Serbian (Serbia).
+    SR_RS = "sr-rs"
+    #: Query language value for Slovak (Slovakia).
+    SK_SK = "sk-sk"
+    #: Query language value for Norwegian (Norway).
+    NB_NO = "nb-no"
+    #: Query language value for Armenian (Armenia).
+    HY_AM = "hy-am"
+    #: Query language value for Bengali (India).
+    BN_IN = "bn-in"
+    #: Query language value for Basque (Spain).
+    EU_ES = "eu-es"
+    #: Query language value for Galician (Spain).
+    GL_ES = "gl-es"
+    #: Query language value for Gujarati (India).
+    GU_IN = "gu-in"
+    #: Query language value for Hebrew (Israel).
+    HE_IL = "he-il"
+    #: Query language value for Irish (Ireland).
+    GA_IE = "ga-ie"
+    #: Query language value for Kannada (India).
+    KN_IN = "kn-in"
+    #: Query language value for Malayalam (India).
+    ML_IN = "ml-in"
+    #: Query language value for Marathi (India).
+    MR_IN = "mr-in"
+    #: Query language value for Persian (U.A.E.).
+    FA_AE = "fa-ae"
+    #: Query language value for Punjabi (India).
+    PA_IN = "pa-in"
+    #: Query language value for Telugu (India).
+    TE_IN = "te-in"
+    #: Query language value for Urdu (Pakistan).
+    UR_PK = "ur-pk"
+
+class QuerySpellerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Improve search recall by spell-correcting individual search query terms.
+    """
+
+    #: Speller not enabled.
+    NONE = "none"
+    #: Speller corrects individual query terms using a static lexicon for the language specified by
+    #: the queryLanguage parameter.
+    LEXICON = "lexicon"
+
+class QueryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the syntax of the search query. The default is 'simple'. Use 'full' if your query
-    uses the Lucene query syntax.
+    uses the Lucene query syntax and 'semantic' if query syntax is not needed.
     """
 
     #: Uses the simple query syntax for searches. Search text is interpreted using a simple query
@@ -75,8 +263,12 @@ class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: query language which allows field-specific and weighted searches, as well as other advanced
     #: features.
     FULL = "full"
+    #: Best suited for queries expressed in natural language as opposed to keywords. Improves
+    #: precision of search results by re-ranking the top search results using a ranking model trained
+    #: on the Web corpus.
+    SEMANTIC = "semantic"
 
-class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScoringStatistics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A value that specifies whether we want to calculate scoring statistics (such as document
     frequency) globally for more consistent scoring, or locally, for lower latency. The default is
     'local'. Use 'global' to aggregate scoring statistics globally before scoring. Using global
@@ -88,7 +280,7 @@ class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The scoring statistics will be calculated globally for more consistent scoring.
     GLOBAL_ENUM = "global"
 
-class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SearchMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether any or all of the search terms must be matched in order to count the document
     as a match.
     """
@@ -97,3 +289,11 @@ class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ANY = "any"
     #: All of the search terms must be matched in order to count the document as a match.
     ALL = "all"
+
+class Speller(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Speller not enabled.
+    NONE = "none"
+    #: Speller corrects individual query terms using a static lexicon for the language specified by
+    #: the queryLanguage parameter.
+    LEXICON = "lexicon"

@@ -12,34 +12,37 @@ interactions:
       - '2'
       Content-Type:
       - application/json
-      Date:
-      - Wed, 21 Apr 2021 01:03:46 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      x-ms-date:
+      - Wed, 03 Aug 2022 09:15:30 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Apr 2021 01:03:45 GMT
+      - Wed, 03 Aug 2022 09:15:30 GMT
       ms-cv:
-      - fuf/w29xP0WNPsRxaQzqoA.0
+      - Lr6vAbpD20a4Ph8ww7SFWA.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
-      transfer-encoding:
-      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 13ms
+      - 37ms
     status:
       code: 201
       message: Created
@@ -56,34 +59,37 @@ interactions:
       - '20'
       Content-Type:
       - application/json
-      Date:
-      - Wed, 21 Apr 2021 01:03:46 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      x-ms-date:
+      - Wed, 03 Aug 2022 09:15:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-04-22T01:03:45.2383068+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-08-04T09:15:31.3345831+00:00"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '804'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Apr 2021 01:03:45 GMT
+      - Wed, 03 Aug 2022 09:15:30 GMT
       ms-cv:
-      - yDf0VHpTCUOuwF4VOh6jYA.0
+      - md+8+sRIhEe9sjYpGqeEyg.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
-      transfer-encoding:
-      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 144ms
+      - 38ms
     status:
       code: 200
       message: OK
@@ -98,30 +104,33 @@ interactions:
       - keep-alive
       Content-Length:
       - '0'
-      Date:
-      - Wed, 21 Apr 2021 01:03:47 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      x-ms-date:
+      - Wed, 03 Aug 2022 09:15:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2022-06-01
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       date:
-      - Wed, 21 Apr 2021 01:03:46 GMT
+      - Wed, 03 Aug 2022 09:15:31 GMT
       ms-cv:
-      - x6iZdquF6U6B1JffH3SVog.0
+      - Fx7hSPEV2kCUKxehpl1eYg.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 646ms
+      - 137ms
     status:
       code: 204
       message: No Content

@@ -1,0 +1,442 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "238",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "The patient was diagnosed with Parkinsons Disease (PD)",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "Healthcare",
+            "parameters": {
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "3e7c5163-20af-48e9-a40d-91b98267a29c",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Jun 2022 23:10:43 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4751ff4d-41e4-4520-bc30-4f64025154a5?api-version=2022-05-01",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "145"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4751ff4d-41e4-4520-bc30-4f64025154a5?api-version=2022-05-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3316ff2e-6773-4ab6-91c7-dad758a2a048",
+        "Content-Length": "3870",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 09 Jun 2022 23:10:47 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "30"
+      },
+      "ResponseBody": {
+        "jobId": "4751ff4d-41e4-4520-bc30-4f64025154a5",
+        "lastUpdatedDateTime": "2022-06-09T23:10:43Z",
+        "createdDateTime": "2022-06-09T23:10:43Z",
+        "expirationDateTime": "2022-06-10T23:10:43Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "HealthcareLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-09T23:10:43.8648978Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "0",
+                    "entities": [
+                      {
+                        "offset": 31,
+                        "length": 18,
+                        "text": "Parkinsons Disease",
+                        "category": "Diagnosis",
+                        "confidenceScore": 1.0,
+                        "name": "Parkinson Disease",
+                        "links": [
+                          {
+                            "dataSource": "UMLS",
+                            "id": "C0030567"
+                          },
+                          {
+                            "dataSource": "AOD",
+                            "id": "0000006203"
+                          },
+                          {
+                            "dataSource": "BI",
+                            "id": "BI00554"
+                          },
+                          {
+                            "dataSource": "CCPSS",
+                            "id": "1018057"
+                          },
+                          {
+                            "dataSource": "CCS",
+                            "id": "6.2.1"
+                          },
+                          {
+                            "dataSource": "CCSR_10",
+                            "id": "NVS004"
+                          },
+                          {
+                            "dataSource": "CCSR_ICD10CM",
+                            "id": "NVS004"
+                          },
+                          {
+                            "dataSource": "CHV",
+                            "id": "0000009319"
+                          },
+                          {
+                            "dataSource": "COSTAR",
+                            "id": "559"
+                          },
+                          {
+                            "dataSource": "CSP",
+                            "id": "2057-3689"
+                          },
+                          {
+                            "dataSource": "CST",
+                            "id": "EXTRAPYR SYND"
+                          },
+                          {
+                            "dataSource": "ICD10",
+                            "id": "G20"
+                          },
+                          {
+                            "dataSource": "ICD10AM",
+                            "id": "G20"
+                          },
+                          {
+                            "dataSource": "ICD10CM",
+                            "id": "G20"
+                          },
+                          {
+                            "dataSource": "ICD9CM",
+                            "id": "332.0"
+                          },
+                          {
+                            "dataSource": "ICPC2ICD10ENG",
+                            "id": "MTHU004748"
+                          },
+                          {
+                            "dataSource": "ICPC2P",
+                            "id": "N87001"
+                          },
+                          {
+                            "dataSource": "LCH_NW",
+                            "id": "sh85098115"
+                          },
+                          {
+                            "dataSource": "LNC",
+                            "id": "MTHU020807"
+                          },
+                          {
+                            "dataSource": "MDR",
+                            "id": "10061536"
+                          },
+                          {
+                            "dataSource": "MEDCIN",
+                            "id": "32004"
+                          },
+                          {
+                            "dataSource": "MEDLINEPLUS",
+                            "id": "85"
+                          },
+                          {
+                            "dataSource": "MSH",
+                            "id": "D010300"
+                          },
+                          {
+                            "dataSource": "NANDA-I",
+                            "id": "03003"
+                          },
+                          {
+                            "dataSource": "NCI",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "NCI_CELLOSAURUS",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "NCI_CPTAC",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "NCI_NCI-GLOSS",
+                            "id": "CDR0000044140"
+                          },
+                          {
+                            "dataSource": "NCI_caDSR",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "OMIM",
+                            "id": "516000"
+                          },
+                          {
+                            "dataSource": "PSY",
+                            "id": "36720"
+                          },
+                          {
+                            "dataSource": "QMR",
+                            "id": "R0121461"
+                          },
+                          {
+                            "dataSource": "RAM",
+                            "id": "DX353"
+                          },
+                          {
+                            "dataSource": "RCD",
+                            "id": "F12.."
+                          },
+                          {
+                            "dataSource": "SNM",
+                            "id": "D-8450"
+                          },
+                          {
+                            "dataSource": "SNMI",
+                            "id": "DA-21012"
+                          },
+                          {
+                            "dataSource": "SNOMEDCT_US",
+                            "id": "49049000"
+                          },
+                          {
+                            "dataSource": "WHO",
+                            "id": "0106"
+                          }
+                        ]
+                      },
+                      {
+                        "offset": 51,
+                        "length": 2,
+                        "text": "PD",
+                        "category": "Diagnosis",
+                        "confidenceScore": 1.0,
+                        "name": "Parkinson Disease",
+                        "links": [
+                          {
+                            "dataSource": "UMLS",
+                            "id": "C0030567"
+                          },
+                          {
+                            "dataSource": "AOD",
+                            "id": "0000006203"
+                          },
+                          {
+                            "dataSource": "BI",
+                            "id": "BI00554"
+                          },
+                          {
+                            "dataSource": "CCPSS",
+                            "id": "1018057"
+                          },
+                          {
+                            "dataSource": "CCS",
+                            "id": "6.2.1"
+                          },
+                          {
+                            "dataSource": "CCSR_10",
+                            "id": "NVS004"
+                          },
+                          {
+                            "dataSource": "CCSR_ICD10CM",
+                            "id": "NVS004"
+                          },
+                          {
+                            "dataSource": "CHV",
+                            "id": "0000009319"
+                          },
+                          {
+                            "dataSource": "COSTAR",
+                            "id": "559"
+                          },
+                          {
+                            "dataSource": "CSP",
+                            "id": "2057-3689"
+                          },
+                          {
+                            "dataSource": "CST",
+                            "id": "EXTRAPYR SYND"
+                          },
+                          {
+                            "dataSource": "ICD10",
+                            "id": "G20"
+                          },
+                          {
+                            "dataSource": "ICD10AM",
+                            "id": "G20"
+                          },
+                          {
+                            "dataSource": "ICD10CM",
+                            "id": "G20"
+                          },
+                          {
+                            "dataSource": "ICD9CM",
+                            "id": "332.0"
+                          },
+                          {
+                            "dataSource": "ICPC2ICD10ENG",
+                            "id": "MTHU004748"
+                          },
+                          {
+                            "dataSource": "ICPC2P",
+                            "id": "N87001"
+                          },
+                          {
+                            "dataSource": "LCH_NW",
+                            "id": "sh85098115"
+                          },
+                          {
+                            "dataSource": "LNC",
+                            "id": "MTHU020807"
+                          },
+                          {
+                            "dataSource": "MDR",
+                            "id": "10061536"
+                          },
+                          {
+                            "dataSource": "MEDCIN",
+                            "id": "32004"
+                          },
+                          {
+                            "dataSource": "MEDLINEPLUS",
+                            "id": "85"
+                          },
+                          {
+                            "dataSource": "MSH",
+                            "id": "D010300"
+                          },
+                          {
+                            "dataSource": "NANDA-I",
+                            "id": "03003"
+                          },
+                          {
+                            "dataSource": "NCI",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "NCI_CELLOSAURUS",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "NCI_CPTAC",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "NCI_NCI-GLOSS",
+                            "id": "CDR0000044140"
+                          },
+                          {
+                            "dataSource": "NCI_caDSR",
+                            "id": "C26845"
+                          },
+                          {
+                            "dataSource": "OMIM",
+                            "id": "516000"
+                          },
+                          {
+                            "dataSource": "PSY",
+                            "id": "36720"
+                          },
+                          {
+                            "dataSource": "QMR",
+                            "id": "R0121461"
+                          },
+                          {
+                            "dataSource": "RAM",
+                            "id": "DX353"
+                          },
+                          {
+                            "dataSource": "RCD",
+                            "id": "F12.."
+                          },
+                          {
+                            "dataSource": "SNM",
+                            "id": "D-8450"
+                          },
+                          {
+                            "dataSource": "SNMI",
+                            "id": "DA-21012"
+                          },
+                          {
+                            "dataSource": "SNOMEDCT_US",
+                            "id": "49049000"
+                          },
+                          {
+                            "dataSource": "WHO",
+                            "id": "0106"
+                          }
+                        ]
+                      }
+                    ],
+                    "relations": [
+                      {
+                        "relationType": "Abbreviation",
+                        "entities": [
+                          {
+                            "ref": "#/results/documents/0/entities/0",
+                            "role": "FullTerm"
+                          },
+                          {
+                            "ref": "#/results/documents/0/entities/1",
+                            "role": "AbbreviatedTerm"
+                          }
+                        ]
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-03-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

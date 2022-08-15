@@ -18,3 +18,9 @@ steps:
     displayName: 'Twine Authenticate to feed'
     inputs:
       artifactFeeds: $(DevFeedName)
+
+  - task: PipAuthenticate@1
+    displayName: 'Pip Authenticate to feed'
+    inputs:
+      artifactFeeds: $(DevFeedName)
+      onlyAddExtraIndex: false

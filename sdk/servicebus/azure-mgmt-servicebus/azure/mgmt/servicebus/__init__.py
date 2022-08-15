@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._service_bus_management_client import ServiceBusManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['ServiceBusManagementClient']
 
 try:

@@ -6,232 +6,119 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccessUri
-    from ._models_py3 import AdditionalUnattendContent
-    from ._models_py3 import ApiEntityReference
-    from ._models_py3 import ApiError
-    from ._models_py3 import ApiErrorBase
-    from ._models_py3 import AvailabilitySet
-    from ._models_py3 import AvailabilitySetListResult
-    from ._models_py3 import BootDiagnostics
-    from ._models_py3 import BootDiagnosticsInstanceView
-    from ._models_py3 import ComputeLongRunningOperationProperties
-    from ._models_py3 import CreationData
-    from ._models_py3 import DataDisk
-    from ._models_py3 import DataDiskImage
-    from ._models_py3 import DiagnosticsProfile
-    from ._models_py3 import Disk
-    from ._models_py3 import DiskEncryptionSettings
-    from ._models_py3 import DiskInstanceView
-    from ._models_py3 import DiskList
-    from ._models_py3 import DiskUpdate
-    from ._models_py3 import EncryptionSettings
-    from ._models_py3 import GrantAccessData
-    from ._models_py3 import HardwareProfile
-    from ._models_py3 import Image
-    from ._models_py3 import ImageDataDisk
-    from ._models_py3 import ImageDiskReference
-    from ._models_py3 import ImageListResult
-    from ._models_py3 import ImageOSDisk
-    from ._models_py3 import ImageReference
-    from ._models_py3 import ImageStorageProfile
-    from ._models_py3 import InnerError
-    from ._models_py3 import InstanceViewStatus
-    from ._models_py3 import KeyVaultAndKeyReference
-    from ._models_py3 import KeyVaultAndSecretReference
-    from ._models_py3 import KeyVaultKeyReference
-    from ._models_py3 import KeyVaultSecretReference
-    from ._models_py3 import LinuxConfiguration
-    from ._models_py3 import ListUsagesResult
-    from ._models_py3 import ManagedDiskParameters
-    from ._models_py3 import NetworkInterfaceReference
-    from ._models_py3 import NetworkProfile
-    from ._models_py3 import OSDisk
-    from ._models_py3 import OSDiskImage
-    from ._models_py3 import OSProfile
-    from ._models_py3 import OperationStatusResponse
-    from ._models_py3 import Plan
-    from ._models_py3 import PurchasePlan
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceUpdate
-    from ._models_py3 import Sku
-    from ._models_py3 import Snapshot
-    from ._models_py3 import SnapshotList
-    from ._models_py3 import SnapshotUpdate
-    from ._models_py3 import SourceVault
-    from ._models_py3 import SshConfiguration
-    from ._models_py3 import SshPublicKey
-    from ._models_py3 import StorageProfile
-    from ._models_py3 import SubResource
-    from ._models_py3 import SubResourceReadOnly
-    from ._models_py3 import UpdateResource
-    from ._models_py3 import UpgradePolicy
-    from ._models_py3 import Usage
-    from ._models_py3 import UsageName
-    from ._models_py3 import VaultCertificate
-    from ._models_py3 import VaultSecretGroup
-    from ._models_py3 import VirtualHardDisk
-    from ._models_py3 import VirtualMachine
-    from ._models_py3 import VirtualMachineAgentInstanceView
-    from ._models_py3 import VirtualMachineCaptureParameters
-    from ._models_py3 import VirtualMachineCaptureResult
-    from ._models_py3 import VirtualMachineExtension
-    from ._models_py3 import VirtualMachineExtensionHandlerInstanceView
-    from ._models_py3 import VirtualMachineExtensionImage
-    from ._models_py3 import VirtualMachineExtensionInstanceView
-    from ._models_py3 import VirtualMachineExtensionUpdate
-    from ._models_py3 import VirtualMachineExtensionsListResult
-    from ._models_py3 import VirtualMachineIdentity
-    from ._models_py3 import VirtualMachineImage
-    from ._models_py3 import VirtualMachineImageResource
-    from ._models_py3 import VirtualMachineInstanceView
-    from ._models_py3 import VirtualMachineListResult
-    from ._models_py3 import VirtualMachineScaleSet
-    from ._models_py3 import VirtualMachineScaleSetDataDisk
-    from ._models_py3 import VirtualMachineScaleSetExtension
-    from ._models_py3 import VirtualMachineScaleSetExtensionProfile
-    from ._models_py3 import VirtualMachineScaleSetIPConfiguration
-    from ._models_py3 import VirtualMachineScaleSetIdentity
-    from ._models_py3 import VirtualMachineScaleSetInstanceView
-    from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
-    from ._models_py3 import VirtualMachineScaleSetListResult
-    from ._models_py3 import VirtualMachineScaleSetListSkusResult
-    from ._models_py3 import VirtualMachineScaleSetListWithLinkResult
-    from ._models_py3 import VirtualMachineScaleSetManagedDiskParameters
-    from ._models_py3 import VirtualMachineScaleSetNetworkConfiguration
-    from ._models_py3 import VirtualMachineScaleSetNetworkProfile
-    from ._models_py3 import VirtualMachineScaleSetOSDisk
-    from ._models_py3 import VirtualMachineScaleSetOSProfile
-    from ._models_py3 import VirtualMachineScaleSetSku
-    from ._models_py3 import VirtualMachineScaleSetSkuCapacity
-    from ._models_py3 import VirtualMachineScaleSetStorageProfile
-    from ._models_py3 import VirtualMachineScaleSetVM
-    from ._models_py3 import VirtualMachineScaleSetVMExtensionsSummary
-    from ._models_py3 import VirtualMachineScaleSetVMInstanceIDs
-    from ._models_py3 import VirtualMachineScaleSetVMInstanceRequiredIDs
-    from ._models_py3 import VirtualMachineScaleSetVMInstanceView
-    from ._models_py3 import VirtualMachineScaleSetVMListResult
-    from ._models_py3 import VirtualMachineScaleSetVMProfile
-    from ._models_py3 import VirtualMachineSize
-    from ._models_py3 import VirtualMachineSizeListResult
-    from ._models_py3 import VirtualMachineStatusCodeCount
-    from ._models_py3 import WinRMConfiguration
-    from ._models_py3 import WinRMListener
-    from ._models_py3 import WindowsConfiguration
-except (SyntaxError, ImportError):
-    from ._models import AccessUri  # type: ignore
-    from ._models import AdditionalUnattendContent  # type: ignore
-    from ._models import ApiEntityReference  # type: ignore
-    from ._models import ApiError  # type: ignore
-    from ._models import ApiErrorBase  # type: ignore
-    from ._models import AvailabilitySet  # type: ignore
-    from ._models import AvailabilitySetListResult  # type: ignore
-    from ._models import BootDiagnostics  # type: ignore
-    from ._models import BootDiagnosticsInstanceView  # type: ignore
-    from ._models import ComputeLongRunningOperationProperties  # type: ignore
-    from ._models import CreationData  # type: ignore
-    from ._models import DataDisk  # type: ignore
-    from ._models import DataDiskImage  # type: ignore
-    from ._models import DiagnosticsProfile  # type: ignore
-    from ._models import Disk  # type: ignore
-    from ._models import DiskEncryptionSettings  # type: ignore
-    from ._models import DiskInstanceView  # type: ignore
-    from ._models import DiskList  # type: ignore
-    from ._models import DiskUpdate  # type: ignore
-    from ._models import EncryptionSettings  # type: ignore
-    from ._models import GrantAccessData  # type: ignore
-    from ._models import HardwareProfile  # type: ignore
-    from ._models import Image  # type: ignore
-    from ._models import ImageDataDisk  # type: ignore
-    from ._models import ImageDiskReference  # type: ignore
-    from ._models import ImageListResult  # type: ignore
-    from ._models import ImageOSDisk  # type: ignore
-    from ._models import ImageReference  # type: ignore
-    from ._models import ImageStorageProfile  # type: ignore
-    from ._models import InnerError  # type: ignore
-    from ._models import InstanceViewStatus  # type: ignore
-    from ._models import KeyVaultAndKeyReference  # type: ignore
-    from ._models import KeyVaultAndSecretReference  # type: ignore
-    from ._models import KeyVaultKeyReference  # type: ignore
-    from ._models import KeyVaultSecretReference  # type: ignore
-    from ._models import LinuxConfiguration  # type: ignore
-    from ._models import ListUsagesResult  # type: ignore
-    from ._models import ManagedDiskParameters  # type: ignore
-    from ._models import NetworkInterfaceReference  # type: ignore
-    from ._models import NetworkProfile  # type: ignore
-    from ._models import OSDisk  # type: ignore
-    from ._models import OSDiskImage  # type: ignore
-    from ._models import OSProfile  # type: ignore
-    from ._models import OperationStatusResponse  # type: ignore
-    from ._models import Plan  # type: ignore
-    from ._models import PurchasePlan  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceUpdate  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import Snapshot  # type: ignore
-    from ._models import SnapshotList  # type: ignore
-    from ._models import SnapshotUpdate  # type: ignore
-    from ._models import SourceVault  # type: ignore
-    from ._models import SshConfiguration  # type: ignore
-    from ._models import SshPublicKey  # type: ignore
-    from ._models import StorageProfile  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import SubResourceReadOnly  # type: ignore
-    from ._models import UpdateResource  # type: ignore
-    from ._models import UpgradePolicy  # type: ignore
-    from ._models import Usage  # type: ignore
-    from ._models import UsageName  # type: ignore
-    from ._models import VaultCertificate  # type: ignore
-    from ._models import VaultSecretGroup  # type: ignore
-    from ._models import VirtualHardDisk  # type: ignore
-    from ._models import VirtualMachine  # type: ignore
-    from ._models import VirtualMachineAgentInstanceView  # type: ignore
-    from ._models import VirtualMachineCaptureParameters  # type: ignore
-    from ._models import VirtualMachineCaptureResult  # type: ignore
-    from ._models import VirtualMachineExtension  # type: ignore
-    from ._models import VirtualMachineExtensionHandlerInstanceView  # type: ignore
-    from ._models import VirtualMachineExtensionImage  # type: ignore
-    from ._models import VirtualMachineExtensionInstanceView  # type: ignore
-    from ._models import VirtualMachineExtensionUpdate  # type: ignore
-    from ._models import VirtualMachineExtensionsListResult  # type: ignore
-    from ._models import VirtualMachineIdentity  # type: ignore
-    from ._models import VirtualMachineImage  # type: ignore
-    from ._models import VirtualMachineImageResource  # type: ignore
-    from ._models import VirtualMachineInstanceView  # type: ignore
-    from ._models import VirtualMachineListResult  # type: ignore
-    from ._models import VirtualMachineScaleSet  # type: ignore
-    from ._models import VirtualMachineScaleSetDataDisk  # type: ignore
-    from ._models import VirtualMachineScaleSetExtension  # type: ignore
-    from ._models import VirtualMachineScaleSetExtensionProfile  # type: ignore
-    from ._models import VirtualMachineScaleSetIPConfiguration  # type: ignore
-    from ._models import VirtualMachineScaleSetIdentity  # type: ignore
-    from ._models import VirtualMachineScaleSetInstanceView  # type: ignore
-    from ._models import VirtualMachineScaleSetInstanceViewStatusesSummary  # type: ignore
-    from ._models import VirtualMachineScaleSetListResult  # type: ignore
-    from ._models import VirtualMachineScaleSetListSkusResult  # type: ignore
-    from ._models import VirtualMachineScaleSetListWithLinkResult  # type: ignore
-    from ._models import VirtualMachineScaleSetManagedDiskParameters  # type: ignore
-    from ._models import VirtualMachineScaleSetNetworkConfiguration  # type: ignore
-    from ._models import VirtualMachineScaleSetNetworkProfile  # type: ignore
-    from ._models import VirtualMachineScaleSetOSDisk  # type: ignore
-    from ._models import VirtualMachineScaleSetOSProfile  # type: ignore
-    from ._models import VirtualMachineScaleSetSku  # type: ignore
-    from ._models import VirtualMachineScaleSetSkuCapacity  # type: ignore
-    from ._models import VirtualMachineScaleSetStorageProfile  # type: ignore
-    from ._models import VirtualMachineScaleSetVM  # type: ignore
-    from ._models import VirtualMachineScaleSetVMExtensionsSummary  # type: ignore
-    from ._models import VirtualMachineScaleSetVMInstanceIDs  # type: ignore
-    from ._models import VirtualMachineScaleSetVMInstanceRequiredIDs  # type: ignore
-    from ._models import VirtualMachineScaleSetVMInstanceView  # type: ignore
-    from ._models import VirtualMachineScaleSetVMListResult  # type: ignore
-    from ._models import VirtualMachineScaleSetVMProfile  # type: ignore
-    from ._models import VirtualMachineSize  # type: ignore
-    from ._models import VirtualMachineSizeListResult  # type: ignore
-    from ._models import VirtualMachineStatusCodeCount  # type: ignore
-    from ._models import WinRMConfiguration  # type: ignore
-    from ._models import WinRMListener  # type: ignore
-    from ._models import WindowsConfiguration  # type: ignore
+from ._models_py3 import AccessUri
+from ._models_py3 import AdditionalUnattendContent
+from ._models_py3 import ApiEntityReference
+from ._models_py3 import ApiError
+from ._models_py3 import ApiErrorBase
+from ._models_py3 import AvailabilitySet
+from ._models_py3 import AvailabilitySetListResult
+from ._models_py3 import BootDiagnostics
+from ._models_py3 import BootDiagnosticsInstanceView
+from ._models_py3 import ComputeLongRunningOperationProperties
+from ._models_py3 import CreationData
+from ._models_py3 import DataDisk
+from ._models_py3 import DataDiskImage
+from ._models_py3 import DiagnosticsProfile
+from ._models_py3 import Disk
+from ._models_py3 import DiskEncryptionSettings
+from ._models_py3 import DiskInstanceView
+from ._models_py3 import DiskList
+from ._models_py3 import DiskUpdate
+from ._models_py3 import EncryptionSettings
+from ._models_py3 import GrantAccessData
+from ._models_py3 import HardwareProfile
+from ._models_py3 import Image
+from ._models_py3 import ImageDataDisk
+from ._models_py3 import ImageDiskReference
+from ._models_py3 import ImageListResult
+from ._models_py3 import ImageOSDisk
+from ._models_py3 import ImageReference
+from ._models_py3 import ImageStorageProfile
+from ._models_py3 import InnerError
+from ._models_py3 import InstanceViewStatus
+from ._models_py3 import KeyVaultAndKeyReference
+from ._models_py3 import KeyVaultAndSecretReference
+from ._models_py3 import KeyVaultKeyReference
+from ._models_py3 import KeyVaultSecretReference
+from ._models_py3 import LinuxConfiguration
+from ._models_py3 import ListUsagesResult
+from ._models_py3 import ManagedDiskParameters
+from ._models_py3 import NetworkInterfaceReference
+from ._models_py3 import NetworkProfile
+from ._models_py3 import OSDisk
+from ._models_py3 import OSDiskImage
+from ._models_py3 import OSProfile
+from ._models_py3 import OperationStatusResponse
+from ._models_py3 import Plan
+from ._models_py3 import PurchasePlan
+from ._models_py3 import Resource
+from ._models_py3 import ResourceUpdate
+from ._models_py3 import Sku
+from ._models_py3 import Snapshot
+from ._models_py3 import SnapshotList
+from ._models_py3 import SnapshotUpdate
+from ._models_py3 import SourceVault
+from ._models_py3 import SshConfiguration
+from ._models_py3 import SshPublicKey
+from ._models_py3 import StorageProfile
+from ._models_py3 import SubResource
+from ._models_py3 import SubResourceReadOnly
+from ._models_py3 import UpdateResource
+from ._models_py3 import UpgradePolicy
+from ._models_py3 import Usage
+from ._models_py3 import UsageName
+from ._models_py3 import VaultCertificate
+from ._models_py3 import VaultSecretGroup
+from ._models_py3 import VirtualHardDisk
+from ._models_py3 import VirtualMachine
+from ._models_py3 import VirtualMachineAgentInstanceView
+from ._models_py3 import VirtualMachineCaptureParameters
+from ._models_py3 import VirtualMachineCaptureResult
+from ._models_py3 import VirtualMachineExtension
+from ._models_py3 import VirtualMachineExtensionHandlerInstanceView
+from ._models_py3 import VirtualMachineExtensionImage
+from ._models_py3 import VirtualMachineExtensionInstanceView
+from ._models_py3 import VirtualMachineExtensionUpdate
+from ._models_py3 import VirtualMachineExtensionsListResult
+from ._models_py3 import VirtualMachineIdentity
+from ._models_py3 import VirtualMachineImage
+from ._models_py3 import VirtualMachineImageResource
+from ._models_py3 import VirtualMachineInstanceView
+from ._models_py3 import VirtualMachineListResult
+from ._models_py3 import VirtualMachineScaleSet
+from ._models_py3 import VirtualMachineScaleSetDataDisk
+from ._models_py3 import VirtualMachineScaleSetExtension
+from ._models_py3 import VirtualMachineScaleSetExtensionProfile
+from ._models_py3 import VirtualMachineScaleSetIPConfiguration
+from ._models_py3 import VirtualMachineScaleSetIdentity
+from ._models_py3 import VirtualMachineScaleSetInstanceView
+from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
+from ._models_py3 import VirtualMachineScaleSetListResult
+from ._models_py3 import VirtualMachineScaleSetListSkusResult
+from ._models_py3 import VirtualMachineScaleSetListWithLinkResult
+from ._models_py3 import VirtualMachineScaleSetManagedDiskParameters
+from ._models_py3 import VirtualMachineScaleSetNetworkConfiguration
+from ._models_py3 import VirtualMachineScaleSetNetworkProfile
+from ._models_py3 import VirtualMachineScaleSetOSDisk
+from ._models_py3 import VirtualMachineScaleSetOSProfile
+from ._models_py3 import VirtualMachineScaleSetSku
+from ._models_py3 import VirtualMachineScaleSetSkuCapacity
+from ._models_py3 import VirtualMachineScaleSetStorageProfile
+from ._models_py3 import VirtualMachineScaleSetVM
+from ._models_py3 import VirtualMachineScaleSetVMExtensionsSummary
+from ._models_py3 import VirtualMachineScaleSetVMInstanceIDs
+from ._models_py3 import VirtualMachineScaleSetVMInstanceRequiredIDs
+from ._models_py3 import VirtualMachineScaleSetVMInstanceView
+from ._models_py3 import VirtualMachineScaleSetVMListResult
+from ._models_py3 import VirtualMachineScaleSetVMProfile
+from ._models_py3 import VirtualMachineSize
+from ._models_py3 import VirtualMachineSizeListResult
+from ._models_py3 import VirtualMachineStatusCodeCount
+from ._models_py3 import WinRMConfiguration
+from ._models_py3 import WinRMListener
+from ._models_py3 import WindowsConfiguration
+
 
 from ._compute_management_client_enums import (
     AccessLevel,
@@ -248,7 +135,9 @@ from ._compute_management_client_enums import (
     VirtualMachineScaleSetSkuScaleType,
     VirtualMachineSizeTypes,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AccessUri',
     'AdditionalUnattendContent',
@@ -376,3 +265,5 @@ __all__ = [
     'VirtualMachineScaleSetSkuScaleType',
     'VirtualMachineSizeTypes',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

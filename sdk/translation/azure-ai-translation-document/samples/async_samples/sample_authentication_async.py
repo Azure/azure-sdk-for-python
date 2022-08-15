@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -50,7 +48,7 @@ async def sample_authentication_api_key_async():
 
     # make calls with authenticated client
     async with document_translation_client:
-        result = await document_translation_client.get_document_formats()
+        result = await document_translation_client.get_supported_document_formats()
 
 
 async def sample_authentication_with_azure_active_directory_async():
@@ -69,7 +67,7 @@ async def sample_authentication_with_azure_active_directory_async():
 
     # make calls with authenticated client
     async with document_translation_client:
-        result = await document_translation_client.get_document_formats()
+        result = await document_translation_client.get_supported_document_formats()
 
 
 async def main():
@@ -77,5 +75,4 @@ async def main():
     await sample_authentication_with_azure_active_directory_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

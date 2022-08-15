@@ -4,7 +4,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -17,7 +16,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -32,14 +30,21 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: communication
+    TestProxy: true
     Artifacts:
     - name: azure-communication-identity
       safeName: azurecommunicationidentity
     - name: azure-communication-chat
       safeName: azurecommunicationchat
+    - name: azure-communication-email
+      safeName: azurecommunicationemail
     - name: azure-mgmt-communication
       safeName: azuremgmtcommunication
     - name: azure-communication-sms
       safeName: azurecommunicationsms
     - name: azure-communication-phonenumbers
       safeName: azurecommunicationphonenumbers
+    - name: azure-communication-networktraversal
+      safeName: azurecommunicationnetworktraversal
+    - name: azure-communication-rooms
+      safeName: azurecommunicationrooms

@@ -153,7 +153,7 @@ class CustomVisionError(Model):
 
 
 class CustomVisionErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'CustomVisionError'.
+    """Server responded with exception of type: 'CustomVisionError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.

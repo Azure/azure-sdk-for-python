@@ -1,6 +1,7 @@
 include *.md
 include azure/__init__.py
 include azure/messaging/__init__.py
-include LICENSE.txt
+include LICENSE
 recursive-include tests *.py
-recursive-include examples *.py *.md
+recursive-include samples *.py *.md
+include azure/messaging/webpubsubservice/py.typed

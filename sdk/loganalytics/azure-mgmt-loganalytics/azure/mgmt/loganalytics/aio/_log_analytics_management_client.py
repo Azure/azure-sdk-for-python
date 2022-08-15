@@ -6,43 +6,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, Awaitable, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
+
+from .. import models
+from ._configuration import LogAnalyticsManagementClientConfiguration
+from .operations import AvailableServiceTiersOperations, ClustersOperations, DataExportsOperations, DataSourcesOperations, DeletedWorkspacesOperations, GatewaysOperations, IntelligencePacksOperations, LinkedServicesOperations, LinkedStorageAccountsOperations, ManagementGroupsOperations, OperationStatusesOperations, Operations, QueriesOperations, QueryPacksOperations, SavedSearchesOperations, SchemaOperations, SharedKeysOperations, StorageInsightConfigsOperations, TablesOperations, UsagesOperations, WorkspacePurgeOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import LogAnalyticsManagementClientConfiguration
-from .operations import DataExportsOperations
-from .operations import DataSourcesOperations
-from .operations import IntelligencePacksOperations
-from .operations import LinkedServicesOperations
-from .operations import LinkedStorageAccountsOperations
-from .operations import ManagementGroupsOperations
-from .operations import OperationStatusesOperations
-from .operations import SharedKeysOperations
-from .operations import UsagesOperations
-from .operations import StorageInsightConfigsOperations
-from .operations import SavedSearchesOperations
-from .operations import AvailableServiceTiersOperations
-from .operations import GatewaysOperations
-from .operations import SchemaOperations
-from .operations import WorkspacePurgeOperations
-from .operations import TablesOperations
-from .operations import ClustersOperations
-from .operations import Operations
-from .operations import WorkspacesOperations
-from .operations import DeletedWorkspacesOperations
-from .. import models
-
-
-class LogAnalyticsManagementClient(object):
+class LogAnalyticsManagementClient:    # pylint: disable=too-many-instance-attributes
     """Operational Insights Client.
 
+    :ivar query_packs: QueryPacksOperations operations
+    :vartype query_packs: azure.mgmt.loganalytics.aio.operations.QueryPacksOperations
+    :ivar queries: QueriesOperations operations
+    :vartype queries: azure.mgmt.loganalytics.aio.operations.QueriesOperations
     :ivar data_exports: DataExportsOperations operations
     :vartype data_exports: azure.mgmt.loganalytics.aio.operations.DataExportsOperations
     :ivar data_sources: DataSourcesOperations operations
@@ -52,7 +38,8 @@ class LogAnalyticsManagementClient(object):
     :ivar linked_services: LinkedServicesOperations operations
     :vartype linked_services: azure.mgmt.loganalytics.aio.operations.LinkedServicesOperations
     :ivar linked_storage_accounts: LinkedStorageAccountsOperations operations
-    :vartype linked_storage_accounts: azure.mgmt.loganalytics.aio.operations.LinkedStorageAccountsOperations
+    :vartype linked_storage_accounts:
+     azure.mgmt.loganalytics.aio.operations.LinkedStorageAccountsOperations
     :ivar management_groups: ManagementGroupsOperations operations
     :vartype management_groups: azure.mgmt.loganalytics.aio.operations.ManagementGroupsOperations
     :ivar operation_statuses: OperationStatusesOperations operations
@@ -62,19 +49,19 @@ class LogAnalyticsManagementClient(object):
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.loganalytics.aio.operations.UsagesOperations
     :ivar storage_insight_configs: StorageInsightConfigsOperations operations
-    :vartype storage_insight_configs: azure.mgmt.loganalytics.aio.operations.StorageInsightConfigsOperations
+    :vartype storage_insight_configs:
+     azure.mgmt.loganalytics.aio.operations.StorageInsightConfigsOperations
     :ivar saved_searches: SavedSearchesOperations operations
     :vartype saved_searches: azure.mgmt.loganalytics.aio.operations.SavedSearchesOperations
     :ivar available_service_tiers: AvailableServiceTiersOperations operations
-    :vartype available_service_tiers: azure.mgmt.loganalytics.aio.operations.AvailableServiceTiersOperations
+    :vartype available_service_tiers:
+     azure.mgmt.loganalytics.aio.operations.AvailableServiceTiersOperations
     :ivar gateways: GatewaysOperations operations
     :vartype gateways: azure.mgmt.loganalytics.aio.operations.GatewaysOperations
     :ivar schema: SchemaOperations operations
     :vartype schema: azure.mgmt.loganalytics.aio.operations.SchemaOperations
     :ivar workspace_purge: WorkspacePurgeOperations operations
     :vartype workspace_purge: azure.mgmt.loganalytics.aio.operations.WorkspacePurgeOperations
-    :ivar tables: TablesOperations operations
-    :vartype tables: azure.mgmt.loganalytics.aio.operations.TablesOperations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure.mgmt.loganalytics.aio.operations.ClustersOperations
     :ivar operations: Operations operations
@@ -83,88 +70,125 @@ class LogAnalyticsManagementClient(object):
     :vartype workspaces: azure.mgmt.loganalytics.aio.operations.WorkspacesOperations
     :ivar deleted_workspaces: DeletedWorkspacesOperations operations
     :vartype deleted_workspaces: azure.mgmt.loganalytics.aio.operations.DeletedWorkspacesOperations
+    :ivar tables: TablesOperations operations
+    :vartype tables: azure.mgmt.loganalytics.aio.operations.TablesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = LogAnalyticsManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = LogAnalyticsManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
+        self._serialize.client_side_validation = False
+        self.query_packs = QueryPacksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.queries = QueriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.data_exports = DataExportsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.data_sources = DataSourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.intelligence_packs = IntelligencePacksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.linked_services = LinkedServicesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.linked_storage_accounts = LinkedStorageAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.management_groups = ManagementGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operation_statuses = OperationStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.shared_keys = SharedKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.usages = UsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.storage_insight_configs = StorageInsightConfigsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.saved_searches = SavedSearchesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.available_service_tiers = AvailableServiceTiersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.gateways = GatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.schema = SchemaOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.workspace_purge = WorkspacePurgeOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tables = TablesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.clusters = ClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.workspaces = WorkspacesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.deleted_workspaces = DeletedWorkspacesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tables = TablesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

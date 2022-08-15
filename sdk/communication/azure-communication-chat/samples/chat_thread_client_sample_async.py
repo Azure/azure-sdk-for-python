@@ -132,7 +132,8 @@ class ChatThreadClientSamplesAsync(object):
                 # Scenario 1: Send message without specifying chat_message_type
                 send_message_result = await chat_thread_client.send_message(
                     "Hello! My name is Fred Flinstone",
-                    sender_display_name="Fred Flinstone")
+                    sender_display_name="Fred Flinstone",
+                    metadata={"tags": "tags"})
                 send_message_result_id = send_message_result.id
 
                 # Scenario 2: Send message specifying chat_message_type
@@ -143,7 +144,8 @@ class ChatThreadClientSamplesAsync(object):
                 send_message_result_w_type_id = send_message_result_w_type.id
 
                 # Verify message content
-                print("First Message:", (await chat_thread_client.get_message(send_message_result_id)).content.message)
+                chat_message_1 = await chat_thread_client.get_message(send_message_result_id)
+                print("First Message:", chat_message_1.content.message, chat_message_1.metadata)
                 print("Second Message:", (await chat_thread_client.get_message(send_message_result_w_type_id)).content.message)
         # [END send_message]
                 self._message_id = send_message_result_id
@@ -396,5 +398,4 @@ async def main():
     sample.clean_up()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

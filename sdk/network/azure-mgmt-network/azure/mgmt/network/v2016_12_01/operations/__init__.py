@@ -6,32 +6,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._network_interfaces_operations import NetworkInterfacesOperations
-from ._application_gateways_operations import ApplicationGatewaysOperations
-from ._network_management_client_operations import NetworkManagementClientOperationsMixin
-from ._express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
-from ._express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
-from ._express_route_circuits_operations import ExpressRouteCircuitsOperations
-from ._express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
-from ._load_balancers_operations import LoadBalancersOperations
-from ._network_security_groups_operations import NetworkSecurityGroupsOperations
-from ._security_rules_operations import SecurityRulesOperations
-from ._network_watchers_operations import NetworkWatchersOperations
-from ._packet_captures_operations import PacketCapturesOperations
-from ._public_ip_addresses_operations import PublicIPAddressesOperations
-from ._route_filters_operations import RouteFiltersOperations
-from ._route_filter_rules_operations import RouteFilterRulesOperations
-from ._route_tables_operations import RouteTablesOperations
-from ._routes_operations import RoutesOperations
-from ._bgp_service_communities_operations import BgpServiceCommunitiesOperations
-from ._usages_operations import UsagesOperations
-from ._virtual_networks_operations import VirtualNetworksOperations
-from ._subnets_operations import SubnetsOperations
-from ._virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
-from ._virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
-from ._virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
-from ._local_network_gateways_operations import LocalNetworkGatewaysOperations
+from ._operations import NetworkInterfacesOperations
+from ._operations import ApplicationGatewaysOperations
+from ._operations import NetworkManagementClientOperationsMixin
+from ._operations import ExpressRouteCircuitAuthorizationsOperations
+from ._operations import ExpressRouteCircuitPeeringsOperations
+from ._operations import ExpressRouteCircuitsOperations
+from ._operations import ExpressRouteServiceProvidersOperations
+from ._operations import LoadBalancersOperations
+from ._operations import NetworkSecurityGroupsOperations
+from ._operations import SecurityRulesOperations
+from ._operations import NetworkWatchersOperations
+from ._operations import PacketCapturesOperations
+from ._operations import PublicIPAddressesOperations
+from ._operations import RouteFiltersOperations
+from ._operations import RouteFilterRulesOperations
+from ._operations import RouteTablesOperations
+from ._operations import RoutesOperations
+from ._operations import BgpServiceCommunitiesOperations
+from ._operations import UsagesOperations
+from ._operations import VirtualNetworksOperations
+from ._operations import SubnetsOperations
+from ._operations import VirtualNetworkPeeringsOperations
+from ._operations import VirtualNetworkGatewaysOperations
+from ._operations import VirtualNetworkGatewayConnectionsOperations
+from ._operations import LocalNetworkGatewaysOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'NetworkInterfacesOperations',
     'ApplicationGatewaysOperations',
@@ -59,3 +62,5 @@ __all__ = [
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

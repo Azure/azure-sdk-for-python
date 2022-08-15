@@ -45,7 +45,7 @@ class ProviderOperationsMetadataOperations:
         self,
         resource_provider_namespace: str,
         expand: Optional[str] = "resourceTypes",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProviderOperationsMetadata":
         """Gets provider operations metadata for the specified resource provider.
 
@@ -69,7 +69,7 @@ class ProviderOperationsMetadataOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -89,7 +89,8 @@ class ProviderOperationsMetadataOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProviderOperationsMetadata', pipeline_response)
 
@@ -102,7 +103,7 @@ class ProviderOperationsMetadataOperations:
     def list(
         self,
         expand: Optional[str] = "resourceTypes",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProviderOperationsMetadataListResult"]:
         """Gets provider operations metadata for all resource providers.
 
@@ -156,8 +157,9 @@ class ProviderOperationsMetadataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 

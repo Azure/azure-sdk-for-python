@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DatabricksClientConfiguration(Configuration):
-    """Configuration for DatabricksClient.
+class AzureDatabricksManagementClientConfiguration(Configuration):
+    """Configuration for AzureDatabricksManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,11 +41,10 @@ class DatabricksClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(DatabricksClientConfiguration, self).__init__(**kwargs)
+        super(AzureDatabricksManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2018-04-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-databricks/{}'.format(VERSION))
         self._configure(**kwargs)

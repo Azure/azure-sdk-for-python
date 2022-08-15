@@ -1,0 +1,32 @@
+type: sweep
+sampling_algorithm: random
+search_space:
+  lr:
+    type: uniform
+    min_value: 0.001
+    max_value: 0.1
+  conv_size:
+    type: choice
+    values: [2, 5, 7]
+  dropout_rate:
+    type: uniform
+    min_value: 0.1
+    max_value: 0.5
+objective:
+  primary_metric: accuracy
+  goal: maximize
+outputs:
+  output1:
+    type: uri_folder
+    path: azureml://datastores/${{default_datastore}}/paths/data_folder/${{name}}/cleaned_data/
+trial:
+  command: |
+    echo "Hello Default World" > ./outputs/output.txt;
+    echo "Hello World" > ${{outputs.output1}}/output.txt;
+    python -c 'import random; import mlflow; mlflow.log_metric("accuracy", random.random())'
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+compute: azureml:testCompute
+limits:
+  max_total_trials: 4
+  max_concurrent_trials: 10
+  timeout: 3000

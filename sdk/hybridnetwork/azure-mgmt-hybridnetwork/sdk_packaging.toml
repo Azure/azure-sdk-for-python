@@ -1,8 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-hybridnetwork"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Hybridnetwork Management"
+package_pprint_name = "Hybrid Network Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-need_msrestazure = true

@@ -1,5 +1,227 @@
 # Release History
 
+## 1.11.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.11.0b3 (2022-08-09)
+
+Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+### Features Added
+
+- Added ability to specify `tenant_id` for `AzureCliCredential` (thanks @tikicoder)    ([#25207](https://github.com/Azure/azure-sdk-for-python/pull/25207))
+
+### Breaking Changes
+
+- Removed `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain. ([#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249))
+
+## 1.11.0b2 (2022-07-05)
+
+### Features Added
+
+- `EnvironmentCredential` added `AZURE_CLIENT_CERTIFICATE_PASSWORD` support for the cert password    ([#24652](https://github.com/Azure/azure-sdk-for-python/issues/24652))
+
+### Bugs Fixed
+
+- Fixed the issue that failed to parse PEM certificate if it does not start with "-----"    ([#24643](https://github.com/Azure/azure-sdk-for-python/issues/24643))
+
+## 1.11.0b1 (2022-05-10)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+
+## 1.10.0 (2022-04-28)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.9.0.
+> Only code written against a beta version such as 1.10.0b1 may be affected.
+- `validate_authority` support is not available in 1.10.0.
+
+### Other Changes
+
+- Supported msal-extensions version 1.0.0    ([#23927](https://github.com/Azure/azure-sdk-for-python/issues/23927))
+
+## 1.10.0b1 (2022-04-07)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+
+## 1.9.0 (2022-04-05)
+
+### Features Added
+
+- Added PII logging if logging.DEBUG is enabled.    ([#23203](https://github.com/Azure/azure-sdk-for-python/issues/23203))
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.8.0.
+> Only code written against a beta version such as 1.9.0b1 may be affected.
+- `validate_authority` support is not available in 1.9.0.
+
+### Bugs Fixed
+
+- Added check on `content` from msal response.    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
+- Fixed the issue that async OBO credential does not refresh correctly.    ([#21981](https://github.com/Azure/azure-sdk-for-python/issues/21981))
+
+### Other Changes
+
+- Removed `resource_id`, please use `identity_config` instead.
+- Renamed argument name `get_assertion` to `func` for `ClientAssertionCredential`.
+
+## 1.9.0b1 (2022-03-08)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+- Added `resource_id` support for user-assigned managed identity  ([#22329](https://github.com/Azure/azure-sdk-for-python/issues/22329))
+- Added `ClientAssertionCredential` support  ([#22328](https://github.com/Azure/azure-sdk-for-python/issues/22328))
+- Updated App service API version to "2019-08-01" ([#23034](https://github.com/Azure/azure-sdk-for-python/issues/23034))
+
+## 1.8.0 (2022-03-01)
+
+### Bugs Fixed
+
+- Handle injected "tenant_id" and "claims" ([#23138](https://github.com/Azure/azure-sdk-for-python/issues/23138))
+  
+  "tenant_id" argument in get_token() method is only supported by:
+
+  - `AuthorizationCodeCredential`
+  - `AzureCliCredential`
+  - `AzurePowerShellCredential`
+  - `InteractiveBrowserCredential`
+  - `DeviceCodeCredential`
+  - `EnvironmentCredential`
+  - `UsernamePasswordCredential`
+
+   it is ignored by other types of credentials.
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.7.1 (2021-11-09)
+
+### Bugs Fixed
+
+- Fix multi-tenant auth using async AadClient ([#21289](https://github.com/Azure/azure-sdk-for-python/issues/21289))
+
+## 1.7.0 (2021-10-14)
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.6.0.
+> Only code written against a beta version such as 1.7.0b1 may be affected.
+
+- The `allow_multitenant_authentication` argument has been removed and the default behavior is now as if it were true.
+  The multitenant authentication feature can be totally disabled by setting the environment variable 
+  `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `True`.
+- `azure.identity.RegionalAuthority` is removed.
+- `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`.
+- `AzureApplicationCredential` is removed.
+- `client_credential` in the ctor of `OnBehalfOfCredential` is removed. Please use `client_secret` or `client_certificate` instead.
+- Make `user_assertion` in the ctor of `OnBehalfOfCredential` a keyword only argument.
+
+## 1.7.0b4 (2021-09-09)
+
+### Features Added
+- `CertificateCredential` accepts certificates in PKCS12 format
+  ([#13540](https://github.com/Azure/azure-sdk-for-python/issues/13540))
+- `OnBehalfOfCredential` supports the on-behalf-of authentication flow for
+  accessing resources on behalf of users
+  ([#19308](https://github.com/Azure/azure-sdk-for-python/issues/19308))
+- `DefaultAzureCredential` allows specifying the client ID of interactive browser via keyword argument `interactive_browser_client_id`
+  ([#20487](https://github.com/Azure/azure-sdk-for-python/issues/20487))
+
+### Other Changes
+- Added context manager methods and `close()` to credentials in the
+  `azure.identity` namespace. At the end of a `with` block, or when `close()`
+  is called, these credentials close their underlying transport sessions.
+  ([#18798](https://github.com/Azure/azure-sdk-for-python/issues/18798))
+
+
+## 1.6.1 (2021-08-19)
+
+### Other Changes
+- Persistent cache implementations are now loaded on demand, enabling
+  workarounds when importing transitive dependencies such as pywin32
+  fails
+  ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
+
+
+## 1.7.0b3 (2021-08-10)
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.6.0.
+> Only code written against a beta version such as 1.7.0b1 may be affected.
+- Renamed `AZURE_POD_IDENTITY_TOKEN_URL` to `AZURE_POD_IDENTITY_AUTHORITY_HOST`.
+  The value should now be a host, for example "http://169.254.169.254" (the
+  default).
+
+### Bugs Fixed
+- Fixed import of `azure.identity.aio.AzureApplicationCredential`
+  ([#19943](https://github.com/Azure/azure-sdk-for-python/issues/19943))
+
+### Other Changes
+- Added `CustomHookPolicy` to credential HTTP pipelines. This allows applications
+  to initialize credentials with `raw_request_hook` and `raw_response_hook`
+  keyword arguments. The value of these arguments should be a callback taking a
+  `PipelineRequest` and `PipelineResponse`, respectively. For example:
+  `ManagedIdentityCredential(raw_request_hook=lambda request: print(request.http_request.url))`
+- Reduced redundant `ChainedTokenCredential` and `DefaultAzureCredential`
+  logging. On Python 3.7+, credentials invoked by these classes now log debug
+  rather than info messages.
+  ([#18972](https://github.com/Azure/azure-sdk-for-python/issues/18972))
+- Persistent cache implementations are now loaded on demand, enabling
+  workarounds when importing transitive dependencies such as pywin32
+  fails
+  ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
+
+
+## 1.7.0b2 (2021-07-08)
+### Features Added
+- `InteractiveBrowserCredential` keyword argument `login_hint` enables
+  pre-filling the username/email address field on the login page
+  ([#19225](https://github.com/Azure/azure-sdk-for-python/issues/19225))
+- `AzureApplicationCredential`, a default credential chain for applications
+  deployed to Azure
+  ([#19309](https://github.com/Azure/azure-sdk-for-python/issues/19309))
+
+### Bugs Fixed
+- `azure.identity.aio.ManagedIdentityCredential` is an async context manager
+  that closes its underlying transport session at the end of a `with` block
+
+### Other Changes
+- Most credentials can use tenant ID values returned from authentication
+  challenges, enabling them to request tokens from the correct tenant. This
+  behavior is optional and controlled by a new keyword argument,
+  `allow_multitenant_authentication`.
+  ([#19300](https://github.com/Azure/azure-sdk-for-python/issues/19300))
+  - When `allow_multitenant_authentication` is False, which is the default, a
+    credential will raise `ClientAuthenticationError` when its configured tenant
+    doesn't match the tenant specified for a token request. This may be a
+    different exception than was raised by prior versions of the credential. To
+    maintain the prior behavior, set environment variable
+    AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION to "True".
+- `CertificateCredential` and `ClientSecretCredential` support regional STS
+  on Azure VMs by either keyword argument `regional_authority` or environment
+  variable `AZURE_REGIONAL_AUTHORITY_NAME`. See `azure.identity.RegionalAuthority`
+  for possible values.
+  ([#19301](https://github.com/Azure/azure-sdk-for-python/issues/19301))
+- Upgraded minimum `azure-core` version to 1.11.0 and minimum `msal` version to
+  1.12.0
+- After IMDS authentication fails, `ManagedIdentityCredential` raises consistent
+  error messages and uses `raise from` to propagate inner exceptions
+  ([#19423](https://github.com/Azure/azure-sdk-for-python/pull/19423))
+
 ## 1.7.0b1 (2021-06-08)
 Beginning with this release, this library requires Python 2.7 or 3.6+.
 
@@ -7,7 +229,6 @@ Beginning with this release, this library requires Python 2.7 or 3.6+.
 - `VisualStudioCodeCredential` gets its default tenant and authority
   configuration from VS Code user settings
   ([#14808](https://github.com/Azure/azure-sdk-for-python/issues/14808))
-
 
 ## 1.6.0 (2021-05-13)
 This is the last version to support Python 3.5. The next version will require
@@ -393,7 +614,7 @@ arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
 for transport but the library does not require it as a dependency because the
 async API is optional. To use async credentials, please install
 [`aiohttp`](https://pypi.org/project/aiohttp/) or see
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport)
 for information about customizing the transport.
 - Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
 - All credentials with `tenant_id` and `client_id` positional parameters now accept them in that order
@@ -462,7 +683,7 @@ authenticate silently after you've signed in to Visual Studio 2019, for
 example. `DefaultAzureCredential` includes `SharedTokenCacheCredential` when
 the shared cache is available, and environment variable `AZURE_USERNAME`
 is set. See the
-[README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md#single-sign-on)
+[README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#single-sign-on)
 for more information.
 
 ### Dependency changes:
@@ -499,7 +720,7 @@ https://aka.ms/azure-sdk-preview1-python.
 
 This release supports service principal and managed identity authentication.
 See the
-[documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
 for more details. User authentication will be added in an upcoming preview
 release.
 

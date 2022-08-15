@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,6 +6,9 @@
 from ._version import VERSION
 from ._form_recognizer_client import FormRecognizerClient
 from ._form_training_client import FormTrainingClient
+from ._document_analysis_client import DocumentAnalysisClient
+from ._document_model_administration_client import DocumentModelAdministrationClient
+from ._polling import DocumentModelAdministrationLROPoller
 from ._models import (
     FormElement,
     LengthUnit,
@@ -34,12 +36,42 @@ from ._models import (
     CustomFormModelProperties,
     FormSelectionMark,
     TextAppearance,
+    AnalyzeResult,
+    AnalyzedDocument,
+    BoundingRegion,
+    AddressValue,
+    CurrencyValue,
+    ModelBuildMode,
+    DocumentContentElement,
+    DocumentField,
+    DocumentKeyValuePair,
+    DocumentKeyValueElement,
+    DocumentLanguage,
+    DocumentLine,
+    DocumentPage,
+    DocumentSelectionMark,
+    DocumentSpan,
+    DocumentStyle,
+    DocumentTable,
+    DocumentTableCell,
+    DocumentWord,
+    DocumentModelOperationSummary,
+    DocumentModelOperationDetails,
+    DocumentModelDetails,
+    DocumentModelSummary,
+    DocumentTypeDetails,
+    ResourceDetails,
+    DocumentAnalysisError,
+    DocumentAnalysisInnerError,
+    TargetAuthorization,
 )
-from ._api_versions import FormRecognizerApiVersion
+from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
 
 __all__ = [
     "FormRecognizerApiVersion",
+    "DocumentAnalysisClient",
+    "DocumentModelAdministrationClient",
     "FormRecognizerClient",
     "FormTrainingClient",
     "LengthUnit",
@@ -68,6 +100,36 @@ __all__ = [
     "CustomFormModelProperties",
     "FormSelectionMark",
     "TextAppearance",
+    "AnalyzeResult",
+    "AnalyzedDocument",
+    "BoundingRegion",
+    "AddressValue",
+    "CurrencyValue",
+    "ModelBuildMode",
+    "DocumentContentElement",
+    "DocumentField",
+    "DocumentKeyValueElement",
+    "DocumentKeyValuePair",
+    "DocumentLanguage",
+    "DocumentLine",
+    "DocumentPage",
+    "DocumentSelectionMark",
+    "DocumentSpan",
+    "DocumentStyle",
+    "DocumentTable",
+    "DocumentTableCell",
+    "DocumentWord",
+    "DocumentModelAdministrationLROPoller",
+    "DocumentModelOperationSummary",
+    "DocumentModelOperationDetails",
+    "DocumentAnalysisApiVersion",
+    "DocumentModelDetails",
+    "DocumentModelSummary",
+    "DocumentTypeDetails",
+    "ResourceDetails",
+    "DocumentAnalysisError",
+    "DocumentAnalysisInnerError",
+    "TargetAuthorization",
 ]
 
 __VERSION__ = VERSION

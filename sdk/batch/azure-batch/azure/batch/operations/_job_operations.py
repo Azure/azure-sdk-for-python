@@ -24,7 +24,7 @@ class JobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-09-01.12.0".
+    :ivar api_version: The API version to use for the request. Constant value: "2022-01-01.15.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class JobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-01.12.0"
+        self.api_version = "2022-01-01.15.0"
 
         self.config = config
 
@@ -591,8 +591,8 @@ class JobOperations(object):
 
         :param job_id: The ID of the Job to disable.
         :type job_id: str
-        :param disable_tasks: What to do with active Tasks associated with the
-         Job. Possible values include: 'requeue', 'terminate', 'wait'
+        :param disable_tasks: Possible values include: 'requeue', 'terminate',
+         'wait'
         :type disable_tasks: str or ~azure.batch.models.DisableJobOption
         :param job_disable_options: Additional parameters for the operation
         :type job_disable_options: ~azure.batch.models.JobDisableOptions
@@ -813,8 +813,7 @@ class JobOperations(object):
 
         :param job_id: The ID of the Job to terminate.
         :type job_id: str
-        :param terminate_reason: The text you want to appear as the Job's
-         TerminateReason. The default is 'UserTerminate'.
+        :param terminate_reason:
         :type terminate_reason: str
         :param job_terminate_options: Additional parameters for the operation
         :type job_terminate_options: ~azure.batch.models.JobTerminateOptions

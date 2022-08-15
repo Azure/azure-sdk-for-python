@@ -6,44 +6,39 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.models import LocationMode
+
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.models import LocationMode
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties
-
+from ._encryption import StorageEncryptionMixin
 from ._models import (
     QueuePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
 )
-
+from ._serialize import get_api_version
 from ._queue_client import QueueClient
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.configuration import Configuration
-    from azure.core.pipeline.policies import HTTPPolicy
     from ._models import (
+        CorsRule,
+        Metrics,
         QueueProperties,
         QueueAnalyticsLogging,
-        Metrics,
-        CorsRule,
     )
 
 
-class QueueServiceClient(StorageAccountHostsMixin):
+class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -52,7 +47,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     can be retrieved using the :func:`~get_queue_client` function.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
     #optional-configuration>`_.
 
     :param str account_url:
@@ -62,11 +57,15 @@ class QueueServiceClient(StorageAccountHostsMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
 
@@ -89,7 +88,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -107,9 +106,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
             raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -120,7 +119,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> QueueServiceClient
         """Create QueueServiceClient from a Connection String.
@@ -131,8 +130,11 @@ class QueueServiceClient(StorageAccountHostsMixin):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -153,7 +155,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -187,7 +189,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -219,7 +221,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            **kwargs
+            **kwargs  # type: Any
         ):
         # type: (...) -> None
         """Sets the properties of a storage account's Queue service, including
@@ -273,7 +275,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            **kwargs
+            **kwargs  # type: Any
         ):
         # type: (...) -> ItemPaged[QueueProperties]
         """Returns a generator to list the queues under the specified account.
@@ -323,7 +325,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
     def create_queue(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
+            **kwargs  # type: Any
         ):
         # type: (...) -> QueueClient
         """Creates a new queue under the specified account.
@@ -358,8 +360,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_queue(
-            self, queue,  # type: Union[QueueProperties, str]
-            **kwargs
+            self,
+            queue,  # type: Union[QueueProperties, str]
+            **kwargs  # type: Any
         ):
         # type: (...) -> None
         """Deletes the specified queue and any messages it contains.
@@ -394,8 +397,11 @@ class QueueServiceClient(StorageAccountHostsMixin):
         kwargs.setdefault('merge_span', True)
         queue_client.delete_queue(timeout=timeout, **kwargs)
 
-    def get_queue_client(self, queue, **kwargs):
-        # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient
+    def get_queue_client(self,
+                         queue,  # type: Union[QueueProperties, str]
+                         **kwargs  # type: Any
+                         ):
+        # type: (...) -> QueueClient
         """Get a client to interact with the specified queue.
 
         The queue need not already exist.
@@ -429,5 +435,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return QueueClient(
             self.url, queue_name=queue_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
-            _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
+            encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
+            api_version=self.api_version, _pipeline=_pipeline, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

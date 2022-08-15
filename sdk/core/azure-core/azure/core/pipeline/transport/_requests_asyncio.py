@@ -27,14 +27,18 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
+from typing import (
+    Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+)
 import urllib3 # type: ignore
 
 import requests
 
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError
+    ServiceResponseError,
+    IncompleteReadError,
+    HttpResponseError,
 )
 from azure.core.pipeline import Pipeline
 from ._base import HttpRequest
@@ -42,9 +46,16 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, AzureErrorUnion
 from ._base_requests_async import RequestsAsyncTransportBase
+from .._tools import is_rest as _is_rest
+from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
 
+if TYPE_CHECKING:
+    from ...rest import (
+        HttpRequest as RestHttpRequest,
+        AsyncHttpResponse as RestAsyncHttpResponse
+    )
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,7 +93,35 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
+    @overload  # type: ignore
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
+        """Send the request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    @overload  # type: ignore
+    async def send(self, request: "RestHttpRequest", **kwargs: Any) -> "RestAsyncHttpResponse":  # pylint:disable=invalid-overridden-method
+        """Send a `azure.core.rest` request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+
+        :keyword requests.Session session: will override the driver session and use yours.
+         Should NOT be done unless really required. Anything else is sent straight to requests.
+        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        """
+
+    async def send(self, request, **kwargs):  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -97,7 +136,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
-        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        error = None    # type: Optional[AzureErrorUnion]
         data_to_send = await self._retrieve_request_data(request)
         try:
             response = await loop.run_in_executor(
@@ -114,6 +153,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     cert=kwargs.pop('connection_cert', self.connection_config.cert),
                     allow_redirects=False,
                     **kwargs))
+            response.raw.enforce_content_length = True
 
         except urllib3.exceptions.NewConnectionError as err:
             error = ServiceRequestError(err, error=err)
@@ -124,11 +164,29 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
+        except requests.exceptions.ChunkedEncodingError as err:
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                error = IncompleteReadError(err, error=err)
+            else:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
 
         if error:
             raise error
+        if _is_rest(request):
+            from azure.core.rest._requests_asyncio import RestAsyncioRequestsTransportResponse
+            retval = RestAsyncioRequestsTransportResponse(
+                request=request,
+                internal_response=response,
+                block_size=self.connection_config.data_block_size
+            )
+            if not kwargs.get("stream"):
+                await _handle_no_stream_rest_response(retval)
+            return retval
 
         return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
@@ -149,10 +207,11 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        internal_response = response.internal_response
         if decompress:
-            self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+            self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
-            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
+            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
@@ -160,6 +219,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         loop = _get_running_loop()
+        internal_response = self.response.internal_response
         try:
             chunk = await loop.run_in_executor(
                 None,
@@ -170,13 +230,22 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                 raise _ResponseStopIteration()
             return chunk
         except _ResponseStopIteration:
-            self.response.internal_response.close()
+            internal_response.close()
             raise StopAsyncIteration()
         except requests.exceptions.StreamConsumedError:
             raise
+        except requests.exceptions.ChunkedEncodingError as err:
+            msg = err.__str__()
+            if 'IncompleteRead' in msg:
+                _LOGGER.warning("Incomplete download: %s", err)
+                internal_response.close()
+                raise IncompleteReadError(err, error=err)
+            _LOGGER.warning("Unable to stream download: %s", err)
+            internal_response.close()
+            raise HttpResponseError(err, error=err)
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.internal_response.close()
+            internal_response.close()
             raise
 
 

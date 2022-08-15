@@ -26,8 +26,8 @@ from azure.storage.blob import (
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.blob._shared.constants import CONNECTION_TIMEOUT, READ_TIMEOUT
 
-from _shared.asynctestcase import AsyncStorageTestCase
-from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
+from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largestblob'
@@ -51,10 +51,10 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
-    async def _setup(self, storage_account, key, additional_policies=None, min_large_block_upload_threshold=1 * 1024 * 1024,
+    async def _setup(self, storage_account_name, key, additional_policies=None, min_large_block_upload_threshold=1 * 1024 * 1024,
                max_single_put_size=32 * 1024):
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=key,
             max_single_put_size=max_single_put_size,
             max_block_size=LARGEST_BLOCK_SIZE,
@@ -90,11 +90,11 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
 
     # --Test cases for block blobs --------------------------------------------
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_bytes_largest(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    async def test_put_block_bytes_largest(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         blob = await self._create_blob()
 
         # Act
@@ -119,12 +119,12 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(block_list[0][0].size, LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_bytes_largest_without_network(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_bytes_largest_without_network(self, storage_account_name, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
-        await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob = await self._create_blob()
 
         # Act
@@ -150,11 +150,11 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_stream_largest(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    async def test_put_block_stream_largest(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         blob = await self._create_blob()
 
         # Act
@@ -181,12 +181,12 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(block_list[0][0].size, LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_stream_largest_without_network(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_stream_largest_without_network(self, storage_account_name, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
-        await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob = await self._create_blob()
 
         # Act
@@ -214,11 +214,11 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip(reason="This takes really long time")
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_largest_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    async def test_create_largest_blob_from_path(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
@@ -237,12 +237,12 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_largest_blob_from_path_without_network(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_largest_blob_from_path_without_network(self, storage_account_name, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
-        await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
@@ -262,14 +262,14 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_counter, 1)
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
-    @pytest.mark.skip(reason="This takes really long time")
+    @pytest.mark.skip(reason="This takes a long time to run. Uncomment to run ad-hoc.")
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_largest_blob_from_stream_without_network(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_largest_blob_from_stream_without_network(self, storage_account_name, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
-        await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -285,13 +285,13 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(payload_dropping_policy.put_block_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_largest_blob_from_stream_single_upload_without_network(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_largest_blob_from_stream_single_upload_without_network(self, storage_account_name, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
-        await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy],
-                    max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE+1)
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy],
+                          max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE + 1)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 

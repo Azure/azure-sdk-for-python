@@ -44,7 +44,7 @@ class UsagesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SignalRServiceUsageList"]:
         """List resource usage quotas by location.
 
@@ -60,7 +60,7 @@ class UsagesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

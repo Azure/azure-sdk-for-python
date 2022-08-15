@@ -75,3 +75,17 @@ class ProvisioningStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CREATING = "Creating"
     UPDATING = "Updating"
     DELETING = "Deleting"
+
+class ResourceSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The reason for restriction.
+    """
+
+    QUOTA_ID = "QuotaId"
+    NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
+
+class ResourceSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of restrictions.
+    """
+
+    LOCATION = "Location"
+    ZONE = "Zone"

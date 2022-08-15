@@ -36,7 +36,7 @@ class LargePersonGroupOperations(object):
         self.config = config
 
     def create(
-            self, large_person_group_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, name, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
         """Create a new large person group with user-specified largePersonGroupId,
         name, an optional userData and recognitionModel.
         <br /> A large person group is the container of the uploaded person

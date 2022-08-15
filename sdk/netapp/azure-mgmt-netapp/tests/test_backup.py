@@ -1,20 +1,19 @@
 import time
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Backup, BackupPatch, VolumePatch
 from test_account import delete_account
-from test_volume import create_volume, wait_for_volume, delete_volume, delete_pool
+from test_volume import create_volume, wait_for_volume, delete_volume, delete_pool, create_virtual_network
 from setup import *
 import azure.mgmt.netapp.models
-import unittest
 
 backups = [TEST_BACKUP_1, TEST_BACKUP_2]
 
 
-def create_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
-                  volume_name=TEST_VOL_1, location=BACKUP_LOCATION, backup_only=False, live=False):
+def create_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
+                  volume_name=TEST_VOL_1, location=LOCATION, backup_only=False, vnet=VNET, live=False):
     if not backup_only:
-        create_volume(client, rg, account_name, pool_name, volume_name, location, vnet=BACKUP_VNET, live=live)
+        create_volume(client, rg, account_name, pool_name, volume_name, location, vnet=vnet, live=live)
         wait_for_volume(client, rg, account_name, pool_name, volume_name, live)
 
     vaults = client.vaults.list(rg, account_name)
@@ -24,14 +23,14 @@ def create_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=
             "backupEnabled": True
         }
     })
-    client.volumes.begin_update(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).result()
+    client.volumes.begin_update(TEST_RG, account_name, TEST_POOL_1, volume_name, volume_patch).result()
     backup_body = Backup(location=location)
     backup = client.backups.begin_create(rg, account_name, pool_name, volume_name, backup_name, backup_body).result()
     wait_for_backup_created(client, rg, account_name, pool_name, volume_name, backup_name, live)
     return backup
 
 
-def disable_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
+def disable_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
                    volume_name=TEST_VOL_1, live=False):
     vaults = client.vaults.list(rg, account_name)
     volume_patch = VolumePatch(data_protection={
@@ -40,21 +39,21 @@ def disable_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name
             "backupEnabled": False
         }
     })
-    client.volumes.begin_update(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).wait()
+    client.volumes.begin_update(TEST_RG, account_name, TEST_POOL_1, volume_name, volume_patch).wait()
     wait_for_no_backup(client, rg, account_name, pool_name, volume_name, backup_name, live)
 
 
-def delete_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
+def delete_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
                   volume_name=TEST_VOL_1, live=False):
     client.backups.begin_delete(rg, account_name, pool_name, volume_name, backup_name).wait()
     wait_for_no_backup(client, rg, account_name, pool_name, volume_name, backup_name, live)
 
 
-def get_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
+def get_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
     return client.backups.get(rg, account_name, pool_name, volume_name, backup_name)
 
 
-def get_backup_list(client, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
+def get_backup_list(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
     return client.backups.list(rg, account_name, pool_name, volume_name)
 
 
@@ -72,6 +71,7 @@ def wait_for_no_backup(client, rg, account_name, pool_name, volume_name, backup_
             # and is actually what we are waiting for
             break
 
+
 def wait_for_backup_created(client, rg, account_name, pool_name, volume_name, backup_name, live=False):
     co = 0
     while co < 40:
@@ -83,93 +83,127 @@ def wait_for_backup_created(client, rg, account_name, pool_name, volume_name, ba
             break
 
 
-class NetAppAccountTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(NetAppAccountTestCase, self).setUp()
+def clean_up(self, disable_bp=True, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1, vnet=VNET, backup_name=TEST_BACKUP_1, live=False):
+    if disable_bp:
+        disable_backup(self.client, account_name=account_name, pool_name=pool_name, volume_name=volume_name, live=live)
+
+    delete_volume(self.client, TEST_RG, account_name=account_name, pool_name=pool_name, volume_name=volume_name, live=live)
+    delete_pool(self.client, TEST_RG, acc_name=account_name, pool_name=pool_name, live=live)
+    #client.account_backups.begin_delete(TEST_RG, account_name, backup_name).wait()
+    delete_account(self.client, TEST_RG, acc_name=account_name, live=live)
+    if self.is_live:
+        self.network_client.virtual_networks.begin_delete(TEST_RG, vnet)
+
+class TestNetAppBackup(AzureMgmtRecordedTestCase):
+
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
+    # Before tests are run live a resource group needs to be created along with vnet and subnet
+    # Note that when tests are run in live mode it is best to run one test at a time.
+    @recorded_by_proxy
     def test_create_delete_backup(self):
-        # Create 2 backups since delete backups can only be used when volume has multiple backups
-        create_backup(self.client, live=self.is_live)
+        set_bodiless_matcher()        
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')                        
 
-        create_backup(self.client, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
-        backup_list = get_backup_list(self.client)
-        self.assertEqual(len(list(backup_list)), 2)
+        # Create 2 backups since delete backups can only be used when volume has multiple backups
+        create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
+        create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
+        backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
+        assert len(list(backup_list)) == 2
 
         # delete the older backup since we are not able to delete the newest one with delete backup service
-        delete_backup(self.client, live=self.is_live)
+        delete_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, live=self.is_live)
+        backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
+        assert len(list(backup_list)) == 1
 
-        # check if backup was deleted
-        backup_list = get_backup_list(self.client)
-        self.assertEqual(len(list(backup_list)), 1)
+        # automatically delete the second backup by disable backups on volume
+        disable_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, live=self.is_live)
+        backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
+        assert len(list(backup_list)) == 0
 
-        # automaticaly delete the second backup by disable backups on volume
-        disable_backup(self.client, live=self.is_live)
+        clean_up(self, disable_bp=False, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, backup_name=TEST_BACKUP_1, live=self.is_live)
 
-        backup_list = get_backup_list(self.client)
-        self.assertEqual(len(list(backup_list)), 0)
-
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
-
+    @recorded_by_proxy
     def test_list_backup(self):
-        create_backup(self.client, live=self.is_live)
-        create_backup(self.client, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
-
-        backup_list = get_backup_list(self.client)
-        self.assertEqual(len(list(backup_list)), 2)
+        set_bodiless_matcher()
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME,live=self.is_live)
+        create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
+        backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
+        assert len(list(backup_list)) == 2
         idx = 0
         for backup in backup_list:
-            self.assertEqual(backup.name, backups[idx])
+            assert backup.name == backups[idx]
             idx += 1
 
-        disable_backup(self.client, live=self.is_live)
-        disable_backup(self.client, backup_name=TEST_BACKUP_2, live=self.is_live)
+        disable_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, live=self.is_live)
+        disable_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=TEST_BACKUP_2, live=self.is_live)
 
-        backup_list = get_backup_list(self.client)
-        self.assertEqual(len(list(backup_list)), 0)
+        backup_list = get_backup_list(self.client, account_name=ACCOUNT1, volume_name=volumeName1)
+        assert len(list(backup_list)) == 0
 
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, disable_bp=False, live=self.is_live)
 
+    @recorded_by_proxy
     def test_get_backup_by_name(self):
-        create_backup(self.client, live=self.is_live)
+        set_bodiless_matcher()
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')        
+        create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
 
-        backup = get_backup(self.client, TEST_BACKUP_1)
-        self.assertEqual(backup.name, TEST_ACC_1 + "/" + TEST_POOL_1 + "/" + TEST_VOL_1 + "/" + TEST_BACKUP_1)
+        backup = get_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=TEST_BACKUP_1)
+        assert backup.name == ACCOUNT1 + "/" + TEST_POOL_1 + "/" + volumeName1 + "/" + TEST_BACKUP_1
 
-        disable_backup(self.client, TEST_BACKUP_1, live=self.is_live)
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
 
-    @unittest.skip("Skipping test until able to update anyting")
+    @recorded_by_proxy
     def test_update_backup(self):
-        create_backup(self.client, live=self.is_live)
+        set_bodiless_matcher()
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        backup1 = self.get_resource_name(TEST_BACKUP_1+"-")
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')         
+        create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
+        backup_body = BackupPatch(account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, location=LOCATION, label="label1")
+        self.client.backups.begin_update(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, backup1, backup_body).wait()
 
-        tag = {'Tag1': 'Value1'}
-        backup_body = BackupPatch(location=BACKUP_LOCATION, tags=tag)
-        self.client.backups.begin_update(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_BACKUP_1, backup_body).wait()
+        backup = get_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1)
+        assert backup.label == "label1"
 
-        backup = get_backup(self.client)
-        self.assertTrue(backup.tags['Tag1'] == 'Value1')
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
 
-        disable_backup(self.client, live=self.is_live)
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
-
-    @unittest.skip("Skipping test until this feature has faster performance. Today you have to wait 5 minute after backup creation until you can call backup status")
+    @recorded_by_proxy
     def test_get_backup_status(self):
-        create_backup(self.client, live=self.is_live)
+        set_bodiless_matcher()
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        backup1 = self.get_resource_name(TEST_BACKUP_1+"-")
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')         
+        create_backup(self.client, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
 
-        backup_status = self.client.backups.get_status(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        self.assertTrue(backup_status.healthy)
-        self.assertEqual(backup_status.mirrorState, "Mirrored")
+        if self.is_live:
+            time.sleep(120)
 
-        disable_backup(self.client, live=self.is_live)
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        backup_status = self.client.backups.get_status(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
+        assert backup_status.healthy
+        assert backup_status.mirror_state == "Mirrored"
+
+        clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)

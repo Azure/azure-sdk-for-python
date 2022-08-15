@@ -1,0 +1,130 @@
+{
+    "id": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/cli-examples/providers/Microsoft.MachineLearningServices/workspaces/main-master/jobs/goofy_morning_66w5vbsvjm_1",
+    "name": "goofy_morning_66w5vbsvjm_1",
+    "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+    "properties": {
+        "description": "Example of using automl function inside pipeline",
+        "tags": {},
+        "properties": {
+            "mlflow.source.git.repoURL": "https://msdata.visualstudio.com/DefaultCollection/Vienna/_git/sdk-cli-v2",
+            "mlflow.source.git.branch": "wanhan/automl_in_pipeline_cli",
+            "mlflow.source.git.commit": "848f33bc67cef02ef7a43a5a4a35c77e5165bf22",
+            "azureml.git.dirty": "True",
+            "azureml.runsource": "azureml.PipelineRun",
+            "runSource": "MFE",
+            "runType": "HTTP",
+            "azureml.parameters": "{}",
+            "azureml.continue_on_step_failure": "False",
+            "azureml.enforceRerun": "False",
+            "azureml.pipelineComponent": "pipelinerun"
+        },
+        "displayName": "automl_node_in_pipeline",
+        "status": "Preparing",
+        "experimentName": "sdk-cli-v2",
+        "services": {
+            "Tracking": {
+                "jobServiceType": "Tracking",
+                "port": null,
+                "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/cli-examples/providers/Microsoft.MachineLearningServices/workspaces/main-master?",
+                "status": null,
+                "errorMessage": null,
+                "properties": null
+            },
+            "Studio": {
+                "jobServiceType": "Studio",
+                "port": null,
+                "endpoint": "https://ml.azure.com/runs/goofy_morning_66w5vbsvjm_1?wsid=/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourcegroups/cli-examples/workspaces/main-master",
+                "status": null,
+                "errorMessage": null,
+                "properties": null
+            }
+        },
+        "computeId": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/cli-examples/providers/Microsoft.MachineLearningServices/workspaces/main-master/computes/cpu-cluster",
+        "isArchived": false,
+        "schedule": null,
+        "identity": null,
+        "jobType": "Pipeline",
+        "settings": {
+            "force_rerun": false
+        },
+        "jobs": {
+            "hello_automl_regression": {
+                "validation_data": "${{parent.inputs.automl_validate_data}}",
+                "test_data": "${{parent.inputs.automl_test_data}}",
+                "training_data": "${{parent.inputs.automl_train_data}}",
+                "target_column_name": "SalePrice",
+                "name": "hello_automl_regression",
+                "display_name": "612f4c35-284b-4d3d-8912-92b686d8e0f1",
+                "tags": {},
+                "experiment_name": "sdk-cli-v2",
+                "properties": {},
+                "type": "automl",
+                "outputs": {
+                    "best_model": {
+                        "mode": "ReadWriteMount",
+                        "job_output_type": "MLFlowModel"
+                    }
+                },
+                "log_verbosity": "info",
+                "limits": {
+                    "max_concurrent_trials": 1,
+                    "max_trials": 1
+                },
+                "featurization": {
+                    "mode": "off"
+                },
+                "training": {
+                    "enable_model_explainability": true,
+                    "enable_stack_ensemble": false,
+                    "enable_vote_ensemble": false
+                },
+                "task": "regression",
+                "primary_metric": "r2_score"
+            },
+            "show_output": {
+                "name": "show_output",
+                "display_name": null,
+                "tags": {},
+                "computeId": null,
+                "componentId": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/cli-examples/providers/Microsoft.MachineLearningServices/workspaces/main-master/components/84f25e01-0410-8d37-f93c-f88360d9a673/versions/1",
+                "inputs": {
+                    "automl_output": {
+                        "job_input_type": "Literal",
+                        "value": "${{parent.jobs.hello_automl_regression.outputs.best_model}}"
+                    }
+                },
+                "outputs": {},
+                "environment_variables": {},
+                "resources": null,
+                "distribution": null,
+                "limits": null
+            }
+        },
+        "inputs": {
+            "automl_train_data": {
+                "description": null,
+                "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/bd78e427f4dfc10f2287e268fc69a3b4/train",
+                "mode": "ReadOnlyMount",
+                "jobInputType": "MLTable"
+            },
+            "automl_validate_data": {
+                "description": null,
+                "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/eefbbf3722a18e7dcbfb0fb6ca14832d/valid",
+                "mode": "ReadOnlyMount",
+                "jobInputType": "MLTable"
+            },
+            "automl_test_data": {
+                "description": null,
+                "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/8ffa1e4dc82b3f3b17fabf07728f8e46/test",
+                "mode": "ReadOnlyMount",
+                "jobInputType": "MLTable"
+            }
+        },
+        "outputs": {}
+    },
+    "systemData": {
+        "createdAt": "2022-04-29T09:38:40.8702736Z",
+        "createdBy": "Han Wang",
+        "createdByType": "User"
+    }
+}

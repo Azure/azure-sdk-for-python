@@ -1,42 +1,39 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 
 from datetime import datetime, timedelta
-import unittest
 
+import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.storage.blob import (
-    BlobServiceClient,
-    BlobClient,
-    BlobLeaseClient,
-    StorageErrorCode,
-    BlobBlock,
-    BlobType,
-    ContentSettings,
-    BlobProperties,
-    ContainerSasPermissions,
     AccessPolicy,
-    generate_blob_sas,
-    BlobSasPermissions,
-    generate_account_sas,
-    ResourceTypes,
-    AccountSasPermissions, generate_container_sas, ContainerClient, CustomerProvidedEncryptionKey,
+    BlobBlock,
+    BlobLeaseClient,
+    BlobProperties,
+    BlobServiceClient,
+    BlobType,
+    ContainerClient,
+    ContainerSasPermissions,
+    ContentSettings,
+    CustomerProvidedEncryptionKey,
+    StorageErrorCode,
 )
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 LARGE_APPEND_BLOB_SIZE = 64 * 1024
 # ------------------------------------------------------------------------------
 
 
-class StorageBlobAccessConditionsTest(StorageTestCase):
+class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def _setup(self):
@@ -52,7 +49,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         container = self._create_container(container_name, bsc)
         blob = bsc.get_blob_client(container_name, blob_name)
         resp = blob.upload_blob(blob_data, length=len(blob_data))
-        self.assertIsNotNone(resp.get('etag'))
+        assert resp.get('etag') is not None
         return container, blob
 
     def _create_container_and_page_blob(self, container_name, blob_name,
@@ -68,53 +65,56 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.create_append_blob()
         return container, blob
 
-    # --Test cases for blob service --------------------------------------------
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_service_client_from_container(
-            self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_service_client_from_container(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc1 = BlobServiceClient(
-            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container_client1 = self._create_container(self.container_name, bsc1)
-        container_client1.get_container_properties()
-        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '43'}
         # Set metadata to check against later
-        container_client1.set_container_metadata(metadata, if_modified_since=test_datetime)
+        container_client1.set_container_metadata(metadata)
 
         # Assert metadata is set
         cc1_md1 = container_client1.get_container_properties().metadata
-        self.assertDictEqual(metadata, cc1_md1)
+        assert metadata == cc1_md1
 
         # Get blob service client from container client
         bsc_props1 = bsc1.get_service_properties()
         bsc2 = container_client1._get_blob_service_client()
         bsc_props2 = bsc2.get_service_properties()
-        self.assertDictEqual(bsc_props1, bsc_props2)
+        assert bsc_props1 == bsc_props2
 
         # Return to container and assert its properties
         container_client2 = bsc2.get_container_client(self.container_name)
         cc2_md1 = container_client2.get_container_properties().metadata
-        self.assertDictEqual(cc2_md1, cc1_md1)
+        assert cc2_md1 == cc1_md1
 
-    @GlobalStorageAccountPreparer()
-    def test_get_container_client_from_blob(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_container_client_from_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container_client1 = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '43'}
         # Set metadata to check against later
-        container_client1.set_container_metadata(metadata, if_modified_since=test_datetime)
+        container_client1.set_container_metadata(metadata)
 
         # Assert metadata is set
         md1 = container_client1.get_container_properties().metadata
-        self.assertDictEqual(metadata, md1)
+        assert metadata == md1
 
         # Create a blob from container_client1
         blob_name = self.get_resource_name("testblob1")
@@ -126,21 +126,25 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         container_client2 = blob_client1._get_container_client()
 
         md2 = container_client2.get_container_properties().metadata
-        self.assertEqual(md1, md2)
+        assert md1 == md2
 
         # Ensure we can get blob client again
         blob_client2 = container_client2.get_blob_client(blob_name)
         blob_client2_data = blob_client2.download_blob().readall()
 
-        self.assertEqual(blob_client1_data, blob_client2_data)
+        assert blob_client1_data == blob_client2_data
 
-    @GlobalStorageAccountPreparer()
-    def test_set_container_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_container_metadata_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '43'}
@@ -148,221 +152,321 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         md = container.get_container_properties().metadata
-        self.assertDictEqual(metadata, md)
+        assert metadata == md
 
-    @GlobalStorageAccountPreparer()
-    def test_set_container_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_container_metadata_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '43'}
             container.set_container_metadata(metadata, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_container_acl_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_container_acl_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifiers = {'testid': access_policy}
         container.set_container_access_policy(signed_identifiers, if_modified_since=test_datetime)
 
         # Assert
         acl = container.get_container_access_policy()
-        self.assertIsNotNone(acl)
+        assert acl is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_set_container_acl_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_container_acl_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifiers = {'testid': access_policy}
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             container.set_container_access_policy(signed_identifiers, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_container_acl_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_container_acl_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifiers = {'testid': access_policy}
         container.set_container_access_policy(signed_identifiers, if_unmodified_since=test_datetime)
 
         # Assert
         acl = container.get_container_access_policy()
-        self.assertIsNotNone(acl)
+        assert acl is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_set_container_acl_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_container_acl_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifiers = {'testid': access_policy}
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             container.set_container_access_policy(signed_identifiers, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_container_acquire_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_container_acquire_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
-        lease = container.acquire_lease(if_modified_since=test_datetime)
+        lease = container.acquire_lease(lease_id=test_lease_id, if_modified_since=test_datetime)
         lease.break_lease()
 
-        # Assert
+        return variables
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_container_acquire_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_container_acquire_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
-            container.acquire_lease(if_modified_since=test_datetime)
+        with pytest.raises(ResourceModifiedError) as e:
+            container.acquire_lease(lease_id=test_lease_id, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_container_acquire_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_container_acquire_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
-        lease = container.acquire_lease(if_unmodified_since=test_datetime)
+        lease = container.acquire_lease(lease_id=test_lease_id, if_unmodified_since=test_datetime)
         lease.break_lease()
 
-        # Assert
+        return variables
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_container_acquire_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_container_acquire_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
-            container.acquire_lease(if_unmodified_since=test_datetime)
+        with pytest.raises(ResourceModifiedError) as e:
+            container.acquire_lease(lease_id=test_lease_id, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_container_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_container_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+
         # Act
         deleted = container.delete_container(if_modified_since=test_datetime)
 
         # Assert
-        self.assertIsNone(deleted)
-        with self.assertRaises(ResourceNotFoundError):
+        assert deleted is None
+        with pytest.raises(ResourceNotFoundError):
             container.get_container_properties()
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_container_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_container_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             container.delete_container(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_container_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_container_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+
         # Act
         container.delete_container(if_unmodified_since=test_datetime)
 
         # Assert
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             container.get_container_properties()
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_container_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_container_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             container.delete_container(if_unmodified_since=test_datetime)
 
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_multi_put_block_contains_headers(self, resource_group, location, storage_account, storage_account_key):
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_multi_put_block_contains_headers(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         counter = list()
 
         def _validate_headers(request):
             counter.append(request)
             header = request.http_request.headers.get('x-custom-header')
-            self.assertEqual(header, 'test_value')
+            assert header == 'test_value'
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"), storage_account_key, max_single_put_size=100, max_block_size=50)
+            self.account_url(storage_account_name, "blob"), storage_account_key, max_single_put_size=100, max_block_size=50)
         self._setup()
         data = self.get_random_bytes(2 * 100)
         self._create_container(self.container_name, bsc)
@@ -372,77 +476,105 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             headers={'x-custom-header': 'test_value'},
             raw_request_hook=_validate_headers
         )
-        self.assertEqual(len(counter), 5)
+        assert len(counter) == 5
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         resp = blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp.get('etag'))
+        assert resp.get('etag') is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_blob(data, length=len(data), if_modified_since=test_datetime, overwrite=True)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         resp = blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp.get('etag'))
+        assert resp.get('etag') is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime, overwrite=True)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
@@ -453,23 +585,27 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertIsNotNone(resp.get('etag'))
+        assert resp.get('etag') is not None
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             blob.upload_blob(data, length=len(data), etag=etag)
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             blob.upload_blob(data, length=len(data), match_condition=MatchConditions.IfNotModified)
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_blob(
                 data,
                 length=len(data),
@@ -478,11 +614,15 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                 overwrite=True)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
@@ -492,15 +632,19 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertIsNotNone(resp.get('etag'))
-        with self.assertRaises(ValueError):
+        assert resp.get('etag') is not None
+        with pytest.raises(ValueError):
             blob.upload_blob(data, length=len(data), etag='0x111111111111111')
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             blob.upload_blob(data, length=len(data), match_condition=MatchConditions.IfModified)
 
-    @GlobalStorageAccountPreparer()
-    def test_put_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_blob_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
@@ -508,77 +652,105 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_blob(data, length=len(data), etag=etag, match_condition=MatchConditions.IfModified, overwrite=True)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         content = blob.download_blob(if_modified_since=test_datetime).readall()
 
         # Assert
-        self.assertEqual(content, b'hello world')
+        assert content == b'hello world'
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.download_blob(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         content = blob.download_blob(if_unmodified_since=test_datetime).readall()
 
         # Assert
-        self.assertEqual(content, b'hello world')
+        assert content == b'hello world'
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.download_blob(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -588,25 +760,33 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified).readall()
 
         # Assert
-        self.assertEqual(content, b'hello world')
+        assert content == b'hello world'
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -615,31 +795,39 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content = blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfModified).readall()
 
         # Assert
-        self.assertEqual(content, b'hello world')
+        assert content == b'hello world'
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.download_blob(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -649,19 +837,25 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         properties = blob.get_blob_properties()
-        self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
-        self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
+        assert content_settings.content_language == properties.content_settings.content_language
+        assert content_settings.content_disposition == properties.content_settings.content_disposition
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
@@ -669,16 +863,22 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             blob.set_http_headers(content_settings, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -688,19 +888,25 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         properties = blob.get_blob_properties()
-        self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
-        self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
+        assert content_settings.content_language == properties.content_settings.content_language
+        assert content_settings.content_disposition == properties.content_settings.content_disposition
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
@@ -708,29 +914,43 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             blob.set_http_headers(content_settings, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_properties_last_access_time(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+        return variables
+
+    @pytest.mark.playback_test_only  # Last Access Time needs to be manually enabled on account
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_properties_last_access_time(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
                                 connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(self.container_name, 'blob1', b'hello world', bsc)
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        # Assert
         lat = blob.get_blob_properties().last_accessed_on
+        self.sleep(5)
+
+        # Act
         blob.stage_block(block_id='1', data="this is test content")
         blob.commit_block_list(['1'])
         new_lat = blob.get_blob_properties().last_accessed_on
-        self.assertIsInstance(lat, datetime)
-        self.assertIsInstance(new_lat, datetime)
-        self.assertGreater(new_lat, lat)
-        self.assertIsInstance(blob.download_blob().properties.last_accessed_on, datetime)
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        # Assert
+        assert isinstance(lat, datetime)
+        assert isinstance(new_lat, datetime)
+        assert new_lat > lat
+        assert isinstance(blob.download_blob().properties.last_accessed_on, datetime)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -745,18 +965,22 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         properties = blob.get_blob_properties()
-        self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
-        self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
+        assert content_settings.content_language == properties.content_settings.content_language
+        assert content_settings.content_disposition == properties.content_settings.content_disposition
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
@@ -764,11 +988,15 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             blob.set_http_headers(content_settings, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -782,12 +1010,16 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         properties = blob.get_blob_properties()
-        self.assertEqual(content_settings.content_language, properties.content_settings.content_language)
-        self.assertEqual(content_settings.content_disposition, properties.content_settings.content_disposition)
+        assert content_settings.content_language == properties.content_settings.content_language
+        assert content_settings.content_disposition == properties.content_settings.content_disposition
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_properties_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_properties_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -795,132 +1027,166 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
             blob.set_http_headers(content_settings, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         properties = blob.get_blob_properties(if_modified_since=test_datetime)
 
         # Assert
-        self.assertIsInstance(properties, BlobProperties)
-        self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.size, 11)
-        self.assertEqual(properties.lease.status, 'unlocked')
+        assert isinstance(properties, BlobProperties)
+        assert properties.blob_type.value == 'BlockBlob'
+        assert properties.size == 11
+        assert properties.lease.status == 'unlocked'
 
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    def test_if_blob_exists(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_if_blob_exists_vid(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         old_blob_version_id = blob.get_blob_properties().get("version_id")
-        self.assertIsNotNone(old_blob_version_id)
+        assert old_blob_version_id is not None
         blob.stage_block(block_id='1', data="this is test content")
         blob.commit_block_list(['1'])
         new_blob_version_id = blob.get_blob_properties().get("version_id")
 
         # Assert
-        self.assertEqual(blob.exists(version_id=old_blob_version_id), True)
-        self.assertEqual(blob.exists(version_id=new_blob_version_id), True)
-        self.assertEqual(blob.exists(version_id="2020-08-21T21:24:15.3585832Z"), False)
+        assert blob.exists(version_id=old_blob_version_id)
+        assert blob.exists(version_id=new_blob_version_id)
+        assert not blob.exists(version_id="2020-08-21T21:24:15.3585832Z")
 
         # Act
         test_snapshot = blob.create_snapshot()
         blob_snapshot = bsc.get_blob_client(self.container_name, 'blob1', snapshot=test_snapshot)
-        self.assertEqual(blob_snapshot.exists(), True)
+        assert blob_snapshot.exists()
         blob.stage_block(block_id='1', data="this is additional test content")
         blob.commit_block_list(['1'])
 
         # Assert
-        self.assertEqual(blob_snapshot.exists(), True)
-        self.assertEqual(blob.exists(), True)
+        assert blob_snapshot.exists()
+        assert blob.exists()
 
-    @GlobalStorageAccountPreparer()
-    def test_if_blob_with_cpk_exists(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_if_blob_with_cpk_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         container_name = self.get_resource_name("testcontainer1")
         cc = ContainerClient(
-            self.account_url(storage_account, "blob"), credential=storage_account_key, container_name=container_name,
+            self.account_url(storage_account_name, "blob"), credential=storage_account_key, container_name=container_name,
             connection_data_block_size=4 * 1024)
         cc.create_container()
         self._setup()
-        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+        test_cpk = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
         blob_client = cc.get_blob_client("test_blob")
         blob_client.upload_blob(b"hello world", cpk=test_cpk)
         # Act
-        self.assertTrue(blob_client.exists())
+        assert blob_client.exists()
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         properties = blob.get_blob_properties(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(properties)
-        self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.size, 11)
-        self.assertEqual(properties.lease.status, 'unlocked')
+        assert properties is not None
+        assert properties.blob_type.value == 'BlockBlob'
+        assert properties.size == 11
+        assert properties.lease.status == 'unlocked'
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -931,29 +1197,37 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         properties = blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertIsNotNone(properties)
-        self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.size, 11)
-        self.assertEqual(properties.lease.status, 'unlocked')
+        assert properties is not None
+        assert properties.blob_type.value == 'BlockBlob'
+        assert properties.size == 11
+        assert properties.lease.status == 'unlocked'
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -963,14 +1237,18 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         properties = blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertIsNotNone(properties)
-        self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.size, 11)
-        self.assertEqual(properties.lease.status, 'unlocked')
+        assert properties is not None
+        assert properties.blob_type.value == 'BlockBlob'
+        assert properties.size == 11
+        assert properties.lease.status == 'unlocked'
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_properties_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_properties_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -978,81 +1256,109 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         md = blob.get_blob_properties(if_modified_since=test_datetime).metadata
 
         # Assert
-        self.assertIsNotNone(md)
+        assert md is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_modified_since=test_datetime).metadata
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         md = blob.get_blob_properties(if_unmodified_since=test_datetime).metadata
 
         # Assert
-        self.assertIsNotNone(md)
+        assert md is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_unmodified_since=test_datetime).metadata
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1063,26 +1369,34 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         md = blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfNotModified).metadata
 
         # Assert
-        self.assertIsNotNone(md)
+        assert md is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified).metadata
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1092,11 +1406,15 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         md = blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfModified).metadata
 
         # Assert
-        self.assertIsNotNone(md)
+        assert md is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_metadata_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_metadata_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1104,20 +1422,24 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified).metadata
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1126,34 +1448,46 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         md = blob.get_blob_properties().metadata
-        self.assertDictEqual(metadata, md)
+        assert metadata == md
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.set_blob_metadata(metadata, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1162,29 +1496,41 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         md = blob.get_blob_properties().metadata
-        self.assertDictEqual(metadata, md)
+        assert metadata == md
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.set_blob_metadata(metadata, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1197,27 +1543,35 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         md = blob.get_blob_properties().metadata
-        self.assertDictEqual(metadata, md)
+        assert metadata == md
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.set_blob_metadata(metadata, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1229,11 +1583,15 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         md = blob.get_blob_properties().metadata
-        self.assertDictEqual(metadata, md)
+        assert metadata == md
 
-    @GlobalStorageAccountPreparer()
-    def test_set_blob_metadata_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_metadata_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1241,19 +1599,23 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob.set_blob_metadata(metadata, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1262,31 +1624,43 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.delete_blob(if_modified_since=test_datetime)
 
         # Assert
-        self.assertIsNone(resp)
+        assert resp is None
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.delete_blob(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1295,28 +1669,40 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.delete_blob(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertIsNone(resp)
+        assert resp is None
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.delete_blob(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1328,26 +1714,34 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.delete_blob(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertIsNone(resp)
+        assert resp is None
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.delete_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1357,11 +1751,15 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.delete_blob(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertIsNone(resp)
+        assert resp is None
 
-    @GlobalStorageAccountPreparer()
-    def test_delete_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1369,83 +1767,111 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.delete_blob(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         resp = blob.create_snapshot(if_modified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp['snapshot'])
+        assert resp is not None
+        assert resp['snapshot'] is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.create_snapshot(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         resp = blob.create_snapshot(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp['snapshot'])
+        assert resp is not None
+        assert resp['snapshot'] is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.create_snapshot(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1456,27 +1882,35 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.create_snapshot(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp['snapshot'])
+        assert resp is not None
+        assert resp['snapshot'] is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
             blob.create_snapshot(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1486,12 +1920,16 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.create_snapshot(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp['snapshot'])
+        assert resp is not None
+        assert resp['snapshot'] is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_snapshot_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_snapshot_blob_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1499,21 +1937,25 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.create_snapshot(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1524,35 +1966,48 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, BlobLeaseClient)
-        self.assertIsNotNone(lease.id)
+        assert isinstance(lease, BlobLeaseClient)
+        assert lease.id is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
-        self._setup()
-        self._create_container_and_block_blob(
-            self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        return variables
 
-        # Act
-        with self.assertRaises(ResourceModifiedError) as e:
-            blob = bsc.get_blob_client(self.container_name, 'blob1')
-            blob.acquire_lease(if_modified_since=test_datetime)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
 
-        # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
-
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+
+        # Act
+        with pytest.raises(ResourceModifiedError) as e:
+            blob = bsc.get_blob_client(self.container_name, 'blob1')
+            blob.acquire_lease(lease_id=test_lease_id, if_modified_since=test_datetime)
+
+        # Assert
+        assert StorageErrorCode.condition_not_met == e.value.error_code
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        self._create_container_and_block_blob(
+            self.container_name, 'blob1', b'hello world', bsc)
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1563,29 +2018,42 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, BlobLeaseClient)
-        self.assertIsNotNone(lease.id)
+        assert isinstance(lease, BlobLeaseClient)
+        assert lease.id is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
-            blob.acquire_lease(if_unmodified_since=test_datetime)
+        with pytest.raises(ResourceModifiedError) as e:
+            blob.acquire_lease(lease_id=test_lease_id, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1601,29 +2069,38 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, BlobLeaseClient)
-        self.assertIsNotNone(lease.id)
-        self.assertIsNotNone(lease.etag)
-        self.assertEqual(lease.etag, etag)
+        assert isinstance(lease, BlobLeaseClient)
+        assert lease.id is not None
+        assert lease.etag is not None
+        assert lease.etag == etag
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
-            blob.acquire_lease(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
+        with pytest.raises(ResourceModifiedError) as e:
+            blob.acquire_lease(lease_id=test_lease_id, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
@@ -1639,36 +2116,45 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, BlobLeaseClient)
-        self.assertIsNotNone(lease.id)
+        assert isinstance(lease, BlobLeaseClient)
+        assert lease.id is not None
 
-    @GlobalStorageAccountPreparer()
-    def test_lease_blob_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_lease_blob_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         etag = blob.get_blob_properties().etag
+        test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
-            blob.acquire_lease(etag=etag, match_condition=MatchConditions.IfModified)
+        with pytest.raises(ResourceModifiedError) as e:
+            blob.acquire_lease(lease_id=test_lease_id, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -1676,85 +2162,100 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(content.readall(), b'AAABBBCCC')
+        assert content.readall() == b'AAABBBCCC'
 
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_returns_vid(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_returns_vid(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-        resp = blob.commit_block_list(block_list, if_modified_since=test_datetime)
+        resp = blob.commit_block_list(block_list)
 
         # Assert
-        self.assertIsNotNone(resp['version_id'])
+        assert resp['version_id'] is not None
         content = blob.download_blob()
-        self.assertEqual(content.readall(), b'AAABBBCCC')
+        assert content.readall() == b'AAABBBCCC'
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '43'}
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-        blob.commit_block_list(block_list, metadata=metadata, if_modified_since=test_datetime)
+        blob.commit_block_list(block_list, metadata=metadata)
 
         # Assert
         content = blob.download_blob()
         properties = blob.get_blob_properties()
-        self.assertEqual(content.readall(), b'AAABBBCCC')
-        self.assertEqual(properties.metadata, metadata)
+        assert content.readall() == b'AAABBBCCC'
+        assert properties.metadata == metadata
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.commit_block_list(
                 [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')],
                 if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -1762,32 +2263,44 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(content.readall(), b'AAABBBCCC')
+        assert content.readall() == b'AAABBBCCC'
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.commit_block_list(
                 [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')],
                 if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1802,11 +2315,15 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(content.readall(), b'AAABBBCCC')
+        assert content.readall() == b'AAABBBCCC'
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1815,17 +2332,21 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.stage_block('3', b'CCC')
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.commit_block_list(
                 [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')],
                 etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1839,11 +2360,15 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob()
-        self.assertEqual(content.readall(), b'AAABBBCCC')
+        assert content.readall() == b'AAABBBCCC'
 
-    @GlobalStorageAccountPreparer()
-    def test_put_block_list_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
@@ -1853,84 +2378,108 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
             blob.commit_block_list(block_list, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         blob.upload_page(data, offset=0, length=512, if_modified_since=test_datetime)
 
-        # Assert
+        return variables
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_page(data, offset=0, length=512, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         blob.upload_page(data, offset=0, length=512, if_unmodified_since=test_datetime)
 
-        # Assert
+        return variables
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_page(data, offset=0, length=512, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1943,9 +2492,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1953,15 +2506,19 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_page(data, offset=0, length=512, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1973,9 +2530,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
-    def test_update_page_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_update_page_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
@@ -1984,21 +2545,25 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.upload_page(data, offset=0, length=512, etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2006,38 +2571,50 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         ranges = blob.get_page_ranges(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(len(ranges[0]), 2)
-        self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
-        self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
+        assert len(ranges[0]) == 2
+        assert ranges[0][0] == {'start': 0, 'end': 511}
+        assert ranges[0][1] == {'start': 1024, 'end': 1535}
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.get_page_ranges(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2045,32 +2622,44 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         ranges = blob.get_page_ranges(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(len(ranges[0]), 2)
-        self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
-        self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
+        assert len(ranges[0]) == 2
+        assert ranges[0][0] == {'start': 0, 'end': 511}
+        assert ranges[0][1] == {'start': 1024, 'end': 1535}
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.get_page_ranges(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2083,13 +2672,17 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         ranges = blob.get_page_ranges(etag=etag, match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(len(ranges[0]), 2)
-        self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
-        self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
+        assert len(ranges[0]) == 2
+        assert ranges[0][0] == {'start': 0, 'end': 511}
+        assert ranges[0][1] == {'start': 1024, 'end': 1535}
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2098,15 +2691,19 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_page(data, offset=1024, length=512)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.get_page_ranges(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2118,13 +2715,17 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         ranges = blob.get_page_ranges(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(len(ranges[0]), 2)
-        self.assertEqual(ranges[0][0], {'start': 0, 'end': 511})
-        self.assertEqual(ranges[0][1], {'start': 1024, 'end': 1535})
+        assert len(ranges[0]) == 2
+        assert ranges[0][0] == {'start': 0, 'end': 511}
+        assert ranges[0][1] == {'start': 1024, 'end': 1535}
 
-    @GlobalStorageAccountPreparer()
-    def test_get_page_ranges_iter_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_page_ranges_iter_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
@@ -2135,77 +2736,105 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             blob.get_page_ranges(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
-            self.assertIsNotNone(resp)
+            assert resp is not None
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
+        assert b'block 0block 1block 2block 3block 4' == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
                 resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = (datetime.utcnow() +
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
-            self.assertIsNotNone(resp)
+            assert resp is not None
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
+        assert b'block 0block 1block 2block 3block 4' == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
                 resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
@@ -2213,63 +2842,77 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         for i in range(5):
             etag = blob.get_blob_properties().etag
             resp = blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfNotModified)
-            self.assertIsNotNone(resp)
+            assert resp is not None
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
+        assert b'block 0block 1block 2block 3block 4' == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with pytest.raises(HttpResponseError) as e:
             for i in range(5):
                 resp = blob.append_block(u'block {0}'.format(i), etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
-        # Assert
-        #self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
         # Act
         for i in range(5):
             resp = blob.append_block(u'block {0}'.format(i), etag='0x8D2C9167D53FC2C', match_condition=MatchConditions.IfModified)
-            self.assertIsNotNone(resp)
+            assert resp is not None
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
+        assert b'block 0block 1block 2block 3block 4' == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_block_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
                 etag = blob.get_blob_properties().etag
                 resp = blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2277,30 +2920,44 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(data, content)
+        assert data == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_modified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = (datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime)
 
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = (datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2308,26 +2965,39 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(data, content)
+        assert data == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_unmodified_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_unmodified_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime)
 
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2339,26 +3009,34 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(data, content)
+        assert data == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_etag = '0x8D2C9167D53FC2C'
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified)
 
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
@@ -2370,22 +3048,26 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         content = blob.download_blob().readall()
-        self.assertEqual(data, content)
+        assert data == content
 
-    @GlobalStorageAccountPreparer()
-    def test_append_blob_from_bytes_with_if_none_match_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_if_none_match_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(ResourceModifiedError) as e:
+        with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
 
-        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
+        assert StorageErrorCode.condition_not_met == e.value.error_code
 
 
 # ------------------------------------------------------------------------------

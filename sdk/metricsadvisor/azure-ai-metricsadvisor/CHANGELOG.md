@@ -1,5 +1,30 @@
 # Release History
 
+## 1.1.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.0.0 (2021-07-06)
+
+### Breaking Changes
+
+- Changed
+  - `DetectionConditionsOperator` -> `DetectionConditionOperator`
+  - `cross_conditions_operator` -> `condition_operator`
+  - `AnomalyAlert.created_on` -> `AnomalyAlert.created_time`
+  - `AnomalyAlert.modified_on` -> `AnomalyAlert.modified_time`
+  - `Anomaly.created_on` -> `Anomaly.created_time`
+  - `admin_emails` has been renamed to `admins` in `NotificationHook`
+  - `admin_emails` has been renamed to `admins` in `DataFeedOptions`
+  - `viewer_emails` has been renamed to `viewers` in `DataFeedOptions`
+
 ## 1.0.0b4 (2021-06-07)
 
 **New Features**

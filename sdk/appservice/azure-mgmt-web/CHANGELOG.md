@@ -1,5 +1,276 @@
 # Release History
 
+## 7.0.0 (2022-07-04)
+
+**Features**
+
+  - Added operation AppServiceEnvironmentsOperations.begin_upgrade
+  - Added operation AppServiceEnvironmentsOperations.delete_ase_custom_dns_suffix_configuration
+  - Added operation AppServiceEnvironmentsOperations.get_ase_custom_dns_suffix_configuration
+  - Added operation AppServiceEnvironmentsOperations.test_upgrade_available_notification
+  - Added operation AppServiceEnvironmentsOperations.update_ase_custom_dns_suffix_configuration
+  - Added operation StaticSitesOperations.begin_link_backend
+  - Added operation StaticSitesOperations.begin_link_backend_to_build
+  - Added operation StaticSitesOperations.begin_validate_backend
+  - Added operation StaticSitesOperations.begin_validate_backend_for_build
+  - Added operation StaticSitesOperations.get_linked_backend
+  - Added operation StaticSitesOperations.get_linked_backend_for_build
+  - Added operation StaticSitesOperations.get_linked_backends
+  - Added operation StaticSitesOperations.get_linked_backends_for_build
+  - Added operation StaticSitesOperations.unlink_backend
+  - Added operation StaticSitesOperations.unlink_backend_from_build
+  - Added operation WebAppsOperations.begin_get_production_site_deployment_status
+  - Added operation WebAppsOperations.begin_get_slot_site_deployment_status_slot
+  - Added operation WebAppsOperations.get_auth_settings_v2_without_secrets_slot
+  - Added operation WebAppsOperations.list_production_site_deployment_statuses
+  - Added operation WebAppsOperations.list_slot_site_deployment_statuses_slot
+  - Added operation group WorkflowRunActionRepetitionsOperations
+  - Added operation group WorkflowRunActionRepetitionsRequestHistoriesOperations
+  - Added operation group WorkflowRunActionScopeRepetitionsOperations
+  - Added operation group WorkflowRunActionsOperations
+  - Added operation group WorkflowRunsOperations
+  - Added operation group WorkflowTriggerHistoriesOperations
+  - Added operation group WorkflowTriggersOperations
+  - Added operation group WorkflowVersionsOperations
+  - Added operation group WorkflowsOperations
+  - Model AppServiceEnvironment has a new parameter custom_dns_suffix_configuration
+  - Model AppServiceEnvironment has a new parameter networking_configuration
+  - Model AppServiceEnvironment has a new parameter upgrade_availability
+  - Model AppServiceEnvironment has a new parameter upgrade_preference
+  - Model AppServiceEnvironmentPatchResource has a new parameter custom_dns_suffix_configuration
+  - Model AppServiceEnvironmentPatchResource has a new parameter networking_configuration
+  - Model AppServiceEnvironmentPatchResource has a new parameter upgrade_availability
+  - Model AppServiceEnvironmentPatchResource has a new parameter upgrade_preference
+  - Model AppServiceEnvironmentResource has a new parameter custom_dns_suffix_configuration
+  - Model AppServiceEnvironmentResource has a new parameter networking_configuration
+  - Model AppServiceEnvironmentResource has a new parameter upgrade_availability
+  - Model AppServiceEnvironmentResource has a new parameter upgrade_preference
+  - Model AppServicePlan has a new parameter number_of_workers
+  - Model AppServicePlanPatchResource has a new parameter number_of_workers
+  - Model AseV3NetworkingConfiguration has a new parameter ftp_enabled
+  - Model AseV3NetworkingConfiguration has a new parameter inbound_ip_address_override
+  - Model AseV3NetworkingConfiguration has a new parameter remote_debug_enabled
+  - Model ErrorResponse has a new parameter error
+  - Model Site has a new parameter public_network_access
+  - Model Site has a new parameter vnet_content_share_enabled
+  - Model Site has a new parameter vnet_image_pull_enabled
+  - Model Site has a new parameter vnet_route_all_enabled
+  - Model StaticSiteARMResource has a new parameter linked_backends
+  - Model StaticSiteARMResource has a new parameter public_network_access
+  - Model StaticSiteBuildARMResource has a new parameter linked_backends
+  - Model StaticSitePatchResource has a new parameter linked_backends
+  - Model StaticSitePatchResource has a new parameter public_network_access
+  - Model TriggeredWebJob has a new parameter public_network_access
+  - Model TriggeredWebJob has a new parameter storage_account_required
+
+**Breaking changes**
+
+  - Model CertificateEmail no longer has parameter id
+  - Model CertificateEmail no longer has parameter kind
+  - Model CertificateEmail no longer has parameter name
+  - Model CertificateEmail no longer has parameter type
+  - Model CertificateOrderAction no longer has parameter id
+  - Model CertificateOrderAction no longer has parameter kind
+  - Model CertificateOrderAction no longer has parameter name
+  - Model CertificateOrderAction no longer has parameter type
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter message
+  - Operation WebSiteManagementClientOperationsMixin.list_custom_host_name_sites has a new parameter hostname
+
+## 6.1.0 (2022-01-24)
+
+**Features**
+
+  - Added operation WebAppsOperations.create_one_deploy_operation
+  - Added operation WebAppsOperations.get_one_deploy_status
+
+## 6.0.0 (2022-01-10)
+
+**Features**
+
+  - Added operation DomainsOperations.transfer_out
+  - Added operation WebAppsOperations.get_auth_settings_v2_without_secrets
+  - Added operation WebSiteManagementClientOperationsMixin.list_custom_host_name_sites
+  - Added operation group ContainerAppsOperations
+  - Added operation group ContainerAppsRevisionsOperations
+  - Model KubeEnvironment has a new parameter container_apps_configuration
+  - Model KubeEnvironment has a new parameter environment_type
+  - Model KubeEnvironmentPatchResource has a new parameter container_apps_configuration
+  - Model StaticSiteARMResource has a new parameter enterprise_grade_cdn_status
+  - Model StaticSitePatchResource has a new parameter enterprise_grade_cdn_status
+
+**Breaking changes**
+
+  - Removed operation WebSiteManagementClientOperationsMixin.generate_github_access_token_for_appservice_cli_async
+
+## 5.0.0 (2021-09-08)
+
+**Features**
+
+  - Model AppServicePlan has a new parameter zone_redundant
+  - Model AppServicePlanPatchResource has a new parameter zone_redundant
+  - Model AppServiceEnvironmentPatchResource has a new parameter zone_redundant
+  - Model AppServiceEnvironmentResource has a new parameter zone_redundant
+  - Model AzureActiveDirectoryRegistration has a new parameter client_secret_certificate_issuer
+  - Model AzureActiveDirectoryRegistration has a new parameter client_secret_certificate_subject_alternative_name
+  - Model AseV3NetworkingConfiguration has a new parameter external_inbound_ip_addresses
+  - Model AseV3NetworkingConfiguration has a new parameter internal_inbound_ip_addresses
+  - Model AppServiceEnvironment has a new parameter zone_redundant
+  - Model ErrorEntity has a new parameter target
+  - Model ErrorEntity has a new parameter details
+
+**Breaking changes**
+
+  - Model TokenStore no longer has parameter kind
+  - Model TokenStore no longer has parameter id
+  - Model TokenStore no longer has parameter name
+  - Model TokenStore no longer has parameter type
+  - Model IdentityProviders no longer has parameter kind
+  - Model IdentityProviders no longer has parameter id
+  - Model IdentityProviders no longer has parameter name
+  - Model IdentityProviders no longer has parameter type
+  - Model Google no longer has parameter kind
+  - Model Google no longer has parameter id
+  - Model Google no longer has parameter name
+  - Model Google no longer has parameter type
+  - Model Nonce no longer has parameter kind
+  - Model Nonce no longer has parameter id
+  - Model Nonce no longer has parameter name
+  - Model Nonce no longer has parameter type
+  - Model AppleRegistration no longer has parameter kind
+  - Model AppleRegistration no longer has parameter id
+  - Model AppleRegistration no longer has parameter name
+  - Model AppleRegistration no longer has parameter type
+  - Model ForwardProxy no longer has parameter kind
+  - Model ForwardProxy no longer has parameter id
+  - Model ForwardProxy no longer has parameter name
+  - Model ForwardProxy no longer has parameter type
+  - Model OpenIdConnectLogin no longer has parameter kind
+  - Model OpenIdConnectLogin no longer has parameter id
+  - Model OpenIdConnectLogin no longer has parameter name
+  - Model OpenIdConnectLogin no longer has parameter type
+  - Model AzureActiveDirectoryRegistration no longer has parameter kind
+  - Model AzureActiveDirectoryRegistration no longer has parameter id
+  - Model AzureActiveDirectoryRegistration no longer has parameter name
+  - Model AzureActiveDirectoryRegistration no longer has parameter type
+  - Model AzureActiveDirectoryLogin no longer has parameter kind
+  - Model AzureActiveDirectoryLogin no longer has parameter id
+  - Model AzureActiveDirectoryLogin no longer has parameter name
+  - Model AzureActiveDirectoryLogin no longer has parameter type
+  - Model TriggeredJobRun no longer has parameter kind
+  - Model TriggeredJobRun no longer has parameter id
+  - Model TriggeredJobRun no longer has parameter name
+  - Model TriggeredJobRun no longer has parameter type
+  - Model AppRegistration no longer has parameter kind
+  - Model AppRegistration no longer has parameter id
+  - Model AppRegistration no longer has parameter name
+  - Model AppRegistration no longer has parameter type
+  - Model VnetInfo no longer has parameter kind
+  - Model VnetInfo no longer has parameter id
+  - Model VnetInfo no longer has parameter name
+  - Model VnetInfo no longer has parameter type
+  - Model CustomOpenIdConnectProvider no longer has parameter kind
+  - Model CustomOpenIdConnectProvider no longer has parameter id
+  - Model CustomOpenIdConnectProvider no longer has parameter name
+  - Model CustomOpenIdConnectProvider no longer has parameter type
+  - Model TwitterRegistration no longer has parameter kind
+  - Model TwitterRegistration no longer has parameter id
+  - Model TwitterRegistration no longer has parameter name
+  - Model TwitterRegistration no longer has parameter type
+  - Model OpenIdConnectConfig no longer has parameter kind
+  - Model OpenIdConnectConfig no longer has parameter id
+  - Model OpenIdConnectConfig no longer has parameter name
+  - Model OpenIdConnectConfig no longer has parameter type
+  - Model AzureStaticWebApps no longer has parameter kind
+  - Model AzureStaticWebApps no longer has parameter id
+  - Model AzureStaticWebApps no longer has parameter name
+  - Model AzureStaticWebApps no longer has parameter type
+  - Model LegacyMicrosoftAccount no longer has parameter kind
+  - Model LegacyMicrosoftAccount no longer has parameter id
+  - Model LegacyMicrosoftAccount no longer has parameter name
+  - Model LegacyMicrosoftAccount no longer has parameter type
+  - Model AzureActiveDirectory no longer has parameter kind
+  - Model AzureActiveDirectory no longer has parameter id
+  - Model AzureActiveDirectory no longer has parameter name
+  - Model AzureActiveDirectory no longer has parameter type
+  - Model GitHub no longer has parameter kind
+  - Model GitHub no longer has parameter id
+  - Model GitHub no longer has parameter name
+  - Model GitHub no longer has parameter type
+  - Model HttpSettings no longer has parameter kind
+  - Model HttpSettings no longer has parameter id
+  - Model HttpSettings no longer has parameter name
+  - Model HttpSettings no longer has parameter type
+  - Model DetectorDefinition no longer has parameter kind
+  - Model DetectorDefinition no longer has parameter id
+  - Model DetectorDefinition no longer has parameter name
+  - Model DetectorDefinition no longer has parameter type
+  - Model Twitter no longer has parameter kind
+  - Model Twitter no longer has parameter id
+  - Model Twitter no longer has parameter name
+  - Model Twitter no longer has parameter type
+  - Model JwtClaimChecks no longer has parameter kind
+  - Model JwtClaimChecks no longer has parameter id
+  - Model JwtClaimChecks no longer has parameter name
+  - Model JwtClaimChecks no longer has parameter type
+  - Model CookieExpiration no longer has parameter kind
+  - Model CookieExpiration no longer has parameter id
+  - Model CookieExpiration no longer has parameter name
+  - Model CookieExpiration no longer has parameter type
+  - Model Apple no longer has parameter kind
+  - Model Apple no longer has parameter id
+  - Model Apple no longer has parameter name
+  - Model Apple no longer has parameter type
+  - Model OpenIdConnectRegistration no longer has parameter kind
+  - Model OpenIdConnectRegistration no longer has parameter id
+  - Model OpenIdConnectRegistration no longer has parameter name
+  - Model OpenIdConnectRegistration no longer has parameter type
+  - Model Login no longer has parameter kind
+  - Model Login no longer has parameter id
+  - Model Login no longer has parameter name
+  - Model Login no longer has parameter type
+  - Model Facebook no longer has parameter kind
+  - Model Facebook no longer has parameter id
+  - Model Facebook no longer has parameter name
+  - Model Facebook no longer has parameter type
+  - Model ClientRegistration no longer has parameter kind
+  - Model ClientRegistration no longer has parameter id
+  - Model ClientRegistration no longer has parameter name
+  - Model ClientRegistration no longer has parameter type
+  - Model GlobalValidation no longer has parameter kind
+  - Model GlobalValidation no longer has parameter id
+  - Model GlobalValidation no longer has parameter name
+  - Model GlobalValidation no longer has parameter type
+  - Model AuthPlatform no longer has parameter kind
+  - Model AuthPlatform no longer has parameter id
+  - Model AuthPlatform no longer has parameter name
+  - Model AuthPlatform no longer has parameter type
+  - Model FileSystemTokenStore has a new signature
+  - Model AzureActiveDirectoryValidation has a new signature
+  - Model LoginRoutes has a new signature
+  - Model BlobStorageTokenStore has a new signature
+  - Model OpenIdConnectClientCredential has a new signature
+  - Model HttpSettingsRoutes has a new signature
+  - Model LoginScopes has a new signature
+  - Model AllowedAudiencesValidation has a new signature
+  - Model AzureStaticWebAppsRegistration has a new signature
+
+## 4.0.0 (2021-08-03)
+
+**Features**
+
+  - Model AppServicePlan has a new parameter elastic_scale_enabled
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.create_or_update_swift_virtual_network_connection_with_check_slot
+  - Added operation WebAppsOperations.update_swift_virtual_network_connection_with_check
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies
+  - Added operation WebAppsOperations.list_basic_publishing_credentials_policies_slot
+
+**Breaking changes**
+
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies_slot
+  - Removed operation WebAppsOperations.get_basic_publishing_credentials_policies
+
 ## 3.0.0 (2021-05-25)
 
 **Features**
@@ -503,7 +774,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -511,13 +782,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.48.0 (2020-09-22)
 

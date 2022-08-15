@@ -43,7 +43,7 @@ class LocationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AscLocationList"]:
         """The location of the responsible ASC of the specific subscription (home region). For each
         subscription there is only one responsible location. The location in the response should be
@@ -111,7 +111,7 @@ class LocationsOperations:
 
     async def get(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AscLocation":
         """Details of a specific location.
 

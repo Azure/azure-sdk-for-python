@@ -1,6 +1,75 @@
 # Release History
 
-## 4.3.0b1 (Unreleased)
+## 4.5.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.5.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
+
+## 4.5.0b1 (2022-06-07)
+
+### Bugs Fixed
+- Port numbers are now preserved in the `vault_url` property of a `KeyVaultSecretIdentifier`
+  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
+
+## 4.4.0 (2022-03-28)
+
+### Features Added
+- Key Vault API version 7.3 is now the default
+- Added support for multi-tenant authentication when using `azure-identity`
+  1.8.0 or newer ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+- (From 4.4.0b3) Added `managed` property to SecretProperties
+
+### Other Changes
+- (From 4.4.0b3) Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Updated minimum `azure-core` version to 1.20.0
+- (From 4.4.0b2) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698)). See
+  https://aka.ms/azsdk/python/identity/tokencredential for more details on how to integrate
+  this parameter if `get_token` is implemented by a custom credential.
+
+## 4.4.0b3 (2022-02-08)
+
+### Features Added
+- Added `managed` property to SecretProperties
+
+### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- (From 4.4.0b2) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+## 4.4.0b2 (2021-11-11)
+
+### Features Added
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
+
+## 4.4.0b1 (2021-09-09)
+
+### Features Added
+- Key Vault API version 7.3-preview is now the default
+
+### Other Changes
+- Updated type hints to fix mypy errors
+  ([#19158](https://github.com/Azure/azure-sdk-for-python/issues/19158))
+
+## 4.3.0 (2021-06-22)
+This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.
 ### Fixed
 - Correct typing for async paging methods
 
@@ -111,9 +180,9 @@ https://aka.ms/azure-sdk-preview1-python.
 This library is not a direct replacement for `azure-keyvault`. Applications
 using that library would require code changes to use `azure-keyvault-secrets`.
 This package's
-[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/README.md)
 and
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples)
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/samples)
 demonstrate the new API.
 
 ### Major changes from `azure-keyvault`
@@ -127,9 +196,9 @@ only)
     the synchronous client in `azure.keyvault.secrets`
 - Authentication using `azure-identity` credentials
   - see this package's
-  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/README.md)
+  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/README.md)
   , and the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 
 ### `azure-keyvault` features not implemented in this library

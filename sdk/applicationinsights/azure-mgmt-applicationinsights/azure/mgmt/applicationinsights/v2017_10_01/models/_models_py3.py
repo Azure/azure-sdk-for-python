@@ -41,6 +41,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -58,19 +60,19 @@ class ApplicationInsightsComponentPricingPlan(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param plan_type: Pricing Plan Type Name.
-    :type plan_type: str
-    :param cap: Daily data volume cap in GB.
-    :type cap: float
+    :ivar plan_type: Pricing Plan Type Name.
+    :vartype plan_type: str
+    :ivar cap: Daily data volume cap in GB.
+    :vartype cap: float
     :ivar reset_hour: Daily data volume cap UTC reset hour.
     :vartype reset_hour: int
-    :param warning_threshold: Reserved, not used for now.
-    :type warning_threshold: int
-    :param stop_send_notification_when_hit_threshold: Reserved, not used for now.
-    :type stop_send_notification_when_hit_threshold: bool
-    :param stop_send_notification_when_hit_cap: Do not send a notification email when the daily
-     data volume cap is met.
-    :type stop_send_notification_when_hit_cap: bool
+    :ivar warning_threshold: Reserved, not used for now.
+    :vartype warning_threshold: int
+    :ivar stop_send_notification_when_hit_threshold: Reserved, not used for now.
+    :vartype stop_send_notification_when_hit_threshold: bool
+    :ivar stop_send_notification_when_hit_cap: Do not send a notification email when the daily data
+     volume cap is met.
+    :vartype stop_send_notification_when_hit_cap: bool
     :ivar max_history_cap: Maximum daily data volume cap that the user can set for this component.
     :vartype max_history_cap: float
     """
@@ -106,6 +108,19 @@ class ApplicationInsightsComponentPricingPlan(Resource):
         stop_send_notification_when_hit_cap: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword plan_type: Pricing Plan Type Name.
+        :paramtype plan_type: str
+        :keyword cap: Daily data volume cap in GB.
+        :paramtype cap: float
+        :keyword warning_threshold: Reserved, not used for now.
+        :paramtype warning_threshold: int
+        :keyword stop_send_notification_when_hit_threshold: Reserved, not used for now.
+        :paramtype stop_send_notification_when_hit_threshold: bool
+        :keyword stop_send_notification_when_hit_cap: Do not send a notification email when the daily
+         data volume cap is met.
+        :paramtype stop_send_notification_when_hit_cap: bool
+        """
         super(ApplicationInsightsComponentPricingPlan, self).__init__(**kwargs)
         self.plan_type = plan_type
         self.cap = cap
@@ -119,17 +134,17 @@ class ApplicationInsightsComponentPricingPlan(Resource):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the Batch service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.applicationinsights.v2017_10_01.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.applicationinsights.v2017_10_01.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -148,6 +163,19 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.applicationinsights.v2017_10_01.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -158,11 +186,11 @@ class CloudErrorBody(msrest.serialization.Model):
 class EASubscriptionMigrationDate(msrest.serialization.Model):
     """Subscription migrate date information properties.
 
-    :param is_grand_fatherable_subscription: Is subscription in the grand fatherable subscription
+    :ivar is_grand_fatherable_subscription: Is subscription in the grand fatherable subscription
      list.
-    :type is_grand_fatherable_subscription: bool
-    :param opted_in_date: Time to start using new pricing model.
-    :type opted_in_date: ~datetime.datetime
+    :vartype is_grand_fatherable_subscription: bool
+    :ivar opted_in_date: Time to start using new pricing model.
+    :vartype opted_in_date: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -177,6 +205,13 @@ class EASubscriptionMigrationDate(msrest.serialization.Model):
         opted_in_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword is_grand_fatherable_subscription: Is subscription in the grand fatherable subscription
+         list.
+        :paramtype is_grand_fatherable_subscription: bool
+        :keyword opted_in_date: Time to start using new pricing model.
+        :paramtype opted_in_date: ~datetime.datetime
+        """
         super(EASubscriptionMigrationDate, self).__init__(**kwargs)
         self.is_grand_fatherable_subscription = is_grand_fatherable_subscription
         self.opted_in_date = opted_in_date

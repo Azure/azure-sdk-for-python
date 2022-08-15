@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._custom_locations_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Resource(msrest.serialization.Model):
@@ -46,6 +48,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -67,10 +71,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -95,6 +99,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -115,31 +125,31 @@ class CustomLocation(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.SystemData
-    :param authentication: This is optional input that contains the authentication that should be
+    :ivar authentication: This is optional input that contains the authentication that should be
      used to generate the namespace.
-    :type authentication:
+    :vartype authentication:
      ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
-    :param cluster_extension_ids: Contains the reference to the add-on that contains charts to
+    :ivar cluster_extension_ids: Contains the reference to the add-on that contains charts to
      deploy CRDs and operators.
-    :type cluster_extension_ids: list[str]
-    :param display_name: Display name for the Custom Locations location.
-    :type display_name: str
-    :param host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will perform
+    :vartype cluster_extension_ids: list[str]
+    :ivar display_name: Display name for the Custom Locations location.
+    :vartype display_name: str
+    :ivar host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will perform
      a checkAccess API for listAdminCredentials permissions.
-    :type host_resource_id: str
-    :param host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
-     Possible values include: "Kubernetes".
-    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
-    :param namespace: Kubernetes namespace that will be created on the specified cluster.
-    :type namespace: str
-    :param provisioning_state: Provisioning State for the Custom Location.
-    :type provisioning_state: str
+    :vartype host_resource_id: str
+    :ivar host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...). Known
+     values are: "Kubernetes".
+    :vartype host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+    :ivar namespace: Kubernetes namespace that will be created on the specified cluster.
+    :vartype namespace: str
+    :ivar provisioning_state: Provisioning State for the Custom Location.
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -171,15 +181,40 @@ class CustomLocation(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        authentication: Optional["CustomLocationPropertiesAuthentication"] = None,
+        authentication: Optional["_models.CustomLocationPropertiesAuthentication"] = None,
         cluster_extension_ids: Optional[List[str]] = None,
         display_name: Optional[str] = None,
         host_resource_id: Optional[str] = None,
-        host_type: Optional[Union[str, "HostType"]] = None,
+        host_type: Optional[Union[str, "_models.HostType"]] = None,
         namespace: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword authentication: This is optional input that contains the authentication that should be
+         used to generate the namespace.
+        :paramtype authentication:
+         ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
+        :keyword cluster_extension_ids: Contains the reference to the add-on that contains charts to
+         deploy CRDs and operators.
+        :paramtype cluster_extension_ids: list[str]
+        :keyword display_name: Display name for the Custom Locations location.
+        :paramtype display_name: str
+        :keyword host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will
+         perform a checkAccess API for listAdminCredentials permissions.
+        :paramtype host_resource_id: str
+        :keyword host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
+         Known values are: "Kubernetes".
+        :paramtype host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+        :keyword namespace: Kubernetes namespace that will be created on the specified cluster.
+        :paramtype namespace: str
+        :keyword provisioning_state: Provisioning State for the Custom Location.
+        :paramtype provisioning_state: str
+        """
         super(CustomLocation, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.authentication = authentication
@@ -216,6 +251,8 @@ class CustomLocationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CustomLocationListResult, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
@@ -266,6 +303,8 @@ class CustomLocationOperation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CustomLocationOperation, self).__init__(**kwargs)
         self.is_data_action = None
         self.name = None
@@ -281,10 +320,10 @@ class CustomLocationOperationsList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param next_link: Next page of operations.
-    :type next_link: str
-    :param value: Required. Array of customLocationOperation.
-    :type value:
+    :ivar next_link: Next page of operations.
+    :vartype next_link: str
+    :ivar value: Required. Array of customLocationOperation.
+    :vartype value:
      list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationOperation]
     """
 
@@ -300,10 +339,17 @@ class CustomLocationOperationsList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CustomLocationOperation"],
+        value: List["_models.CustomLocationOperation"],
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Next page of operations.
+        :paramtype next_link: str
+        :keyword value: Required. Array of customLocationOperation.
+        :paramtype value:
+         list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationOperation]
+        """
         super(CustomLocationOperationsList, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -312,10 +358,10 @@ class CustomLocationOperationsList(msrest.serialization.Model):
 class CustomLocationPropertiesAuthentication(msrest.serialization.Model):
     """This is optional input that contains the authentication that should be used to generate the namespace.
 
-    :param type: The type of the Custom Locations authentication.
-    :type type: str
-    :param value: The kubeconfig value.
-    :type value: str
+    :ivar type: The type of the Custom Locations authentication.
+    :vartype type: str
+    :ivar value: The kubeconfig value.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -330,6 +376,12 @@ class CustomLocationPropertiesAuthentication(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of the Custom Locations authentication.
+        :paramtype type: str
+        :keyword value: The kubeconfig value.
+        :paramtype value: str
+        """
         super(CustomLocationPropertiesAuthentication, self).__init__(**kwargs)
         self.type = type
         self.value = value
@@ -366,6 +418,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -384,12 +438,12 @@ class EnabledResourceType(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.SystemData
-    :param cluster_extension_id: Cluster Extension ID.
-    :type cluster_extension_id: str
-    :param extension_type: Cluster Extension Type.
-    :type extension_type: str
-    :param types_metadata: Metadata of the Resource Type.
-    :type types_metadata:
+    :ivar cluster_extension_id: Cluster Extension ID.
+    :vartype cluster_extension_id: str
+    :ivar extension_type: Cluster Extension Type.
+    :vartype extension_type: str
+    :ivar types_metadata: Metadata of the Resource Type.
+    :vartype types_metadata:
      list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.EnabledResourceTypePropertiesTypesMetadataItem]
     """
 
@@ -415,9 +469,18 @@ class EnabledResourceType(ProxyResource):
         *,
         cluster_extension_id: Optional[str] = None,
         extension_type: Optional[str] = None,
-        types_metadata: Optional[List["EnabledResourceTypePropertiesTypesMetadataItem"]] = None,
+        types_metadata: Optional[List["_models.EnabledResourceTypePropertiesTypesMetadataItem"]] = None,
         **kwargs
     ):
+        """
+        :keyword cluster_extension_id: Cluster Extension ID.
+        :paramtype cluster_extension_id: str
+        :keyword extension_type: Cluster Extension Type.
+        :paramtype extension_type: str
+        :keyword types_metadata: Metadata of the Resource Type.
+        :paramtype types_metadata:
+         list[~azure.mgmt.extendedlocation.v2021_03_15_preview.models.EnabledResourceTypePropertiesTypesMetadataItem]
+        """
         super(EnabledResourceType, self).__init__(**kwargs)
         self.system_data = None
         self.cluster_extension_id = cluster_extension_id
@@ -428,12 +491,12 @@ class EnabledResourceType(ProxyResource):
 class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model):
     """Metadata of the Resource Type.
 
-    :param api_version: Api Version of Resource Type.
-    :type api_version: str
-    :param resource_provider_namespace: Resource Provider Namespace of Resource Type.
-    :type resource_provider_namespace: str
-    :param resource_type: Resource Type.
-    :type resource_type: str
+    :ivar api_version: Api Version of Resource Type.
+    :vartype api_version: str
+    :ivar resource_provider_namespace: Resource Provider Namespace of Resource Type.
+    :vartype resource_provider_namespace: str
+    :ivar resource_type: Resource Type.
+    :vartype resource_type: str
     """
 
     _attribute_map = {
@@ -450,6 +513,14 @@ class EnabledResourceTypePropertiesTypesMetadataItem(msrest.serialization.Model)
         resource_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword api_version: Api Version of Resource Type.
+        :paramtype api_version: str
+        :keyword resource_provider_namespace: Resource Provider Namespace of Resource Type.
+        :paramtype resource_provider_namespace: str
+        :keyword resource_type: Resource Type.
+        :paramtype resource_type: str
+        """
         super(EnabledResourceTypePropertiesTypesMetadataItem, self).__init__(**kwargs)
         self.api_version = api_version
         self.resource_provider_namespace = resource_provider_namespace
@@ -482,6 +553,8 @@ class EnabledResourceTypesListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EnabledResourceTypesListResult, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
@@ -495,7 +568,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -505,13 +578,15 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -555,6 +630,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -566,8 +643,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -577,9 +654,13 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -587,27 +668,27 @@ class ErrorResponse(msrest.serialization.Model):
 class PatchableCustomLocations(msrest.serialization.Model):
     """The Custom Locations patchable resource definition.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param authentication: This is optional input that contains the authentication that should be
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar authentication: This is optional input that contains the authentication that should be
      used to generate the namespace.
-    :type authentication:
+    :vartype authentication:
      ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
-    :param cluster_extension_ids: Contains the reference to the add-on that contains charts to
+    :ivar cluster_extension_ids: Contains the reference to the add-on that contains charts to
      deploy CRDs and operators.
-    :type cluster_extension_ids: list[str]
-    :param display_name: Display name for the Custom Locations location.
-    :type display_name: str
-    :param host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will perform
+    :vartype cluster_extension_ids: list[str]
+    :ivar display_name: Display name for the Custom Locations location.
+    :vartype display_name: str
+    :ivar host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will perform
      a checkAccess API for listAdminCredentials permissions.
-    :type host_resource_id: str
-    :param host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
-     Possible values include: "Kubernetes".
-    :type host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
-    :param namespace: Kubernetes namespace that will be created on the specified cluster.
-    :type namespace: str
-    :param provisioning_state: Provisioning State for the Custom Location.
-    :type provisioning_state: str
+    :vartype host_resource_id: str
+    :ivar host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...). Known
+     values are: "Kubernetes".
+    :vartype host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+    :ivar namespace: Kubernetes namespace that will be created on the specified cluster.
+    :vartype namespace: str
+    :ivar provisioning_state: Provisioning State for the Custom Location.
+    :vartype provisioning_state: str
     """
 
     _attribute_map = {
@@ -625,15 +706,38 @@ class PatchableCustomLocations(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        authentication: Optional["CustomLocationPropertiesAuthentication"] = None,
+        authentication: Optional["_models.CustomLocationPropertiesAuthentication"] = None,
         cluster_extension_ids: Optional[List[str]] = None,
         display_name: Optional[str] = None,
         host_resource_id: Optional[str] = None,
-        host_type: Optional[Union[str, "HostType"]] = None,
+        host_type: Optional[Union[str, "_models.HostType"]] = None,
         namespace: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword authentication: This is optional input that contains the authentication that should be
+         used to generate the namespace.
+        :paramtype authentication:
+         ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CustomLocationPropertiesAuthentication
+        :keyword cluster_extension_ids: Contains the reference to the add-on that contains charts to
+         deploy CRDs and operators.
+        :paramtype cluster_extension_ids: list[str]
+        :keyword display_name: Display name for the Custom Locations location.
+        :paramtype display_name: str
+        :keyword host_resource_id: Connected Cluster or AKS Cluster. The Custom Locations RP will
+         perform a checkAccess API for listAdminCredentials permissions.
+        :paramtype host_resource_id: str
+        :keyword host_type: Type of host the Custom Locations is referencing (Kubernetes, etc...).
+         Known values are: "Kubernetes".
+        :paramtype host_type: str or ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.HostType
+        :keyword namespace: Kubernetes namespace that will be created on the specified cluster.
+        :paramtype namespace: str
+        :keyword provisioning_state: Provisioning State for the Custom Location.
+        :paramtype provisioning_state: str
+        """
         super(PatchableCustomLocations, self).__init__(**kwargs)
         self.tags = tags
         self.authentication = authentication
@@ -648,22 +752,22 @@ class PatchableCustomLocations(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or
      ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -679,13 +783,31 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.extendedlocation.v2021_03_15_preview.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type

@@ -27,19 +27,23 @@ parameters:
   default: []
 - name: Pool
   type: string
-  default: azsdk-pool-mms-ubuntu-1804-general
+  default: azsdk-pool-mms-ubuntu-2004-general
 - name: OsVmImage
   type: string
-  default: MMSUbuntu18.04
+  default: MMSUbuntu20.04
 # This parameter is only necessary if there are multiple invocations of this template within the SAME STAGE.
 # When that occurs, provide a name other than the default value.
 - name: GenerateJobName
   type: string
   default: 'generate_job_matrix'
+- name: PreGenerationSteps
+  type: stepList
+  default: []
 
 jobs:
 - job: ${{ parameters.GenerateJobName }}
   variables:
+    skipComponentGovernanceDetection: true
     displayNameFilter: $[ coalesce(variables.jobMatrixFilter, '.*') ]
   pool:
     name: ${{ parameters.Pool }}
@@ -56,7 +60,9 @@ jobs:
             Paths: ${{ parameters.SparseCheckoutPaths }}
           ${{ if and(eq(length(parameters.SparseCheckoutPaths), 0), ne(parameters.AdditionalParameters.ServiceDirectory, '')) }}:
             Paths:
-              - ${{ parameters.AdditionalParameters.ServiceDirectory }}
+              - "sdk/${{ parameters.AdditionalParameters.ServiceDirectory }}"
+
+    - ${{ parameters.PreGenerationSteps }}
 
     - ${{ each config in parameters.MatrixConfigs }}:
       - ${{ if eq(config.GenerateVMJobs, 'true') }}:

@@ -47,7 +47,7 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SharedPrivateLinkResourceList"]:
         """List shared private link resources.
 
@@ -66,7 +66,7 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -124,7 +124,7 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         shared_private_link_resource_name: str,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedPrivateLinkResource":
         """Get the specified shared private link resource.
 
@@ -145,7 +145,7 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -189,14 +189,14 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.SharedPrivateLinkResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedPrivateLinkResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedPrivateLinkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -249,7 +249,7 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.SharedPrivateLinkResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SharedPrivateLinkResource"]:
         """Create or update a shared private link resource.
 
@@ -264,8 +264,8 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         :type parameters: ~azure.mgmt.webpubsub.models.SharedPrivateLinkResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SharedPrivateLinkResource or the result of cls(response)
@@ -325,14 +325,14 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         shared_private_link_resource_name: str,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -372,7 +372,7 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         shared_private_link_resource_name: str,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete the specified shared private link resource.
 
@@ -385,8 +385,8 @@ class WebPubSubSharedPrivateLinkResourcesOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

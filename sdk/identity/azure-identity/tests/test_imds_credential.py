@@ -5,12 +5,13 @@
 import json
 import time
 
+from devtools_testutils import recorded_by_proxy
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from azure.identity import CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.imds import ImdsCredential, IMDS_URL, PIPELINE_SETTINGS
+from azure.identity._credentials.imds import IMDS_TOKEN_PATH, ImdsCredential, IMDS_AUTHORITY, PIPELINE_SETTINGS
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
@@ -147,9 +148,9 @@ def test_identity_config():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=IMDS_URL),
+            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
-                base_url=IMDS_URL,
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope, param_name: param_value},
@@ -177,8 +178,8 @@ def test_identity_config():
     assert token == expected_token
 
 
-def test_imds_url_override():
-    url = "https://localhost/token"
+def test_imds_authority_override():
+    authority = "https://localhost"
     expected_token = "***"
     scope = "scope"
     now = int(time.time())
@@ -186,7 +187,7 @@ def test_imds_url_override():
     transport = validating_transport(
         requests=[
             Request(
-                base_url=url,
+                base_url=authority + IMDS_TOKEN_PATH,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
@@ -207,7 +208,7 @@ def test_imds_url_override():
         ],
     )
 
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL: url}, clear=True):
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST: authority}, clear=True):
         credential = ImdsCredential(transport=transport)
         token = credential.get_token(scope)
 
@@ -215,16 +216,33 @@ def test_imds_url_override():
 
 
 @pytest.mark.usefixtures("record_imds_test")
-class RecordedTests(RecordedTestCase):
+class TestImds(RecordedTestCase):
+    @recorded_by_proxy
     def test_system_assigned(self):
         credential = ImdsCredential()
         token = credential.get_token(self.scope)
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @recorded_by_proxy
+    def test_system_assigned_tenant_id(self):
+        credential = ImdsCredential()
+        token = credential.get_token(self.scope, tenant_id="tenant_id")
+        assert token.token
+        assert isinstance(token.expires_on, int)
+
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    @recorded_by_proxy
     def test_user_assigned(self):
         credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
         token = credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)
+
+    @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    @recorded_by_proxy
+    def test_user_assigned_tenant_id(self):
+        credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
+        token = credential.get_token(self.scope, tenant_id="tenant_id")
         assert token.token
         assert isinstance(token.expires_on, int)

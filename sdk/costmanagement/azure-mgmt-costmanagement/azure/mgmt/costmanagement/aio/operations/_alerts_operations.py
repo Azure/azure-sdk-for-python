@@ -43,7 +43,7 @@ class AlertsOperations:
     async def list(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AlertsResult":
         """Lists the alerts for scope defined.
 
@@ -74,7 +74,7 @@ class AlertsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -98,7 +98,7 @@ class AlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AlertsResult', pipeline_response)
@@ -113,7 +113,7 @@ class AlertsOperations:
         self,
         scope: str,
         alert_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Alert":
         """Gets the alert for the scope by alert ID.
 
@@ -146,7 +146,7 @@ class AlertsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -171,7 +171,7 @@ class AlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Alert', pipeline_response)
@@ -187,7 +187,7 @@ class AlertsOperations:
         scope: str,
         alert_id: str,
         parameters: "_models.DismissAlertPayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Alert":
         """Dismisses the specified alert.
 
@@ -222,7 +222,7 @@ class AlertsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -252,7 +252,7 @@ class AlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Alert', pipeline_response)
@@ -267,7 +267,7 @@ class AlertsOperations:
         self,
         external_cloud_provider_type: Union[str, "_models.ExternalCloudProviderType"],
         external_cloud_provider_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AlertsResult":
         """Lists the Alerts for external cloud provider type defined.
 
@@ -288,7 +288,7 @@ class AlertsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -313,7 +313,7 @@ class AlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AlertsResult', pipeline_response)

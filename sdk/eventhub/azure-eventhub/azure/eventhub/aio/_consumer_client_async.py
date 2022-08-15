@@ -18,8 +18,6 @@ from typing import (
     Awaitable,
 )
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
@@ -28,7 +26,7 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from ._client_base_async import CredentialTypes
     from uamqp.constants import TransportType
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
@@ -38,7 +36,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBaseAsync):
+class EventHubConsumerClient(
+    ClientBaseAsync
+):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -79,6 +79,16 @@ class EventHubConsumerClient(ClientBaseAsync):
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
+    :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay).
+     In fixed mode, retry policy will always sleep for {backoff factor}.
+     In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+     seconds. If the backoff_factor is 0.1, then the retry will sleep
+     for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
+    :paramtype retry_mode: str
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
@@ -87,7 +97,7 @@ class EventHubConsumerClient(ClientBaseAsync):
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
@@ -137,7 +147,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: "CredentialTypes",
         **kwargs
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
@@ -148,10 +158,17 @@ class EventHubConsumerClient(ClientBaseAsync):
             "partition_ownership_expiration_interval", None
         )
         if self._partition_ownership_expiration_interval is None:
-            self._partition_ownership_expiration_interval = 6 * self._load_balancing_interval
-        load_balancing_strategy = kwargs.pop("load_balancing_strategy", None) or LoadBalancingStrategy.GREEDY
-        self._load_balancing_strategy = LoadBalancingStrategy(load_balancing_strategy) if load_balancing_strategy \
+            self._partition_ownership_expiration_interval = (
+                6 * self._load_balancing_interval
+            )
+        load_balancing_strategy = (
+            kwargs.pop("load_balancing_strategy", None) or LoadBalancingStrategy.GREEDY
+        )
+        self._load_balancing_strategy = (
+            LoadBalancingStrategy(load_balancing_strategy)
+            if load_balancing_strategy
             else LoadBalancingStrategy.GREEDY
+        )
         self._consumer_group = consumer_group
         network_tracing = kwargs.pop("logging_enable", False)
         super(EventHubConsumerClient, self).__init__(
@@ -159,9 +176,9 @@ class EventHubConsumerClient(ClientBaseAsync):
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=network_tracing,
-            **kwargs
+            **kwargs,
         )
-        self._lock = asyncio.Lock(loop=self._loop)
+        self._lock = asyncio.Lock(**self._internal_kwargs)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
 
     async def __aenter__(self):
@@ -198,7 +215,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-            loop=self._loop,
+            **self._internal_kwargs,
         )
         return handler
 
@@ -225,7 +242,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         :param str consumer_group: Receive events from the Event Hub for this consumer group.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
@@ -239,6 +256,16 @@ class EventHubConsumerClient(ClientBaseAsync):
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
+        :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
+         (most errors are resolved immediately by a second try without a delay).
+         In fixed mode, retry policy will always sleep for {backoff factor}.
+         In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+         seconds. If the backoff_factor is 0.1, then the retry will sleep
+         for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+        :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no further activity. By default the value is None, meaning that the client will not shutdown due
          to inactivity unless initiated by the service.
@@ -302,34 +329,34 @@ class EventHubConsumerClient(ClientBaseAsync):
             transport_type=transport_type,
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
-            **kwargs
+            **kwargs,
         )
         return cls(**constructor_args)
 
     async def _receive(
-            self,
-            on_event,
-            batch=False,
-            *,
-            max_batch_size: int = 300,
-            max_wait_time: Optional[float] = None,
-            partition_id: Optional[str] = None,
-            owner_level: Optional[int] = None,
-            prefetch: int = 300,
-            track_last_enqueued_event_properties: bool = False,
-            starting_position: Optional[
-                Union[str, int, datetime.datetime, Dict[str, Any]]
-            ] = None,
-            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-            on_error: Optional[
-                Callable[["PartitionContext", Exception], Awaitable[None]]
-            ] = None,
-            on_partition_initialize: Optional[
-                Callable[["PartitionContext"], Awaitable[None]]
-            ] = None,
-            on_partition_close: Optional[
-                Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
-            ] = None
+        self,
+        on_event,
+        batch=False,
+        *,
+        max_batch_size: int = 300,
+        max_wait_time: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        owner_level: Optional[int] = None,
+        prefetch: int = 300,
+        track_last_enqueued_event_properties: bool = False,
+        starting_position: Optional[
+            Union[str, int, datetime.datetime, Dict[str, Any]]
+        ] = None,
+        starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+        on_error: Optional[
+            Callable[["PartitionContext", Exception], Awaitable[None]]
+        ] = None,
+        on_partition_initialize: Optional[
+            Callable[["PartitionContext"], Awaitable[None]]
+        ] = None,
+        on_partition_close: Optional[
+            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
+        ] = None
     ):
         async with self._lock:
             error = None
@@ -341,7 +368,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                     )
                 )
             elif partition_id is None and any(
-                    x[0] == self._consumer_group for x in self._event_processors
+                x[0] == self._consumer_group for x in self._event_processors
             ):
                 error = (
                     "This consumer client is already receiving events "
@@ -373,12 +400,14 @@ class EventHubConsumerClient(ClientBaseAsync):
                 load_balancing_interval=self._load_balancing_interval,
                 load_balancing_strategy=self._load_balancing_strategy,
                 partition_ownership_expiration_interval=self._partition_ownership_expiration_interval,
-                initial_event_position=starting_position if starting_position is not None else "@latest",
+                initial_event_position=starting_position
+                if starting_position is not None
+                else "@latest",
                 initial_event_position_inclusive=starting_position_inclusive or False,
                 owner_level=owner_level,
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-                loop=self._loop,
+                **self._internal_kwargs,
             )
             self._event_processors[
                 (self._consumer_group, partition_id or ALL_PARTITIONS)
@@ -397,7 +426,9 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     async def receive(
         self,
-        on_event: Callable[["PartitionContext", Optional["EventData"]], Awaitable[None]],
+        on_event: Callable[
+            ["PartitionContext", Optional["EventData"]], Awaitable[None]
+        ],
         *,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
@@ -449,12 +480,12 @@ class EventHubConsumerClient(ClientBaseAsync):
          a dict with partition ID as the key and position as the value for individual partitions, or a single
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :paramtype starting_position_inclusive: bool or Dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -501,12 +532,14 @@ class EventHubConsumerClient(ClientBaseAsync):
             starting_position_inclusive=starting_position_inclusive,
             on_error=on_error,
             on_partition_initialize=on_partition_initialize,
-            on_partition_close=on_partition_close
+            on_partition_close=on_partition_close,
         )
 
     async def receive_batch(
         self,
-        on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
+        on_event_batch: Callable[
+            ["PartitionContext", List["EventData"]], Awaitable[None]
+        ],
         *,
         max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
@@ -565,12 +598,12 @@ class EventHubConsumerClient(ClientBaseAsync):
          a dict with partition ID as the key and position as the value for individual partitions, or a single
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :paramtype starting_position_inclusive: bool or Dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -619,7 +652,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             starting_position_inclusive=starting_position_inclusive,
             on_error=on_error,
             on_partition_initialize=on_partition_initialize,
-            on_partition_close=on_partition_close
+            on_partition_close=on_partition_close,
         )
 
     async def get_eventhub_properties(self) -> Dict[str, Any]:
@@ -631,7 +664,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict
+        :rtype: Dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -661,7 +694,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict
+        :rtype: Dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -687,7 +720,6 @@ class EventHubConsumerClient(ClientBaseAsync):
             await asyncio.gather(
                 *[p.stop() for p in self._event_processors.values()],
                 return_exceptions=True,
-                loop=self._loop
             )
             self._event_processors = {}
             await super(EventHubConsumerClient, self)._close_async()

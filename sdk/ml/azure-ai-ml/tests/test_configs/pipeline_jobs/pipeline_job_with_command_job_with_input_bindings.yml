@@ -1,0 +1,54 @@
+type: pipeline
+
+name: simplePipelineJobWithInlineCommandJobgit a
+description: The hello world pipeline job with inline command job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_data_path:
+    type: uri_file
+    path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    mode: ro_mount
+
+outputs:
+  job_out_path_1:
+    mode: mount
+
+jobs:
+  hello_world:
+    type: command
+
+    command: pip freeze && echo Hello World
+    code: ./
+
+    experiment_name: test-iris-example-1
+    description: Train a model on the Iris dataset-1.
+    compute: "azureml:cpu-cluster"
+    inputs:
+      "test1": ${{parent.inputs.job_data_path}}
+      "test2": ${{parent.inputs.job_data_path}}
+      "literal_input": 2
+    outputs:
+      job_output: ${{parent.outputs.job_out_path_1}}
+    environment_variables:
+      FOO: "bar"
+
+  hello_world_inline_commandjob_2:
+    type: command
+
+    command: echo Hello World
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    name: "test2"
+    experiment_name: test-iris-example-2
+    description: Train a model on the Iris dataset-2.
+    inputs:
+      "input_from_previous_node": ${{parent.jobs.hello_world.outputs.job_output}}
+      "test2": ${{parent.inputs.job_data_path}}
+    properties:
+      test_property: test_value
+    identity:
+      type: AMLToken

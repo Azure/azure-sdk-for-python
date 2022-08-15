@@ -17,8 +17,8 @@ class CertificateSource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -37,6 +37,8 @@ class CertificateSource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CertificateSource, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -49,13 +51,13 @@ class ProcessorNodeBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
     """
 
     _validation = {
@@ -78,6 +80,13 @@ class ProcessorNodeBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        """
         super(ProcessorNodeBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.name = kwargs['name']
@@ -89,23 +98,23 @@ class CognitiveServicesVisionProcessor(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param endpoint: Required. Endpoint to which this processor should connect.
-    :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
-    :param image: Describes the parameters of the image that is sent as input to the endpoint.
-    :type image: ~azure.media.videoanalyzer.edge.models.ImageProperties
-    :param sampling_options: Describes the sampling options to be applied when forwarding samples
-     to the extension.
-    :type sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
-    :param operation: Required. Describes the Spatial Analysis operation to be used in the
-     Cognitive Services Vision processor.
-    :type operation: ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationBase
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar endpoint: Required. Endpoint to which this processor should connect.
+    :vartype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+    :ivar image: Describes the parameters of the image that is sent as input to the endpoint.
+    :vartype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+    :ivar sampling_options: Describes the sampling options to be applied when forwarding samples to
+     the extension.
+    :vartype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+    :ivar operation: Required. Describes the Spatial Analysis operation to be used in the Cognitive
+     Services Vision processor.
+    :vartype operation: ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationBase
     """
 
     _validation = {
@@ -130,6 +139,23 @@ class CognitiveServicesVisionProcessor(ProcessorNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword endpoint: Required. Endpoint to which this processor should connect.
+        :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+        :keyword image: Describes the parameters of the image that is sent as input to the endpoint.
+        :paramtype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+        :keyword sampling_options: Describes the sampling options to be applied when forwarding samples
+         to the extension.
+        :paramtype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+        :keyword operation: Required. Describes the Spatial Analysis operation to be used in the
+         Cognitive Services Vision processor.
+        :paramtype operation: ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationBase
+        """
         super(CognitiveServicesVisionProcessor, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.CognitiveServicesVisionProcessor'  # type: str
         self.endpoint = kwargs['endpoint']
@@ -142,12 +168,12 @@ class CredentialsBase(msrest.serialization.Model):
     """Base class for credential objects.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: HttpHeaderCredentials, UsernamePasswordCredentials.
+    sub-classes are: HttpHeaderCredentials, SymmetricKeyCredentials, UsernamePasswordCredentials.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -159,15 +185,90 @@ class CredentialsBase(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.HttpHeaderCredentials': 'HttpHeaderCredentials', '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials': 'UsernamePasswordCredentials'}
+        'type': {'#Microsoft.VideoAnalyzer.HttpHeaderCredentials': 'HttpHeaderCredentials', '#Microsoft.VideoAnalyzer.SymmetricKeyCredentials': 'SymmetricKeyCredentials', '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials': 'UsernamePasswordCredentials'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(CredentialsBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
+
+
+class DiscoveredOnvifDevice(msrest.serialization.Model):
+    """The discovered properties of the ONVIF device that are returned during the discovery.
+
+    :ivar service_identifier: The unique identifier of the ONVIF device that was discovered in the
+     same subnet as the IoT Edge device.
+    :vartype service_identifier: str
+    :ivar remote_ip_address: The IP address of the ONVIF device that was discovered in the same
+     subnet as the IoT Edge device.
+    :vartype remote_ip_address: str
+    :ivar scopes: An array of hostnames for the ONVIF discovered devices that are in the same
+     subnet as the IoT Edge device.
+    :vartype scopes: list[str]
+    :ivar endpoints: An array of media profile endpoints that the ONVIF discovered device supports.
+    :vartype endpoints: list[str]
+    """
+
+    _attribute_map = {
+        'service_identifier': {'key': 'serviceIdentifier', 'type': 'str'},
+        'remote_ip_address': {'key': 'remoteIPAddress', 'type': 'str'},
+        'scopes': {'key': 'scopes', 'type': '[str]'},
+        'endpoints': {'key': 'endpoints', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword service_identifier: The unique identifier of the ONVIF device that was discovered in
+         the same subnet as the IoT Edge device.
+        :paramtype service_identifier: str
+        :keyword remote_ip_address: The IP address of the ONVIF device that was discovered in the same
+         subnet as the IoT Edge device.
+        :paramtype remote_ip_address: str
+        :keyword scopes: An array of hostnames for the ONVIF discovered devices that are in the same
+         subnet as the IoT Edge device.
+        :paramtype scopes: list[str]
+        :keyword endpoints: An array of media profile endpoints that the ONVIF discovered device
+         supports.
+        :paramtype endpoints: list[str]
+        """
+        super(DiscoveredOnvifDevice, self).__init__(**kwargs)
+        self.service_identifier = kwargs.get('service_identifier', None)
+        self.remote_ip_address = kwargs.get('remote_ip_address', None)
+        self.scopes = kwargs.get('scopes', None)
+        self.endpoints = kwargs.get('endpoints', None)
+
+
+class DiscoveredOnvifDeviceCollection(msrest.serialization.Model):
+    """A list of ONVIF devices that were discovered in the same subnet as the IoT Edge device.
+
+    :ivar value: An array of ONVIF devices that have been discovered in the same subnet as the IoT
+     Edge device.
+    :vartype value: list[~azure.media.videoanalyzer.edge.models.DiscoveredOnvifDevice]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DiscoveredOnvifDevice]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword value: An array of ONVIF devices that have been discovered in the same subnet as the
+         IoT Edge device.
+        :paramtype value: list[~azure.media.videoanalyzer.edge.models.DiscoveredOnvifDevice]
+        """
+        super(DiscoveredOnvifDeviceCollection, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class EndpointBase(msrest.serialization.Model):
@@ -178,12 +279,12 @@ class EndpointBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param credentials: Credentials to be presented to the endpoint.
-    :type credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
-    :param url: Required. The endpoint URL for Video Analyzer to connect to.
-    :type url: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar credentials: Credentials to be presented to the endpoint.
+    :vartype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+    :ivar url: Required. The endpoint URL for Video Analyzer to connect to.
+    :vartype url: str
     """
 
     _validation = {
@@ -205,6 +306,12 @@ class EndpointBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword credentials: Credentials to be presented to the endpoint.
+        :paramtype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+        :keyword url: Required. The endpoint URL for Video Analyzer to connect to.
+        :paramtype url: str
+        """
         super(EndpointBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.credentials = kwargs.get('credentials', None)
@@ -219,21 +326,21 @@ class ExtensionProcessorBase(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param endpoint: Required. Endpoint details of the pipeline extension plugin.
-    :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
-    :param image: Required. Image transformations and formatting options to be applied to the video
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar endpoint: Required. Endpoint details of the pipeline extension plugin.
+    :vartype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+    :ivar image: Required. Image transformations and formatting options to be applied to the video
      frame(s) prior submission to the pipeline extension plugin.
-    :type image: ~azure.media.videoanalyzer.edge.models.ImageProperties
-    :param sampling_options: Media sampling parameters that define how often media is submitted to
+    :vartype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+    :ivar sampling_options: Media sampling parameters that define how often media is submitted to
      the extension plugin.
-    :type sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+    :vartype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
     """
 
     _validation = {
@@ -261,6 +368,21 @@ class ExtensionProcessorBase(ProcessorNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword endpoint: Required. Endpoint details of the pipeline extension plugin.
+        :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+        :keyword image: Required. Image transformations and formatting options to be applied to the
+         video frame(s) prior submission to the pipeline extension plugin.
+        :paramtype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+        :keyword sampling_options: Media sampling parameters that define how often media is submitted
+         to the extension plugin.
+        :paramtype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+        """
         super(ExtensionProcessorBase, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.ExtensionProcessorBase'  # type: str
         self.endpoint = kwargs['endpoint']
@@ -276,13 +398,13 @@ class SinkNodeBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
     """
 
     _validation = {
@@ -305,6 +427,13 @@ class SinkNodeBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        """
         super(SinkNodeBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.name = kwargs['name']
@@ -316,22 +445,22 @@ class FileSink(SinkNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param base_directory_path: Required. Absolute directory path where media files will be stored.
-    :type base_directory_path: str
-    :param file_name_pattern: Required. File name pattern for creating new files when performing
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar base_directory_path: Required. Absolute directory path where media files will be stored.
+    :vartype base_directory_path: str
+    :ivar file_name_pattern: Required. File name pattern for creating new files when performing
      event based recording. The pattern must include at least one system variable.
-    :type file_name_pattern: str
-    :param maximum_size_mi_b: Required. Maximum amount of disk space that can be used for storing
+    :vartype file_name_pattern: str
+    :ivar maximum_size_mi_b: Required. Maximum amount of disk space that can be used for storing
      files from this sink. Once this limit is reached, the oldest files from this sink will be
      automatically deleted.
-    :type maximum_size_mi_b: str
+    :vartype maximum_size_mi_b: str
     """
 
     _validation = {
@@ -356,6 +485,23 @@ class FileSink(SinkNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword base_directory_path: Required. Absolute directory path where media files will be
+         stored.
+        :paramtype base_directory_path: str
+        :keyword file_name_pattern: Required. File name pattern for creating new files when performing
+         event based recording. The pattern must include at least one system variable.
+        :paramtype file_name_pattern: str
+        :keyword maximum_size_mi_b: Required. Maximum amount of disk space that can be used for storing
+         files from this sink. Once this limit is reached, the oldest files from this sink will be
+         automatically deleted.
+        :paramtype maximum_size_mi_b: str
+        """
         super(FileSink, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.FileSink'  # type: str
         self.base_directory_path = kwargs['base_directory_path']
@@ -368,27 +514,27 @@ class GrpcExtension(ExtensionProcessorBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param endpoint: Required. Endpoint details of the pipeline extension plugin.
-    :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
-    :param image: Required. Image transformations and formatting options to be applied to the video
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar endpoint: Required. Endpoint details of the pipeline extension plugin.
+    :vartype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+    :ivar image: Required. Image transformations and formatting options to be applied to the video
      frame(s) prior submission to the pipeline extension plugin.
-    :type image: ~azure.media.videoanalyzer.edge.models.ImageProperties
-    :param sampling_options: Media sampling parameters that define how often media is submitted to
+    :vartype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+    :ivar sampling_options: Media sampling parameters that define how often media is submitted to
      the extension plugin.
-    :type sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
-    :param data_transfer: Required. Specifies how media is transferred to the extension plugin.
-    :type data_transfer: ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransfer
-    :param extension_configuration: An optional configuration string that is sent to the extension
+    :vartype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+    :ivar data_transfer: Required. Specifies how media is transferred to the extension plugin.
+    :vartype data_transfer: ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransfer
+    :ivar extension_configuration: An optional configuration string that is sent to the extension
      plugin. The configuration string is specific to each custom extension and it not understood
      neither validated by Video Analyzer. Please see https://aka.ms/ava-extension-grpc for details.
-    :type extension_configuration: str
+    :vartype extension_configuration: str
     """
 
     _validation = {
@@ -415,6 +561,28 @@ class GrpcExtension(ExtensionProcessorBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword endpoint: Required. Endpoint details of the pipeline extension plugin.
+        :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+        :keyword image: Required. Image transformations and formatting options to be applied to the
+         video frame(s) prior submission to the pipeline extension plugin.
+        :paramtype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+        :keyword sampling_options: Media sampling parameters that define how often media is submitted
+         to the extension plugin.
+        :paramtype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+        :keyword data_transfer: Required. Specifies how media is transferred to the extension plugin.
+        :paramtype data_transfer: ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransfer
+        :keyword extension_configuration: An optional configuration string that is sent to the
+         extension plugin. The configuration string is specific to each custom extension and it not
+         understood neither validated by Video Analyzer. Please see https://aka.ms/ava-extension-grpc
+         for details.
+        :paramtype extension_configuration: str
+        """
         super(GrpcExtension, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.GrpcExtension'  # type: str
         self.data_transfer = kwargs['data_transfer']
@@ -426,12 +594,12 @@ class GrpcExtensionDataTransfer(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param shared_memory_size_mi_b: The share memory buffer for sample transfers, in mebibytes. It
+    :ivar shared_memory_size_mi_b: The share memory buffer for sample transfers, in mebibytes. It
      can only be used with the 'SharedMemory' transfer mode.
-    :type shared_memory_size_mi_b: str
-    :param mode: Required. Data transfer mode: embedded or sharedMemory. Possible values include:
+    :vartype shared_memory_size_mi_b: str
+    :ivar mode: Required. Data transfer mode: embedded or sharedMemory. Possible values include:
      "embedded", "sharedMemory".
-    :type mode: str or ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransferMode
+    :vartype mode: str or ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransferMode
     """
 
     _validation = {
@@ -447,9 +615,48 @@ class GrpcExtensionDataTransfer(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword shared_memory_size_mi_b: The share memory buffer for sample transfers, in mebibytes.
+         It can only be used with the 'SharedMemory' transfer mode.
+        :paramtype shared_memory_size_mi_b: str
+        :keyword mode: Required. Data transfer mode: embedded or sharedMemory. Possible values include:
+         "embedded", "sharedMemory".
+        :paramtype mode: str or ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransferMode
+        """
         super(GrpcExtensionDataTransfer, self).__init__(**kwargs)
         self.shared_memory_size_mi_b = kwargs.get('shared_memory_size_mi_b', None)
         self.mode = kwargs['mode']
+
+
+class H264Configuration(msrest.serialization.Model):
+    """Class representing the H264 Configuration.
+
+    :ivar gov_length: Group of Video frames length.
+    :vartype gov_length: float
+    :ivar profile: The H264 Profile. Possible values include: "Baseline", "Main", "Extended",
+     "High".
+    :vartype profile: str or ~azure.media.videoanalyzer.edge.models.H264Profile
+    """
+
+    _attribute_map = {
+        'gov_length': {'key': 'govLength', 'type': 'float'},
+        'profile': {'key': 'profile', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword gov_length: Group of Video frames length.
+        :paramtype gov_length: float
+        :keyword profile: The H264 Profile. Possible values include: "Baseline", "Main", "Extended",
+         "High".
+        :paramtype profile: str or ~azure.media.videoanalyzer.edge.models.H264Profile
+        """
+        super(H264Configuration, self).__init__(**kwargs)
+        self.gov_length = kwargs.get('gov_length', None)
+        self.profile = kwargs.get('profile', None)
 
 
 class HttpExtension(ExtensionProcessorBase):
@@ -457,21 +664,21 @@ class HttpExtension(ExtensionProcessorBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param endpoint: Required. Endpoint details of the pipeline extension plugin.
-    :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
-    :param image: Required. Image transformations and formatting options to be applied to the video
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar endpoint: Required. Endpoint details of the pipeline extension plugin.
+    :vartype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+    :ivar image: Required. Image transformations and formatting options to be applied to the video
      frame(s) prior submission to the pipeline extension plugin.
-    :type image: ~azure.media.videoanalyzer.edge.models.ImageProperties
-    :param sampling_options: Media sampling parameters that define how often media is submitted to
+    :vartype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+    :ivar sampling_options: Media sampling parameters that define how often media is submitted to
      the extension plugin.
-    :type sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+    :vartype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
     """
 
     _validation = {
@@ -495,6 +702,21 @@ class HttpExtension(ExtensionProcessorBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword endpoint: Required. Endpoint details of the pipeline extension plugin.
+        :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+        :keyword image: Required. Image transformations and formatting options to be applied to the
+         video frame(s) prior submission to the pipeline extension plugin.
+        :paramtype image: ~azure.media.videoanalyzer.edge.models.ImageProperties
+        :keyword sampling_options: Media sampling parameters that define how often media is submitted
+         to the extension plugin.
+        :paramtype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
+        """
         super(HttpExtension, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.HttpExtension'  # type: str
 
@@ -504,14 +726,14 @@ class HttpHeaderCredentials(CredentialsBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param header_name: Required. HTTP header name.
-    :type header_name: str
-    :param header_value: Required. HTTP header value. It is recommended that this value is
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar header_name: Required. HTTP header name.
+    :vartype header_name: str
+    :ivar header_value: Required. HTTP header value. It is recommended that this value is
      parameterized as a secret string in order to prevent this value to be returned as part of the
      resource on API requests.
-    :type header_value: str
+    :vartype header_value: str
     """
 
     _validation = {
@@ -530,6 +752,14 @@ class HttpHeaderCredentials(CredentialsBase):
         self,
         **kwargs
     ):
+        """
+        :keyword header_name: Required. HTTP header name.
+        :paramtype header_name: str
+        :keyword header_value: Required. HTTP header value. It is recommended that this value is
+         parameterized as a secret string in order to prevent this value to be returned as part of the
+         resource on API requests.
+        :paramtype header_value: str
+        """
         super(HttpHeaderCredentials, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.HttpHeaderCredentials'  # type: str
         self.header_name = kwargs['header_name']
@@ -544,8 +774,8 @@ class ImageFormatProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -564,6 +794,8 @@ class ImageFormatProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ImageFormatProperties, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -573,8 +805,8 @@ class ImageFormatBmp(ImageFormatProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -589,6 +821,8 @@ class ImageFormatBmp(ImageFormatProperties):
         self,
         **kwargs
     ):
+        """
+        """
         super(ImageFormatBmp, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.ImageFormatBmp'  # type: str
 
@@ -598,10 +832,10 @@ class ImageFormatJpeg(ImageFormatProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param quality: Image quality value between 0 to 100 (best quality).
-    :type quality: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar quality: Image quality value between 0 to 100 (best quality).
+    :vartype quality: str
     """
 
     _validation = {
@@ -617,6 +851,10 @@ class ImageFormatJpeg(ImageFormatProperties):
         self,
         **kwargs
     ):
+        """
+        :keyword quality: Image quality value between 0 to 100 (best quality).
+        :paramtype quality: str
+        """
         super(ImageFormatJpeg, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.ImageFormatJpeg'  # type: str
         self.quality = kwargs.get('quality', None)
@@ -627,8 +865,8 @@ class ImageFormatPng(ImageFormatProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -643,6 +881,8 @@ class ImageFormatPng(ImageFormatProperties):
         self,
         **kwargs
     ):
+        """
+        """
         super(ImageFormatPng, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.ImageFormatPng'  # type: str
 
@@ -652,12 +892,12 @@ class ImageFormatRaw(ImageFormatProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param pixel_format: Required. Pixel format to be applied to the raw image. Possible values
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar pixel_format: Required. Pixel format to be applied to the raw image. Possible values
      include: "yuv420p", "rgb565be", "rgb565le", "rgb555be", "rgb555le", "rgb24", "bgr24", "argb",
      "rgba", "abgr", "bgra".
-    :type pixel_format: str or ~azure.media.videoanalyzer.edge.models.ImageFormatRawPixelFormat
+    :vartype pixel_format: str or ~azure.media.videoanalyzer.edge.models.ImageFormatRawPixelFormat
     """
 
     _validation = {
@@ -674,6 +914,13 @@ class ImageFormatRaw(ImageFormatProperties):
         self,
         **kwargs
     ):
+        """
+        :keyword pixel_format: Required. Pixel format to be applied to the raw image. Possible values
+         include: "yuv420p", "rgb565be", "rgb565le", "rgb555be", "rgb555le", "rgb24", "bgr24", "argb",
+         "rgba", "abgr", "bgra".
+        :paramtype pixel_format: str or
+         ~azure.media.videoanalyzer.edge.models.ImageFormatRawPixelFormat
+        """
         super(ImageFormatRaw, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.ImageFormatRaw'  # type: str
         self.pixel_format = kwargs['pixel_format']
@@ -682,10 +929,10 @@ class ImageFormatRaw(ImageFormatProperties):
 class ImageProperties(msrest.serialization.Model):
     """Image transformations and formatting options to be applied to the video frame(s).
 
-    :param scale: Image scaling mode.
-    :type scale: ~azure.media.videoanalyzer.edge.models.ImageScale
-    :param format: Base class for image formatting properties.
-    :type format: ~azure.media.videoanalyzer.edge.models.ImageFormatProperties
+    :ivar scale: Image scaling mode.
+    :vartype scale: ~azure.media.videoanalyzer.edge.models.ImageScale
+    :ivar format: Base class for image formatting properties.
+    :vartype format: ~azure.media.videoanalyzer.edge.models.ImageFormatProperties
     """
 
     _attribute_map = {
@@ -697,6 +944,12 @@ class ImageProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword scale: Image scaling mode.
+        :paramtype scale: ~azure.media.videoanalyzer.edge.models.ImageScale
+        :keyword format: Base class for image formatting properties.
+        :paramtype format: ~azure.media.videoanalyzer.edge.models.ImageFormatProperties
+        """
         super(ImageProperties, self).__init__(**kwargs)
         self.scale = kwargs.get('scale', None)
         self.format = kwargs.get('format', None)
@@ -705,13 +958,13 @@ class ImageProperties(msrest.serialization.Model):
 class ImageScale(msrest.serialization.Model):
     """Image scaling mode.
 
-    :param mode: Describes the image scaling mode to be applied. Default mode is 'pad'. Possible
+    :ivar mode: Describes the image scaling mode to be applied. Default mode is 'pad'. Possible
      values include: "preserveAspectRatio", "pad", "stretch".
-    :type mode: str or ~azure.media.videoanalyzer.edge.models.ImageScaleMode
-    :param width: The desired output image width.
-    :type width: str
-    :param height: The desired output image height.
-    :type height: str
+    :vartype mode: str or ~azure.media.videoanalyzer.edge.models.ImageScaleMode
+    :ivar width: The desired output image width.
+    :vartype width: str
+    :ivar height: The desired output image height.
+    :vartype height: str
     """
 
     _attribute_map = {
@@ -724,10 +977,58 @@ class ImageScale(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword mode: Describes the image scaling mode to be applied. Default mode is 'pad'. Possible
+         values include: "preserveAspectRatio", "pad", "stretch".
+        :paramtype mode: str or ~azure.media.videoanalyzer.edge.models.ImageScaleMode
+        :keyword width: The desired output image width.
+        :paramtype width: str
+        :keyword height: The desired output image height.
+        :paramtype height: str
+        """
         super(ImageScale, self).__init__(**kwargs)
         self.mode = kwargs.get('mode', None)
         self.width = kwargs.get('width', None)
         self.height = kwargs.get('height', None)
+
+
+class IotHubDeviceConnection(msrest.serialization.Model):
+    """Information that enables communication between the IoT Hub and the IoT device - allowing this edge module to act as a transparent gateway between the two.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar device_id: Required. The name of the IoT device configured and managed in IoT Hub.
+     (case-sensitive).
+    :vartype device_id: str
+    :ivar credentials: IoT device connection credentials. Currently IoT device symmetric key
+     credentials are supported.
+    :vartype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+    """
+
+    _validation = {
+        'device_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'device_id': {'key': 'deviceId', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword device_id: Required. The name of the IoT device configured and managed in IoT Hub.
+         (case-sensitive).
+        :paramtype device_id: str
+        :keyword credentials: IoT device connection credentials. Currently IoT device symmetric key
+         credentials are supported.
+        :paramtype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+        """
+        super(IotHubDeviceConnection, self).__init__(**kwargs)
+        self.device_id = kwargs['device_id']
+        self.credentials = kwargs.get('credentials', None)
 
 
 class IotHubMessageSink(SinkNodeBase):
@@ -735,16 +1036,16 @@ class IotHubMessageSink(SinkNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param hub_output_name: Required. Name of the Iot Edge Hub output to which the messages will be
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar hub_output_name: Required. Name of the Iot Edge Hub output to which the messages will be
      published.
-    :type hub_output_name: str
+    :vartype hub_output_name: str
     """
 
     _validation = {
@@ -765,6 +1066,16 @@ class IotHubMessageSink(SinkNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword hub_output_name: Required. Name of the Iot Edge Hub output to which the messages will
+         be published.
+        :paramtype hub_output_name: str
+        """
         super(IotHubMessageSink, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.IotHubMessageSink'  # type: str
         self.hub_output_name = kwargs['hub_output_name']
@@ -778,10 +1089,10 @@ class SourceNodeBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
     """
 
     _validation = {
@@ -802,6 +1113,10 @@ class SourceNodeBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        """
         super(SourceNodeBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.name = kwargs['name']
@@ -812,12 +1127,12 @@ class IotHubMessageSource(SourceNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param hub_input_name: Name of the IoT Edge Hub input from which messages will be consumed.
-    :type hub_input_name: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar hub_input_name: Name of the IoT Edge Hub input from which messages will be consumed.
+    :vartype hub_input_name: str
     """
 
     _validation = {
@@ -835,6 +1150,12 @@ class IotHubMessageSource(SourceNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword hub_input_name: Name of the IoT Edge Hub input from which messages will be consumed.
+        :paramtype hub_input_name: str
+        """
         super(IotHubMessageSource, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.IotHubMessageSource'  # type: str
         self.hub_input_name = kwargs.get('hub_input_name', None)
@@ -845,15 +1166,15 @@ class LineCrossingProcessor(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param lines: Required. An array of lines used to compute line crossing events.
-    :type lines: list[~azure.media.videoanalyzer.edge.models.NamedLineBase]
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar lines: Required. An array of lines used to compute line crossing events.
+    :vartype lines: list[~azure.media.videoanalyzer.edge.models.NamedLineBase]
     """
 
     _validation = {
@@ -874,6 +1195,15 @@ class LineCrossingProcessor(ProcessorNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword lines: Required. An array of lines used to compute line crossing events.
+        :paramtype lines: list[~azure.media.videoanalyzer.edge.models.NamedLineBase]
+        """
         super(LineCrossingProcessor, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.LineCrossingProcessor'  # type: str
         self.lines = kwargs['lines']
@@ -884,12 +1214,12 @@ class LivePipeline(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Live pipeline unique identifier.
-    :type name: str
-    :param system_data: Read-only system metadata associated with this object.
-    :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: Live pipeline properties.
-    :type properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
+    :ivar name: Required. Live pipeline unique identifier.
+    :vartype name: str
+    :ivar system_data: Read-only system metadata associated with this object.
+    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+    :ivar properties: Live pipeline properties.
+    :vartype properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
     """
 
     _validation = {
@@ -906,6 +1236,14 @@ class LivePipeline(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Live pipeline unique identifier.
+        :paramtype name: str
+        :keyword system_data: Read-only system metadata associated with this object.
+        :paramtype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :keyword properties: Live pipeline properties.
+        :paramtype properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
+        """
         super(LivePipeline, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.system_data = kwargs.get('system_data', None)
@@ -916,7 +1254,7 @@ class MethodRequest(msrest.serialization.Model):
     """Base class for direct method calls.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LivePipelineSetRequestBody, MethodRequestEmptyBodyBase, PipelineTopologySetRequestBody, LivePipelineListRequest, LivePipelineSetRequest, PipelineTopologyListRequest, PipelineTopologySetRequest.
+    sub-classes are: LivePipelineSetRequestBody, MethodRequestEmptyBodyBase, PipelineTopologySetRequestBody, RemoteDeviceAdapterSetRequestBody, LivePipelineListRequest, LivePipelineSetRequest, OnvifDeviceDiscoverRequest, OnvifDeviceGetRequest, PipelineTopologyListRequest, PipelineTopologySetRequest, RemoteDeviceAdapterListRequest, RemoteDeviceAdapterSetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -924,13 +1262,13 @@ class MethodRequest(msrest.serialization.Model):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
     }
 
     _attribute_map = {
@@ -939,24 +1277,28 @@ class MethodRequest(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'method_name': {'LivePipelineSetRequestBody': 'LivePipelineSetRequestBody', 'MethodRequestEmptyBodyBase': 'MethodRequestEmptyBodyBase', 'PipelineTopologySetRequestBody': 'PipelineTopologySetRequestBody', 'livePipelineList': 'LivePipelineListRequest', 'livePipelineSet': 'LivePipelineSetRequest', 'pipelineTopologyList': 'PipelineTopologyListRequest', 'pipelineTopologySet': 'PipelineTopologySetRequest'}
+        'method_name': {'LivePipelineSetRequestBody': 'LivePipelineSetRequestBody', 'MethodRequestEmptyBodyBase': 'MethodRequestEmptyBodyBase', 'PipelineTopologySetRequestBody': 'PipelineTopologySetRequestBody', 'RemoteDeviceAdapterSetRequestBody': 'RemoteDeviceAdapterSetRequestBody', 'livePipelineList': 'LivePipelineListRequest', 'livePipelineSet': 'LivePipelineSetRequest', 'onvifDeviceDiscover': 'OnvifDeviceDiscoverRequest', 'onvifDeviceGet': 'OnvifDeviceGetRequest', 'pipelineTopologyList': 'PipelineTopologyListRequest', 'pipelineTopologySet': 'PipelineTopologySetRequest', 'remoteDeviceAdapterList': 'RemoteDeviceAdapterListRequest', 'remoteDeviceAdapterSet': 'RemoteDeviceAdapterSetRequest'}
     }
-
-    api_version = "1.0"
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        """
         super(MethodRequest, self).__init__(**kwargs)
         self.method_name = None  # type: Optional[str]
+        self.api_version = kwargs.get('api_version', "1.1")
 
 
 class MethodRequestEmptyBodyBase(MethodRequest):
     """MethodRequestEmptyBodyBase.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LivePipelineActivateRequest, LivePipelineDeactivateRequest, LivePipelineDeleteRequest, LivePipelineGetRequest, PipelineTopologyDeleteRequest, PipelineTopologyGetRequest.
+    sub-classes are: LivePipelineActivateRequest, LivePipelineDeactivateRequest, LivePipelineDeleteRequest, LivePipelineGetRequest, PipelineTopologyDeleteRequest, PipelineTopologyGetRequest, RemoteDeviceAdapterDeleteRequest, RemoteDeviceAdapterGetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -964,15 +1306,15 @@ class MethodRequestEmptyBodyBase(MethodRequest):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -983,15 +1325,20 @@ class MethodRequestEmptyBodyBase(MethodRequest):
     }
 
     _subtype_map = {
-        'method_name': {'livePipelineActivate': 'LivePipelineActivateRequest', 'livePipelineDeactivate': 'LivePipelineDeactivateRequest', 'livePipelineDelete': 'LivePipelineDeleteRequest', 'livePipelineGet': 'LivePipelineGetRequest', 'pipelineTopologyDelete': 'PipelineTopologyDeleteRequest', 'pipelineTopologyGet': 'PipelineTopologyGetRequest'}
+        'method_name': {'livePipelineActivate': 'LivePipelineActivateRequest', 'livePipelineDeactivate': 'LivePipelineDeactivateRequest', 'livePipelineDelete': 'LivePipelineDeleteRequest', 'livePipelineGet': 'LivePipelineGetRequest', 'pipelineTopologyDelete': 'PipelineTopologyDeleteRequest', 'pipelineTopologyGet': 'PipelineTopologyGetRequest', 'remoteDeviceAdapterDelete': 'RemoteDeviceAdapterDeleteRequest', 'remoteDeviceAdapterGet': 'RemoteDeviceAdapterGetRequest'}
     }
-
-    api_version = "1.0"
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(MethodRequestEmptyBodyBase, self).__init__(**kwargs)
         self.method_name = 'MethodRequestEmptyBodyBase'  # type: str
         self.name = kwargs['name']
@@ -1006,15 +1353,15 @@ class LivePipelineActivateRequest(MethodRequestEmptyBodyBase):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -1024,12 +1371,17 @@ class LivePipelineActivateRequest(MethodRequestEmptyBodyBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(LivePipelineActivateRequest, self).__init__(**kwargs)
         self.method_name = 'livePipelineActivate'  # type: str
 
@@ -1037,12 +1389,12 @@ class LivePipelineActivateRequest(MethodRequestEmptyBodyBase):
 class LivePipelineCollection(msrest.serialization.Model):
     """A collection of live pipelines.
 
-    :param value: List of live pipelines.
-    :type value: list[~azure.media.videoanalyzer.edge.models.LivePipeline]
-    :param continuation_token: A continuation token to be used in subsequent calls when enumerating
+    :ivar value: List of live pipelines.
+    :vartype value: list[~azure.media.videoanalyzer.edge.models.LivePipeline]
+    :ivar continuation_token: A continuation token to be used in subsequent calls when enumerating
      through the collection. This is returned when the collection results won't fit in a single
      response.
-    :type continuation_token: str
+    :vartype continuation_token: str
     """
 
     _attribute_map = {
@@ -1054,6 +1406,14 @@ class LivePipelineCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: List of live pipelines.
+        :paramtype value: list[~azure.media.videoanalyzer.edge.models.LivePipeline]
+        :keyword continuation_token: A continuation token to be used in subsequent calls when
+         enumerating through the collection. This is returned when the collection results won't fit in a
+         single response.
+        :paramtype continuation_token: str
+        """
         super(LivePipelineCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.continuation_token = kwargs.get('continuation_token', None)
@@ -1068,15 +1428,15 @@ class LivePipelineDeactivateRequest(MethodRequestEmptyBodyBase):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -1086,12 +1446,17 @@ class LivePipelineDeactivateRequest(MethodRequestEmptyBodyBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(LivePipelineDeactivateRequest, self).__init__(**kwargs)
         self.method_name = 'livePipelineDeactivate'  # type: str
 
@@ -1105,15 +1470,15 @@ class LivePipelineDeleteRequest(MethodRequestEmptyBodyBase):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -1123,12 +1488,17 @@ class LivePipelineDeleteRequest(MethodRequestEmptyBodyBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(LivePipelineDeleteRequest, self).__init__(**kwargs)
         self.method_name = 'livePipelineDelete'  # type: str
 
@@ -1142,15 +1512,15 @@ class LivePipelineGetRequest(MethodRequestEmptyBodyBase):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -1160,12 +1530,17 @@ class LivePipelineGetRequest(MethodRequestEmptyBodyBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(LivePipelineGetRequest, self).__init__(**kwargs)
         self.method_name = 'livePipelineGet'  # type: str
 
@@ -1179,13 +1554,13 @@ class LivePipelineListRequest(MethodRequest):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
     }
 
     _attribute_map = {
@@ -1193,12 +1568,15 @@ class LivePipelineListRequest(MethodRequest):
         'api_version': {'key': '@apiVersion', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        """
         super(LivePipelineListRequest, self).__init__(**kwargs)
         self.method_name = 'livePipelineList'  # type: str
 
@@ -1206,20 +1584,20 @@ class LivePipelineListRequest(MethodRequest):
 class LivePipelineProperties(msrest.serialization.Model):
     """Live pipeline properties.
 
-    :param description: An optional description of the live pipeline.
-    :type description: str
-    :param topology_name: The reference to an existing pipeline topology defined for real-time
+    :ivar description: An optional description of the live pipeline.
+    :vartype description: str
+    :ivar topology_name: The reference to an existing pipeline topology defined for real-time
      content processing. When activated, this live pipeline will process content according to the
      pipeline topology definition.
-    :type topology_name: str
-    :param parameters: List of the instance level parameter values for the user-defined topology
+    :vartype topology_name: str
+    :ivar parameters: List of the instance level parameter values for the user-defined topology
      parameters. A pipeline can only define or override parameters values for parameters which have
      been declared in the referenced topology. Topology parameters without a default value must be
      defined. Topology parameters with a default value can be optionally be overridden.
-    :type parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDefinition]
-    :param state: Current pipeline state (read-only). Possible values include: "inactive",
+    :vartype parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDefinition]
+    :ivar state: Current pipeline state (read-only). Possible values include: "inactive",
      "activating", "active", "deactivating".
-    :type state: str or ~azure.media.videoanalyzer.edge.models.LivePipelineState
+    :vartype state: str or ~azure.media.videoanalyzer.edge.models.LivePipelineState
     """
 
     _attribute_map = {
@@ -1233,6 +1611,22 @@ class LivePipelineProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword description: An optional description of the live pipeline.
+        :paramtype description: str
+        :keyword topology_name: The reference to an existing pipeline topology defined for real-time
+         content processing. When activated, this live pipeline will process content according to the
+         pipeline topology definition.
+        :paramtype topology_name: str
+        :keyword parameters: List of the instance level parameter values for the user-defined topology
+         parameters. A pipeline can only define or override parameters values for parameters which have
+         been declared in the referenced topology. Topology parameters without a default value must be
+         defined. Topology parameters with a default value can be optionally be overridden.
+        :paramtype parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDefinition]
+        :keyword state: Current pipeline state (read-only). Possible values include: "inactive",
+         "activating", "active", "deactivating".
+        :paramtype state: str or ~azure.media.videoanalyzer.edge.models.LivePipelineState
+        """
         super(LivePipelineProperties, self).__init__(**kwargs)
         self.description = kwargs.get('description', None)
         self.topology_name = kwargs.get('topology_name', None)
@@ -1249,16 +1643,16 @@ class LivePipelineSetRequest(MethodRequest):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param live_pipeline: Required. Live Pipeline represents an unique instance of a pipeline
+    :ivar live_pipeline: Required. Live Pipeline represents an unique instance of a pipeline
      topology which is used for real-time content ingestion and analysis.
-    :type live_pipeline: ~azure.media.videoanalyzer.edge.models.LivePipeline
+    :vartype live_pipeline: ~azure.media.videoanalyzer.edge.models.LivePipeline
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'live_pipeline': {'required': True},
     }
 
@@ -1268,19 +1662,25 @@ class LivePipelineSetRequest(MethodRequest):
         'live_pipeline': {'key': 'livePipeline', 'type': 'LivePipeline'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword live_pipeline: Required. Live Pipeline represents an unique instance of a pipeline
+         topology which is used for real-time content ingestion and analysis.
+        :paramtype live_pipeline: ~azure.media.videoanalyzer.edge.models.LivePipeline
+        """
         super(LivePipelineSetRequest, self).__init__(**kwargs)
         self.method_name = 'livePipelineSet'  # type: str
         self.live_pipeline = kwargs['live_pipeline']
 
 
 class LivePipelineSetRequestBody(LivePipeline, MethodRequest):
-    """Live pipeline resource representation.
+    """Live Pipeline represents an unique instance of a pipeline topology which is used for real-time content ingestion and analysis.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1288,19 +1688,19 @@ class LivePipelineSetRequestBody(LivePipeline, MethodRequest):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Live pipeline unique identifier.
-    :type name: str
-    :param system_data: Read-only system metadata associated with this object.
-    :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: Live pipeline properties.
-    :type properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
+    :ivar name: Required. Live pipeline unique identifier.
+    :vartype name: str
+    :ivar system_data: Read-only system metadata associated with this object.
+    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+    :ivar properties: Live pipeline properties.
+    :vartype properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -1312,18 +1712,89 @@ class LivePipelineSetRequestBody(LivePipeline, MethodRequest):
         'properties': {'key': 'properties', 'type': 'LivePipelineProperties'},
     }
 
-    api_version = "1.0"
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Live pipeline unique identifier.
+        :paramtype name: str
+        :keyword system_data: Read-only system metadata associated with this object.
+        :paramtype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :keyword properties: Live pipeline properties.
+        :paramtype properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
+        """
+        super(LivePipelineSetRequestBody, self).__init__(**kwargs)
+        self.method_name = 'LivePipelineSetRequestBody'  # type: str
+        self.api_version = kwargs.get('api_version', "1.1")
+        self.method_name = 'LivePipelineSetRequestBody'  # type: str
+        self.name = kwargs['name']
+        self.system_data = kwargs.get('system_data', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class MediaProfile(msrest.serialization.Model):
+    """Class representing the ONVIF MediaProfiles.
+
+    :ivar name: The name of the Media Profile.
+    :vartype name: str
+    :ivar media_uri: Object representing the URI that will be used to request for media streaming.
+    :vartype media_uri: any
+    :ivar video_encoder_configuration: The Video encoder configuration.
+    :vartype video_encoder_configuration:
+     ~azure.media.videoanalyzer.edge.models.VideoEncoderConfiguration
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'media_uri': {'key': 'mediaUri', 'type': 'object'},
+        'video_encoder_configuration': {'key': 'videoEncoderConfiguration', 'type': 'VideoEncoderConfiguration'},
+    }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(LivePipelineSetRequestBody, self).__init__(**kwargs)
-        self.method_name = 'LivePipelineSetRequestBody'  # type: str
-        self.method_name = 'LivePipelineSetRequestBody'  # type: str
-        self.name = kwargs['name']
-        self.system_data = kwargs.get('system_data', None)
-        self.properties = kwargs.get('properties', None)
+        """
+        :keyword name: The name of the Media Profile.
+        :paramtype name: str
+        :keyword media_uri: Object representing the URI that will be used to request for media
+         streaming.
+        :paramtype media_uri: any
+        :keyword video_encoder_configuration: The Video encoder configuration.
+        :paramtype video_encoder_configuration:
+         ~azure.media.videoanalyzer.edge.models.VideoEncoderConfiguration
+        """
+        super(MediaProfile, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.media_uri = kwargs.get('media_uri', None)
+        self.video_encoder_configuration = kwargs.get('video_encoder_configuration', None)
+
+
+class MediaUri(msrest.serialization.Model):
+    """Object representing the URI that will be used to request for media streaming.
+
+    :ivar uri: URI that can be used for media streaming.
+    :vartype uri: str
+    """
+
+    _attribute_map = {
+        'uri': {'key': 'uri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword uri: URI that can be used for media streaming.
+        :paramtype uri: str
+        """
+        super(MediaUri, self).__init__(**kwargs)
+        self.uri = kwargs.get('uri', None)
 
 
 class MotionDetectionProcessor(ProcessorNodeBase):
@@ -1331,23 +1802,23 @@ class MotionDetectionProcessor(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param sensitivity: Motion detection sensitivity: low, medium, high. Possible values include:
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar sensitivity: Motion detection sensitivity: low, medium, high. Possible values include:
      "low", "medium", "high".
-    :type sensitivity: str or ~azure.media.videoanalyzer.edge.models.MotionDetectionSensitivity
-    :param output_motion_region: Indicates whether the processor should detect and output the
+    :vartype sensitivity: str or ~azure.media.videoanalyzer.edge.models.MotionDetectionSensitivity
+    :ivar output_motion_region: Indicates whether the processor should detect and output the
      regions within the video frame where motion was detected. Default is true.
-    :type output_motion_region: bool
-    :param event_aggregation_window: Time window duration on which events are aggregated before
+    :vartype output_motion_region: bool
+    :ivar event_aggregation_window: Time window duration on which events are aggregated before
      being emitted. Value must be specified in ISO8601 duration format (i.e. "PT2S" equals 2
      seconds). Use 0 seconds for no aggregation. Default is 1 second.
-    :type event_aggregation_window: str
+    :vartype event_aggregation_window: str
     """
 
     _validation = {
@@ -1369,11 +1840,58 @@ class MotionDetectionProcessor(ProcessorNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword sensitivity: Motion detection sensitivity: low, medium, high. Possible values include:
+         "low", "medium", "high".
+        :paramtype sensitivity: str or
+         ~azure.media.videoanalyzer.edge.models.MotionDetectionSensitivity
+        :keyword output_motion_region: Indicates whether the processor should detect and output the
+         regions within the video frame where motion was detected. Default is true.
+        :paramtype output_motion_region: bool
+        :keyword event_aggregation_window: Time window duration on which events are aggregated before
+         being emitted. Value must be specified in ISO8601 duration format (i.e. "PT2S" equals 2
+         seconds). Use 0 seconds for no aggregation. Default is 1 second.
+        :paramtype event_aggregation_window: str
+        """
         super(MotionDetectionProcessor, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.MotionDetectionProcessor'  # type: str
         self.sensitivity = kwargs.get('sensitivity', None)
         self.output_motion_region = kwargs.get('output_motion_region', None)
         self.event_aggregation_window = kwargs.get('event_aggregation_window', None)
+
+
+class MPEG4Configuration(msrest.serialization.Model):
+    """Class representing the MPEG4 Configuration.
+
+    :ivar gov_length: Group of Video frames length.
+    :vartype gov_length: float
+    :ivar profile: The MPEG4 Profile. Possible values include: "SP", "ASP".
+    :vartype profile: str or ~azure.media.videoanalyzer.edge.models.MPEG4Profile
+    """
+
+    _attribute_map = {
+        'gov_length': {'key': 'govLength', 'type': 'float'},
+        'profile': {'key': 'profile', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword gov_length: Group of Video frames length.
+        :paramtype gov_length: float
+        :keyword profile: The MPEG4 Profile. Possible values include: "SP", "ASP".
+        :paramtype profile: str or ~azure.media.videoanalyzer.edge.models.MPEG4Profile
+        """
+        super(MPEG4Configuration, self).__init__(**kwargs)
+        self.gov_length = kwargs.get('gov_length', None)
+        self.profile = kwargs.get('profile', None)
 
 
 class NamedLineBase(msrest.serialization.Model):
@@ -1384,10 +1902,10 @@ class NamedLineBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Line name. Must be unique within the node.
-    :type name: str
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Line name. Must be unique within the node.
+    :vartype name: str
     """
 
     _validation = {
@@ -1408,6 +1926,10 @@ class NamedLineBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Line name. Must be unique within the node.
+        :paramtype name: str
+        """
         super(NamedLineBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.name = kwargs['name']
@@ -1418,15 +1940,15 @@ class NamedLineString(NamedLineBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Line name. Must be unique within the node.
-    :type name: str
-    :param line: Required. Point coordinates for the line start and end, respectively. Example:
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Line name. Must be unique within the node.
+    :vartype name: str
+    :ivar line: Required. Point coordinates for the line start and end, respectively. Example:
      '[[0.3, 0.2],[0.9, 0.8]]'. Each point is expressed as [LEFT, TOP] coordinate ratios ranging
      from 0.0 to 1.0, where [0,0] is the upper-left frame corner and [1, 1] is the bottom-right
      frame corner.
-    :type line: str
+    :vartype line: str
     """
 
     _validation = {
@@ -1445,6 +1967,15 @@ class NamedLineString(NamedLineBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Line name. Must be unique within the node.
+        :paramtype name: str
+        :keyword line: Required. Point coordinates for the line start and end, respectively. Example:
+         '[[0.3, 0.2],[0.9, 0.8]]'. Each point is expressed as [LEFT, TOP] coordinate ratios ranging
+         from 0.0 to 1.0, where [0,0] is the upper-left frame corner and [1, 1] is the bottom-right
+         frame corner.
+        :paramtype line: str
+        """
         super(NamedLineString, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.NamedLineString'  # type: str
         self.line = kwargs['line']
@@ -1458,10 +1989,10 @@ class NamedPolygonBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Polygon name. Must be unique within the node.
-    :type name: str
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Polygon name. Must be unique within the node.
+    :vartype name: str
     """
 
     _validation = {
@@ -1482,6 +2013,10 @@ class NamedPolygonBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Polygon name. Must be unique within the node.
+        :paramtype name: str
+        """
         super(NamedPolygonBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.name = kwargs['name']
@@ -1492,14 +2027,14 @@ class NamedPolygonString(NamedPolygonBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Polygon name. Must be unique within the node.
-    :type name: str
-    :param polygon: Required. Point coordinates for the polygon. Example: '[[0.3, 0.2],[0.9,
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Polygon name. Must be unique within the node.
+    :vartype name: str
+    :ivar polygon: Required. Point coordinates for the polygon. Example: '[[0.3, 0.2],[0.9,
      0.8],[0.7, 0.6]]'. Each point is expressed as [LEFT, TOP] coordinate ratios ranging from 0.0 to
      1.0, where [0,0] is the upper-left frame corner and [1, 1] is the bottom-right frame corner.
-    :type polygon: str
+    :vartype polygon: str
     """
 
     _validation = {
@@ -1518,6 +2053,14 @@ class NamedPolygonString(NamedPolygonBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Polygon name. Must be unique within the node.
+        :paramtype name: str
+        :keyword polygon: Required. Point coordinates for the polygon. Example: '[[0.3, 0.2],[0.9,
+         0.8],[0.7, 0.6]]'. Each point is expressed as [LEFT, TOP] coordinate ratios ranging from 0.0 to
+         1.0, where [0,0] is the upper-left frame corner and [1, 1] is the bottom-right frame corner.
+        :paramtype polygon: str
+        """
         super(NamedPolygonString, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.NamedPolygonString'  # type: str
         self.polygon = kwargs['polygon']
@@ -1528,12 +2071,12 @@ class NodeInput(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_name: Required. The name of the upstream node in the pipeline which output is used
+    :ivar node_name: Required. The name of the upstream node in the pipeline which output is used
      as input of the current node.
-    :type node_name: str
-    :param output_selectors: Allows for the selection of specific data streams (eg. video only)
-     from another node.
-    :type output_selectors: list[~azure.media.videoanalyzer.edge.models.OutputSelector]
+    :vartype node_name: str
+    :ivar output_selectors: Allows for the selection of specific data streams (eg. video only) from
+     another node.
+    :vartype output_selectors: list[~azure.media.videoanalyzer.edge.models.OutputSelector]
     """
 
     _validation = {
@@ -1549,6 +2092,14 @@ class NodeInput(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword node_name: Required. The name of the upstream node in the pipeline which output is
+         used as input of the current node.
+        :paramtype node_name: str
+        :keyword output_selectors: Allows for the selection of specific data streams (eg. video only)
+         from another node.
+        :paramtype output_selectors: list[~azure.media.videoanalyzer.edge.models.OutputSelector]
+        """
         super(NodeInput, self).__init__(**kwargs)
         self.node_name = kwargs['node_name']
         self.output_selectors = kwargs.get('output_selectors', None)
@@ -1559,16 +2110,16 @@ class ObjectTrackingProcessor(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param accuracy: Object tracker accuracy: low, medium, high. Higher accuracy leads to higher
-     CPU consumption in average. Possible values include: "low", "medium", "high".
-    :type accuracy: str or ~azure.media.videoanalyzer.edge.models.ObjectTrackingAccuracy
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar accuracy: Object tracker accuracy: low, medium, high. Higher accuracy leads to higher CPU
+     consumption in average. Possible values include: "low", "medium", "high".
+    :vartype accuracy: str or ~azure.media.videoanalyzer.edge.models.ObjectTrackingAccuracy
     """
 
     _validation = {
@@ -1588,21 +2139,260 @@ class ObjectTrackingProcessor(ProcessorNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword accuracy: Object tracker accuracy: low, medium, high. Higher accuracy leads to higher
+         CPU consumption in average. Possible values include: "low", "medium", "high".
+        :paramtype accuracy: str or ~azure.media.videoanalyzer.edge.models.ObjectTrackingAccuracy
+        """
         super(ObjectTrackingProcessor, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.ObjectTrackingProcessor'  # type: str
         self.accuracy = kwargs.get('accuracy', None)
 
 
+class OnvifDevice(msrest.serialization.Model):
+    """The ONVIF device properties.
+
+    :ivar hostname: The hostname of the ONVIF device.
+    :vartype hostname: ~azure.media.videoanalyzer.edge.models.OnvifHostName
+    :ivar system_date_time: The system date and time of the ONVIF device.
+    :vartype system_date_time: ~azure.media.videoanalyzer.edge.models.OnvifSystemDateTime
+    :ivar dns: The ONVIF device DNS properties.
+    :vartype dns: ~azure.media.videoanalyzer.edge.models.OnvifDns
+    :ivar media_profiles: An array of of ONVIF media profiles supported by the ONVIF device.
+    :vartype media_profiles: list[~azure.media.videoanalyzer.edge.models.MediaProfile]
+    """
+
+    _attribute_map = {
+        'hostname': {'key': 'hostname', 'type': 'OnvifHostName'},
+        'system_date_time': {'key': 'systemDateTime', 'type': 'OnvifSystemDateTime'},
+        'dns': {'key': 'dns', 'type': 'OnvifDns'},
+        'media_profiles': {'key': 'mediaProfiles', 'type': '[MediaProfile]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword hostname: The hostname of the ONVIF device.
+        :paramtype hostname: ~azure.media.videoanalyzer.edge.models.OnvifHostName
+        :keyword system_date_time: The system date and time of the ONVIF device.
+        :paramtype system_date_time: ~azure.media.videoanalyzer.edge.models.OnvifSystemDateTime
+        :keyword dns: The ONVIF device DNS properties.
+        :paramtype dns: ~azure.media.videoanalyzer.edge.models.OnvifDns
+        :keyword media_profiles: An array of of ONVIF media profiles supported by the ONVIF device.
+        :paramtype media_profiles: list[~azure.media.videoanalyzer.edge.models.MediaProfile]
+        """
+        super(OnvifDevice, self).__init__(**kwargs)
+        self.hostname = kwargs.get('hostname', None)
+        self.system_date_time = kwargs.get('system_date_time', None)
+        self.dns = kwargs.get('dns', None)
+        self.media_profiles = kwargs.get('media_profiles', None)
+
+
+class OnvifDeviceDiscoverRequest(MethodRequest):
+    """Lists all the discoverable ONVIF devices on the same subnet as the Edge Module.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
+    :vartype api_version: str
+    :ivar discovery_duration: The amount of time that the ONVIF device discovery will wait for
+     supported device responses.
+    :vartype discovery_duration: str
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        'discovery_duration': {'key': 'discoveryDuration', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword discovery_duration: The amount of time that the ONVIF device discovery will wait for
+         supported device responses.
+        :paramtype discovery_duration: str
+        """
+        super(OnvifDeviceDiscoverRequest, self).__init__(**kwargs)
+        self.method_name = 'onvifDeviceDiscover'  # type: str
+        self.discovery_duration = kwargs.get('discovery_duration', None)
+
+
+class OnvifDeviceGetRequest(MethodRequest):
+    """Retrieves properties and media profiles of an ONVIF device.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
+    :vartype api_version: str
+    :ivar endpoint: Required. Base class for endpoints.
+    :vartype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+        'endpoint': {'required': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword endpoint: Required. Base class for endpoints.
+        :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+        """
+        super(OnvifDeviceGetRequest, self).__init__(**kwargs)
+        self.method_name = 'onvifDeviceGet'  # type: str
+        self.endpoint = kwargs['endpoint']
+
+
+class OnvifDns(msrest.serialization.Model):
+    """The ONVIF device DNS properties.
+
+    :ivar from_dhcp: Result value showing if the ONVIF device is configured to use DHCP.
+    :vartype from_dhcp: bool
+    :ivar ipv4_address: An array of IPv4 address for the discovered ONVIF device.
+    :vartype ipv4_address: list[str]
+    :ivar ipv6_address: An array of IPv6 address for the discovered ONVIF device.
+    :vartype ipv6_address: list[str]
+    """
+
+    _attribute_map = {
+        'from_dhcp': {'key': 'fromDhcp', 'type': 'bool'},
+        'ipv4_address': {'key': 'ipv4Address', 'type': '[str]'},
+        'ipv6_address': {'key': 'ipv6Address', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword from_dhcp: Result value showing if the ONVIF device is configured to use DHCP.
+        :paramtype from_dhcp: bool
+        :keyword ipv4_address: An array of IPv4 address for the discovered ONVIF device.
+        :paramtype ipv4_address: list[str]
+        :keyword ipv6_address: An array of IPv6 address for the discovered ONVIF device.
+        :paramtype ipv6_address: list[str]
+        """
+        super(OnvifDns, self).__init__(**kwargs)
+        self.from_dhcp = kwargs.get('from_dhcp', None)
+        self.ipv4_address = kwargs.get('ipv4_address', None)
+        self.ipv6_address = kwargs.get('ipv6_address', None)
+
+
+class OnvifHostName(msrest.serialization.Model):
+    """The ONVIF device DNS properties.
+
+    :ivar from_dhcp: Result value showing if the ONVIF device is configured to use DHCP.
+    :vartype from_dhcp: bool
+    :ivar hostname: The hostname of the ONVIF device.
+    :vartype hostname: str
+    """
+
+    _attribute_map = {
+        'from_dhcp': {'key': 'fromDhcp', 'type': 'bool'},
+        'hostname': {'key': 'hostname', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword from_dhcp: Result value showing if the ONVIF device is configured to use DHCP.
+        :paramtype from_dhcp: bool
+        :keyword hostname: The hostname of the ONVIF device.
+        :paramtype hostname: str
+        """
+        super(OnvifHostName, self).__init__(**kwargs)
+        self.from_dhcp = kwargs.get('from_dhcp', None)
+        self.hostname = kwargs.get('hostname', None)
+
+
+class OnvifSystemDateTime(msrest.serialization.Model):
+    """The ONVIF device DNS properties.
+
+    :ivar type: An enum value determining whether the date time was configured using NTP or manual.
+     Possible values include: "Ntp", "Manual".
+    :vartype type: str or ~azure.media.videoanalyzer.edge.models.OnvifSystemDateTimeType
+    :ivar time: The device datetime returned when calling the request.
+    :vartype time: str
+    :ivar time_zone: The timezone of the ONVIF device datetime.
+    :vartype time_zone: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'time': {'key': 'time', 'type': 'str'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword type: An enum value determining whether the date time was configured using NTP or
+         manual. Possible values include: "Ntp", "Manual".
+        :paramtype type: str or ~azure.media.videoanalyzer.edge.models.OnvifSystemDateTimeType
+        :keyword time: The device datetime returned when calling the request.
+        :paramtype time: str
+        :keyword time_zone: The timezone of the ONVIF device datetime.
+        :paramtype time_zone: str
+        """
+        super(OnvifSystemDateTime, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.time = kwargs.get('time', None)
+        self.time_zone = kwargs.get('time_zone', None)
+
+
 class OutputSelector(msrest.serialization.Model):
     """Allows for the selection of particular streams from another node.
 
-    :param property: The property of the data stream to be used as the selection criteria. Possible
+    :ivar property: The property of the data stream to be used as the selection criteria. Possible
      values include: "mediaType".
-    :type property: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorProperty
-    :param operator: The operator to compare properties by. Possible values include: "is", "isNot".
-    :type operator: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorOperator
-    :param value: Value to compare against.
-    :type value: str
+    :vartype property: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorProperty
+    :ivar operator: The operator to compare properties by. Possible values include: "is", "isNot".
+    :vartype operator: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorOperator
+    :ivar value: Value to compare against.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -1615,6 +2405,16 @@ class OutputSelector(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword property: The property of the data stream to be used as the selection criteria.
+         Possible values include: "mediaType".
+        :paramtype property: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorProperty
+        :keyword operator: The operator to compare properties by. Possible values include: "is",
+         "isNot".
+        :paramtype operator: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorOperator
+        :keyword value: Value to compare against.
+        :paramtype value: str
+        """
         super(OutputSelector, self).__init__(**kwargs)
         self.property = kwargs.get('property', None)
         self.operator = kwargs.get('operator', None)
@@ -1626,16 +2426,16 @@ class ParameterDeclaration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the parameter.
-    :type name: str
-    :param type: Required. Type of the parameter. Possible values include: "string",
-     "secretString", "int", "double", "bool".
-    :type type: str or ~azure.media.videoanalyzer.edge.models.ParameterType
-    :param description: Description of the parameter.
-    :type description: str
-    :param default: The default value for the parameter to be used if the live pipeline does not
+    :ivar name: Required. Name of the parameter.
+    :vartype name: str
+    :ivar type: Required. Type of the parameter. Possible values include: "string", "secretString",
+     "int", "double", "bool".
+    :vartype type: str or ~azure.media.videoanalyzer.edge.models.ParameterType
+    :ivar description: Description of the parameter.
+    :vartype description: str
+    :ivar default: The default value for the parameter to be used if the live pipeline does not
      specify a value.
-    :type default: str
+    :vartype default: str
     """
 
     _validation = {
@@ -1654,6 +2454,18 @@ class ParameterDeclaration(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of the parameter.
+        :paramtype name: str
+        :keyword type: Required. Type of the parameter. Possible values include: "string",
+         "secretString", "int", "double", "bool".
+        :paramtype type: str or ~azure.media.videoanalyzer.edge.models.ParameterType
+        :keyword description: Description of the parameter.
+        :paramtype description: str
+        :keyword default: The default value for the parameter to be used if the live pipeline does not
+         specify a value.
+        :paramtype default: str
+        """
         super(ParameterDeclaration, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.type = kwargs['type']
@@ -1666,10 +2478,10 @@ class ParameterDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the parameter declared in the pipeline topology.
-    :type name: str
-    :param value: Parameter value to be applied on this specific live pipeline.
-    :type value: str
+    :ivar name: Required. Name of the parameter declared in the pipeline topology.
+    :vartype name: str
+    :ivar value: Parameter value to be applied on this specific live pipeline.
+    :vartype value: str
     """
 
     _validation = {
@@ -1685,6 +2497,12 @@ class ParameterDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of the parameter declared in the pipeline topology.
+        :paramtype name: str
+        :keyword value: Parameter value to be applied on this specific live pipeline.
+        :paramtype value: str
+        """
         super(ParameterDefinition, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.value = kwargs.get('value', None)
@@ -1695,10 +2513,10 @@ class PemCertificateList(CertificateSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param certificates: Required. PEM formatted public certificates. One certificate per entry.
-    :type certificates: list[str]
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar certificates: Required. PEM formatted public certificates. One certificate per entry.
+    :vartype certificates: list[str]
     """
 
     _validation = {
@@ -1715,6 +2533,10 @@ class PemCertificateList(CertificateSource):
         self,
         **kwargs
     ):
+        """
+        :keyword certificates: Required. PEM formatted public certificates. One certificate per entry.
+        :paramtype certificates: list[str]
+        """
         super(PemCertificateList, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.PemCertificateList'  # type: str
         self.certificates = kwargs['certificates']
@@ -1731,12 +2553,12 @@ class PipelineTopology(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Pipeline topology unique identifier.
-    :type name: str
-    :param system_data: Read-only system metadata associated with this object.
-    :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: Pipeline topology properties.
-    :type properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
+    :ivar name: Required. Pipeline topology unique identifier.
+    :vartype name: str
+    :ivar system_data: Read-only system metadata associated with this object.
+    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+    :ivar properties: Pipeline topology properties.
+    :vartype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
     """
 
     _validation = {
@@ -1753,6 +2575,14 @@ class PipelineTopology(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Pipeline topology unique identifier.
+        :paramtype name: str
+        :keyword system_data: Read-only system metadata associated with this object.
+        :paramtype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :keyword properties: Pipeline topology properties.
+        :paramtype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
+        """
         super(PipelineTopology, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.system_data = kwargs.get('system_data', None)
@@ -1762,12 +2592,12 @@ class PipelineTopology(msrest.serialization.Model):
 class PipelineTopologyCollection(msrest.serialization.Model):
     """A collection of pipeline topologies.
 
-    :param value: List of pipeline topologies.
-    :type value: list[~azure.media.videoanalyzer.edge.models.PipelineTopology]
-    :param continuation_token: A continuation token to be used in subsequent calls when enumerating
+    :ivar value: List of pipeline topologies.
+    :vartype value: list[~azure.media.videoanalyzer.edge.models.PipelineTopology]
+    :ivar continuation_token: A continuation token to be used in subsequent calls when enumerating
      through the collection. This is returned when the collection results won't fit in a single
      response.
-    :type continuation_token: str
+    :vartype continuation_token: str
     """
 
     _attribute_map = {
@@ -1779,6 +2609,14 @@ class PipelineTopologyCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword value: List of pipeline topologies.
+        :paramtype value: list[~azure.media.videoanalyzer.edge.models.PipelineTopology]
+        :keyword continuation_token: A continuation token to be used in subsequent calls when
+         enumerating through the collection. This is returned when the collection results won't fit in a
+         single response.
+        :paramtype continuation_token: str
+        """
         super(PipelineTopologyCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.continuation_token = kwargs.get('continuation_token', None)
@@ -1793,15 +2631,15 @@ class PipelineTopologyDeleteRequest(MethodRequestEmptyBodyBase):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -1811,12 +2649,17 @@ class PipelineTopologyDeleteRequest(MethodRequestEmptyBodyBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(PipelineTopologyDeleteRequest, self).__init__(**kwargs)
         self.method_name = 'pipelineTopologyDelete'  # type: str
 
@@ -1830,15 +2673,15 @@ class PipelineTopologyGetRequest(MethodRequestEmptyBodyBase):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Resource name.
-    :type name: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -1848,12 +2691,17 @@ class PipelineTopologyGetRequest(MethodRequestEmptyBodyBase):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
         super(PipelineTopologyGetRequest, self).__init__(**kwargs)
         self.method_name = 'pipelineTopologyGet'  # type: str
 
@@ -1867,13 +2715,13 @@ class PipelineTopologyListRequest(MethodRequest):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
     }
 
     _attribute_map = {
@@ -1881,12 +2729,15 @@ class PipelineTopologyListRequest(MethodRequest):
         'api_version': {'key': '@apiVersion', 'type': 'str'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        """
         super(PipelineTopologyListRequest, self).__init__(**kwargs)
         self.method_name = 'pipelineTopologyList'  # type: str
 
@@ -1894,23 +2745,23 @@ class PipelineTopologyListRequest(MethodRequest):
 class PipelineTopologyProperties(msrest.serialization.Model):
     """Pipeline topology properties.
 
-    :param description: An optional description of the pipeline topology. It is recommended that
-     the expected use of the topology to be described here.
-    :type description: str
-    :param parameters: List of the topology parameter declarations. Parameters declared here can be
+    :ivar description: An optional description of the pipeline topology. It is recommended that the
+     expected use of the topology to be described here.
+    :vartype description: str
+    :ivar parameters: List of the topology parameter declarations. Parameters declared here can be
      referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
      Parameters can have optional default values and can later be defined in individual instances of
      the pipeline.
-    :type parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDeclaration]
-    :param sources: List of the topology source nodes. Source nodes enable external data to be
+    :vartype parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDeclaration]
+    :ivar sources: List of the topology source nodes. Source nodes enable external data to be
      ingested by the pipeline.
-    :type sources: list[~azure.media.videoanalyzer.edge.models.SourceNodeBase]
-    :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
-     to be analyzed, processed or transformed.
-    :type processors: list[~azure.media.videoanalyzer.edge.models.ProcessorNodeBase]
-    :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+    :vartype sources: list[~azure.media.videoanalyzer.edge.models.SourceNodeBase]
+    :ivar processors: List of the topology processor nodes. Processor nodes enable pipeline data to
+     be analyzed, processed or transformed.
+    :vartype processors: list[~azure.media.videoanalyzer.edge.models.ProcessorNodeBase]
+    :ivar sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
      exported.
-    :type sinks: list[~azure.media.videoanalyzer.edge.models.SinkNodeBase]
+    :vartype sinks: list[~azure.media.videoanalyzer.edge.models.SinkNodeBase]
     """
 
     _attribute_map = {
@@ -1925,6 +2776,25 @@ class PipelineTopologyProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword description: An optional description of the pipeline topology. It is recommended that
+         the expected use of the topology to be described here.
+        :paramtype description: str
+        :keyword parameters: List of the topology parameter declarations. Parameters declared here can
+         be referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string
+         pattern. Parameters can have optional default values and can later be defined in individual
+         instances of the pipeline.
+        :paramtype parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDeclaration]
+        :keyword sources: List of the topology source nodes. Source nodes enable external data to be
+         ingested by the pipeline.
+        :paramtype sources: list[~azure.media.videoanalyzer.edge.models.SourceNodeBase]
+        :keyword processors: List of the topology processor nodes. Processor nodes enable pipeline data
+         to be analyzed, processed or transformed.
+        :paramtype processors: list[~azure.media.videoanalyzer.edge.models.ProcessorNodeBase]
+        :keyword sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+         exported.
+        :paramtype sinks: list[~azure.media.videoanalyzer.edge.models.SinkNodeBase]
+        """
         super(PipelineTopologyProperties, self).__init__(**kwargs)
         self.description = kwargs.get('description', None)
         self.parameters = kwargs.get('parameters', None)
@@ -1942,9 +2812,10 @@ class PipelineTopologySetRequest(MethodRequest):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param pipeline_topology: Required. Pipeline topology describes the processing steps to be
+    :ivar pipeline_topology: Required. Pipeline topology describes the processing steps to be
      applied when processing media for a particular outcome. The topology should be defined
      according to the scenario to be achieved and can be reused across many pipeline instances which
      share the same processing characteristics. For instance, a pipeline topology which acquires
@@ -1963,12 +2834,11 @@ class PipelineTopologySetRequest(MethodRequest):
      * Processors: list of nodes which perform data analysis or transformations.
        -Sinks: list of one or more data sinks which allow for data to be stored or exported to
      other destinations.
-    :type pipeline_topology: ~azure.media.videoanalyzer.edge.models.PipelineTopology
+    :vartype pipeline_topology: ~azure.media.videoanalyzer.edge.models.PipelineTopology
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'pipeline_topology': {'required': True},
     }
 
@@ -1978,19 +2848,48 @@ class PipelineTopologySetRequest(MethodRequest):
         'pipeline_topology': {'key': 'pipelineTopology', 'type': 'PipelineTopology'},
     }
 
-    api_version = "1.0"
-
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword pipeline_topology: Required. Pipeline topology describes the processing steps to be
+         applied when processing media for a particular outcome. The topology should be defined
+         according to the scenario to be achieved and can be reused across many pipeline instances which
+         share the same processing characteristics. For instance, a pipeline topology which acquires
+         data from a RTSP camera, process it with an specific AI model and stored the data on the cloud
+         can be reused across many different cameras, as long as the same processing should be applied
+         across all the cameras. Individual instance properties can be defined through the use of
+         user-defined parameters, which allow for a topology to be parameterized, thus allowing
+         individual pipelines to refer to different values, such as individual cameras RTSP endpoints
+         and credentials. Overall a topology is composed of the following:
+        
+        
+         * Parameters: list of user defined parameters that can be references across the topology
+         nodes.
+         * Sources: list of one or more data sources nodes such as an RTSP source which allows for
+         media to be ingested from cameras.
+         * Processors: list of nodes which perform data analysis or transformations.
+           -Sinks: list of one or more data sinks which allow for data to be stored or exported to
+         other destinations.
+        :paramtype pipeline_topology: ~azure.media.videoanalyzer.edge.models.PipelineTopology
+        """
         super(PipelineTopologySetRequest, self).__init__(**kwargs)
         self.method_name = 'pipelineTopologySet'  # type: str
         self.pipeline_topology = kwargs['pipeline_topology']
 
 
 class PipelineTopologySetRequestBody(PipelineTopology, MethodRequest):
-    """Pipeline topology resource representation.
+    """Pipeline topology describes the processing steps to be applied when processing media for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which acquires data from a RTSP camera, process it with an specific AI model and stored the data on the cloud can be reused across many different cameras, as long as the same processing should be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized, thus allowing individual pipelines to refer to different values, such as individual cameras RTSP endpoints and credentials. Overall a topology is composed of the following:
+
+
+* Parameters: list of user defined parameters that can be references across the topology nodes.
+* Sources: list of one or more data sources nodes such as an RTSP source which allows for media to be ingested from cameras.
+* Processors: list of nodes which perform data analysis or transformations.
+  -Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1998,19 +2897,19 @@ class PipelineTopologySetRequestBody(PipelineTopology, MethodRequest):
 
     :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
     :vartype api_version: str
-    :param name: Required. Pipeline topology unique identifier.
-    :type name: str
-    :param system_data: Read-only system metadata associated with this object.
-    :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: Pipeline topology properties.
-    :type properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
+    :ivar name: Required. Pipeline topology unique identifier.
+    :vartype name: str
+    :ivar system_data: Read-only system metadata associated with this object.
+    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+    :ivar properties: Pipeline topology properties.
+    :vartype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
     """
 
     _validation = {
         'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
         'name': {'required': True},
     }
 
@@ -2022,18 +2921,450 @@ class PipelineTopologySetRequestBody(PipelineTopology, MethodRequest):
         'properties': {'key': 'properties', 'type': 'PipelineTopologyProperties'},
     }
 
-    api_version = "1.0"
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Pipeline topology unique identifier.
+        :paramtype name: str
+        :keyword system_data: Read-only system metadata associated with this object.
+        :paramtype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :keyword properties: Pipeline topology properties.
+        :paramtype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
+        """
+        super(PipelineTopologySetRequestBody, self).__init__(**kwargs)
+        self.method_name = 'PipelineTopologySetRequestBody'  # type: str
+        self.api_version = kwargs.get('api_version', "1.1")
+        self.method_name = 'PipelineTopologySetRequestBody'  # type: str
+        self.name = kwargs['name']
+        self.system_data = kwargs.get('system_data', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class RateControl(msrest.serialization.Model):
+    """Class  representing the video's rate control.
+
+    :ivar bit_rate_limit: the maximum output bitrate in kbps.
+    :vartype bit_rate_limit: float
+    :ivar encoding_interval: Interval at which images are encoded and transmitted.
+    :vartype encoding_interval: float
+    :ivar frame_rate_limit: Maximum output framerate in fps.
+    :vartype frame_rate_limit: float
+    :ivar guaranteed_frame_rate: A value of true indicates that frame rate is a fixed value rather
+     than an upper limit, and that the video encoder shall prioritize frame rate over all other
+     adaptable configuration values such as bitrate.
+    :vartype guaranteed_frame_rate: bool
+    """
+
+    _attribute_map = {
+        'bit_rate_limit': {'key': 'bitRateLimit', 'type': 'float'},
+        'encoding_interval': {'key': 'encodingInterval', 'type': 'float'},
+        'frame_rate_limit': {'key': 'frameRateLimit', 'type': 'float'},
+        'guaranteed_frame_rate': {'key': 'guaranteedFrameRate', 'type': 'bool'},
+    }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(PipelineTopologySetRequestBody, self).__init__(**kwargs)
-        self.method_name = 'PipelineTopologySetRequestBody'  # type: str
-        self.method_name = 'PipelineTopologySetRequestBody'  # type: str
+        """
+        :keyword bit_rate_limit: the maximum output bitrate in kbps.
+        :paramtype bit_rate_limit: float
+        :keyword encoding_interval: Interval at which images are encoded and transmitted.
+        :paramtype encoding_interval: float
+        :keyword frame_rate_limit: Maximum output framerate in fps.
+        :paramtype frame_rate_limit: float
+        :keyword guaranteed_frame_rate: A value of true indicates that frame rate is a fixed value
+         rather than an upper limit, and that the video encoder shall prioritize frame rate over all
+         other adaptable configuration values such as bitrate.
+        :paramtype guaranteed_frame_rate: bool
+        """
+        super(RateControl, self).__init__(**kwargs)
+        self.bit_rate_limit = kwargs.get('bit_rate_limit', None)
+        self.encoding_interval = kwargs.get('encoding_interval', None)
+        self.frame_rate_limit = kwargs.get('frame_rate_limit', None)
+        self.guaranteed_frame_rate = kwargs.get('guaranteed_frame_rate', None)
+
+
+class RemoteDeviceAdapter(msrest.serialization.Model):
+    """The Video Analyzer edge module can act as a transparent gateway for video, enabling IoT devices to send video to the cloud from behind a firewall. A remote device adapter should be created for each such IoT device. Communication between the cloud and IoT device would then flow via the Video Analyzer edge module.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The unique identifier for the remote device adapter.
+    :vartype name: str
+    :ivar system_data: Read-only system metadata associated with this object.
+    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+    :ivar properties: Properties of the remote device adapter.
+    :vartype properties: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapterProperties
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'RemoteDeviceAdapterProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. The unique identifier for the remote device adapter.
+        :paramtype name: str
+        :keyword system_data: Read-only system metadata associated with this object.
+        :paramtype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :keyword properties: Properties of the remote device adapter.
+        :paramtype properties: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapterProperties
+        """
+        super(RemoteDeviceAdapter, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.system_data = kwargs.get('system_data', None)
         self.properties = kwargs.get('properties', None)
+
+
+class RemoteDeviceAdapterCollection(msrest.serialization.Model):
+    """A list of remote device adapters.
+
+    :ivar value: An array of remote device adapters.
+    :vartype value: list[~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapter]
+    :ivar continuation_token: A continuation token to use in subsequent calls to enumerate through
+     the remote device adapter collection. This is used when the collection contains too many
+     results to return in one response.
+    :vartype continuation_token: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RemoteDeviceAdapter]'},
+        'continuation_token': {'key': '@continuationToken', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword value: An array of remote device adapters.
+        :paramtype value: list[~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapter]
+        :keyword continuation_token: A continuation token to use in subsequent calls to enumerate
+         through the remote device adapter collection. This is used when the collection contains too
+         many results to return in one response.
+        :paramtype continuation_token: str
+        """
+        super(RemoteDeviceAdapterCollection, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.continuation_token = kwargs.get('continuation_token', None)
+
+
+class RemoteDeviceAdapterDeleteRequest(MethodRequestEmptyBodyBase):
+    """Deletes an existing remote device adapter.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
+    :vartype api_version: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
+        super(RemoteDeviceAdapterDeleteRequest, self).__init__(**kwargs)
+        self.method_name = 'remoteDeviceAdapterDelete'  # type: str
+
+
+class RemoteDeviceAdapterGetRequest(MethodRequestEmptyBodyBase):
+    """Retrieves an existing remote device adapter.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
+    :vartype api_version: str
+    :ivar name: Required. Resource name.
+    :vartype name: str
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        """
+        super(RemoteDeviceAdapterGetRequest, self).__init__(**kwargs)
+        self.method_name = 'remoteDeviceAdapterGet'  # type: str
+
+
+class RemoteDeviceAdapterListRequest(MethodRequest):
+    """List all existing remote device adapters.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
+    :vartype api_version: str
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        """
+        super(RemoteDeviceAdapterListRequest, self).__init__(**kwargs)
+        self.method_name = 'remoteDeviceAdapterList'  # type: str
+
+
+class RemoteDeviceAdapterProperties(msrest.serialization.Model):
+    """Remote device adapter properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: An optional description for the remote device adapter.
+    :vartype description: str
+    :ivar target: Required. The IoT device to which this remote device will connect.
+    :vartype target: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapterTarget
+    :ivar iot_hub_device_connection: Required. Information that enables communication between the
+     IoT Hub and the IoT device - allowing this edge module to act as a transparent gateway between
+     the two.
+    :vartype iot_hub_device_connection:
+     ~azure.media.videoanalyzer.edge.models.IotHubDeviceConnection
+    """
+
+    _validation = {
+        'target': {'required': True},
+        'iot_hub_device_connection': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'RemoteDeviceAdapterTarget'},
+        'iot_hub_device_connection': {'key': 'iotHubDeviceConnection', 'type': 'IotHubDeviceConnection'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: An optional description for the remote device adapter.
+        :paramtype description: str
+        :keyword target: Required. The IoT device to which this remote device will connect.
+        :paramtype target: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapterTarget
+        :keyword iot_hub_device_connection: Required. Information that enables communication between
+         the IoT Hub and the IoT device - allowing this edge module to act as a transparent gateway
+         between the two.
+        :paramtype iot_hub_device_connection:
+         ~azure.media.videoanalyzer.edge.models.IotHubDeviceConnection
+        """
+        super(RemoteDeviceAdapterProperties, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.target = kwargs['target']
+        self.iot_hub_device_connection = kwargs['iot_hub_device_connection']
+
+
+class RemoteDeviceAdapterSetRequest(MethodRequest):
+    """Creates a new remote device adapter or updates an existing one.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
+    :vartype api_version: str
+    :ivar remote_device_adapter: Required. The Video Analyzer edge module can act as a transparent
+     gateway for video, enabling IoT devices to send video to the cloud from behind a firewall. A
+     remote device adapter should be created for each such IoT device. Communication between the
+     cloud and IoT device would then flow via the Video Analyzer edge module.
+    :vartype remote_device_adapter: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapter
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+        'remote_device_adapter': {'required': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        'remote_device_adapter': {'key': 'remoteDeviceAdapter', 'type': 'RemoteDeviceAdapter'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword remote_device_adapter: Required. The Video Analyzer edge module can act as a
+         transparent gateway for video, enabling IoT devices to send video to the cloud from behind a
+         firewall. A remote device adapter should be created for each such IoT device. Communication
+         between the cloud and IoT device would then flow via the Video Analyzer edge module.
+        :paramtype remote_device_adapter: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapter
+        """
+        super(RemoteDeviceAdapterSetRequest, self).__init__(**kwargs)
+        self.method_name = 'remoteDeviceAdapterSet'  # type: str
+        self.remote_device_adapter = kwargs['remote_device_adapter']
+
+
+class RemoteDeviceAdapterSetRequestBody(RemoteDeviceAdapter, MethodRequest):
+    """The Video Analyzer edge module can act as a transparent gateway for video, enabling IoT devices to send video to the cloud from behind a firewall. A remote device adapter should be created for each such IoT device. Communication between the cloud and IoT device would then flow via the Video Analyzer edge module.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+     and "1.1". The default value is "1.1".
+    :vartype api_version: str
+    :ivar name: Required. The unique identifier for the remote device adapter.
+    :vartype name: str
+    :ivar system_data: Read-only system metadata associated with this object.
+    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+    :ivar properties: Properties of the remote device adapter.
+    :vartype properties: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapterProperties
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'RemoteDeviceAdapterProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
+         None and "1.1". The default value is "1.1".
+        :paramtype api_version: str
+        :keyword name: Required. The unique identifier for the remote device adapter.
+        :paramtype name: str
+        :keyword system_data: Read-only system metadata associated with this object.
+        :paramtype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :keyword properties: Properties of the remote device adapter.
+        :paramtype properties: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapterProperties
+        """
+        super(RemoteDeviceAdapterSetRequestBody, self).__init__(**kwargs)
+        self.method_name = 'RemoteDeviceAdapterSetRequestBody'  # type: str
+        self.api_version = kwargs.get('api_version', "1.1")
+        self.method_name = 'RemoteDeviceAdapterSetRequestBody'  # type: str
+        self.name = kwargs['name']
+        self.system_data = kwargs.get('system_data', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class RemoteDeviceAdapterTarget(msrest.serialization.Model):
+    """Properties of the remote device adapter target.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar host: Required. Hostname or IP address of the remote device.
+    :vartype host: str
+    """
+
+    _validation = {
+        'host': {'required': True},
+    }
+
+    _attribute_map = {
+        'host': {'key': 'host', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword host: Required. Hostname or IP address of the remote device.
+        :paramtype host: str
+        """
+        super(RemoteDeviceAdapterTarget, self).__init__(**kwargs)
+        self.host = kwargs['host']
 
 
 class RtspSource(SourceNodeBase):
@@ -2041,20 +3372,20 @@ class RtspSource(SourceNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param transport: Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar transport: Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When
      using TCP, the RTP packets are interleaved on the TCP RTSP connection. When using HTTP, the
      RTSP messages are exchanged through long lived HTTP connections, and the RTP packages are
      interleaved in the HTTP connections alongside the RTSP messages. Possible values include:
      "http", "tcp".
-    :type transport: str or ~azure.media.videoanalyzer.edge.models.RtspTransport
-    :param endpoint: Required. RTSP endpoint information for Video Analyzer to connect to. This
+    :vartype transport: str or ~azure.media.videoanalyzer.edge.models.RtspTransport
+    :ivar endpoint: Required. RTSP endpoint information for Video Analyzer to connect to. This
      contains the required information for Video Analyzer to connect to RTSP cameras and/or generic
      RTSP servers.
-    :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+    :vartype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
     """
 
     _validation = {
@@ -2074,6 +3405,20 @@ class RtspSource(SourceNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword transport: Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When
+         using TCP, the RTP packets are interleaved on the TCP RTSP connection. When using HTTP, the
+         RTSP messages are exchanged through long lived HTTP connections, and the RTP packages are
+         interleaved in the HTTP connections alongside the RTSP messages. Possible values include:
+         "http", "tcp".
+        :paramtype transport: str or ~azure.media.videoanalyzer.edge.models.RtspTransport
+        :keyword endpoint: Required. RTSP endpoint information for Video Analyzer to connect to. This
+         contains the required information for Video Analyzer to connect to RTSP cameras and/or generic
+         RTSP servers.
+        :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
+        """
         super(RtspSource, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.RtspSource'  # type: str
         self.transport = kwargs.get('transport', None)
@@ -2083,15 +3428,15 @@ class RtspSource(SourceNodeBase):
 class SamplingOptions(msrest.serialization.Model):
     """Defines how often media is submitted to the extension plugin.
 
-    :param skip_samples_without_annotation: When set to 'true', prevents frames without upstream
+    :ivar skip_samples_without_annotation: When set to 'true', prevents frames without upstream
      inference data to be sent to the extension plugin. This is useful to limit the frames sent to
      the extension to pre-analyzed frames only. For example, when used downstream from a motion
      detector, this can enable for only frames in which motion has been detected to be further
      analyzed.
-    :type skip_samples_without_annotation: str
-    :param maximum_samples_per_second: Maximum rate of samples submitted to the extension. This
+    :vartype skip_samples_without_annotation: str
+    :ivar maximum_samples_per_second: Maximum rate of samples submitted to the extension. This
      prevents an extension plugin to be overloaded with data.
-    :type maximum_samples_per_second: str
+    :vartype maximum_samples_per_second: str
     """
 
     _attribute_map = {
@@ -2103,6 +3448,17 @@ class SamplingOptions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword skip_samples_without_annotation: When set to 'true', prevents frames without upstream
+         inference data to be sent to the extension plugin. This is useful to limit the frames sent to
+         the extension to pre-analyzed frames only. For example, when used downstream from a motion
+         detector, this can enable for only frames in which motion has been detected to be further
+         analyzed.
+        :paramtype skip_samples_without_annotation: str
+        :keyword maximum_samples_per_second: Maximum rate of samples submitted to the extension. This
+         prevents an extension plugin to be overloaded with data.
+        :paramtype maximum_samples_per_second: str
+        """
         super(SamplingOptions, self).__init__(**kwargs)
         self.skip_samples_without_annotation = kwargs.get('skip_samples_without_annotation', None)
         self.maximum_samples_per_second = kwargs.get('maximum_samples_per_second', None)
@@ -2113,31 +3469,31 @@ class SignalGateProcessor(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param activation_evaluation_window: The period of time over which the gate gathers input
-     events before evaluating them.
-    :type activation_evaluation_window: str
-    :param activation_signal_offset: Signal offset once the gate is activated (can be negative). It
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar activation_evaluation_window: The period of time over which the gate gathers input events
+     before evaluating them.
+    :vartype activation_evaluation_window: str
+    :ivar activation_signal_offset: Signal offset once the gate is activated (can be negative). It
      determines the how much farther behind of after the signal will be let through based on the
      activation time. A negative offset indicates that data prior the activation time must be
      included on the signal that is let through, once the gate is activated. When used upstream of a
      file or video sink, this allows for scenarios such as recording buffered media prior an event,
      such as: record video 5 seconds prior motions is detected.
-    :type activation_signal_offset: str
-    :param minimum_activation_time: The minimum period for which the gate remains open in the
+    :vartype activation_signal_offset: str
+    :ivar minimum_activation_time: The minimum period for which the gate remains open in the
      absence of subsequent triggers (events). When used upstream of a file or video sink, it
      determines the minimum length of the recorded video clip.
-    :type minimum_activation_time: str
-    :param maximum_activation_time: The maximum period for which the gate remains open in the
+    :vartype minimum_activation_time: str
+    :ivar maximum_activation_time: The maximum period for which the gate remains open in the
      presence of subsequent triggers (events). When used upstream of a file or video sink, it
      determines the maximum length of the recorded video clip.
-    :type maximum_activation_time: str
+    :vartype maximum_activation_time: str
     """
 
     _validation = {
@@ -2160,6 +3516,31 @@ class SignalGateProcessor(ProcessorNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword activation_evaluation_window: The period of time over which the gate gathers input
+         events before evaluating them.
+        :paramtype activation_evaluation_window: str
+        :keyword activation_signal_offset: Signal offset once the gate is activated (can be negative).
+         It determines the how much farther behind of after the signal will be let through based on the
+         activation time. A negative offset indicates that data prior the activation time must be
+         included on the signal that is let through, once the gate is activated. When used upstream of a
+         file or video sink, this allows for scenarios such as recording buffered media prior an event,
+         such as: record video 5 seconds prior motions is detected.
+        :paramtype activation_signal_offset: str
+        :keyword minimum_activation_time: The minimum period for which the gate remains open in the
+         absence of subsequent triggers (events). When used upstream of a file or video sink, it
+         determines the minimum length of the recorded video clip.
+        :paramtype minimum_activation_time: str
+        :keyword maximum_activation_time: The maximum period for which the gate remains open in the
+         presence of subsequent triggers (events). When used upstream of a file or video sink, it
+         determines the maximum length of the recorded video clip.
+        :paramtype maximum_activation_time: str
+        """
         super(SignalGateProcessor, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.SignalGateProcessor'  # type: str
         self.activation_evaluation_window = kwargs.get('activation_evaluation_window', None)
@@ -2176,8 +3557,8 @@ class SpatialAnalysisOperationBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
     """
 
     _validation = {
@@ -2196,6 +3577,8 @@ class SpatialAnalysisOperationBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SpatialAnalysisOperationBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -2205,11 +3588,11 @@ class SpatialAnalysisCustomOperation(SpatialAnalysisOperationBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param extension_configuration: Required. Custom configuration to pass to the Azure Cognitive
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar extension_configuration: Required. Custom configuration to pass to the Azure Cognitive
      Services Spatial Analysis module.
-    :type extension_configuration: str
+    :vartype extension_configuration: str
     """
 
     _validation = {
@@ -2226,6 +3609,11 @@ class SpatialAnalysisCustomOperation(SpatialAnalysisOperationBase):
         self,
         **kwargs
     ):
+        """
+        :keyword extension_configuration: Required. Custom configuration to pass to the Azure Cognitive
+         Services Spatial Analysis module.
+        :paramtype extension_configuration: str
+        """
         super(SpatialAnalysisCustomOperation, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisCustomOperation'  # type: str
         self.extension_configuration = kwargs['extension_configuration']
@@ -2234,11 +3622,11 @@ class SpatialAnalysisCustomOperation(SpatialAnalysisOperationBase):
 class SpatialAnalysisOperationEventBase(msrest.serialization.Model):
     """Defines the Azure Cognitive Services Spatial Analysis operation eventing configuration.
 
-    :param threshold: The event threshold.
-    :type threshold: str
-    :param focus: The operation focus type. Possible values include: "center", "bottomCenter",
+    :ivar threshold: The event threshold.
+    :vartype threshold: str
+    :ivar focus: The operation focus type. Possible values include: "center", "bottomCenter",
      "footprint".
-    :type focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+    :vartype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
     """
 
     _attribute_map = {
@@ -2250,6 +3638,13 @@ class SpatialAnalysisOperationEventBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword threshold: The event threshold.
+        :paramtype threshold: str
+        :keyword focus: The operation focus type. Possible values include: "center", "bottomCenter",
+         "footprint".
+        :paramtype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+        """
         super(SpatialAnalysisOperationEventBase, self).__init__(**kwargs)
         self.threshold = kwargs.get('threshold', None)
         self.focus = kwargs.get('focus', None)
@@ -2258,16 +3653,16 @@ class SpatialAnalysisOperationEventBase(msrest.serialization.Model):
 class SpatialAnalysisPersonCountEvent(SpatialAnalysisOperationEventBase):
     """Defines a Spatial Analysis person count operation eventing configuration.
 
-    :param threshold: The event threshold.
-    :type threshold: str
-    :param focus: The operation focus type. Possible values include: "center", "bottomCenter",
+    :ivar threshold: The event threshold.
+    :vartype threshold: str
+    :ivar focus: The operation focus type. Possible values include: "center", "bottomCenter",
      "footprint".
-    :type focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
-    :param trigger: The event trigger type. Possible values include: "event", "interval".
-    :type trigger: str or
+    :vartype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+    :ivar trigger: The event trigger type. Possible values include: "event", "interval".
+    :vartype trigger: str or
      ~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountEventTrigger
-    :param output_frequency: The event or interval output frequency.
-    :type output_frequency: str
+    :ivar output_frequency: The event or interval output frequency.
+    :vartype output_frequency: str
     """
 
     _attribute_map = {
@@ -2281,6 +3676,18 @@ class SpatialAnalysisPersonCountEvent(SpatialAnalysisOperationEventBase):
         self,
         **kwargs
     ):
+        """
+        :keyword threshold: The event threshold.
+        :paramtype threshold: str
+        :keyword focus: The operation focus type. Possible values include: "center", "bottomCenter",
+         "footprint".
+        :paramtype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+        :keyword trigger: The event trigger type. Possible values include: "event", "interval".
+        :paramtype trigger: str or
+         ~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountEventTrigger
+        :keyword output_frequency: The event or interval output frequency.
+        :paramtype output_frequency: str
+        """
         super(SpatialAnalysisPersonCountEvent, self).__init__(**kwargs)
         self.trigger = kwargs.get('trigger', None)
         self.output_frequency = kwargs.get('output_frequency', None)
@@ -2294,17 +3701,23 @@ class SpatialAnalysisTypedOperationBase(SpatialAnalysisOperationBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param debug: If set to 'true', enables debugging mode for this operation.
-    :type debug: str
-    :param camera_configuration: Advanced camera configuration.
-    :type camera_configuration: str
-    :param detector_node_configuration: Advanced detector node configuration.
-    :type detector_node_configuration: str
-    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar debug: If set to 'true', enables debugging mode for this operation.
+    :vartype debug: str
+    :ivar calibration_configuration: Advanced calibration configuration.
+    :vartype calibration_configuration: str
+    :ivar camera_configuration: Advanced camera configuration.
+    :vartype camera_configuration: str
+    :ivar camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+    :vartype camera_calibrator_node_configuration: str
+    :ivar detector_node_configuration: Advanced detector node configuration.
+    :vartype detector_node_configuration: str
+    :ivar tracker_node_configuration: Advanced tracker node configuration.
+    :vartype tracker_node_configuration: str
+    :ivar enable_face_mask_classifier: If set to 'true', enables face mask detection for this
      operation.
-    :type enable_face_mask_classifier: str
+    :vartype enable_face_mask_classifier: str
     """
 
     _validation = {
@@ -2314,8 +3727,11 @@ class SpatialAnalysisTypedOperationBase(SpatialAnalysisOperationBase):
     _attribute_map = {
         'type': {'key': '@type', 'type': 'str'},
         'debug': {'key': 'debug', 'type': 'str'},
+        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
         'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
+        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
         'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
+        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
         'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
     }
 
@@ -2327,11 +3743,31 @@ class SpatialAnalysisTypedOperationBase(SpatialAnalysisOperationBase):
         self,
         **kwargs
     ):
+        """
+        :keyword debug: If set to 'true', enables debugging mode for this operation.
+        :paramtype debug: str
+        :keyword calibration_configuration: Advanced calibration configuration.
+        :paramtype calibration_configuration: str
+        :keyword camera_configuration: Advanced camera configuration.
+        :paramtype camera_configuration: str
+        :keyword camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+        :paramtype camera_calibrator_node_configuration: str
+        :keyword detector_node_configuration: Advanced detector node configuration.
+        :paramtype detector_node_configuration: str
+        :keyword tracker_node_configuration: Advanced tracker node configuration.
+        :paramtype tracker_node_configuration: str
+        :keyword enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+         operation.
+        :paramtype enable_face_mask_classifier: str
+        """
         super(SpatialAnalysisTypedOperationBase, self).__init__(**kwargs)
         self.type = 'SpatialAnalysisTypedOperationBase'  # type: str
         self.debug = kwargs.get('debug', None)
+        self.calibration_configuration = kwargs.get('calibration_configuration', None)
         self.camera_configuration = kwargs.get('camera_configuration', None)
+        self.camera_calibrator_node_configuration = kwargs.get('camera_calibrator_node_configuration', None)
         self.detector_node_configuration = kwargs.get('detector_node_configuration', None)
+        self.tracker_node_configuration = kwargs.get('tracker_node_configuration', None)
         self.enable_face_mask_classifier = kwargs.get('enable_face_mask_classifier', None)
 
 
@@ -2340,19 +3776,26 @@ class SpatialAnalysisPersonCountOperation(SpatialAnalysisTypedOperationBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param debug: If set to 'true', enables debugging mode for this operation.
-    :type debug: str
-    :param camera_configuration: Advanced camera configuration.
-    :type camera_configuration: str
-    :param detector_node_configuration: Advanced detector node configuration.
-    :type detector_node_configuration: str
-    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar debug: If set to 'true', enables debugging mode for this operation.
+    :vartype debug: str
+    :ivar calibration_configuration: Advanced calibration configuration.
+    :vartype calibration_configuration: str
+    :ivar camera_configuration: Advanced camera configuration.
+    :vartype camera_configuration: str
+    :ivar camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+    :vartype camera_calibrator_node_configuration: str
+    :ivar detector_node_configuration: Advanced detector node configuration.
+    :vartype detector_node_configuration: str
+    :ivar tracker_node_configuration: Advanced tracker node configuration.
+    :vartype tracker_node_configuration: str
+    :ivar enable_face_mask_classifier: If set to 'true', enables face mask detection for this
      operation.
-    :type enable_face_mask_classifier: str
-    :param zones: Required. The list of zones and optional events.
-    :type zones: list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountZoneEvents]
+    :vartype enable_face_mask_classifier: str
+    :ivar zones: Required. The list of zones and optional events.
+    :vartype zones:
+     list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountZoneEvents]
     """
 
     _validation = {
@@ -2363,8 +3806,11 @@ class SpatialAnalysisPersonCountOperation(SpatialAnalysisTypedOperationBase):
     _attribute_map = {
         'type': {'key': '@type', 'type': 'str'},
         'debug': {'key': 'debug', 'type': 'str'},
+        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
         'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
+        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
         'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
+        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
         'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[SpatialAnalysisPersonCountZoneEvents]'},
     }
@@ -2373,6 +3819,26 @@ class SpatialAnalysisPersonCountOperation(SpatialAnalysisTypedOperationBase):
         self,
         **kwargs
     ):
+        """
+        :keyword debug: If set to 'true', enables debugging mode for this operation.
+        :paramtype debug: str
+        :keyword calibration_configuration: Advanced calibration configuration.
+        :paramtype calibration_configuration: str
+        :keyword camera_configuration: Advanced camera configuration.
+        :paramtype camera_configuration: str
+        :keyword camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+        :paramtype camera_calibrator_node_configuration: str
+        :keyword detector_node_configuration: Advanced detector node configuration.
+        :paramtype detector_node_configuration: str
+        :keyword tracker_node_configuration: Advanced tracker node configuration.
+        :paramtype tracker_node_configuration: str
+        :keyword enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+         operation.
+        :paramtype enable_face_mask_classifier: str
+        :keyword zones: Required. The list of zones and optional events.
+        :paramtype zones:
+         list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountZoneEvents]
+        """
         super(SpatialAnalysisPersonCountOperation, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonCountOperation'  # type: str
         self.zones = kwargs['zones']
@@ -2383,10 +3849,10 @@ class SpatialAnalysisPersonCountZoneEvents(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param zone: Required. The named zone.
-    :type zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
-    :param events: The event configuration.
-    :type events: list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountEvent]
+    :ivar zone: Required. The named zone.
+    :vartype zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
+    :ivar events: The event configuration.
+    :vartype events: list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountEvent]
     """
 
     _validation = {
@@ -2402,6 +3868,12 @@ class SpatialAnalysisPersonCountZoneEvents(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword zone: Required. The named zone.
+        :paramtype zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
+        :keyword events: The event configuration.
+        :paramtype events: list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountEvent]
+        """
         super(SpatialAnalysisPersonCountZoneEvents, self).__init__(**kwargs)
         self.zone = kwargs['zone']
         self.events = kwargs.get('events', None)
@@ -2410,20 +3882,20 @@ class SpatialAnalysisPersonCountZoneEvents(msrest.serialization.Model):
 class SpatialAnalysisPersonDistanceEvent(SpatialAnalysisOperationEventBase):
     """Defines a Spatial Analysis person distance operation eventing configuration.
 
-    :param threshold: The event threshold.
-    :type threshold: str
-    :param focus: The operation focus type. Possible values include: "center", "bottomCenter",
+    :ivar threshold: The event threshold.
+    :vartype threshold: str
+    :ivar focus: The operation focus type. Possible values include: "center", "bottomCenter",
      "footprint".
-    :type focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
-    :param trigger: The event trigger type. Possible values include: "event", "interval".
-    :type trigger: str or
+    :vartype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+    :ivar trigger: The event trigger type. Possible values include: "event", "interval".
+    :vartype trigger: str or
      ~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceEventTrigger
-    :param output_frequency: The event or interval output frequency.
-    :type output_frequency: str
-    :param minimum_distance_threshold: The minimum distance threshold.
-    :type minimum_distance_threshold: str
-    :param maximum_distance_threshold: The maximum distance threshold.
-    :type maximum_distance_threshold: str
+    :ivar output_frequency: The event or interval output frequency.
+    :vartype output_frequency: str
+    :ivar minimum_distance_threshold: The minimum distance threshold.
+    :vartype minimum_distance_threshold: str
+    :ivar maximum_distance_threshold: The maximum distance threshold.
+    :vartype maximum_distance_threshold: str
     """
 
     _attribute_map = {
@@ -2439,6 +3911,22 @@ class SpatialAnalysisPersonDistanceEvent(SpatialAnalysisOperationEventBase):
         self,
         **kwargs
     ):
+        """
+        :keyword threshold: The event threshold.
+        :paramtype threshold: str
+        :keyword focus: The operation focus type. Possible values include: "center", "bottomCenter",
+         "footprint".
+        :paramtype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+        :keyword trigger: The event trigger type. Possible values include: "event", "interval".
+        :paramtype trigger: str or
+         ~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceEventTrigger
+        :keyword output_frequency: The event or interval output frequency.
+        :paramtype output_frequency: str
+        :keyword minimum_distance_threshold: The minimum distance threshold.
+        :paramtype minimum_distance_threshold: str
+        :keyword maximum_distance_threshold: The maximum distance threshold.
+        :paramtype maximum_distance_threshold: str
+        """
         super(SpatialAnalysisPersonDistanceEvent, self).__init__(**kwargs)
         self.trigger = kwargs.get('trigger', None)
         self.output_frequency = kwargs.get('output_frequency', None)
@@ -2451,19 +3939,25 @@ class SpatialAnalysisPersonDistanceOperation(SpatialAnalysisTypedOperationBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param debug: If set to 'true', enables debugging mode for this operation.
-    :type debug: str
-    :param camera_configuration: Advanced camera configuration.
-    :type camera_configuration: str
-    :param detector_node_configuration: Advanced detector node configuration.
-    :type detector_node_configuration: str
-    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar debug: If set to 'true', enables debugging mode for this operation.
+    :vartype debug: str
+    :ivar calibration_configuration: Advanced calibration configuration.
+    :vartype calibration_configuration: str
+    :ivar camera_configuration: Advanced camera configuration.
+    :vartype camera_configuration: str
+    :ivar camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+    :vartype camera_calibrator_node_configuration: str
+    :ivar detector_node_configuration: Advanced detector node configuration.
+    :vartype detector_node_configuration: str
+    :ivar tracker_node_configuration: Advanced tracker node configuration.
+    :vartype tracker_node_configuration: str
+    :ivar enable_face_mask_classifier: If set to 'true', enables face mask detection for this
      operation.
-    :type enable_face_mask_classifier: str
-    :param zones: Required. The list of zones with optional events.
-    :type zones:
+    :vartype enable_face_mask_classifier: str
+    :ivar zones: Required. The list of zones with optional events.
+    :vartype zones:
      list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceZoneEvents]
     """
 
@@ -2475,8 +3969,11 @@ class SpatialAnalysisPersonDistanceOperation(SpatialAnalysisTypedOperationBase):
     _attribute_map = {
         'type': {'key': '@type', 'type': 'str'},
         'debug': {'key': 'debug', 'type': 'str'},
+        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
         'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
+        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
         'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
+        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
         'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[SpatialAnalysisPersonDistanceZoneEvents]'},
     }
@@ -2485,6 +3982,26 @@ class SpatialAnalysisPersonDistanceOperation(SpatialAnalysisTypedOperationBase):
         self,
         **kwargs
     ):
+        """
+        :keyword debug: If set to 'true', enables debugging mode for this operation.
+        :paramtype debug: str
+        :keyword calibration_configuration: Advanced calibration configuration.
+        :paramtype calibration_configuration: str
+        :keyword camera_configuration: Advanced camera configuration.
+        :paramtype camera_configuration: str
+        :keyword camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+        :paramtype camera_calibrator_node_configuration: str
+        :keyword detector_node_configuration: Advanced detector node configuration.
+        :paramtype detector_node_configuration: str
+        :keyword tracker_node_configuration: Advanced tracker node configuration.
+        :paramtype tracker_node_configuration: str
+        :keyword enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+         operation.
+        :paramtype enable_face_mask_classifier: str
+        :keyword zones: Required. The list of zones with optional events.
+        :paramtype zones:
+         list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceZoneEvents]
+        """
         super(SpatialAnalysisPersonDistanceOperation, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonDistanceOperation'  # type: str
         self.zones = kwargs['zones']
@@ -2495,10 +4012,11 @@ class SpatialAnalysisPersonDistanceZoneEvents(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param zone: Required. The named zone.
-    :type zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
-    :param events: The event configuration.
-    :type events: list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceEvent]
+    :ivar zone: Required. The named zone.
+    :vartype zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
+    :ivar events: The event configuration.
+    :vartype events:
+     list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceEvent]
     """
 
     _validation = {
@@ -2514,6 +4032,13 @@ class SpatialAnalysisPersonDistanceZoneEvents(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword zone: Required. The named zone.
+        :paramtype zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
+        :keyword events: The event configuration.
+        :paramtype events:
+         list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceEvent]
+        """
         super(SpatialAnalysisPersonDistanceZoneEvents, self).__init__(**kwargs)
         self.zone = kwargs['zone']
         self.events = kwargs.get('events', None)
@@ -2522,11 +4047,11 @@ class SpatialAnalysisPersonDistanceZoneEvents(msrest.serialization.Model):
 class SpatialAnalysisPersonLineCrossingEvent(SpatialAnalysisOperationEventBase):
     """Defines a Spatial Analysis person line crossing operation eventing configuration.
 
-    :param threshold: The event threshold.
-    :type threshold: str
-    :param focus: The operation focus type. Possible values include: "center", "bottomCenter",
+    :ivar threshold: The event threshold.
+    :vartype threshold: str
+    :ivar focus: The operation focus type. Possible values include: "center", "bottomCenter",
      "footprint".
-    :type focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+    :vartype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
     """
 
     _attribute_map = {
@@ -2538,6 +4063,13 @@ class SpatialAnalysisPersonLineCrossingEvent(SpatialAnalysisOperationEventBase):
         self,
         **kwargs
     ):
+        """
+        :keyword threshold: The event threshold.
+        :paramtype threshold: str
+        :keyword focus: The operation focus type. Possible values include: "center", "bottomCenter",
+         "footprint".
+        :paramtype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+        """
         super(SpatialAnalysisPersonLineCrossingEvent, self).__init__(**kwargs)
 
 
@@ -2546,10 +4078,10 @@ class SpatialAnalysisPersonLineCrossingLineEvents(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param line: Required. The named line.
-    :type line: ~azure.media.videoanalyzer.edge.models.NamedLineBase
-    :param events: The event configuration.
-    :type events:
+    :ivar line: Required. The named line.
+    :vartype line: ~azure.media.videoanalyzer.edge.models.NamedLineBase
+    :ivar events: The event configuration.
+    :vartype events:
      list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonLineCrossingEvent]
     """
 
@@ -2566,6 +4098,13 @@ class SpatialAnalysisPersonLineCrossingLineEvents(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword line: Required. The named line.
+        :paramtype line: ~azure.media.videoanalyzer.edge.models.NamedLineBase
+        :keyword events: The event configuration.
+        :paramtype events:
+         list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonLineCrossingEvent]
+        """
         super(SpatialAnalysisPersonLineCrossingLineEvents, self).__init__(**kwargs)
         self.line = kwargs['line']
         self.events = kwargs.get('events', None)
@@ -2576,19 +4115,25 @@ class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBa
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param debug: If set to 'true', enables debugging mode for this operation.
-    :type debug: str
-    :param camera_configuration: Advanced camera configuration.
-    :type camera_configuration: str
-    :param detector_node_configuration: Advanced detector node configuration.
-    :type detector_node_configuration: str
-    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar debug: If set to 'true', enables debugging mode for this operation.
+    :vartype debug: str
+    :ivar calibration_configuration: Advanced calibration configuration.
+    :vartype calibration_configuration: str
+    :ivar camera_configuration: Advanced camera configuration.
+    :vartype camera_configuration: str
+    :ivar camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+    :vartype camera_calibrator_node_configuration: str
+    :ivar detector_node_configuration: Advanced detector node configuration.
+    :vartype detector_node_configuration: str
+    :ivar tracker_node_configuration: Advanced tracker node configuration.
+    :vartype tracker_node_configuration: str
+    :ivar enable_face_mask_classifier: If set to 'true', enables face mask detection for this
      operation.
-    :type enable_face_mask_classifier: str
-    :param lines: Required. The list of lines with optional events.
-    :type lines:
+    :vartype enable_face_mask_classifier: str
+    :ivar lines: Required. The list of lines with optional events.
+    :vartype lines:
      list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonLineCrossingLineEvents]
     """
 
@@ -2600,8 +4145,11 @@ class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBa
     _attribute_map = {
         'type': {'key': '@type', 'type': 'str'},
         'debug': {'key': 'debug', 'type': 'str'},
+        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
         'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
+        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
         'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
+        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
         'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
         'lines': {'key': 'lines', 'type': '[SpatialAnalysisPersonLineCrossingLineEvents]'},
     }
@@ -2610,6 +4158,26 @@ class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBa
         self,
         **kwargs
     ):
+        """
+        :keyword debug: If set to 'true', enables debugging mode for this operation.
+        :paramtype debug: str
+        :keyword calibration_configuration: Advanced calibration configuration.
+        :paramtype calibration_configuration: str
+        :keyword camera_configuration: Advanced camera configuration.
+        :paramtype camera_configuration: str
+        :keyword camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+        :paramtype camera_calibrator_node_configuration: str
+        :keyword detector_node_configuration: Advanced detector node configuration.
+        :paramtype detector_node_configuration: str
+        :keyword tracker_node_configuration: Advanced tracker node configuration.
+        :paramtype tracker_node_configuration: str
+        :keyword enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+         operation.
+        :paramtype enable_face_mask_classifier: str
+        :keyword lines: Required. The list of lines with optional events.
+        :paramtype lines:
+         list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonLineCrossingLineEvents]
+        """
         super(SpatialAnalysisPersonLineCrossingOperation, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonLineCrossingOperation'  # type: str
         self.lines = kwargs['lines']
@@ -2618,13 +4186,13 @@ class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBa
 class SpatialAnalysisPersonZoneCrossingEvent(SpatialAnalysisOperationEventBase):
     """Defines a Spatial Analysis person crossing zone operation eventing configuration.
 
-    :param threshold: The event threshold.
-    :type threshold: str
-    :param focus: The operation focus type. Possible values include: "center", "bottomCenter",
+    :ivar threshold: The event threshold.
+    :vartype threshold: str
+    :ivar focus: The operation focus type. Possible values include: "center", "bottomCenter",
      "footprint".
-    :type focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
-    :param event_type: The event type. Possible values include: "zoneCrossing", "zoneDwellTime".
-    :type event_type: str or
+    :vartype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+    :ivar event_type: The event type. Possible values include: "zoneCrossing", "zoneDwellTime".
+    :vartype event_type: str or
      ~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonZoneCrossingEventType
     """
 
@@ -2638,6 +4206,16 @@ class SpatialAnalysisPersonZoneCrossingEvent(SpatialAnalysisOperationEventBase):
         self,
         **kwargs
     ):
+        """
+        :keyword threshold: The event threshold.
+        :paramtype threshold: str
+        :keyword focus: The operation focus type. Possible values include: "center", "bottomCenter",
+         "footprint".
+        :paramtype focus: str or ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationFocus
+        :keyword event_type: The event type. Possible values include: "zoneCrossing", "zoneDwellTime".
+        :paramtype event_type: str or
+         ~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonZoneCrossingEventType
+        """
         super(SpatialAnalysisPersonZoneCrossingEvent, self).__init__(**kwargs)
         self.event_type = kwargs.get('event_type', None)
 
@@ -2647,19 +4225,25 @@ class SpatialAnalysisPersonZoneCrossingOperation(SpatialAnalysisTypedOperationBa
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param debug: If set to 'true', enables debugging mode for this operation.
-    :type debug: str
-    :param camera_configuration: Advanced camera configuration.
-    :type camera_configuration: str
-    :param detector_node_configuration: Advanced detector node configuration.
-    :type detector_node_configuration: str
-    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+    :ivar type: Required. The Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar debug: If set to 'true', enables debugging mode for this operation.
+    :vartype debug: str
+    :ivar calibration_configuration: Advanced calibration configuration.
+    :vartype calibration_configuration: str
+    :ivar camera_configuration: Advanced camera configuration.
+    :vartype camera_configuration: str
+    :ivar camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+    :vartype camera_calibrator_node_configuration: str
+    :ivar detector_node_configuration: Advanced detector node configuration.
+    :vartype detector_node_configuration: str
+    :ivar tracker_node_configuration: Advanced tracker node configuration.
+    :vartype tracker_node_configuration: str
+    :ivar enable_face_mask_classifier: If set to 'true', enables face mask detection for this
      operation.
-    :type enable_face_mask_classifier: str
-    :param zones: Required. The list of zones with optional events.
-    :type zones:
+    :vartype enable_face_mask_classifier: str
+    :ivar zones: Required. The list of zones with optional events.
+    :vartype zones:
      list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonZoneCrossingZoneEvents]
     """
 
@@ -2671,8 +4255,11 @@ class SpatialAnalysisPersonZoneCrossingOperation(SpatialAnalysisTypedOperationBa
     _attribute_map = {
         'type': {'key': '@type', 'type': 'str'},
         'debug': {'key': 'debug', 'type': 'str'},
+        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
         'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
+        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
         'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
+        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
         'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[SpatialAnalysisPersonZoneCrossingZoneEvents]'},
     }
@@ -2681,6 +4268,26 @@ class SpatialAnalysisPersonZoneCrossingOperation(SpatialAnalysisTypedOperationBa
         self,
         **kwargs
     ):
+        """
+        :keyword debug: If set to 'true', enables debugging mode for this operation.
+        :paramtype debug: str
+        :keyword calibration_configuration: Advanced calibration configuration.
+        :paramtype calibration_configuration: str
+        :keyword camera_configuration: Advanced camera configuration.
+        :paramtype camera_configuration: str
+        :keyword camera_calibrator_node_configuration: Advanced camera calibrator configuration.
+        :paramtype camera_calibrator_node_configuration: str
+        :keyword detector_node_configuration: Advanced detector node configuration.
+        :paramtype detector_node_configuration: str
+        :keyword tracker_node_configuration: Advanced tracker node configuration.
+        :paramtype tracker_node_configuration: str
+        :keyword enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+         operation.
+        :paramtype enable_face_mask_classifier: str
+        :keyword zones: Required. The list of zones with optional events.
+        :paramtype zones:
+         list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonZoneCrossingZoneEvents]
+        """
         super(SpatialAnalysisPersonZoneCrossingOperation, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonZoneCrossingOperation'  # type: str
         self.zones = kwargs['zones']
@@ -2691,10 +4298,10 @@ class SpatialAnalysisPersonZoneCrossingZoneEvents(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param zone: Required. The named zone.
-    :type zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
-    :param events: The event configuration.
-    :type events:
+    :ivar zone: Required. The named zone.
+    :vartype zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
+    :ivar events: The event configuration.
+    :vartype events:
      list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonZoneCrossingEvent]
     """
 
@@ -2711,20 +4318,61 @@ class SpatialAnalysisPersonZoneCrossingZoneEvents(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword zone: Required. The named zone.
+        :paramtype zone: ~azure.media.videoanalyzer.edge.models.NamedPolygonBase
+        :keyword events: The event configuration.
+        :paramtype events:
+         list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonZoneCrossingEvent]
+        """
         super(SpatialAnalysisPersonZoneCrossingZoneEvents, self).__init__(**kwargs)
         self.zone = kwargs['zone']
         self.events = kwargs.get('events', None)
 
 
+class SymmetricKeyCredentials(CredentialsBase):
+    """Symmetric key credential.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar key: Required. Symmetric key credential.
+    :vartype key: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'key': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': '@type', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword key: Required. Symmetric key credential.
+        :paramtype key: str
+        """
+        super(SymmetricKeyCredentials, self).__init__(**kwargs)
+        self.type = '#Microsoft.VideoAnalyzer.SymmetricKeyCredentials'  # type: str
+        self.key = kwargs['key']
+
+
 class SystemData(msrest.serialization.Model):
     """Read-only system metadata associated with a resource.
 
-    :param created_at: Date and time when this resource was first created. Value is represented in
+    :ivar created_at: Date and time when this resource was first created. Value is represented in
      UTC according to the ISO8601 date format.
-    :type created_at: ~datetime.datetime
-    :param last_modified_at: Date and time when this resource was last modified. Value is
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_at: Date and time when this resource was last modified. Value is
      represented in UTC according to the ISO8601 date format.
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -2736,6 +4384,14 @@ class SystemData(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword created_at: Date and time when this resource was first created. Value is represented
+         in UTC according to the ISO8601 date format.
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_at: Date and time when this resource was last modified. Value is
+         represented in UTC according to the ISO8601 date format.
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_at = kwargs.get('created_at', None)
         self.last_modified_at = kwargs.get('last_modified_at', None)
@@ -2746,19 +4402,19 @@ class TlsEndpoint(EndpointBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param credentials: Credentials to be presented to the endpoint.
-    :type credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
-    :param url: Required. The endpoint URL for Video Analyzer to connect to.
-    :type url: str
-    :param trusted_certificates: List of trusted certificate authorities when authenticating a TLS
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar credentials: Credentials to be presented to the endpoint.
+    :vartype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+    :ivar url: Required. The endpoint URL for Video Analyzer to connect to.
+    :vartype url: str
+    :ivar trusted_certificates: List of trusted certificate authorities when authenticating a TLS
      connection. A null list designates that Azure Video Analyzer's list of trusted authorities
      should be used.
-    :type trusted_certificates: ~azure.media.videoanalyzer.edge.models.CertificateSource
-    :param validation_options: Validation options to use when authenticating a TLS connection. By
+    :vartype trusted_certificates: ~azure.media.videoanalyzer.edge.models.CertificateSource
+    :ivar validation_options: Validation options to use when authenticating a TLS connection. By
      default, strict validation is used.
-    :type validation_options: ~azure.media.videoanalyzer.edge.models.TlsValidationOptions
+    :vartype validation_options: ~azure.media.videoanalyzer.edge.models.TlsValidationOptions
     """
 
     _validation = {
@@ -2778,6 +4434,19 @@ class TlsEndpoint(EndpointBase):
         self,
         **kwargs
     ):
+        """
+        :keyword credentials: Credentials to be presented to the endpoint.
+        :paramtype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+        :keyword url: Required. The endpoint URL for Video Analyzer to connect to.
+        :paramtype url: str
+        :keyword trusted_certificates: List of trusted certificate authorities when authenticating a
+         TLS connection. A null list designates that Azure Video Analyzer's list of trusted authorities
+         should be used.
+        :paramtype trusted_certificates: ~azure.media.videoanalyzer.edge.models.CertificateSource
+        :keyword validation_options: Validation options to use when authenticating a TLS connection. By
+         default, strict validation is used.
+        :paramtype validation_options: ~azure.media.videoanalyzer.edge.models.TlsValidationOptions
+        """
         super(TlsEndpoint, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.TlsEndpoint'  # type: str
         self.trusted_certificates = kwargs.get('trusted_certificates', None)
@@ -2787,12 +4456,12 @@ class TlsEndpoint(EndpointBase):
 class TlsValidationOptions(msrest.serialization.Model):
     """Options for controlling the validation of TLS endpoints.
 
-    :param ignore_hostname: When set to 'true' causes the certificate subject name validation to be
+    :ivar ignore_hostname: When set to 'true' causes the certificate subject name validation to be
      skipped. Default is 'false'.
-    :type ignore_hostname: str
-    :param ignore_signature: When set to 'true' causes the certificate chain trust validation to be
+    :vartype ignore_hostname: str
+    :ivar ignore_signature: When set to 'true' causes the certificate chain trust validation to be
      skipped. Default is 'false'.
-    :type ignore_signature: str
+    :vartype ignore_signature: str
     """
 
     _attribute_map = {
@@ -2804,6 +4473,14 @@ class TlsValidationOptions(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        :keyword ignore_hostname: When set to 'true' causes the certificate subject name validation to
+         be skipped. Default is 'false'.
+        :paramtype ignore_hostname: str
+        :keyword ignore_signature: When set to 'true' causes the certificate chain trust validation to
+         be skipped. Default is 'false'.
+        :paramtype ignore_signature: str
+        """
         super(TlsValidationOptions, self).__init__(**kwargs)
         self.ignore_hostname = kwargs.get('ignore_hostname', None)
         self.ignore_signature = kwargs.get('ignore_signature', None)
@@ -2814,12 +4491,12 @@ class UnsecuredEndpoint(EndpointBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param credentials: Credentials to be presented to the endpoint.
-    :type credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
-    :param url: Required. The endpoint URL for Video Analyzer to connect to.
-    :type url: str
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar credentials: Credentials to be presented to the endpoint.
+    :vartype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+    :ivar url: Required. The endpoint URL for Video Analyzer to connect to.
+    :vartype url: str
     """
 
     _validation = {
@@ -2837,6 +4514,12 @@ class UnsecuredEndpoint(EndpointBase):
         self,
         **kwargs
     ):
+        """
+        :keyword credentials: Credentials to be presented to the endpoint.
+        :paramtype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
+        :keyword url: Required. The endpoint URL for Video Analyzer to connect to.
+        :paramtype url: str
+        """
         super(UnsecuredEndpoint, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.UnsecuredEndpoint'  # type: str
 
@@ -2846,14 +4529,14 @@ class UsernamePasswordCredentials(CredentialsBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param username: Required. Username to be presented as part of the credentials.
-    :type username: str
-    :param password: Required. Password to be presented as part of the credentials. It is
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar username: Required. Username to be presented as part of the credentials.
+    :vartype username: str
+    :ivar password: Required. Password to be presented as part of the credentials. It is
      recommended that this value is parameterized as a secret string in order to prevent this value
      to be returned as part of the resource on API requests.
-    :type password: str
+    :vartype password: str
     """
 
     _validation = {
@@ -2872,6 +4555,14 @@ class UsernamePasswordCredentials(CredentialsBase):
         self,
         **kwargs
     ):
+        """
+        :keyword username: Required. Username to be presented as part of the credentials.
+        :paramtype username: str
+        :keyword password: Required. Password to be presented as part of the credentials. It is
+         recommended that this value is parameterized as a secret string in order to prevent this value
+         to be returned as part of the resource on API requests.
+        :paramtype password: str
+        """
         super(UsernamePasswordCredentials, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials'  # type: str
         self.username = kwargs['username']
@@ -2881,36 +4572,170 @@ class UsernamePasswordCredentials(CredentialsBase):
 class VideoCreationProperties(msrest.serialization.Model):
     """Optional video properties to be used in case a new video resource needs to be created on the service. These will not take effect if the video already exists.
 
-    :param title: Optional video title provided by the user. Value can be up to 256 characters
-     long.
-    :type title: str
-    :param description: Optional video description provided by the user. Value can be up to 2048
+    :ivar title: Optional video title provided by the user. Value can be up to 256 characters long.
+    :vartype title: str
+    :ivar description: Optional video description provided by the user. Value can be up to 2048
      characters long.
-    :type description: str
-    :param segment_length: Video segment length indicates the length of individual video files
+    :vartype description: str
+    :ivar segment_length: Video segment length indicates the length of individual video files
      (segments) which are persisted to storage. Smaller segments provide lower archive playback
      latency but generate larger volume of storage transactions. Larger segments reduce the amount
      of storage transactions while increasing the archive playback latency. Value must be specified
      in ISO8601 duration format (i.e. "PT30S" equals 30 seconds) and can vary between 30 seconds to
      5 minutes, in 30 seconds increments. Changing this value after the video is initially created
      can lead to errors when uploading media to the archive. Default value is 30 seconds.
-    :type segment_length: str
+    :vartype segment_length: str
+    :ivar retention_period: Video retention period indicates how long the video is kept in storage,
+     and must be a multiple of 1 day. For example, if this is set to 30 days, then content older
+     than 30 days will be deleted.
+    :vartype retention_period: str
     """
 
     _attribute_map = {
         'title': {'key': 'title', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'segment_length': {'key': 'segmentLength', 'type': 'str'},
+        'retention_period': {'key': 'retentionPeriod', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword title: Optional video title provided by the user. Value can be up to 256 characters
+         long.
+        :paramtype title: str
+        :keyword description: Optional video description provided by the user. Value can be up to 2048
+         characters long.
+        :paramtype description: str
+        :keyword segment_length: Video segment length indicates the length of individual video files
+         (segments) which are persisted to storage. Smaller segments provide lower archive playback
+         latency but generate larger volume of storage transactions. Larger segments reduce the amount
+         of storage transactions while increasing the archive playback latency. Value must be specified
+         in ISO8601 duration format (i.e. "PT30S" equals 30 seconds) and can vary between 30 seconds to
+         5 minutes, in 30 seconds increments. Changing this value after the video is initially created
+         can lead to errors when uploading media to the archive. Default value is 30 seconds.
+        :paramtype segment_length: str
+        :keyword retention_period: Video retention period indicates how long the video is kept in
+         storage, and must be a multiple of 1 day. For example, if this is set to 30 days, then content
+         older than 30 days will be deleted.
+        :paramtype retention_period: str
+        """
         super(VideoCreationProperties, self).__init__(**kwargs)
         self.title = kwargs.get('title', None)
         self.description = kwargs.get('description', None)
         self.segment_length = kwargs.get('segment_length', None)
+        self.retention_period = kwargs.get('retention_period', None)
+
+
+class VideoEncoderConfiguration(msrest.serialization.Model):
+    """Class representing the MPEG4 Configuration.
+
+    :ivar encoding: The video codec used by the Media Profile. Possible values include: "JPEG",
+     "H264", "MPEG4".
+    :vartype encoding: str or ~azure.media.videoanalyzer.edge.models.VideoEncoding
+    :ivar quality: Relative value representing the quality of the video.
+    :vartype quality: float
+    :ivar resolution: The Video Resolution.
+    :vartype resolution: ~azure.media.videoanalyzer.edge.models.VideoResolution
+    :ivar rate_control: The Video's rate control.
+    :vartype rate_control: ~azure.media.videoanalyzer.edge.models.RateControl
+    :ivar h264: The H264 Configuration.
+    :vartype h264: ~azure.media.videoanalyzer.edge.models.H264Configuration
+    :ivar mpeg4: The H264 Configuration.
+    :vartype mpeg4: ~azure.media.videoanalyzer.edge.models.MPEG4Configuration
+    """
+
+    _attribute_map = {
+        'encoding': {'key': 'encoding', 'type': 'str'},
+        'quality': {'key': 'quality', 'type': 'float'},
+        'resolution': {'key': 'resolution', 'type': 'VideoResolution'},
+        'rate_control': {'key': 'rateControl', 'type': 'RateControl'},
+        'h264': {'key': 'h264', 'type': 'H264Configuration'},
+        'mpeg4': {'key': 'mpeg4', 'type': 'MPEG4Configuration'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword encoding: The video codec used by the Media Profile. Possible values include: "JPEG",
+         "H264", "MPEG4".
+        :paramtype encoding: str or ~azure.media.videoanalyzer.edge.models.VideoEncoding
+        :keyword quality: Relative value representing the quality of the video.
+        :paramtype quality: float
+        :keyword resolution: The Video Resolution.
+        :paramtype resolution: ~azure.media.videoanalyzer.edge.models.VideoResolution
+        :keyword rate_control: The Video's rate control.
+        :paramtype rate_control: ~azure.media.videoanalyzer.edge.models.RateControl
+        :keyword h264: The H264 Configuration.
+        :paramtype h264: ~azure.media.videoanalyzer.edge.models.H264Configuration
+        :keyword mpeg4: The H264 Configuration.
+        :paramtype mpeg4: ~azure.media.videoanalyzer.edge.models.MPEG4Configuration
+        """
+        super(VideoEncoderConfiguration, self).__init__(**kwargs)
+        self.encoding = kwargs.get('encoding', None)
+        self.quality = kwargs.get('quality', None)
+        self.resolution = kwargs.get('resolution', None)
+        self.rate_control = kwargs.get('rate_control', None)
+        self.h264 = kwargs.get('h264', None)
+        self.mpeg4 = kwargs.get('mpeg4', None)
+
+
+class VideoPublishingOptions(msrest.serialization.Model):
+    """Options for changing video publishing behavior on the video sink and output video.
+
+    :ivar enable_video_preview_image: When set to 'true' the video will publish preview images.
+     Default is 'false'.
+    :vartype enable_video_preview_image: str
+    """
+
+    _attribute_map = {
+        'enable_video_preview_image': {'key': 'enableVideoPreviewImage', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword enable_video_preview_image: When set to 'true' the video will publish preview images.
+         Default is 'false'.
+        :paramtype enable_video_preview_image: str
+        """
+        super(VideoPublishingOptions, self).__init__(**kwargs)
+        self.enable_video_preview_image = kwargs.get('enable_video_preview_image', None)
+
+
+class VideoResolution(msrest.serialization.Model):
+    """The Video resolution.
+
+    :ivar width: The number of columns of the Video image.
+    :vartype width: float
+    :ivar height: The number of lines of the Video image.
+    :vartype height: float
+    """
+
+    _attribute_map = {
+        'width': {'key': 'width', 'type': 'float'},
+        'height': {'key': 'height', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword width: The number of columns of the Video image.
+        :paramtype width: float
+        :keyword height: The number of lines of the Video image.
+        :paramtype height: float
+        """
+        super(VideoResolution, self).__init__(**kwargs)
+        self.width = kwargs.get('width', None)
+        self.height = kwargs.get('height', None)
 
 
 class VideoSink(SinkNodeBase):
@@ -2918,28 +4743,33 @@ class VideoSink(SinkNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type discriminator for the derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
+    :ivar type: Required. Type discriminator for the derived types.Constant filled by server.
+    :vartype type: str
+    :ivar name: Required. Node name. Must be unique within the topology.
+    :vartype name: str
+    :ivar inputs: Required. An array of upstream node references within the topology to be used as
      inputs for this node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param video_name: Required. Name of a new or existing Video Analyzer video resource used for
+    :vartype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :ivar video_name: Required. Name of a new or existing Video Analyzer video resource used for
      the media recording.
-    :type video_name: str
-    :param video_creation_properties: Optional video properties to be used in case a new video
+    :vartype video_name: str
+    :ivar video_creation_properties: Optional video properties to be used in case a new video
      resource needs to be created on the service.
-    :type video_creation_properties: ~azure.media.videoanalyzer.edge.models.VideoCreationProperties
-    :param local_media_cache_path: Required. Path to a local file system directory for caching of
+    :vartype video_creation_properties:
+     ~azure.media.videoanalyzer.edge.models.VideoCreationProperties
+    :ivar video_publishing_options: Optional video publishing options to be used for changing
+     publishing behavior of the output video.
+    :vartype video_publishing_options:
+     ~azure.media.videoanalyzer.edge.models.VideoPublishingOptions
+    :ivar local_media_cache_path: Required. Path to a local file system directory for caching of
      temporary media files. This will also be used to store content which cannot be immediately
      uploaded to Azure due to Internet connectivity issues.
-    :type local_media_cache_path: str
-    :param local_media_cache_maximum_size_mi_b: Required. Maximum amount of disk space that can be
+    :vartype local_media_cache_path: str
+    :ivar local_media_cache_maximum_size_mi_b: Required. Maximum amount of disk space that can be
      used for caching of temporary media files. Once this limit is reached, the oldest segments of
      the media archive will be continuously deleted in order to make space for new media, thus
      leading to gaps in the cloud recorded content.
-    :type local_media_cache_maximum_size_mi_b: str
+    :vartype local_media_cache_maximum_size_mi_b: str
     """
 
     _validation = {
@@ -2957,6 +4787,7 @@ class VideoSink(SinkNodeBase):
         'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
         'video_name': {'key': 'videoName', 'type': 'str'},
         'video_creation_properties': {'key': 'videoCreationProperties', 'type': 'VideoCreationProperties'},
+        'video_publishing_options': {'key': 'videoPublishingOptions', 'type': 'VideoPublishingOptions'},
         'local_media_cache_path': {'key': 'localMediaCachePath', 'type': 'str'},
         'local_media_cache_maximum_size_mi_b': {'key': 'localMediaCacheMaximumSizeMiB', 'type': 'str'},
     }
@@ -2965,9 +4796,37 @@ class VideoSink(SinkNodeBase):
         self,
         **kwargs
     ):
+        """
+        :keyword name: Required. Node name. Must be unique within the topology.
+        :paramtype name: str
+        :keyword inputs: Required. An array of upstream node references within the topology to be used
+         as inputs for this node.
+        :paramtype inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+        :keyword video_name: Required. Name of a new or existing Video Analyzer video resource used for
+         the media recording.
+        :paramtype video_name: str
+        :keyword video_creation_properties: Optional video properties to be used in case a new video
+         resource needs to be created on the service.
+        :paramtype video_creation_properties:
+         ~azure.media.videoanalyzer.edge.models.VideoCreationProperties
+        :keyword video_publishing_options: Optional video publishing options to be used for changing
+         publishing behavior of the output video.
+        :paramtype video_publishing_options:
+         ~azure.media.videoanalyzer.edge.models.VideoPublishingOptions
+        :keyword local_media_cache_path: Required. Path to a local file system directory for caching of
+         temporary media files. This will also be used to store content which cannot be immediately
+         uploaded to Azure due to Internet connectivity issues.
+        :paramtype local_media_cache_path: str
+        :keyword local_media_cache_maximum_size_mi_b: Required. Maximum amount of disk space that can
+         be used for caching of temporary media files. Once this limit is reached, the oldest segments
+         of the media archive will be continuously deleted in order to make space for new media, thus
+         leading to gaps in the cloud recorded content.
+        :paramtype local_media_cache_maximum_size_mi_b: str
+        """
         super(VideoSink, self).__init__(**kwargs)
         self.type = '#Microsoft.VideoAnalyzer.VideoSink'  # type: str
         self.video_name = kwargs['video_name']
         self.video_creation_properties = kwargs.get('video_creation_properties', None)
+        self.video_publishing_options = kwargs.get('video_publishing_options', None)
         self.local_media_cache_path = kwargs['local_media_cache_path']
         self.local_media_cache_maximum_size_mi_b = kwargs['local_media_cache_maximum_size_mi_b']

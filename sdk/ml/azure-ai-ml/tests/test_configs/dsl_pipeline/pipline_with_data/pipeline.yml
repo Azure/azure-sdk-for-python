@@ -1,0 +1,39 @@
+type: pipeline
+
+compute: azureml:cpu-cluster
+
+inputs:
+  pipeline_sample_input_data:
+    path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    type: uri_file
+
+outputs:
+  pipeline_sample_output_data_A:
+    mode: upload
+  pipeline_sample_output_data_B:
+    mode: rw_mount
+  pipeline_sample_output_data_C:
+    mode: upload
+
+jobs:
+  component_a_job:
+    type: command
+    component: file:./componentA.yml
+    inputs:
+      componentA_input: ${{parent.inputs.pipeline_sample_input_data}}
+    outputs:
+      componentA_output: ${{parent.outputs.pipeline_sample_output_data_A}}
+  component_b_job:
+    type: command
+    component: file:./componentB.yml
+    inputs:
+      componentB_input: ${{parent.jobs.component_a_job.outputs.componentA_output}}
+    outputs:
+      componentB_output: ${{parent.outputs.pipeline_sample_output_data_B}}
+  component_c_job:
+    type: command
+    component: file:./componentC.yml
+    inputs:
+      componentC_input: ${{parent.jobs.component_b_job.outputs.componentB_output}}
+    outputs:
+      componentC_output: ${{parent.outputs.pipeline_sample_output_data_C}}

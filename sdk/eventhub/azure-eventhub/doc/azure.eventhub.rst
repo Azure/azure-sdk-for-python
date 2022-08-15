@@ -58,3 +58,4 @@ Subpackages
 
    azure.eventhub.aio
    azure.eventhub.exceptions
+   azure.eventhub.amqp

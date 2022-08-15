@@ -1,4 +1,5 @@
 include *.md
+include LICENSE
 include azure/__init__.py
 include azure/confidentialledger/__init__.py
 include azure/confidentialledger/py.typed

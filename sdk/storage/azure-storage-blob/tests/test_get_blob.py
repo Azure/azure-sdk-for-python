@@ -5,36 +5,36 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import base64
-import unittest
+import pytest
+import random
 import uuid
-from os import path, remove, sys, urandom
+from os import path, remove
+from math import ceil
+from io import BytesIO
+from os import path, remove
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
-    BlobClient,
     StorageErrorCode,
     BlobProperties
 )
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
+from settings.testcase import BlobPreparer
+from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-
-
 # ------------------------------------------------------------------------------
 
 class StorageGetBlobTest(StorageTestCase):
-    def _setup(self, storage_account, key):
+    def _setup(self, storage_account_name, key):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=key,
             max_single_get_size=1024,
             max_chunk_get_size=1024)
@@ -83,9 +83,9 @@ class StorageGetBlobTest(StorageTestCase):
 
     # -- Get test cases for blobs ----------------------------------------------
 
-    @GlobalStorageAccountPreparer()
-    def test_unicode_get_blob_unicode_data(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_unicode_get_blob_unicode_data(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_data = u'hello world啊齄丂狛狜'.encode('utf-8')
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -98,9 +98,9 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsInstance(content.properties, BlobProperties)
         self.assertEqual(content.readall(), blob_data)
 
-    @GlobalStorageAccountPreparer()
-    def test_unicode_get_blob_binary_data(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_unicode_get_blob_binary_data(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
         binary_data = base64.b64decode(base64_data)
 
@@ -115,9 +115,9 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsInstance(content.properties, BlobProperties)
         self.assertEqual(content.readall(), binary_data)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_no_content(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_no_content(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_data = b''
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -131,11 +131,11 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(0, content.properties.size)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_bytes(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_bytes(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -145,11 +145,11 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(self.byte_data, content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_bytes_with_single_byte(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_ranged_get_blob_to_bytes_with_single_byte(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -166,9 +166,9 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(1, len(content))
         self.assertEqual(self.byte_data[5], content[0])
 
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_bytes_with_zero_byte(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_ranged_get_blob_to_bytes_with_zero_byte(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_data = b''
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -184,9 +184,9 @@ class StorageGetBlobTest(StorageTestCase):
             blob.download_blob(offset=3, length=5)
         self.assertEqual(StorageErrorCode.invalid_range, e.exception.error_code)
 
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_with_missing_start_range(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_ranged_get_blob_with_missing_start_range(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_data = b'foobar'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -198,11 +198,11 @@ class StorageGetBlobTest(StorageTestCase):
             blob.download_blob(length=3)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_bytes_snapshot(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_bytes_snapshot(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         snapshot_ref = blob.create_snapshot()
         snapshot = self.bsc.get_blob_client(self.container_name, self.byte_blob, snapshot=snapshot_ref)
@@ -216,11 +216,11 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(self.byte_data, content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_bytes_with_progress(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         progress = []
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
@@ -240,9 +240,9 @@ class StorageGetBlobTest(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_bytes_non_parallel(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_bytes_non_parallel(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         progress = []
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
@@ -262,9 +262,9 @@ class StorageGetBlobTest(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_bytes_small(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_bytes_small(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_data = self.get_random_bytes(1024)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -289,11 +289,11 @@ class StorageGetBlobTest(StorageTestCase):
             progress)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_stream(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_stream(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -310,11 +310,11 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_stream_with_progress(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         progress = []
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
@@ -340,9 +340,9 @@ class StorageGetBlobTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_stream_non_parallel(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_stream_non_parallel(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         progress = []
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
@@ -369,9 +369,9 @@ class StorageGetBlobTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_stream_small(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_stream_small(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_data = self.get_random_bytes(1024)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -404,11 +404,11 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_path(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_ranged_get_blob_to_path(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -426,11 +426,11 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_ranged_get_blob_to_path_with_progress(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         progress = []
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
@@ -463,9 +463,9 @@ class StorageGetBlobTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_path_small(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_ranged_get_blob_to_path_small(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -481,9 +481,9 @@ class StorageGetBlobTest(StorageTestCase):
             self.assertEqual(self.byte_data[1:5], actual)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_ranged_get_blob_to_path_non_parallel(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -500,11 +500,11 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_path_invalid_range_parallel(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_ranged_get_blob_to_path_invalid_range_parallel(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob_size = self.config.max_single_get_size + 1
         blob_data = self.get_random_bytes(blob_size)
         blob_name = self._get_blob_reference()
@@ -526,11 +526,11 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_ranged_get_blob_to_path_invalid_range_non_parallel(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_ranged_get_blob_to_path_invalid_range_non_parallel(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob_size = 1024
         blob_data = self.get_random_bytes(blob_size)
         blob_name = self._get_blob_reference()
@@ -554,11 +554,11 @@ class StorageGetBlobTest(StorageTestCase):
             # Assert
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_text(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_text(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         text_blob = self.get_resource_name('textblob')
         text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
@@ -572,11 +572,11 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(text_data, content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_text_with_progress(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_text_with_progress(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         text_blob = self.get_resource_name('textblob')
         text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
@@ -604,9 +604,9 @@ class StorageGetBlobTest(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_text_non_parallel(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_text_non_parallel(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         text_blob = self._get_blob_reference()
         text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
@@ -634,9 +634,9 @@ class StorageGetBlobTest(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_text_small(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_text_small(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_data = self.get_random_text_data(1024)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -661,9 +661,9 @@ class StorageGetBlobTest(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_text_with_encoding(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         text = u'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -676,9 +676,9 @@ class StorageGetBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(text, content)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_text_with_encoding_and_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         text = u'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -703,9 +703,9 @@ class StorageGetBlobTest(StorageTestCase):
             self.config.max_single_get_size,
             progress)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_non_seekable(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_non_seekable(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -723,11 +723,11 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_non_seekable_parallel(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_non_seekable_parallel(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -740,9 +740,9 @@ class StorageGetBlobTest(StorageTestCase):
                 properties = downloader.readinto(non_seekable_stream)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_stream_exact_get_size(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_to_stream_exact_get_size(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         byte_data = self.get_random_bytes(self.config.max_single_get_size)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -772,9 +772,9 @@ class StorageGetBlobTest(StorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_exact_get_size(self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    def test_get_blob_exact_get_size(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         byte_data = self.get_random_bytes(self.config.max_single_get_size)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -799,11 +799,11 @@ class StorageGetBlobTest(StorageTestCase):
             progress)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_exact_chunk_size(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_exact_chunk_size(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         byte_data = self.get_random_bytes(
             self.config.max_single_get_size +
@@ -830,11 +830,11 @@ class StorageGetBlobTest(StorageTestCase):
             progress)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_to_stream_with_md5(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_to_stream_with_md5(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -851,11 +851,11 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_with_md5(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_with_md5(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
@@ -865,11 +865,11 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(self.byte_data, content)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_range_to_stream_with_overall_md5(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_range_to_stream_with_overall_md5(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         props = blob.get_blob_properties()
         props.content_settings.content_md5 = b'MDAwMDAwMDA='
@@ -888,14 +888,14 @@ class StorageGetBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_range_with_overall_md5(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_range_with_overall_md5(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         content = blob.download_blob(offset=0, length=1024, validate_content=True)
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         props = blob.get_blob_properties()
         props.content_settings.content_md5 = b'MDAwMDAwMDA='
         blob.set_http_headers(props.content_settings)
@@ -908,14 +908,14 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertEqual(b'MDAwMDAwMDA=', content.properties.content_settings.content_md5)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
-    def test_get_blob_range_with_range_md5(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_get_blob_range_with_range_md5(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         content = blob.download_blob(offset=0, length=1024, validate_content=True)
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         props = blob.get_blob_properties()
         props.content_settings.content_md5 = None
         blob.set_http_headers(props.content_settings)
@@ -927,5 +927,457 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsNotNone(content.properties.content_settings.content_type)
         self.assertIsNone(content.properties.content_settings.content_md5)
 
+    @BlobPreparer()
+    def test_get_blob_progress_single_get(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 512
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
 
-# ------------------------------------------------------------------------------
+        progress = ProgressTracker(len(data), len(data))
+
+        # Act
+        blob.download_blob(progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @BlobPreparer()
+    def test_get_blob_progress_chunked(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob.download_blob(max_concurrency=1, progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_range(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        length = 4096
+        progress = ProgressTracker(length, 1024)
+
+        # Act
+        blob.download_blob(
+            offset=512,
+            length=length,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress
+        ).readall()
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_readinto(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+        result = BytesIO()
+
+        # Act
+        stream = blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress)
+        read = stream.readinto(result)
+
+        # Assert
+        progress.assert_complete()
+        self.assertEqual(len(data), read)
+
+    @BlobPreparer()
+    def test_get_blob_read_empty(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b''
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        content = blob.download_blob().read()
+        content2 = blob.download_blob().read(512)
+
+        # Assert
+        assert data == content
+        assert data == content2
+
+    @BlobPreparer()
+    def test_get_blob_read_all(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        content = blob.download_blob().read()
+
+        # Assert
+        assert data == content
+
+    @BlobPreparer()
+    def test_get_blob_read_single(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_get_size = 10 * 1024
+        self.bsc._config.max_chunk_get_size = 10 * 1024
+
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_small_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_large_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 1536
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_chunk_equal_download_chunk(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 1024
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read_random_chunks(self, storage_account_name, storage_account_key):
+        # Random chunk sizes, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        total = 0
+        while total < len(data):
+            read_size = random.randint(500, 2500)
+            content = stream.read(read_size)
+            result.extend(content)
+            total += len(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob(max_concurrency=3)
+
+        # Act
+        result = bytearray()
+        read_size = 4096
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_into_upload(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + '-copy')
+        blob2.upload_blob(stream, overwrite=True)
+        result = blob2.download_blob().readall()
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_past(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'Hello World'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        stream = blob.download_blob()
+        result = stream.read(25)
+
+        # Assert
+        assert result == data
+        for _ in range(3):
+            result = stream.read(100)
+            assert result == b''
+
+    @BlobPreparer()
+    def test_get_blob_read_ranged(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        offset, length = 1024, 2048
+        stream = blob.download_blob(offset=offset, length=length)
+
+        read_size = 1024
+        data1 = stream.read(read_size)
+        data2 = stream.read(read_size)
+
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
+
+        offset, length = 501, 3000
+        stream = blob.download_blob(offset=offset, length=length)
+
+        read_size = 1536
+        data1 = stream.read(read_size)
+        data2 = stream.read(read_size)
+
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
+
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_single(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'Hello World'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        stream = blob.download_blob()
+        first = stream.read(5)
+        second = stream.readall()
+
+        assert first == data[:5]
+        assert second == data[5:]
+
+        stream = blob.download_blob()
+        first = stream.read(5)
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[:5]
+        assert second == data[5:]
+        assert read_size == len(second)
+
+        # Test another read operation after reading all data
+        stream = blob.download_blob()
+        first = stream.read(25)
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data
+        assert second == b''
+        assert read_size == 0
+
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        stream = blob.download_blob()
+        first = stream.read(100)  # Read in first chunk
+        second = stream.readall()
+
+        assert first == data[:100]
+        assert second == data[100:]
+
+        stream = blob.download_blob()
+        first = stream.read(3000)  # Read past first chunk
+        second = stream.readall()
+
+        assert first == data[:3000]
+        assert second == data[3000:]
+
+        stream = blob.download_blob()
+        first = stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[:3000]
+        assert second == data[3000:]
+        assert read_size == len(second)
+
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        offset, length = 1024, 2048
+
+        # Act / Assert
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(100)  # Read in first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + 100]
+        assert second == data[offset + 100:offset + length]
+
+        offset, length = 501, 5000
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(3000)  # Read past first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+        assert read_size == len(second)
+
+    @BlobPreparer()
+    def test_get_blob_read_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Custom progress tracker for 4 read calls then readall
+        class CustomProgressTracker:
+            def __init__(self):
+                self.num_read = 0
+                self.totals = [5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125]
+                self.currents = [500, 1000, 1024, 1500, 2000, 3024, 4048, 5072, 5125]
+
+            def assert_progress(self, current, total):
+                assert total == self.totals[self.num_read]
+                assert current == self.currents[self.num_read]
+                self.num_read += 1
+
+        progress = CustomProgressTracker()
+        stream = blob.download_blob(progress_hook=progress.assert_progress)
+
+        # Act / Assert
+        for _ in range(4):
+            stream.read(500)
+        stream.readall()
+
+    # ------------------------------------------------------------------------------

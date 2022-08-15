@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-TIME_WINDOW = u"Microsoft.TimeWindow"
+FILTER_TIME_WINDOW = u"Microsoft.TimeWindow"
 
-PERCENTAGE = u"Microsoft.Percentage"
+FILTER_PERCENTAGE = u"Microsoft.Percentage"
 
-TARGETING = u"Microsoft.Targeting"
+FILTER_TARGETING = u"Microsoft.Targeting"

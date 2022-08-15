@@ -7,6 +7,16 @@ trigger:
     exclude:
     - '*'
 
+# avoid being triggered as part of CI check
+pr:
+  branches:
+    exclude:
+    - '*'
+
+
+variables:
+  - group: Release Secrets for GitHub
+  - group: Azure SDK Auto Release Pipeline Secrets
 
 jobs:
 - job: LiveTestPython38
@@ -15,7 +25,7 @@ jobs:
   strategy:
     maxParallel: 5
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-20.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
@@ -30,58 +40,51 @@ jobs:
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir azure-sdk-for-python
-        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
+        git clone ${REPO:0:8}$(USR_NAME):$(azuresdk-github-pat)@${REPO:8} $(pwd)/azure-sdk-for-python
+
+        # prepare env if need to generate SDK code
+        if [ "$(SPEC_README)" ]; then
+          mkdir azure-rest-api-specs
+          git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
+
+
+          # install autorest
+          sudo npm install -g n
+          sudo n 14.15.0
+          export PATH=/usr/local/n/versions/node/14.15.0/bin:$PATH
+          sudo npm init -f
+          sudo npm install -g autorest --save
+
+          mkdir temp_folder
+
+          export SPEC_README=$(SPEC_README)
+          export SPEC_REPO=$(pwd)/azure-rest-api-specs
+          export TEMP_FOLDER=$(pwd)/temp_folder
+        fi
 
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
-        output_path=$(pwd)/venv-sdk
-        pip install packaging
-        pip install -r $script_path/livetest_package.txt
+        pip install -r $script_path/requirement.txt
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
-        export TENANT_ID=$(ENV_TENANT_ID)
-        export CLIENT_ID=$(ENV_CLIENT_ID)
-        export CLIENT_SECRET=$(ENV_CLIENT_SECRET)
-        export SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
-        export AZURE_TENANT_ID=$(ENV_TENANT_ID)
-        export AZURE_CLIENT_ID=$(ENV_CLIENT_ID)
-        export AZURE_CLIENT_SECRET=$(ENV_CLIENT_SECRET)
-        export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
+        export TENANT_ID=$(ENV-TENANT-ID)
+        export CLIENT_ID=$(ENV-CLIENT-ID)
+        export CLIENT_SECRET=$(ENV-CLIENT-SECRET)
+        export SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
+        export AZURE_TENANT_ID=$(ENV-TENANT-ID)
+        export AZURE_CLIENT_ID=$(ENV-CLIENT-ID)
+        export AZURE_CLIENT_SECRET=$(ENV-CLIENT-SECRET)
+        export AZURE_SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
+        export ISSUE_LINK=$(ISSUE_LINK)
+        export BASE_BRANCH=$(BASE_BRANCH)
+        export SCRIPT_PATH=$script_path
+        export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
+        export STORAGE_CONN_STR=$(storage-conn-str)
+        export STORAGE_ENDPOINT=$(storage-endpoint)
+        export PYTHON_TAG=$(PYTHON_TAG)
 
         # run
         cd azure-sdk-for-python
-        python $script_path/main.py $(BASE_BRANCH) "$script_path" "$output_path"
-
-        # judge
-        if [ ! -f "$output_path/output.txt" ]; then
-          echo "output.txt does not exist, pipeline fail!!!"
-          exit 1
-        fi
-
-        test_result=""
-        if [ -f "$output_path/live_test_fail.txt" ]; then
-          test_result="Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!\n"
-        fi
-
-        # create PR
-        new_branch=`sed -n '1p' $output_path/output.txt`
-        target_branch=`sed -n '2p' $output_path/output.txt`
-        curl \
-          --user "anything:$(USR_TOKEN)" \
-          -d "{\
-                  \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
-                  \"body\":\"$test_result Please Add the link issue \",\
-                  \"head\":\"$(USR_NAME):$new_branch\",\
-                  \"base\":\"$target_branch\"\
-              }" \
-              https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
-
-        echo "\'[AutoRelease] $new_branch \' has been created!!!"
-
-        # if test fail, still push and crete PR. But pipeline would fail to remind user
-        if [ -f "$output_path/live_test_fail.txt" ]; then
-          echo "please fix failure test!!! \'[AutoRelease] $new_branch \' has been created!!!"
-          exit 1
-        fi
+        python $script_path/main.py

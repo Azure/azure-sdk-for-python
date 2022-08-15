@@ -1,0 +1,9 @@
+name: project_environment
+channels:
+  - defaults
+dependencies:
+  - python=3.7.9
+  - pip=20.0
+  - pip:
+    - azureml-defaults
+    - azureml-dataprep>=1.6

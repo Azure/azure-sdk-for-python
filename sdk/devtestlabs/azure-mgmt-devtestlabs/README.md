@@ -1,19 +1,12 @@
-## Microsoft Azure SDK for Python
+# Microsoft Azure SDK for Python
 
-This is the Microsoft Azure DevTestLabs Management Client Library.
+This is the Microsoft Azure Dev Test Labs Management Client Library.
+This package has been tested with Python 3.7+.
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
-Azure Resource Manager (ARM) is the next generation of management APIs
-that replace the old Azure Service Management (ASM).
+## _Disclaimer_
 
-This package has been tested with Python 2.7, 3.5, 3.6 and 3.7.
-
-For the older Azure Service Management (ASM) libraries, see
-[azure-servicemanagement-legacy](https://pypi.python.org/pypi/azure-servicemanagement-legacy)
-library.
-
-For a more complete set of Azure libraries, see the
-[azure sdk python release](https://aka.ms/azsdk/python/all).
-
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Usage
 
@@ -22,14 +15,16 @@ To learn how to use this package, see the [quickstart guide](https://aka.ms/azsd
 
 
  
-For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/)
-Code samples for this package can be found at [DevTestLabs Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
+For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/devtest-labs)
+Code samples for this package can be found at [Dev Test Labs Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
 Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
-## Provide Feedback
 
-If you encounter any bugs or have suggestions, please file an issue in
-the [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
+# Provide Feedback
 
-![image](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-devtestlabs%2FREADME.png)
+If you encounter any bugs or have suggestions, please file an issue in the
+[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
+section of the project. 
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-devtestlabs%2FREADME.png)

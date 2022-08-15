@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/commandJob.schema.json
+command: echo "inputs dont need to be used in command"
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+name: "test1"
+compute: "azureml:testCompute"
+experiment_name: mfe-test1
+properties:
+  _azureml.ComputeTargetType: amlcompute
+outputs:
+  test1:
+  test2:
+    mode: upload
+  test3:
+    mode: rw_mount

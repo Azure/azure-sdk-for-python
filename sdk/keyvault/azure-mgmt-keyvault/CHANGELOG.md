@@ -1,5 +1,59 @@
 # Release History
 
+## 10.1.0 (2022-08-10)
+
+### Features Added
+
+  - Added operation ManagedHsmsOperations.check_mhsm_name_availability
+  - Model Key has a new parameter release_policy
+  - Model Key has a new parameter rotation_policy
+  - Model KeyProperties has a new parameter release_policy
+  - Model KeyProperties has a new parameter rotation_policy
+  - Model MHSMPrivateEndpointConnectionItem has a new parameter etag
+  - Model MHSMPrivateEndpointConnectionItem has a new parameter id
+
+### Other Changes
+
+  - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+
+## 10.0.0 (2022-05-24)
+
+**Breaking changes**
+
+  - Model Key no longer has parameter release_policy
+  - Model Key no longer has parameter rotation_policy
+  - Model KeyProperties no longer has parameter release_policy
+  - Model KeyProperties no longer has parameter rotation_policy
+
+## 9.3.0 (2021-11-11)
+
+**Features**
+
+  - Added some enum value
+
+
+## 9.2.0 (2021-10-15)
+
+**Features**
+
+  - Model VaultProperties has a new parameter public_network_access
+  - Model VaultPatchProperties has a new parameter public_network_access
+  - Model KeyAttributes has a new parameter exportable
+  - Model Key has a new parameter release_policy
+  - Model Key has a new parameter rotation_policy
+  - Model KeyProperties has a new parameter release_policy
+  - Model KeyProperties has a new parameter rotation_policy
+
+## 9.1.0 (2021-08-26)
+
+**Features**
+
+  - Model VirtualNetworkRule has a new parameter ignore_missing_vnet_service_endpoint
+  - Model VaultProperties has a new parameter hsm_pool_resource_id
+  - Model PrivateEndpointConnectionItem has a new parameter etag
+  - Model PrivateEndpointConnectionItem has a new parameter id
+  - Model ServiceSpecification has a new parameter metric_specifications
+
 ## 9.0.0 (2021-04-19)
 
 **Features**
@@ -69,7 +123,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -77,13 +131,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 2.2.0 (2020-03-20)
 

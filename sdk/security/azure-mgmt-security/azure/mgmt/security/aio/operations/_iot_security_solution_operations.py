@@ -44,7 +44,7 @@ class IotSecuritySolutionOperations:
     def list_by_subscription(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IoTSecuritySolutionsList"]:
         """Use this method to get the list of IoT Security solutions by subscription.
 
@@ -117,7 +117,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IoTSecuritySolutionsList"]:
         """Use this method to get the list IoT Security solutions organized by resource group.
 
@@ -194,7 +194,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IoTSecuritySolutionModel":
         """User this method to get details of a specific IoT Security solution based on solution name.
 
@@ -254,7 +254,7 @@ class IotSecuritySolutionOperations:
         resource_group_name: str,
         solution_name: str,
         iot_security_solution_data: "_models.IoTSecuritySolutionModel",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IoTSecuritySolutionModel":
         """Use this method to create or update yours IoT Security solution.
 
@@ -325,7 +325,7 @@ class IotSecuritySolutionOperations:
         resource_group_name: str,
         solution_name: str,
         update_iot_security_solution_data: "_models.UpdateIotSecuritySolutionData",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IoTSecuritySolutionModel":
         """Use this method to update existing IoT Security solution tags or user defined resources. To
         update other fields use the CreateOrUpdate method.
@@ -392,7 +392,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Use this method to delete yours IoT Security solution.
 

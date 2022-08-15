@@ -10,8 +10,9 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import uuid
 
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, DecodeError, ResourceNotFoundError
 from azure.data.tables import (
     generate_account_sas,
     AccountSasPermissions,
@@ -22,13 +23,24 @@ from azure.data.tables import (
     TableAnalyticsLogging,
     TableMetrics,
     TableServiceClient,
+    _error
 )
+from azure.data.tables._error import _decode_error
+from azure.identity import DefaultAzureCredential
 
 from devtools_testutils import is_live
 
 SLEEP_DELAY = 30
 
 TEST_TABLE_PREFIX = "pytablesync"
+
+SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
+                                '></StorageServiceStats> '
+
+SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                         '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
+                         '></StorageServiceStats> '
 
 
 class FakeTokenCredential(object):
@@ -39,7 +51,7 @@ class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
-    def get_token(self, *args):
+    def get_token(self, *args, **kwargs):
         return self.token
 
 
@@ -80,6 +92,11 @@ class TableTestCase(object):
             start=datetime.now() - timedelta(hours=24),
             expiry=datetime.now() + timedelta(days=8),
         )
+
+    def get_token_credential(self):
+        if is_live():
+            return DefaultAzureCredential()
+        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
@@ -296,6 +313,15 @@ class TableTestCase(object):
         self._assert_metrics_equal(prop["minute_metrics"], TableMetrics())
         self._assert_cors_equal(prop["cors"], list())
 
+    def _assert_policy_datetime(self, val1, val2):
+        assert isinstance(val2, datetime)
+        assert val1.year == val2.year
+        assert val1.month == val2.month
+        assert val1.day == val2.day
+        assert val1.hour == val2.hour
+        assert val1.minute == val2.minute
+        assert val1.second == val2.second
+
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
             assert log1 == log2
@@ -412,10 +438,10 @@ class TableTestCase(object):
         metadata = self.table.create_entity(entity)
         return entity, metadata["etag"]
 
-    def _set_up(self, account_name, account_key, url="table"):
+    def _set_up(self, account_name, credential, url="table"):
         self.table_name = self.get_resource_name("uttable")
         self.ts = TableServiceClient(
-            self.account_url(account_name, url), credential=account_key, table_name=self.table_name
+            self.account_url(account_name, url), credential=credential, table_name=self.table_name
         )
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
@@ -440,6 +466,13 @@ class TableTestCase(object):
         assert stats["geo_replication"]["status"] == "unavailable"
         assert stats["geo_replication"]["last_sync_time"] is None
 
+    @staticmethod
+    def override_response_body_with_unavailable_status(response):
+        response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY
+
+    @staticmethod
+    def override_response_body_with_live_status(response):
+        response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):
@@ -466,3 +499,20 @@ class RetryCounter(object):
 
     def simple_count(self, retry_context):
         self.count += 1
+
+
+def _decode_proxy_error(response, error_message=None, error_type=None, **kwargs):  # pylint: disable=too-many-branches
+    try:
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(response)
+        if isinstance(error_body, dict):
+            # Special case: there was a playback error during test execution (test proxy only)
+            message = error_body.get("Message")
+            if message and message.startswith("Unable to find a record for the request"):
+                error = ResourceNotFoundError(message=error_message, response=response)
+                error.error_code = 'ResourceNotFoundError'
+                return error
+    except DecodeError:
+        pass
+    return _decode_error(response, error_message, error_type, **kwargs)
+
+_error._decode_error = _decode_proxy_error

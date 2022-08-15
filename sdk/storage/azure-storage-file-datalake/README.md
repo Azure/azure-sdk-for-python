@@ -6,13 +6,13 @@ This preview package for Python includes ADLS Gen2 specific API support made ava
 2. Permission related operations (Get/Set ACLs) for hierarchical namespace enabled (HNS) accounts.
 
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/azure/storage/filedatalake) | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/) | [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/azure/storage/filedatalake) | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/) | [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples)
 
 
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
 
@@ -48,9 +48,9 @@ Interaction with DataLake Storage starts with an instance of the DataLakeService
 #### Get credentials
 
 To authenticate the client you have a few options:
-1. Use a SAS token string 
+1. Use a SAS token string
 2. Use an account shared access key
-3. Use a token credential from [azure.identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
+3. Use a token credential from [azure.identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity)
 
 Alternatively, you can authenticate with a storage connection string using the `from_connection_string` method. See example: [Client creation with a connection string](#client-creation-with-a-connection-string).
 
@@ -74,10 +74,20 @@ DataLake storage offers four types of resources:
 * A directory under the file system
 * A file in a the file system or under directory
 
+### Async Clients 
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
+for more information.
+
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods.
+
 #### Clients
 
 The DataLake Storage SDK provides four different clients to interact with the DataLake Service:
-1. **DataLakeServiceClient** - this client interacts with the DataLake Service at the account level. 
+1. **DataLakeServiceClient** - this client interacts with the DataLake Service at the account level.
     It provides operations to retrieve and configure the account properties
     as well as list, create, and delete file systems within the account.
     For operations relating to a specific file system, directory or file, clients for those entities
@@ -85,16 +95,16 @@ The DataLake Storage SDK provides four different clients to interact with the Da
 2. **FileSystemClient** - this client represents interaction with a specific
     file system, even if that file system does not exist yet. It provides operations to create, delete, or
     configure file systems and includes operations to list paths under file system, upload, and delete file or
-    directory in the file system.  
+    directory in the file system.
     For operations relating to a specific file, the client can also be retrieved using
-    the `get_file_client` function.  
-    For operations relating to a specific directory, the client can be retrieved using 
-    the `get_directory_client` function.  
+    the `get_file_client` function.
+    For operations relating to a specific directory, the client can be retrieved using
+    the `get_directory_client` function.
 3. **DataLakeDirectoryClient** - this client represents interaction with a specific
     directory, even if that directory does not exist yet. It provides directory operations create, delete, rename,
     get properties and set properties operations.
 3. **DataLakeFileClient** - this client represents interaction with a specific
-    file, even if that file does not exist yet. It provides file operations to append data, flush data, delete, 
+    file, even if that file does not exist yet. It provides file operations to append data, flush data, delete,
     create, and read file.
 4. **DataLakeLeaseClient** - this client represents lease interactions with a FileSystemClient, DataLakeDirectoryClient
     or DataLakeFileClient. It provides operations to acquire, renew, release, change, and break leases on the resources.
@@ -125,7 +135,7 @@ Upload a file to your file system.
 from azure.storage.filedatalake import DataLakeFileClient
 
 data = b"abc"
-file = DataLakeFileClient.from_connection_string("my_connection_string", 
+file = DataLakeFileClient.from_connection_string("my_connection_string",
                                                  file_system_name="myfilesystem", file_path="myfile")
 file.create_file ()
 file.append_data(data, offset=0, length=len(data))
@@ -138,7 +148,7 @@ Download a file from your file system.
 ```python
 from azure.storage.filedatalake import DataLakeFileClient
 
-file = DataLakeFileClient.from_connection_string("my_connection_string", 
+file = DataLakeFileClient.from_connection_string("my_connection_string",
                                                  file_system_name="myfilesystem", file_path="myfile")
 
 with open("./BlockDestination.txt", "wb") as my_file:
@@ -159,9 +169,48 @@ for path in paths:
     print(path.name + '\n')
 ```
 
+## Optional Configuration
+
+Optional keyword arguments that can be passed in at the client and per-operation level.
+
+### Retry Policy configuration
+
+Use the following keyword arguments when instantiating a client to configure the retry policy:
+
+* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
+Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
+* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
+* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
+* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
+* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able.
+This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
+Defaults to `False`.
+
+### Other client / per-operation configuration
+
+Other optional configuration keyword arguments that can be specified on the client or per-operation.
+
+**Client keyword arguments:**
+
+* __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
+* __read_timeout__ (int): The number of seconds the client will wait, after the connections has been established, for the server to send a response.
+* __transport__ (Any): User-provided transport to send the HTTP request.
+
+**Per-operation keyword arguments:**
+
+* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
+* __raw_request_hook__ (callable): The given callback uses the request before being sent to service.
+* __client_request_id__ (str): Optional user specified identification of the request.
+* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
+* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+the client level to enable it for all requests.
+* __logging_body__ (bool): Enables logging the request and response body. Defaults to False. Can also be passed in at
+the client level to enable it for all requests.
+* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
+
 ## Troubleshooting
 ### General
-DataLake Storage clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+DataLake Storage clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
 This list can be used for reference to catch thrown exceptions. To get the specific error code of the exception, use the `error_code` attribute, i.e, `exception.error_code`.
 
@@ -200,11 +249,11 @@ service_client.list_file_systems(logging_enable=True)
 
 ### More sample code
 
-Get started with our [Azure DataLake samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples).
+Get started with our [Azure DataLake samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples).
 
 Several DataLake Storage Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with DataLake Storage:
 
-* [`datalake_samples_access_control.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_access_control.py) - Examples for common DataLake Storage tasks:
+* [`datalake_samples_access_control.py`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_access_control.py) - Examples for common DataLake Storage tasks:
     * Set up a file system
     * Create a directory
     * Set/Get access control for the directory
@@ -212,7 +261,7 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
     * Set/Get access control for each file
     * Delete file system
 
-* [`datalake_samples_upload_download.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_upload_download.py) - Examples for common DataLake Storage tasks:
+* [`datalake_samples_upload_download.py`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_upload_download.py) - Examples for common DataLake Storage tasks:
     * Set up a file system
     * Create file
     * Append data to the file
@@ -223,7 +272,7 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
 
 ### Additional documentation
 
-Table for [ADLS Gen1 to ADLS Gen2 API Mapping](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-file-datalake/GEN1_GEN2_MAPPING.md)  
+Table for [ADLS Gen1 to ADLS Gen2 API Mapping](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-file-datalake/GEN1_GEN2_MAPPING.md)
 For more extensive REST documentation on Data Lake Storage Gen2, see the [Data Lake Storage Gen2 documentation](https://docs.microsoft.com/rest/api/storageservices/datalakestoragegen2/filesystem) on docs.microsoft.com.
 
 

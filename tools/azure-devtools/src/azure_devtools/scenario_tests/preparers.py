@@ -6,7 +6,6 @@
 import contextlib
 import functools
 import logging
-import sys
 from collections import namedtuple
 from threading import Lock
 
@@ -135,7 +134,14 @@ You must specify use_cache=True in the preparer decorator""".format(
                         )
 
             if test_class_instance.is_live:
-                test_class_instance.scrubber.register_name_pair(resource_name, self.moniker)
+                # Adding this for new proxy testcase
+                if hasattr(test_class_instance, "scrubber"):
+                    test_class_instance.scrubber.register_name_pair(resource_name, self.moniker)
+                else:
+                    _logger.info(
+                        "This test class instance has no scrubber, so the AbstractPreparer will not scrub any values "
+                        "in recordings."
+                    )
 
             # We shouldn't trim the same kwargs that we use for deletion,
             # we may remove some of the variables we needed to do the delete.

@@ -1,5 +1,115 @@
 # Release History
 
+## 11.3.0b9 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
+
+### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+
+## 11.3.0b8 (2022-03-08)
+
+### Features Added
+- Added support to create, update and delete aliases via the `SearchIndexClient`.
+
+## 11.3.0b7 (2022-02-08)
+
+### Features Added
+
+- Support for [`AzureMachineLearningSkill`](https://docs.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://docs.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://docs.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 11.3.0b6 (2021-11-19)
+
+### Features Added
+
+- Added properties to `SearchClient.search`: `semantic_configuration_name`
+- Added properties to `SearchIndex`: `semantic_settings`
+- Added models: `PrioritizedFields`, `SemanticConfiguration`, `SemanticField`, `SemanticSettings`
+- Added new values to model `QueryLanguage`
+
+## 11.3.0b5 (2021-11-09)
+
+### Features Added
+
+- Added properties to `SearchClient.search`: `session_id`, `scoring_statistics`.
+- Added properties to `SearchIndexerDataSourceConnection`: `identity`, `encryption_key`.
+- Added `select` property to the following `SearchIndexClient` operations: `get_synonym_maps`, `list_indexes`.
+- Added `select` property to the following `SearchIndexersClient` operations: `get_data_source_connections`, `get_indexers`, `get_skillsets`.
+- Added operations to `SearchIndexerClient`: `reset_skills`, `reset_documents`.
+- Added model: `DocumentKeysOrIds`
+
+## 11.3.0b4 (2021-10-05)
+
+### Features Added
+
+- Added properties to `SearchClient`: `query_answer`, `query_answer_count`,
+  `query_caption`, `query_caption_highlight` and `semantic_fields`.
+
+### Breaking Changes
+
+- Renamed `SearchClient.speller` to `SearchClient.query_speller`.
+- Renamed model `Speller` to `QuerySpellerType`.
+- Renamed model `Answers` to `QueryAnswerType`. 
+- Removed keyword arguments from `SearchClient`: `answers` and `captions`.
+- `SentimentSkill`, `EntityRecognitionSkill`: added client-side validation to prevent sending unsupported parameters.
+- Renamed property `ignore_reset_requirements` to `skip_indexer_reset_requirement_for_cache`.
+
+## 11.3.0b3 (2021-09-08)
+
+### Features Added
+
+- Added new models: 
+  - `azure.search.documents.models.QueryCaptionType`
+  - `azure.search.documents.models.CaptionResult`
+  - `azure.search.documents.indexes.models.CustomEntityLookupSkillLanguage`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`
+  - `azure.search.documents.indexes.models.LexicalNormalizerName`
+  - `azure.search.documents.indexes.models.PIIDetectionSkill`
+  - `azure.search.documents.indexes.models.PIIDetectionSkillMaskingMode`
+  - `azure.search.documents.indexes.models.SearchIndexerCache`
+  - `azure.search.documents.indexes.models.SearchIndexerDataIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataNoneIdentity`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity`
+  - `azure.search.documents.indexes.models.SentimentSkillVersion`
+- Added `normalizer_name` property to `AnalyzeTextOptions` model.
+
+### Breaking Changes
+
+- Removed:
+  - `azure.search.documents.indexes.models.SentimentSkillV3`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillV3`
+- Renamed:
+  - `SearchField.normalizer` renamed to `SearchField.normalizer_name`.
+
+### Other Changes
+- `SentimentSkill` and `EntityRecognitionSkill` can now be created by specifying
+  the `skill_version` keyword argument with a `SentimentSkillVersion` or
+  `EntityRecognitionSkillVersion`, respectively. The default behavior if `skill_version`
+  is not specified is to create a version 1 skill.
+
+## 11.3.0b2 (2021-08-10)
+
+### Features Added
+
+- Added new skills: `SentimentSkillV3`, `EntityLinkingSkill`, `EntityRecognitionSkillV3`
+
+## 11.3.0b1 (2021-07-07)
+
+### Features Added
+
+- Added AAD support
+- Added support for semantic search
+- Added normalizer support
+
 ## 11.2.2 (2022-04-14)
 
 ### Bugs Fixed

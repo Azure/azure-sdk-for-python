@@ -1,0 +1,141 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 22 Jul 2021 00:58:07 GMT
+      x-ms-version:
+      - '2020-08-04'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainera9a0178d?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:841a715d-701e-00bb-2394-7ee956000000\nTime:2021-07-22T00:58:07.4850376Z</Message></Error>"
+    headers:
+      content-length: '230'
+      content-type: application/xml
+      date: Thu, 22 Jul 2021 00:58:06 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2020-08-04'
+    status:
+      code: 409
+      message: The specified container already exists.
+    url: https://emilydevtest.blob.core.windows.net/utcontainera9a0178d?restype=container
+- request:
+    body: testloggingbody
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '15'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 22 Jul 2021 00:58:07 GMT
+      x-ms-version:
+      - '2020-08-04'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainera9a0178d/testloggingbloba9a0178d
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: kiWDMg2eTMJ7rcIxBGHjdQ==
+      date: Thu, 22 Jul 2021 00:58:06 GMT
+      etag: '"0x8D94CABC4D57331"'
+      last-modified: Thu, 22 Jul 2021 00:58:07 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: V9QvlmP+jQ4=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-08-04'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.blob.core.windows.net/utcontainera9a0178d/testloggingbloba9a0178d
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 22 Jul 2021 00:58:07 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2020-08-04'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainera9a0178d/testloggingbloba9a0178d
+  response:
+    body:
+      string: testloggingbody
+    headers:
+      accept-ranges: bytes
+      content-length: '15'
+      content-range: bytes 0-14/15
+      content-type: application/octet-stream
+      date: Thu, 22 Jul 2021 00:58:06 GMT
+      etag: '"0x8D94CABC4D57331"'
+      last-modified: Thu, 22 Jul 2021 00:58:07 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-blob-content-md5: kiWDMg2eTMJ7rcIxBGHjdQ==
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Thu, 22 Jul 2021 00:34:21 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-08-04'
+    status:
+      code: 206
+      message: Partial Content
+    url: https://emilydevtest.blob.core.windows.net/utcontainera9a0178d/testloggingbloba9a0178d
+- request:
+    body: testloggingbody
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '15'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 22 Jul 2021 00:58:07 GMT
+      x-ms-version:
+      - '2020-08-04'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainera9a0178d/testloggingbloba9a0178d
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: kiWDMg2eTMJ7rcIxBGHjdQ==
+      date: Thu, 22 Jul 2021 00:58:06 GMT
+      etag: '"0x8D94CABC4DC2B2A"'
+      last-modified: Thu, 22 Jul 2021 00:58:07 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: V9QvlmP+jQ4=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-08-04'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.blob.core.windows.net/utcontainera9a0178d/testloggingbloba9a0178d
+version: 1

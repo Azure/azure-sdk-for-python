@@ -16,8 +16,8 @@ param (
     [ValidatePattern('^[-a-zA-Z0-9\.\(\)_]{0,80}(?<=[a-zA-Z0-9\(\)])$')]
     [string] $BaseName,
 
-    [Parameter(ParameterSetName = 'ResourceGroup', Mandatory = $true)]
-    [Parameter(ParameterSetName = 'ResourceGroup+Provisioner', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'ResourceGroup')]
+    [Parameter(ParameterSetName = 'ResourceGroup+Provisioner')]
     [string] $ResourceGroupName,
 
     [Parameter(ParameterSetName = 'Default+Provisioner', Mandatory = $true)]
@@ -48,6 +48,14 @@ param (
     [ValidateSet('AzureCloud', 'AzureUSGovernment', 'AzureChinaCloud', 'Dogfood')]
     [string] $Environment = 'AzureCloud',
 
+    [Parameter(ParameterSetName = 'ResourceGroup')]
+    [Parameter(ParameterSetName = 'ResourceGroup+Provisioner')]
+    [switch] $CI,
+
+    [Parameter()]
+    [ValidateSet('test', 'perf')]
+    [string] $ResourceType = 'test',
+
     [Parameter()]
     [switch] $Force,
 
@@ -60,6 +68,22 @@ param (
 if (!$PSBoundParameters.ContainsKey('ErrorAction')) {
     $ErrorActionPreference = 'Stop'
 }
+
+# Support actions to invoke on exit.
+$exitActions = @({
+    if ($exitActions.Count -gt 1) {
+        Write-Verbose 'Running registered exit actions.'
+    }
+})
+
+trap {
+    # Like using try..finally in PowerShell, but without keeping track of more braces or tabbing content.
+    $exitActions.Invoke()
+}
+
+. $PSScriptRoot/SubConfig-Helpers.ps1
+# Source helpers to purge resources.
+. "$PSScriptRoot\..\scripts\Helpers\Resource-Helpers.ps1"
 
 function Log($Message) {
     Write-Host ('{0} - {1}' -f [DateTime]::Now.ToLongTimeString(), $Message)
@@ -84,18 +108,6 @@ function Retry([scriptblock] $Action, [int] $Attempts = 5) {
             }
         }
     }
-}
-
-# Support actions to invoke on exit.
-$exitActions = @({
-    if ($exitActions.Count -gt 1) {
-        Write-Verbose 'Running registered exit actions.'
-    }
-})
-
-trap {
-    # Like using try..finally in PowerShell, but without keeping track of more braces or tabbing content.
-    $exitActions.Invoke()
 }
 
 if ($ProvisionerApplicationId) {
@@ -123,18 +135,27 @@ if ($ProvisionerApplicationId) {
 $context = Get-AzContext
 
 if (!$ResourceGroupName) {
-    # Make sure $BaseName is set.
-    if (!$BaseName) {
-        $UserName = if ($env:USER) { $env:USER } else { "${env:USERNAME}" }
-        # Remove spaces, etc. that may be in $UserName
-        $UserName = $UserName -replace '\W'
+    if ($CI) {
+        if (!$ServiceDirectory) {
+            Write-Warning "ServiceDirectory parameter is empty, nothing to remove"
+            exit 0
+        }
+        $envVarName = (BuildServiceDirectoryPrefix (GetServiceLeafDirectoryName $ServiceDirectory)) + "RESOURCE_GROUP"
+        $ResourceGroupName = [Environment]::GetEnvironmentVariable($envVarName)
+        if (!$ResourceGroupName) {
+            Write-Error "Could not find resource group name environment variable '$envVarName'. This is likely due to an earlier failure in the 'Deploy Test Resources' step above."
+            exit 0
+        }
+    } else {
+        if (!$BaseName) {
+            $UserName = GetUserName
+            $BaseName = GetBaseName $UserName $ServiceDirectory
+            Log "BaseName was not set. Using default base name '$BaseName'"
+        }
 
-        $BaseName = "$UserName$ServiceDirectory"
-        Log "BaseName was not set. Using default base name '$BaseName'"
+        # Format the resource group name like in New-TestResources.ps1.
+        $ResourceGroupName = "rg-$BaseName"
     }
-
-    # Format the resource group name like in New-TestResources.ps1.
-    $ResourceGroupName = "rg-$BaseName"
 }
 
 # If no subscription was specified, try to select the Azure SDK Developer Playground subscription.
@@ -181,7 +202,7 @@ Log "Selected subscription '$subscriptionName'"
 
 if ($ServiceDirectory) {
     $root = [System.IO.Path]::Combine("$PSScriptRoot/../../../sdk", $ServiceDirectory) | Resolve-Path
-    $preRemovalScript = Join-Path -Path $root -ChildPath 'remove-test-resources-pre.ps1'
+    $preRemovalScript = Join-Path -Path $root -ChildPath "remove-$ResourceType-resources-pre.ps1"
     if (Test-Path $preRemovalScript) {
         Log "Invoking pre resource removal script '$preRemovalScript'"
 
@@ -193,7 +214,7 @@ if ($ServiceDirectory) {
     }
 
     # Make sure environment files from New-TestResources -OutFile are removed.
-    Get-ChildItem -Path $root -Filter test-resources.json.env -Recurse | Remove-Item -Force:$Force
+    Get-ChildItem -Path $root -Filter "$ResourceType-resources.json.env" -Recurse | Remove-Item -Force:$Force
 }
 
 $verifyDeleteScript = {
@@ -213,15 +234,22 @@ $verifyDeleteScript = {
     }
 }
 
+# Get any resources that can be purged after the resource group is deleted coerced into a collection even if empty.
+$purgeableResources = Get-PurgeableGroupResources $ResourceGroupName
+
 Log "Deleting resource group '$ResourceGroupName'"
-if ($Force) {
+if ($Force -and !$purgeableResources) {
     Remove-AzResourceGroup -Name "$ResourceGroupName" -Force:$Force -AsJob
+    Write-Verbose "Running background job to delete resource group '$ResourceGroupName'"
+
     Retry $verifyDeleteScript 3
-    Write-Verbose "Requested async deletion of resource group '$ResourceGroupName'"
 } else {
     # Don't swallow interactive confirmation when Force is false
     Remove-AzResourceGroup -Name "$ResourceGroupName" -Force:$Force
 }
+
+# Now purge the resources that should have been deleted with the resource group.
+Remove-PurgeableResources $purgeableResources
 
 $exitActions.Invoke()
 
@@ -271,6 +299,9 @@ specified - in which to discover pre removal script named 'remove-test-resources
 .PARAMETER Environment
 Name of the cloud environment. The default is the Azure Public Cloud
 ('PublicCloud')
+
+.PARAMETER CI
+Run script in CI mode. Infers various environment variable names based on CI convention.
 
 .PARAMETER Force
 Force removal of resource group without asking for user confirmation

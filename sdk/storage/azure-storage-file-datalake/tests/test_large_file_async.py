@@ -17,13 +17,9 @@ from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake.aio import DataLakeServiceClient
-from asynctestcase import (
-    StorageTestCase,
-)
-
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 # ------------------------------------------------------------------------------
-from testcase import DataLakePreparer
-
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
 FILE_PATH = 'file_output.temp.dat'
@@ -33,7 +29,7 @@ LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 
 class LargeFileTest(StorageTestCase):
     async def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(account_name, account_key)
         self.dsc = DataLakeServiceClient(url,
@@ -91,10 +87,10 @@ class LargeFileTest(StorageTestCase):
         self.assertEqual(self.payload_dropping_policy.append_counter, 1)
         self.assertEqual(self.payload_dropping_policy.append_sizes[0], LARGEST_BLOCK_SIZE)
 
+    @pytest.mark.skip(reason="Pypy3 on Linux failed somehow, skip for now to investigate")
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_upload_large_stream_without_network(self, datalake_storage_account_name, datalake_storage_account_key):
-        pytest.skip("Pypy3 on Linux failed somehow, skip for now to investigate")
+    async def test_upload_large_stream_without_network_async(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self.get_resource_name(TEST_DIRECTORY_PREFIX)
 

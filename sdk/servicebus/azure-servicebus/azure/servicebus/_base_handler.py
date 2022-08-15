@@ -20,6 +20,7 @@ from uamqp import utils, compat
 from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.pipeline.policies import RetryMode
 
 from ._common._configuration import Configuration
 from .exceptions import (
@@ -152,6 +153,12 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
+def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
+    if retry_mode == RetryMode.Fixed:
+        backoff_value = backoff_factor
+    else:
+        backoff_value = backoff_factor * (2 ** retried_times)
+    return min(backoff_max, backoff_value)
 
 class ServiceBusSASTokenCredential(object):
     """The shared access token credential used for authentication.
@@ -418,7 +425,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     ):
         # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
-        backoff = self._config.retry_backoff_factor * 2 ** retried_times
+        backoff = _get_backoff_time(
+                    self._config.retry_mode,
+                    self._config.retry_backoff_factor,
+                    self._config.retry_backoff_max,
+                    retried_times,
+                )
         if backoff <= self._config.retry_backoff_max and (
             abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):  # pylint:disable=no-else-return

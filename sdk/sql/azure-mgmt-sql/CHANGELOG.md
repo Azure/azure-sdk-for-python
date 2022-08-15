@@ -1,5 +1,94 @@
 # Release History
 
+## 4.0.0b3 (2022-07-06)
+
+**Features**
+
+  - Added operation group DatabaseAdvancedThreatProtectionSettingsOperations
+  - Added operation group EndpointCertificatesOperations
+  - Added operation group ManagedServerDnsAliasesOperations
+  - Added operation group ServerAdvancedThreatProtectionSettingsOperations
+  - Model Database has a new parameter source_resource_id
+  - Model DatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+
+**Breaking changes**
+
+  - Model Database no longer has parameter primary_delegated_identity_client_id
+  - Model DatabaseIdentity no longer has parameter delegated_resources
+  - Model DatabaseUpdate no longer has parameter primary_delegated_identity_client_id
+  - Removed operation ReplicationLinksOperations.begin_unlink
+
+## 4.0.0b2 (2022-03-08)
+
+**Features**
+
+  - Added operation group DistributedAvailabilityGroupsOperations
+  - Added operation group IPv6FirewallRulesOperations
+  - Added operation group ServerTrustCertificatesOperations
+  - Model ElasticPool has a new parameter high_availability_replica_count
+  - Model ElasticPoolUpdate has a new parameter high_availability_replica_count
+
+**Breaking changes**
+
+  - Removed operation group OperationsHealthOperations
+
+## 4.0.0b1 (2021-12-21)
+
+**Features**
+
+  - Model ManagedInstanceUpdate has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter service_principal
+  - Model Database has a new parameter identity
+  - Model Database has a new parameter primary_delegated_identity_client_id
+  - Model Database has a new parameter federated_client_id
+  - Model ManagedInstance has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter service_principal
+  - Model DatabaseUpdate has a new parameter identity
+  - Model DatabaseUpdate has a new parameter primary_delegated_identity_client_id
+  - Model DatabaseUpdate has a new parameter federated_client_id
+  - Added operation TransparentDataEncryptionsOperations.list_by_database
+  - Added operation LedgerDigestUploadsOperations.begin_create_or_update
+  - Added operation LedgerDigestUploadsOperations.begin_disable
+  - Added operation ServerConnectionPoliciesOperations.list_by_server
+  - Added operation ServerConnectionPoliciesOperations.begin_create_or_update
+
+**Breaking changes**
+
+  - Operation TransparentDataEncryptionsOperations.create_or_update has a new signature
+  - Operation TransparentDataEncryptionsOperations.get has a new signature
+  - Model ManagedInstanceUpdate no longer has parameter storage_account_type
+  - Model ManagedInstance no longer has parameter storage_account_type
+  - Model RestorableDroppedDatabase no longer has parameter elastic_pool_id
+  - Removed operation LedgerDigestUploadsOperations.create_or_update
+  - Removed operation LedgerDigestUploadsOperations.disable
+  - Removed operation ServerConnectionPoliciesOperations.create_or_update
+  - Removed operation group TransparentDataEncryptionActivitiesOperations
+
+## 3.0.1 (2021-07-15)
+
+**Bugfixes**
+
+  - Fix default setting for blob_auditing_policy_name
+
+## 3.0.0 (2021-06-18)
+
+**Features**
+
+  - Model Server has a new parameter federated_client_id
+  - Model Server has a new parameter restrict_outbound_network_access
+  - Model ServerUpdate has a new parameter federated_client_id
+  - Model ServerUpdate has a new parameter restrict_outbound_network_access
+  - Model BackupShortTermRetentionPolicy has a new parameter diff_backup_interval_in_hours
+
+**Breaking changes**
+
+  - Operation ReplicationLinksOperations.get has a new signature
+
 ## 2.1.0 (2021-05-24)
 
  - Add resource identity
@@ -192,7 +281,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -200,13 +289,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.21.0 (2020-09-03)
 
@@ -599,7 +688,7 @@ introduce breaking changes.
         tier-related properties. We have made this change in order to
         allow future support of autoscale, and to allow for new
         vCore-based editions.
-        
+
           - Database.sku has replaced
             Database.requested_service_objective_name and
             Database.edition. Database scale can be set by setting
@@ -950,10 +1039,10 @@ Operations removed:
       - Added ReadScale, SampleName, ServerState
   - Added missing Database properties (failover_group_id,
     restore_point_in_time, read_scale, sample_name)
-  - Added missing ElasticPoolActivity properties ([requested](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/sql/azure-mgmt-sql)*)
+  - Added missing ElasticPoolActivity properties ([requested](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/sql/azure-mgmt-sql)*)
   - Added missing ReplicationLink properties (is_termination_allowed,
     replication_mode)
-  - Added missing Server properties ([external_administrator](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/sql/azure-mgmt-sql)*,
+  - Added missing Server properties ([external_administrator](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/sql/azure-mgmt-sql)*,
     state)
   - Added operations APIs
   - Removed unused Database.upgrade_hint property

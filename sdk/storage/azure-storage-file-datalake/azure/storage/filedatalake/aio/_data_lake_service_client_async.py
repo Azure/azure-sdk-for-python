@@ -10,6 +10,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
 
 from azure.storage.blob.aio import BlobServiceClient
+from .._serialize import get_api_version
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._deserialize import get_datalake_service_properties
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
@@ -43,10 +44,15 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -67,7 +73,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -79,7 +85,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         )
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
         self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
-        self._client = AzureDataLakeStorageRESTAPI(self.url, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs)  #pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     async def __aenter__(self):
@@ -153,6 +160,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
             account. The default value is `False`.
             .. versionadded:: 12.3.0
+        :keyword bool include_system:
+            Flag specifying that system filesystems should be included.
+            .. versionadded:: 12.6.0
         :returns: An iterable (auto-paging) of FileSystemProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 
@@ -191,6 +201,13 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         :param public_access:
             Possible values include: file system, file.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword encryption_scope_options:
+            Specifies the default encryption scope to set on the file system and use for
+            all future writes.
+
+            .. versionadded:: 12.9.0
+
+        :paramtype encryption_scope_options: dict or ~azure.storage.filedatalake.EncryptionScopeOptions
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
@@ -244,9 +261,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             Specifies the name of the deleted filesystem to restore.
         :param str deleted_version:
             Specifies the version of the deleted filesystem to restore.
-        :keyword str new_name:
-            The new name for the deleted filesystem to be restored to.
-            If not specified "name" will be used as the restored filesystem name.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
@@ -340,10 +354,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
+                                api_version=self.api_version,
                                 _configuration=self._config,
-                                _pipeline=self._pipeline, _hosts=self._hosts,
-                                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                                key_resolver_function=self.key_resolver_function)
+                                _pipeline=self._pipeline, _hosts=self._hosts)
 
     def get_directory_client(self, file_system,  # type: Union[FileSystemProperties, str]
                              directory  # type: Union[DirectoryProperties, str]
@@ -388,12 +401,9 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         )
         return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=self._pipeline,
-                                       _hosts=self._hosts,
-                                       require_encryption=self.require_encryption,
-                                       key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function
-                                       )
+                                       _hosts=self._hosts)
 
     def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
                         file_path  # type: Union[FileProperties, str]
@@ -438,10 +448,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         )
         return DataLakeFileClient(
             self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            api_version=self.api_version,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
 
     async def set_service_properties(self, **kwargs):
         # type: (**Any) -> None

@@ -15,8 +15,9 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 from msrest import Serializer
+from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
@@ -27,7 +28,6 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from datetime import datetime
-
 
 def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
@@ -70,9 +70,14 @@ def _generate_hmac(key, message):
     return base64.b64encode(hmac_new)
 
 
-def _get_authentication_policy(credential):
+def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCredentialPolicy):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
+    if hasattr(credential, "get_token"):
+        return bearer_token_policy(
+            credential,
+            constants.DEFAULT_EVENTGRID_SCOPE
+        )
     if isinstance(credential, AzureKeyCredential):
         return AzureKeyCredentialPolicy(
             credential=credential, name=constants.EVENTGRID_KEY_HEADER
@@ -82,7 +87,7 @@ def _get_authentication_policy(credential):
             credential=credential, name=constants.EVENTGRID_TOKEN_HEADER
         )
     raise ValueError(
-        "The provided credential should be an instance of AzureSasCredential or AzureKeyCredential"
+        "The provided credential should be an instance of a TokenCredential, AzureSasCredential or AzureKeyCredential"
     )
 
 
@@ -93,7 +98,6 @@ def _is_cloud_event(event):
         return all([_ in event for _ in required]) and event["specversion"] == "1.0"
     except TypeError:
         return False
-
 
 def _is_eventgrid_event(event):
     # type: (Any) -> bool
@@ -138,10 +142,29 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _build_request(endpoint, content_type, events):
+def _from_cncf_events(event):
+    """This takes in a CNCF cloudevent and returns a dictionary.
+    If cloud events library is not installed, the event is returned back.
+    """
+    try:
+        from cloudevents.http import to_json
+        return json.loads(to_json(event))
+    except (AttributeError, ImportError):
+        # means this is not a CNCF event
+        return event
+    except Exception as err: # pylint: disable=broad-except
+        msg = """Failed to serialize the event. Please ensure your
+        CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
+        raise_with_traceback(ValueError, msg, err)
+
+
+def _build_request(endpoint, content_type, events, *, channel_name=None):
     serialize = Serializer()
     header_parameters = {}  # type: Dict[str, Any]
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
+
+    if channel_name:
+        header_parameters['aeg-channel-name'] = channel_name
 
     query_parameters = {}  # type: Dict[str, Any]
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')

@@ -5,16 +5,15 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import AdministratorContact, CertificateClient
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for certificate issuers.
@@ -31,64 +30,58 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a certificate client that will be used to call the service.
-# Notice that the client is using default Azure credentials.
-# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
-try:
-    # First we specify the AdministratorContact for our issuers.
-    admin_contacts = [
-        AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
-    ]
 
-    # Next we create an issuer with these administrator details
-    # The name field refers to the name you would like to get the issuer. There are also pre-set names, such as 'Self' and 'Unknown'
-    # The provider for your issuer must exist for your vault location and tenant id.
-    client.create_issuer(
-        issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
-    )
+# First we specify the AdministratorContact for our issuers.
+admin_contacts = [
+    AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+]
 
-    # Now we get this issuer by name
-    issuer1 = client.get_issuer(issuer_name="issuer1")
+# Next we create an issuer with these administrator details
+# The name field refers to the name you would like to get the issuer. There are also pre-set names, such as 'Self' and 'Unknown'
+# The provider for your issuer must exist for your vault location and tenant id.
+client.create_issuer(
+    issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
+)
 
-    print(issuer1.name)
-    print(issuer1.provider)
-    print(issuer1.account_id)
+# Now we get this issuer by name
+issuer1 = client.get_issuer(issuer_name="issuer1")
 
-    for contact in issuer1.admin_contacts:
-        print(contact.first_name)
-        print(contact.last_name)
-        print(contact.email)
-        print(contact.phone)
+print(issuer1.name)
+print(issuer1.provider)
+print(issuer1.account_id)
 
-    # Now we update the admnistrator contact for this issuer
-    admin_contacts = [
-        AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
-    ]
-    issuer1 = client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
+for contact in issuer1.admin_contacts:
+    print(contact.first_name)
+    print(contact.last_name)
+    print(contact.email)
+    print(contact.phone)
 
-    for contact in issuer1.admin_contacts:
-        print(contact.first_name)
-        print(contact.last_name)
-        print(contact.email)
-        print(contact.phone)
+# Now we update the administrator contact for this issuer
+admin_contacts = [
+    AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+]
+issuer1 = client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
 
-    # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
-    client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
+for contact in issuer1.admin_contacts:
+    print(contact.first_name)
+    print(contact.last_name)
+    print(contact.email)
+    print(contact.phone)
 
-    issuers = client.list_properties_of_issuers()
+# Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
+client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-    for issuer in issuers:
-        print(issuer.name)
-        print(issuer.provider)
+issuers = client.list_properties_of_issuers()
 
-    # Finally, we delete our first issuer by name.
-    client.delete_issuer("issuer1")
+for issuer in issuers:
+    print(issuer.name)
+    print(issuer.provider)
 
-except HttpResponseError as e:
-    print("\nrun_sample has caught an error. {0}".format(e.message))
+# Finally, we delete our first issuer by name.
+client.delete_issuer("issuer1")
 
-finally:
-    print("\nrun_sample done")
+print("\nrun_sample done")

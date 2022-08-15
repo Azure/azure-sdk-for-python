@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class Operations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class Operations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.OperationList"]
+        # type: (...) -> Iterable["_models.OperationList"]
         """Gets a list of AzureBareMetal management operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,12 +57,12 @@ class Operations(object):
         :rtype: ~azure.core.paging.ItemPaged[~bare_metal_infrastructure_client.models.OperationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-06-preview"
+        api_version = "2021-08-09"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -98,7 +98,7 @@ class Operations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

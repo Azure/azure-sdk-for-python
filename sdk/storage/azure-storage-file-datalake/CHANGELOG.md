@@ -1,5 +1,107 @@
 # Release History
 
+## 12.9.0b1 (2022-08-09)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added support for `flush` to `append_data` API, allowing for append and flush in one operation.
+- Encryption Scope is now supported for both `create_file_system` APIs (`FileSystemClient`, `DataLakeServiceClient`).
+- Encryption Scope is now supported as a SAS permission.
+
+## 12.8.0 (2022-07-07)
+
+### Features Added
+- Stable release of features from 12.8.0b1.
+- Removed support for `expiry_options` from file `create` APIs. With this change, `expires_on` now covers all functionality `expiry_options` offered.
+
+## 12.8.0b1 (2022-06-15)
+
+### Features Added
+- Added support for service version 2021-08-06.
+- Added support for `owner`, `group`, `acl`, `lease_id`, `lease_duration` to both file and directory `create` APIs.
+- Added support for `expiry_options`, `expires_on` to file `create` APIs.
+
+## 12.7.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.7.0b1.
+
+### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
+
+## 12.7.0b1 (2022-04-14)
+
+### Features Added
+- Added support for service version 2021-06-08 as well as previous versions.
+- Added support for Customer-Provided Keys (cpk) to all required APIs.
+- The `get_paths()` API now returns `creation_time` and `expiry_time` for each path.
+
+### Bugs Fixed
+- Updated `create_file_system()` docstring to have the correct return-type of `None`
+- Fixed parsing of extra `/` symbols not being stripped properly in `async` clients
+- Fixed a bug where `get_paths()` would fail if a path did not contain `last_modified` from the service.
+
+## 12.6.0 (2022-03-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Stable release of preview features
+- Added support for service version 2021-02-12.
+- Account level SAS tokens now supports two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+- Added support for listing system file systems with list_file_systems().
+
+### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+- Added all missing Service SAS permissions.
+
+### Other Changes
+- Temporarily removed the preview `delete_files()` method on `FileSystemClient`. This feature will be added back
+in a future release.
+
+## 12.6.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12.
+- Added support for listing system file systems with list_file_systems().
+
+### Bugs Fixed
+- Connection string SAS now works as expected.
+
+## 12.6.0b1 (2021-11-08)
+**New features**
+- Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`
+- Account level SAS tokens now support two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+**Fixes**
+- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772) 
+- Datalake Client Typing annotation issues have been resolved (#19906)
+
+## 12.5.0 (2021-09-15)
+**Stable release of preview features**
+- Added support for service version 2020-10-02 (STG78)
+- Added support for quick query parquet
+
+## 12.5.0b1 (2021-07-27)
+**New features**
+- Added support for quick query parquet
+
+**Fixes**
+- Fixed PathProperties class init issue (#18490)
+
+**Notes**
+- Deprecated new_name in for undelete filesystem operation
+
+## 12.4.0 (2021-06-09)
+**New features**
+- Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
+- Added support for `list_deleted_paths()` on `FileSystemClient`
+
 ## 12.4.0b1 (2021-05-12)
 **New features**
 - Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
@@ -83,7 +185,7 @@
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 
-## 12.0.2 
+## 12.0.2
 **Fixes**
 - Improve the performance of upload when using max_concurrency
 
@@ -102,8 +204,8 @@
 **Breaking changes**
 - For `generate_file_system_sas`, `generate_directory_sas`, `generate_file_sas` APIs, `account_key` and `user_delegation_key` are merged into one parameter called `credential`.
 - Rename `rename_destination` to `new_name` for rename_directory and rename_file APIs
-- Rename `read_file` to `download_file`. The return type is changed to `StorageStreamDownloader` with which user can do `readinto()` and `readall()` 
-- `metadata` is a required parameter for FileSystemClient, DataLakeFileClient and DataLakeDirectoryClient  `set_*_metadata` APIs. 
+- Rename `read_file` to `download_file`. The return type is changed to `StorageStreamDownloader` with which user can do `readinto()` and `readall()`
+- `metadata` is a required parameter for FileSystemClient, DataLakeFileClient and DataLakeDirectoryClient  `set_*_metadata` APIs.
 
 **Notes**
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
@@ -131,6 +233,6 @@
 - Support for DataLakeFileClient: create, delete, rename, get properties, get access control, set metadata, set properties, set access control, append, flush, read
 
 This package's
-[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/README.md)
 and
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples)

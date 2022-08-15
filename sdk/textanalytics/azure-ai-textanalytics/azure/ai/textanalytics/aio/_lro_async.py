@@ -1,24 +1,89 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import datetime
-from typing import Optional
+
+import base64
+import functools
+import json
+from typing import Mapping, Any, TypeVar, Generator, Awaitable, cast
+from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from azure.core.polling._async_poller import PollingReturnType
+from azure.core.tracing.decorator_async import distributed_trace_async
+from .._lro import TextAnalyticsOperationResourcePolling
+from .._generated.v2022_05_01.models import JobState
 
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
+
+PollingReturnType = TypeVar("PollingReturnType", covariant=True)
+
+
+@runtime_checkable
+class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
+    """Implements a protocol which returned poller objects are consistent with.
+    """
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
+
+    def continuation_token(self) -> str:  # pylint: disable=no-self-use
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
+
+    def status(self) -> str:  # pylint: disable=no-self-use
+        """Returns the current status string.
+
+        :returns: The current status string
+        :rtype: str
+        """
+
+    async def result(self) -> PollingReturnType:
+        """Return the result of the long running operation.
+
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+
+    async def wait(self) -> None:
+        """Wait on the long running operation.
+
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+
+    def done(self) -> bool:  # pylint: disable=no-self-use
+        """Check status of the long running operation.
+
+        :returns: 'True' if the process has completed, else 'False'.
+        :rtype: bool
+        """
+
+    def __await__(self) -> Generator[Any, None, PollingReturnType]:
+        ...
+
+    async def cancel(self) -> None:  # pylint: disable=no-self-use
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
-
     def finished(self):
         """Is this polling finished?
         :rtype: bool
@@ -69,7 +134,14 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
             await self.update_status()
 
         if TextAnalyticsAsyncLROPollingMethod._failed(self.status()):
-            raise OperationFailed("Operation failed or canceled")
+            try:
+                job = json.loads(self._pipeline_response.http_response.text())
+                error_message = ""
+                for err in job["errors"]:
+                    error_message += "({}) {}".format(err["code"], err["message"])
+                raise HttpResponseError(message=error_message, response=self._pipeline_response.http_response)
+            except KeyError as e:
+                raise OperationFailed("Operation failed or canceled") from e
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
@@ -78,16 +150,21 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
                 self._pipeline_response.http_response
             )
 
-class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
+class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+    TextAnalyticsAsyncLROPollingMethod
+):
     def __init__(self, *args, **kwargs):
         self._text_analytics_client = kwargs.pop("text_analytics_client")
-        super(AsyncAnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(*args, **kwargs)
+        self._doc_id_order = kwargs.pop("doc_id_order", None)
+        self._show_stats = kwargs.pop("show_stats", None)
+        super().__init__(
+            *args, **kwargs
+        )
 
     @property
     def _current_body(self):
-        from .._generated.v3_1_preview_5.models import JobMetadata
-        return JobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
@@ -109,65 +186,106 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollin
 
     @property
     def id(self):
+        if self._current_body and self._current_body.job_id is not None:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
+
+    @property
+    def display_name(self):
         if not self._current_body:
             return None
-        return self._current_body.job_id
+        return self._current_body.display_name
+
+    def get_continuation_token(self):
+        # type() -> str
+        import pickle
+        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
+        self._initial_response.context.options["show_stats"] = self._show_stats
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
 class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
-
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
         """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
         """
         return self._polling_method  # type: ignore
 
     @property
-    def created_on(self) -> datetime.datetime:
-        """When your healthcare entities job was created
+    def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
 
-        :return: When your healthcare entities job was created
-        :rtype: ~datetime.datetime
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
         """
-        return self.polling_method().created_on
+        return {
+            "id": self.polling_method().id,
+            "created_on": self.polling_method().created_on,
+            "expires_on": self.polling_method().expires_on,
+            "display_name": self.polling_method().display_name,
+            "last_modified_on": self.polling_method().last_modified_on,
+        }
 
-    @property
-    def expires_on(self) -> datetime.datetime:
-        """When your healthcare entities job will expire
+    def __getattr__(self, item):
+        attrs = [
+            "created_on",
+            "expires_on",
+            "display_name",
+            "last_modified_on",
+            "id"
+        ]
+        if item in attrs:
+            return self.details[item]
+        return self.__getattribute__(item)
 
-        :return: When your healthcare entities job will expire
-        :rtype: ~datetime.datetime
+    @classmethod
+    def from_continuation_token(  # type: ignore
+        cls,
+        polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
+        continuation_token: str,
+        **kwargs: Any
+    ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller":
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeHealthcareEntitiesLROPoller
+        :rtype: AsyncAnalyzeHealthcareEntitiesLROPoller
+
+        :meta private:
         """
-        return self.polling_method().expires_on
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method  # type: ignore
+        )
 
-    @property
-    def last_modified_on(self) -> datetime.datetime:
-        """When your healthcare entities job was last modified
-
-        :return: When your healthcare entities job was last modified
-        :rtype: ~datetime.datetime
-        """
-        return self.polling_method().last_modified_on
-
-    @property
-    def id(self) -> str:
-        """ID of your call to :func:`begin_analyze_healthcare_entities`
-
-        :return: ID of your call to :func:`begin_analyze_healthcare_entities`
-        :rtype: str
-        """
-        return self.polling_method().id
-
-    async def cancel( # type: ignore
-        self,
-        **kwargs
-    ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller[None]":
+    @distributed_trace_async
+    async def cancel(self, **kwargs) -> "AsyncLROPoller[None]":  # type: ignore
         """Cancel the operation currently being polled.
 
         :keyword int polling_interval: The polling interval to use to poll the cancellation status.
             The default value is 5 seconds.
-        :return: Returns an instance of an LROPoller that returns None.
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: Warning when the operation has already reached a terminal state.
+        :return: Returns an instance of an AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
 
         .. admonition:: Example:
 
@@ -175,29 +293,40 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
                 :start-after: [START analyze_healthcare_entities_with_cancellation_async]
                 :end-before: [END analyze_healthcare_entities_with_cancellation_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Cancel an existing health operation.
         """
         polling_interval = kwargs.pop("polling_interval", 5)
-        await self.polling_method().update_status()
 
         try:
-            return await getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
-                self.id,
-                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+            client = getattr(
+                self._polling_method, "_text_analytics_client"
             )
-
+            try:
+                return await client.begin_cancel_health_job(
+                    self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+                )
+            except ValueError:  # language API compat
+                return await client.begin_analyze_text_cancel_job(
+                    self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+                )
         except HttpResponseError as error:
             from .._response_handlers import process_http_response_error
+
             process_http_response_error(error)
 
 
 class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
+    def __init__(self, *args, **kwargs):
+        self._doc_id_order = kwargs.pop("doc_id_order", None)
+        self._task_id_order = kwargs.pop("task_id_order", None)
+        self._show_stats = kwargs.pop("show_stats", None)
+        self._text_analytics_client = kwargs.pop("text_analytics_client", None)
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
-        from .._generated.v3_1_preview_5.models import AnalyzeJobMetadata
-        return AnalyzeJobMetadata.deserialize(self._pipeline_response)
+        return JobState.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
@@ -221,19 +350,19 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def actions_failed_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']['failed']
+        return self._current_body.additional_properties.get("tasks", {}).get("failed", None)
 
     @property
     def actions_in_progress_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']['inProgress']
+        return self._current_body.additional_properties.get("tasks", {}).get("inProgress", None)
 
     @property
     def actions_succeeded_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']["completed"]
+        return self._current_body.additional_properties.get("tasks", {}).get("completed", None)
 
     @property
     def last_modified_on(self):
@@ -245,102 +374,120 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def total_actions_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']["total"]
+        return self._current_body.additional_properties.get("tasks", {}).get("total", None)
 
     @property
     def id(self):
-        if not self._current_body:
-            return None
-        return self._current_body.job_id
+        if self._current_body and self._current_body.job_id is not None:
+            return self._current_body.job_id
+        return self._get_id_from_headers()
+
+    def _get_id_from_headers(self) -> str:
+        return self._initial_response.http_response.headers[
+            "Operation-Location"
+        ].split("/jobs/")[1].split("?")[0]
+
+    def get_continuation_token(self):
+        # type: () -> str
+        import pickle
+        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
+        self._initial_response.context.options["task_id_order"] = self._task_id_order
+        self._initial_response.context.options["show_stats"] = self._show_stats
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
 class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
-
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
         """Return the polling method associated to this poller.
+
+        :return: AsyncAnalyzeActionsLROPollingMethod
+        :rtype: AsyncAnalyzeActionsLROPollingMethod
         """
         return self._polling_method  # type: ignore
 
     @property
-    def created_on(self) -> datetime.datetime:
-        """When your analyze job was created
+    def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
 
-        :return: When your analyze job was created
-        :rtype: ~datetime.datetime
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
         """
-        return self.polling_method().created_on
+        return {
+            "id": self.polling_method().id,
+            "created_on": self.polling_method().created_on,
+            "expires_on": self.polling_method().expires_on,
+            "display_name": self.polling_method().display_name,
+            "last_modified_on": self.polling_method().last_modified_on,
+            "actions_failed_count": self.polling_method().actions_failed_count,
+            "actions_in_progress_count": self.polling_method().actions_in_progress_count,
+            "actions_succeeded_count": self.polling_method().actions_succeeded_count,
+            "total_actions_count": self.polling_method().total_actions_count,
+        }
 
-    @property
-    def display_name(self) -> Optional[str]:
-        """The display name of your :func:`begin_analyze_actions` call.
+    def __getattr__(self, item):
+        attrs = [
+            "created_on",
+            "expires_on",
+            "display_name",
+            "actions_failed_count",
+            "actions_in_progress_count",
+            "actions_succeeded_count",
+            "total_actions_count",
+            "last_modified_on",
+            "id"
+        ]
+        if item in attrs:
+            return self.details[item]
+        return self.__getattribute__(item)
 
-        Corresponds to the `display_name` kwarg you pass to your
-        :func:`begin_analyze_actions` call.
+    @classmethod
+    def from_continuation_token(  # type: ignore
+        cls,
+        polling_method: AsyncAnalyzeActionsLROPollingMethod,
+        continuation_token: str,
+        **kwargs: Any
+    ) -> "AsyncAnalyzeActionsLROPoller":  # type: ignore
+        """Internal use only.
 
-        :return: The display name of your :func:`begin_analyze_actions` call.
-        :rtype: str
+        :param polling_method: Polling method to use.
+        :type polling_method: AsyncAnalyzeActionsLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AsyncAnalyzeActionsLROPoller
+        :rtype: AsyncAnalyzeActionsLROPoller
+
+        :meta private:
         """
-        return self.polling_method().display_name
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method  # type: ignore
+        )
 
-    @property
-    def expires_on(self) -> datetime.datetime:
-        """When your analyze job will expire
+    @distributed_trace_async
+    async def cancel(self) -> None:
+        """Cancel the operation currently being polled.
 
-        :return: When your analyze job will expire
-        :rtype: ~datetime.datetime
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
-        return self.polling_method().expires_on
 
-    @property
-    def actions_failed_count(self) -> int:
-        """Total number of actions that have failed
+        cast(AsyncAnalyzeActionsLROPollingMethod, self.polling_method)
+        client = self.polling_method()._text_analytics_client  # pylint: disable=protected-access
 
-        :return: Total number of actions that have failed
-        :rtype: int
-        """
-        return self.polling_method().actions_failed_count
-
-    @property
-    def actions_in_progress_count(self) -> int:
-        """Total number of actions currently in progress
-
-        :return: Total number of actions currently in progress
-        :rtype: int
-        """
-        return self.polling_method().actions_in_progress_count
-
-    @property
-    def actions_succeeded_count(self) -> int:
-        """Total number of actions that succeeded
-
-        :return: Total number of actions that succeeded
-        :rtype: int
-        """
-        return self.polling_method().actions_succeeded_count
-
-    @property
-    def last_modified_on(self) -> datetime.datetime:
-        """The last time your actions results were updated
-
-        :return: The last time your actions results were updated
-        :rtype: ~datetime.datetime
-        """
-        return self.polling_method().last_modified_on
-
-    @property
-    def total_actions_count(self) -> int:
-        """Total number of actions you submitted
-
-        :return: Total number of actions submitted
-        :rtype: int
-        """
-        return self.polling_method().total_actions_count
-
-    @property
-    def id(self) -> str:
-        """ID of your :func:`begin_analyze_actions` call.
-
-        :return: ID of your :func:`begin_analyze_actions` call.
-        :rtype: str
-        """
-        return self.polling_method().id
+        try:
+            await client.begin_analyze_text_cancel_job(self.id, polling=False)
+        except ValueError:
+            raise ValueError("Cancellation not supported by API versions v3.0, v3.1.")
+        except HttpResponseError as error:
+            from .._response_handlers import process_http_response_error
+            process_http_response_error(error)

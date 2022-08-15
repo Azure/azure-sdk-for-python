@@ -1,5 +1,149 @@
 # Release History
 
+## 8.1.0 (2022-08-02)
+
+**Features**
+
+  - Added operation VolumesOperations.begin_reestablish_replication
+  - Model CapacityPoolPatch has a new parameter cool_access
+  - Model Volume has a new parameter key_vault_private_endpoint_resource_id
+  - Model VolumeGroupVolumeProperties has a new parameter key_vault_private_endpoint_resource_id
+  - Model VolumePatch has a new parameter cool_access
+  - Model VolumePatch has a new parameter coolness_period
+
+## 8.0.0 (2022-06-13)
+
+**Features**
+
+  - Added operation VolumesOperations.begin_finalize_relocation
+  - Added operation VolumesOperations.begin_relocate
+  - Added operation VolumesOperations.begin_reset_cifs_password
+  - Added operation VolumesOperations.begin_revert_relocation
+  - Added operation VolumesOperations.list_replications
+  - Added operation group VolumeQuotaRulesOperations
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model Volume has a new parameter encrypted
+  - Model Volume has a new parameter zones
+  - Model VolumeGroupVolumeProperties has a new parameter encrypted
+
+**Breaking changes**
+
+  - Model VolumeGroup no longer has parameter tags
+  - Model VolumeGroupDetails no longer has parameter tags
+
+## 7.0.0 (2022-03-15)
+
+**Features**
+
+  - Added operation SnapshotsOperations.begin_restore_files
+  - Added operation group SubvolumesOperations
+  - Model ActiveDirectory has a new parameter ldap_search_scope
+  - Model BackupPolicy has a new parameter system_data
+  - Model CapacityPool has a new parameter system_data
+  - Model SnapshotPolicy has a new parameter system_data
+  - Model Volume has a new parameter enable_subvolumes
+  - Model Volume has a new parameter maximum_number_of_files
+  - Model Volume has a new parameter system_data
+  - Model VolumeGroupVolumeProperties has a new parameter enable_subvolumes
+  - Model VolumeGroupVolumeProperties has a new parameter maximum_number_of_files
+  - Model VolumePatch has a new parameter unix_permissions
+
+**Breaking changes**
+
+  - Operation VolumesOperations.begin_delete has a new signature
+
+## 6.0.1 (2022-01-12)
+
+**Fixes**
+
+  - add support for Python 3.6
+
+## 6.0.0 (2022-01-06)
+
+**Features**
+
+  - Added operation group VolumeGroupsOperations
+  - Model ActiveDirectory has a new parameter encrypt_dc_connections
+  - Model Volume has a new parameter capacity_pool_resource_id
+  - Model Volume has a new parameter placement_rules
+  - Model Volume has a new parameter proximity_placement_group
+  - Model Volume has a new parameter t2_network
+  - Model Volume has a new parameter volume_group_name
+  - Model Volume has a new parameter volume_spec_name
+
+**Breaking changes**
+
+  - Model BackupPolicy no longer has parameter name_properties_name
+  - Model BackupPolicyDetails no longer has parameter name_properties_name
+  - Model BackupPolicyPatch no longer has parameter name_properties_name
+  - Model SubscriptionQuotaItem no longer has parameter name_properties_name
+
+## 5.1.0 (2021-09-22)
+
+**Features**
+
+  - Model ServiceSpecification has a new parameter log_specifications
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+  - Model MetricSpecification has a new parameter is_internal
+  - Model Volume has a new parameter network_sibling_set_id
+  - Model Volume has a new parameter storage_to_network_proximity
+  - Model Volume has a new parameter network_features
+  - Added operation group NetAppResourceQuotaLimitsOperations
+
+## 5.0.0 (2021-08-20)
+
+**Features**
+
+  - Model BackupPolicy has a new parameter etag
+  - Model BackupPolicy has a new parameter backup_policy_id
+  - Model BackupPolicyPatch has a new parameter backup_policy_id
+  - Model NetAppAccount has a new parameter etag
+  - Model VolumePatch has a new parameter is_default_quota_enabled
+  - Model VolumePatch has a new parameter default_user_quota_in_ki_bs
+  - Model VolumePatch has a new parameter default_group_quota_in_ki_bs
+  - Model BackupPolicyDetails has a new parameter backup_policy_id
+  - Model Volume has a new parameter clone_progress
+  - Model Volume has a new parameter default_group_quota_in_ki_bs
+  - Model Volume has a new parameter is_default_quota_enabled
+  - Model Volume has a new parameter default_user_quota_in_ki_bs
+  - Model Volume has a new parameter avs_data_store
+  - Model Volume has a new parameter etag
+  - Model MetricSpecification has a new parameter supported_aggregation_types
+  - Model MetricSpecification has a new parameter supported_time_grain_types
+  - Model MetricSpecification has a new parameter internal_metric_name
+  - Model MetricSpecification has a new parameter source_mdm_namespace
+  - Model MetricSpecification has a new parameter source_mdm_account
+  - Model CapacityPool has a new parameter encryption_type
+  - Model CapacityPool has a new parameter etag
+  - Model SnapshotPolicy has a new parameter etag
+  - Added operation AccountsOperations.list_by_subscription
+
+**Breaking changes**
+
+  - Model BackupPolicy no longer has parameter yearly_backups_to_keep
+  - Model BackupPolicyPatch no longer has parameter yearly_backups_to_keep
+  - Model BackupPolicyDetails no longer has parameter yearly_backups_to_keep
+
+## 4.0.0 (2021-06-11)
+
+**Features**
+
+  - Model ExportPolicyRule has a new parameter chown_mode
+  - Model BackupStatus has a new parameter last_transfer_size
+  - Model BackupStatus has a new parameter total_transfer_bytes
+  - Model BackupStatus has a new parameter last_transfer_type
+  - Model Volume has a new parameter cool_access
+  - Model Volume has a new parameter unix_permissions
+  - Model Volume has a new parameter coolness_period
+  - Model CapacityPool has a new parameter cool_access
+  - Model ActiveDirectory has a new parameter administrators
+  - Added operation BackupsOperations.get_volume_restore_status
+
+**Breaking changes**
+
+  - Operation NetAppResourceOperations.check_file_path_availability has a new signature
+
 ## 3.0.0 (2021-05-21)
 
 **Features**
@@ -72,7 +216,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -80,13 +224,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.10.0 (2020-04-21)
 

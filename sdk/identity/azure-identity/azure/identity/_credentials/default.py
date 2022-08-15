@@ -14,7 +14,6 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
-from .vscode import VisualStudioCodeCredential
 
 
 try:
@@ -41,23 +40,20 @@ class DefaultAzureCredential(ChainedTokenCredential):
     3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
-    4. The user currently signed in to Visual Studio Code.
-    5. The identity currently logged in to the Azure CLI.
-    6. The identity currently logged in to Azure PowerShell.
+    4. The identity currently logged in to the Azure CLI.
+    5. The identity currently logged in to Azure PowerShell.
 
     This default behavior is configurable with keyword arguments.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-          defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
     :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
-    :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
-        Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
@@ -67,28 +63,20 @@ class DefaultAzureCredential(ChainedTokenCredential):
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
+    :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
+        specified, users will authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
-    :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
-        :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
-        settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
-        Directory work or school accounts.
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        authority = kwargs.pop("authority", None)
+        if "tenant_id" in kwargs:
+            raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
-        vscode_tenant_id = kwargs.pop(
-            "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
-        )
-        vscode_args = {}
-        if authority:
-            vscode_args["authority"] = authority
-        if vscode_tenant_id:
-            vscode_args["tenant_id"] = vscode_tenant_id
+        authority = kwargs.pop("authority", None)
 
         authority = normalize_authority(authority) if authority else get_default_authority()
 
@@ -99,6 +87,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
+        interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -108,7 +97,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
-        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
@@ -127,14 +115,19 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
-        if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential())
         if not exclude_interactive_browser_credential:
-            credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id))
+            if interactive_browser_client_id:
+                credentials.append(
+                    InteractiveBrowserCredential(
+                        tenant_id=interactive_browser_tenant_id, client_id=interactive_browser_client_id, **kwargs
+                    )
+                )
+            else:
+                credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -145,6 +138,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
+        :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """

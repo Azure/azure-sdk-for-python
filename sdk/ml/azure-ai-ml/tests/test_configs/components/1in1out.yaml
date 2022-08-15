@@ -1,0 +1,15 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: one_in_one_out
+display_name: One In One Out
+version: 0.0.1
+type: command
+inputs:
+  input1:
+    type: uri_folder
+outputs:
+  output1:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+command: >-
+  echo ${{inputs.input1}} &&
+  echo ${{outputs.output1}}

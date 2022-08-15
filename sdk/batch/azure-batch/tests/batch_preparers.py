@@ -18,6 +18,7 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
+AZURE_ARM_ENDPOINT = 'https://management.azure.com'
 BATCH_ACCOUNT_PARAM = 'batch_account'
 STORAGE_ACCOUNT_PARAM = 'storage_account'
 FakeAccount = namedtuple(
@@ -31,7 +32,9 @@ class AccountPreparer(AzureMgmtPreparer):
                  location='westus',
                  parameter_name=BATCH_ACCOUNT_PARAM,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
-                 disable_recording=True, playback_fake_resource=None,
+                 disable_recording=True,
+                 playback_fake_resource=None,
+                 batch_environment=None, # Set to "pilotprod1" or "pilotprod2" if testing in PPE
                  client_kwargs=None):
         super(AccountPreparer, self).__init__(name_prefix, 24,
                                               disable_recording=disable_recording,
@@ -43,6 +46,7 @@ class AccountPreparer(AzureMgmtPreparer):
         self.creds_parameter = 'credentials'
         self.parameter_name_for_location='location'
         self.resource_moniker=name_prefix
+        self.batch_environment = batch_environment
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -69,12 +73,13 @@ class AccountPreparer(AzureMgmtPreparer):
         except Exception as err:
             raise AzureTestError('Failed to upload test package: {}'.format(err))
         else:
-            self.client.application_package.activate(group_name, batch_name, 'application_id', 'v1.0', 'zip')
+            self.client.application_package.activate(group_name, batch_name, 'application_id', 'v1.0', {'format': 'zip'})
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(
-                azure.mgmt.batch.BatchManagementClient)
+                azure.mgmt.batch.BatchManagementClient,
+                base_url=AZURE_ARM_ENDPOINT)
             group = self._get_resource_group(**kwargs)
             batch_account = models.BatchAccountCreateParameters(
                 location=self.location,
@@ -87,7 +92,7 @@ class AccountPreparer(AzureMgmtPreparer):
                     storage.name
                 )
                 batch_account.auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
-            account_setup = self.client.batch_account.create(
+            account_setup = self.client.batch_account.begin_create(
                 group.name,
                 name,
                 batch_account)
@@ -106,9 +111,13 @@ class AccountPreparer(AzureMgmtPreparer):
                 self.resource_moniker
             )
         else:
+            # If using pilotprod, need to prefix the region with the environment.
+            # IE: myaccount.pilotprod1.eastus.batch.azure.com
+            env_prefix = "" if self.batch_environment is None else ".{}".format(self.batch_environment)
+
             self.resource = FakeAccount(
                 name=name,
-                account_endpoint="https://{}.{}.batch.azure.com".format(name, self.location))
+                account_endpoint="https://{}{}.{}.batch.azure.com".format(name, env_prefix, self.location))
             credentials = SharedKeyCredentials(
                 name,
                 'ZmFrZV9hY29jdW50X2tleQ==')
@@ -120,7 +129,7 @@ class AccountPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            deleting = self.client.batch_account.delete(group.name, name)
+            deleting = self.client.batch_account.begin_delete(group.name, name)
             try:
                 deleting.wait()
             except:
@@ -169,11 +178,12 @@ class PoolPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(
-                azure.mgmt.batch.BatchManagementClient)
+                azure.mgmt.batch.BatchManagementClient,
+                base_url=AZURE_ARM_ENDPOINT)
             group = self._get_resource_group(**kwargs)
             batch_account = self._get_batch_account(**kwargs)
             user = models.UserAccount(name='task-user', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
-            vm_size = 'Standard_A1'
+            vm_size = 'standard_d2_v2'
 
             if self.config == 'paas':
                 vm_size = 'small'
@@ -195,9 +205,9 @@ class PoolPreparer(AzureMgmtPreparer):
                         image_reference=models.ImageReference(
                             publisher='Canonical',
                             offer='UbuntuServer',
-                            sku='16.04-LTS'
+                            sku='18.04-LTS'
                         ),
-                        node_agent_sku_id='batch.node.ubuntu 16.04'))
+                        node_agent_sku_id='batch.node.ubuntu 18.04'))
             parameters = models.Pool(
                 display_name="test_pool",
                 vm_size=vm_size,
@@ -210,9 +220,8 @@ class PoolPreparer(AzureMgmtPreparer):
                 )
             )
 
-            pool_setup = self.client.pool.create(
+            self.resource = self.client.pool.create(
                 group.name, batch_account.name, name, parameters)
-            self.resource = pool_setup.result()
             while (self.resource.allocation_state != models.AllocationState.steady 
                     and self.resource.current_dedicated_nodes < self.size):
                 time.sleep(10)
@@ -227,7 +236,11 @@ class PoolPreparer(AzureMgmtPreparer):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
             account = self._get_batch_account(**kwargs)
-            self.client.pool.delete(group.name, account.name, name)
+            deleting = self.client.pool.begin_delete(group.name, account.name, name)
+            try:
+                deleting.wait()
+            except:
+                pass
 
 
 class JobPreparer(AzureMgmtPreparer):

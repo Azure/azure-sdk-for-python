@@ -11,6 +11,8 @@ from ._tenants_operations import TenantsOperations
 from ._subscription_operations import SubscriptionOperations
 from ._operations import Operations
 from ._alias_operations import AliasOperations
+from ._subscription_policy_operations import SubscriptionPolicyOperations
+from ._billing_account_operations import BillingAccountOperations
 
 __all__ = [
     'SubscriptionsOperations',
@@ -18,4 +20,6 @@ __all__ = [
     'SubscriptionOperations',
     'Operations',
     'AliasOperations',
+    'SubscriptionPolicyOperations',
+    'BillingAccountOperations',
 ]

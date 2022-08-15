@@ -1,5 +1,36 @@
 # Release History
 
+## 10.0.0b1 (2022-04-13)
+
+**Features**
+
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinksOperations
+  - Model App has a new parameter network_rule_sets
+  - Model App has a new parameter private_endpoint_connections
+  - Model App has a new parameter provisioning_state
+  - Model App has a new parameter public_network_access
+  - Model App has a new parameter system_data
+  - Model AppPatch has a new parameter network_rule_sets
+  - Model AppPatch has a new parameter private_endpoint_connections
+  - Model AppPatch has a new parameter provisioning_state
+  - Model AppPatch has a new parameter public_network_access
+  - Model Resource has a new parameter system_data
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+
+## 9.0.0 (2021-11-11)
+
+**Features**
+
+  - Model App has a new parameter state
+  - Model App has a new parameter identity
+  - Model AppPatch has a new parameter state
+  - Model AppPatch has a new parameter identity
+
 ## 9.0.0b1 (2021-05-13)
 
 This is beta preview version.
@@ -15,7 +46,7 @@ This version uses a next-generation code generator that introduces important bre
 
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -23,13 +54,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 4.1.0 (2021-02-19)
 

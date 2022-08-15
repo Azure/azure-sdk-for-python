@@ -18,10 +18,14 @@ class FarmBeatsSmokeTestCase(FarmBeatsTest):
 
         # Setup data
         common_id_prefix = "satellite-flow-"
-        farmer_id = common_id_prefix + "test-farmer"
-        boundary_id = common_id_prefix + "test-boundary"
+        farmer_id_prefix = common_id_prefix + "test-farmer"
+        boundary_id_prefix = common_id_prefix + "test-boundary"
         job_id_prefix = common_id_prefix + "job"
+
         job_id = self.generate_random_name(job_id_prefix)
+        farmer_id = self.generate_random_name(farmer_id_prefix)
+        boundary_id = self.generate_random_name(boundary_id_prefix)
+
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())
 

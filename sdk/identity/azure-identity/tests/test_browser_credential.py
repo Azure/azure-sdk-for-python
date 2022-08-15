@@ -186,7 +186,7 @@ def test_redirect_uri():
     expected_message = "test_redirect_uri"
     server = Mock(side_effect=Exception(expected_message))  # exception prevents this test actually authenticating
     credential = InteractiveBrowserCredential(
-        redirect_uri="htps://{}:{}".format(expected_hostname, expected_port), _server_class=server
+        redirect_uri="https://{}:{}".format(expected_hostname, expected_port), _server_class=server
     )
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
@@ -264,6 +264,33 @@ def test_claims_challenge():
         assert msal_app.acquire_token_silent_with_error.call_count == 1
         args, kwargs = msal_app.acquire_token_silent_with_error.call_args
         assert kwargs["claims_challenge"] == expected_claims
+
+
+def test_login_hint():
+    expected_username = "user@foo.com"
+    auth_code_response = {"code": "authorization-code", "state": ["..."]}
+    server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+
+    msal_acquire_token_result = dict(
+        build_aad_response(access_token="**", id_token=build_id_token()),
+        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
+    )
+    mock_msal_app = Mock(
+        acquire_token_by_auth_code_flow=Mock(return_value=msal_acquire_token_result),
+        initiate_auth_code_flow=Mock(return_value={"auth_uri": "http://localhost"}),
+    )
+
+    credential = InteractiveBrowserCredential(
+        _server_class=server_class, transport=transport, login_hint=expected_username
+    )
+    with patch("msal.PublicClientApplication", Mock(return_value=mock_msal_app)):
+        with patch(WEBBROWSER_OPEN, lambda _: True):
+            credential.authenticate(scopes=["scope"])
+
+    assert mock_msal_app.initiate_auth_code_flow.call_count == 1
+    _, kwargs = mock_msal_app.initiate_auth_code_flow.call_args
+    assert kwargs["login_hint"] == expected_username
 
 
 @pytest.mark.parametrize(

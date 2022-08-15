@@ -12,6 +12,7 @@ from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, Environmen
 from .._internal import normalize_authority, validate_tenant_id
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.decorators import log_get_token
 
 if sys.platform.startswith("win"):
     from .._internal.win_vscode_adapter import get_refresh_token, get_user_settings
@@ -122,6 +123,21 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         supports only Azure Active Directory work or school accounts.
     """
 
+    def __enter__(self):
+        if self._client:
+            self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        if self._client:
+            self._client.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
+
+    @log_get_token("VSCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
@@ -134,13 +150,17 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
           Studio Code
         """
         if self._unavailable_reason:
-            raise CredentialUnavailableError(message=self._unavailable_reason)
+            error_message = self._unavailable_reason \
+                            + '\n' \
+                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
+                              " to troubleshoot this issue."
+            raise CredentialUnavailableError(message=error_message)
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes)
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken

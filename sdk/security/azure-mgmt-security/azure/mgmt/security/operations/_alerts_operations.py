@@ -12,13 +12,15 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -62,7 +64,7 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -133,7 +135,7 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -184,7 +186,7 @@ class AlertsOperations(object):
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/alerts'}  # type: ignore
 
-    def list_subscription_level_alerts_by_region(
+    def list_subscription_level_by_region(
         self,
         **kwargs  # type: Any
     ):
@@ -202,7 +204,7 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -212,7 +214,7 @@ class AlertsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_subscription_level_alerts_by_region.metadata['url']  # type: ignore
+                url = self.list_subscription_level_by_region.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
                     'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -251,9 +253,9 @@ class AlertsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_subscription_level_alerts_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts'}  # type: ignore
+    list_subscription_level_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts'}  # type: ignore
 
-    def list_resource_group_level_alerts_by_region(
+    def list_resource_group_level_by_region(
         self,
         resource_group_name,  # type: str
         **kwargs  # type: Any
@@ -275,7 +277,7 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -285,7 +287,7 @@ class AlertsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_resource_group_level_alerts_by_region.metadata['url']  # type: ignore
+                url = self.list_resource_group_level_by_region.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
                     'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -325,9 +327,9 @@ class AlertsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_resource_group_level_alerts_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts'}  # type: ignore
+    list_resource_group_level_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts'}  # type: ignore
 
-    def get_subscription_level_alert(
+    def get_subscription_level(
         self,
         alert_name,  # type: str
         **kwargs  # type: Any
@@ -347,11 +349,11 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_subscription_level_alert.metadata['url']  # type: ignore
+        url = self.get_subscription_level.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -381,9 +383,9 @@ class AlertsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_subscription_level_alert.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}'}  # type: ignore
+    get_subscription_level.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}'}  # type: ignore
 
-    def get_resource_group_level_alerts(
+    def get_resource_group_level(
         self,
         alert_name,  # type: str
         resource_group_name,  # type: str
@@ -407,11 +409,11 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_resource_group_level_alerts.metadata['url']  # type: ignore
+        url = self.get_resource_group_level.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -442,9 +444,9 @@ class AlertsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_resource_group_level_alerts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}'}  # type: ignore
+    get_resource_group_level.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}'}  # type: ignore
 
-    def update_subscription_level_alert_state_to_dismiss(
+    def update_subscription_level_state_to_dismiss(
         self,
         alert_name,  # type: str
         **kwargs  # type: Any
@@ -464,11 +466,11 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.update_subscription_level_alert_state_to_dismiss.metadata['url']  # type: ignore
+        url = self.update_subscription_level_state_to_dismiss.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -495,7 +497,7 @@ class AlertsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_subscription_level_alert_state_to_dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}  # type: ignore
+    update_subscription_level_state_to_dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}  # type: ignore
 
     def update_subscription_level_state_to_resolve(
         self,
@@ -517,7 +519,7 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -550,7 +552,7 @@ class AlertsOperations(object):
 
     update_subscription_level_state_to_resolve.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/resolve'}  # type: ignore
 
-    def update_subscription_level_alert_state_to_reactivate(
+    def update_subscription_level_state_to_activate(
         self,
         alert_name,  # type: str
         **kwargs  # type: Any
@@ -570,11 +572,11 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.update_subscription_level_alert_state_to_reactivate.metadata['url']  # type: ignore
+        url = self.update_subscription_level_state_to_activate.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -601,7 +603,7 @@ class AlertsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_subscription_level_alert_state_to_reactivate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/activate'}  # type: ignore
+    update_subscription_level_state_to_activate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/activate'}  # type: ignore
 
     def update_resource_group_level_state_to_resolve(
         self,
@@ -627,7 +629,7 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -661,7 +663,7 @@ class AlertsOperations(object):
 
     update_resource_group_level_state_to_resolve.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/resolve'}  # type: ignore
 
-    def update_resource_group_level_alert_state_to_dismiss(
+    def update_resource_group_level_state_to_dismiss(
         self,
         alert_name,  # type: str
         resource_group_name,  # type: str
@@ -685,11 +687,11 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.update_resource_group_level_alert_state_to_dismiss.metadata['url']  # type: ignore
+        url = self.update_resource_group_level_state_to_dismiss.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -717,9 +719,9 @@ class AlertsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_resource_group_level_alert_state_to_dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}  # type: ignore
+    update_resource_group_level_state_to_dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}  # type: ignore
 
-    def update_resource_group_level_alert_state_to_reactivate(
+    def update_resource_group_level_state_to_activate(
         self,
         alert_name,  # type: str
         resource_group_name,  # type: str
@@ -743,11 +745,11 @@ class AlertsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.update_resource_group_level_alert_state_to_reactivate.metadata['url']  # type: ignore
+        url = self.update_resource_group_level_state_to_activate.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
@@ -775,4 +777,112 @@ class AlertsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_resource_group_level_alert_state_to_reactivate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/activate'}  # type: ignore
+    update_resource_group_level_state_to_activate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/activate'}  # type: ignore
+
+    def _simulate_initial(
+        self,
+        alert_simulator_request_body,  # type: "_models.AlertSimulatorRequestBody"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-01-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._simulate_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(alert_simulator_request_body, 'AlertSimulatorRequestBody')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _simulate_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/default/simulate'}  # type: ignore
+
+    def begin_simulate(
+        self,
+        alert_simulator_request_body,  # type: "_models.AlertSimulatorRequestBody"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Simulate security alerts.
+
+        :param alert_simulator_request_body: Alert Simulator Request Properties.
+        :type alert_simulator_request_body: ~azure.mgmt.security.models.AlertSimulatorRequestBody
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._simulate_initial(
+                alert_simulator_request_body=alert_simulator_request_body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_simulate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/default/simulate'}  # type: ignore

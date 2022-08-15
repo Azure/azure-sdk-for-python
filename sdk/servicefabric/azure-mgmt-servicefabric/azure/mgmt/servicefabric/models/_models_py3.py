@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -148,6 +148,8 @@ class ProxyResource(msrest.serialization.Model):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     """
 
     _validation = {
@@ -155,6 +157,7 @@ class ProxyResource(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -164,6 +167,7 @@ class ProxyResource(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -180,6 +184,7 @@ class ProxyResource(msrest.serialization.Model):
         self.location = location
         self.tags = tags
         self.etag = None
+        self.system_data = None
 
 
 class ApplicationResource(ProxyResource):
@@ -200,6 +205,8 @@ class ApplicationResource(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     :param identity: Describes the managed identities for an Azure resource.
     :type identity: ~azure.mgmt.servicefabric.models.ManagedIdentity
     :param type_version: The version of the application type as defined in the application
@@ -240,6 +247,7 @@ class ApplicationResource(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
         'minimum_nodes': {'minimum': 0},
         'maximum_nodes': {'minimum': 0},
         'provisioning_state': {'readonly': True},
@@ -252,6 +260,7 @@ class ApplicationResource(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
@@ -492,6 +501,8 @@ class ApplicationResourceUpdate(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     :param type_version: The version of the application type as defined in the application
      manifest.
     :type type_version: str
@@ -525,6 +536,7 @@ class ApplicationResourceUpdate(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
         'minimum_nodes': {'minimum': 0},
         'maximum_nodes': {'minimum': 0},
     }
@@ -536,6 +548,7 @@ class ApplicationResourceUpdate(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
@@ -590,6 +603,8 @@ class ApplicationTypeResource(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -600,6 +615,7 @@ class ApplicationTypeResource(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -610,6 +626,7 @@ class ApplicationTypeResource(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -673,6 +690,8 @@ class ApplicationTypeVersionResource(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -688,6 +707,7 @@ class ApplicationTypeVersionResource(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'default_parameter_list': {'readonly': True},
     }
@@ -699,6 +719,7 @@ class ApplicationTypeVersionResource(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'app_package_url': {'key': 'properties.appPackageUrl', 'type': 'str'},
         'default_parameter_list': {'key': 'properties.defaultParameterList', 'type': '{str}'},
@@ -757,7 +778,7 @@ class ApplicationTypeVersionsCleanupPolicy(msrest.serialization.Model):
 
     :param max_unused_versions_to_keep: Required. Number of unused versions per application type to
      keep.
-    :type max_unused_versions_to_keep: int
+    :type max_unused_versions_to_keep: long
     """
 
     _validation = {
@@ -765,7 +786,7 @@ class ApplicationTypeVersionsCleanupPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'max_unused_versions_to_keep': {'key': 'maxUnusedVersionsToKeep', 'type': 'int'},
+        'max_unused_versions_to_keep': {'key': 'maxUnusedVersionsToKeep', 'type': 'long'},
     }
 
     def __init__(
@@ -801,6 +822,10 @@ class ApplicationUpgradePolicy(msrest.serialization.Model):
      UnmonitoredAuto, UnmonitoredManual, and Monitored. Possible values include: "Invalid",
      "UnmonitoredAuto", "UnmonitoredManual", "Monitored". Default value: "Monitored".
     :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.RollingUpgradeMode
+    :param recreate_application: Determines whether the application should be recreated on update.
+     If value=true, the rest of the upgrade policy parameters are not allowed and it will result in
+     availability loss.
+    :type recreate_application: bool
     """
 
     _attribute_map = {
@@ -809,6 +834,7 @@ class ApplicationUpgradePolicy(msrest.serialization.Model):
         'rolling_upgrade_monitoring_policy': {'key': 'rollingUpgradeMonitoringPolicy', 'type': 'ArmRollingUpgradeMonitoringPolicy'},
         'application_health_policy': {'key': 'applicationHealthPolicy', 'type': 'ArmApplicationHealthPolicy'},
         'upgrade_mode': {'key': 'upgradeMode', 'type': 'str'},
+        'recreate_application': {'key': 'recreateApplication', 'type': 'bool'},
     }
 
     def __init__(
@@ -819,6 +845,7 @@ class ApplicationUpgradePolicy(msrest.serialization.Model):
         rolling_upgrade_monitoring_policy: Optional["ArmRollingUpgradeMonitoringPolicy"] = None,
         application_health_policy: Optional["ArmApplicationHealthPolicy"] = None,
         upgrade_mode: Optional[Union[str, "RollingUpgradeMode"]] = "Monitored",
+        recreate_application: Optional[bool] = None,
         **kwargs
     ):
         super(ApplicationUpgradePolicy, self).__init__(**kwargs)
@@ -827,6 +854,7 @@ class ApplicationUpgradePolicy(msrest.serialization.Model):
         self.rolling_upgrade_monitoring_policy = rolling_upgrade_monitoring_policy
         self.application_health_policy = application_health_policy
         self.upgrade_mode = upgrade_mode
+        self.recreate_application = recreate_application
 
 
 class ApplicationUserAssignedIdentity(msrest.serialization.Model):
@@ -1118,49 +1146,6 @@ class CertificateDescription(msrest.serialization.Model):
         self.x509_store_name = x509_store_name
 
 
-class ClientCertificate(msrest.serialization.Model):
-    """Client Certificate definition.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param is_admin: Required. Whether the certificate is admin or not.
-    :type is_admin: bool
-    :param thumbprint: Certificate Thumbprint.
-    :type thumbprint: str
-    :param common_name: Certificate Common name.
-    :type common_name: str
-    :param issuer_thumbprint: Issuer thumbprint for the certificate. Only used together with
-     CommonName.
-    :type issuer_thumbprint: str
-    """
-
-    _validation = {
-        'is_admin': {'required': True},
-    }
-
-    _attribute_map = {
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'common_name': {'key': 'commonName', 'type': 'str'},
-        'issuer_thumbprint': {'key': 'issuerThumbprint', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        is_admin: bool,
-        thumbprint: Optional[str] = None,
-        common_name: Optional[str] = None,
-        issuer_thumbprint: Optional[str] = None,
-        **kwargs
-    ):
-        super(ClientCertificate, self).__init__(**kwargs)
-        self.is_admin = is_admin
-        self.thumbprint = thumbprint
-        self.common_name = common_name
-        self.issuer_thumbprint = issuer_thumbprint
-
-
 class ClientCertificateCommonName(msrest.serialization.Model):
     """Describes the client certificate details using common name.
 
@@ -1255,6 +1240,8 @@ class Resource(msrest.serialization.Model):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     """
 
     _validation = {
@@ -1263,6 +1250,7 @@ class Resource(msrest.serialization.Model):
         'type': {'readonly': True},
         'location': {'required': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1272,6 +1260,7 @@ class Resource(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -1288,10 +1277,11 @@ class Resource(msrest.serialization.Model):
         self.location = location
         self.tags = tags
         self.etag = None
+        self.system_data = None
 
 
 class Cluster(Resource):
-    """The cluster resource properties.
+    """The cluster resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1309,6 +1299,8 @@ class Cluster(Resource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     :param add_on_features: The list of add-on features to enable in the cluster.
     :type add_on_features: list[str or ~azure.mgmt.servicefabric.models.AddOnFeatures]
     :ivar available_cluster_versions: The Service Fabric runtime versions available for this
@@ -1407,14 +1399,7 @@ class Cluster(Resource):
     :param upgrade_description: The policy to use when upgrading the cluster.
     :type upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
     :param upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version is
-     available.
-    
-    
-     * Automatic - The cluster will be automatically upgraded to the latest Service Fabric runtime
-     version as soon as it is available.
-     * Manual - The cluster will not be automatically upgraded to the latest Service Fabric runtime
-     version. The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster
-     resource. Possible values include: "Automatic", "Manual".
+     available. Possible values include: "Automatic", "Manual". Default value: "Automatic".
     :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
     :param application_type_versions_cleanup_policy: The policy used to clean up unused versions.
     :type application_type_versions_cleanup_policy:
@@ -1422,6 +1407,30 @@ class Cluster(Resource):
     :param vm_image: The VM image VMSS has been configured with. Generic names such as Windows or
      Linux can be used.
     :type vm_image: str
+    :param sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
+     domains (UDs). This property can't be modified if a node type with multiple Availability Zones
+     is already present in the cluster. Possible values include: "Parallel", "Hierarchical".
+    :type sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
+    :param vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual machine
+     scale set, it is mandatory if a node type with multiple Availability Zones is added. Possible
+     values include: "Parallel", "Hierarchical".
+    :type vmss_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
+    :param infrastructure_service_manager: Indicates if infrastructure service manager is enabled.
+    :type infrastructure_service_manager: bool
+    :param upgrade_wave: Indicates when new cluster runtime version upgrades will be applied after
+     they are released. By default is Wave0. Only applies when **upgradeMode** is set to
+     'Automatic'. Possible values include: "Wave0", "Wave1", "Wave2".
+    :type upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
+    :param upgrade_pause_start_timestamp_utc: Indicates the start date and time to pause automatic
+     runtime version upgrades on the cluster for an specific period of time on the cluster (UTC).
+    :type upgrade_pause_start_timestamp_utc: ~datetime.datetime
+    :param upgrade_pause_end_timestamp_utc: Indicates the end date and time to pause automatic
+     runtime version upgrades on the cluster for an specific period of time on the cluster (UTC).
+    :type upgrade_pause_end_timestamp_utc: ~datetime.datetime
+    :param wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the cluster.
+    :type wave_upgrade_paused: bool
+    :param notifications: Indicates a list of notification channels for cluster events.
+    :type notifications: list[~azure.mgmt.servicefabric.models.Notification]
     """
 
     _validation = {
@@ -1430,6 +1439,7 @@ class Cluster(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
         'available_cluster_versions': {'readonly': True},
         'cluster_endpoint': {'readonly': True},
         'cluster_id': {'readonly': True},
@@ -1444,6 +1454,7 @@ class Cluster(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'add_on_features': {'key': 'properties.addOnFeatures', 'type': '[str]'},
         'available_cluster_versions': {'key': 'properties.availableClusterVersions', 'type': '[ClusterVersionDetails]'},
         'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
@@ -1468,6 +1479,14 @@ class Cluster(Resource):
         'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'str'},
         'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
         'vm_image': {'key': 'properties.vmImage', 'type': 'str'},
+        'sf_zonal_upgrade_mode': {'key': 'properties.sfZonalUpgradeMode', 'type': 'str'},
+        'vmss_zonal_upgrade_mode': {'key': 'properties.vmssZonalUpgradeMode', 'type': 'str'},
+        'infrastructure_service_manager': {'key': 'properties.infrastructureServiceManager', 'type': 'bool'},
+        'upgrade_wave': {'key': 'properties.upgradeWave', 'type': 'str'},
+        'upgrade_pause_start_timestamp_utc': {'key': 'properties.upgradePauseStartTimestampUtc', 'type': 'iso-8601'},
+        'upgrade_pause_end_timestamp_utc': {'key': 'properties.upgradePauseEndTimestampUtc', 'type': 'iso-8601'},
+        'wave_upgrade_paused': {'key': 'properties.waveUpgradePaused', 'type': 'bool'},
+        'notifications': {'key': 'properties.notifications', 'type': '[Notification]'},
     }
 
     def __init__(
@@ -1491,9 +1510,17 @@ class Cluster(Resource):
         reverse_proxy_certificate: Optional["CertificateDescription"] = None,
         reverse_proxy_certificate_common_names: Optional["ServerCertificateCommonNames"] = None,
         upgrade_description: Optional["ClusterUpgradePolicy"] = None,
-        upgrade_mode: Optional[Union[str, "UpgradeMode"]] = None,
+        upgrade_mode: Optional[Union[str, "UpgradeMode"]] = "Automatic",
         application_type_versions_cleanup_policy: Optional["ApplicationTypeVersionsCleanupPolicy"] = None,
         vm_image: Optional[str] = None,
+        sf_zonal_upgrade_mode: Optional[Union[str, "SfZonalUpgradeMode"]] = None,
+        vmss_zonal_upgrade_mode: Optional[Union[str, "VmssZonalUpgradeMode"]] = None,
+        infrastructure_service_manager: Optional[bool] = None,
+        upgrade_wave: Optional[Union[str, "ClusterUpgradeCadence"]] = None,
+        upgrade_pause_start_timestamp_utc: Optional[datetime.datetime] = None,
+        upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
+        wave_upgrade_paused: Optional[bool] = None,
+        notifications: Optional[List["Notification"]] = None,
         **kwargs
     ):
         super(Cluster, self).__init__(location=location, tags=tags, **kwargs)
@@ -1521,6 +1548,14 @@ class Cluster(Resource):
         self.upgrade_mode = upgrade_mode
         self.application_type_versions_cleanup_policy = application_type_versions_cleanup_policy
         self.vm_image = vm_image
+        self.sf_zonal_upgrade_mode = sf_zonal_upgrade_mode
+        self.vmss_zonal_upgrade_mode = vmss_zonal_upgrade_mode
+        self.infrastructure_service_manager = infrastructure_service_manager
+        self.upgrade_wave = upgrade_wave
+        self.upgrade_pause_start_timestamp_utc = upgrade_pause_start_timestamp_utc
+        self.upgrade_pause_end_timestamp_utc = upgrade_pause_end_timestamp_utc
+        self.wave_upgrade_paused = wave_upgrade_paused
+        self.notifications = notifications
 
 
 class ClusterCodeVersionsListResult(msrest.serialization.Model):
@@ -1738,19 +1773,36 @@ class ClusterUpdateParameters(msrest.serialization.Model):
     :type reverse_proxy_certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
     :param upgrade_description: The policy to use when upgrading the cluster.
     :type upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
-    :param upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version is
-     available.
-    
-    
-     * Automatic - The cluster will be automatically upgraded to the latest Service Fabric runtime
-     version as soon as it is available.
-     * Manual - The cluster will not be automatically upgraded to the latest Service Fabric runtime
-     version. The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster
-     resource. Possible values include: "Automatic", "Manual".
-    :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
     :param application_type_versions_cleanup_policy: The policy used to clean up unused versions.
     :type application_type_versions_cleanup_policy:
      ~azure.mgmt.servicefabric.models.ApplicationTypeVersionsCleanupPolicy
+    :param upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version is
+     available. Possible values include: "Automatic", "Manual". Default value: "Automatic".
+    :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
+    :param sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
+     domains (UDs). This property can't be modified if a node type with multiple Availability Zones
+     is already present in the cluster. Possible values include: "Parallel", "Hierarchical".
+    :type sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
+    :param vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual machine
+     scale set, it is mandatory if a node type with multiple Availability Zones is added. Possible
+     values include: "Parallel", "Hierarchical".
+    :type vmss_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
+    :param infrastructure_service_manager: Indicates if infrastructure service manager is enabled.
+    :type infrastructure_service_manager: bool
+    :param upgrade_wave: Indicates when new cluster runtime version upgrades will be applied after
+     they are released. By default is Wave0. Only applies when **upgradeMode** is set to
+     'Automatic'. Possible values include: "Wave0", "Wave1", "Wave2".
+    :type upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
+    :param upgrade_pause_start_timestamp_utc: The start timestamp to pause runtime version upgrades
+     on the cluster (UTC).
+    :type upgrade_pause_start_timestamp_utc: ~datetime.datetime
+    :param upgrade_pause_end_timestamp_utc: The end timestamp of pause runtime version upgrades on
+     the cluster (UTC).
+    :type upgrade_pause_end_timestamp_utc: ~datetime.datetime
+    :param wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the cluster.
+    :type wave_upgrade_paused: bool
+    :param notifications: Indicates a list of notification channels for cluster events.
+    :type notifications: list[~azure.mgmt.servicefabric.models.Notification]
     """
 
     _attribute_map = {
@@ -1767,8 +1819,16 @@ class ClusterUpdateParameters(msrest.serialization.Model):
         'reliability_level': {'key': 'properties.reliabilityLevel', 'type': 'str'},
         'reverse_proxy_certificate': {'key': 'properties.reverseProxyCertificate', 'type': 'CertificateDescription'},
         'upgrade_description': {'key': 'properties.upgradeDescription', 'type': 'ClusterUpgradePolicy'},
-        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'str'},
         'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
+        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'str'},
+        'sf_zonal_upgrade_mode': {'key': 'properties.sfZonalUpgradeMode', 'type': 'str'},
+        'vmss_zonal_upgrade_mode': {'key': 'properties.vmssZonalUpgradeMode', 'type': 'str'},
+        'infrastructure_service_manager': {'key': 'properties.infrastructureServiceManager', 'type': 'bool'},
+        'upgrade_wave': {'key': 'properties.upgradeWave', 'type': 'str'},
+        'upgrade_pause_start_timestamp_utc': {'key': 'properties.upgradePauseStartTimestampUtc', 'type': 'iso-8601'},
+        'upgrade_pause_end_timestamp_utc': {'key': 'properties.upgradePauseEndTimestampUtc', 'type': 'iso-8601'},
+        'wave_upgrade_paused': {'key': 'properties.waveUpgradePaused', 'type': 'bool'},
+        'notifications': {'key': 'properties.notifications', 'type': '[Notification]'},
     }
 
     def __init__(
@@ -1787,8 +1847,16 @@ class ClusterUpdateParameters(msrest.serialization.Model):
         reliability_level: Optional[Union[str, "ReliabilityLevel"]] = None,
         reverse_proxy_certificate: Optional["CertificateDescription"] = None,
         upgrade_description: Optional["ClusterUpgradePolicy"] = None,
-        upgrade_mode: Optional[Union[str, "UpgradeMode"]] = None,
         application_type_versions_cleanup_policy: Optional["ApplicationTypeVersionsCleanupPolicy"] = None,
+        upgrade_mode: Optional[Union[str, "UpgradeMode"]] = "Automatic",
+        sf_zonal_upgrade_mode: Optional[Union[str, "SfZonalUpgradeMode"]] = None,
+        vmss_zonal_upgrade_mode: Optional[Union[str, "VmssZonalUpgradeMode"]] = None,
+        infrastructure_service_manager: Optional[bool] = None,
+        upgrade_wave: Optional[Union[str, "ClusterUpgradeCadence"]] = None,
+        upgrade_pause_start_timestamp_utc: Optional[datetime.datetime] = None,
+        upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
+        wave_upgrade_paused: Optional[bool] = None,
+        notifications: Optional[List["Notification"]] = None,
         **kwargs
     ):
         super(ClusterUpdateParameters, self).__init__(**kwargs)
@@ -1805,8 +1873,16 @@ class ClusterUpdateParameters(msrest.serialization.Model):
         self.reliability_level = reliability_level
         self.reverse_proxy_certificate = reverse_proxy_certificate
         self.upgrade_description = upgrade_description
-        self.upgrade_mode = upgrade_mode
         self.application_type_versions_cleanup_policy = application_type_versions_cleanup_policy
+        self.upgrade_mode = upgrade_mode
+        self.sf_zonal_upgrade_mode = sf_zonal_upgrade_mode
+        self.vmss_zonal_upgrade_mode = vmss_zonal_upgrade_mode
+        self.infrastructure_service_manager = infrastructure_service_manager
+        self.upgrade_wave = upgrade_wave
+        self.upgrade_pause_start_timestamp_utc = upgrade_pause_start_timestamp_utc
+        self.upgrade_pause_end_timestamp_utc = upgrade_pause_end_timestamp_utc
+        self.wave_upgrade_paused = wave_upgrade_paused
+        self.notifications = notifications
 
 
 class ClusterUpgradeDeltaHealthPolicy(msrest.serialization.Model):
@@ -2127,325 +2203,6 @@ class ErrorModelError(msrest.serialization.Model):
         self.message = message
 
 
-class LoadBalancingRule(msrest.serialization.Model):
-    """Describes a load balancing rule.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param frontend_port: Required. The port for the external endpoint. Port numbers for each rule
-     must be unique within the Load Balancer. Acceptable values are between 1 and 65534.
-    :type frontend_port: int
-    :param backend_port: Required. The port used for internal connections on the endpoint.
-     Acceptable values are between 1 and 65535.
-    :type backend_port: int
-    :param protocol: Required. The reference to the transport protocol used by the load balancing
-     rule. Possible values include: "tcp", "udp".
-    :type protocol: str or ~azure.mgmt.servicefabric.models.Protocol
-    :param probe_protocol: Required. the reference to the load balancer probe used by the load
-     balancing rule. Possible values include: "tcp", "http", "https".
-    :type probe_protocol: str or ~azure.mgmt.servicefabric.models.ProbeProtocol
-    :param probe_request_path: The probe request path. Only supported for HTTP/HTTPS probes.
-    :type probe_request_path: str
-    """
-
-    _validation = {
-        'frontend_port': {'required': True, 'maximum': 65534, 'minimum': 1},
-        'backend_port': {'required': True, 'maximum': 65534, 'minimum': 1},
-        'protocol': {'required': True},
-        'probe_protocol': {'required': True},
-    }
-
-    _attribute_map = {
-        'frontend_port': {'key': 'frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'probe_protocol': {'key': 'probeProtocol', 'type': 'str'},
-        'probe_request_path': {'key': 'probeRequestPath', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        frontend_port: int,
-        backend_port: int,
-        protocol: Union[str, "Protocol"],
-        probe_protocol: Union[str, "ProbeProtocol"],
-        probe_request_path: Optional[str] = None,
-        **kwargs
-    ):
-        super(LoadBalancingRule, self).__init__(**kwargs)
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
-        self.protocol = protocol
-        self.probe_protocol = probe_protocol
-        self.probe_request_path = probe_request_path
-
-
-class ManagedCluster(Resource):
-    """The manged cluster resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource identifier.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :param location: Required. Azure resource location.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
-    :ivar etag: Azure resource etag.
-    :vartype etag: str
-    :param sku: The sku of the managed cluster.
-    :type sku: ~azure.mgmt.servicefabric.models.Sku
-    :param dns_name: The cluster dns name.
-    :type dns_name: str
-    :ivar fqdn: the cluster Fully qualified domain name.
-    :vartype fqdn: str
-    :ivar cluster_id: A service generated unique identifier for the cluster resource.
-    :vartype cluster_id: str
-    :ivar cluster_state: The current state of the cluster. Possible values include:
-     "WaitingForNodes", "Deploying", "BaselineUpgrade", "UpdatingUserConfiguration",
-     "UpdatingUserCertificate", "UpdatingInfrastructure", "EnforcingClusterVersion",
-     "UpgradeServiceUnreachable", "AutoScale", "Ready".
-    :vartype cluster_state: str or ~azure.mgmt.servicefabric.models.ClusterState
-    :ivar cluster_certificate_thumbprint: The cluster certificate thumbprint used node to node
-     communication.
-    :vartype cluster_certificate_thumbprint: str
-    :param client_connection_port: The port used for client connections to the cluster.
-    :type client_connection_port: int
-    :param http_gateway_connection_port: The port used for http connections to the cluster.
-    :type http_gateway_connection_port: int
-    :param admin_user_name: vm admin user name.
-    :type admin_user_name: str
-    :param admin_password: vm admin user password.
-    :type admin_password: str
-    :param load_balancing_rules: Describes load balancing rules.
-    :type load_balancing_rules: list[~azure.mgmt.servicefabric.models.LoadBalancingRule]
-    :param clients: client certificates for the cluster.
-    :type clients: list[~azure.mgmt.servicefabric.models.ClientCertificate]
-    :param azure_active_directory: Azure active directory.
-    :type azure_active_directory: ~azure.mgmt.servicefabric.models.AzureActiveDirectory
-    :param fabric_settings: The list of custom fabric settings to configure the cluster.
-    :type fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
-    :ivar provisioning_state: The provisioning state of the managed cluster resource. Possible
-     values include: "None", "Creating", "Created", "Updating", "Succeeded", "Failed", "Canceled",
-     "Deleting", "Deleted", "Other".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.servicefabric.models.ManagedResourceProvisioningState
-    :param cluster_code_version: The Service Fabric runtime version of the cluster. This property
-     can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
-     Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
-     get the list of available version for existing clusters use **availableClusterVersions**.
-    :type cluster_code_version: str
-    :param addon_features: client certificates for the cluster.
-    :type addon_features: list[str or ~azure.mgmt.servicefabric.models.ManagedClusterAddOnFeature]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'etag': {'readonly': True},
-        'fqdn': {'readonly': True},
-        'cluster_id': {'readonly': True},
-        'cluster_state': {'readonly': True},
-        'cluster_certificate_thumbprint': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'dns_name': {'key': 'properties.dnsName', 'type': 'str'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
-        'cluster_state': {'key': 'properties.clusterState', 'type': 'str'},
-        'cluster_certificate_thumbprint': {'key': 'properties.clusterCertificateThumbprint', 'type': 'str'},
-        'client_connection_port': {'key': 'properties.clientConnectionPort', 'type': 'int'},
-        'http_gateway_connection_port': {'key': 'properties.httpGatewayConnectionPort', 'type': 'int'},
-        'admin_user_name': {'key': 'properties.adminUserName', 'type': 'str'},
-        'admin_password': {'key': 'properties.adminPassword', 'type': 'str'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]'},
-        'clients': {'key': 'properties.clients', 'type': '[ClientCertificate]'},
-        'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
-        'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'addon_features': {'key': 'properties.addonFeatures', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        dns_name: Optional[str] = None,
-        client_connection_port: Optional[int] = 19000,
-        http_gateway_connection_port: Optional[int] = 19080,
-        admin_user_name: Optional[str] = None,
-        admin_password: Optional[str] = None,
-        load_balancing_rules: Optional[List["LoadBalancingRule"]] = None,
-        clients: Optional[List["ClientCertificate"]] = None,
-        azure_active_directory: Optional["AzureActiveDirectory"] = None,
-        fabric_settings: Optional[List["SettingsSectionDescription"]] = None,
-        cluster_code_version: Optional[str] = None,
-        addon_features: Optional[List[Union[str, "ManagedClusterAddOnFeature"]]] = None,
-        **kwargs
-    ):
-        super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
-        self.sku = sku
-        self.dns_name = dns_name
-        self.fqdn = None
-        self.cluster_id = None
-        self.cluster_state = None
-        self.cluster_certificate_thumbprint = None
-        self.client_connection_port = client_connection_port
-        self.http_gateway_connection_port = http_gateway_connection_port
-        self.admin_user_name = admin_user_name
-        self.admin_password = admin_password
-        self.load_balancing_rules = load_balancing_rules
-        self.clients = clients
-        self.azure_active_directory = azure_active_directory
-        self.fabric_settings = fabric_settings
-        self.provisioning_state = None
-        self.cluster_code_version = cluster_code_version
-        self.addon_features = addon_features
-
-
-class ManagedClusterListResult(msrest.serialization.Model):
-    """Managed Cluster list results.
-
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.ManagedCluster]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedCluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ManagedCluster"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ManagedClusterListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ManagedClusterUpdateParameters(msrest.serialization.Model):
-    """Managed cluster update request.
-
-    :param tags: A set of tags. Managed cluster update parameters.
-    :type tags: dict[str, str]
-    :param client_connection_port: The port used for client connections to the cluster.
-    :type client_connection_port: int
-    :param http_gateway_connection_port: The port used for http connections to the cluster.
-    :type http_gateway_connection_port: int
-    :param load_balancing_rules: Describes load balancing rules.
-    :type load_balancing_rules: list[~azure.mgmt.servicefabric.models.LoadBalancingRule]
-    :param clients: client certificates for the cluster.
-    :type clients: list[~azure.mgmt.servicefabric.models.ClientCertificate]
-    :param azure_active_directory: Azure active directory.
-    :type azure_active_directory: ~azure.mgmt.servicefabric.models.AzureActiveDirectory
-    :param fabric_settings: The list of custom fabric settings to configure the cluster.
-    :type fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
-    :param cluster_code_version: The Service Fabric runtime version of the cluster. This property
-     can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
-     Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
-     get the list of available version for existing clusters use **availableClusterVersions**.
-    :type cluster_code_version: str
-    :param addon_features: client certificates for the cluster.
-    :type addon_features: list[str or ~azure.mgmt.servicefabric.models.ManagedClusterAddOnFeature]
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'client_connection_port': {'key': 'properties.clientConnectionPort', 'type': 'int'},
-        'http_gateway_connection_port': {'key': 'properties.httpGatewayConnectionPort', 'type': 'int'},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]'},
-        'clients': {'key': 'properties.clients', 'type': '[ClientCertificate]'},
-        'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
-        'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
-        'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'addon_features': {'key': 'properties.addonFeatures', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        client_connection_port: Optional[int] = None,
-        http_gateway_connection_port: Optional[int] = None,
-        load_balancing_rules: Optional[List["LoadBalancingRule"]] = None,
-        clients: Optional[List["ClientCertificate"]] = None,
-        azure_active_directory: Optional["AzureActiveDirectory"] = None,
-        fabric_settings: Optional[List["SettingsSectionDescription"]] = None,
-        cluster_code_version: Optional[str] = None,
-        addon_features: Optional[List[Union[str, "ManagedClusterAddOnFeature"]]] = None,
-        **kwargs
-    ):
-        super(ManagedClusterUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
-        self.client_connection_port = client_connection_port
-        self.http_gateway_connection_port = http_gateway_connection_port
-        self.load_balancing_rules = load_balancing_rules
-        self.clients = clients
-        self.azure_active_directory = azure_active_directory
-        self.fabric_settings = fabric_settings
-        self.cluster_code_version = cluster_code_version
-        self.addon_features = addon_features
-
-
-class ManagedClusterVersionDetails(msrest.serialization.Model):
-    """The detail of the Service Fabric runtime version.
-
-    :param msi_version: The Service Fabric runtime version of the cluster.
-    :type msi_version: str
-    :param support_expiry_utc: The date of expiry of support of the version.
-    :type support_expiry_utc: str
-    :param os_type: Indicates the operating system of the cluster. Possible values include:
-     "Windows", "Ubuntu", "RedHat", "Ubuntu18_04".
-    :type os_type: str or ~azure.mgmt.servicefabric.models.ClusterOsType
-    """
-
-    _attribute_map = {
-        'msi_version': {'key': 'msiVersion', 'type': 'str'},
-        'support_expiry_utc': {'key': 'supportExpiryUtc', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        msi_version: Optional[str] = None,
-        support_expiry_utc: Optional[str] = None,
-        os_type: Optional[Union[str, "ClusterOsType"]] = None,
-        **kwargs
-    ):
-        super(ManagedClusterVersionDetails, self).__init__(**kwargs)
-        self.msi_version = msi_version
-        self.support_expiry_utc = support_expiry_utc
-        self.os_type = os_type
-
-
 class ManagedIdentity(msrest.serialization.Model):
     """Describes the managed identities for an Azure resource.
 
@@ -2491,47 +2248,6 @@ class ManagedIdentity(msrest.serialization.Model):
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
-
-
-class ManagedProxyResource(msrest.serialization.Model):
-    """The resource model definition for proxy-only resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource identifier.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ManagedProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = tags
 
 
 class PartitionSchemeDescription(msrest.serialization.Model):
@@ -2607,165 +2323,6 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
         self.names = names
 
 
-class NodeType(ManagedProxyResource):
-    """Describes a node type in the cluster, each node type represents sub set of nodes in the cluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource identifier.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
-    :param is_primary: The node type on which system services will run. Only one node type should
-     be marked as primary. Primary node type cannot be deleted or changed for existing clusters.
-    :type is_primary: bool
-    :param vm_instance_count: The number of nodes in the node type.
-    :type vm_instance_count: int
-    :param data_disk_size_gb: Disk size for each vm in the node type in GBs.
-    :type data_disk_size_gb: int
-    :param placement_properties: The placement tags applied to nodes in the node type, which can be
-     used to indicate where certain services (workload) should run.
-    :type placement_properties: dict[str, str]
-    :param capacities: The capacity tags applied to the nodes in the node type, the cluster
-     resource manager uses these tags to understand how much resource a node has.
-    :type capacities: dict[str, str]
-    :param application_ports: The range of ports from which cluster assigned port to Service Fabric
-     applications.
-    :type application_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param ephemeral_ports: The range of ephemeral ports that nodes in this node type should be
-     configured with.
-    :type ephemeral_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param vm_size: The size of virtual machines in the pool. All virtual machines in a pool are
-     the same size. For example, Standard_D3.
-    :type vm_size: str
-    :param vm_image_publisher: The publisher of the Azure Virtual Machines Marketplace image. For
-     example, Canonical or MicrosoftWindowsServer.
-    :type vm_image_publisher: str
-    :param vm_image_offer: The offer type of the Azure Virtual Machines Marketplace image. For
-     example, UbuntuServer or WindowsServer.
-    :type vm_image_offer: str
-    :param vm_image_sku: The SKU of the Azure Virtual Machines Marketplace image. For example,
-     14.04.0-LTS or 2012-R2-Datacenter.
-    :type vm_image_sku: str
-    :param vm_image_version: The version of the Azure Virtual Machines Marketplace image. A value
-     of 'latest' can be specified to select the latest version of an image. If omitted, the default
-     is 'latest'.
-    :type vm_image_version: str
-    :param vm_secrets: The secrets to install in the virtual machines.
-    :type vm_secrets: list[~azure.mgmt.servicefabric.models.VaultSecretGroup]
-    :param vm_extensions: Set of extensions that should be installed onto the virtual machines.
-    :type vm_extensions: list[~azure.mgmt.servicefabric.models.VMSSExtension]
-    :ivar provisioning_state: The provisioning state of the managed cluster resource. Possible
-     values include: "None", "Creating", "Created", "Updating", "Succeeded", "Failed", "Canceled",
-     "Deleting", "Deleted", "Other".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.servicefabric.models.ManagedResourceProvisioningState
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'vm_instance_count': {'maximum': 2147483647, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'is_primary': {'key': 'properties.isPrimary', 'type': 'bool'},
-        'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
-        'data_disk_size_gb': {'key': 'properties.dataDiskSizeGB', 'type': 'int'},
-        'placement_properties': {'key': 'properties.placementProperties', 'type': '{str}'},
-        'capacities': {'key': 'properties.capacities', 'type': '{str}'},
-        'application_ports': {'key': 'properties.applicationPorts', 'type': 'EndpointRangeDescription'},
-        'ephemeral_ports': {'key': 'properties.ephemeralPorts', 'type': 'EndpointRangeDescription'},
-        'vm_size': {'key': 'properties.vmSize', 'type': 'str'},
-        'vm_image_publisher': {'key': 'properties.vmImagePublisher', 'type': 'str'},
-        'vm_image_offer': {'key': 'properties.vmImageOffer', 'type': 'str'},
-        'vm_image_sku': {'key': 'properties.vmImageSku', 'type': 'str'},
-        'vm_image_version': {'key': 'properties.vmImageVersion', 'type': 'str'},
-        'vm_secrets': {'key': 'properties.vmSecrets', 'type': '[VaultSecretGroup]'},
-        'vm_extensions': {'key': 'properties.vmExtensions', 'type': '[VMSSExtension]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        is_primary: Optional[bool] = None,
-        vm_instance_count: Optional[int] = None,
-        data_disk_size_gb: Optional[int] = None,
-        placement_properties: Optional[Dict[str, str]] = None,
-        capacities: Optional[Dict[str, str]] = None,
-        application_ports: Optional["EndpointRangeDescription"] = None,
-        ephemeral_ports: Optional["EndpointRangeDescription"] = None,
-        vm_size: Optional[str] = None,
-        vm_image_publisher: Optional[str] = None,
-        vm_image_offer: Optional[str] = None,
-        vm_image_sku: Optional[str] = None,
-        vm_image_version: Optional[str] = None,
-        vm_secrets: Optional[List["VaultSecretGroup"]] = None,
-        vm_extensions: Optional[List["VMSSExtension"]] = None,
-        **kwargs
-    ):
-        super(NodeType, self).__init__(tags=tags, **kwargs)
-        self.is_primary = is_primary
-        self.vm_instance_count = vm_instance_count
-        self.data_disk_size_gb = data_disk_size_gb
-        self.placement_properties = placement_properties
-        self.capacities = capacities
-        self.application_ports = application_ports
-        self.ephemeral_ports = ephemeral_ports
-        self.vm_size = vm_size
-        self.vm_image_publisher = vm_image_publisher
-        self.vm_image_offer = vm_image_offer
-        self.vm_image_sku = vm_image_sku
-        self.vm_image_version = vm_image_version
-        self.vm_secrets = vm_secrets
-        self.vm_extensions = vm_extensions
-        self.provisioning_state = None
-
-
-class NodeTypeActionParameters(msrest.serialization.Model):
-    """Parameters for Node type action.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param nodes: Required. List of node names from the node type.
-    :type nodes: list[str]
-    :param force: Force the action to go through.
-    :type force: bool
-    """
-
-    _validation = {
-        'nodes': {'required': True},
-    }
-
-    _attribute_map = {
-        'nodes': {'key': 'nodes', 'type': '[str]'},
-        'force': {'key': 'force', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        *,
-        nodes: List[str],
-        force: Optional[bool] = None,
-        **kwargs
-    ):
-        super(NodeTypeActionParameters, self).__init__(**kwargs)
-        self.nodes = nodes
-        self.force = force
-
-
 class NodeTypeDescription(msrest.serialization.Model):
     """Describes a node type in the cluster, each node type represents sub set of nodes in the cluster.
 
@@ -2803,11 +2360,19 @@ class NodeTypeDescription(msrest.serialization.Model):
      type should be marked as primary. Primary node type cannot be deleted or changed for existing
      clusters.
     :type is_primary: bool
-    :param vm_instance_count: Required. The number of nodes in the node type. This count should
-     match the capacity property in the corresponding VirtualMachineScaleSet resource.
+    :param vm_instance_count: Required. VMInstanceCount should be 1 to n, where n indicates the
+     number of VM instances corresponding to this nodeType. VMInstanceCount = 0 can be done only in
+     these scenarios: NodeType is a secondary nodeType. Durability = Bronze or Durability >= Bronze
+     and InfrastructureServiceManager = true. If VMInstanceCount = 0, implies the VMs for this
+     nodeType will not be used for the initial cluster size computation.
     :type vm_instance_count: int
     :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
     :type reverse_proxy_endpoint_port: int
+    :param is_stateless: Indicates if the node type can only host Stateless workloads.
+    :type is_stateless: bool
+    :param multiple_availability_zones: Indicates if the node type is enabled to support multiple
+     zones.
+    :type multiple_availability_zones: bool
     """
 
     _validation = {
@@ -2815,7 +2380,7 @@ class NodeTypeDescription(msrest.serialization.Model):
         'client_connection_endpoint_port': {'required': True},
         'http_gateway_endpoint_port': {'required': True},
         'is_primary': {'required': True},
-        'vm_instance_count': {'required': True, 'maximum': 2147483647, 'minimum': 1},
+        'vm_instance_count': {'required': True, 'maximum': 2147483647, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -2830,6 +2395,8 @@ class NodeTypeDescription(msrest.serialization.Model):
         'is_primary': {'key': 'isPrimary', 'type': 'bool'},
         'vm_instance_count': {'key': 'vmInstanceCount', 'type': 'int'},
         'reverse_proxy_endpoint_port': {'key': 'reverseProxyEndpointPort', 'type': 'int'},
+        'is_stateless': {'key': 'isStateless', 'type': 'bool'},
+        'multiple_availability_zones': {'key': 'multipleAvailabilityZones', 'type': 'bool'},
     }
 
     def __init__(
@@ -2846,6 +2413,8 @@ class NodeTypeDescription(msrest.serialization.Model):
         application_ports: Optional["EndpointRangeDescription"] = None,
         ephemeral_ports: Optional["EndpointRangeDescription"] = None,
         reverse_proxy_endpoint_port: Optional[int] = None,
+        is_stateless: Optional[bool] = None,
+        multiple_availability_zones: Optional[bool] = None,
         **kwargs
     ):
         super(NodeTypeDescription, self).__init__(**kwargs)
@@ -2860,96 +2429,90 @@ class NodeTypeDescription(msrest.serialization.Model):
         self.is_primary = is_primary
         self.vm_instance_count = vm_instance_count
         self.reverse_proxy_endpoint_port = reverse_proxy_endpoint_port
+        self.is_stateless = is_stateless
+        self.multiple_availability_zones = multiple_availability_zones
 
 
-class NodeTypeListResult(msrest.serialization.Model):
-    """Node type list results.
+class Notification(msrest.serialization.Model):
+    """Describes the notification channel for cluster events.
 
-    :param value: The list of node types.
-    :type value: list[~azure.mgmt.servicefabric.models.NodeType]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
-    """
+    All required parameters must be populated in order to send to Azure.
 
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[NodeType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["NodeType"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(NodeTypeListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class NodeTypeUpdateParameters(msrest.serialization.Model):
-    """Node type update request.
-
-    :param tags: A set of tags. Node type update parameters.
-    :type tags: dict[str, str]
-    :param vm_instance_count: The number of nodes in the node type.
-    :type vm_instance_count: int
-    :param placement_properties: The placement tags applied to nodes in the node type, which can be
-     used to indicate where certain services (workload) should run.
-    :type placement_properties: dict[str, str]
-    :param capacities: The capacity tags applied to the nodes in the node type, the cluster
-     resource manager uses these tags to understand how much resource a node has.
-    :type capacities: dict[str, str]
-    :param application_ports: The range of ports from which cluster assigned port to Service Fabric
-     applications.
-    :type application_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param ephemeral_ports: The range of ephemeral ports that nodes in this node type should be
-     configured with.
-    :type ephemeral_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param vm_secrets: The secrets to install in the virtual machines.
-    :type vm_secrets: list[~azure.mgmt.servicefabric.models.VaultSecretGroup]
-    :param vm_extensions: Set of extensions that should be installed onto the virtual machines.
-    :type vm_extensions: list[~azure.mgmt.servicefabric.models.VMSSExtension]
+    :param is_enabled: Required. Indicates if the notification is enabled.
+    :type is_enabled: bool
+    :param notification_category: Required. The category of notification. Possible values include:
+     "WaveProgress".
+    :type notification_category: str or ~azure.mgmt.servicefabric.models.NotificationCategory
+    :param notification_level: Required. The level of notification. Possible values include:
+     "Critical", "All".
+    :type notification_level: str or ~azure.mgmt.servicefabric.models.NotificationLevel
+    :param notification_targets: Required. List of targets that subscribe to the notification.
+    :type notification_targets: list[~azure.mgmt.servicefabric.models.NotificationTarget]
     """
 
     _validation = {
-        'vm_instance_count': {'maximum': 2147483647, 'minimum': 1},
+        'is_enabled': {'required': True},
+        'notification_category': {'required': True},
+        'notification_level': {'required': True},
+        'notification_targets': {'required': True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
-        'placement_properties': {'key': 'properties.placementProperties', 'type': '{str}'},
-        'capacities': {'key': 'properties.capacities', 'type': '{str}'},
-        'application_ports': {'key': 'properties.applicationPorts', 'type': 'EndpointRangeDescription'},
-        'ephemeral_ports': {'key': 'properties.ephemeralPorts', 'type': 'EndpointRangeDescription'},
-        'vm_secrets': {'key': 'properties.vmSecrets', 'type': '[VaultSecretGroup]'},
-        'vm_extensions': {'key': 'properties.vmExtensions', 'type': '[VMSSExtension]'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'notification_category': {'key': 'notificationCategory', 'type': 'str'},
+        'notification_level': {'key': 'notificationLevel', 'type': 'str'},
+        'notification_targets': {'key': 'notificationTargets', 'type': '[NotificationTarget]'},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
-        vm_instance_count: Optional[int] = None,
-        placement_properties: Optional[Dict[str, str]] = None,
-        capacities: Optional[Dict[str, str]] = None,
-        application_ports: Optional["EndpointRangeDescription"] = None,
-        ephemeral_ports: Optional["EndpointRangeDescription"] = None,
-        vm_secrets: Optional[List["VaultSecretGroup"]] = None,
-        vm_extensions: Optional[List["VMSSExtension"]] = None,
+        is_enabled: bool,
+        notification_category: Union[str, "NotificationCategory"],
+        notification_level: Union[str, "NotificationLevel"],
+        notification_targets: List["NotificationTarget"],
         **kwargs
     ):
-        super(NodeTypeUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
-        self.vm_instance_count = vm_instance_count
-        self.placement_properties = placement_properties
-        self.capacities = capacities
-        self.application_ports = application_ports
-        self.ephemeral_ports = ephemeral_ports
-        self.vm_secrets = vm_secrets
-        self.vm_extensions = vm_extensions
+        super(Notification, self).__init__(**kwargs)
+        self.is_enabled = is_enabled
+        self.notification_category = notification_category
+        self.notification_level = notification_level
+        self.notification_targets = notification_targets
+
+
+class NotificationTarget(msrest.serialization.Model):
+    """Describes the notification target properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param notification_channel: Required. The notification channel indicates the type of receivers
+     subscribed to the notification, either user or subscription. Possible values include:
+     "EmailUser", "EmailSubscription".
+    :type notification_channel: str or ~azure.mgmt.servicefabric.models.NotificationChannel
+    :param receivers: Required. List of targets that subscribe to the notification.
+    :type receivers: list[str]
+    """
+
+    _validation = {
+        'notification_channel': {'required': True},
+        'receivers': {'required': True},
+    }
+
+    _attribute_map = {
+        'notification_channel': {'key': 'notificationChannel', 'type': 'str'},
+        'receivers': {'key': 'receivers', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        notification_channel: Union[str, "NotificationChannel"],
+        receivers: List[str],
+        **kwargs
+    ):
+        super(NotificationTarget, self).__init__(**kwargs)
+        self.notification_channel = notification_channel
+        self.receivers = receivers
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -2988,6 +2551,8 @@ class OperationResult(msrest.serialization.Model):
 
     :param name: The name of the operation.
     :type name: str
+    :param is_data_action: Indicates whether the operation is a data action.
+    :type is_data_action: bool
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.servicefabric.models.AvailableOperationDisplay
     :param origin: Origin result.
@@ -2998,6 +2563,7 @@ class OperationResult(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'AvailableOperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
@@ -3007,6 +2573,7 @@ class OperationResult(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
+        is_data_action: Optional[bool] = None,
         display: Optional["AvailableOperationDisplay"] = None,
         origin: Optional[str] = None,
         next_link: Optional[str] = None,
@@ -3014,6 +2581,7 @@ class OperationResult(msrest.serialization.Model):
     ):
         super(OperationResult, self).__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
         self.origin = origin
         self.next_link = next_link
@@ -3224,6 +2792,8 @@ class ServiceResource(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     :param placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
@@ -3266,6 +2836,7 @@ class ServiceResource(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -3276,6 +2847,7 @@ class ServiceResource(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
         'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
         'service_load_metrics': {'key': 'properties.serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
@@ -3510,6 +3082,8 @@ class ServiceResourceUpdate(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     :param placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
@@ -3538,6 +3112,7 @@ class ServiceResourceUpdate(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -3547,6 +3122,7 @@ class ServiceResourceUpdate(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
         'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
         'service_load_metrics': {'key': 'properties.serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
@@ -3784,33 +3360,6 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
     ):
         super(SingletonPartitionSchemeDescription, self).__init__(**kwargs)
         self.partition_scheme = 'Singleton'  # type: str
-
-
-class Sku(msrest.serialization.Model):
-    """Sku definition.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. Sku Name. Possible values include: "Basic", "Standard".
-    :type name: str or ~azure.mgmt.servicefabric.models.SkuName
-    """
-
-    _validation = {
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Union[str, "SkuName"],
-        **kwargs
-    ):
-        super(Sku, self).__init__(**kwargs)
-        self.name = name
 
 
 class StatefulServiceProperties(ServiceResourceProperties):
@@ -4185,25 +3734,50 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
         self.instance_close_delay_duration = instance_close_delay_duration
 
 
-class SubResource(msrest.serialization.Model):
-    """Azure resource identifier.
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
 
-    :param id: Azure resource identifier.
-    :type id: str
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+    :type created_by_type: str
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource.
+    :type last_modified_by_type: str
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[str] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[str] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SubResource, self).__init__(**kwargs)
-        self.id = id
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
@@ -4253,6 +3827,54 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
         self.high_key = high_key
 
 
+class UpgradableVersionPathResult(msrest.serialization.Model):
+    """The list of intermediate cluster code versions for an upgrade or downgrade. Or minimum and maximum upgradable version if no target was given.
+
+    :param supported_path:
+    :type supported_path: list[str]
+    """
+
+    _attribute_map = {
+        'supported_path': {'key': 'supportedPath', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        supported_path: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(UpgradableVersionPathResult, self).__init__(**kwargs)
+        self.supported_path = supported_path
+
+
+class UpgradableVersionsDescription(msrest.serialization.Model):
+    """UpgradableVersionsDescription.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_version: Required. The target code version.
+    :type target_version: str
+    """
+
+    _validation = {
+        'target_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_version': {'key': 'targetVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_version: str,
+        **kwargs
+    ):
+        super(UpgradableVersionsDescription, self).__init__(**kwargs)
+        self.target_version = target_version
+
+
 class UserAssignedIdentity(msrest.serialization.Model):
     """UserAssignedIdentity.
 
@@ -4281,165 +3903,3 @@ class UserAssignedIdentity(msrest.serialization.Model):
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
-
-
-class VaultCertificate(msrest.serialization.Model):
-    """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param certificate_url: Required. This is the URL of a certificate that has been uploaded to
-     Key Vault as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the
-     key vault <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this
-     case, your certificate needs to be It is the Base64 encoding of the following JSON Object which
-     is encoded in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
-     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-     "password":":code:`<pfx-file-password>`":code:`<br>`}.
-    :type certificate_url: str
-    :param certificate_store: Required. For Windows VMs, specifies the certificate store on the
-     Virtual Machine to which the certificate should be added. The specified certificate store is
-     implicitly in the LocalMachine account. :code:`<br>`:code:`<br>`For Linux VMs, the certificate
-     file is placed under the /var/lib/waagent directory, with the file name
-     :code:`<UppercaseThumbprint>`.crt for the X509 certificate file and
-     :code:`<UppercaseThumbprint>`.prv for private key. Both of these files are .pem formatted.
-    :type certificate_store: str
-    """
-
-    _validation = {
-        'certificate_url': {'required': True},
-        'certificate_store': {'required': True},
-    }
-
-    _attribute_map = {
-        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
-        'certificate_store': {'key': 'certificateStore', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        certificate_url: str,
-        certificate_store: str,
-        **kwargs
-    ):
-        super(VaultCertificate, self).__init__(**kwargs)
-        self.certificate_url = certificate_url
-        self.certificate_store = certificate_store
-
-
-class VaultSecretGroup(msrest.serialization.Model):
-    """Specifies set of certificates that should be installed onto the virtual machines.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param source_vault: Required. The relative URL of the Key Vault containing all of the
-     certificates in VaultCertificates.
-    :type source_vault: ~azure.mgmt.servicefabric.models.SubResource
-    :param vault_certificates: Required. The list of key vault references in SourceVault which
-     contain certificates.
-    :type vault_certificates: list[~azure.mgmt.servicefabric.models.VaultCertificate]
-    """
-
-    _validation = {
-        'source_vault': {'required': True},
-        'vault_certificates': {'required': True},
-    }
-
-    _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
-        'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_vault: "SubResource",
-        vault_certificates: List["VaultCertificate"],
-        **kwargs
-    ):
-        super(VaultSecretGroup, self).__init__(**kwargs)
-        self.source_vault = source_vault
-        self.vault_certificates = vault_certificates
-
-
-class VMSSExtension(msrest.serialization.Model):
-    """Specifies set of extensions that should be installed onto the virtual machines.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the extension.
-    :type name: str
-    :param publisher: Required. The name of the extension handler publisher.
-    :type publisher: str
-    :param type: Required. Specifies the type of the extension; an example is
-     "CustomScriptExtension".
-    :type type: str
-    :param type_handler_version: Required. Specifies the version of the script handler.
-    :type type_handler_version: str
-    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
-     version if one is available at deployment time. Once deployed, however, the extension will not
-     upgrade minor versions unless redeployed, even with this property set to true.
-    :type auto_upgrade_minor_version: bool
-    :param settings: Json formatted public settings for the extension.
-    :type settings: any
-    :param protected_settings: The extension can contain either protectedSettings or
-     protectedSettingsFromKeyVault or no protected settings at all.
-    :type protected_settings: any
-    :param force_update_tag: If a value is provided and is different from the previous value, the
-     extension handler will be forced to update even if the extension configuration has not changed.
-    :type force_update_tag: str
-    :param provision_after_extensions: Collection of extension names after which this extension
-     needs to be provisioned.
-    :type provision_after_extensions: list[str]
-    :ivar provisioning_state: The provisioning state, which only appears in the response.
-    :vartype provisioning_state: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'type': {'required': True},
-        'type_handler_version': {'required': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'properties.settings', 'type': 'object'},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
-        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        publisher: str,
-        type: str,
-        type_handler_version: str,
-        auto_upgrade_minor_version: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
-        force_update_tag: Optional[str] = None,
-        provision_after_extensions: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(VMSSExtension, self).__init__(**kwargs)
-        self.name = name
-        self.publisher = publisher
-        self.type = type
-        self.type_handler_version = type_handler_version
-        self.auto_upgrade_minor_version = auto_upgrade_minor_version
-        self.settings = settings
-        self.protected_settings = protected_settings
-        self.force_update_tag = force_update_tag
-        self.provision_after_extensions = provision_after_extensions
-        self.provisioning_state = None

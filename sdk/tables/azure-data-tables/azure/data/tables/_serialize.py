@@ -32,6 +32,14 @@ def _get_match_headers(etag, match_condition):
     raise ValueError("Unsupported match condition: {}".format(match_condition))
 
 
+def _prepare_key(keyvalue):
+    """Duplicate the single quote char to escape."""
+    try:
+        return keyvalue.replace("'", "''")
+    except AttributeError:
+        raise TypeError('PartitionKey or RowKey must be of type string.')
+
+
 def _parameter_filter_substitution(parameters, query_filter):
     # type: (Dict[str, str], str) -> str
     """Replace user defined parameter in filter
@@ -62,7 +70,7 @@ def _parameter_filter_substitution(parameters, query_filter):
                         v = v[2:-1]
                     filter_strings[index] = "X'{}'".format(v)
                 else:
-                    filter_strings[index] = "'{}'".format(val.replace("'", "''"))
+                    filter_strings[index] = "'{}'".format(_prepare_key(val))
         return ' '.join(filter_strings)
     return query_filter
 
@@ -90,6 +98,9 @@ def _to_entity_datetime(value):
 
 
 def _to_entity_float(value):
+    if isinstance(value, str):
+        # Pass a serialized value straight through
+        return EdmType.DOUBLE, value
     if isnan(value):
         return EdmType.DOUBLE, "NaN"
     if value == float("inf"):
@@ -121,7 +132,7 @@ def _to_entity_int64(value):
 
 
 def _to_entity_str(value):
-    return EdmType.STRING, value
+    return EdmType.STRING, str(value)
 
 
 def _to_entity_none(value):  # pylint: disable=unused-argument
@@ -155,14 +166,19 @@ except NameError:
     )
 
 # Conversion from Edm type to a function which returns a tuple of the
-# type string and content string.
+# type string and content string. These conversions are only used when the
+# full EdmProperty tuple is specified. As a result, in this case we ALWAYS add
+# the Odatatype tag, even for field types where it's not necessary. This is why
+# boolean and int32 have special processing below, as we would not normally add the
+# Odatatype tags for these to keep payload size minimal.
+# This is also necessary for CLI compatibility.
 _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.BINARY: _to_entity_binary,
-    EdmType.BOOLEAN: _to_entity_bool,
+    EdmType.BOOLEAN: lambda v: (EdmType.BOOLEAN, v),
     EdmType.DATETIME: _to_entity_datetime,
     EdmType.DOUBLE: _to_entity_float,
     EdmType.GUID: _to_entity_guid,
-    EdmType.INT32: _to_entity_int32,
+    EdmType.INT32: lambda v: (EdmType.INT32, _to_entity_int32(v)[1]),  # Still using the int32 validation
     EdmType.INT64: _to_entity_int64,
     EdmType.STRING: _to_entity_str,
 }

@@ -2,6 +2,7 @@ include *.md
 include azure/__init__.py
 include azure/digitaltwins/__init__.py
 include azure/digitaltwins/core/__init__.py
-include LICENSE.txt
+include LICENSE
 recursive-include tests *.py
 recursive-include samples *.py *.md
+include azure/digitaltwins/core/py.typed

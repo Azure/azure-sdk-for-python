@@ -120,7 +120,7 @@ if __name__ == "__main__":
     if args.target_package:
         # get target package name from target package path
         pkg_dir = path.abspath(args.target_package)
-        pkg_name, _, ver = get_package_details(path.join(pkg_dir, "setup.py"))
+        pkg_name, _, ver, _, _ = get_package_details(path.join(pkg_dir, "setup.py"))
         install_dev_build_packages(pkg_name)
 
 

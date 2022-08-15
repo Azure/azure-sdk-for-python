@@ -25,8 +25,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from requests.structures import CaseInsensitiveDict
-from ..._utils import _FixedOffset
+from ...utils._utils import _FixedOffset, case_insensitive_dict
 
 def _parse_http_date(text):
     """Parse a HTTP date format into datetime."""
@@ -58,7 +57,7 @@ def get_retry_after(response):
     :return: Value of Retry-After in seconds.
     :rtype: float or None
     """
-    headers = CaseInsensitiveDict(response.http_response.headers)
+    headers = case_insensitive_dict(response.http_response.headers)
     retry_after = headers.get("retry-after")
     if retry_after:
         return parse_retry_after(retry_after)

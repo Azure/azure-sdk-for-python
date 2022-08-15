@@ -30,7 +30,7 @@ class APIError(Model):
 
 
 class APIErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'APIError'.
+    """Server responded with exception of type: 'APIError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.

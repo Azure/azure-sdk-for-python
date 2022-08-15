@@ -1,0 +1,39 @@
+interactions:
+- request:
+    body: '{"qnaId": 19}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Charge
+        your Surface Book\"\n      ],\n      \"answer\": \"**Charge your Surface Book**\\n\\n1.
+        \ Connect the two parts of the power cord.\\n2.  Connect the power cord securely
+        to the charging port on your Surface Book. A light appears at the end of the
+        connector when your Surface is getting power.\u272A\\n3.  Plug the power supply
+        into an electrical outlet.\",\n      \"confidenceScore\": 1.0,\n      \"id\":
+        19,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    }\n  ]\n}"
+    headers:
+      apim-request-id: f4b33598-b113-4851-93b3-c690842429ea
+      content-length: '610'
+      content-type: application/json; charset=utf-8
+      csp-billing-usage: CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
+      date: Tue, 02 Aug 2022 22:08:15 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '26'
+    status:
+      code: 200
+      message: OK
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/:query-knowledgebases?projectName=testQA&deploymentName=test&api-version=2021-10-01
+version: 1

@@ -1,5 +1,72 @@
 # Release History
 
+## 2.1.0b5 (2022-04-15)
+
+**Features**
+
+  - Added operation group WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations
+
+## 2.1.0b4 (2022-01-11)
+
+**Features**
+
+  - Model DynamicExecutorAllocation has a new parameter max_executors
+  - Model DynamicExecutorAllocation has a new parameter min_executors
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model ManagedIntegrationRuntime has a new parameter id
+  - Model ManagedIntegrationRuntime has a new parameter reference_name
+  - Model ManagedIntegrationRuntime has a new parameter type_managed_virtual_network_type
+  - Model SelfHostedIntegrationRuntimeStatus has a new parameter newer_versions
+  - Model SelfHostedIntegrationRuntimeStatus has a new parameter service_region
+  - Model ServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model Workspace has a new parameter trusted_service_bypass_enabled
+
+## 2.1.0b3 (2021-11-08)
+
+**Features**
+
+  - Model EventHubDataConnection has a new parameter managed_identity_resource_id
+  - Added operation KustoPoolsOperations.list_skus
+
+**Breaking changes**
+
+  - Removed operation group KustoPoolOperations
+
+## 2.1.0b2 (2021-10-09)
+
+**Features**
+
+  - Added operation group KustoPoolOperations
+  - Added operation group KustoPoolChildResourceOperations
+  - Added operation group KustoPoolsOperations
+  - Added operation group KustoPoolAttachedDatabaseConfigurationsOperations
+  - Added operation group KustoOperationsOperations
+  - Added operation group KustoPoolDatabasesOperations
+  - Added operation group KustoPoolDataConnectionsOperations
+  - Added operation group KustoPoolPrincipalAssignmentsOperations
+  - Added operation group KustoPoolDatabasePrincipalAssignmentsOperations
+
+## 2.1.0b1 (2021-09-06)
+
+**Features**
+
+  - Model IntegrationRuntimeVNetProperties has a new parameter subnet_id
+  - Model Workspace has a new parameter csp_workspace_admin_properties
+  - Model Workspace has a new parameter settings
+  - Model Workspace has a new parameter azure_ad_only_authentication
+  - Model SqlPoolPatchInfo has a new parameter source_database_deletion_date
+  - Model CustomerManagedKeyDetails has a new parameter kek_identity
+  - Model DataLakeStorageAccountDetails has a new parameter resource_id
+  - Model DataLakeStorageAccountDetails has a new parameter create_managed_private_endpoint
+  - Model SqlPool has a new parameter source_database_deletion_date
+  - Model ManagedIdentity has a new parameter user_assigned_identities
+  - Model IntegrationRuntimeDataFlowProperties has a new parameter cleanup
+  - Added operation IntegrationRuntimesOperations.list_outbound_network_dependencies_endpoints
+  - Added operation PrivateEndpointConnectionsPrivateLinkHubOperations.get
+  - Added operation group AzureADOnlyAuthenticationsOperations
+  - Added operation group SparkConfigurationsOperations
+  - Added operation group SparkConfigurationOperations
+
 ## 2.0.0 (2021-04-07)
 
 **Features**
@@ -70,7 +137,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -78,13 +145,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.5.0 (2020-11-23)
 

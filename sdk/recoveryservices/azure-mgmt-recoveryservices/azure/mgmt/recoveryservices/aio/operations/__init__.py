@@ -14,8 +14,12 @@ from ._recovery_services_operations import RecoveryServicesOperations
 from ._vaults_operations import VaultsOperations
 from ._operations import Operations
 from ._vault_extended_info_operations import VaultExtendedInfoOperations
+from ._recovery_services_client_operations import RecoveryServicesClientOperationsMixin
 from ._usages_operations import UsagesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'VaultCertificatesOperations',
     'RegisteredIdentitiesOperations',
@@ -25,5 +29,8 @@ __all__ = [
     'VaultsOperations',
     'Operations',
     'VaultExtendedInfoOperations',
+    'RecoveryServicesClientOperationsMixin',
     'UsagesOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -71,7 +71,7 @@ class RoleAssignmentsOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.CheckPrincipalAccessRequest(subject=subject, actions=actions, scope=scope)
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -140,7 +140,7 @@ class RoleAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
@@ -219,7 +219,7 @@ class RoleAssignmentsOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.RoleAssignmentRequest(role_id=role_id, principal_id=principal_id, scope=scope, principal_type=principal_type)
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -280,7 +280,7 @@ class RoleAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
@@ -339,7 +339,7 @@ class RoleAssignmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL

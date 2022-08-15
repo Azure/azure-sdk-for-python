@@ -57,6 +57,7 @@ interactions:
       x-ms-share-provisioned-egress-mbps: '66'
       x-ms-share-provisioned-ingress-mbps: '44'
       x-ms-share-provisioned-iops: '100'
+      x-ms-share-provisioned-bandwidth-mibps: '110'
       x-ms-share-quota: '100'
       x-ms-version: '2019-07-07'
     status:

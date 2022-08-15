@@ -20,17 +20,17 @@ import os
 import json
 
 # all types of CloudEvents below produce same DeserializedEvent
-connection_str = os.environ['STORAGE_QUEUE_CONN_STR']
+connection_str = os.environ['AZURE_STORAGE_CONNECTION_STRING']
 queue_name = os.environ['STORAGE_QUEUE_NAME']
 
 with QueueServiceClient.from_connection_string(connection_str) as qsc:
     payload =  qsc.get_queue_client(
         queue=queue_name,
         message_decode_policy=BinaryBase64DecodePolicy()
-        ).peek_messages()
+        ).peek_messages(max_messages=32)
 
     ## deserialize payload into a list of typed Events
-    events = [CloudEvent.from_dict(json.loads(msg.content)) for msg in payload]
+    events = [CloudEvent.from_json(msg) for msg in payload]
 
     for event in events:
         print(type(event)) ## CloudEvent

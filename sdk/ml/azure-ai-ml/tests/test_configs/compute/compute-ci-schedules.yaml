@@ -1,0 +1,22 @@
+name: banchci
+type: computeinstance
+size: STANDARD_DS3_V2
+schedules:
+   compute_start_stop:
+      - action: stop
+        trigger:
+         type: cron
+         start_time: "2021-03-10T21:21:07"
+         time_zone: Pacific Standard Time
+         expression: 0 18 * * *
+      - action: start
+        trigger:
+         type: recurrence
+         start_time: "2021-03-10T21:21:07"
+         time_zone: Pacific Standard Time
+         frequency: week
+         interval: 1
+         schedule:
+            hours: [0]
+            minutes: [15]
+            week_days: ['monday', 'tuesday']

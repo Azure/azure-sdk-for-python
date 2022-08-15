@@ -6,7 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage import StorageTestCase
 
 from azure.storage.blob import (
     BlobServiceClient,
@@ -48,11 +49,11 @@ class StorageObjectReplicationTest(StorageTestCase):
         self.assertEqual(result[1].rules[1].status, 'Failed' if result[1].rules[1].rule_id == '222' else 'Completed')
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    def test_ors_source(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_ors_source(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key)
         blob = bsc.get_blob_client(container=self.SRC_CONTAINER, blob=self.BLOB_NAME)
 
@@ -77,11 +78,11 @@ class StorageObjectReplicationTest(StorageTestCase):
                          props.object_replication_source_properties)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    def test_ors_destination(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_ors_destination(self, storage_account_name, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=storage_account_key)
         blob = bsc.get_blob_client(container=self.DST_CONTAINER, blob=self.BLOB_NAME)
 

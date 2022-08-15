@@ -1,0 +1,7 @@
+name: test_ws_conn_cr_managed
+type: container_registry
+target: https://test-feed.com
+credentials:
+  type: managed_identity
+  client_id: client_id
+  resource_id: resource_id

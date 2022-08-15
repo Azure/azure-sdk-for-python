@@ -6,56 +6,38 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    IO,
-    Iterable,
-    AnyStr,
-    Dict,
-    List,
-    Tuple,
-    TYPE_CHECKING,
-)
+    Any, Dict, List, Optional,
+    TYPE_CHECKING)
 
-try:
-    from urllib.parse import urlparse, quote, unquote  # pylint: disable=unused-import
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
-
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.core.async_paging import AsyncItemPaged
-
+from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized,
 )
-from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from .._generated.aio import AzureQueueStorage
-from .._generated.models import SignedIdentifier
-from .._generated.models import QueueMessage as GenQueueMessage
-
+from .._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
+from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
+from .._encryption import StorageEncryptionMixin
 from .._models import QueueMessage, AccessPolicy
-from ._models import MessagesPaged
-from .._shared.policies_async import ExponentialRetry
 from .._queue_client import QueueClient as QueueClientBase
-
+from ._models import MessagesPaged
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
-    from .._models import QueueSasPermissions, QueueProperties
+    from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
+class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncryptionMixin):
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -66,11 +48,15 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword message_encode_policy: The encoding policy to use on outgoing messages.
@@ -101,7 +87,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         self,
         account_url,  # type: str
         queue_name,  # type: str
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -110,10 +96,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         super(QueueClient, self).__init__(
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = kwargs.get('api_version', default_api_version)  # pylint: disable=protected-access
+        self._client = AzureQueueStorage(self.url, base_url=self.url,
+                                         pipeline=self._pipeline, loop=loop)  # type: ignore
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_queue(self, **kwargs):
@@ -376,11 +363,23 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
-        self._config.message_encode_policy.configure(
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function
-        )
+        try:
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function,
+                encryption_version=self.encryption_version)
+        except TypeError:
+            warnings.warn(
+                "TypeError when calling message_encode_policy.configure. \
+                It is likely missing the encryption_version parameter. \
+                Consider updating your encryption information/implementation. \
+                Retrying without encryption_version."
+            )
+            self._config.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function)
         encoded_content = self._config.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
@@ -467,7 +466,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         content and a pop_receipt value, which is required to delete the message.
         The message is not automatically deleted from the queue, but after it has
         been retrieved, it is not visible to other clients for the time interval
-        specified by the visibility_timeout parameter.
+        specified by the visibility_timeout parameter. The iterator will continuously
+        fetch messages until the queue is empty or max_messages is reached (if max_messages
+        is set).
 
         If the key-encryption-key or resolver field is set on the local service object, the messages will be
         decrypted before being returned.
@@ -480,14 +481,16 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             `by_page()` can be used to provide a page iterator on the AsyncItemPaged if messages_per_page is set.
             `next()` can be used to get the next page.
         :keyword int visibility_timeout:
-            If not specified, the default value is 0. Specifies the
+            If not specified, the default value is 30. Specifies the
             new visibility timeout value, in seconds, relative to server time.
-            The value must be larger than or equal to 0, and cannot be
+            The value must be larger than or equal to 1, and cannot be
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :keyword int max_messages:
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.QueueMessage]
@@ -504,6 +507,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         messages_per_page = kwargs.pop('messages_per_page', None)
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
+        max_messages = kwargs.pop('max_messages', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -517,7 +521,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return AsyncItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
+            if max_messages is not None and messages_per_page is not None:
+                if max_messages < messages_per_page:
+                    raise ValueError("max_messages must be greater or equal to messages_per_page")
+            return AsyncItemPaged(command, results_per_page=messages_per_page,
+                                  page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -596,9 +604,25 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
-            self._config.message_encode_policy.configure(
-                self.require_encryption, self.key_encryption_key, self.key_resolver_function
-            )
+            try:
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
+                    encryption_version=self.encryption_version
+                )
+            except TypeError:
+                warnings.warn(
+                    "TypeError when calling message_encode_policy.configure. \
+                    It is likely missing the encryption_version parameter. \
+                    Consider updating your encryption information/implementation. \
+                    Retrying without encryption_version."
+                )
+                self._config.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function
+                )
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:

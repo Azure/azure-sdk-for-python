@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, TYPE_CHECKING, Union, List, Tuple, Dict, Mapping, Iterable, overload
+from typing import Optional, Any, TYPE_CHECKING, Union, List, Dict, Mapping, Iterable, overload, cast
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -21,37 +21,32 @@ from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import (
     _process_table_error,
-    _validate_table_name,
     _reraise_error,
-    _decode_error
+    _decode_error,
+    _validate_tablename_error
 )
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
     QueryOptions
 )
-from ._serialize import _get_match_headers, _add_entity_properties
+from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._serialize import serialize_iso, _parameter_filter_substitution
-from ._deserialize import _return_headers_and_deserialized
-from ._table_batch import TableBatchOperations
+from ._deserialize import deserialize_iso, _return_headers_and_deserialized
+from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
 from ._models import (
     TableEntityPropertiesPaged,
     UpdateMode,
     TableAccessPolicy,
-    TransactionOperation,
     TableItem
 )
-
-EntityType = Union[TableEntity, Mapping[str, Any]]
-OperationType = Union[TransactionOperation, str]
-TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
-class TableClient(TablesBaseClient):
+class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -72,16 +67,16 @@ class TableClient(TablesBaseClient):
         :param str table_name: The table name.
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
-            or AzureSasCredential from azure-core.
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+            AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
         :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+            :class:`~azure.core.credentials.AzureSasCredential` or
+            :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
-        _validate_table_name(table_name)
         self.table_name = table_name
         super(TableClient, self).__init__(endpoint, **kwargs)
 
@@ -169,12 +164,12 @@ class TableClient(TablesBaseClient):
     def get_table_access_policy(
         self, **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, TableAccessPolicy]
+        # type: (...) -> Dict[str, Optional[TableAccessPolicy]]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
+        :rtype: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -186,30 +181,44 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
-        return {s.id: s.access_policy or TableAccessPolicy() for s in identifiers}  # type: ignore
+            _process_table_error(error, table_name=self.table_name)
+        output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
+        for identifier in cast(List[SignedIdentifier], identifiers):
+            if identifier.access_policy:
+                output[identifier.id] = TableAccessPolicy(
+                    start=deserialize_iso(identifier.access_policy.start),
+                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    permission=identifier.access_policy.permission
+                )
+            else:
+                output[identifier.id] = None
+        return output
 
     @distributed_trace
     def set_table_access_policy(
         self,
-        signed_identifiers,  # type: Dict[str, TableAccessPolicy]
+        signed_identifiers,  # type: Dict[str, Optional[TableAccessPolicy]]
         **kwargs
     ):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
-        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
+        :type signed_identifiers: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         identifiers = []
         for key, value in signed_identifiers.items():
+            payload = None
             if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+                payload = TableAccessPolicy(
+                    start=serialize_iso(value.start),
+                    expiry=serialize_iso(value.expiry),
+                    permission=value.permission
+                )
+            identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         signed_identifiers = identifiers  # type: ignore
         try:
             self._client.table.set_access_policy(
@@ -217,7 +226,7 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             try:
-                _process_table_error(error)
+                _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
                 if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
                 and len(signed_identifiers) > 5):
@@ -251,7 +260,7 @@ class TableClient(TablesBaseClient):
         try:
             result = self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
@@ -280,7 +289,7 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @overload
     def delete_entity(self, partition_key, row_key, **kwargs):
@@ -349,15 +358,15 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 if_match=if_match,
                 **kwargs
             )
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace
     def create_entity(
@@ -398,6 +407,7 @@ class TableClient(TablesBaseClient):
                     raise ValueError("PartitionKey must be present in an entity")
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
+            _validate_tablename_error(decoded, self.table_name)
             _reraise_error(error)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
@@ -444,37 +454,36 @@ class TableClient(TablesBaseClient):
             etag=etag,
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
-
+        entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.REPLACE:
+            if mode == UpdateMode.REPLACE:
                 metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.MERGE:
+            elif mode == UpdateMode.MERGE:
                 metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     if_match=if_match,
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
             else:
-                raise ValueError("Mode type is not supported")
+                raise ValueError("Mode type '{}' is not supported.".format(mode))
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
@@ -494,8 +503,8 @@ class TableClient(TablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
-                :start-after: [START query_entities]
-                :end-before: [END query_entities]
+                :start-after: [START list_entities]
+                :end-before: [END list_entities]
                 :language: python
                 :dedent: 16
                 :caption: List all entities held within a table
@@ -515,7 +524,7 @@ class TableClient(TablesBaseClient):
         )
 
     @distributed_trace
-    def query_entities(
+    def query_entities(  # pylint: disable=line-too-long
         self,
         query_filter,
         **kwargs
@@ -523,7 +532,8 @@ class TableClient(TablesBaseClient):
         # type: (str, Dict[str, Any]) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
-        :param str query_filter: Specify a filter to return certain entities
+        :param str query_filter: Specify a filter to return certain entities. For more information
+         on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
@@ -596,13 +606,13 @@ class TableClient(TablesBaseClient):
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 query_options=QueryOptions(select=user_select),
                 **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _convert_to_entity(entity)
 
     @distributed_trace
@@ -632,27 +642,26 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Update/merge or insert an entity into a table
         """
-
+        entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.MERGE:
+            if mode == UpdateMode.MERGE:
                 metadata, content = self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.REPLACE:
+            elif mode == UpdateMode.REPLACE:
                 metadata, content = self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
@@ -665,7 +674,7 @@ class TableClient(TablesBaseClient):
                     )
                 )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     def submit_transaction(
@@ -678,10 +687,14 @@ class TableClient(TablesBaseClient):
 
         If any one of these operations fails, the entire transaction will be rejected.
 
-        :param operations: The list of operations to commit in a transaction. This should be a list of
+        :param operations: The list of operations to commit in a transaction. This should be an iterable of
          tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
-         kwargs for that operation.
-        :type operations: Iterable[Tuple[str, EntityType]]
+         kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
+        :type operations: Iterable[Tuple[str, TableEntity, Mapping[str, Any]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
         :raises: :class:`~azure.data.tables.TableTransactionError`
@@ -704,13 +717,12 @@ class TableClient(TablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
-        for operation in operations:
-            try:
-                operation_kwargs = operation[2]  # type: ignore
-            except IndexError:
-                operation_kwargs = {}
-            try:
-                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
-            except AttributeError:
-                raise ValueError("Unrecognized operation: {}".format(operation[0]))
-        return self._batch_send(*batched_requests.requests, **kwargs)  # type: ignore
+        try:
+            for operation in operations:
+                batched_requests.add_operation(operation)
+        except TypeError:
+            raise TypeError(
+                "The value of 'operations' must be an iterator "
+                "of Tuples. Please check documentation for correct Tuple format."
+            )
+        return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore

@@ -3,7 +3,9 @@
 -e ../../core/azure-core
 -e ../../identity/azure-identity
 -e ../azure-keyvault-keys
--e ../azure-mgmt-keyvault
 ../../nspkg/azure-keyvault-nspkg
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
+azure-mgmt-core==1.3.0
+azure-mgmt-keyvault==10.0.0
 azure-storage-blob==12.6.0
+parameterized>=0.7.3

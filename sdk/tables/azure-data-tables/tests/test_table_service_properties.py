@@ -8,7 +8,7 @@
 import time
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables import (
     TableServiceClient,
@@ -25,8 +25,9 @@ from preparers import tables_decorator
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
+    @recorded_by_proxy
     def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -41,11 +42,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Assert
         assert resp is None
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         self._assert_properties_default(tsc.get_service_properties())
 
     # --Test cases per feature ---------------------------------------
     @tables_decorator
+    @recorded_by_proxy
     def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -57,11 +59,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
     @tables_decorator
+    @recorded_by_proxy
     def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -73,11 +76,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @tables_decorator
+    @recorded_by_proxy
     def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -90,11 +94,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @tables_decorator
+    @recorded_by_proxy
     def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -118,12 +123,13 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = tsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
     @tables_decorator
+    @recorded_by_proxy
     def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
@@ -136,6 +142,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
                           tsc.set_service_properties, cors=cors)
 
     @tables_decorator
+    @recorded_by_proxy
     def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)

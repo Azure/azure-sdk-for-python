@@ -3,17 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
-import pytest
-import platform
-from datetime import datetime, timedelta
 
-from azure.core.exceptions import AzureError, ResourceExistsError
+import pytest
+
 from azure.storage.queue import (
     QueueServiceClient,
     QueueClient
 )
-from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
+from azure.storage.queue._shared.constants import X_MS_VERSION
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 
@@ -21,7 +19,7 @@ class StorageClientTest(StorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = '2018-03-28'
+        self.api_version_2 = X_MS_VERSION
 
     # --Test Cases--------------------------------------------------------------
 
@@ -46,7 +44,7 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(queue_client.api_version, self.api_version_1)
         self.assertEqual(queue_client._client._config.version, self.api_version_1)
 
-    def test_blob_client_api_version_property(self):
+    def test_queue_client_api_version_property(self):
         queue_client = QueueClient(
             "https://foo.queue.core.windows.net/account",
             "queue_name",

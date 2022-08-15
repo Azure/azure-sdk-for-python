@@ -8,8 +8,12 @@
 
 from ._proactive_detection_configurations_operations import ProactiveDetectionConfigurationsOperations
 from ._components_operations import ComponentsOperations
+from ._operations import Operations
+from ._web_tests_operations import WebTestsOperations
 
 __all__ = [
     'ProactiveDetectionConfigurationsOperations',
     'ComponentsOperations',
+    'Operations',
+    'WebTestsOperations',
 ]

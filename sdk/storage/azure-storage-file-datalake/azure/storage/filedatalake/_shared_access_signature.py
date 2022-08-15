@@ -3,12 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, TYPE_CHECKING
+)
 
 from azure.storage.blob import generate_account_sas as generate_blob_account_sas
 from azure.storage.blob import generate_container_sas, generate_blob_sas
 if TYPE_CHECKING:
-    import datetime
+    from datetime import datetime
     from ._models import AccountSasPermissions, FileSystemSasPermissions, FileSasPermissions, ResourceTypes, \
         UserDelegationKey
 
@@ -63,6 +65,8 @@ def generate_account_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -106,7 +110,7 @@ def generate_file_system_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered racwdlmeop.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -162,6 +166,8 @@ def generate_file_system_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -208,7 +214,7 @@ def generate_directory_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered racwdlmeop.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -264,6 +270,8 @@ def generate_directory_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -317,7 +325,7 @@ def generate_file_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered racwdmeop.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -373,6 +381,8 @@ def generate_file_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS. This can only be used when to generate sas with delegation key.
+    :keyword str encryption_scope:
+        Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """

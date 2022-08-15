@@ -43,7 +43,7 @@ class JitNetworkAccessPoliciesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control.
 
@@ -109,7 +109,7 @@ class JitNetworkAccessPoliciesOperations:
 
     def list_by_region(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
@@ -178,7 +178,7 @@ class JitNetworkAccessPoliciesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
@@ -250,7 +250,7 @@ class JitNetworkAccessPoliciesOperations:
     def list_by_resource_group_and_region(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
@@ -324,7 +324,7 @@ class JitNetworkAccessPoliciesOperations:
         self,
         resource_group_name: str,
         jit_network_access_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JitNetworkAccessPolicy":
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
@@ -386,7 +386,7 @@ class JitNetworkAccessPoliciesOperations:
         resource_group_name: str,
         jit_network_access_policy_name: str,
         body: "_models.JitNetworkAccessPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JitNetworkAccessPolicy":
         """Create a policy for protecting resources using Just-in-Time access control.
 
@@ -453,7 +453,7 @@ class JitNetworkAccessPoliciesOperations:
         self,
         resource_group_name: str,
         jit_network_access_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a Just-in-Time access control policy.
 
@@ -511,7 +511,7 @@ class JitNetworkAccessPoliciesOperations:
         resource_group_name: str,
         jit_network_access_policy_name: str,
         body: "_models.JitNetworkAccessPolicyInitiateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JitNetworkAccessRequest":
         """Initiate a JIT access from a specific Just-in-Time policy configuration.
 

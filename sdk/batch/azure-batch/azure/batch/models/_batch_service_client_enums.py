@@ -120,8 +120,19 @@ class StorageAccountType(str, Enum):
 
 class DiskEncryptionTarget(str, Enum):
 
-    os_disk = "osdisk"  #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other partitions (such as those on mounted data disks) when encryption occurs at boot time.
+    os_disk = "osdisk"  #: The OS Disk on the compute node is encrypted.
     temporary_disk = "temporarydisk"  #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other partitions (such as those on mounted data disks) when encryption occurs at boot time.
+
+
+class NodePlacementPolicyType(str, Enum):
+
+    regional = "regional"  #: All nodes in the pool will be allocated in the same region.
+    zonal = "zonal"  #: Nodes in the pool will be spread across different availability zones with best effort balancing.
+
+
+class DiffDiskPlacement(str, Enum):
+
+    cache_disk = "CacheDisk"  #: The Ephemeral OS Disk is stored on the VM cache.
 
 
 class DynamicVNetAssignmentScope(str, Enum):
@@ -211,6 +222,18 @@ class JobReleaseTaskState(str, Enum):
     completed = "completed"  #: The Task has exited with exit code 0, or the Task has exhausted its retry limit, or the Batch service was unable to start the Task due to Task preparation errors (such as resource file download failures).
 
 
+class ContainerType(str, Enum):
+
+    docker_compatible = "dockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
+
+
+class StatusLevelTypes(str, Enum):
+
+    error = "Error"
+    info = "Info"
+    warning = "Warning"
+
+
 class PoolState(str, Enum):
 
     active = "active"  #: The Pool is available to run Tasks subject to the availability of Compute Nodes.
@@ -222,6 +245,12 @@ class AllocationState(str, Enum):
     steady = "steady"  #: The Pool is not resizing. There are no changes to the number of Compute Nodes in the Pool in progress. A Pool enters this state when it is created and when no operations are being performed on the Pool to change the number of Compute Nodes.
     resizing = "resizing"  #: The Pool is resizing; that is, Compute Nodes are being added to or removed from the Pool.
     stopping = "stopping"  #: The Pool was resizing, but the user has requested that the resize be stopped, but the stop request has not yet been completed.
+
+
+class PoolIdentityType(str, Enum):
+
+    user_assigned = "UserAssigned"  #: Batch pool has user assigned identities with it.
+    none = "None"  #: Batch pool has no identity associated with it. Setting `None` in update pool will remove existing identities.
 
 
 class TaskState(str, Enum):
@@ -266,7 +295,7 @@ class ComputeNodeState(str, Enum):
     unknown = "unknown"  #: The Batch service has lost contact with the Compute Node, and does not know its true state.
     leaving_pool = "leavingpool"  #: The Compute Node is leaving the Pool, either because the user explicitly removed it or because the Pool is resizing or autoscaling down.
     offline = "offline"  #: The Compute Node is not currently running a Task, and scheduling of new Tasks to the Compute Node is disabled.
-    preempted = "preempted"  #: The low-priority Compute Node has been preempted. Tasks which were running on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes available.
+    preempted = "preempted"  #: The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes available.
 
 
 class SchedulingState(str, Enum):

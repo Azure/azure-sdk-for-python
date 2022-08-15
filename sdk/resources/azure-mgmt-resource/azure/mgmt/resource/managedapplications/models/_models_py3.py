@@ -25,10 +25,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -52,6 +52,12 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -71,16 +77,16 @@ class GenericResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param managed_by: ID of the resource that manages this resource.
-    :type managed_by: str
-    :param sku: The SKU of the resource.
-    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar managed_by: ID of the resource that manages this resource.
+    :vartype managed_by: str
+    :ivar sku: The SKU of the resource.
+    :vartype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.resource.managedapplications.models.Identity
     """
 
     _validation = {
@@ -110,6 +116,18 @@ class GenericResource(Resource):
         identity: Optional["Identity"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword managed_by: ID of the resource that manages this resource.
+        :paramtype managed_by: str
+        :keyword sku: The SKU of the resource.
+        :paramtype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
+        """
         super(GenericResource, self).__init__(location=location, tags=tags, **kwargs)
         self.managed_by = managed_by
         self.sku = sku
@@ -129,29 +147,28 @@ class Application(GenericResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param managed_by: ID of the resource that manages this resource.
-    :type managed_by: str
-    :param sku: The SKU of the resource.
-    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
-    :param plan: The plan information.
-    :type plan: ~azure.mgmt.resource.managedapplications.models.Plan
-    :param kind: Required. The kind of the managed application. Allowed values are MarketPlace and
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar managed_by: ID of the resource that manages this resource.
+    :vartype managed_by: str
+    :ivar sku: The SKU of the resource.
+    :vartype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.resource.managedapplications.models.Identity
+    :ivar plan: The plan information.
+    :vartype plan: ~azure.mgmt.resource.managedapplications.models.Plan
+    :ivar kind: Required. The kind of the managed application. Allowed values are MarketPlace and
      ServiceCatalog.
-    :type kind: str
-    :param managed_resource_group_id: Required. The managed resource group Id.
-    :type managed_resource_group_id: str
-    :param application_definition_id: The fully qualified path of managed application definition
-     Id.
-    :type application_definition_id: str
-    :param parameters: Name and value pairs that define the managed application parameters. It can
+    :vartype kind: str
+    :ivar managed_resource_group_id: Required. The managed resource group Id.
+    :vartype managed_resource_group_id: str
+    :ivar application_definition_id: The fully qualified path of managed application definition Id.
+    :vartype application_definition_id: str
+    :ivar parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: any
+    :vartype parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: any
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
@@ -204,6 +221,31 @@ class Application(GenericResource):
         parameters: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword managed_by: ID of the resource that manages this resource.
+        :paramtype managed_by: str
+        :keyword sku: The SKU of the resource.
+        :paramtype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
+        :keyword plan: The plan information.
+        :paramtype plan: ~azure.mgmt.resource.managedapplications.models.Plan
+        :keyword kind: Required. The kind of the managed application. Allowed values are MarketPlace
+         and ServiceCatalog.
+        :paramtype kind: str
+        :keyword managed_resource_group_id: Required. The managed resource group Id.
+        :paramtype managed_resource_group_id: str
+        :keyword application_definition_id: The fully qualified path of managed application definition
+         Id.
+        :paramtype application_definition_id: str
+        :keyword parameters: Name and value pairs that define the managed application parameters. It
+         can be a JObject or a well formed JSON string.
+        :paramtype parameters: any
+        """
         super(Application, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.plan = plan
         self.kind = kind
@@ -217,13 +259,13 @@ class Application(GenericResource):
 class ApplicationArtifact(msrest.serialization.Model):
     """Managed application artifact.
 
-    :param name: The managed application artifact name.
-    :type name: str
-    :param uri: The managed application artifact blob uri.
-    :type uri: str
-    :param type: The managed application artifact type. Possible values include: "Template",
+    :ivar name: The managed application artifact name.
+    :vartype name: str
+    :ivar uri: The managed application artifact blob uri.
+    :vartype uri: str
+    :ivar type: The managed application artifact type. Possible values include: "Template",
      "Custom".
-    :type type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
+    :vartype type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
     """
 
     _attribute_map = {
@@ -240,6 +282,15 @@ class ApplicationArtifact(msrest.serialization.Model):
         type: Optional[Union[str, "ApplicationArtifactType"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The managed application artifact name.
+        :paramtype name: str
+        :keyword uri: The managed application artifact blob uri.
+        :paramtype uri: str
+        :keyword type: The managed application artifact type. Possible values include: "Template",
+         "Custom".
+        :paramtype type: str or ~azure.mgmt.resource.managedapplications.models.ApplicationArtifactType
+        """
         super(ApplicationArtifact, self).__init__(**kwargs)
         self.name = name
         self.uri = uri
@@ -259,40 +310,41 @@ class ApplicationDefinition(GenericResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param managed_by: ID of the resource that manages this resource.
-    :type managed_by: str
-    :param sku: The SKU of the resource.
-    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
-    :param lock_level: Required. The managed application lock level. Possible values include:
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar managed_by: ID of the resource that manages this resource.
+    :vartype managed_by: str
+    :ivar sku: The SKU of the resource.
+    :vartype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.resource.managedapplications.models.Identity
+    :ivar lock_level: Required. The managed application lock level. Possible values include:
      "CanNotDelete", "ReadOnly", "None".
-    :type lock_level: str or ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
-    :param display_name: The managed application definition display name.
-    :type display_name: str
-    :param is_enabled: A value indicating whether the package is enabled or not.
-    :type is_enabled: str
-    :param authorizations: Required. The managed application provider authorizations.
-    :type authorizations:
+    :vartype lock_level: str or
+     ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
+    :ivar display_name: The managed application definition display name.
+    :vartype display_name: str
+    :ivar is_enabled: A value indicating whether the package is enabled or not.
+    :vartype is_enabled: str
+    :ivar authorizations: Required. The managed application provider authorizations.
+    :vartype authorizations:
      list[~azure.mgmt.resource.managedapplications.models.ApplicationProviderAuthorization]
-    :param artifacts: The collection of managed application artifacts. The portal will use the
-     files specified as artifacts to construct the user experience of creating a managed application
-     from a managed application definition.
-    :type artifacts: list[~azure.mgmt.resource.managedapplications.models.ApplicationArtifact]
-    :param description: The managed application definition description.
-    :type description: str
-    :param package_file_uri: The managed application definition package file Uri. Use this element.
-    :type package_file_uri: str
-    :param main_template: The inline main template json which has resources to be provisioned. It
+    :ivar artifacts: The collection of managed application artifacts. The portal will use the files
+     specified as artifacts to construct the user experience of creating a managed application from
+     a managed application definition.
+    :vartype artifacts: list[~azure.mgmt.resource.managedapplications.models.ApplicationArtifact]
+    :ivar description: The managed application definition description.
+    :vartype description: str
+    :ivar package_file_uri: The managed application definition package file Uri. Use this element.
+    :vartype package_file_uri: str
+    :ivar main_template: The inline main template json which has resources to be provisioned. It
      can be a JObject or well-formed JSON string.
-    :type main_template: any
-    :param create_ui_definition: The createUiDefinition json for the backing template with
+    :vartype main_template: any
+    :ivar create_ui_definition: The createUiDefinition json for the backing template with
      Microsoft.Solutions/applications resource. It can be a JObject or well-formed JSON string.
-    :type create_ui_definition: any
+    :vartype create_ui_definition: any
     """
 
     _validation = {
@@ -342,6 +394,44 @@ class ApplicationDefinition(GenericResource):
         create_ui_definition: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword managed_by: ID of the resource that manages this resource.
+        :paramtype managed_by: str
+        :keyword sku: The SKU of the resource.
+        :paramtype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
+        :keyword lock_level: Required. The managed application lock level. Possible values include:
+         "CanNotDelete", "ReadOnly", "None".
+        :paramtype lock_level: str or
+         ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
+        :keyword display_name: The managed application definition display name.
+        :paramtype display_name: str
+        :keyword is_enabled: A value indicating whether the package is enabled or not.
+        :paramtype is_enabled: str
+        :keyword authorizations: Required. The managed application provider authorizations.
+        :paramtype authorizations:
+         list[~azure.mgmt.resource.managedapplications.models.ApplicationProviderAuthorization]
+        :keyword artifacts: The collection of managed application artifacts. The portal will use the
+         files specified as artifacts to construct the user experience of creating a managed application
+         from a managed application definition.
+        :paramtype artifacts: list[~azure.mgmt.resource.managedapplications.models.ApplicationArtifact]
+        :keyword description: The managed application definition description.
+        :paramtype description: str
+        :keyword package_file_uri: The managed application definition package file Uri. Use this
+         element.
+        :paramtype package_file_uri: str
+        :keyword main_template: The inline main template json which has resources to be provisioned. It
+         can be a JObject or well-formed JSON string.
+        :paramtype main_template: any
+        :keyword create_ui_definition: The createUiDefinition json for the backing template with
+         Microsoft.Solutions/applications resource. It can be a JObject or well-formed JSON string.
+        :paramtype create_ui_definition: any
+        """
         super(ApplicationDefinition, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.lock_level = lock_level
         self.display_name = display_name
@@ -357,10 +447,10 @@ class ApplicationDefinition(GenericResource):
 class ApplicationDefinitionListResult(msrest.serialization.Model):
     """List of managed application definitions.
 
-    :param value: The array of managed application definitions.
-    :type value: list[~azure.mgmt.resource.managedapplications.models.ApplicationDefinition]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: The array of managed application definitions.
+    :vartype value: list[~azure.mgmt.resource.managedapplications.models.ApplicationDefinition]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -375,6 +465,12 @@ class ApplicationDefinitionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The array of managed application definitions.
+        :paramtype value: list[~azure.mgmt.resource.managedapplications.models.ApplicationDefinition]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ApplicationDefinitionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -383,10 +479,10 @@ class ApplicationDefinitionListResult(msrest.serialization.Model):
 class ApplicationListResult(msrest.serialization.Model):
     """List of managed applications.
 
-    :param value: The array of managed applications.
-    :type value: list[~azure.mgmt.resource.managedapplications.models.Application]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: The array of managed applications.
+    :vartype value: list[~azure.mgmt.resource.managedapplications.models.Application]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -401,6 +497,12 @@ class ApplicationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The array of managed applications.
+        :paramtype value: list[~azure.mgmt.resource.managedapplications.models.Application]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(ApplicationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -417,29 +519,28 @@ class ApplicationPatchable(GenericResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param managed_by: ID of the resource that manages this resource.
-    :type managed_by: str
-    :param sku: The SKU of the resource.
-    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
-    :param plan: The plan information.
-    :type plan: ~azure.mgmt.resource.managedapplications.models.PlanPatchable
-    :param kind: The kind of the managed application. Allowed values are MarketPlace and
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar managed_by: ID of the resource that manages this resource.
+    :vartype managed_by: str
+    :ivar sku: The SKU of the resource.
+    :vartype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.resource.managedapplications.models.Identity
+    :ivar plan: The plan information.
+    :vartype plan: ~azure.mgmt.resource.managedapplications.models.PlanPatchable
+    :ivar kind: The kind of the managed application. Allowed values are MarketPlace and
      ServiceCatalog.
-    :type kind: str
-    :param managed_resource_group_id: The managed resource group Id.
-    :type managed_resource_group_id: str
-    :param application_definition_id: The fully qualified path of managed application definition
-     Id.
-    :type application_definition_id: str
-    :param parameters: Name and value pairs that define the managed application parameters. It can
+    :vartype kind: str
+    :ivar managed_resource_group_id: The managed resource group Id.
+    :vartype managed_resource_group_id: str
+    :ivar application_definition_id: The fully qualified path of managed application definition Id.
+    :vartype application_definition_id: str
+    :ivar parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: any
+    :vartype parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
     :vartype outputs: any
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
@@ -491,6 +592,31 @@ class ApplicationPatchable(GenericResource):
         parameters: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword managed_by: ID of the resource that manages this resource.
+        :paramtype managed_by: str
+        :keyword sku: The SKU of the resource.
+        :paramtype sku: ~azure.mgmt.resource.managedapplications.models.Sku
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.resource.managedapplications.models.Identity
+        :keyword plan: The plan information.
+        :paramtype plan: ~azure.mgmt.resource.managedapplications.models.PlanPatchable
+        :keyword kind: The kind of the managed application. Allowed values are MarketPlace and
+         ServiceCatalog.
+        :paramtype kind: str
+        :keyword managed_resource_group_id: The managed resource group Id.
+        :paramtype managed_resource_group_id: str
+        :keyword application_definition_id: The fully qualified path of managed application definition
+         Id.
+        :paramtype application_definition_id: str
+        :keyword parameters: Name and value pairs that define the managed application parameters. It
+         can be a JObject or a well formed JSON string.
+        :paramtype parameters: any
+        """
         super(ApplicationPatchable, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.plan = plan
         self.kind = kind
@@ -506,13 +632,13 @@ class ApplicationProviderAuthorization(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param principal_id: Required. The provider's principal identifier. This is the identity that
+    :ivar principal_id: Required. The provider's principal identifier. This is the identity that
      the provider will use to call ARM to manage the managed application resources.
-    :type principal_id: str
-    :param role_definition_id: Required. The provider's role definition identifier. This role will
+    :vartype principal_id: str
+    :ivar role_definition_id: Required. The provider's role definition identifier. This role will
      define all the permissions that the provider must have on the managed application's container
      resource group. This role definition cannot have permission to delete the resource group.
-    :type role_definition_id: str
+    :vartype role_definition_id: str
     """
 
     _validation = {
@@ -532,6 +658,16 @@ class ApplicationProviderAuthorization(msrest.serialization.Model):
         role_definition_id: str,
         **kwargs
     ):
+        """
+        :keyword principal_id: Required. The provider's principal identifier. This is the identity that
+         the provider will use to call ARM to manage the managed application resources.
+        :paramtype principal_id: str
+        :keyword role_definition_id: Required. The provider's role definition identifier. This role
+         will define all the permissions that the provider must have on the managed application's
+         container resource group. This role definition cannot have permission to delete the resource
+         group.
+        :paramtype role_definition_id: str
+        """
         super(ApplicationProviderAuthorization, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role_definition_id = role_definition_id
@@ -540,12 +676,12 @@ class ApplicationProviderAuthorization(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates managed application is not able to process the incoming request. The reason is provided in the error message.
 
-    :param http_status: Http status code.
-    :type http_status: str
-    :param error_code: Error code.
-    :type error_code: str
-    :param error_message: Error message indicating why the operation failed.
-    :type error_message: str
+    :ivar http_status: Http status code.
+    :vartype http_status: str
+    :ivar error_code: Error code.
+    :vartype error_code: str
+    :ivar error_message: Error message indicating why the operation failed.
+    :vartype error_message: str
     """
 
     _attribute_map = {
@@ -562,6 +698,14 @@ class ErrorResponse(msrest.serialization.Model):
         error_message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword http_status: Http status code.
+        :paramtype http_status: str
+        :keyword error_code: Error code.
+        :paramtype error_code: str
+        :keyword error_message: Error message indicating why the operation failed.
+        :paramtype error_message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.http_status = http_status
         self.error_code = error_code
@@ -577,14 +721,14 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
+    :ivar type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
     :vartype type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -593,24 +737,30 @@ class Identity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
+        *,
+        type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. The only acceptable values to pass in are None and
+         "SystemAssigned". The default value is None.
+        :paramtype type: str
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = type
 
 
 class Operation(msrest.serialization.Model):
     """Microsoft.Solutions operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -625,6 +775,12 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -633,12 +789,12 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Solutions.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Application, JitRequest, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
+    :ivar provider: Service provider: Microsoft.Solutions.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Application, JitRequest, etc.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
     """
 
     _attribute_map = {
@@ -655,6 +811,14 @@ class OperationDisplay(msrest.serialization.Model):
         operation: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Solutions.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed: Application, JitRequest, etc.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -664,10 +828,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Microsoft.Solutions operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Microsoft.Solutions operations.
-    :type value: list[~azure.mgmt.resource.managedapplications.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Microsoft.Solutions operations.
+    :vartype value: list[~azure.mgmt.resource.managedapplications.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -682,6 +846,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Microsoft.Solutions operations.
+        :paramtype value: list[~azure.mgmt.resource.managedapplications.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -692,16 +862,16 @@ class Plan(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The plan name.
-    :type name: str
-    :param publisher: Required. The publisher ID.
-    :type publisher: str
-    :param product: Required. The product code.
-    :type product: str
-    :param promotion_code: The promotion code.
-    :type promotion_code: str
-    :param version: Required. The plan's version.
-    :type version: str
+    :ivar name: Required. The plan name.
+    :vartype name: str
+    :ivar publisher: Required. The publisher ID.
+    :vartype publisher: str
+    :ivar product: Required. The product code.
+    :vartype product: str
+    :ivar promotion_code: The promotion code.
+    :vartype promotion_code: str
+    :ivar version: Required. The plan's version.
+    :vartype version: str
     """
 
     _validation = {
@@ -729,6 +899,18 @@ class Plan(msrest.serialization.Model):
         promotion_code: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The plan name.
+        :paramtype name: str
+        :keyword publisher: Required. The publisher ID.
+        :paramtype publisher: str
+        :keyword product: Required. The product code.
+        :paramtype product: str
+        :keyword promotion_code: The promotion code.
+        :paramtype promotion_code: str
+        :keyword version: Required. The plan's version.
+        :paramtype version: str
+        """
         super(Plan, self).__init__(**kwargs)
         self.name = name
         self.publisher = publisher
@@ -740,16 +922,16 @@ class Plan(msrest.serialization.Model):
 class PlanPatchable(msrest.serialization.Model):
     """Plan for the managed application.
 
-    :param name: The plan name.
-    :type name: str
-    :param publisher: The publisher ID.
-    :type publisher: str
-    :param product: The product code.
-    :type product: str
-    :param promotion_code: The promotion code.
-    :type promotion_code: str
-    :param version: The plan's version.
-    :type version: str
+    :ivar name: The plan name.
+    :vartype name: str
+    :ivar publisher: The publisher ID.
+    :vartype publisher: str
+    :ivar product: The product code.
+    :vartype product: str
+    :ivar promotion_code: The promotion code.
+    :vartype promotion_code: str
+    :ivar version: The plan's version.
+    :vartype version: str
     """
 
     _attribute_map = {
@@ -770,6 +952,18 @@ class PlanPatchable(msrest.serialization.Model):
         version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The plan name.
+        :paramtype name: str
+        :keyword publisher: The publisher ID.
+        :paramtype publisher: str
+        :keyword product: The product code.
+        :paramtype product: str
+        :keyword promotion_code: The promotion code.
+        :paramtype promotion_code: str
+        :keyword version: The plan's version.
+        :paramtype version: str
+        """
         super(PlanPatchable, self).__init__(**kwargs)
         self.name = name
         self.publisher = publisher
@@ -783,18 +977,18 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The SKU name.
-    :type name: str
-    :param tier: The SKU tier.
-    :type tier: str
-    :param size: The SKU size.
-    :type size: str
-    :param family: The SKU family.
-    :type family: str
-    :param model: The SKU model.
-    :type model: str
-    :param capacity: The SKU capacity.
-    :type capacity: int
+    :ivar name: Required. The SKU name.
+    :vartype name: str
+    :ivar tier: The SKU tier.
+    :vartype tier: str
+    :ivar size: The SKU size.
+    :vartype size: str
+    :ivar family: The SKU family.
+    :vartype family: str
+    :ivar model: The SKU model.
+    :vartype model: str
+    :ivar capacity: The SKU capacity.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -821,6 +1015,20 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The SKU name.
+        :paramtype name: str
+        :keyword tier: The SKU tier.
+        :paramtype tier: str
+        :keyword size: The SKU size.
+        :paramtype size: str
+        :keyword family: The SKU family.
+        :paramtype family: str
+        :keyword model: The SKU model.
+        :paramtype model: str
+        :keyword capacity: The SKU capacity.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier

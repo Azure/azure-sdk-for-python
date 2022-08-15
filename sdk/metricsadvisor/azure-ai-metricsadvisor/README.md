@@ -8,6 +8,10 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 
 [Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs] | [Samples][samples_readme]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Install the package
@@ -15,12 +19,12 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 Install the Azure Metrics Advisor client library for Python with pip:
 
 ```commandline
-pip install azure-ai-metricsadvisor --pre
+pip install azure-ai-metricsadvisor
 ```
 
 ### Prerequisites
 
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [Metrics Advisor serivce][ma_service] to use this package.
 
 ### Authenticate the client
@@ -86,7 +90,7 @@ A `DataFeedMetric` is a quantifiable measure that is used to monitor and assess 
 
 ### AnomalyDetectionConfiguration
 
-`AnomalyDetectionConfiguration` is required for every time series, and determines whether a point in the time series is an anomaly. 
+`AnomalyDetectionConfiguration` is required for every time series, and determines whether a point in the time series is an anomaly.
 
 ### Anomaly & Incident
 
@@ -153,7 +157,7 @@ data_feed = client.create_data_feed(
         ],
         dimensions=[
             DataFeedDimension(name="category", display_name="Category"),
-            DataFeedDimension(name="city", display_name="City")
+            DataFeedDimension(name="region", display_name="region")
         ],
         timestamp_column="Timestamp"
     ),
@@ -257,7 +261,7 @@ detection_config = client.create_detection_configuration(
     metric_id=metric_id,
     description="anomaly detection config for metric",
     whole_series_detection_condition=MetricDetectionCondition(
-        cross_conditions_operator="OR",
+        condition_operator="OR",
         change_threshold_condition=change_threshold_condition,
         hard_threshold_condition=hard_threshold_condition,
         smart_detection_condition=smart_detection_condition
@@ -364,14 +368,14 @@ results = client.list_alerts(
 )
 for result in results:
     print("Alert id: {}".format(result.id))
-    print("Create on: {}".format(result.created_on))
+    print("Create time: {}".format(result.created_time))
 
 results = client.list_anomalies(
     alert_configuration_id=alert_config_id,
     alert_id=alert_id,
 )
 for result in results:
-    print("Create on: {}".format(result.created_on))
+    print("Create time: {}".format(result.created_time))
     print("Severity: {}".format(result.severity))
     print("Status: {}".format(result.status))
 ```
@@ -460,7 +464,7 @@ hook = client.create_hook(
 
 ### Async APIs
 
-This library includes a complete async API supported on Python 3.6+. To use it, you must
+This library includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation][azure_core_docs]
@@ -518,7 +522,7 @@ or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
 <!-- LINKS -->
-[src_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/metricsadvisor/azure-ai-metricsadvisor
+[src_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/metricsadvisor/azure-ai-metricsadvisor
 [reference_documentation]: https://aka.ms/azsdk/python/metricsadvisor/docs
 [ma_docs]: https://docs.microsoft.com/azure/cognitive-services/metrics-advisor/overview
 [azure_cli]: https://docs.microsoft.com/cli/azure
@@ -527,9 +531,9 @@ additional questions or comments.
 [ma_service]: https://go.microsoft.com/fwlink/?linkid=2142156
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [azure_core]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
-[azure_core_docs]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
-[samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/README.md
+[azure_core_docs]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
+[samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/README.md
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

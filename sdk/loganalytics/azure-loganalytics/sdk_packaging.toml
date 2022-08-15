@@ -4,3 +4,5 @@ package_pprint_name = "Log Analytics"
 package_doc_id = ""
 is_stable = false
 is_arm = false
+auto_update = false
+need_msrestazure = false

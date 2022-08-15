@@ -1,0 +1,131 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 20 Jul 2022 21:49:31 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerfd731cc8?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 20 Jul 2022 21:49:30 GMT
+      etag: '"0x8DA6A99BA50DA4C"'
+      last-modified: Wed, 20 Jul 2022 21:49:31 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainerfd731cc8?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 20 Jul 2022 21:49:31 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainersourcefd731cc8?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 20 Jul 2022 21:49:30 GMT
+      etag: '"0x8DA6A99BA5FCC4B"'
+      last-modified: Wed, 20 Jul 2022 21:49:31 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainersourcefd731cc8?restype=container
+- request:
+    body: Hello Async World!
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Wed, 20 Jul 2022 21:49:31 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerfd731cc8/blobfd731cc8
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: I3pVbaOCUTom+G9F9uKFoA==
+      date: Wed, 20 Jul 2022 21:49:30 GMT
+      etag: '"0x8DA6A99BA6DB625"'
+      last-modified: Wed, 20 Jul 2022 21:49:31 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: EbYwp1zrrC8=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainerfd731cc8/blobfd731cc8
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 20 Jul 2022 21:49:32 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainerfd731cc8/blobfd731cc8
+  response:
+    body:
+      string: Hello Async World!
+    headers:
+      accept-ranges: bytes
+      content-length: '18'
+      content-range: bytes 0-17/18
+      content-type: application/octet-stream
+      date: Wed, 20 Jul 2022 21:49:31 GMT
+      etag: '"0x8DA6A99BA6DB625"'
+      last-modified: Wed, 20 Jul 2022 21:49:31 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-blob-content-md5: I3pVbaOCUTom+G9F9uKFoA==
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Wed, 20 Jul 2022 21:49:31 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 206
+      message: Partial Content
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainerfd731cc8/blobfd731cc8
+version: 1

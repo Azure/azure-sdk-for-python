@@ -43,7 +43,7 @@ class SecureScoresOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecureScoresList"]:
         """List secure scores for all your Security Center initiatives within your current scope.
 
@@ -110,7 +110,7 @@ class SecureScoresOperations:
     async def get(
         self,
         secure_score_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecureScoreItem":
         """Get secure score for a specific Security Center initiative within your current scope. For the
         ASC Default initiative, use 'ascScore'.

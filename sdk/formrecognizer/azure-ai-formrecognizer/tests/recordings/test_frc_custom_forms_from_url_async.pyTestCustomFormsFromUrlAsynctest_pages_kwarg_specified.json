@@ -1,0 +1,1313 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "109",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": {
+        "source": "https://blob_sas_url",
+        "sourceFilter": {
+          "prefix": "",
+          "includeSubFolders": false
+        },
+        "useLabelFile": false
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "d6d631b5-1b98-4cb9-b199-4e0d02ca61c1",
+        "Content-Length": "0",
+        "Date": "Fri, 24 Jun 2022 00:23:14 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "330"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d93bf899-a667-4fc2-a1a1-22535259c899",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:19 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "93"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "132c3ba5-a536-4c78-9d7b-723774294033",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:24 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "65"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "8d42e6ee-d210-472b-8837-3eb78268469f",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:30 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "18"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3d3098c8-5f67-4062-9c82-50c40a02a533",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:35 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "18"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "81ad936d-a6ab-4d9c-88ae-69f9bcf8f4bc",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "21"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "ed68f0a0-4126-4022-b2ad-95f3fadb1977",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:44 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "f7bbc8f6-21d9-48eb-8d40-527ef21230b0",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:49 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "21"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "98478476-0168-43a0-9385-a0d4c2cb0ed7",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:23:55 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "30"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "28b0c7a7-2a58-4365-b6f9-296675e0217e",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:24:00 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "20"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "9599d873-8bcb-4897-a768-0f2468184913",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:24:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "83823688-a469-47da-9e2f-f90fbe8c60d5",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:24:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "18"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "creating",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:23:14Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4cbe55d5-7866-4c4b-be7b-d033bb29862c",
+        "Content-Length": "4741",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:24:15 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "23"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "68ecfc2b-3b5e-46eb-b506-04f1d05b51b1",
+          "status": "ready",
+          "createdDateTime": "2022-06-24T00:23:14Z",
+          "lastUpdatedDateTime": "2022-06-24T00:24:11Z"
+        },
+        "keys": {
+          "clusters": {
+            "0": [
+              "Item",
+              "Price",
+              "Tax",
+              "Total"
+            ],
+            "1": [
+              "1 Redmond way Suite",
+              "Address:",
+              "Charges",
+              "Contoso",
+              "Invoice Date",
+              "Invoice Due Date",
+              "Invoice For:",
+              "Invoice Number",
+              "VAT ID"
+            ],
+            "2": [
+              "DESCRIPTION",
+              "LINE TOTAL",
+              "QUANTITY",
+              "UNIT PRICE"
+            ],
+            "3": [],
+            "4": [
+              "Elemento",
+              "Imposta:",
+              "Prezzo",
+              "Quantit\u00E0",
+              "Suggerimento:",
+              "Totale parziale:",
+              "Totale:"
+            ],
+            "5": [
+              "Address:",
+              "Article",
+              "Bilbo Baggins",
+              "Conseil:",
+              "Invoice For:",
+              "Item",
+              "Price",
+              "Prix",
+              "Quantity",
+              "Quantit\u00E9",
+              "Redmond, WA",
+              "Signature:",
+              "Sous-total:",
+              "Subtotal:",
+              "Tax:",
+              "Tip:",
+              "Total:"
+            ],
+            "6": [
+              "Dica:",
+              "Imposto:",
+              "Item",
+              "Pre\u00E7o",
+              "Quantidade",
+              "Subtotal:",
+              "Total:"
+            ],
+            "7": [
+              "Art\u00EDculo",
+              "Cantidad",
+              "Consejo:",
+              "Impuesto:",
+              "Precio",
+              "Subtotal:",
+              "Total:"
+            ],
+            "8": [
+              "Artikel",
+              "Gesamt:",
+              "Menge",
+              "Preis",
+              "Steuer:",
+              "Tipp:",
+              "Zwischensumme:"
+            ],
+            "9": [
+              "Belasting:",
+              "Hoeveelheid",
+              "Item",
+              "Prijs",
+              "Subtotaal:",
+              "Tip:",
+              "Totaal:"
+            ],
+            "10": [
+              "Total:"
+            ],
+            "11": [],
+            "12": [],
+            "13": [
+              "Contoso",
+              "Sales Associate:",
+              "Sub-Total",
+              "Tax",
+              "Total"
+            ],
+            "14": [
+              "8 123 STREET ADDRESS"
+            ],
+            "15": [
+              "BILL TO:",
+              "CUSTOMER ID:",
+              "CUSTOMER NAME:",
+              "DESCRIPTION",
+              "DUE DATE:",
+              "F.O.B. POINT",
+              "INVOICE DATE:",
+              "INVOICE:",
+              "P.O. NUMBER",
+              "QUANTITY",
+              "REMIT TO:",
+              "REQUISITIONER",
+              "SALESPERSON",
+              "SERVICE ADDRESS:",
+              "SERVICE PERIOD:",
+              "SHIP TO:",
+              "SHIPPED VIA",
+              "TERMS",
+              "TOTAL",
+              "UNIT PRICE"
+            ],
+            "16": [],
+            "17": [
+              "fax:",
+              "mob:",
+              "tel:"
+            ],
+            "18": [
+              "09 / 21 in the amount of:",
+              "650-768-2322 or e-mail to:",
+              "Card Type:",
+              "City:",
+              "Email Address:",
+              "Mailing Address:",
+              "Name of Cardholder:",
+              "Purpose of Payment:",
+              "STATE OF CALIFORNIA:",
+              "Signature:",
+              "State:",
+              "Zip Code:",
+              "form. Telephone #:",
+              "to charge my:"
+            ],
+            "19": [
+              "Address:",
+              "Company Name:",
+              "Company Phone:",
+              "Dated As:",
+              "Details",
+              "Name:",
+              "Phone:",
+              "Purchase Order #:",
+              "Quantity",
+              "Total",
+              "Unit Price",
+              "Vendor Name:",
+              "Website:"
+            ],
+            "20": [
+              "Division",
+              "Quarterly Sales Update:",
+              "Region",
+              "Sales Team",
+              "Units Shipped (Thousands)",
+              "YOY"
+            ],
+            "21": [],
+            "22": [
+              "Included",
+              "Package",
+              "Price",
+              "Vendor #:",
+              "below, and attach a check made out to:"
+            ],
+            "23": [
+              "Company Name:",
+              "Contact:",
+              "Preferred Package:",
+              "Special Requests:",
+              "Vendor #:"
+            ],
+            "24": [
+              "fax:",
+              "mob:",
+              "tel:"
+            ],
+            "25": [
+              "Item Number/Description",
+              "Shipped",
+              "Unit Proce"
+            ]
+          }
+        },
+        "trainResult": {
+          "trainingDocuments": [
+            {
+              "documentName": "Document%1.pdf",
+              "pages": 2,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "Form_1.jpg",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "Invoice_1.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "Invoice_1.tiff",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "Invoice_6.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "blank.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "business-card-multipage.pdf",
+              "pages": 2,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "content_chinese_simplified.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "content_dutch.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "content_french.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "content_german.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "content_italian.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "content_portuguese.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "content_spanish.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "contoso-allinone.jpg",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "invoice_cross_page_table.pdf",
+              "pages": 2,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "label_table_fixed_rows1.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "label_table_variable_rows1.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "license.jpg",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice1.pdf",
+              "pages": 3,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_receipt.pdf",
+              "pages": 2,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "passport_1.jpg",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "sample_invoice.jpg",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "selection_mark_form.pdf",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "ErrorImage.tiff",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "businessCard.jpg",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "businessCard.png",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "contoso-receipt.png",
+              "pages": 1,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multi1.pdf",
+              "pages": 2,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipagelayout.pdf",
+              "pages": 2,
+              "errors": [],
+              "status": "succeeded"
+            }
+          ],
+          "errors": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1/analyze?includeTextDetails=false\u0026pages=1",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "33",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": {
+        "source": "https://blob_sas_url"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "b1ad7f9b-f18f-4022-a4f2-af763ff7cde1",
+        "Content-Length": "0",
+        "Date": "Fri, 24 Jun 2022 00:24:15 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1/analyzeresults/5b555f63-8551-4852-ac21-cd8cde439d4d",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "257"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1/analyzeresults/5b555f63-8551-4852-ac21-cd8cde439d4d",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "f163b48c-1d3a-4b8f-be68-f210a6ccfa08",
+        "Content-Length": "134",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:24:21 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "32"
+      },
+      "ResponseBody": {
+        "status": "running",
+        "createdDateTime": "2022-06-24T00:24:16Z",
+        "lastUpdatedDateTime": "2022-06-24T00:24:17Z",
+        "analyzeResult": null
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/68ecfc2b-3b5e-46eb-b506-04f1d05b51b1/analyzeresults/5b555f63-8551-4852-ac21-cd8cde439d4d",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "33a3dbbe-2cf3-43e6-ba4e-f6215c3469b7",
+        "Content-Length": "5765",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 24 Jun 2022 00:24:26 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "27"
+      },
+      "ResponseBody": {
+        "status": "succeeded",
+        "createdDateTime": "2022-06-24T00:24:16Z",
+        "lastUpdatedDateTime": "2022-06-24T00:24:24Z",
+        "analyzeResult": {
+          "version": "2.1.0",
+          "readResults": [
+            {
+              "page": 1,
+              "angle": 0,
+              "width": 8.5,
+              "height": 11.0,
+              "unit": "inch",
+              "lines": [],
+              "selectionMarks": null
+            }
+          ],
+          "pageResults": [
+            {
+              "page": 1,
+              "keyValuePairs": [
+                {
+                  "key": {
+                    "text": "Vendor #:",
+                    "boundingBox": [
+                      6.1278,
+                      1.0652,
+                      7.1264,
+                      1.0652,
+                      7.1264,
+                      1.2612,
+                      6.1278,
+                      1.2612
+                    ],
+                    "elements": null
+                  },
+                  "value": {
+                    "text": "121",
+                    "boundingBox": [
+                      7.1264,
+                      1.0625,
+                      7.4792,
+                      1.0625,
+                      7.4792,
+                      1.2639,
+                      7.1264,
+                      1.2639
+                    ],
+                    "elements": null
+                  },
+                  "confidence": 1.0
+                },
+                {
+                  "key": {
+                    "text": "below, and attach a check made out to:",
+                    "boundingBox": [
+                      0.9889,
+                      3.2278,
+                      3.6778,
+                      3.2278,
+                      3.6778,
+                      3.3958,
+                      0.9889,
+                      3.3958
+                    ],
+                    "elements": null
+                  },
+                  "value": {
+                    "text": "Contoso Ltd. 2345 Dogwood Lane Birch, Kansas 98123",
+                    "boundingBox": [
+                      0.9931,
+                      3.5729,
+                      2.375,
+                      3.5729,
+                      2.375,
+                      4.1541,
+                      0.9931,
+                      4.1541
+                    ],
+                    "elements": null
+                  },
+                  "confidence": 1.0
+                }
+              ],
+              "tables": [
+                {
+                  "rows": 6,
+                  "columns": 3,
+                  "boundingBox": [
+                    1.0694,
+                    4.6806,
+                    6.2917,
+                    4.6806,
+                    6.2917,
+                    8.875,
+                    1.0694,
+                    8.875
+                  ],
+                  "cells": [
+                    {
+                      "text": "Package",
+                      "rowIndex": 0,
+                      "columnIndex": 0,
+                      "boundingBox": [
+                        1.0722,
+                        4.6944,
+                        1.6278,
+                        4.6944,
+                        1.6278,
+                        4.8438,
+                        1.0722,
+                        4.8438
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": true,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Included",
+                      "rowIndex": 0,
+                      "columnIndex": 1,
+                      "boundingBox": [
+                        2.6944,
+                        4.6806,
+                        3.2708,
+                        4.6806,
+                        3.2708,
+                        4.8438,
+                        2.6944,
+                        4.8438
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": true,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Price",
+                      "rowIndex": 0,
+                      "columnIndex": 2,
+                      "boundingBox": [
+                        5.8222,
+                        4.691,
+                        6.1417,
+                        4.691,
+                        6.1417,
+                        4.816,
+                        5.8222,
+                        4.816
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": true,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Gold Sponsor",
+                      "rowIndex": 1,
+                      "columnIndex": 0,
+                      "boundingBox": [
+                        1.0764,
+                        4.9048,
+                        1.9861,
+                        4.9048,
+                        1.9861,
+                        5.0527,
+                        1.0764,
+                        5.0527
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Full booth Pre-keynote thank you Logo on poster Full page ad in program guide",
+                      "rowIndex": 1,
+                      "columnIndex": 1,
+                      "boundingBox": [
+                        3.1694,
+                        4.9115,
+                        5.2111,
+                        4.9115,
+                        5.2111,
+                        5.7158,
+                        3.1694,
+                        5.7158
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "$1,500",
+                      "rowIndex": 1,
+                      "columnIndex": 2,
+                      "boundingBox": [
+                        5.8194,
+                        4.8993,
+                        6.2806,
+                        4.8993,
+                        6.2806,
+                        5.0556,
+                        5.8194,
+                        5.0556
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Silver Sponsor",
+                      "rowIndex": 2,
+                      "columnIndex": 0,
+                      "boundingBox": [
+                        1.0722,
+                        5.9792,
+                        2.0444,
+                        5.9792,
+                        2.0444,
+                        6.125,
+                        1.0722,
+                        6.125
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Full booth Post-keynote thank you Logo on poster Half page ad in program guide",
+                      "rowIndex": 2,
+                      "columnIndex": 1,
+                      "boundingBox": [
+                        3.1736,
+                        5.9809,
+                        5.2333,
+                        5.9809,
+                        5.2333,
+                        6.7778,
+                        3.1736,
+                        6.7778
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "$1,200",
+                      "rowIndex": 2,
+                      "columnIndex": 2,
+                      "boundingBox": [
+                        5.8222,
+                        5.9549,
+                        6.2847,
+                        5.9549,
+                        6.2847,
+                        6.125,
+                        5.8222,
+                        6.125
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Bronze Sponsor",
+                      "rowIndex": 3,
+                      "columnIndex": 0,
+                      "boundingBox": [
+                        1.0764,
+                        6.8352,
+                        2.1458,
+                        6.8352,
+                        2.1458,
+                        6.9794,
+                        1.0764,
+                        6.9794
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Full booth Logo on poster 50% discount on program guide advertisements",
+                      "rowIndex": 3,
+                      "columnIndex": 1,
+                      "boundingBox": [
+                        3.1806,
+                        6.8385,
+                        5.3333,
+                        6.8385,
+                        5.3333,
+                        7.6042,
+                        3.1806,
+                        7.6042
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "$1,000",
+                      "rowIndex": 3,
+                      "columnIndex": 2,
+                      "boundingBox": [
+                        5.8167,
+                        6.816,
+                        6.2917,
+                        6.816,
+                        6.2917,
+                        6.9861,
+                        5.8167,
+                        6.9861
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Full Booth",
+                      "rowIndex": 4,
+                      "columnIndex": 0,
+                      "boundingBox": [
+                        1.0806,
+                        7.6736,
+                        1.75,
+                        7.6736,
+                        1.75,
+                        7.8125,
+                        1.0806,
+                        7.8125
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Full booth 50% discount on program guide advertisements",
+                      "rowIndex": 4,
+                      "columnIndex": 1,
+                      "boundingBox": [
+                        3.1806,
+                        7.684,
+                        5.3403,
+                        7.684,
+                        5.3403,
+                        8.2396,
+                        3.1806,
+                        8.2396
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "$600",
+                      "rowIndex": 4,
+                      "columnIndex": 2,
+                      "boundingBox": [
+                        5.8167,
+                        7.6701,
+                        6.1458,
+                        7.6701,
+                        6.1458,
+                        7.8194,
+                        5.8167,
+                        7.8194
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Half Booth",
+                      "rowIndex": 5,
+                      "columnIndex": 0,
+                      "boundingBox": [
+                        1.0694,
+                        8.3125,
+                        1.775,
+                        8.3125,
+                        1.775,
+                        8.4463,
+                        1.0694,
+                        8.4463
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "Full booth 25% discount on program guide advertisements",
+                      "rowIndex": 5,
+                      "columnIndex": 1,
+                      "boundingBox": [
+                        3.1806,
+                        8.3194,
+                        5.3361,
+                        8.3194,
+                        5.3361,
+                        8.875,
+                        3.1806,
+                        8.875
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    },
+                    {
+                      "text": "$350",
+                      "rowIndex": 5,
+                      "columnIndex": 2,
+                      "boundingBox": [
+                        5.8222,
+                        8.3021,
+                        6.1528,
+                        8.3021,
+                        6.1528,
+                        8.4479,
+                        5.8222,
+                        8.4479
+                      ],
+                      "confidence": 0.0,
+                      "rowSpan": 1,
+                      "columnSpan": 1,
+                      "elements": null,
+                      "isHeader": false,
+                      "isFooter": false
+                    }
+                  ]
+                }
+              ],
+              "clusterId": null
+            }
+          ],
+          "documentResults": [],
+          "errors": []
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

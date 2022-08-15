@@ -1,0 +1,8 @@
+include *.md
+include LICENSE
+include azure/__init__.py
+include azure/eventhub/__init__.py
+include azure/eventhub/extensions/__init__.py
+recursive-include tests *.py
+recursive-include samples *.py
+include azure/eventhub/extensions/checkpointstoretable/py.typed

@@ -93,7 +93,7 @@ az role assignment create --role "Managed Identity Operator" \
 
 # build images
 The test application must be packaged as a Docker image before deployment.
-Test runs must include Python 2 and 3, so two images are required.
+Test runs must include Python 3.6+.
 
 ### authenticate to ACR
 ```sh
@@ -113,7 +113,7 @@ cd azure-sdk-for-python/sdk/identity/azure-identity/tests
 ### build images and push them to the container registry
 Set environment variables:
 ```sh
-export REPOSITORY=$ACR_NAME.azurecr.io IMAGE_NAME=test-pod-identity PYTHON_VERSION=2.7
+export REPOSITORY=$ACR_NAME.azurecr.io IMAGE_NAME=test-pod-identity PYTHON_VERSION=3.9
 ```
 
 Build an image:
@@ -125,11 +125,6 @@ Push it to ACR:
 ```sh
 docker push $REPOSITORY/$IMAGE_NAME:$PYTHON_VERSION
 ```
-
-Then set `PYTHON_VERSION` to the latest 3.x (3.8 at time of writing) and run the
-above `docker build` and `docker push` commands again. (It's safe--and faster--
-to omit `--no-cache` from `docker build` the second time.)
-
 
 # run the test
 
@@ -149,7 +144,7 @@ helm init --wait
 ```
 
 ### run the test script
-Twice. Once with `PYTHON_VERSION=2.7`, once with `PYTHON_VERSION=3.x`
+With `PYTHON_VERSION=3.x`
 (replacing x with the latest Python 3 minor version):
 ```sh
 python ./pod-identity/run-test.py \

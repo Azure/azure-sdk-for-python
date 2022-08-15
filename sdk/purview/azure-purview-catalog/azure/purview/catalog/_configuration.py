@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -15,39 +15,42 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
 
 
-class PurviewCatalogClientConfiguration(Configuration):
+class PurviewCatalogClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for PurviewCatalogClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: The catalog endpoint of your Purview account. Example:
+     https://{accountName}.purview.azure.com.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
-    :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
+        endpoint: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
+        super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
-        self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2021-05-01-preview"
+        self.credential = credential
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-catalog/{}'.format(VERSION))
         self._configure(**kwargs)

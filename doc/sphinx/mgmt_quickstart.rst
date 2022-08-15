@@ -15,17 +15,17 @@ authentication. This document illustrates the most common scenario
 
 Migration Guide
 ---------------
-If you are an existing user of the older version of Azure management library for Python and you are looking for a migration guide to the new version of the SDK, please refer to `this migration guide here <https://github.com/Azure/azure-sdk-for-python/blob/master/doc/sphinx/python_mgmt_migration_guide.rst>`__
+If you are an existing user of the older version of Azure management library for Python and you are looking for a migration guide to the new version of the SDK, please refer to `this migration guide here <https://github.com/Azure/azure-sdk-for-python/blob/main/doc/sphinx/python_mgmt_migration_guide.rst>`__
 
 Prerequisites
 -------------
 
 | You will need the following values to authenticate to Azure
- 
+
 - **Subscription ID**
-- **Client ID** 
-- **Client Secret** 
-- **Tenant ID** 
+- **Client ID**
+- **Client Secret**
+- **Tenant ID**
 
 These values can be obtained from the portal, here's the instructions:
 
@@ -38,7 +38,7 @@ Get Subscription ID
 4. Click on Overview
 5. Copy the Subscription ID
 
-Get Client ID / Client Secret / Tenant ID 
+Get Client ID / Client Secret / Tenant ID
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For information on how to get Client ID, Client Secret, and Tenant ID, please refer to `this document <https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal>`__
@@ -250,7 +250,7 @@ Note that asyncio in Windows is underpowered and please take caution when using 
     )
     public_ip_address = await async_poller.result()
     print("Create Public IP Address:\n{}".format(public_ip_address))
-    
+
 Code Samples
 -------------------------
 For more code samples that demonstrate how to use our SDK to interact with Azure services, please visit `here <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__. You can also view the Github repo that contains the code samples `here <https://github.com/Azure-Samples/azure-samples-python-management>`__

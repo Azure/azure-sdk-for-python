@@ -6,106 +6,114 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AdministratorName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+
+class AdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the sever administrator.
+    """
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+
+class ConfigurationSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source of the configuration.
+    """
+
+    SYSTEM_DEFAULT = "system-default"
+    USER_OVERRIDE = "user-override"
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode to create a new MySQL server.
     """
 
     DEFAULT = "Default"
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
     REPLICA = "Replica"
+    GEO_RESTORE = "GeoRestore"
 
-class HaEnabledEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not HA is enabled for this server. Value is optional but if passed in, must be
-    'Enabled' or 'Disabled'
+class DataEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The key type, AzureKeyVault for enable cmk, SystemManaged for disable cmk.
+    """
+
+    AZURE_KEY_VAULT = "AzureKeyVault"
+    SYSTEM_MANAGED = "SystemManaged"
+
+class EnableStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate whether value is 'Enabled' or 'Disabled'
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class InfrastructureEncryptionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Add a second layer of encryption for your data using new encryption algorithm which gives
-    additional data protection. Value is optional but if passed in, must be 'Disabled' or
-    'Enabled'.
+class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """High availability mode for a server.
     """
 
-    ENABLED = "Enabled"
     DISABLED = "Disabled"
+    ZONE_REDUNDANT = "ZoneRedundant"
+    SAME_ZONE = "SameZone"
 
-class IsConfigPendingRestart(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HighAvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of server high availability.
+    """
+
+    NOT_ENABLED = "NotEnabled"
+    CREATING_STANDBY = "CreatingStandby"
+    HEALTHY = "Healthy"
+    FAILING_OVER = "FailingOver"
+    REMOVING_STANDBY = "RemovingStandby"
+
+class IsConfigPendingRestart(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If is the configuration pending restart or not.
     """
 
     TRUE = "True"
     FALSE = "False"
 
-class IsDynamicConfig(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IsDynamicConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If is the configuration dynamic.
     """
 
     TRUE = "True"
     FALSE = "False"
 
-class IsReadOnly(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IsReadOnly(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If is the configuration read only.
     """
 
     TRUE = "True"
     FALSE = "False"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The intended executor of the operation.
+class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The replication role.
     """
 
-    NOT_SPECIFIED = "NotSpecified"
-    USER = "user"
-    SYSTEM = "system"
+    NONE = "None"
+    SOURCE = "Source"
+    REPLICA = "Replica"
 
-class PublicNetworkAccessEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not public network access is allowed for this server. Value is optional but if
-    passed in, must be 'Enabled' or 'Disabled'
+class ResetAllToDefault(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to reset all server parameters to default.
     """
 
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    TRUE = "True"
+    FALSE = "False"
 
-class ServerHAState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of a HA server.
-    """
-
-    NOT_ENABLED = "NotEnabled"
-    CREATING_STANDBY = "CreatingStandby"
-    REPLICATING_DATA = "ReplicatingData"
-    FAILING_OVER = "FailingOver"
-    HEALTHY = "Healthy"
-    REMOVING_STANDBY = "RemovingStandby"
-
-class ServerKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The key type like 'AzureKeyVault'.
-    """
-
-    AZURE_KEY_VAULT = "AzureKeyVault"
-
-class ServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of a server.
     """
 
@@ -117,30 +125,17 @@ class ServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STOPPED = "Stopped"
     UPDATING = "Updating"
 
-class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The version of a server.
     """
 
     FIVE7 = "5.7"
+    EIGHT0_21 = "8.0.21"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The tier of the particular SKU, e.g. GeneralPurpose.
     """
 
     BURSTABLE = "Burstable"
     GENERAL_PURPOSE = "GeneralPurpose"
     MEMORY_OPTIMIZED = "MemoryOptimized"
-
-class SslEnforcementEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable ssl enforcement or not when connect to server.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-class StorageAutogrow(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable Storage Auto Grow.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"

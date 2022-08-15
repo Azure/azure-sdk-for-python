@@ -21,10 +21,7 @@ from azure.communication.chat._shared.models import(
 )
 from unittest_helpers import mock_response
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import Mock, patch
 
 def _convert_datetime_to_utc_int(input):
     return int(calendar.timegm(input.utctimetuple()))
@@ -67,9 +64,11 @@ class TestChatThreadClient(unittest.TestCase):
         try:
             content='hello world'
             sender_display_name='sender name'
+            metadata={ "tags": "tag" }
             create_message_result = chat_thread_client.send_message(
                 content=content,
-                sender_display_name=sender_display_name)
+                sender_display_name=sender_display_name,
+                metadata=metadata)
             create_message_result_id = create_message_result.id
         except:
             raised = True
@@ -192,7 +191,10 @@ class TestChatThreadClient(unittest.TestCase):
                         "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
                             "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
                         "deletedOn": "2021-01-27T01:37:33Z",
-                        "editedOn": "2021-01-27T01:37:33Z"
+                        "editedOn": "2021-01-27T01:37:33Z",
+                        "metadata": {
+                            "tags": "tag"
+                        }
                     })
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
@@ -206,6 +208,7 @@ class TestChatThreadClient(unittest.TestCase):
         assert message.id == message_id
         assert message.content.message == message_str
         assert message.type == ChatMessageType.TEXT
+        assert message.metadata["tags"] == "tag"
         assert len(message.content.participants) > 0
 
     def test_list_messages(self):
@@ -332,7 +335,7 @@ class TestChatThreadClient(unittest.TestCase):
             l = list(chat_message)
             assert len(l) == 2
 
-    def test_update_message(self):
+    def test_update_message_content(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         message_id='1596823919339'
         raised = False
@@ -344,6 +347,23 @@ class TestChatThreadClient(unittest.TestCase):
         try:
             content = "updated message content"
             chat_thread_client.update_message(message_id, content=content)
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+
+    def test_update_message_metadata(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        message_id='1596823919339'
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=204)
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        try:
+            metadata={ "tags": "tag" }
+            chat_thread_client.update_message(message_id, metadata=metadata)
         except:
             raised = True
 
@@ -534,6 +554,21 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             chat_thread_client.send_typing_notification()
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+
+    def test_send_typing_notification_with_sender_display_name(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=200)
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        try:
+            chat_thread_client.send_typing_notification(sender_display_name="John")
         except:
             raised = True
 

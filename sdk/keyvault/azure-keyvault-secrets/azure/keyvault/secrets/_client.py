@@ -4,6 +4,7 @@
 # ------------------------------------
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
 
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
@@ -294,7 +295,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_secret(self, name, **kwargs):
-        # type: (str, **Any) -> DeletedSecret
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         When this method returns Key Vault has begun deleting the secret. Deletion may take several seconds in a vault
@@ -416,7 +417,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_secret(self, name, **kwargs):
-        # type: (str, **Any) -> SecretProperties
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted secret to its latest version. Possible only in a vault with soft-delete enabled.
 
         If the vault does not have soft-delete enabled, :func:`begin_delete_secret` is permanent, and this method will

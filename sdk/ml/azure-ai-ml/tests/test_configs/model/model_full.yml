@@ -1,0 +1,15 @@
+name: my-model6
+type: mlflow_model
+path: ./lightgbm_mlflow_model
+version: 3
+description: "this is my test model"
+tags:
+  foo: bar
+  abc: 123
+utc_time_created: '2020-10-19 17:44:02.096572'
+flavors:
+  sklearn:
+    sklearn_version: 0.23.2
+  python_function:
+    loader_module: office.plrmodel
+    python_version: 3.8.5

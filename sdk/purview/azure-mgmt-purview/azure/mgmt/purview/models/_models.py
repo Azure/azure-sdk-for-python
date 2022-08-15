@@ -46,6 +46,8 @@ class TrackedResource(msrest.serialization.Model):
     :type location: str
     :ivar name: Gets or sets the name.
     :vartype name: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.purview.models.TrackedResourceSystemData
     :param tags: A set of tags. Tags on the azure resource.
     :type tags: dict[str, str]
     :ivar type: Gets or sets the type.
@@ -55,6 +57,7 @@ class TrackedResource(msrest.serialization.Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'system_data': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -63,6 +66,7 @@ class TrackedResource(msrest.serialization.Model):
         'identity': {'key': 'identity', 'type': 'Identity'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'TrackedResourceSystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
@@ -76,6 +80,7 @@ class TrackedResource(msrest.serialization.Model):
         self.identity = kwargs.get('identity', None)
         self.location = kwargs.get('location', None)
         self.name = None
+        self.system_data = None
         self.tags = kwargs.get('tags', None)
         self.type = None
 
@@ -93,6 +98,8 @@ class Account(TrackedResource):
     :type location: str
     :ivar name: Gets or sets the name.
     :vartype name: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.purview.models.TrackedResourceSystemData
     :param tags: A set of tags. Tags on the azure resource.
     :type tags: dict[str, str]
     :ivar type: Gets or sets the type.
@@ -109,26 +116,29 @@ class Account(TrackedResource):
     :ivar created_by_object_id: Gets the creators of the entity's object id.
     :vartype created_by_object_id: str
     :ivar endpoints: The URIs that are the public endpoints of the account.
-    :vartype endpoints: ~azure.mgmt.purview.models.AccountEndpoints
+    :vartype endpoints: ~azure.mgmt.purview.models.AccountPropertiesEndpoints
     :ivar friendly_name: Gets or sets the friendly name.
     :vartype friendly_name: str
+    :param managed_resource_group_name: Gets or sets the managed resource group name.
+    :type managed_resource_group_name: str
     :ivar managed_resources: Gets the resource identifiers of the managed resources.
-    :vartype managed_resources: ~azure.mgmt.purview.models.ManagedResources
+    :vartype managed_resources: ~azure.mgmt.purview.models.AccountPropertiesManagedResources
     :ivar private_endpoint_connections: Gets the private endpoint connections information.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.purview.models.PrivateEndpointConnection]
     :ivar provisioning_state: Gets or sets the state of the provisioning. Possible values include:
      "Unknown", "Creating", "Moving", "Deleting", "SoftDeleting", "SoftDeleted", "Failed",
-     "Succeeded".
+     "Succeeded", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.purview.models.ProvisioningState
     :param public_network_access: Gets or sets the public network access. Possible values include:
-     "NotSpecified", "Enabled", "Disabled".
+     "NotSpecified", "Enabled", "Disabled". Default value: "Enabled".
     :type public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'system_data': {'readonly': True},
         'type': {'readonly': True},
         'created_at': {'readonly': True},
         'created_by': {'readonly': True},
@@ -145,6 +155,7 @@ class Account(TrackedResource):
         'identity': {'key': 'identity', 'type': 'Identity'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'TrackedResourceSystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'AccountSku'},
@@ -152,9 +163,10 @@ class Account(TrackedResource):
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'created_by_object_id': {'key': 'properties.createdByObjectId', 'type': 'str'},
-        'endpoints': {'key': 'properties.endpoints', 'type': 'AccountEndpoints'},
+        'endpoints': {'key': 'properties.endpoints', 'type': 'AccountPropertiesEndpoints'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'managed_resources': {'key': 'properties.managedResources', 'type': 'ManagedResources'},
+        'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
+        'managed_resources': {'key': 'properties.managedResources', 'type': 'AccountPropertiesManagedResources'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
@@ -172,10 +184,11 @@ class Account(TrackedResource):
         self.created_by_object_id = None
         self.endpoints = None
         self.friendly_name = None
+        self.managed_resource_group_name = kwargs.get('managed_resource_group_name', None)
         self.managed_resources = None
         self.private_endpoint_connections = None
         self.provisioning_state = None
-        self.public_network_access = kwargs.get('public_network_access', None)
+        self.public_network_access = kwargs.get('public_network_access', "Enabled")
 
 
 class AccountEndpoints(msrest.serialization.Model):
@@ -244,6 +257,83 @@ class AccountList(msrest.serialization.Model):
         self.count = kwargs.get('count', None)
         self.next_link = kwargs.get('next_link', None)
         self.value = kwargs['value']
+
+
+class AccountProperties(msrest.serialization.Model):
+    """The account properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param cloud_connectors: Cloud connectors.
+     External cloud identifier used as part of scanning configuration.
+    :type cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
+    :ivar created_at: Gets the time at which the entity was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: Gets the creator of the entity.
+    :vartype created_by: str
+    :ivar created_by_object_id: Gets the creators of the entity's object id.
+    :vartype created_by_object_id: str
+    :ivar endpoints: The URIs that are the public endpoints of the account.
+    :vartype endpoints: ~azure.mgmt.purview.models.AccountPropertiesEndpoints
+    :ivar friendly_name: Gets or sets the friendly name.
+    :vartype friendly_name: str
+    :param managed_resource_group_name: Gets or sets the managed resource group name.
+    :type managed_resource_group_name: str
+    :ivar managed_resources: Gets the resource identifiers of the managed resources.
+    :vartype managed_resources: ~azure.mgmt.purview.models.AccountPropertiesManagedResources
+    :ivar private_endpoint_connections: Gets the private endpoint connections information.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.purview.models.PrivateEndpointConnection]
+    :ivar provisioning_state: Gets or sets the state of the provisioning. Possible values include:
+     "Unknown", "Creating", "Moving", "Deleting", "SoftDeleting", "SoftDeleted", "Failed",
+     "Succeeded", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.purview.models.ProvisioningState
+    :param public_network_access: Gets or sets the public network access. Possible values include:
+     "NotSpecified", "Enabled", "Disabled". Default value: "Enabled".
+    :type public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
+    """
+
+    _validation = {
+        'created_at': {'readonly': True},
+        'created_by': {'readonly': True},
+        'created_by_object_id': {'readonly': True},
+        'endpoints': {'readonly': True},
+        'friendly_name': {'readonly': True},
+        'managed_resources': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'cloud_connectors': {'key': 'cloudConnectors', 'type': 'CloudConnectors'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_object_id': {'key': 'createdByObjectId', 'type': 'str'},
+        'endpoints': {'key': 'endpoints', 'type': 'AccountPropertiesEndpoints'},
+        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
+        'managed_resource_group_name': {'key': 'managedResourceGroupName', 'type': 'str'},
+        'managed_resources': {'key': 'managedResources', 'type': 'AccountPropertiesManagedResources'},
+        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AccountProperties, self).__init__(**kwargs)
+        self.cloud_connectors = kwargs.get('cloud_connectors', None)
+        self.created_at = None
+        self.created_by = None
+        self.created_by_object_id = None
+        self.endpoints = None
+        self.friendly_name = None
+        self.managed_resource_group_name = kwargs.get('managed_resource_group_name', None)
+        self.managed_resources = None
+        self.private_endpoint_connections = None
+        self.provisioning_state = None
+        self.public_network_access = kwargs.get('public_network_access', "Enabled")
 
 
 class AccountPropertiesEndpoints(AccountEndpoints):
@@ -373,60 +463,15 @@ class AccountSku(msrest.serialization.Model):
 class AccountUpdateParameters(msrest.serialization.Model):
     """The account update properties.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
+    :param properties: The account properties.
+    :type properties: ~azure.mgmt.purview.models.AccountProperties
     :param tags: A set of tags. Tags on the azure resource.
     :type tags: dict[str, str]
-    :param cloud_connectors: Cloud connectors.
-     External cloud identifier used as part of scanning configuration.
-    :type cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
-    :ivar created_at: Gets the time at which the entity was created.
-    :vartype created_at: ~datetime.datetime
-    :ivar created_by: Gets the creator of the entity.
-    :vartype created_by: str
-    :ivar created_by_object_id: Gets the creators of the entity's object id.
-    :vartype created_by_object_id: str
-    :ivar endpoints: The URIs that are the public endpoints of the account.
-    :vartype endpoints: ~azure.mgmt.purview.models.AccountEndpoints
-    :ivar friendly_name: Gets or sets the friendly name.
-    :vartype friendly_name: str
-    :ivar managed_resources: Gets the resource identifiers of the managed resources.
-    :vartype managed_resources: ~azure.mgmt.purview.models.ManagedResources
-    :ivar private_endpoint_connections: Gets the private endpoint connections information.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.purview.models.PrivateEndpointConnection]
-    :ivar provisioning_state: Gets or sets the state of the provisioning. Possible values include:
-     "Unknown", "Creating", "Moving", "Deleting", "SoftDeleting", "SoftDeleted", "Failed",
-     "Succeeded".
-    :vartype provisioning_state: str or ~azure.mgmt.purview.models.ProvisioningState
-    :param public_network_access: Gets or sets the public network access. Possible values include:
-     "NotSpecified", "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
     """
 
-    _validation = {
-        'created_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'created_by_object_id': {'readonly': True},
-        'endpoints': {'readonly': True},
-        'friendly_name': {'readonly': True},
-        'managed_resources': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
     _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'AccountProperties'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'cloud_connectors': {'key': 'properties.cloudConnectors', 'type': 'CloudConnectors'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
-        'created_by_object_id': {'key': 'properties.createdByObjectId', 'type': 'str'},
-        'endpoints': {'key': 'properties.endpoints', 'type': 'AccountEndpoints'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'managed_resources': {'key': 'properties.managedResources', 'type': 'ManagedResources'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -434,17 +479,8 @@ class AccountUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(AccountUpdateParameters, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.tags = kwargs.get('tags', None)
-        self.cloud_connectors = kwargs.get('cloud_connectors', None)
-        self.created_at = None
-        self.created_by = None
-        self.created_by_object_id = None
-        self.endpoints = None
-        self.friendly_name = None
-        self.managed_resources = None
-        self.private_endpoint_connections = None
-        self.provisioning_state = None
-        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class CheckNameAvailabilityRequest(msrest.serialization.Model):
@@ -499,7 +535,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 
 
 class CloudConnectors(msrest.serialization.Model):
-    """Properties for configuring third party cloud connections.
+    """CloudConnectors.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -522,6 +558,25 @@ class CloudConnectors(msrest.serialization.Model):
     ):
         super(CloudConnectors, self).__init__(**kwargs)
         self.aws_external_id = None
+
+
+class CollectionAdminUpdate(msrest.serialization.Model):
+    """Collection administrator update.
+
+    :param object_id: Gets or sets the object identifier of the admin.
+    :type object_id: str
+    """
+
+    _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CollectionAdminUpdate, self).__init__(**kwargs)
+        self.object_id = kwargs.get('object_id', None)
 
 
 class DefaultAccountPayload(msrest.serialization.Model):
@@ -562,230 +617,6 @@ class DefaultAccountPayload(msrest.serialization.Model):
         self.scope_tenant_id = kwargs.get('scope_tenant_id', None)
         self.scope_type = kwargs.get('scope_type', None)
         self.subscription_id = kwargs.get('subscription_id', None)
-
-
-class ProxyResource(msrest.serialization.Model):
-    """Proxy Azure Resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Gets or sets the identifier.
-    :vartype id: str
-    :ivar name: Gets or sets the name.
-    :vartype name: str
-    :ivar type: Gets or sets the type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class DeletedAccount(ProxyResource):
-    """Soft Deleted Account resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Gets or sets the identifier.
-    :vartype id: str
-    :ivar name: Gets or sets the name.
-    :vartype name: str
-    :ivar type: Gets or sets the type.
-    :vartype type: str
-    :ivar account_id: Gets the account identifier associated with resource.
-    :vartype account_id: str
-    :ivar deleted_by: Gets the user identifier that deleted resource.
-    :vartype deleted_by: str
-    :ivar deletion_date: Gets the time at which the resource was soft deleted.
-    :vartype deletion_date: ~datetime.datetime
-    :ivar location: Gets the resource location.
-    :vartype location: str
-    :ivar scheduled_purge_date: Gets the scheduled purge datetime.
-    :vartype scheduled_purge_date: ~datetime.datetime
-    :ivar tags: A set of tags. Gets the account tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'account_id': {'readonly': True},
-        'deleted_by': {'readonly': True},
-        'deletion_date': {'readonly': True},
-        'location': {'readonly': True},
-        'scheduled_purge_date': {'readonly': True},
-        'tags': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
-        'deleted_by': {'key': 'properties.deletedBy', 'type': 'str'},
-        'deletion_date': {'key': 'properties.deletionDate', 'type': 'iso-8601'},
-        'location': {'key': 'properties.location', 'type': 'str'},
-        'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'iso-8601'},
-        'tags': {'key': 'properties.tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeletedAccount, self).__init__(**kwargs)
-        self.account_id = None
-        self.deleted_by = None
-        self.deletion_date = None
-        self.location = None
-        self.scheduled_purge_date = None
-        self.tags = None
-
-
-class DeletedAccountList(msrest.serialization.Model):
-    """Paged list of soft deleted account resources.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param count: Total item count.
-    :type count: long
-    :param next_link: The Url of next result page.
-    :type next_link: str
-    :param value: Required. Collection of items of type results.
-    :type value: list[~azure.mgmt.purview.models.DeletedAccount]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'count': {'key': 'count', 'type': 'long'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DeletedAccount]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeletedAccountList, self).__init__(**kwargs)
-        self.count = kwargs.get('count', None)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
-
-
-class DeletedAccountProperties(msrest.serialization.Model):
-    """The soft deleted account properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar account_id: Gets the account identifier associated with resource.
-    :vartype account_id: str
-    :ivar deleted_by: Gets the user identifier that deleted resource.
-    :vartype deleted_by: str
-    :ivar deletion_date: Gets the time at which the resource was soft deleted.
-    :vartype deletion_date: ~datetime.datetime
-    :ivar location: Gets the resource location.
-    :vartype location: str
-    :ivar scheduled_purge_date: Gets the scheduled purge datetime.
-    :vartype scheduled_purge_date: ~datetime.datetime
-    :ivar tags: A set of tags. Gets the account tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'account_id': {'readonly': True},
-        'deleted_by': {'readonly': True},
-        'deletion_date': {'readonly': True},
-        'location': {'readonly': True},
-        'scheduled_purge_date': {'readonly': True},
-        'tags': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'deleted_by': {'key': 'deletedBy', 'type': 'str'},
-        'deletion_date': {'key': 'deletionDate', 'type': 'iso-8601'},
-        'location': {'key': 'location', 'type': 'str'},
-        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeletedAccountProperties, self).__init__(**kwargs)
-        self.account_id = None
-        self.deleted_by = None
-        self.deletion_date = None
-        self.location = None
-        self.scheduled_purge_date = None
-        self.tags = None
-
-
-class DeletedAccountPropertiesAutoGenerated(DeletedAccountProperties):
-    """Gets or sets the properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar account_id: Gets the account identifier associated with resource.
-    :vartype account_id: str
-    :ivar deleted_by: Gets the user identifier that deleted resource.
-    :vartype deleted_by: str
-    :ivar deletion_date: Gets the time at which the resource was soft deleted.
-    :vartype deletion_date: ~datetime.datetime
-    :ivar location: Gets the resource location.
-    :vartype location: str
-    :ivar scheduled_purge_date: Gets the scheduled purge datetime.
-    :vartype scheduled_purge_date: ~datetime.datetime
-    :ivar tags: A set of tags. Gets the account tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'account_id': {'readonly': True},
-        'deleted_by': {'readonly': True},
-        'deletion_date': {'readonly': True},
-        'location': {'readonly': True},
-        'scheduled_purge_date': {'readonly': True},
-        'tags': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'deleted_by': {'key': 'deletedBy', 'type': 'str'},
-        'deletion_date': {'key': 'deletionDate', 'type': 'iso-8601'},
-        'location': {'key': 'location', 'type': 'str'},
-        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeletedAccountPropertiesAutoGenerated, self).__init__(**kwargs)
 
 
 class DimensionProperties(msrest.serialization.Model):
@@ -862,7 +693,7 @@ class ErrorResponseModel(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: Gets or sets the error.
-    :vartype error: ~azure.mgmt.purview.models.ErrorModel
+    :vartype error: ~azure.mgmt.purview.models.ErrorResponseModelError
     """
 
     _validation = {
@@ -870,7 +701,7 @@ class ErrorResponseModel(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorModel'},
+        'error': {'key': 'error', 'type': 'ErrorResponseModelError'},
     }
 
     def __init__(
@@ -1185,6 +1016,41 @@ class PrivateEndpoint(msrest.serialization.Model):
         self.id = kwargs.get('id', None)
 
 
+class ProxyResource(msrest.serialization.Model):
+    """Proxy Azure Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Gets or sets the identifier.
+    :vartype id: str
+    :ivar name: Gets or sets the name.
+    :vartype name: str
+    :ivar type: Gets or sets the type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
 class PrivateEndpointConnection(ProxyResource):
     """A private endpoint connection class.
 
@@ -1264,42 +1130,33 @@ class PrivateEndpointConnectionList(msrest.serialization.Model):
         self.value = kwargs['value']
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(msrest.serialization.Model):
     """A privately linkable resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Gets or sets the identifier.
+    :ivar id: The private link resource identifier.
     :vartype id: str
-    :ivar name: Gets or sets the name.
+    :ivar name: The private link resource name.
     :vartype name: str
-    :ivar type: Gets or sets the type.
+    :ivar properties: The private link resource properties.
+    :vartype properties: ~azure.mgmt.purview.models.PrivateLinkResourceProperties
+    :ivar type: The private link resource type.
     :vartype type: str
-    :ivar group_id: The private link resource group identifier.
-    :vartype group_id: str
-    :ivar required_members: This translates to how many Private IPs should be created for each
-     privately linkable resource.
-    :vartype required_members: list[str]
-    :ivar required_zone_names: The required zone names for private link resource.
-    :vartype required_zone_names: list[str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'properties': {'readonly': True},
         'type': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
-        'required_zone_names': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
         'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
     }
 
     def __init__(
@@ -1307,9 +1164,10 @@ class PrivateLinkResource(ProxyResource):
         **kwargs
     ):
         super(PrivateLinkResource, self).__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
-        self.required_zone_names = None
+        self.id = None
+        self.name = None
+        self.properties = None
+        self.type = None
 
 
 class PrivateLinkResourceList(msrest.serialization.Model):
@@ -1345,6 +1203,42 @@ class PrivateLinkResourceList(msrest.serialization.Model):
         self.value = kwargs['value']
 
 
+class PrivateLinkResourceProperties(msrest.serialization.Model):
+    """A privately linkable resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar group_id: The private link resource group identifier.
+    :vartype group_id: str
+    :ivar required_members: This translates to how many Private IPs should be created for each
+     privately linkable resource.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The required zone names for private link resource.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
+
+
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """The private link service connection state.
 
@@ -1371,3 +1265,101 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         self.actions_required = kwargs.get('actions_required', None)
         self.description = kwargs.get('description', None)
         self.status = kwargs.get('status', None)
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.purview.models.CreatedByType
+    :ivar last_modified_at: The timestamp of the last modification the resource (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.purview.models.LastModifiedByType
+    """
+
+    _validation = {
+        'created_at': {'readonly': True},
+        'created_by': {'readonly': True},
+        'created_by_type': {'readonly': True},
+        'last_modified_at': {'readonly': True},
+        'last_modified_by': {'readonly': True},
+        'last_modified_by_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_at = None
+        self.created_by = None
+        self.created_by_type = None
+        self.last_modified_at = None
+        self.last_modified_by = None
+        self.last_modified_by_type = None
+
+
+class TrackedResourceSystemData(SystemData):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.purview.models.CreatedByType
+    :ivar last_modified_at: The timestamp of the last modification the resource (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.purview.models.LastModifiedByType
+    """
+
+    _validation = {
+        'created_at': {'readonly': True},
+        'created_by': {'readonly': True},
+        'created_by_type': {'readonly': True},
+        'last_modified_at': {'readonly': True},
+        'last_modified_by': {'readonly': True},
+        'last_modified_by_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TrackedResourceSystemData, self).__init__(**kwargs)

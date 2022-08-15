@@ -6,52 +6,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import DiagnosticSettingsCategoryResource
-    from ._models_py3 import DiagnosticSettingsCategoryResourceCollection
-    from ._models_py3 import DiagnosticSettingsResource
-    from ._models_py3 import DiagnosticSettingsResourceCollection
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LocalizableString
-    from ._models_py3 import LogSettings
-    from ._models_py3 import MetadataValue
-    from ._models_py3 import Metric
-    from ._models_py3 import MetricAvailability
-    from ._models_py3 import MetricDefinition
-    from ._models_py3 import MetricDefinitionCollection
-    from ._models_py3 import MetricSettings
-    from ._models_py3 import MetricValue
-    from ._models_py3 import ProxyOnlyResource
-    from ._models_py3 import Response
-    from ._models_py3 import RetentionPolicy
-    from ._models_py3 import SubscriptionDiagnosticSettingsResource
-    from ._models_py3 import SubscriptionDiagnosticSettingsResourceCollection
-    from ._models_py3 import SubscriptionLogSettings
-    from ._models_py3 import SubscriptionProxyOnlyResource
-    from ._models_py3 import TimeSeriesElement
-except (SyntaxError, ImportError):
-    from ._models import DiagnosticSettingsCategoryResource  # type: ignore
-    from ._models import DiagnosticSettingsCategoryResourceCollection  # type: ignore
-    from ._models import DiagnosticSettingsResource  # type: ignore
-    from ._models import DiagnosticSettingsResourceCollection  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LocalizableString  # type: ignore
-    from ._models import LogSettings  # type: ignore
-    from ._models import MetadataValue  # type: ignore
-    from ._models import Metric  # type: ignore
-    from ._models import MetricAvailability  # type: ignore
-    from ._models import MetricDefinition  # type: ignore
-    from ._models import MetricDefinitionCollection  # type: ignore
-    from ._models import MetricSettings  # type: ignore
-    from ._models import MetricValue  # type: ignore
-    from ._models import ProxyOnlyResource  # type: ignore
-    from ._models import Response  # type: ignore
-    from ._models import RetentionPolicy  # type: ignore
-    from ._models import SubscriptionDiagnosticSettingsResource  # type: ignore
-    from ._models import SubscriptionDiagnosticSettingsResourceCollection  # type: ignore
-    from ._models import SubscriptionLogSettings  # type: ignore
-    from ._models import SubscriptionProxyOnlyResource  # type: ignore
-    from ._models import TimeSeriesElement  # type: ignore
+from ._models_py3 import DiagnosticSettingsCategoryResource
+from ._models_py3 import DiagnosticSettingsCategoryResourceCollection
+from ._models_py3 import DiagnosticSettingsResource
+from ._models_py3 import DiagnosticSettingsResourceCollection
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LocalizableString
+from ._models_py3 import LogSettings
+from ._models_py3 import MetadataValue
+from ._models_py3 import Metric
+from ._models_py3 import MetricAvailability
+from ._models_py3 import MetricDefinition
+from ._models_py3 import MetricDefinitionCollection
+from ._models_py3 import MetricSettings
+from ._models_py3 import MetricValue
+from ._models_py3 import ProxyOnlyResource
+from ._models_py3 import Response
+from ._models_py3 import RetentionPolicy
+from ._models_py3 import SubscriptionDiagnosticSettingsResource
+from ._models_py3 import SubscriptionDiagnosticSettingsResourceCollection
+from ._models_py3 import SubscriptionLogSettings
+from ._models_py3 import SubscriptionProxyOnlyResource
+from ._models_py3 import TimeSeriesElement
+
 
 from ._monitor_management_client_enums import (
     AggregationType,
@@ -59,7 +36,9 @@ from ._monitor_management_client_enums import (
     ResultType,
     Unit,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'DiagnosticSettingsCategoryResource',
     'DiagnosticSettingsCategoryResourceCollection',
@@ -88,3 +67,5 @@ __all__ = [
     'ResultType',
     'Unit',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

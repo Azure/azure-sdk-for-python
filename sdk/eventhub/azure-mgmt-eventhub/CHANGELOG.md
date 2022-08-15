@@ -1,5 +1,53 @@
 # Release History
 
+## 10.1.0 (2022-06-22)
+
+**Features**
+
+  - Added operation group ApplicationGroupOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Model Cluster has a new parameter supports_scaling
+  - Model EHNamespace has a new parameter minimum_tls_version
+  - Model EHNamespace has a new parameter public_network_access
+
+## 10.0.0 (2021-11-01)
+
+**Features**
+
+  - Model ErrorResponse has a new parameter error
+  - Model NetworkRuleSet has a new parameter location
+  - Model Eventhub has a new parameter location
+  - Model ConsumerGroup has a new parameter location
+  - Model ArmDisasterRecovery has a new parameter location
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model PrivateEndpointConnection has a new parameter location
+  - Model Destination has a new parameter data_lake_account_name
+  - Model Destination has a new parameter data_lake_subscription_id
+  - Model Destination has a new parameter data_lake_folder_path
+  - Model EHNamespace has a new parameter alternate_name
+  - Model OperationDisplay has a new parameter description
+  - Model AuthorizationRule has a new parameter location
+  - Added operation NamespacesOperations.list_network_rule_set
+  - Added operation group SchemaRegistryOperations
+
+**Breaking changes**
+
+  - Model ErrorResponse no longer has parameter message
+  - Model ErrorResponse no longer has parameter code
+
+## 9.1.0 (2021-09-17)
+
+**Features**
+
+  - Model Cluster has a new parameter system_data
+  - Model EHNamespace has a new parameter disable_local_auth
+  - Model EHNamespace has a new parameter status
+  - Model NetworkRuleSet has a new parameter public_network_access
+  - Added operation ClustersOperations.list_by_subscription
+
 ## 9.0.0 (2021-05-25)
 
 **Features**
@@ -49,7 +97,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -57,13 +105,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 4.0.0 (2020-06-12)
 

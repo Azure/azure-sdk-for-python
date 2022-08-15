@@ -8,11 +8,13 @@ parameters:
   DevFeedName: 'public/azure-sdk-for-python'
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
+  PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+  DocValidationImageId: "azuresdkimages.azurecr.io/pyrefautocr:latest"
 
 stages:
-  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+  - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
-      - stage: Release_${{artifact.safeName}}
+      - stage:
         displayName: 'Release: ${{artifact.name}}'
         dependsOn: ${{parameters.DependsOn}}
         condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
@@ -23,8 +25,8 @@ stages:
             environment: github
 
             pool:
-              name: azsdk-pool-mms-ubuntu-1804-general
-              vmImage: MMSUbuntu18.04
+              name: azsdk-pool-mms-ubuntu-2004-general
+              vmImage: MMSUbuntu20.04
 
             strategy:
               runOnce:
@@ -65,29 +67,39 @@ stages:
               dependsOn: TagRepository
 
               pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                name: azsdk-pool-mms-ubuntu-2004-general
+                vmImage: MMSUbuntu20.04
 
               strategy:
                 runOnce:
                   deploy:
                     steps:
-                      - checkout: none
+                      - checkout: self
                       - download: current
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
 
                       - task: UsePythonVersion@0
+                        inputs:
+                          versionSpec: '3.9'
 
                       - script: |
                           set -e
-                          pip install twine readme-renderer[md]
-                        displayName: Install Twine
+                          pip install -r eng/release_requirements.txt
+                          pip install tools/azure-sdk-tools
+                        displayName: Install Release Dependencies
+
+                      - task: PythonScript@0
+                        displayName: Verify Dependency Presence
+                        condition: and(succeeded(), ne(variables['Skip.VerifyDependencies'], 'true'))
+                        inputs:
+                          scriptPath: 'scripts/devops_tasks/verify_dependencies_present.py'
+                          arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
                       - task: TwineAuthenticate@1
                         displayName: 'Authenticate to registry: pypi.org'
                         inputs:
-                          pythonUploadServiceConnection: 'pypi.org - azure-sdk'
+                          pythonUploadServiceConnection: 'PyPI Upload (azure-sdk token)'
 
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
@@ -142,53 +154,41 @@ stages:
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
-          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
-            - deployment: PublishDocs
-              displayName: "Docs.MS Release"
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
-              environment: githubio
-              dependsOn: PublishPackage
+          - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                - deployment: PublishDocs
+                  displayName: Docs.MS Release
+                  condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+                  environment: githubio
+                  dependsOn: PublishPackage
 
-              pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                  pool:
+                    name: azsdk-pool-mms-ubuntu-2004-general
+                    vmImage: MMSUbuntu20.04
 
-              variables:
-                CIConfigs: "{'targets':[{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview','content_folder':'docs-ref-services/preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest','content_folder':'docs-ref-services/latest'}]}"
-
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - checkout: self
-
-                      - pwsh: |
-                          Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                        workingDirectory: $(Pipeline.Workspace)
-                        displayName: Output Visible Artifacts
-
-                      - template: /eng/common/pipelines/templates/steps/get-pr-owners.yml
-                        parameters:
-                          TargetVariable: "OwningGHUser"
-                          ServiceDirectory: ${{parameters.ServiceDirectory}}
-
-                      - template: /eng/common/pipelines/templates/steps/docs-metadata-release.yml
-                        parameters:
-                          ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                          PackageRepository: PyPI
-                          ReleaseSha: $(Build.SourceVersion)
-                          RepoId: Azure/azure-sdk-for-python
-                          WorkingDirectory: $(System.DefaultWorkingDirectory)
-                          TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-                          TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-                          PRBranchName: onboarding-${{artifact.name}}-$(Build.BuildId)
-                          ArtifactName: ${{artifact.name}}
-                          Language: 'python'
-                          DocRepoDestinationPath: 'docs-ref-services/'
-                          GHReviewersVariable: 'OwningGHUser'
-                          CIConfigs: $(CIConfigs)
-                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
-
+                  strategy:
+                    runOnce:
+                      deploy:
+                        steps:
+                          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                            parameters:
+                              SkipDefaultCheckout: true
+                              Paths:
+                                - sdk/**/*.md
+                                - .github/CODEOWNERS
+                          - download: current
+                          - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+                            parameters:
+                              PackageInfoLocations:
+                                - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+                              WorkingDirectory: $(System.DefaultWorkingDirectory)
+                              TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                              TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                              Language: 'python'
+                              SparseCheckoutPaths:
+                                - docs-ref-services/
+                                - metadata/
+                              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+                              DocValidationImageId: ${{parameters.DocValidationImageId}}
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
@@ -197,8 +197,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                name: azsdk-pool-mms-ubuntu-2004-general
+                vmImage: MMSUbuntu20.04
 
               strategy:
                 runOnce:
@@ -220,17 +220,15 @@ stages:
                           PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
                           CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
+                          PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+          - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+            - template: /eng/pipelines/templates/jobs/smoke.tests.yml
+              parameters:
+                Daily: false
+                ArtifactName: ${{ parameters.ArtifactName }}
+                Artifact: ${{ artifact }}
 
-  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - stage: SmokeTest_Release_Packages
-      displayName: Smoke Test Release Packages
-      jobs:
-        - template: /eng/pipelines/templates/jobs/smoke.tests.yml
-          parameters:
-            Daily: false
-            ArtifactName: ${{ parameters.ArtifactName }}
-            Artifacts: ${{ parameters.Artifacts }}
 
   - stage: Integration
     dependsOn: ${{parameters.DependsOn}}
@@ -240,8 +238,8 @@ stages:
       displayName: "Publish package to daily feed"
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
-        name: azsdk-pool-mms-ubuntu-1804-general
-        vmImage: MMSUbuntu18.04
+        name: azsdk-pool-mms-ubuntu-2004-general
+        vmImage: MMSUbuntu20.04
       steps:
       - checkout: none
       - download: current
@@ -264,7 +262,7 @@ stages:
               $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
               if ($fileCount -eq 0) {
-                Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
+                Write-Host "No alpha packages for ${{artifact.name}} to publish."
                 exit 0
               }
 
@@ -273,3 +271,38 @@ stages:
               twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.zip
               echo "Uploaded sdist to devops feed $(DevFeedName)"
             displayName: 'Publish ${{artifact.name}} alpha package'
+
+    - job: PublishDocsToNightlyBranch
+      dependsOn: PublishPackages
+      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+      pool:
+        name: azsdk-pool-mms-ubuntu-2004-general
+        vmImage: MMSUbuntu20.04
+      steps:
+        - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+          parameters:
+            SkipDefaultCheckout: true 
+            Paths:
+              - sdk/**/*.md
+              - .github/CODEOWNERS
+        - download: current
+        - pwsh: |
+            Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
+          displayName: Show visible artifacts
+
+        - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+          parameters:
+            PackageInfoLocations:
+              - ${{ each artifact in parameters.Artifacts }}:
+                - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                  - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+            WorkingDirectory: $(System.DefaultWorkingDirectory)
+            TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+            TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+            Language: 'python'
+            DailyDocsBuild: true
+            SparseCheckoutPaths:
+              - docs-ref-services/
+              - metadata/
+            PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+            DocValidationImageId: ${{parameters.DocValidationImageId}}

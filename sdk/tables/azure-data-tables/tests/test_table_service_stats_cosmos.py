@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase, SLEEP_DELAY
@@ -21,8 +21,7 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
 
 
 # --Test Class -----------------------------------------------------------------
-class TableServiceStatsTest(AzureTestCase, TableTestCase):
-
+class TestTableServiceStatsCosmos(AzureRecordedTestCase, TableTestCase):
     @staticmethod
     def override_response_body_with_unavailable_status(response):
         response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY
@@ -35,6 +34,7 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator
+    @recorded_by_proxy
     def test_table_service_stats_f(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -42,6 +42,7 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
 
     @pytest.mark.skip("JSON is invalid for cosmos")
     @cosmos_decorator
+    @recorded_by_proxy
     def test_table_service_stats_when_unavailable(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload
+from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -22,13 +22,13 @@ from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import TableAccessPolicy, TableItem
-from .._serialize import serialize_iso, _parameter_filter_substitution
-from .._deserialize import _return_headers_and_deserialized
+from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare_key
+from .._deserialize import deserialize_iso, _return_headers_and_deserialized
 from .._error import (
     _process_table_error,
-    _validate_table_name,
     _decode_error,
-    _reraise_error
+    _reraise_error,
+    _validate_tablename_error
 )
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
@@ -38,8 +38,11 @@ from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
-class TableClient(AsyncTablesBaseClient):
+
+class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -52,7 +55,7 @@ class TableClient(AsyncTablesBaseClient):
         endpoint: str,
         table_name: str,
         *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
@@ -61,17 +64,17 @@ class TableClient(AsyncTablesBaseClient):
         :param str table_name: The table name.
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
-            or AzureSasCredential from azure-core.
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+            AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
         :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+            :class:`~azure.core.credentials.AzureSasCredential` or
+            :class:`~azure.core.credentials.TokenCredential`
 
         :returns: None
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
-        _validate_table_name(table_name)
         self.table_name = table_name
         super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
@@ -158,13 +161,13 @@ class TableClient(AsyncTablesBaseClient):
         return cls(endpoint, table_name=table_name, **kwargs)
 
     @distributed_trace_async
-    async def get_table_access_policy(self, **kwargs) -> Mapping[str, TableAccessPolicy]:
+    async def get_table_access_policy(self, **kwargs) -> Mapping[str, Optional[TableAccessPolicy]]:
         """
         Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, :class:`~azure.data.tables.TableAccessPolicy`]
+        :rtype: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -176,17 +179,23 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
-        return {
-            s.id: s.access_policy
-            or TableAccessPolicy(start=None, expiry=None, permission=None)
-            for s in identifiers  # type: ignore
-        }
+            _process_table_error(error, table_name=self.table_name)
+        output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
+        for identifier in cast(List[SignedIdentifier], identifiers):
+            if identifier.access_policy:
+                output[identifier.id] = TableAccessPolicy(
+                    start=deserialize_iso(identifier.access_policy.start),
+                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    permission=identifier.access_policy.permission
+                )
+            else:
+                output[identifier.id] = None
+        return output
 
     @distributed_trace_async
     async def set_table_access_policy(
         self,
-        signed_identifiers: Mapping[str, TableAccessPolicy],
+        signed_identifiers: Mapping[str, Optional[TableAccessPolicy]],
         **kwargs
     ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
@@ -199,17 +208,21 @@ class TableClient(AsyncTablesBaseClient):
         """
         identifiers = []
         for key, value in signed_identifiers.items():
+            payload = None
             if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+                payload = TableAccessPolicy(
+                    start=serialize_iso(value.start),
+                    expiry=serialize_iso(value.expiry),
+                    permission=value.permission
+                )
+            identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
             await self._client.table.set_access_policy(
                 table=self.table_name, table_acl=identifiers or None, **kwargs  # type: ignore
             )
         except HttpResponseError as error:
             try:
-                _process_table_error(error)
+                _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
                 if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
                 and len(identifiers) > 5):
@@ -240,7 +253,7 @@ class TableClient(AsyncTablesBaseClient):
         try:
             result = await self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace_async
@@ -266,7 +279,7 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @overload
     async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
@@ -332,15 +345,15 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 if_match=if_match,
                 **kwargs
             )
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace_async
     async def create_entity(
@@ -381,6 +394,7 @@ class TableClient(AsyncTablesBaseClient):
                     raise ValueError("PartitionKey must be present in an entity")
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
+            _validate_tablename_error(decoded, self.table_name)
             _reraise_error(error)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
@@ -434,30 +448,30 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.REPLACE:
+            if mode == UpdateMode.REPLACE:
                 metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.MERGE:
+            elif mode == UpdateMode.MERGE:
                 metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     table_entity_properties=entity,  # type: ignore
                     **kwargs
                 )
             else:
-                raise ValueError("Mode type is not supported")
+                raise ValueError("Mode type '{}' is not supported.".format(mode))
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
@@ -495,14 +509,15 @@ class TableClient(AsyncTablesBaseClient):
         )
 
     @distributed_trace
-    def query_entities(
+    def query_entities(  # pylint: disable=line-too-long
         self,
         query_filter: str,
         **kwargs
     ) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
 
-        :param str query_filter: Specify a filter to return certain entities
+        :param str query_filter: Specify a filter to return certain entities.  For more information
+         on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
@@ -574,14 +589,14 @@ class TableClient(AsyncTablesBaseClient):
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
                 query_options=QueryOptions(select=user_select),
                 **kwargs
             )
             properties = _convert_to_entity(entity)
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return properties
 
     @distributed_trace_async
@@ -618,20 +633,20 @@ class TableClient(AsyncTablesBaseClient):
         try:
             metadata = None
             content = None
-            if mode is UpdateMode.MERGE:
+            if mode == UpdateMode.MERGE:
                 metadata, content = await self._client.table.merge_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
                 )
-            elif mode is UpdateMode.REPLACE:
+            elif mode == UpdateMode.REPLACE:
                 metadata, content = await self._client.table.update_entity(  # type: ignore
                     table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs
@@ -644,23 +659,30 @@ class TableClient(AsyncTablesBaseClient):
                     )
                 )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace_async
     async def submit_transaction(
         self,
-        operations: Iterable[TransactionOperationType],
+        operations: Union[
+            Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]
+        ],
         **kwargs
     ) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.
 
-        :param operations: The list of operations to commit in a transaction. This should be a list of
-         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
-         kwargs for that operation.
-        :type operations: Iterable[Tuple[str, EntityType]]
+        :param operations: The list of operations to commit in a transaction. This should be an iterable
+         (or async iterable) of tuples containing an operation name, the entity on which to operate,
+         and optionally, a dict of additional kwargs for that operation. For example::
+
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
+            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
+
+        :type operations:
+         Union[Iterable[Tuple[str, Entity, Mapping[str, Any]]],AsyncIterable[Tuple[str, Entity, Mapping[str, Any]]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: List[Mapping[str, Any]]
         :raises ~azure.data.tables.TableTransactionError:
@@ -683,13 +705,17 @@ class TableClient(AsyncTablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs
         )
-        for operation in operations:
+        try:
+            for operation in operations:  # type: ignore
+                batched_requests.add_operation(operation)
+        except TypeError:
             try:
-                operation_kwargs = operation[2]  # type: ignore
-            except IndexError:
-                operation_kwargs = {}
-            try:
-                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
-            except AttributeError:
-                raise ValueError("Unrecognized operation: {}".format(operation))
-        return await self._batch_send(*batched_requests.requests, **kwargs)
+                async for operation in operations:  # type: ignore
+                    batched_requests.add_operation(operation)
+            except TypeError:
+                raise TypeError(
+                  "The value of 'operations' must be an iterator or async iterator "
+                  "of Tuples. Please check documentation for correct Tuple format."
+                )
+
+        return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)

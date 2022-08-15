@@ -5,31 +5,27 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search6dc91ab1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    uri: https://search6dc91ab1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Iv7Hv/cf
-        3N35fwC74FOIBQAAAA==
+      string: "\uFEFF10"
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Thu, 20 May 2021 17:15:03 GMT
-      elapsed-time: '134'
+      date: Tue, 31 Aug 2021 17:24:25 GMT
+      elapsed-time: '3'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: e9bbbd54-b98e-11eb-b8e4-a0481ca055a9
+      request-id: 4ba7b53c-0a80-11ec-9a00-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search6dc91ab1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    url: https://search6dc91ab1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
 version: 1

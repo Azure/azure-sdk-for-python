@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import sys
-from re import match
+import re
 from enum import Enum
 
 from azure.core.exceptions import (
@@ -28,7 +28,6 @@ else:
     _str = str
 
 
-
 def _to_str(value):
     return _str(value) if value is not None else None
 
@@ -39,6 +38,19 @@ _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
 _ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
 
+# Storage table validation regex breakdown:
+# ^ Match start of string.
+# [a-zA-Z]{1} Match any letter for exactly 1 character.
+# [a-zA-Z0-9]{2,62} Match any alphanumeric character for between 2 and 62 characters.
+# $ End of string
+_STORAGE_VALID_TABLE = re.compile(r"^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$")
+
+# Cosmos table validation regex breakdown:
+# ^ Match start of string.
+# [^/\#?]{0,254} Match any character that is not /\#? for between 0-253 characters.
+# [^ /\#?]{1} Match any character that is not /\#? or a space for exactly 1 character.
+# $ End of string
+_COSMOS_VALID_TABLE = re.compile(r"^[^/\\#?]{0,253}[^ /\\#?]{1}$")
 
 def _validate_not_none(param_name, param):
     if param is None:
@@ -60,14 +72,57 @@ def _wrap_exception(ex, desired_type):
     return desired_type("{}: {}".format(ex.__class__.__name__, msg))
 
 
-def _validate_table_name(table_name):
-    if match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
+def _validate_storage_tablename(table_name):
+    if _STORAGE_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."
+            "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."  # pylint: disable=line-too-long
         )
 
 
-def _decode_error(response, error_message=None, error_type=None, **kwargs):
+def _validate_cosmos_tablename(table_name):
+    if _COSMOS_VALID_TABLE.match(table_name) is None:
+        raise ValueError(
+            "Cosmos table names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
+        )
+
+
+def _validate_tablename_error(decoded_error, table_name):
+    if (decoded_error.error_code == 'InvalidResourceName' and
+        'The specifed resource name contains invalid characters' in decoded_error.message):
+        # This error is raised by Storage for any table/entity operations where the table name contains
+        # forbidden characters.
+        _validate_storage_tablename(table_name)
+    elif (decoded_error.error_code == 'OutOfRangeInput' and
+          'The specified resource name length is not within the permissible limits' in decoded_error.message):
+        # This error is raised by Storage for any table/entity operations where the table name is < 3 or > 63
+        # characters long
+        _validate_storage_tablename(table_name)
+    elif (decoded_error.error_code == 'InternalServerError' and
+          ('The resource name presented contains invalid character' in decoded_error.message or
+           'The resource name can\'t end with space'in decoded_error.message)):
+        # This error is raised by Cosmos during create_table if the table name contains forbidden
+        # characters or ends in a space.
+        _validate_cosmos_tablename(table_name)
+    elif (decoded_error.error_code == 'BadRequest' and
+          'The input name is invalid.' in decoded_error.message):
+        # This error is raised by Cosmos specifically during create_table if the table name is 255 or more
+        # characters. Entity operations on a too-long-table name simply result in a ResourceNotFoundError.
+        _validate_cosmos_tablename(table_name)
+    elif (decoded_error.error_code == 'InvalidInput' and
+          ('Request url is invalid.' in decoded_error.message or
+           'One of the input values is invalid.' in decoded_error.message)):
+        # This error is raised by Cosmos for any entity operations or delete_table if the table name contains
+        # forbidden characters (except in the case of trailing space and backslash).
+        _validate_cosmos_tablename(table_name)
+    elif (decoded_error.error_code == 'Unauthorized' and
+          ('The input authorization token can\'t serve the request.' in decoded_error.message or
+           'The MAC signature found in the HTTP request' in decoded_error.message)):
+        # This error is raised by Cosmos specifically on entity operations where the table name contains
+        # some forbidden characters, and seems to be a bug in the service authentication.
+        _validate_cosmos_tablename(table_name)
+
+
+def _decode_error(response, error_message=None, error_type=None, **kwargs):  # pylint: disable=too-many-branches
     error_code = response.headers.get("x-ms-error-code")
     additional_data = {}
     try:
@@ -148,8 +203,13 @@ def _reraise_error(decoded_error):
         raise decoded_error
 
 
-def _process_table_error(storage_error):
-    decoded_error = _decode_error(storage_error.response, storage_error.message)
+def _process_table_error(storage_error, table_name=None):
+    try:
+        decoded_error = _decode_error(storage_error.response, storage_error.message)
+    except AttributeError:
+        raise storage_error
+    if table_name:
+        _validate_tablename_error(decoded_error, table_name)
     _reraise_error(decoded_error)
 
 
@@ -179,8 +239,8 @@ class TableTransactionError(HttpResponseError):
 class RequestTooLargeError(TableTransactionError):
     """An error response with status code 413 - Request Entity Too Large"""
 
-
-class TableErrorCode(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class TableErrorCode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"

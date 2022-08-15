@@ -2,12 +2,10 @@ import asyncio
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase
 
-class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
 
-    def setUp(self):
-        super(AzureMgmtAsyncTestCase, self).setUp()
+class AzureMgmtRecordedAsyncTestCase(AzureMgmtRecordedTestCase):
 
     @property
     def event_loop(self):
@@ -21,7 +19,7 @@ class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
             credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
         return client(
             credential=credential,
-            subscription_id=self.settings.SUBSCRIPTION_ID
+            subscription_id=self.get_settings_value("SUBSCRIPTION_ID")
         )
 
     def to_list(self, ait):
@@ -30,4 +28,5 @@ class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
             async for item in ait:
                 result.append(item)
             return result
+
         return self.event_loop.run_until_complete(lst())

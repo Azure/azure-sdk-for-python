@@ -1,0 +1,35 @@
+{
+    "@id": "dtmi:mymodels:line;1",
+    "@type": "Interface",
+    "displayName": "line",
+    "contents": [
+        {
+            "@type": "Property",
+            "name": "capacity",
+            "displayName": "capacity",
+            "schema": "double",
+            "comment": "How many people can safely wait in this line."
+        },
+        {
+            "@type": "Property",
+            "name": "status",
+            "displayName": "status",
+            "schema": "string",
+            "comment": "current status of the line"
+        },
+        {
+            "@type": "Relationship",
+            "name": "leadsTo",
+            "properties": [
+                {
+                    "@type": "Property",
+                    "name": "walk_distance",
+                    "schema": "double"
+                }
+            ]
+        }
+    ],
+    "@context": "dtmi:dtdl:context;2",
+    "comment": "lines can hold a number of people.",
+    "description": "a group of people waiting to get into a place."
+}

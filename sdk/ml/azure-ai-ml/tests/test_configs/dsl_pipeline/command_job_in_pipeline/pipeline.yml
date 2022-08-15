@@ -1,0 +1,71 @@
+
+type: pipeline
+
+inputs:
+  pipeline_job_training_input:
+    path: ./data
+  pipeline_job_test_input:
+    path: ./data
+  pipeline_job_training_max_epocs: 20
+  pipeline_job_training_learning_rate: 1.8
+  pipeline_job_learning_rate_schedule: 'time-based'
+
+
+#specify a different store than the workspace default datastore
+#settings:
+#  datastore: azureml:testepstorageyzmrkcbu_azureml
+
+compute: azureml:cpu-cluster
+
+jobs:
+  train_job:
+    display_name: "my-train-job"
+    type: command
+    #this job will use the default compute specified at pipeline job level.
+    #compute: azureml:cpu-cluster
+    inputs:
+      training_data:
+        path: ./data
+      max_epocs: 20
+      learning_rate: 1.8
+      learning_rate_schedule: 'time-based'
+    code: ./train_src
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    command: >-
+      python train.py
+      --training_data ${{inputs.training_data}}
+      --max_epocs ${{inputs.max_epocs}}
+      --learning_rate ${{inputs.learning_rate}}
+      --learning_rate_schedule ${{inputs.learning_rate_schedule}}
+
+  score_job:
+    display_name: "my-score-job"
+    type: command
+    # this job will use a different compute than the default specified at pipeline job level.
+    compute: azureml:gpu-cluster
+    inputs:
+      model_input:
+        path: ./data
+      test_data:
+        path: ./data
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    code: ./score_src
+    command: >-
+      python score.py
+      --model_input ${{inputs.model_input}}
+      --test_data ${{inputs.test_data}}
+
+  evaluate_job:
+    display_name: "my-evaluate-job"
+    type: command
+    compute: azureml:cpu-cluster
+    inputs:
+      scoring_result:
+        path: ./data
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    #code: ./eval_src
+    command: echo "hello world"
+    #command: >-
+    #  python eval.py
+    #  --scoring_result ${{inputs.scoring_result}}
+    #  --eval_output ${{outputs.eval_output}}

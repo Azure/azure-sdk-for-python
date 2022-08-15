@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-
+from itertools import product
 import azure.core
 from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ServiceRequestError
@@ -15,7 +15,7 @@ from azure.core.pipeline.policies import (
     AzureKeyCredentialPolicy,
     AzureSasCredentialPolicy,
 )
-from azure.core.pipeline.transport import HttpRequest
+from utils import HTTP_REQUESTS
 
 import pytest
 
@@ -26,7 +26,8 @@ except ImportError:
     from mock import Mock
 
 
-def test_bearer_policy_adds_header():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_adds_header(http_request):
     """The bearer token policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
     expected_token = AccessToken("expected_token", 2524608000)
@@ -39,19 +40,20 @@ def test_bearer_policy_adds_header():
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
 
     pipeline = Pipeline(transport=Mock(), policies=policies)
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(http_request("GET", "https://spam.eggs"))
 
     assert fake_credential.get_token.call_count == 1
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(http_request("GET", "https://spam.eggs"))
 
     # Didn't need a new token
     assert fake_credential.get_token.call_count == 1
 
 
-def test_bearer_policy_send():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_send(http_request):
     """The bearer token policy should invoke the next policy's send method and return the result"""
-    expected_request = HttpRequest("GET", "https://spam.eggs")
+    expected_request = http_request("GET", "https://spam.eggs")
     expected_response = Mock()
 
     def verify_request(request):
@@ -65,15 +67,16 @@ def test_bearer_policy_send():
     assert response is expected_response
 
 
-def test_bearer_policy_token_caching():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_token_caching(http_request):
     good_for_one_hour = AccessToken("token", time.time() + 3600)
     credential = Mock(get_token=Mock(return_value=good_for_one_hour))
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(http_request("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 1  # policy has no token at first request -> it should call get_token
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(http_request("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 1  # token is good for an hour -> policy should return it from cache
 
     expired_token = AccessToken("token", time.time())
@@ -81,14 +84,15 @@ def test_bearer_policy_token_caching():
     credential.get_token.return_value = expired_token
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(http_request("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 1
 
-    pipeline.run(HttpRequest("GET", "https://spam.eggs"))
+    pipeline.run(http_request("GET", "https://spam.eggs"))
     assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
 
 
-def test_bearer_policy_optionally_enforces_https():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_optionally_enforces_https(http_request):
     """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
 
     def assert_option_popped(request, **kwargs):
@@ -102,20 +106,21 @@ def test_bearer_policy_optionally_enforces_https():
 
     # by default and when enforce_https=True, the policy should raise when given an insecure request
     with pytest.raises(ServiceRequestError):
-        pipeline.run(HttpRequest("GET", "http://not.secure"))
+        pipeline.run(http_request("GET", "http://not.secure"))
     with pytest.raises(ServiceRequestError):
-        pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=True)
+        pipeline.run(http_request("GET", "http://not.secure"), enforce_https=True)
 
     # when enforce_https=False, an insecure request should pass
-    pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+    pipeline.run(http_request("GET", "http://not.secure"), enforce_https=False)
 
     # https requests should always pass
-    pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=False)
-    pipeline.run(HttpRequest("GET", "https://secure"), enforce_https=True)
-    pipeline.run(HttpRequest("GET", "https://secure"))
+    pipeline.run(http_request("GET", "https://secure"), enforce_https=False)
+    pipeline.run(http_request("GET", "https://secure"), enforce_https=True)
+    pipeline.run(http_request("GET", "https://secure"))
 
 
-def test_bearer_policy_preserves_enforce_https_opt_out():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_preserves_enforce_https_opt_out(http_request):
     """The policy should use request context to preserve an opt out from https enforcement"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -127,10 +132,11 @@ def test_bearer_policy_preserves_enforce_https_opt_out():
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
-    pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
+    pipeline.run(http_request("GET", "http://not.secure"), enforce_https=False)
 
 
-def test_bearer_policy_default_context():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_default_context(http_request):
     """The policy should call get_token with the scopes given at construction, and no keyword arguments, by default"""
     expected_scope = "scope"
     token = AccessToken("", 0)
@@ -138,12 +144,13 @@ def test_bearer_policy_default_context():
     policy = BearerTokenCredentialPolicy(credential, expected_scope)
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
-    pipeline.run(HttpRequest("GET", "https://localhost"))
+    pipeline.run(http_request("GET", "https://localhost"))
 
     credential.get_token.assert_called_once_with(expected_scope)
 
 
-def test_bearer_policy_context_unmodified_by_default():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_context_unmodified_by_default(http_request):
     """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -154,10 +161,11 @@ def test_bearer_policy_context_unmodified_by_default():
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
-    pipeline.run(HttpRequest("GET", "https://secure"))
+    pipeline.run(http_request("GET", "https://secure"))
 
 
-def test_bearer_policy_calls_on_challenge():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_calls_on_challenge(http_request):
     """BearerTokenCredentialPolicy should call its on_challenge method when it receives an authentication challenge"""
 
     class TestPolicy(BearerTokenCredentialPolicy):
@@ -173,12 +181,13 @@ def test_bearer_policy_calls_on_challenge():
     transport = Mock(send=Mock(return_value=response))
 
     pipeline = Pipeline(transport=transport, policies=policies)
-    pipeline.run(HttpRequest("GET", "https://localhost"))
+    pipeline.run(http_request("GET", "https://localhost"))
 
     assert TestPolicy.called
 
 
-def test_bearer_policy_cannot_complete_challenge():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_cannot_complete_challenge(http_request):
     """BearerTokenCredentialPolicy should return the 401 response when it can't complete its challenge"""
 
     expected_scope = "scope"
@@ -189,14 +198,15 @@ def test_bearer_policy_cannot_complete_challenge():
     policies = [BearerTokenCredentialPolicy(credential, expected_scope)]
 
     pipeline = Pipeline(transport=transport, policies=policies)
-    response = pipeline.run(HttpRequest("GET", "https://localhost"))
+    response = pipeline.run(http_request("GET", "https://localhost"))
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
     credential.get_token.assert_called_once_with(expected_scope)
 
 
-def test_bearer_policy_calls_sansio_methods():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_calls_sansio_methods(http_request):
     """BearerTokenCredentialPolicy should call SansIOHttpPolicy methods as does _SansIOHTTPPolicyRunner"""
 
     class TestPolicy(BearerTokenCredentialPolicy):
@@ -216,7 +226,7 @@ def test_bearer_policy_calls_sansio_methods():
     transport = Mock(send=Mock(return_value=Mock(status_code=200)))
 
     pipeline = Pipeline(transport=transport, policies=[policy])
-    pipeline.run(HttpRequest("GET", "https://localhost"))
+    pipeline.run(http_request("GET", "https://localhost"))
 
     policy.on_request.assert_called_once_with(policy.request)
     policy.on_response.assert_called_once_with(policy.request, policy.response)
@@ -225,16 +235,36 @@ def test_bearer_policy_calls_sansio_methods():
     class TestException(Exception):
         pass
 
+    # during the first send...
     transport = Mock(send=Mock(side_effect=TestException))
     policy = TestPolicy(credential, "scope")
     pipeline = Pipeline(transport=transport, policies=[policy])
     with pytest.raises(TestException):
-        pipeline.run(HttpRequest("GET", "https://localhost"))
+        pipeline.run(http_request("GET", "https://localhost"))
+    policy.on_exception.assert_called_once_with(policy.request)
+
+    # ...or the second
+    def raise_the_second_time(*args, **kwargs):
+        if raise_the_second_time.calls == 0:
+            raise_the_second_time.calls = 1
+            return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
+        raise TestException()
+    raise_the_second_time.calls = 0
+
+    policy = TestPolicy(credential, "scope")
+    policy.on_challenge = Mock(return_value=True)
+    transport = Mock(send=Mock(wraps=raise_the_second_time))
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    with pytest.raises(TestException):
+        pipeline.run(http_request("GET", "https://localhost"))
+    assert transport.send.call_count == 2
+    policy.on_challenge.assert_called_once()
     policy.on_exception.assert_called_once_with(policy.request)
 
 
 @pytest.mark.skipif(azure.core.__version__ >= "2", reason="this test applies only to azure-core 1.x")
-def test_key_vault_regression():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_key_vault_regression(http_request):
     """Test for regression affecting azure-keyvault-* 4.0.0. This test must pass, unmodified, for all 1.x versions."""
 
     from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
@@ -254,7 +284,8 @@ def test_key_vault_regression():
     assert policy._token.token == token
 
 
-def test_azure_key_credential_policy():
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_key_credential_policy(http_request):
     """Tests to see if we can create an AzureKeyCredentialPolicy"""
 
     key_header = "api_key"
@@ -268,7 +299,7 @@ def test_azure_key_credential_policy():
     credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
-    pipeline.run(HttpRequest("GET", "https://test_key_credential"))
+    pipeline.run(http_request("GET", "https://test_key_credential"))
 
 
 def test_azure_key_credential_policy_raises():
@@ -294,7 +325,7 @@ def test_azure_key_credential_updates():
     credential.update(api_key)
     assert credential.key == api_key
 
-@pytest.mark.parametrize("sas,url,expected_url", [
+combinations = [
     ("sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
     ("sig=test_signature", "https://test_sas_credential?sig=test_signature", "https://test_sas_credential?sig=test_signature"),
@@ -303,10 +334,12 @@ def test_azure_key_credential_updates():
     ("?sig=test_signature", "https://test_sas_credential?", "https://test_sas_credential?sig=test_signature"),
     ("sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
-])
-def test_azure_sas_credential_policy(sas, url, expected_url):
-    """Tests to see if we can create an AzureSasCredentialPolicy"""
+]
 
+@pytest.mark.parametrize("combinations,http_request", product(combinations, HTTP_REQUESTS))
+def test_azure_sas_credential_policy(combinations, http_request):
+    """Tests to see if we can create an AzureSasCredentialPolicy"""
+    sas, url, expected_url = combinations
     def verify_authorization(request):
         assert request.url == expected_url
 
@@ -315,7 +348,7 @@ def test_azure_sas_credential_policy(sas, url, expected_url):
     credential_policy = AzureSasCredentialPolicy(credential=credential)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
-    pipeline.run(HttpRequest("GET", url))
+    pipeline.run(http_request("GET", url))
 
 def test_azure_sas_credential_updates():
     """Tests AzureSasCredential updates"""

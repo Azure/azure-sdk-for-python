@@ -82,7 +82,7 @@
         "type": "string",
         "value": "[variables('schemaRegistryGroup')]"
       },
-      "SCHEMAREGISTRY_ENDPOINT": {
+      "SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE": {
         "type": "string",
         "value": "[variables('schemaRegistryEndpoint')]"
       }

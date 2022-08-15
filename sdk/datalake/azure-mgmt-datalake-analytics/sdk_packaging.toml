@@ -1,5 +1,9 @@
 [packaging]
 package_name = "azure-mgmt-datalake-analytics"
-package_pprint_name = "Data Lake Analytics Management"
-package_doc_id = "data-lake-analytics"
+package_nspkg = "azure-mgmt-datalake-nspkg"
+package_pprint_name = "Datalake-analytics Management"
+package_doc_id = ""
 is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true

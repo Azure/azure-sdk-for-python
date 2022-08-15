@@ -15,6 +15,7 @@ https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-bu
 """
 
 import os
+import re
 import time
 from base64 import b64encode, b64decode
 from hashlib import sha256
@@ -80,6 +81,13 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
         # Once a redirect error is received, close the original client and recreate a new one to the re-directed address
         receive_client.close()
         fully_qualified_name = redirect.hostname.decode("utf-8")
+        # Use regular expression to parse the Event Hub name from the IoT Hub redirection address
+        if redirect.address:
+            # The regex searches for the Event Hub compatible name in the redirection address. The name is nested in
+            # between the port and 'ConsumerGroups'.
+            # (ex. "...servicebus.windows.net:12345/<Event Hub name>/ConsumerGroups/...").
+            # The regex matches string ':<digits>/', then any characters, then the string '/ConsumerGroups'.
+            iot_hub_name = re.search(":\d+\/.*/ConsumerGroups", str(redirect.address)).group(0).split("/")[1]
         return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
             fully_qualified_name,
             shared_access_key_name,
@@ -115,5 +123,4 @@ async def receive_events_from_iothub(iothub_conn_str):
 
 if __name__ == '__main__':
     iothub_conn_str = os.environ["IOTHUB_CONN_STR"]
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(receive_events_from_iothub(iothub_conn_str))
+    asyncio.run(receive_events_from_iothub(iothub_conn_str))

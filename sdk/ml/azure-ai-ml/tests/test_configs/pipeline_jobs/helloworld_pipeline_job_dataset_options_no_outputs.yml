@@ -1,0 +1,47 @@
+type: pipeline
+
+name: simplePipelineJobWithMultipleDatasetCases
+description: The hello world pipeline job with multiple data cases
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of dataset inputs
+
+  # registered dataset with version
+  # Mount is default if mode is not specified
+  job_in_dataset_name_version_def_mode:
+    type: uri_file
+    path: https://sag3uw5aitwz5iw.blob.core.windows.net/azureml-blobstore-525ecb0d-ade1-4979-bed9-a80da71c5fba/LocalUpload/79dd8f7e00e2fe2d398effb65ff874e3/data/sample1.csv
+
+  # registered dataset with version
+  # Mount mode specified
+  job_in_dataset_name_version_mode_mount:
+    mode: ro_mount
+    type: uri_file
+    path: https://sag3uw5aitwz5iw.blob.core.windows.net/azureml-blobstore-525ecb0d-ade1-4979-bed9-a80da71c5fba/LocalUpload/79dd8f7e00e2fe2d398effb65ff874e3/data/sample1.csv
+
+  # registered dataset with version
+  # Download mode specified
+  job_in_dataset_name_version_mode_download:
+    mode: download
+    type: uri_file
+    path: https://sag3uw5aitwz5iw.blob.core.windows.net/azureml-blobstore-525ecb0d-ade1-4979-bed9-a80da71c5fba/LocalUpload/79dd8f7e00e2fe2d398effb65ff874e3/data/sample1.csv
+
+
+  # blob store directory
+  job_in_dataset_by_blob_dir:
+    path: azureml://datastores/workspaceblobstore/paths/LocalUpload/79dd8f7e00e2fe2d398effb65ff874e3/data
+
+jobs:
+  multiple_data_component:
+    component: azureml:microsoftsamplesCommandComponentMultipleData:1
+    type: command
+    inputs:
+      component_in_1: ${{parent.inputs.job_in_dataset_name_version_def_mode}}
+      component_in_2: ${{parent.inputs.job_in_dataset_name_version_mode_mount}}
+      component_in_3: ${{parent.inputs.job_in_dataset_name_version_mode_download}}
+      component_in_4: ${{parent.inputs.job_in_dataset_by_blob_dir}}

@@ -20,10 +20,12 @@ requirements:
     - python
     - requests >=2.18.4
     - six >=1.11.0
+    - typing-extensions>=4.0.1
   run:
     - python
     - requests >=2.18.4
     - six >=1.11.0
+    - typing-extensions>=4.0.1
 
 test:
   imports:
@@ -34,13 +36,13 @@ test:
     - azure.core.polling
 
 about:
-  home: "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core"
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: Microsoft Azure Core Library for Python{{ environ.get('CORE_SUMMARY', '') }}
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:

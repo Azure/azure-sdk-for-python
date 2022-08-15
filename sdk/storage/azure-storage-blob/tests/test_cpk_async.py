@@ -16,8 +16,8 @@ from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob import BlobType, BlobBlock, CustomerProvidedEncryptionKey, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient
-from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
@@ -86,14 +86,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_and_put_block_list(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_and_put_block_list(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -132,13 +132,13 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_block_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_block_blob_with_chunks(self, storage_account_name, storage_account_key):
         # parallel operation
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -174,9 +174,9 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_block_blob_with_sub_streams(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_block_blob_with_sub_streams(self, storage_account_name, storage_account_key):
         # problem with the recording framework can only run live
 
         # Act
@@ -184,7 +184,7 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -218,14 +218,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_block_blob_with_single_chunk(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_block_blob_with_single_chunk(self, storage_account_name, storage_account_key):
         # Act
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -256,14 +256,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.last_modified, upload_response['last_modified'])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_from_url_and_commit(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_from_url_and_commit(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -328,14 +328,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_append_block(self, resource_group, location, storage_account, storage_account_key):
+    async def test_append_block(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -366,14 +366,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(await blob.readall(), b'AAABBBCCC')
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
+    async def test_append_block_from_url(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -422,14 +422,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(await blob.readall(), self.byte_data[0: 4 * 1024])
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_append_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_append_blob_with_chunks(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -460,14 +460,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(await blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_update_page(self, resource_group, location, storage_account, storage_account_key):
+    async def test_update_page(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -502,14 +502,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(await blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_update_page_from_url(self, resource_group, location, storage_account, storage_account_key):
+    async def test_update_page_from_url(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -562,13 +562,13 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_page_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
+    async def test_create_page_blob_with_chunks(self, storage_account_name, storage_account_key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -601,14 +601,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(await blob.readall(), self.byte_data)
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_set_blob_metadata(self, resource_group, location, storage_account, storage_account_key):
+    async def test_get_set_blob_metadata(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
@@ -647,14 +647,14 @@ class StorageCPKAsyncTest(AsyncStorageTestCase):
         self.assertEqual(md['up'], 'upval')
         self.assertFalse('Up' in md)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_snapshot_blob(self, resource_group, location, storage_account, storage_account_key):
+    async def test_snapshot_blob(self, storage_account_name, storage_account_key):
         # Arrange
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             storage_account_key,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,

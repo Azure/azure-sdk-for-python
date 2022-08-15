@@ -3,7 +3,6 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
       ServiceDirectory: identity
       EnvVars:
         AZURE_CLIENT_ID: $(python-identity-client-id)
@@ -12,3 +11,7 @@ stages:
         CERTIFICATE_PASSWORD: $(python-identity-certificate-password)
         PEM_CONTENT: $(python-identity-certificate)
         PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password)
+        PFX_CONTENT: $(python-identity-certificate-pfx)
+        PFX_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password-pfx)
+        AZURE_TEST_RUN_LIVE: true
+        AZURE_SKIP_LIVE_RECORDING: 'True'

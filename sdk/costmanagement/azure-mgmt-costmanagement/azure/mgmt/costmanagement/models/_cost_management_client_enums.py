@@ -124,7 +124,7 @@ class ChartType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TABLE = "Table"
 
 class ExecutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The last known status of the export execution.
+    """The status of the export execution.
     """
 
     QUEUED = "Queued"
@@ -176,7 +176,7 @@ class ForecastType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AMORTIZED_COST = "AmortizedCost"
 
 class FormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The format of the export being delivered. Currently only 'Csv' is supported.
+    """The format of the export being delivered.
     """
 
     CSV = "Csv"
@@ -185,10 +185,13 @@ class FunctionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the aggregation function to use.
     """
 
+    AVG = "Avg"
+    MAX = "Max"
+    MIN = "Min"
     SUM = "Sum"
 
 class GranularityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The granularity of rows in the forecast.
+    """The granularity of rows in the query.
     """
 
     DAILY = "Daily"
@@ -207,6 +210,14 @@ class MetricType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACTUAL_COST = "ActualCost"
     AMORTIZED_COST = "AmortizedCost"
     AHUB = "AHUB"
+
+class OperationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of the long running operation.
+    """
+
+    RUNNING = "Running"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
 
 class OperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The operator to use for comparison.
@@ -228,12 +239,6 @@ class QueryColumnType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TAG = "Tag"
     DIMENSION = "Dimension"
-
-class QueryOperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operator to use for comparison.
-    """
-
-    IN_ENUM = "In"
 
 class RecurrenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The schedule recurrence.
@@ -283,8 +288,18 @@ class ReportType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     USAGE = "Usage"
 
+class SettingsPropertiesStartOn(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates what scope Cost Management in the Azure portal should default to. Allowed values:
+    LastUsed.
+    """
+
+    LAST_USED = "LastUsed"
+    SCOPE_PICKER = "ScopePicker"
+    SPECIFIC_SCOPE = "SpecificScope"
+
 class StatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the export's schedule. If 'Inactive', the export's schedule is paused.
+    """The status of the schedule. Whether active or not. If inactive, the export's scheduled
+    execution is paused.
     """
 
     ACTIVE = "Active"

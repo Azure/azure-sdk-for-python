@@ -1,0 +1,100 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "356",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "I should take my cat to the veterinarian.",
+              "language": "es"
+            },
+            {
+              "id": "2",
+              "text": "Este es un document escrito en Espa\u00F1ol.",
+              "language": "es"
+            },
+            {
+              "id": "3",
+              "text": "\u732B\u306F\u5E78\u305B",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "fd46a113-3e28-4ccd-8240-93cc7b2a4d91",
+        "Content-Length": "498",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Wed, 08 Jun 2022 01:44:01 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "283"
+      },
+      "ResponseBody": {
+        "kind": "EntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "entities": [
+                {
+                  "text": "veterinarian",
+                  "category": "PersonType",
+                  "offset": 28,
+                  "length": 12,
+                  "confidenceScore": 1.0
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "entities": [
+                {
+                  "text": "un",
+                  "category": "Quantity",
+                  "subcategory": "Number",
+                  "offset": 8,
+                  "length": 2,
+                  "confidenceScore": 0.8
+                },
+                {
+                  "text": "Espa\u00F1ol",
+                  "category": "Skill",
+                  "offset": 31,
+                  "length": 7,
+                  "confidenceScore": 0.94
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "entities": [],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

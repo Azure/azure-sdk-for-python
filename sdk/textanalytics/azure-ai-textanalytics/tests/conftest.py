@@ -1,23 +1,23 @@
-
-# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
+import pytest
+from devtools_testutils import (
+    test_proxy,
+    add_remove_header_sanitizer,
+    add_general_regex_sanitizer,
+    add_oauth_response_sanitizer,
+)
 
-# fixture needs to be visible from conftest
-from testcase import text_analytics_account
 
-# Ignore async tests for Python < 3.5
-collect_ignore_glob = []
-if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
-
-def pytest_configure(config):
-    # register an additional marker
-    config.addinivalue_line(
-        "usefixtures", "text_analytics_account"
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
+    add_general_regex_sanitizer(
+        value="fakeendpoint",
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)"
     )
+    add_oauth_response_sanitizer()

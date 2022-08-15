@@ -54,15 +54,15 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/azure-monitor-opentelemetry-exporter',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -74,11 +74,27 @@ setup(
         'azure.monitor',
         'azure.monitor.opentelemetry'
     ]),
-    python_requires=">=3.6.0",
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
+    python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.6.0",
+        "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.10",
-        "opentelemetry-api<2.0.0,>=1.0.0",
-        "opentelemetry-sdk<2.0.0,>=1.0.0"
+        "opentelemetry-api<2.0.0,>=1.12.0",
+        "opentelemetry-sdk<2.0.0,>=1.12.0",
     ],
+    entry_points={
+        "opentelemetry_traces_exporter": [
+            "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorTraceExporter"
+        ],
+        "opentelemetry_logs_exporter": [
+            "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorLogExporter"
+        ],
+        "opentelemetry_metrics_exporter": [
+            "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorMetricExporter"
+        ]
+    }
 )
+

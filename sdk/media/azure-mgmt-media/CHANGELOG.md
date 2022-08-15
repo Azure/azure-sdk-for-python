@@ -1,5 +1,66 @@
 # Release History
 
+## 10.0.0 (2022-07-01)
+
+**Features**
+
+  - Added operation MediaservicesOperations.begin_create_or_update
+  - Added operation MediaservicesOperations.begin_update
+  - Added operation group MediaServicesOperationResultsOperations
+  - Added operation group MediaServicesOperationStatusesOperations
+  - Model MediaService has a new parameter private_endpoint_connections
+  - Model MediaService has a new parameter provisioning_state
+  - Model MediaServiceUpdate has a new parameter private_endpoint_connections
+  - Model MediaServiceUpdate has a new parameter provisioning_state
+
+**Breaking changes**
+
+  - Removed operation MediaservicesOperations.create_or_update
+  - Removed operation MediaservicesOperations.update
+
+## 9.0.0 (2022-03-30)
+
+**Features**
+
+  - Added operation StreamingEndpointsOperations.skus
+  - Added operation group OperationResultsOperations
+  - Added operation group OperationStatusesOperations
+  - Added operation group TracksOperations
+  - Model H264Layer has a new parameter crf
+  - Model H264Video has a new parameter rate_control_mode
+  - Model H265Layer has a new parameter crf
+  - Model StreamingEndpoint has a new parameter sku
+
+**Breaking changes**
+
+  - Model H264Layer no longer has parameter odata_type
+  - Model H265Layer no longer has parameter odata_type
+  - Model H265VideoLayer no longer has parameter odata_type
+  - Model JpgLayer no longer has parameter odata_type
+  - Model Layer no longer has parameter odata_type
+  - Model PngLayer no longer has parameter odata_type
+  - Model VideoLayer no longer has parameter odata_type
+
+## 8.0.0 (2021-07-15)
+
+**Features**
+
+  - Model JobOutput has a new parameter preset_override
+  - Model BuiltInStandardEncoderPreset has a new parameter configurations
+  - Model MediaServiceIdentity has a new parameter user_assigned_identities
+  - Model JobOutputAsset has a new parameter preset_override
+  - Model MediaService has a new parameter public_network_access
+  - Model MediaServiceUpdate has a new parameter public_network_access
+  - Model StorageAccount has a new parameter status
+  - Model StorageAccount has a new parameter identity
+  - Model AccountEncryption has a new parameter status
+  - Model AccountEncryption has a new parameter identity
+  - Model LiveOutput has a new parameter system_data
+
+**Breaking changes**
+
+  - Model OperationCollection no longer has parameter odata_next_link
+
 ## 7.0.0 (2021-06-03)
 
 **Features**
@@ -47,7 +108,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -55,13 +116,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 2.2.0 (2020-05-29)
 

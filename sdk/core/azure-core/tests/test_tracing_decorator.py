@@ -9,18 +9,17 @@ try:
 except ImportError:
     import mock
 
-import sys
 import time
 
 import pytest
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import HttpTransport, HttpRequest
+from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
-from azure.core.tracing import common
+from azure.core.tracing import common, SpanKind
 from azure.core.tracing.decorator import distributed_trace
 from tracing_common import FakeSpan
-
+from utils import HTTP_REQUESTS
 
 @pytest.fixture(scope="module")
 def fake_span():
@@ -29,9 +28,9 @@ def fake_span():
 
 class MockClient:
     @distributed_trace
-    def __init__(self, policies=None, assert_current_span=False):
+    def __init__(self, http_request, policies=None, assert_current_span=False):
         time.sleep(0.001)
-        self.request = HttpRequest("GET", "https://bing.com")
+        self.request = http_request("GET", "http://localhost")
         if policies is None:
             policies = []
         policies.append(mock.Mock(spec=HTTPPolicy, send=self.verify_request))
@@ -79,6 +78,10 @@ class MockClient:
     def tracing_attr(self):
         time.sleep(0.001)
 
+    @distributed_trace(kind=SpanKind.PRODUCER)
+    def kind_override(self):
+        time.sleep(0.001)
+
     @distributed_trace
     def raising_exception(self):
         raise ValueError("Something went horribly wrong here")
@@ -88,8 +91,9 @@ def random_function():
     pass
 
 
-def test_get_function_and_class_name():
-    client = MockClient()
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_get_function_and_class_name(http_request):
+    client = MockClient(http_request)
     assert common.get_function_and_class_name(client.get_foo, client) == "MockClient.get_foo"
     assert common.get_function_and_class_name(random_function) == "random_function"
 
@@ -97,28 +101,44 @@ def test_get_function_and_class_name():
 @pytest.mark.usefixtures("fake_span")
 class TestDecorator(object):
 
-    def test_decorator_tracing_attr(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_decorator_tracing_attr(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             client.tracing_attr()
 
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "MockClient.tracing_attr"
+        assert parent.children[1].kind == SpanKind.INTERNAL
         assert parent.children[1].attributes == {'foo': 'bar'}
 
-    def test_decorator_has_different_name(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_decorator_has_different_name(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             client.check_name_is_different()
 
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "different name"
+        assert parent.children[1].kind == SpanKind.INTERNAL
 
-    def test_used(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_kind_override(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(policies=[])
+            client = MockClient(http_request)
+            client.kind_override()
+
+        assert len(parent.children) == 2
+        assert parent.children[0].name == "MockClient.__init__"
+        assert parent.children[1].name == "MockClient.kind_override"
+        assert parent.children[1].kind == SpanKind.PRODUCER
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_used(self, http_request):
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request, policies=[])
             client.get_foo(parent_span=parent)
             client.get_foo()
 
@@ -130,9 +150,10 @@ class TestDecorator(object):
         assert parent.children[2].name == "MockClient.get_foo"
         assert not parent.children[2].children
 
-    def test_span_merge_span(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_span_merge_span(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             client.merge_span_method()
             client.no_merge_span_method()
 
@@ -144,9 +165,10 @@ class TestDecorator(object):
         assert parent.children[2].name == "MockClient.no_merge_span_method"
         assert parent.children[2].children[0].name == "MockClient.get_foo"
 
-    def test_span_complicated(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_span_complicated(self, http_request):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             client.make_request(2)
             with parent.span("child") as child:
                 time.sleep(0.001)
@@ -164,11 +186,12 @@ class TestDecorator(object):
         assert parent.children[3].name == "MockClient.make_request"
         assert not parent.children[3].children
 
-    def test_span_with_exception(self):
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_span_with_exception(self, http_request):
         """Assert that if an exception is raised, the next sibling method is actually a sibling span.
         """
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(http_request)
             try:
                 client.raising_exception()
             except:

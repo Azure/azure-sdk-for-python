@@ -27,7 +27,7 @@ class AadClientCertificate(object):
         # type: (bytes, Optional[bytes]) -> None
         private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         if not isinstance(private_key, RSAPrivateKey):
-            raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
+            raise ValueError("The certificate must have an RSA private key because RS256 is used for signing")
         self._private_key = private_key
 
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())

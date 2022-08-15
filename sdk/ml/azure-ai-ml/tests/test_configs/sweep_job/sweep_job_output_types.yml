@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/sweepJob.schema.json
+type: sweep
+trial:
+  command: python foo.py --lr ${{search_space.lr}}
+  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+compute: "azureml:testCompute"
+sampling_algorithm: random
+objective:
+  primary_metric: accuracy
+  goal: maximize
+limits:
+  max_total_trials: 5
+name: "test1"
+experiment_name: mfe-test1
+properties:
+  _azureml.ComputeTargetType: amlcompute
+search_space:
+  lr:
+    type: uniform
+    min_value: 0.001
+    max_value: 0.1
+outputs:
+  test1:
+  test2:
+    mode: upload
+  test3:
+    mode: rw_mount

@@ -1,13 +1,13 @@
-# Azure AgriFood Farming client library for Python
+# Azure FarmBeats client library for Python
 FarmBeats is a B2B PaaS offering from Microsoft that makes it easy for AgriFood companies to build intelligent digital agriculture solutions on Azure. FarmBeats allows users to acquire, aggregate, and process agricultural data from various sources (farm equipment, weather, satellite) without the need to invest in deep data engineering resources.  Customers can build SaaS solutions on top of FarmBeats and leverage first class support for model building to generate insights at scale.
 
-Use FarmBeats client library for Python to do the following. 
+Use FarmBeats client library for Python to do the following.
 
 - Create & update farmers, farms, fields, seasonal fields and boundaries.
 - Ingest satellite and weather data for areas of interest.
 - Ingest farm operations data covering tilling, planting, harvesting and application of farm inputs.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
+[Source code][source_code] | [Package (PyPi)][pypi-package] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
 
 ## Getting started
 
@@ -15,12 +15,12 @@ Use FarmBeats client library for Python to do the following.
 
 To use this package, you must have:
 - Azure subscription - [Create a free account][azure_subscription]
-- AgriFood (FarmBeats) resource - [Install FarmBeats][install_farmbeats]
-- Python 2.7, 3.6 or later - [Install Python][python]
+- Azure FarmBeats resource - [Install FarmBeats][install_farmbeats]
+- 3.6 or later - [Install Python][python]
 
 ### Install the package
 
-Install the Azure AgriFood Farming client library for Python with [pip][pip]:
+Install the Azure FarmBeats client library for Python with [pip][pip]:
 
 ```bash
 pip install azure-agrifood-farming
@@ -33,7 +33,8 @@ provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
 
 To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip] and
-enable AAD authentication on your AgriFood resource (ADD LINK).
+enable AAD authentication on your FarmBeats resource. If you followed the [installation docs][install_farmbeats] when creating the FarmBeats
+resource, this is already covered.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
@@ -62,19 +63,19 @@ Farm hierarchy is a collection of below entities.
 - Field - is a multi-polygon area. This is expected to be stable across seasons.
 - Seasonal field - is a multi-polygon area. To define a seasonal boundary we need the details of area (boundary), time (season) and crop. New seasonal fields are expected to be created for every growing season.
 - Boundary - is the actual multi-polygon area expressed as a geometry (in geojson). It is normally associated with a field or a seasonal field. Satellite, weather and farm operations data is linked to a boundary.
-- Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree. 
-    
+- Cascade delete - Agronomic data is stored hierarchically with farmer as the root. The hierarchy includes Farmer -> Farms -> Fields -> Seasonal Fields -> Boundaries -> Associated data (satellite, weather, farm operations). Cascade delete refers to the process of deleting any node and its subtree.
+
 ### [Scenes][scenes]
 Scenes refers to images normally ingested using satellite APIs. This includes raw bands and derived bands (Ex: NDVI). Scenes may also include spatial outputs of an inference or AI/ML model (Ex: LAI).
 
 ### [Farm Operations][farm_operations_docs]
-Fam operations includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere. 
+Fam operations includes details pertaining to tilling, planting, application of pesticides & nutrients, and harvesting. This can either be manually pushed into FarmBeats using APIs or the same information can be pulled from farm equipment service providers like John Deere.
 
 
 ## Examples
 
 ### Create a Farmer
-Once you have authenticated and created the client object as shown in the [Authenticate the client](#authenticate-the-client) 
+Once you have authenticated and created the client object as shown in the [Authenticate the client](#authenticate-the-client)
 section, you can create a farmer within the FarmBeats resource like this:
 
 ```python
@@ -289,7 +290,7 @@ for scene in scenes:
 
 ### General
 
-The AgriFood Farming client will raise exceptions defined in [Azure Core][azure_core] if you call `.raise_for_status()` on your responses.
+The FarmBeats client will raise exceptions defined in [Azure Core][azure_core] if you call `.raise_for_status()` on your responses.
 
 ### Logging
 
@@ -345,23 +346,24 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 [api_docs]: https://aka.ms/FarmBeatsAPIDocumentationPaaS
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [azure_subscription]: https://azure.microsoft.com/free/
-[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/CHANGELOG.md
+[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agrifood/azure-agrifood-farming/CHANGELOG.md
 [cla]: https://cla.microsoft.com
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential/
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential/
 [farm_hierarchy]: https://aka.ms/FarmBeatsFarmHierarchyDocs
 [farm_operations_docs]: https://aka.ms/FarmBeatsFarmOperationsDocumentation
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS
 [product_docs]: https://aka.ms/FarmBeatsProductDocumentationPaaS
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/
+[pypi-package]: https://pypi.org/project/azure-agrifood-farming/
 [python]: https://www.python.org/downloads/
 [python_logging]: https://docs.python.org/3.5/library/logging.html
-[samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agrifood/azure-agrifood-farming/samples/
 [scenes]: https://aka.ms/FarmBeatsSatellitePaaSDocumentation
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agrifood/azure-agrifood-farming/

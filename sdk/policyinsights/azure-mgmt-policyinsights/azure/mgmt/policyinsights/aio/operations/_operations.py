@@ -42,7 +42,7 @@ class Operations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationsListResults":
         """Lists available operations.
 
@@ -76,7 +76,7 @@ class Operations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.QueryFailure, response)
+            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('OperationsListResults', pipeline_response)

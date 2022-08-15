@@ -11,33 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - 9a5edcf7-64ef-11eb-9169-c8348e5fffbc
+      - azsdk-python-storage-dfs/12.4.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 02 Feb 2021 00:43:01 GMT
+      - Thu, 13 May 2021 02:18:01 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/filesystem75f5116a?restype=container
+    uri: https://storagename.blob.core.windows.net/testfs75f5116a?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 02 Feb 2021 00:43:04 GMT
-      ETag:
-      - '"0x8D8C7137F31F1F8"'
-      Last-Modified:
-      - Tue, 02 Feb 2021 00:43:02 GMT
-      Server:
+      date:
+      - Thu, 13 May 2021 02:18:00 GMT
+      etag:
+      - '"0x8D915B555007A06"'
+      last-modified:
+      - Thu, 13 May 2021 02:18:00 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - c890cdb1-201e-0093-31fc-f81156000000
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     status:
       code: 201
       message: Created
@@ -53,29 +49,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - 9c8d9e73-64ef-11eb-94e6-c8348e5fffbc
+      - azsdk-python-storage-dfs/12.4.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 02 Feb 2021 00:43:05 GMT
+      - Thu, 13 May 2021 02:18:01 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/filesystem75f5116a?restype=container
+    uri: https://storagename.blob.core.windows.net/testfs75f5116a?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 02 Feb 2021 00:43:04 GMT
-      Server:
+      date:
+      - Thu, 13 May 2021 02:18:00 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - c890d487-201e-0093-6ffc-f81156000000
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     status:
       code: 202
       message: Accepted
@@ -89,34 +81,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - 9cc0b4ac-64ef-11eb-8114-c8348e5fffbc
+      - azsdk-python-storage-dfs/12.4.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 02 Feb 2021 00:43:05 GMT
+      - Thu, 13 May 2021 02:18:41 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     method: GET
-    uri: https://storagename.blob.core.windows.net/filesystem75f5116a?restype=container
+    uri: https://storagename.blob.core.windows.net/testfs75f5116a?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:c890d571-201e-0093-2bfc-f81156000000\nTime:2021-02-02T00:43:05.5532742Z</Message></Error>"
+        specified container does not exist.\nRequestId:c2e99ef2-b01e-000a-3d9e-473b5a000000\nTime:2021-05-13T02:18:41.1647521Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '225'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Tue, 02 Feb 2021 00:43:04 GMT
-      Server:
+      date:
+      - Thu, 13 May 2021 02:18:40 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ContainerNotFound
-      x-ms-request-id:
-      - c890d571-201e-0093-2bfc-f81156000000
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     status:
       code: 404
       message: The specified container does not exist.
@@ -130,99 +118,53 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.7.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - 9cfa236b-64ef-11eb-b034-c8348e5fffbc
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 02 Feb 2021 00:43:05 GMT
+      - Thu, 13 May 2021 02:18:41 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     method: GET
     uri: https://storagename.blob.core.windows.net/?comp=list&include=deleted
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>filcxcdnvsxcesys175f5116a</Name><Deleted>true</Deleted><Version>01D6F6A0314E9488</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:38:13 GMT</Last-Modified><Etag>\"0x8D8C4B753C56913\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:44:15 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filcxcdsxcesys175f5116a</Name><Deleted>true</Deleted><Version>01D6F69EDA93DBBA</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:28:38 GMT</Last-Modified><Etag>\"0x8D8C4B5FD0A8288\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:28:38 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filcxcxcesys175f5116a</Name><Deleted>true</Deleted><Version>01D6F69E94CC30CD</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:26:41 GMT</Last-Modified><Etag>\"0x8D8C4B5B74314B8\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:44:16 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filessfgew75f5116a</Name><Deleted>true</Deleted><Version>01D6F69D22040FCE</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:16:19 GMT</Last-Modified><Etag>\"0x8D8C4B4447B0328\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:18:22 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filesys175f5116a</Name><Deleted>true</Deleted><Version>01D6F69BE495951C</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:07:26 GMT</Last-Modified><Etag>\"0x8D8C4B3070C883F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:32 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filesys75f5116a</Name><Deleted>true</Deleted><Version>01D6F69B95D1800A</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:05:14 GMT</Last-Modified><Etag>\"0x8D8C4B2B8486C99\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:24 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filesys75f5116a</Name><Deleted>true</Deleted><Version>01D6F8F232563195</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:30:16 GMT</Last-Modified><Etag>\"0x8D8C70954CCC24A\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:30:16 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>filesystem175f5116a</Name><Deleted>true</Deleted><Version>01D6F425B15C30B0</Version><Properties><Last-Modified>Tue,
-        26 Jan 2021 20:56:18 GMT</Last-Modified><Etag>\"0x8D8C23CD3D2A095\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Tue,
-        26 Jan 2021 20:56:18 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Container><Container><Name>filesystem275f5116a</Name><Deleted>true</Deleted><Version>01D6F426474ECD99</Version><Properties><Last-Modified>Tue,
-        26 Jan 2021 21:00:29 GMT</Last-Modified><Etag>\"0x8D8C23D69C52786\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Tue,
-        26 Jan 2021 21:00:30 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Container><Container><Name>filesystem275f5116a</Name><Deleted>true</Deleted><Version>01D6F4265E1ACE96</Version><Properties><Last-Modified>Tue,
-        26 Jan 2021 21:01:07 GMT</Last-Modified><Etag>\"0x8D8C23D80917D53\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:30 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filesystem75f5116a</Name><Deleted>true</Deleted><Version>01D6F8F46C9F8125</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:46:13 GMT</Last-Modified><Etag>\"0x8D8C70B8F15C6B7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:46:13 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>filesystem75f5116a</Name><Deleted>true</Deleted><Version>01D6F8FC5CBB8973</Version><Properties><Last-Modified>Tue,
-        02 Feb 2021 00:43:02 GMT</Last-Modified><Etag>\"0x8D8C7137F31F1F8\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>fixed</LeaseDuration><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Tue,
-        02 Feb 2021 00:43:05 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>filesystem8e7c0a7e</Name><Deleted>true</Deleted><Version>01D6F44707744B9E</Version><Properties><Last-Modified>Wed,
-        27 Jan 2021 00:54:55 GMT</Last-Modified><Etag>\"0x8D8C25E29EAFAEE\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:18 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filmcxncxcdndsvsxcesys175f5116a</Name><Deleted>true</Deleted><Version>01D6F6A0ABD10C88</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:41:39 GMT</Last-Modified><Etag>\"0x8D8C4B7CE47C1CD\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:41:39 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filmncxcdndsvsxcesys175f5116a</Name><Deleted>true</Deleted><Version>01D6F6A07CBEC3CC</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:40:20 GMT</Last-Modified><Etag>\"0x8D8C4B79F355F2F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:40:21 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filmncxcdnvsxcesys175f5116a</Name><Deleted>true</Deleted><Version>01D6F6A041C633BA</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:38:41 GMT</Last-Modified><Etag>\"0x8D8C4B7643CD5CF\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:38:42 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filurtdesystem75f5116a</Name><Deleted>true</Deleted><Version>01D6F69AB4E4BD0B</Version><Properties><Last-Modified>Fri,
-        29 Jan 2021 23:58:57 GMT</Last-Modified><Etag>\"0x8D8C4B1D75B2E99\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Fri,
-        29 Jan 2021 23:58:57 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties></Container><Container><Name>fs141b81006</Name><Deleted>true</Deleted><Version>01D6F4EE87D66711</Version><Properties><Last-Modified>Wed,
-        27 Jan 2021 20:53:57 GMT</Last-Modified><Etag>\"0x8D8C305AA4CEEF6\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:16 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>fs175f5116a</Name><Deleted>true</Deleted><Version>01D6F69B47B7267E</Version><Properties><Last-Modified>Sat,
-        30 Jan 2021 00:03:03 GMT</Last-Modified><Etag>\"0x8D8C4B26A2DD1E9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:03:04 GMT</DeletedTime><RemainingRetentionDays>3</RemainingRetentionDays></Properties></Container><Container><Name>fs341b81006</Name><Deleted>true</Deleted><Version>01D6F4F0B1060E67</Version><Properties><Last-Modified>Wed,
-        27 Jan 2021 21:09:25 GMT</Last-Modified><Etag>\"0x8D8C307D37CB1FE\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:26 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>fs41b81006</Name><Deleted>true</Deleted><Version>01D6F4EE35D82B82</Version><Properties><Last-Modified>Wed,
-        27 Jan 2021 20:51:39 GMT</Last-Modified><Etag>\"0x8D8C305584EC8E2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:22 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>restored0</Name><Deleted>true</Deleted><Version>01D6F8E50988873F</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 21:56:04 GMT</Last-Modified><Etag>\"0x8D8C6FC2BFF86B7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:31:15 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restored1</Name><Deleted>true</Deleted><Version>01D6F8E525045EF5</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 21:56:50 GMT</Last-Modified><Etag>\"0x8D8C6FC477B5D19\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:31:17 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a0</Name><Deleted>true</Deleted><Version>01D6F8F27BAD1D74</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:32:19 GMT</Last-Modified><Etag>\"0x8D8C7099E241EE7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:34:17 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a0</Name><Deleted>true</Deleted><Version>01D6F8F2E932F8F0</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:35:23 GMT</Last-Modified><Etag>\"0x8D8C70A0BA9E8F6\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:36:55 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a0</Name><Deleted>true</Deleted><Version>01D6F8F38E3D749A</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:40:00 GMT</Last-Modified><Etag>\"0x8D8C70AB0B45C7F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:43:08 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a0</Name><Deleted>true</Deleted><Version>01D6F8F4CF045569</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:48:58 GMT</Last-Modified><Etag>\"0x8D8C70BF17B490E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Tue,
-        02 Feb 2021 00:37:58 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a1</Name><Deleted>true</Deleted><Version>01D6F8F27BC62852</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:32:19 GMT</Last-Modified><Etag>\"0x8D8C7099E3D2A0A\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:34:15 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a1</Name><Deleted>true</Deleted><Version>01D6F8F2E94C2ADC</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:35:23 GMT</Last-Modified><Etag>\"0x8D8C70A0BC31B26\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:36:56 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a1</Name><Deleted>true</Deleted><Version>01D6F8F3983A11AB</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:40:16 GMT</Last-Modified><Etag>\"0x8D8C70ABAB11582\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:43:06 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a2</Name><Deleted>true</Deleted><Version>01D6F8F27BDFF69B</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:32:19 GMT</Last-Modified><Etag>\"0x8D8C7099E56D188\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:34:11 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>restoredfilesystem75f5116a3</Name><Deleted>true</Deleted><Version>01D6F8F27BF86518</Version><Properties><Last-Modified>Mon,
-        01 Feb 2021 23:32:19 GMT</Last-Modified><Etag>\"0x8D8C7099E6F4042\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
-        01 Feb 2021 23:34:13 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>testingtamer</Name><Deleted>true</Deleted><Version>01D6F4250554AFFC</Version><Properties><Last-Modified>Tue,
-        26 Jan 2021 20:51:57 GMT</Last-Modified><Etag>\"0x8D8C23C38CE1730\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><PublicAccess>container</PublicAccess><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat,
-        30 Jan 2021 00:14:28 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container></Containers><NextMarker
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>filesystem41b81006</Name><Deleted>true</Deleted><Version>01D7454F48DD4DD9</Version><Properties><Last-Modified>Mon,
+        10 May 2021 03:48:05 GMT</Last-Modified><Etag>\"0x8D913666B540D09\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Mon,
+        10 May 2021 03:48:07 GMT</DeletedTime><RemainingRetentionDays>4</RemainingRetentionDays></Properties></Container><Container><Name>filesystem75f5116a</Name><Deleted>true</Deleted><Version>01D7478261A661F7</Version><Properties><Last-Modified>Wed,
+        12 May 2021 22:58:54 GMT</Last-Modified><Etag>\"0x8D91599841CF2F3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Wed,
+        12 May 2021 22:58:54 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>tbvestbfdv1rtu275f5116a</Name><Deleted>true</Deleted><Version>01D7479E2190A2D5</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:17:32 GMT</Last-Modified><Etag>\"0x8D915B5440794C7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:17:32 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>tbvestbv1rtu275f5116a</Name><Deleted>true</Deleted><Version>01D7479D6034CCFF</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:12:08 GMT</Last-Modified><Etag>\"0x8D915B482AB5A9C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:12:08 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>test12375f5116a</Name><Deleted>true</Deleted><Version>01D7479C575FDC16</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:04:43 GMT</Last-Modified><Etag>\"0x8D915B379D6E378\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:05:29 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>test1275f5116a</Name><Deleted>true</Deleted><Version>01D7479CB60E4A94</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:07:22 GMT</Last-Modified><Etag>\"0x8D915B3D884DCF7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:07:22 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>test175f5116a</Name><Deleted>true</Deleted><Version>01D7479CA1A9993E</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:06:48 GMT</Last-Modified><Etag>\"0x8D915B3C4201FD3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:06:48 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>test1rtu275f5116a</Name><Deleted>true</Deleted><Version>01D7479CF6C16F08</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:09:11 GMT</Last-Modified><Etag>\"0x8D915B41937C25A\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:09:11 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>test75f5116a</Name><Deleted>true</Deleted><Version>01D747842A8A6A45</Version><Properties><Last-Modified>Wed,
+        12 May 2021 23:11:40 GMT</Last-Modified><Etag>\"0x8D9159B4D00ECBC\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Wed,
+        12 May 2021 23:11:41 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>test75f5116a</Name><Deleted>true</Deleted><Version>01D747847186849F</Version><Properties><Last-Modified>Wed,
+        12 May 2021 23:13:39 GMT</Last-Modified><Etag>\"0x8D9159B93FD51C8\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Wed,
+        12 May 2021 23:13:46 GMT</DeletedTime><RemainingRetentionDays>6</RemainingRetentionDays></Properties></Container><Container><Name>testbv1rtu275f5116a</Name><Deleted>true</Deleted><Version>01D7479D39E9AF65</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:11:03 GMT</Last-Modified><Etag>\"0x8D915B45C605132\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:11:03 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container><Container><Name>testfs75f5116a</Name><Deleted>true</Deleted><Version>01D7479E3289C488</Version><Properties><Last-Modified>Thu,
+        13 May 2021 02:18:00 GMT</Last-Modified><Etag>\"0x8D915B555007A06\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>expired</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Thu,
+        13 May 2021 02:18:01 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Tue, 02 Feb 2021 00:43:05 GMT
-      Server:
+      date:
+      - Thu, 13 May 2021 02:18:41 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - ecb6a8d1-801e-00c7-78fc-f85e01000000
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     status:
       code: 200
       message: OK
@@ -238,33 +180,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.7.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - d4a3bdde-64ef-11eb-b1d2-c8348e5fffbc
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 02 Feb 2021 00:44:39 GMT
+      - Thu, 13 May 2021 02:18:42 GMT
       x-ms-deleted-container-name:
-      - filesystem75f5116a
+      - testfs75f5116a
       x-ms-deleted-container-version:
-      - 01D6F8F46C9F8125
+      - 01D7479E3289C488
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/restoredfilesystem75f5116a0?restype=container&comp=undelete
+    uri: https://storagename.blob.core.windows.net/testfs75f5116a?restype=container&comp=undelete
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 02 Feb 2021 00:44:41 GMT
-      Server:
+      date:
+      - Thu, 13 May 2021 02:18:41 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - ecb79474-801e-00c7-7ffc-f85e01000000
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     status:
       code: 201
       message: Created
@@ -278,28 +216,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - d731bcd6-64ef-11eb-944a-c8348e5fffbc
+      - azsdk-python-storage-dfs/12.4.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 02 Feb 2021 00:44:43 GMT
+      - Thu, 13 May 2021 02:18:42 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     method: GET
-    uri: https://storagename.blob.core.windows.net/restoredfilesystem75f5116a0?restype=container
+    uri: https://storagename.blob.core.windows.net/testfs75f5116a?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 02 Feb 2021 00:44:42 GMT
-      ETag:
-      - '"0x8D8C713BA05A9BC"'
-      Last-Modified:
-      - Tue, 02 Feb 2021 00:44:41 GMT
-      Server:
+      date:
+      - Thu, 13 May 2021 02:18:41 GMT
+      etag:
+      - '"0x8D915B56D3A090E"'
+      last-modified:
+      - Thu, 13 May 2021 02:18:41 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-default-encryption-scope:
       - $account-encryption-key
@@ -313,10 +249,8 @@ interactions:
       - available
       x-ms-lease-status:
       - unlocked
-      x-ms-request-id:
-      - c891adf3-201e-0093-7cfc-f81156000000
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     status:
       code: 200
       message: OK
@@ -332,86 +266,26 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.7.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - dcde5296-64ef-11eb-b208-c8348e5fffbc
+      - azsdk-python-storage-dfs/12.4.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 02 Feb 2021 00:44:53 GMT
-      x-ms-deleted-container-name:
-      - filesystem75f5116a
-      x-ms-deleted-container-version:
-      - 01D6F8FC5CBB8973
+      - Thu, 13 May 2021 02:18:42 GMT
       x-ms-version:
-      - '2020-04-08'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/restoredfilesystem75f5116a1?restype=container&comp=undelete
+      - '2020-08-04'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/testfs75f5116a?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 02 Feb 2021 00:44:53 GMT
-      Server:
+      date:
+      - Thu, 13 May 2021 02:18:41 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - ecb7b667-801e-00c7-35fc-f85e01000000
       x-ms-version:
-      - '2020-04-08'
+      - '2020-08-04'
     status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - de5438e4-64ef-11eb-b583-c8348e5fffbc
-      x-ms-date:
-      - Tue, 02 Feb 2021 00:44:55 GMT
-      x-ms-version:
-      - '2020-04-08'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/restoredfilesystem75f5116a1?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Tue, 02 Feb 2021 00:44:54 GMT
-      ETag:
-      - '"0x8D8C713C111B556"'
-      Last-Modified:
-      - Tue, 02 Feb 2021 00:44:53 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-default-encryption-scope:
-      - $account-encryption-key
-      x-ms-deny-encryption-scope-override:
-      - 'false'
-      x-ms-has-immutability-policy:
-      - 'false'
-      x-ms-has-legal-hold:
-      - 'false'
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - c891c722-201e-0093-17fc-f81156000000
-      x-ms-version:
-      - '2020-04-08'
-    status:
-      code: 200
-      message: OK
+      code: 202
+      message: Accepted
 version: 1

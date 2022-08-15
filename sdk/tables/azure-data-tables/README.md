@@ -1,16 +1,22 @@
-# Azure Data Tables client library for Python
+# Azure Tables client library for Python
 
-Azure Data Tables is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
+Azure Tables is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
 Tables scales as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
-The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts.
+The Azure Tables client can be used to access Azure Storage or Cosmos accounts. This document covers [`azure-data-tables`][Tables_pypi].
+
+Please note, this package is a replacement for [`azure-cosmosdb-tables`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table) which is now deprecated. See the [migration guide][migration_guide] for more details.
 
 [Source code][source_code] | [Package (PyPI)][Tables_pypi] | [API reference documentation][Tables_ref_docs] | [Samples][Tables_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
-The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
+The Azure Tables SDK can access an Azure Storage or CosmosDB account.
 
 ### Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and either
     * an [Azure Storage account][azure_storage_account] or
     * an [Azure Cosmos Account][azure_cosmos_account].
@@ -20,13 +26,13 @@ The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
 * To create a new cosmos storage account, you can use the [Azure CLI][azure_cli_create_cosmos] or [Azure Portal][azure_portal_create_cosmos].
 
 ### Install the package
-Install the Azure Data Tables client library for Python with [pip][pip_link]:
+Install the Azure Tables client library for Python with [pip][pip_link]:
 ```bash
-pip install --pre azure-data-tables
+pip install azure-data-tables
 ```
 
 #### Create the client
-The Azure Data Tables library allows you to interact with two types of resources:
+The Azure Tables library allows you to interact with two types of resources:
 * the tables in your account
 * the entities within those tables.
 Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `endpoint` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
@@ -59,8 +65,12 @@ az storage account keys list -g MyResourceGroup -n MyStorageAccount
 
 Use the key as the credential parameter to authenticate the client:
 ```python
-    from azure.data.tables import TableServiceClient
-    service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential="<account_access_key>")
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.data.tables import TableServiceClient
+
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
+
+service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=credential)
 ```
 
 ##### Creating the client from a connection string
@@ -72,9 +82,9 @@ az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
 ```python
-    from azure.data.tables import TableServiceClient
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
-    service = TableServiceClient.from_connection_string(conn_str=connection_string)
+from azure.data.tables import TableServiceClient
+connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
+service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
 ##### Creating the client from a SAS token
@@ -82,18 +92,19 @@ To use a [shared access signature (SAS) token][azure_sas_token], provide the tok
    functions to create a sas token for the account or table:
 
 ```python
-    from datetime import datetime, timedelta
-    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+from datetime import datetime, timedelta
+from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
-    sas_token = generate_account_sas(
-        account_name="<account-name>",
-        account_key="<account-access-key>",
-        resource_types=ResourceTypes(service=True),
-        permission=AccountSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)
-    )
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
+sas_token = generate_account_sas(
+    credential,
+    resource_types=ResourceTypes(service=True),
+    permission=AccountSasPermissions(read=True),
+    expiry=datetime.utcnow() + timedelta(hours=1),
+)
 
-    table_service_client = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=sas_token)
+table_service_client = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=AzureSasCredential(sas_token))
 ```
 
 
@@ -104,12 +115,12 @@ Common uses of the Table service included:
 * Quickly querying data using a clustered index
 * Accessing data using the OData protocol and LINQ filter expressions
 
-The following components make up the Azure Data Tables Service:
+The following components make up the Azure Tables Service:
 * The account
 * A table within the account, which contains a set of entities
 * An entity within a table, as a dictionary
 
-The Azure Data Tables client library for Python allows you to interact with each of these components through the
+The Azure Tables client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
 
 ### Clients
@@ -245,7 +256,7 @@ the client level to enable it for all requests.
 ## Troubleshooting
 
 ### General
-Azure Data Tables clients raise exceptions defined in [Azure Core][azure_core_readme].
+Azure Tables clients raise exceptions defined in [Azure Core][azure_core_readme].
 When you interact with the Azure table library using the Python SDK, errors returned by the service respond ot the same HTTP status codes for [REST API][tables_rest] requests. The Table service operations will throw a `HttpResponseError` on failure with helpful [error codes][tables_error_codes].
 
 For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
@@ -299,20 +310,20 @@ service_client.create_entity(entity=my_entity, logging_enable=True)
 
 Get started with our [Table samples][tables_samples].
 
-Several Azure Data Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables.
+Several Azure Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables.
 
 ### Common Scenarios
-These code samples show common scenario operations with the Azure Data tables client library. The async versions of the samples (the python sample files appended with _async) show asynchronous operations with Tables and require Python 3.5 or later.
+These code samples show common scenario operations with the Azure Tables client library. The async versions of the samples (the python sample files appended with _async) show asynchronous operations with Tables and require Python 3.6 or later.
 
-* Create and delete tables: [sample_create_delete_table.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py))
-* List and query tables: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
-* Insert and delete entities: [sample_insert_delete_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py))
-* Query and list entities: [sample_query_table.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
-* Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
-* Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
+* Create and delete tables: [sample_create_delete_table.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py))
+* List and query tables: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
+* Insert and delete entities: [sample_insert_delete_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py))
+* Query and list entities: [sample_query_table.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
+* Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
+* Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
 
 ### Additional documentation
-For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation][Tables_product_doc] on docs.microsoft.com.
+For more extensive documentation on Azure Tables, see the [Azure Tables documentation][Tables_product_doc] on docs.microsoft.com.
 
 ## Known Issues
 A list of currently known issues relating to Cosmos DB table endpoints can be found [here](https://aka.ms/tablesknownissues).
@@ -325,11 +336,12 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_coc]. For more information see the [Code of Conduct FAQ][msft_oss_coc_faq] or contact [opencode@microsoft.com][contact_msft_oss] with any additional questions or comments.
 
 <!-- LINKS -->
-[source_code]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables
+[source_code]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables
 [Tables_pypi]:https://aka.ms/azsdk/python/tablespypi
-[Tables_ref_docs]:https://docs.microsoft.com/python/api/overview/azure/data-tables-readme-pre?view=azure-python-preview
+[Tables_ref_docs]:https://docs.microsoft.com/python/api/overview/azure/data-tables-readme?view=azure-python
 [Tables_product_doc]:https://docs.microsoft.com/azure/cosmos-db/table-introduction
-[Tables_samples]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples
+[Tables_samples]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples
+[migration_guide]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/migration_guide.md
 
 [azure_subscription]:https://azure.microsoft.com/free/
 [azure_storage_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
@@ -350,10 +362,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [azure_sas_token]:https://docs.microsoft.com/azure/storage/common/storage-sas-overview
 [azure_shared_key]:https://docs.microsoft.com/rest/api/storageservices/authorize-with-shared-key
 
-[odata_syntax]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/README.md#writing-filters
+[odata_syntax]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md#writing-filters
 
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
-[azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 
 [python_logging]: https://docs.python.org/3/library/logging.html
 [tables_error_codes]: https://docs.microsoft.com/rest/api/storageservices/table-service-error-codes
@@ -364,11 +376,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 
 [tables_rest]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
 
-[create_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L51-L57
-[delete_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L73-L80
-[update_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L128-L129
-[query_entities]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py#L63-L72
-[get_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L52-L55
-[upsert_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L103-L120
+[create_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L67-L73
+[delete_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L89-L92
+[update_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L165-L181
+[query_entities]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_query_table.py#L75-L89
+[get_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L67-L71
+[upsert_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L155-L163
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)

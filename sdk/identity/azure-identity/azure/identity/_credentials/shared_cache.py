@@ -2,39 +2,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
-import time
+from typing import TYPE_CHECKING
 
-from msal.application import PublicClientApplication
-
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
-
+from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AadClient, validate_tenant_id
-from .._internal.decorators import log_get_token, wrap_exceptions
-from .._internal.msal_client import MsalClient
+from .._internal import AadClient
+from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
-    from .. import AuthenticationRecord
+    from azure.core.credentials import TokenCredential
     from .._internal import AadClientBase
 
 
-class SharedTokenCacheCredential(SharedTokenCacheBase):
+class SharedTokenCacheCredential(object):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
-    :param str username:
-        Username (typically an email address) of the user to authenticate as. This is used when the local cache
-        contains tokens for multiple identities.
+    :param str username: Username (typically an email address) of the user to authenticate as. This is used when the
+        local cache contains tokens for multiple identities.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -51,20 +39,25 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
     def __init__(self, username=None, **kwargs):
         # type: (Optional[str], **Any) -> None
 
-        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
-        if self._auth_record:
-            # authenticate in the tenant that produced the record unless "tenant_id" specifies another
-            self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
-            validate_tenant_id(self._tenant_id)
-            self._cache = kwargs.pop("_cache", None)
-            self._app = None
-            self._client_kwargs = kwargs
-            self._initialized = False
+        if "authentication_record" in kwargs:
+            self._credential = SilentAuthenticationCredential(**kwargs)  # type: TokenCredential
         else:
-            super(SharedTokenCacheCredential, self).__init__(username=username, **kwargs)
+            self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
+
+    def __enter__(self):
+        self._credential.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._credential.__exit__(*args)
+
+    def close(self):
+        # type: () -> None
+        """Close the credential's transport session."""
+        self.__exit__()
 
     @log_get_token("SharedTokenCacheCredential")
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    def get_token(self, *scopes, **kwargs):
         # type (*str, **Any) -> AccessToken
         """Get an access token for `scopes` from the shared cache.
 
@@ -73,14 +66,43 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
-          claims challenge following an authorization failure
+            claims challenge following an authorization failure
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason.
+            attribute gives a reason.
         """
+        return self._credential.get_token(*scopes, **kwargs)
+
+    @staticmethod
+    def supported():
+        # type: () -> bool
+        """Whether the shared token cache is supported on the current platform.
+
+        :rtype: bool
+        """
+        return SharedTokenCacheBase.supported()
+
+
+class _SharedTokenCacheCredential(SharedTokenCacheBase):
+    """The original SharedTokenCacheCredential, which doesn't use msal.ClientApplication"""
+
+    def __enter__(self):
+        if self._client:
+            self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        if self._client:
+            self._client.__exit__(*args)
+
+    def get_token(self, *scopes, **kwargs):
+        # type (*str, **Any) -> AccessToken
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
@@ -90,9 +112,6 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         if not self._cache:
             raise CredentialUnavailableError(message="Shared token cache unavailable")
 
-        if self._auth_record:
-            return self._acquire_token_silent(*scopes, **kwargs)
-
         account = self._get_account(self._username, self._tenant_id)
 
         token = self._get_cached_access_token(scopes, account)
@@ -101,7 +120,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
-            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token)
+            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
@@ -109,66 +128,3 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
         return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)
-
-    def _initialize(self):
-        if self._initialized:
-            return
-
-        if not self._auth_record:
-            super(SharedTokenCacheCredential, self)._initialize()
-            return
-
-        self._load_cache()
-        if self._cache:
-            if "AZURE_IDENTITY_DISABLE_CP1" in os.environ:
-                capabilities = None
-            else:
-                capabilities = ["CP1"]  # able to handle CAE claims challenges
-            self._app = PublicClientApplication(
-                client_id=self._auth_record.client_id,
-                authority="https://{}/{}".format(self._auth_record.authority, self._tenant_id),
-                token_cache=self._cache,
-                http_client=MsalClient(**self._client_kwargs),
-                client_capabilities=capabilities
-            )
-
-        self._initialized = True
-
-    @wrap_exceptions
-    def _acquire_token_silent(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        """Silently acquire a token from MSAL. Requires an AuthenticationRecord."""
-
-        # self._auth_record and ._app will not be None when this method is called by get_token
-        # but should either be None anyway (and to satisfy mypy) we raise
-        if self._app is None or self._auth_record is None:
-            raise CredentialUnavailableError("Initialization failed")
-
-        result = None
-
-        accounts_for_user = self._app.get_accounts(username=self._auth_record.username)
-        if not accounts_for_user:
-            raise CredentialUnavailableError("The cache contains no account matching the given AuthenticationRecord.")
-
-        for account in accounts_for_user:
-            if account.get("home_account_id") != self._auth_record.home_account_id:
-                continue
-
-            now = int(time.time())
-            result = self._app.acquire_token_silent_with_error(
-                list(scopes), account=account, claims_challenge=kwargs.get("claims")
-            )
-            if result and "access_token" in result and "expires_in" in result:
-                return AccessToken(result["access_token"], now + int(result["expires_in"]))
-
-        # if we get this far, the cache contained a matching account but MSAL failed to authenticate it silently
-        if result:
-            # cache contains a matching refresh token but STS returned an error response when MSAL tried to use it
-            message = "Token acquisition failed"
-            details = result.get("error_description") or result.get("error")
-            if details:
-                message += ": {}".format(details)
-            raise ClientAuthenticationError(message=message)
-
-        # cache doesn't contain a matching refresh (or access) token
-        raise CredentialUnavailableError(message=NO_TOKEN.format(self._auth_record.username))

@@ -180,6 +180,11 @@ class DiskPool(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar managed_by: Azure resource id. Indicates if this resource is managed by another Azure
+     resource.
+    :vartype managed_by: str
+    :ivar managed_by_extended: List of Azure resource ids that manage this resource.
+    :vartype managed_by_extended: list[str]
     :ivar system_data: Resource metadata required by ARM RPC.
     :vartype system_data: ~storage_pool_management.models.SystemMetadata
     :ivar provisioning_state: Required. State of the operation on the resource. Possible values
@@ -209,6 +214,8 @@ class DiskPool(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'managed_by': {'readonly': True},
+        'managed_by_extended': {'readonly': True},
         'system_data': {'readonly': True},
         'provisioning_state': {'required': True, 'readonly': True},
         'availability_zones': {'required': True},
@@ -222,6 +229,8 @@ class DiskPool(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
         'system_data': {'key': 'systemData', 'type': 'SystemMetadata'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'properties.availabilityZones', 'type': '[str]'},
@@ -248,6 +257,8 @@ class DiskPool(TrackedResource):
         **kwargs
     ):
         super(DiskPool, self).__init__(tags=tags, location=location, **kwargs)
+        self.managed_by = None
+        self.managed_by_extended = None
         self.system_data = None
         self.provisioning_state = None
         self.availability_zones = availability_zones
@@ -280,6 +291,11 @@ class DiskPoolCreate(msrest.serialization.Model):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
+    :param managed_by: Azure resource id. Indicates if this resource is managed by another Azure
+     resource.
+    :type managed_by: str
+    :param managed_by_extended: List of Azure resource ids that manage this resource.
+    :type managed_by_extended: list[str]
     :param availability_zones: Logical zone for Disk Pool resource; example: ["1"].
     :type availability_zones: list[str]
     :param disks: List of Azure Managed Disks to attach to a Disk Pool.
@@ -306,6 +322,8 @@ class DiskPoolCreate(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
         'availability_zones': {'key': 'properties.availabilityZones', 'type': '[str]'},
         'disks': {'key': 'properties.disks', 'type': '[Disk]'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
@@ -319,6 +337,8 @@ class DiskPoolCreate(msrest.serialization.Model):
         location: str,
         subnet_id: str,
         tags: Optional[Dict[str, str]] = None,
+        managed_by: Optional[str] = None,
+        managed_by_extended: Optional[List[str]] = None,
         availability_zones: Optional[List[str]] = None,
         disks: Optional[List["Disk"]] = None,
         additional_capabilities: Optional[List[str]] = None,
@@ -331,6 +351,8 @@ class DiskPoolCreate(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.managed_by = managed_by
+        self.managed_by_extended = managed_by_extended
         self.availability_zones = availability_zones
         self.disks = disks
         self.subnet_id = subnet_id
@@ -374,6 +396,13 @@ class DiskPoolListResult(msrest.serialization.Model):
 class DiskPoolUpdate(msrest.serialization.Model):
     """Request payload for Update Disk Pool request.
 
+    :param managed_by: Azure resource id. Indicates if this resource is managed by another Azure
+     resource.
+    :type managed_by: str
+    :param managed_by_extended: List of Azure resource ids that manage this resource.
+    :type managed_by_extended: list[str]
+    :param sku: Determines the SKU of the Disk Pool.
+    :type sku: ~storage_pool_management.models.Sku
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param disks: List of Azure Managed Disks to attach to a Disk Pool.
@@ -381,6 +410,9 @@ class DiskPoolUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'disks': {'key': 'properties.disks', 'type': '[Disk]'},
     }
@@ -388,25 +420,39 @@ class DiskPoolUpdate(msrest.serialization.Model):
     def __init__(
         self,
         *,
+        managed_by: Optional[str] = None,
+        managed_by_extended: Optional[List[str]] = None,
+        sku: Optional["Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         disks: Optional[List["Disk"]] = None,
         **kwargs
     ):
         super(DiskPoolUpdate, self).__init__(**kwargs)
+        self.managed_by = managed_by
+        self.managed_by_extended = managed_by_extended
+        self.sku = sku
         self.tags = tags
         self.disks = disks
 
 
 class DiskPoolZoneInfo(msrest.serialization.Model):
-    """Disk Pool Sku Details.
+    """Disk Pool SKU Details.
 
-    :param availability_zones: Logical zone for Disk Pool resource; example: ["1"].
-    :type availability_zones: list[str]
-    :param additional_capabilities: List of additional capabilities for Disk Pool.
-    :type additional_capabilities: list[str]
-    :param sku: Determines the SKU of VM deployed for Disk Pool.
-    :type sku: ~storage_pool_management.models.Sku
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar availability_zones: Logical zone for Disk Pool resource; example: ["1"].
+    :vartype availability_zones: list[str]
+    :ivar additional_capabilities: List of additional capabilities for Disk Pool.
+    :vartype additional_capabilities: list[str]
+    :ivar sku: Determines the SKU of VM deployed for Disk Pool.
+    :vartype sku: ~storage_pool_management.models.Sku
     """
+
+    _validation = {
+        'availability_zones': {'readonly': True},
+        'additional_capabilities': {'readonly': True},
+        'sku': {'readonly': True},
+    }
 
     _attribute_map = {
         'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
@@ -416,26 +462,29 @@ class DiskPoolZoneInfo(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        availability_zones: Optional[List[str]] = None,
-        additional_capabilities: Optional[List[str]] = None,
-        sku: Optional["Sku"] = None,
         **kwargs
     ):
         super(DiskPoolZoneInfo, self).__init__(**kwargs)
-        self.availability_zones = availability_zones
-        self.additional_capabilities = additional_capabilities
-        self.sku = sku
+        self.availability_zones = None
+        self.additional_capabilities = None
+        self.sku = None
 
 
 class DiskPoolZoneListResult(msrest.serialization.Model):
     """List Disk Pool skus operation response.
 
-    :param value: The list of Disk Pool Skus.
-    :type value: list[~storage_pool_management.models.DiskPoolZoneInfo]
-    :param next_link: URI to fetch the next section of the paginated response.
-    :type next_link: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of Disk Pool Skus.
+    :vartype value: list[~storage_pool_management.models.DiskPoolZoneInfo]
+    :ivar next_link: URI to fetch the next section of the paginated response.
+    :vartype next_link: str
     """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[DiskPoolZoneInfo]'},
@@ -444,14 +493,11 @@ class DiskPoolZoneListResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: Optional[List["DiskPoolZoneInfo"]] = None,
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(DiskPoolZoneListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value = None
+        self.next_link = None
 
 
 class EndpointDependency(msrest.serialization.Model):
@@ -705,6 +751,11 @@ class IscsiTarget(ProxyResource):
     :vartype type: str
     :ivar system_data: Resource metadata required by ARM RPC.
     :vartype system_data: ~storage_pool_management.models.SystemMetadata
+    :ivar managed_by: Azure resource id. Indicates if this resource is managed by another Azure
+     resource.
+    :vartype managed_by: str
+    :ivar managed_by_extended: List of Azure resource ids that manage this resource.
+    :vartype managed_by_extended: list[str]
     :param acl_mode: Required. Mode for Target connectivity. Possible values include: "Dynamic",
      "Static".
     :type acl_mode: str or ~storage_pool_management.models.IscsiTargetAclMode
@@ -727,6 +778,8 @@ class IscsiTarget(ProxyResource):
     :type endpoints: list[str]
     :param port: The port used by iSCSI Target portal group.
     :type port: int
+    :ivar sessions: List of identifiers for active sessions on the iSCSI target.
+    :vartype sessions: list[str]
     """
 
     _validation = {
@@ -734,10 +787,13 @@ class IscsiTarget(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
+        'managed_by': {'readonly': True},
+        'managed_by_extended': {'readonly': True},
         'acl_mode': {'required': True},
         'target_iqn': {'required': True},
         'provisioning_state': {'required': True, 'readonly': True},
         'status': {'required': True},
+        'sessions': {'readonly': True},
     }
 
     _attribute_map = {
@@ -745,6 +801,8 @@ class IscsiTarget(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemMetadata'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
         'acl_mode': {'key': 'properties.aclMode', 'type': 'str'},
         'static_acls': {'key': 'properties.staticAcls', 'type': '[Acl]'},
         'luns': {'key': 'properties.luns', 'type': '[IscsiLun]'},
@@ -753,6 +811,7 @@ class IscsiTarget(ProxyResource):
         'status': {'key': 'properties.status', 'type': 'str'},
         'endpoints': {'key': 'properties.endpoints', 'type': '[str]'},
         'port': {'key': 'properties.port', 'type': 'int'},
+        'sessions': {'key': 'properties.sessions', 'type': '[str]'},
     }
 
     def __init__(
@@ -769,6 +828,8 @@ class IscsiTarget(ProxyResource):
     ):
         super(IscsiTarget, self).__init__(**kwargs)
         self.system_data = None
+        self.managed_by = None
+        self.managed_by_extended = None
         self.acl_mode = acl_mode
         self.static_acls = static_acls
         self.luns = luns
@@ -777,6 +838,7 @@ class IscsiTarget(ProxyResource):
         self.status = status
         self.endpoints = endpoints
         self.port = port
+        self.sessions = None
 
 
 class IscsiTargetCreate(ProxyResource):
@@ -794,6 +856,11 @@ class IscsiTargetCreate(ProxyResource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
+    :param managed_by: Azure resource id. Indicates if this resource is managed by another Azure
+     resource.
+    :type managed_by: str
+    :param managed_by_extended: List of Azure resource ids that manage this resource.
+    :type managed_by_extended: list[str]
     :param acl_mode: Required. Mode for Target connectivity. Possible values include: "Dynamic",
      "Static".
     :type acl_mode: str or ~storage_pool_management.models.IscsiTargetAclMode
@@ -817,6 +884,8 @@ class IscsiTargetCreate(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
         'acl_mode': {'key': 'properties.aclMode', 'type': 'str'},
         'target_iqn': {'key': 'properties.targetIqn', 'type': 'str'},
         'static_acls': {'key': 'properties.staticAcls', 'type': '[Acl]'},
@@ -827,12 +896,16 @@ class IscsiTargetCreate(ProxyResource):
         self,
         *,
         acl_mode: Union[str, "IscsiTargetAclMode"],
+        managed_by: Optional[str] = None,
+        managed_by_extended: Optional[List[str]] = None,
         target_iqn: Optional[str] = None,
         static_acls: Optional[List["Acl"]] = None,
         luns: Optional[List["IscsiLun"]] = None,
         **kwargs
     ):
         super(IscsiTargetCreate, self).__init__(**kwargs)
+        self.managed_by = managed_by
+        self.managed_by_extended = managed_by_extended
         self.acl_mode = acl_mode
         self.target_iqn = target_iqn
         self.static_acls = static_acls
@@ -886,6 +959,11 @@ class IscsiTargetUpdate(ProxyResource):
     :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
      Microsoft.Storage/storageAccounts.
     :vartype type: str
+    :param managed_by: Azure resource id. Indicates if this resource is managed by another Azure
+     resource.
+    :type managed_by: str
+    :param managed_by_extended: List of Azure resource ids that manage this resource.
+    :type managed_by_extended: list[str]
     :param static_acls: Access Control List (ACL) for an iSCSI Target; defines LUN masking policy.
     :type static_acls: list[~storage_pool_management.models.Acl]
     :param luns: List of LUNs to be exposed through iSCSI Target.
@@ -902,6 +980,8 @@ class IscsiTargetUpdate(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
         'static_acls': {'key': 'properties.staticAcls', 'type': '[Acl]'},
         'luns': {'key': 'properties.luns', 'type': '[IscsiLun]'},
     }
@@ -909,11 +989,15 @@ class IscsiTargetUpdate(ProxyResource):
     def __init__(
         self,
         *,
+        managed_by: Optional[str] = None,
+        managed_by_extended: Optional[List[str]] = None,
         static_acls: Optional[List["Acl"]] = None,
         luns: Optional[List["IscsiLun"]] = None,
         **kwargs
     ):
         super(IscsiTargetUpdate, self).__init__(**kwargs)
+        self.managed_by = managed_by
+        self.managed_by_extended = managed_by_extended
         self.static_acls = static_acls
         self.luns = luns
 
@@ -977,6 +1061,256 @@ class OutboundEnvironmentEndpointList(msrest.serialization.Model):
         super(OutboundEnvironmentEndpointList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
+
+
+class ResourceSkuCapability(msrest.serialization.Model):
+    """Capability a resource SKU has.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Capability name.
+    :vartype name: str
+    :ivar value: Capability value.
+    :vartype value: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceSkuCapability, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
+
+
+class ResourceSkuInfo(msrest.serialization.Model):
+    """Resource SKU Details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar api_version: StoragePool RP API version.
+    :vartype api_version: str
+    :ivar resource_type: StoragePool resource type.
+    :vartype resource_type: str
+    :ivar capabilities: List of additional capabilities for StoragePool resource.
+    :vartype capabilities: list[~storage_pool_management.models.ResourceSkuCapability]
+    :ivar location_info: Zones and zone capabilities in those locations where the SKU is available.
+    :vartype location_info: ~storage_pool_management.models.ResourceSkuLocationInfo
+    :ivar name: Sku name.
+    :vartype name: str
+    :ivar tier: Sku tier.
+    :vartype tier: str
+    :ivar restrictions: The restrictions because of which SKU cannot be used. This is empty if
+     there are no restrictions.
+    :vartype restrictions: list[~storage_pool_management.models.ResourceSkuRestrictions]
+    """
+
+    _validation = {
+        'api_version': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'capabilities': {'readonly': True},
+        'location_info': {'readonly': True},
+        'name': {'readonly': True},
+        'tier': {'readonly': True},
+        'restrictions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '[ResourceSkuCapability]'},
+        'location_info': {'key': 'locationInfo', 'type': 'ResourceSkuLocationInfo'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'restrictions': {'key': 'restrictions', 'type': '[ResourceSkuRestrictions]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceSkuInfo, self).__init__(**kwargs)
+        self.api_version = None
+        self.resource_type = None
+        self.capabilities = None
+        self.location_info = None
+        self.name = None
+        self.tier = None
+        self.restrictions = None
+
+
+class ResourceSkuListResult(msrest.serialization.Model):
+    """List Disk Pool skus operation response.
+
+    :param value: The list of StoragePool resource skus.
+    :type value: list[~storage_pool_management.models.ResourceSkuInfo]
+    :param next_link: URI to fetch the next section of the paginated response.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ResourceSkuInfo]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["ResourceSkuInfo"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(ResourceSkuListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ResourceSkuLocationInfo(msrest.serialization.Model):
+    """Zone and capability info for resource sku.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: Location of the SKU.
+    :vartype location: str
+    :ivar zones: List of availability zones where the SKU is supported.
+    :vartype zones: list[str]
+    :ivar zone_details: Details of capabilities available to a SKU in specific zones.
+    :vartype zone_details: list[~storage_pool_management.models.ResourceSkuZoneDetails]
+    """
+
+    _validation = {
+        'location': {'readonly': True},
+        'zones': {'readonly': True},
+        'zone_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+        'zone_details': {'key': 'zoneDetails', 'type': '[ResourceSkuZoneDetails]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceSkuLocationInfo, self).__init__(**kwargs)
+        self.location = None
+        self.zones = None
+        self.zone_details = None
+
+
+class ResourceSkuRestrictionInfo(msrest.serialization.Model):
+    """Describes an available Compute SKU Restriction Information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar locations: Locations where the SKU is restricted.
+    :vartype locations: list[str]
+    :ivar zones: List of availability zones where the SKU is restricted.
+    :vartype zones: list[str]
+    """
+
+    _validation = {
+        'locations': {'readonly': True},
+        'zones': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
+        self.locations = None
+        self.zones = None
+
+
+class ResourceSkuRestrictions(msrest.serialization.Model):
+    """Describes scaling information of a SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The type of restrictions. Possible values include: "Location", "Zone".
+    :vartype type: str or ~storage_pool_management.models.ResourceSkuRestrictionsType
+    :ivar values: The value of restrictions. If the restriction type is set to location. This would
+     be different locations where the SKU is restricted.
+    :vartype values: list[str]
+    :ivar restriction_info: The information about the restriction where the SKU cannot be used.
+    :vartype restriction_info: ~storage_pool_management.models.ResourceSkuRestrictionInfo
+    :ivar reason_code: The reason for restriction. Possible values include: "QuotaId",
+     "NotAvailableForSubscription".
+    :vartype reason_code: str or ~storage_pool_management.models.ResourceSkuRestrictionsReasonCode
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'values': {'readonly': True},
+        'restriction_info': {'readonly': True},
+        'reason_code': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+        'restriction_info': {'key': 'restrictionInfo', 'type': 'ResourceSkuRestrictionInfo'},
+        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceSkuRestrictions, self).__init__(**kwargs)
+        self.type = None
+        self.values = None
+        self.restriction_info = None
+        self.reason_code = None
+
+
+class ResourceSkuZoneDetails(msrest.serialization.Model):
+    """Describes The zonal capabilities of a SKU.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The set of zones that the SKU is available in with the specified capabilities.
+    :vartype name: list[str]
+    :ivar capabilities: A list of capabilities that are available for the SKU in the specified list
+     of zones.
+    :vartype capabilities: list[~storage_pool_management.models.ResourceSkuCapability]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[ResourceSkuCapability]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceSkuZoneDetails, self).__init__(**kwargs)
+        self.name = None
+        self.capabilities = None
 
 
 class Sku(msrest.serialization.Model):

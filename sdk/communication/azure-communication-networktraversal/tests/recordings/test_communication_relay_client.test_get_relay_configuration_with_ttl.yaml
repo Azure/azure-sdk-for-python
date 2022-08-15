@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: '{"ttl": 100}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '12'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      x-ms-date:
+      - Wed, 23 Mar 2022 18:20:55 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
+  response:
+    body:
+      string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
+        "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
+        "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
+        "BQAANuA+Pw0B2D7iM6JUKfyPKl8NlSowP2iOPBcBxtYAAAAMARCsgNlqhd5IsZldo6P6NifIMTpzA2YMw5en9xK6CIPtDq/fjfE=",
+        "credential": "iJIAIA8pN850+Ny6u+tbMSEDC+8="}], "expiresOn": "2022-03-23T18:22:35.3308519+00:00"}'
+    headers:
+      api-supported-versions:
+      - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-03-01-preview
+      content-length:
+      - '546'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 23 Mar 2022 18:20:54 GMT
+      ms-cv:
+      - oL54Lq98jE6ejCMVMO+ETA.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 21ms
+    status:
+      code: 200
+      message: OK
+version: 1

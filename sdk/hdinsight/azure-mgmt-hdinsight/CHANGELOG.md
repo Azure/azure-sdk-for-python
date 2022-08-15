@@ -1,5 +1,30 @@
 # Release History
 
+## 9.0.0 (2021-10-08)
+
+**Features**
+
+  - Model Cluster has a new parameter zones
+  - Model Cluster has a new parameter system_data
+  - Model ClusterGetProperties has a new parameter private_link_configurations
+  - Model ClusterGetProperties has a new parameter private_endpoint_connections
+  - Model ClusterCreateParametersExtended has a new parameter zones
+  - Model ApplicationProperties has a new parameter private_link_configurations
+  - Model ClusterCreateProperties has a new parameter private_link_configurations
+  - Model VmSizeCompatibilityFilterV2 has a new parameter esp_applied
+  - Model VmSizeCompatibilityFilterV2 has a new parameter compute_isolation_supported
+  - Model Application has a new parameter system_data
+  - Model ClusterCreateRequestValidationParameters has a new parameter zones
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+
+**Breaking changes**
+
+  - Parameter location of model Cluster is now required
+  - Parameter location of model TrackedResource is now required
+  - Model CapabilitiesResult no longer has parameter vmsize_filters
+  - Model CapabilitiesResult no longer has parameter vmsizes
+
 ## 8.0.0 (2021-06-03)
 
 **Features**
@@ -79,20 +104,20 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
 - Most of the operation kwarg have changed. Some of the most noticeable:
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
-  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
 ## 2.0.0 (2020-10-20)
@@ -107,7 +132,7 @@ This version uses a next-generation code generator that introduces important bre
 
   - Model ClusterGetProperties no longer has parameter network_settings
   - Model ClusterCreateProperties no longer has parameter network_settings
-  
+
 ## 1.7.0 (2020-08-13)
 
 **Features**

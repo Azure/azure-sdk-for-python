@@ -1,5 +1,49 @@
 # Release History
 
+## 2.0.0 (2021-09-02)
+
+**Features**
+
+  - Model NodeTypeDescription has a new parameter multiple_availability_zones
+  - Model NodeTypeDescription has a new parameter is_stateless
+  - Model ApplicationResource has a new parameter system_data
+  - Model ApplicationResourceUpdate has a new parameter system_data
+  - Model Cluster has a new parameter wave_upgrade_paused
+  - Model Cluster has a new parameter system_data
+  - Model Cluster has a new parameter upgrade_pause_end_timestamp_utc
+  - Model Cluster has a new parameter notifications
+  - Model Cluster has a new parameter sf_zonal_upgrade_mode
+  - Model Cluster has a new parameter vmss_zonal_upgrade_mode
+  - Model Cluster has a new parameter upgrade_pause_start_timestamp_utc
+  - Model Cluster has a new parameter upgrade_wave
+  - Model Cluster has a new parameter infrastructure_service_manager
+  - Model ProxyResource has a new parameter system_data
+  - Model OperationResult has a new parameter is_data_action
+  - Model ApplicationTypeVersionResource has a new parameter system_data
+  - Model ServiceResourceUpdate has a new parameter system_data
+  - Model ClusterUpdateParameters has a new parameter wave_upgrade_paused
+  - Model ClusterUpdateParameters has a new parameter upgrade_pause_end_timestamp_utc
+  - Model ClusterUpdateParameters has a new parameter notifications
+  - Model ClusterUpdateParameters has a new parameter sf_zonal_upgrade_mode
+  - Model ClusterUpdateParameters has a new parameter vmss_zonal_upgrade_mode
+  - Model ClusterUpdateParameters has a new parameter upgrade_pause_start_timestamp_utc
+  - Model ClusterUpdateParameters has a new parameter upgrade_wave
+  - Model ClusterUpdateParameters has a new parameter infrastructure_service_manager
+  - Model ApplicationTypeResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model ServiceResource has a new parameter system_data
+  - Model ApplicationUpgradePolicy has a new parameter recreate_application
+  - Added operation ClustersOperations.list_upgradable_versions
+
+**Breaking changes**
+
+  - Removed operation group ManagedClusterVersionsOperations
+  - Removed operation group ManagedclusterOperations
+  - Removed operation group ManagedClustersOperations
+  - Removed operation group ApplicationOperations
+  - Removed operation group NodeTypesOperations
+  - Removed operation group NodetypeOperations
+
 ## 1.0.0 (2021-06-03)
 
 **Features**
@@ -39,7 +83,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -47,13 +91,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.5.0 (2020-07-28)
 

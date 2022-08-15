@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._query_packs_operations import QueryPacksOperations
+from ._queries_operations import QueriesOperations
 from ._data_exports_operations import DataExportsOperations
 from ._data_sources_operations import DataSourcesOperations
 from ._intelligence_packs_operations import IntelligencePacksOperations
@@ -21,13 +23,18 @@ from ._available_service_tiers_operations import AvailableServiceTiersOperations
 from ._gateways_operations import GatewaysOperations
 from ._schema_operations import SchemaOperations
 from ._workspace_purge_operations import WorkspacePurgeOperations
-from ._tables_operations import TablesOperations
 from ._clusters_operations import ClustersOperations
 from ._operations import Operations
 from ._workspaces_operations import WorkspacesOperations
 from ._deleted_workspaces_operations import DeletedWorkspacesOperations
+from ._tables_operations import TablesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'QueryPacksOperations',
+    'QueriesOperations',
     'DataExportsOperations',
     'DataSourcesOperations',
     'IntelligencePacksOperations',
@@ -43,9 +50,11 @@ __all__ = [
     'GatewaysOperations',
     'SchemaOperations',
     'WorkspacePurgeOperations',
-    'TablesOperations',
     'ClustersOperations',
     'Operations',
     'WorkspacesOperations',
     'DeletedWorkspacesOperations',
+    'TablesOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-mgmt-dataprotection"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Data Protection Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true

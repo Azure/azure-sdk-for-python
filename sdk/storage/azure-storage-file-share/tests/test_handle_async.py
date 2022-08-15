@@ -16,12 +16,8 @@ from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
 )
-from _shared.testcase import (
-    LogCaptured,
-    GlobalStorageAccountPreparer,
-    GlobalResourceGroupPreparer
-)
-from _shared.asynctestcase import AsyncStorageTestCase
+from settings.testcase import FileSharePreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test'
@@ -42,7 +38,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageHandleTest(AsyncStorageTestCase):
     def _setup(self, storage_account, storage_account_key):
-        file_url = self.account_url(storage_account, "file")
+        file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
         self.test_shares = []
@@ -65,16 +61,15 @@ class StorageHandleTest(AsyncStorageTestCase):
         self.assertIsNotNone(handles[0].client_ip)
         self.assertIsNotNone(handles[0].open_time)
 
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skip(reason="Needs further investigation.")
+    @pytest.mark.playback_test_only
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_close_single_handle_async(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("investigate later")
+    async def test_close_single_handle_async(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = []
@@ -92,16 +87,17 @@ class StorageHandleTest(AsyncStorageTestCase):
         self.assertEqual(1, handles_info['closed_handles_count'])
         self.assertEqual(handles_info['failed_handles_count'], 0)
 
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skip(reason="Needs further investigation.")
+    @pytest.mark.playback_test_only
+    @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_close_all_handle_async(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("investigate later")
+    async def test_close_all_handle_async(self, storage_account_name, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
         if self.is_live:
             pytest.skip("Cannot run in live without manual setup")
 
-        self._setup(storage_account, storage_account_key)
+        self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = []

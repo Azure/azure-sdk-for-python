@@ -127,7 +127,6 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         # type: (PipelineRequest, PipelineResponse) -> None
         self.end_span(request, response=response.http_response)
 
-    def on_exception(self, request):  # pylint: disable=unused-argument
-        # type: (PipelineRequest) -> bool
+    def on_exception(self, request):
+        # type: (PipelineRequest) -> None
         self.end_span(request, exc_info=sys.exc_info())
-        return False

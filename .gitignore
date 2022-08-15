@@ -35,12 +35,16 @@ build/
 TestResults/
 ENV_DIR/
 
+# Perf test profiling
+cProfile-*.pstats
+
 # tox generated artifacts
 test-junit-*.xml
 pylint-*.out.txt
 coverage-*.xml
 stderr.txt
 stdout.txt
+_proxy_log_*.log
 
 # tox environment folders
 .tox/
@@ -89,15 +93,25 @@ src/build
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
 venv/
+.venv/
 code_reports
 
 # Azure Storage test credentials
+sdk/storage/azure-storage-blob/tests/settings/settings_real.py
+sdk/storage/azure-storage-queue/tests/settings/settings_real.py
+sdk/storage/azure-storage-file-share/tests/settings/settings_real.py
+sdk/storage/azure-storage-file-datalake/tests/settings/settings_real.py
+
+# azure-ai-ml test configs
+!sdk/ml/azure-ai-ml/tests/test_configs/environment/*
+!sdk/ml/azure-ai-ml/tests/test_configs/*/*/environment*
+
+
+# The locations below are deprecated - keep to prevent any accidental secrets leakage ==========
 sdk/storage/azure-storage-blob/tests/_shared/settings_real.py
 sdk/storage/azure-storage-queue/tests/_shared/settings_real.py
 sdk/storage/azure-storage-file-share/tests/_shared/settings_real.py
 sdk/storage/azure-storage-file-datalake/tests/settings_real.py
-
-# The locations below are deprecated - keep to prevent any accidental secrets leakage ==========
 sdk/storage/azure-storage-blob/tests/settings_real.py
 sdk/storage/azure-storage-queue/tests/settings_real.py
 sdk/storage/azure-storage-file-share/tests/settings_real.py
@@ -111,3 +125,6 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # env vars
 .env
+
+# local SSL certificate folder
+.certificate

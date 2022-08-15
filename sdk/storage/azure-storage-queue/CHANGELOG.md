@@ -1,5 +1,54 @@
 # Release History
 
+## 12.5.0b1 (2022-08-09)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
+## 12.4.0 (2022-07-07)
+
+### Features Added
+- Stable release of features from 12.4.0b1.
+
+## 12.4.0b1 (2022-06-15)
+
+### Features Added
+- Introduced version 2.0 of client-side encryption for Queue messages which utilizes AES-GCM-256 encryption.
+Version 1.0 is now deprecated and no longer considered secure. If you are using client-side encryption, it is
+**highly recommended** that you update to version 2.0.
+The encryption version can be specified on any client constructor via the `encryption_version`
+keyword (i.e. `encryption_version='2.0'`).
+
+## 12.3.0 (2022-05-09)
+
+### Features Added
+- Stable release of features from 12.3.0b1.
+
+### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
+
+## 12.3.0b1 (2022-04-14)
+
+### Features Added
+- Added support for `max_messages` in `receive_messages()` to specify the maximum number of messages to receive from the queue.
+
+### Other Changes
+- Updated SAS token generation to use the latest supported service version by default. Moving to the latest version
+also included a change to how account SAS is generated to reflect a change made to the service in SAS generation for
+service version 2020-12-06.
+- Updated documentation for `receive_messages()` to explain iterator behavior and life-cycle.
+- Added a sample to `queue_samples_message.py` (and async-equivalent) showcasing the use of `max_messages` in `receive_messages()`. 
+
+## 12.2.0 (2022-03-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+
 ## 12.1.6 (2021-04-20)
 **Fixes**
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
@@ -19,9 +68,9 @@
 
 ## 12.1.3 (2020-09-10)
 **Fixes**
-- Fixed QueueClient type declaration (#11392). 
+- Fixed QueueClient type declaration (#11392).
 
-## 12.1.2 
+## 12.1.2
 **Notes**
 - Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
@@ -140,7 +189,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
@@ -155,26 +204,26 @@ https://aka.ms/azure-sdk-preview1-python.
 - Operation `put_message` has been renamed to `enqueue_message`.
 - Operation `get_messages` has been renamed to `receive_messages`.
 
-## 2.0.1 
+## 2.0.1
 - Updated dependency on azure-storage-common.
 
-## 2.0.0 
+## 2.0.0
 - Support for 2018-11-09 REST version.
 
-## 1.4.0 
+## 1.4.0
 - azure-storage-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 
-## 1.3.0 
+## 1.3.0
 - Support for 2018-03-28 REST version. Please see our REST API documentation and blog for information about the related added features.
 
-## 1.2.0rc1 
+## 1.2.0rc1
 - Support for 2017-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for OAuth authentication for HTTPS requests(Please note that this feature is available in preview).
 
-## 1.1.0 
+## 1.1.0
 - Support for 2017-07-29 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Queue messages can now have an arbitrarily large or infinite time to live.
 - Error message now contains the ErrorCode from the x-ms-error-code header value.
 
-## 1.0.0 
+## 1.0.0
 - The package has switched from Apache 2.0 to the MIT license.

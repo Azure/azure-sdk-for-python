@@ -6,36 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ActiveDirectoryObject
-    from ._models_py3 import GenerateCredentialsParameters
-    from ._models_py3 import GenerateCredentialsResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import ScopeMap
-    from ._models_py3 import ScopeMapListResult
-    from ._models_py3 import ScopeMapUpdateParameters
-    from ._models_py3 import SystemData
-    from ._models_py3 import Token
-    from ._models_py3 import TokenCertificate
-    from ._models_py3 import TokenCredentialsProperties
-    from ._models_py3 import TokenListResult
-    from ._models_py3 import TokenPassword
-    from ._models_py3 import TokenUpdateParameters
-except (SyntaxError, ImportError):
-    from ._models import ActiveDirectoryObject  # type: ignore
-    from ._models import GenerateCredentialsParameters  # type: ignore
-    from ._models import GenerateCredentialsResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import ScopeMap  # type: ignore
-    from ._models import ScopeMapListResult  # type: ignore
-    from ._models import ScopeMapUpdateParameters  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import Token  # type: ignore
-    from ._models import TokenCertificate  # type: ignore
-    from ._models import TokenCredentialsProperties  # type: ignore
-    from ._models import TokenListResult  # type: ignore
-    from ._models import TokenPassword  # type: ignore
-    from ._models import TokenUpdateParameters  # type: ignore
+from ._models_py3 import ActiveDirectoryObject
+from ._models_py3 import GenerateCredentialsParameters
+from ._models_py3 import GenerateCredentialsResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import ScopeMap
+from ._models_py3 import ScopeMapListResult
+from ._models_py3 import ScopeMapUpdateParameters
+from ._models_py3 import SystemData
+from ._models_py3 import Token
+from ._models_py3 import TokenCertificate
+from ._models_py3 import TokenCredentialsProperties
+from ._models_py3 import TokenListResult
+from ._models_py3 import TokenPassword
+from ._models_py3 import TokenUpdateParameters
+
 
 from ._container_registry_management_client_enums import (
     CreatedByType,

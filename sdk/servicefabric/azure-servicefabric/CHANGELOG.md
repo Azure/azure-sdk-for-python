@@ -1,5 +1,25 @@
 # Release History
 
+## 8.2.0.0 (2021-12-14)
+
+**Features**
+
+**Breaking changes**
+
+Added new operations:
+ - Added operation ServiceFabricClientAPIsOperationsMixin.validate_cluster_upgrade
+ - Added operation ServiceFabricClientAPIsOperationsMixin.update_application
+ - Added operation ServiceFabricClientAPIsOperationsMixin.move_auxiliary_replica
+
+Added new models:
+  - ApplicationUpdateDescription
+  - CurrentUpgradeUnitsProgressInfo
+  - ServiceHostUpgradeImpact
+  - UpgradeDomainDeployedApplicationsHealthEvaluation
+  - UpgradeUnitInfo
+  - UpgradeUnitState
+  - ValidateClusterUpgradeResult
+
 ## 8.0.0.0 (2021-05-03)
 
 **Features**

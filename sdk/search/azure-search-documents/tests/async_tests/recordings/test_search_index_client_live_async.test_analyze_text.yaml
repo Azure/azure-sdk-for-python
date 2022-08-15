@@ -9,34 +9,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30
+    uri: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns73p5Pz3fuz6Vj+HF8Vy1l11YyXeXv3d1vkbYa3f/yL
-        YlpXTXXejo9/sK7z8Wtp/JN7O3s7v//Op7//vZ3x8TIrr3+Qv8qbddl+NPqord7my+ajR9/7xfIr
-        9Vwt848b+qpps7r98vy8yQmfndFH+XJm/ro/+mhVNUVbVPTCzi8ZuZfbq6r76oPg1V2C5N7d/SXf
-        /yX/D4Ujad/9AAAA
+      string: '{"@odata.context":"https://search4cbf15dc.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.AnalyzeResult","tokens":[{"token":"one''s","startOffset":0,"endOffset":5,"position":0},{"token":"two","startOffset":7,"endOffset":10,"position":1}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
-      content-length: '297'
+      content-length: '305'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:25:29 GMT
-      elapsed-time: '63'
+      date: Tue, 31 Aug 2021 17:33:02 GMT
+      elapsed-time: '67'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 5f4d4344-b990-11eb-9c8d-a0481ca055a9
+      request-id: 7f919a27-0a81-11ec-af5a-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30
+    url: https://search4cbf15dc.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2021-04-30-Preview
 version: 1

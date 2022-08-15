@@ -22,7 +22,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, Callable, Sequence
+    from typing import Dict, Optional, Union, Callable, Sequence, Any
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
     AttributeValue = Union[
@@ -61,7 +61,38 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :paramtype links: list[~azure.core.tracing.Link]
         """
         tracer = self.get_current_tracer()
+        value = kwargs.pop('kind', None)
+        kind = (
+            OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
+            OpenCensusSpanKind.CLIENT if value == SpanKind.PRODUCER else # No producer in opencensus
+            OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
+            OpenCensusSpanKind.CLIENT if value == SpanKind.CONSUMER else # No consumer in opencensus
+            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.INTERNAL else # No internal in opencensus
+            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
+            None
+        ) # type: SpanKind
+        if value and kind is None:
+            raise ValueError("Kind {} is not supported in OpenCensus".format(value))
+
+        links = kwargs.pop('links', None)
         self._span_instance = span or tracer.start_span(name=name, **kwargs)
+        if kind is not None:
+            self._span_instance.span_kind = kind
+
+        if links:
+            try:
+                for link in links:
+                    ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(link.headers)
+                    self._span_instance.add_link(
+                        Link(
+                            trace_id=ctx.trace_id,
+                            span_id=ctx.span_id,
+                            attributes=link.attributes
+                        ))
+            except AttributeError:
+                # we will just send the links as is if it's not ~azure.core.tracing.Link without any validation
+                # assuming user knows what they are doing.
+                self._span_instance.links = links
 
     @property
     def span_instance(self):

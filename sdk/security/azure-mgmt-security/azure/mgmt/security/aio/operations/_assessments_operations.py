@@ -44,12 +44,12 @@ class AssessmentsOperations:
     def list(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityAssessmentList"]:
         """Get security assessments on all your scanned resources inside a scope.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -117,7 +117,7 @@ class AssessmentsOperations:
         resource_id: str,
         assessment_name: str,
         expand: Optional[Union[str, "_models.ExpandEnum"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityAssessment":
         """Get a security assessment on your scanned resource.
 
@@ -179,7 +179,7 @@ class AssessmentsOperations:
         resource_id: str,
         assessment_name: str,
         assessment: "_models.SecurityAssessment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityAssessment":
         """Create a security assessment on your resource. An assessment metadata that describes this
         assessment must be predefined with the same name before inserting the assessment result.
@@ -248,7 +248,7 @@ class AssessmentsOperations:
         self,
         resource_id: str,
         assessment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a security assessment on your resource. An assessment metadata that describes this
         assessment must be predefined with the same name before inserting the assessment result.

@@ -1,9 +1,9 @@
 interactions:
 - request:
-    body: '{"id": "batch_job1_8dcc0a7e", "jobPreparationTask": {"commandLine": "cmd
-      /c \"echo hello world\""}, "jobReleaseTask": {"commandLine": "cmd /c \"echo
-      goodbye world\""}, "poolInfo": {"autoPoolSpecification": {"poolLifetimeOption":
-      "job", "pool": {"vmSize": "small", "cloudServiceConfiguration": {"osFamily":
+    body: '{"id": "batch_job1_8dcc0a7e", "maxParallelTasks": -1, "jobPreparationTask":
+      {"commandLine": "cmd /c \"echo hello world\""}, "jobReleaseTask": {"commandLine":
+      "cmd /c \"echo goodbye world\""}, "poolInfo": {"autoPoolSpecification": {"poolLifetimeOption":
+      "job", "pool": {"vmSize": "standard_d1_v2", "cloudServiceConfiguration": {"osFamily":
       "5"}}}}}'
     headers:
       Accept:
@@ -13,36 +13,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '314'
+      - '347'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:13 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/jobs?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch8dcc0a7e.westcentralus.batch.azure.com/jobs/job-1
+      - https://batch8dcc0a7e.southcentralus.batch.azure.com/jobs/job-1
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
       etag:
-      - '0x8D890AA7A5303E1'
+      - '0x8D9D665BEA2AAD4'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/jobs/job-1
+      - https://batch.southcentralus.batch.azure.com/jobs/job-1
       request-id:
-      - acce697c-6286-45e5-99d0-b36babc67595
+      - 99c8a536-132f-41a2-b353-5e0843cc4e44
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -55,9 +55,9 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{"priority": 500, "constraints": {"maxTaskRetryCount": 3}, "poolInfo":
-      {"autoPoolSpecification": {"poolLifetimeOption": "job", "pool": {"vmSize": "small",
-      "cloudServiceConfiguration": {"osFamily": "5"}}}}}'
+    body: '{"priority": 500, "maxParallelTasks": -1, "constraints": {"maxTaskRetryCount":
+      3}, "poolInfo": {"autoPoolSpecification": {"poolLifetimeOption": "job", "pool":
+      {"vmSize": "standard_d1_v2", "cloudServiceConfiguration": {"osFamily": "5"}}}}}'
     headers:
       Accept:
       - application/json
@@ -66,34 +66,34 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '205'
+      - '238'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
     method: PUT
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch8dcc0a7e.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e
+      - https://batch8dcc0a7e.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
       etag:
-      - '0x8D890AA7A657B73'
+      - '0x8D9D665BEB3C24A'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
       request-id:
-      - 927d3759-ab70-456b-add0-b3cc90a7b5c7
+      - 30fd9632-ea58-4da2-8947-230f59ff0f98
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -119,30 +119,30 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: PATCH
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch8dcc0a7e.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e
+      - https://batch8dcc0a7e.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
       etag:
-      - '0x8D890AA7A72B5C2'
+      - '0x8D9D665BEC11449'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 25ea762e-f8ea-4e6d-b9a2-ae9487e174de
+      - a21ef849-fe99-4d23-970c-f957b1bc3040
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -164,54 +164,44 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobs/@Element\"\
-        ,\"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e\"\
-        ,\"eTag\":\"0x8D890AA7A72B5C2\",\"lastModified\":\"2020-11-24T18:55:14.6103234Z\"\
-        ,\"creationTime\":\"2020-11-24T18:55:14.3856059Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T18:55:14.4026081Z\",\"priority\":900,\"\
-        usesTaskDependencies\":false,\"constraints\":{\r\n    \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":3\r\n  },\"jobPreparationTask\"\
-        :{\r\n    \"id\":\"jobpreparation\",\"commandLine\":\"cmd /c \\\"echo hello\
-        \ world\\\"\",\"constraints\":{\r\n      \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n    },\"userIdentity\"\
-        :{\r\n      \"autoUser\":{\r\n        \"scope\":\"pool\",\"elevationLevel\"\
-        :\"nonadmin\"\r\n      }\r\n    },\"waitForSuccess\":true,\"rerunOnNodeRebootAfterSuccess\"\
-        :true\r\n  },\"jobReleaseTask\":{\r\n    \"id\":\"jobrelease\",\"commandLine\"\
-        :\"cmd /c \\\"echo goodbye world\\\"\",\"maxWallClockTime\":\"PT15M\",\"retentionTime\"\
-        :\"P7D\",\"userIdentity\":{\r\n      \"autoUser\":{\r\n        \"scope\":\"\
-        pool\",\"elevationLevel\":\"nonadmin\"\r\n      }\r\n    }\r\n  },\"poolInfo\"\
-        :{\r\n    \"autoPoolSpecification\":{\r\n      \"poolLifetimeOption\":\"job\"\
-        ,\"keepAlive\":false,\"pool\":{\r\n        \"vmSize\":\"small\",\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n          \"nodeFillType\":\"Spread\"\r\n\
-        \        },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\"\
-        :{\r\n          \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n        }\r\n  \
-        \    }\r\n    }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2020-11-24T18:55:14.4026081Z\"\
-        ,\"poolId\":\"3E54CD46-D2F3-4909-B4CC-03F80E7E3E0F\"\r\n  },\"onAllTasksComplete\"\
-        :\"noaction\",\"onTaskFailure\":\"noaction\"\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#jobs/@Element\",\"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e\",\"eTag\":\"0x8D9D665BEC11449\",\"lastModified\":\"2022-01-13T07:24:33.0001481Z\",\"creationTime\":\"2022-01-13T07:24:32.7838394Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:24:32.8008404Z\",\"priority\":900,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+        \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":3\r\n
+        \ },\"jobPreparationTask\":{\r\n    \"id\":\"jobpreparation\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"constraints\":{\r\n      \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n
+        \   },\"userIdentity\":{\r\n      \"autoUser\":{\r\n        \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n
+        \     }\r\n    },\"waitForSuccess\":true,\"rerunOnNodeRebootAfterSuccess\":true\r\n
+        \ },\"jobReleaseTask\":{\r\n    \"id\":\"jobrelease\",\"commandLine\":\"cmd
+        /c \\\"echo goodbye world\\\"\",\"maxWallClockTime\":\"PT15M\",\"retentionTime\":\"P7D\",\"userIdentity\":{\r\n
+        \     \"autoUser\":{\r\n        \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n
+        \     }\r\n    }\r\n  },\"poolInfo\":{\r\n    \"autoPoolSpecification\":{\r\n
+        \     \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\n        \"vmSize\":\"standard_d1_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \         \"nodeFillType\":\"Spread\"\r\n        },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
+        \         \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n        }\r\n      }\r\n
+        \   }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2022-01-13T07:24:32.8008404Z\",\"poolId\":\"9AA70A7C-9C4D-46FB-8C0E-BC25FBF8C37C\"\r\n
+        \ },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\":\"noaction\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:32 GMT
       etag:
-      - '0x8D890AA7A72B5C2'
+      - '0x8D9D665BEC11449'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 1e35b703-e4f8-43b5-bf42-0ac3368d4bb7
+      - f8cdf5bc-21e6-4867-823d-a71175663c0a
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -224,9 +214,10 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"id": "batch_job2_8dcc0a7e", "poolInfo": {"autoPoolSpecification": {"poolLifetimeOption":
-      "job", "pool": {"vmSize": "small", "cloudServiceConfiguration": {"osFamily":
-      "5"}}}}, "onAllTasksComplete": "terminatejob", "onTaskFailure": "performexitoptionsjobaction"}'
+    body: '{"id": "batch_job2_8dcc0a7e", "maxParallelTasks": -1, "poolInfo": {"autoPoolSpecification":
+      {"poolLifetimeOption": "job", "pool": {"vmSize": "standard_d1_v2", "cloudServiceConfiguration":
+      {"osFamily": "5"}}}}, "onAllTasksComplete": "terminatejob", "onTaskFailure":
+      "performexitoptionsjobaction"}'
     headers:
       Accept:
       - application/json
@@ -235,36 +226,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '262'
+      - '295'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/jobs?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch8dcc0a7e.westcentralus.batch.azure.com/jobs/job-1
+      - https://batch8dcc0a7e.southcentralus.batch.azure.com/jobs/job-1
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       etag:
-      - '0x8D890AA7A91C0FE'
+      - '0x8D9D665BEE23F25'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/jobs/job-1
+      - https://batch.southcentralus.batch.azure.com/jobs/job-1
       request-id:
-      - 02aeaa99-6616-4016-a006-109a77ce102e
+      - df1a49f6-291c-469e-8abd-f526b1b9e0ee
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -286,45 +277,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobs/@Element\"\
-        ,\"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.westcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e\"\
-        ,\"eTag\":\"0x8D890AA7A91C0FE\",\"lastModified\":\"2020-11-24T18:55:14.8137726Z\"\
-        ,\"creationTime\":\"2020-11-24T18:55:14.7967616Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T18:55:14.8137726Z\",\"priority\":0,\"usesTaskDependencies\"\
-        :false,\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n  },\"poolInfo\":{\r\n    \"autoPoolSpecification\"\
-        :{\r\n      \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\
-        \n        \"vmSize\":\"small\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\"\
-        :{\r\n          \"nodeFillType\":\"Spread\"\r\n        },\"resizeTimeout\"\
-        :\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\"\
-        :false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\"\
-        :{\r\n          \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n        }\r\n  \
-        \    }\r\n    }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2020-11-24T18:55:14.8137726Z\"\
-        ,\"poolId\":\"B17A35FC-8DF6-437C-86F0-CD81A3568042\"\r\n  },\"onAllTasksComplete\"\
-        :\"terminatejob\",\"onTaskFailure\":\"performexitoptionsjobaction\"\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#jobs/@Element\",\"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.southcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e\",\"eTag\":\"0x8D9D665BEE23F25\",\"lastModified\":\"2022-01-13T07:24:33.2175141Z\",\"creationTime\":\"2022-01-13T07:24:33.200495Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:24:33.2175141Z\",\"priority\":0,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+        \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \ },\"poolInfo\":{\r\n    \"autoPoolSpecification\":{\r\n      \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\n
+        \       \"vmSize\":\"standard_d1_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \         \"nodeFillType\":\"Spread\"\r\n        },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
+        \         \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n        }\r\n      }\r\n
+        \   }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2022-01-13T07:24:33.2175141Z\",\"poolId\":\"0488F7AD-72FE-4AFA-BD76-DDCA4D08E4B9\"\r\n
+        \ },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"performexitoptionsjobaction\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       etag:
-      - '0x8D890AA7A91C0FE'
+      - '0x8D9D665BEE23F25'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 1a3f0987-68d8-4d22-96ec-9995aa95b962
+      - bd81e514-2fab-430f-b330-183c943a3b4b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -346,68 +329,51 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/jobs?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobs\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e\"\
-        ,\"eTag\":\"0x8D890AA7A72B5C2\",\"lastModified\":\"2020-11-24T18:55:14.6103234Z\"\
-        ,\"creationTime\":\"2020-11-24T18:55:14.3856059Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T18:55:14.4026081Z\",\"priority\":900,\"\
-        usesTaskDependencies\":false,\"constraints\":{\r\n        \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":3\r\n      },\"jobPreparationTask\"\
-        :{\r\n        \"id\":\"jobpreparation\",\"commandLine\":\"cmd /c \\\"echo\
-        \ hello world\\\"\",\"constraints\":{\r\n          \"maxWallClockTime\":\"\
-        P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\"\
-        :0\r\n        },\"userIdentity\":{\r\n          \"autoUser\":{\r\n       \
-        \     \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n          }\r\n\
-        \        },\"waitForSuccess\":true,\"rerunOnNodeRebootAfterSuccess\":true\r\
-        \n      },\"jobReleaseTask\":{\r\n        \"id\":\"jobrelease\",\"commandLine\"\
-        :\"cmd /c \\\"echo goodbye world\\\"\",\"maxWallClockTime\":\"PT15M\",\"retentionTime\"\
-        :\"P7D\",\"userIdentity\":{\r\n          \"autoUser\":{\r\n            \"\
-        scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n          }\r\n      \
-        \  }\r\n      },\"poolInfo\":{\r\n        \"autoPoolSpecification\":{\r\n\
-        \          \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\
-        \n            \"vmSize\":\"small\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\"\
-        :{\r\n              \"nodeFillType\":\"Spread\"\r\n            },\"resizeTimeout\"\
-        :\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\"\
-        :false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\"\
-        :{\r\n              \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n           \
-        \ }\r\n          }\r\n        }\r\n      },\"executionInfo\":{\r\n       \
-        \ \"startTime\":\"2020-11-24T18:55:14.4026081Z\",\"poolId\":\"3E54CD46-D2F3-4909-B4CC-03F80E7E3E0F\"\
-        \r\n      },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\":\"noaction\"\
-        \r\n    },{\r\n      \"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.westcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e\"\
-        ,\"eTag\":\"0x8D890AA7A91C0FE\",\"lastModified\":\"2020-11-24T18:55:14.8137726Z\"\
-        ,\"creationTime\":\"2020-11-24T18:55:14.7967616Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T18:55:14.8137726Z\",\"priority\":0,\"usesTaskDependencies\"\
-        :false,\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n      },\"poolInfo\":{\r\n        \"autoPoolSpecification\"\
-        :{\r\n          \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\"\
-        :{\r\n            \"vmSize\":\"small\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\"\
-        :{\r\n              \"nodeFillType\":\"Spread\"\r\n            },\"resizeTimeout\"\
-        :\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\"\
-        :false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\"\
-        :{\r\n              \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n           \
-        \ }\r\n          }\r\n        }\r\n      },\"executionInfo\":{\r\n       \
-        \ \"startTime\":\"2020-11-24T18:55:14.8137726Z\",\"poolId\":\"B17A35FC-8DF6-437C-86F0-CD81A3568042\"\
-        \r\n      },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"performexitoptionsjobaction\"\
-        \r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#jobs\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e\",\"eTag\":\"0x8D9D665BEC11449\",\"lastModified\":\"2022-01-13T07:24:33.0001481Z\",\"creationTime\":\"2022-01-13T07:24:32.7838394Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:24:32.8008404Z\",\"priority\":900,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":3\r\n
+        \     },\"jobPreparationTask\":{\r\n        \"id\":\"jobpreparation\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"constraints\":{\r\n          \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n
+        \       },\"userIdentity\":{\r\n          \"autoUser\":{\r\n            \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n
+        \         }\r\n        },\"waitForSuccess\":true,\"rerunOnNodeRebootAfterSuccess\":true\r\n
+        \     },\"jobReleaseTask\":{\r\n        \"id\":\"jobrelease\",\"commandLine\":\"cmd
+        /c \\\"echo goodbye world\\\"\",\"maxWallClockTime\":\"PT15M\",\"retentionTime\":\"P7D\",\"userIdentity\":{\r\n
+        \         \"autoUser\":{\r\n            \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n
+        \         }\r\n        }\r\n      },\"poolInfo\":{\r\n        \"autoPoolSpecification\":{\r\n
+        \         \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\n
+        \           \"vmSize\":\"standard_d1_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \             \"nodeFillType\":\"Spread\"\r\n            },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
+        \             \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n            }\r\n
+        \         }\r\n        }\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2022-01-13T07:24:32.8008404Z\",\"poolId\":\"9AA70A7C-9C4D-46FB-8C0E-BC25FBF8C37C\"\r\n
+        \     },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\":\"noaction\"\r\n
+        \   },{\r\n      \"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.southcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e\",\"eTag\":\"0x8D9D665BEE23F25\",\"lastModified\":\"2022-01-13T07:24:33.2175141Z\",\"creationTime\":\"2022-01-13T07:24:33.200495Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:24:33.2175141Z\",\"priority\":0,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
+        \     },\"poolInfo\":{\r\n        \"autoPoolSpecification\":{\r\n          \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\n
+        \           \"vmSize\":\"standard_d1_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \             \"nodeFillType\":\"Spread\"\r\n            },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
+        \             \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n            }\r\n
+        \         }\r\n        }\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2022-01-13T07:24:33.2175141Z\",\"poolId\":\"0488F7AD-72FE-4AFA-BD76-DDCA4D08E4B9\"\r\n
+        \     },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"performexitoptionsjobaction\"\r\n
+        \   }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - dc22ba37-16b8-4208-8543-0577949a0e0d
+      - 4fb73940-2bb5-4d0c-8992-f44ba68b2d7e
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -433,30 +399,30 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/disable?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/disable?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch8dcc0a7e.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/disable
+      - https://batch8dcc0a7e.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/disable
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       etag:
-      - '0x8D890AA7AB55449'
+      - '0x8D9D665BF0BE6AF'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 7b0e44d8-d2e8-4fa5-9616-ee756fb1e776
+      - 27d9d260-e4d4-4cc4-934d-952b98d75bd4
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -480,30 +446,30 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/enable?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/enable?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch8dcc0a7e.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/enable
+      - https://batch8dcc0a7e.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/enable
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       etag:
-      - '0x8D890AA7AC1993F'
+      - '0x8D9D665BF19B372'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 32b6ae57-c123-4be5-a632-bad397666441
+      - 88f9df5b-1ab3-4e2a-9ad8-462a6ab22f4c
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -525,27 +491,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/jobpreparationandreleasetaskstatus?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/jobpreparationandreleasetaskstatus?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobpreparationandreleasetaskstatuslist\"\
-        ,\"value\":[\r\n    \r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#jobpreparationandreleasetaskstatuslist\",\"value\":[]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - c793a207-8145-4a4b-9fc6-7f6f9536403a
+      - 849504d6-a86b-4a46-9f63-8145648cdc3b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -571,30 +536,30 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/terminate?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/terminate?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch8dcc0a7e.westcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/terminate
+      - https://batch8dcc0a7e.southcentralus.batch.azure.com/jobs/batch_job1_8dcc0a7e/terminate
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       etag:
-      - '0x8D890AA7AD97D8B'
+      - '0x8D9D665BF347E88'
       last-modified:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 5773ff95-1713-4c3a-bfc0-f75547e8dd2e
+      - ad7814e1-2490-4926-bb0f-1f3dca584fec
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -618,14 +583,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: DELETE
-    uri: https://batch.westcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/jobs/batch_job2_8dcc0a7e?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -633,9 +598,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:14 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 778c1a8a-855c-419b-8f34-cadf9131ad46
+      - 1204241a-15f0-46b5-a84d-27b8bf1487e4
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -657,32 +622,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/lifetimejobstats?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/lifetimejobstats?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#jobstats/@Element\"\
-        ,\"url\":\"https://batch.westcentralus.batch.azure.com/lifetimejobstats\"\
-        ,\"startTime\":\"2020-11-24T18:54:57.6907786Z\",\"lastUpdateTime\":\"2020-11-24T18:54:57.6907786Z\"\
-        ,\"userCPUTime\":\"PT0S\",\"kernelCPUTime\":\"PT0S\",\"wallClockTime\":\"\
-        PT0S\",\"readIOps\":\"0\",\"writeIOps\":\"0\",\"readIOGiB\":0.0,\"writeIOGiB\"\
-        :0.0,\"numTaskRetries\":\"0\",\"numSucceededTasks\":\"0\",\"numFailedTasks\"\
-        :\"0\",\"waitTime\":\"PT0S\"\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#jobstats/@Element\",\"url\":\"https://batch.southcentralus.batch.azure.com/lifetimejobstats\",\"startTime\":\"2022-01-13T07:24:16.6358301Z\",\"lastUpdateTime\":\"2022-01-13T07:24:16.6358301Z\",\"userCPUTime\":\"PT0S\",\"kernelCPUTime\":\"PT0S\",\"wallClockTime\":\"PT0S\",\"readIOps\":\"0\",\"writeIOps\":\"0\",\"readIOGiB\":0.0,\"writeIOGiB\":0.0,\"numTaskRetries\":\"0\",\"numSucceededTasks\":\"0\",\"numFailedTasks\":\"0\",\"waitTime\":\"PT0S\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 18:55:15 GMT
+      - Thu, 13 Jan 2022 07:24:33 GMT
       request-id:
-      - 2fb10198-e78f-4509-8f21-9275e110f54f
+      - 5d582dd7-c9da-4a35-978b-fb32df5c72c2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

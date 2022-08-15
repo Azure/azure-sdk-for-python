@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._storage_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccountSasParameters(msrest.serialization.Model):
@@ -19,31 +21,31 @@ class AccountSasParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param services: Required. The signed services accessible with the account SAS. Possible values
-     include: Blob (b), Queue (q), Table (t), File (f). Possible values include: "b", "q", "t", "f".
-    :type services: str or ~azure.mgmt.storage.v2019_04_01.models.Services
-    :param resource_types: Required. The signed resource types that are accessible with the account
+    :ivar services: Required. The signed services accessible with the account SAS. Possible values
+     include: Blob (b), Queue (q), Table (t), File (f). Known values are: "b", "q", "t", "f".
+    :vartype services: str or ~azure.mgmt.storage.v2019_04_01.models.Services
+    :ivar resource_types: Required. The signed resource types that are accessible with the account
      SAS. Service (s): Access to service-level APIs; Container (c): Access to container-level APIs;
      Object (o): Access to object-level APIs for blobs, queue messages, table entities, and files.
-     Possible values include: "s", "c", "o".
-    :type resource_types: str or ~azure.mgmt.storage.v2019_04_01.models.SignedResourceTypes
-    :param permissions: Required. The signed permissions for the account SAS. Possible values
+     Known values are: "s", "c", "o".
+    :vartype resource_types: str or ~azure.mgmt.storage.v2019_04_01.models.SignedResourceTypes
+    :ivar permissions: Required. The signed permissions for the account SAS. Possible values
      include: Read (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process
-     (p). Possible values include: "r", "d", "w", "l", "a", "c", "u", "p".
-    :type permissions: str or ~azure.mgmt.storage.v2019_04_01.models.Permissions
-    :param ip_address_or_range: An IP address or a range of IP addresses from which to accept
+     (p). Known values are: "r", "d", "w", "l", "a", "c", "u", "p".
+    :vartype permissions: str or ~azure.mgmt.storage.v2019_04_01.models.Permissions
+    :ivar ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
-    :type ip_address_or_range: str
-    :param protocols: The protocol permitted for a request made with the account SAS. Possible
-     values include: "https,http", "https".
-    :type protocols: str or ~azure.mgmt.storage.v2019_04_01.models.HttpProtocol
-    :param shared_access_start_time: The time at which the SAS becomes valid.
-    :type shared_access_start_time: ~datetime.datetime
-    :param shared_access_expiry_time: Required. The time at which the shared access signature
+    :vartype ip_address_or_range: str
+    :ivar protocols: The protocol permitted for a request made with the account SAS. Known values
+     are: "https,http", "https".
+    :vartype protocols: str or ~azure.mgmt.storage.v2019_04_01.models.HttpProtocol
+    :ivar shared_access_start_time: The time at which the SAS becomes valid.
+    :vartype shared_access_start_time: ~datetime.datetime
+    :ivar shared_access_expiry_time: Required. The time at which the shared access signature
      becomes invalid.
-    :type shared_access_expiry_time: ~datetime.datetime
-    :param key_to_sign: The key to sign the account SAS token with.
-    :type key_to_sign: str
+    :vartype shared_access_expiry_time: ~datetime.datetime
+    :ivar key_to_sign: The key to sign the account SAS token with.
+    :vartype key_to_sign: str
     """
 
     _validation = {
@@ -67,16 +69,43 @@ class AccountSasParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        services: Union[str, "Services"],
-        resource_types: Union[str, "SignedResourceTypes"],
-        permissions: Union[str, "Permissions"],
+        services: Union[str, "_models.Services"],
+        resource_types: Union[str, "_models.SignedResourceTypes"],
+        permissions: Union[str, "_models.Permissions"],
         shared_access_expiry_time: datetime.datetime,
         ip_address_or_range: Optional[str] = None,
-        protocols: Optional[Union[str, "HttpProtocol"]] = None,
+        protocols: Optional[Union[str, "_models.HttpProtocol"]] = None,
         shared_access_start_time: Optional[datetime.datetime] = None,
         key_to_sign: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword services: Required. The signed services accessible with the account SAS. Possible
+         values include: Blob (b), Queue (q), Table (t), File (f). Known values are: "b", "q", "t", "f".
+        :paramtype services: str or ~azure.mgmt.storage.v2019_04_01.models.Services
+        :keyword resource_types: Required. The signed resource types that are accessible with the
+         account SAS. Service (s): Access to service-level APIs; Container (c): Access to
+         container-level APIs; Object (o): Access to object-level APIs for blobs, queue messages, table
+         entities, and files. Known values are: "s", "c", "o".
+        :paramtype resource_types: str or ~azure.mgmt.storage.v2019_04_01.models.SignedResourceTypes
+        :keyword permissions: Required. The signed permissions for the account SAS. Possible values
+         include: Read (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process
+         (p). Known values are: "r", "d", "w", "l", "a", "c", "u", "p".
+        :paramtype permissions: str or ~azure.mgmt.storage.v2019_04_01.models.Permissions
+        :keyword ip_address_or_range: An IP address or a range of IP addresses from which to accept
+         requests.
+        :paramtype ip_address_or_range: str
+        :keyword protocols: The protocol permitted for a request made with the account SAS. Known
+         values are: "https,http", "https".
+        :paramtype protocols: str or ~azure.mgmt.storage.v2019_04_01.models.HttpProtocol
+        :keyword shared_access_start_time: The time at which the SAS becomes valid.
+        :paramtype shared_access_start_time: ~datetime.datetime
+        :keyword shared_access_expiry_time: Required. The time at which the shared access signature
+         becomes invalid.
+        :paramtype shared_access_expiry_time: ~datetime.datetime
+        :keyword key_to_sign: The key to sign the account SAS token with.
+        :paramtype key_to_sign: str
+        """
         super(AccountSasParameters, self).__init__(**kwargs)
         self.services = services
         self.resource_types = resource_types
@@ -93,19 +122,19 @@ class ActiveDirectoryProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param domain_name: Required. Specifies the primary domain that the AD DNS server is
+    :ivar domain_name: Required. Specifies the primary domain that the AD DNS server is
      authoritative for.
-    :type domain_name: str
-    :param net_bios_domain_name: Required. Specifies the NetBIOS domain name.
-    :type net_bios_domain_name: str
-    :param forest_name: Required. Specifies the Active Directory forest to get.
-    :type forest_name: str
-    :param domain_guid: Required. Specifies the domain GUID.
-    :type domain_guid: str
-    :param domain_sid: Required. Specifies the security identifier (SID).
-    :type domain_sid: str
-    :param azure_storage_sid: Required. Specifies the security identifier (SID) for Azure Storage.
-    :type azure_storage_sid: str
+    :vartype domain_name: str
+    :ivar net_bios_domain_name: Required. Specifies the NetBIOS domain name.
+    :vartype net_bios_domain_name: str
+    :ivar forest_name: Required. Specifies the Active Directory forest to get.
+    :vartype forest_name: str
+    :ivar domain_guid: Required. Specifies the domain GUID.
+    :vartype domain_guid: str
+    :ivar domain_sid: Required. Specifies the security identifier (SID).
+    :vartype domain_sid: str
+    :ivar azure_storage_sid: Required. Specifies the security identifier (SID) for Azure Storage.
+    :vartype azure_storage_sid: str
     """
 
     _validation = {
@@ -137,6 +166,22 @@ class ActiveDirectoryProperties(msrest.serialization.Model):
         azure_storage_sid: str,
         **kwargs
     ):
+        """
+        :keyword domain_name: Required. Specifies the primary domain that the AD DNS server is
+         authoritative for.
+        :paramtype domain_name: str
+        :keyword net_bios_domain_name: Required. Specifies the NetBIOS domain name.
+        :paramtype net_bios_domain_name: str
+        :keyword forest_name: Required. Specifies the Active Directory forest to get.
+        :paramtype forest_name: str
+        :keyword domain_guid: Required. Specifies the domain GUID.
+        :paramtype domain_guid: str
+        :keyword domain_sid: Required. Specifies the security identifier (SID).
+        :paramtype domain_sid: str
+        :keyword azure_storage_sid: Required. Specifies the security identifier (SID) for Azure
+         Storage.
+        :paramtype azure_storage_sid: str
+        """
         super(ActiveDirectoryProperties, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.net_bios_domain_name = net_bios_domain_name
@@ -177,6 +222,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -218,6 +265,8 @@ class AzureEntityResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureEntityResource, self).__init__(**kwargs)
         self.etag = None
 
@@ -227,12 +276,12 @@ class AzureFilesIdentityBasedAuthentication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param directory_service_options: Required. Indicates the directory service used. Possible
-     values include: "None", "AADDS", "AD".
-    :type directory_service_options: str or
+    :ivar directory_service_options: Required. Indicates the directory service used. Known values
+     are: "None", "AADDS", "AD".
+    :vartype directory_service_options: str or
      ~azure.mgmt.storage.v2019_04_01.models.DirectoryServiceOptions
-    :param active_directory_properties: Required if choose AD.
-    :type active_directory_properties:
+    :ivar active_directory_properties: Required if choose AD.
+    :vartype active_directory_properties:
      ~azure.mgmt.storage.v2019_04_01.models.ActiveDirectoryProperties
     """
 
@@ -248,10 +297,19 @@ class AzureFilesIdentityBasedAuthentication(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        directory_service_options: Union[str, "DirectoryServiceOptions"],
-        active_directory_properties: Optional["ActiveDirectoryProperties"] = None,
+        directory_service_options: Union[str, "_models.DirectoryServiceOptions"],
+        active_directory_properties: Optional["_models.ActiveDirectoryProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword directory_service_options: Required. Indicates the directory service used. Known
+         values are: "None", "AADDS", "AD".
+        :paramtype directory_service_options: str or
+         ~azure.mgmt.storage.v2019_04_01.models.DirectoryServiceOptions
+        :keyword active_directory_properties: Required if choose AD.
+        :paramtype active_directory_properties:
+         ~azure.mgmt.storage.v2019_04_01.models.ActiveDirectoryProperties
+        """
         super(AzureFilesIdentityBasedAuthentication, self).__init__(**kwargs)
         self.directory_service_options = directory_service_options
         self.active_directory_properties = active_directory_properties
@@ -272,22 +330,21 @@ class BlobContainer(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param public_access: Specifies whether data in the container may be accessed publicly and the
-     level of access. Possible values include: "Container", "Blob", "None".
-    :type public_access: str or ~azure.mgmt.storage.v2019_04_01.models.PublicAccess
+    :ivar public_access: Specifies whether data in the container may be accessed publicly and the
+     level of access. Known values are: "Container", "Blob", "None".
+    :vartype public_access: str or ~azure.mgmt.storage.v2019_04_01.models.PublicAccess
     :ivar last_modified_time: Returns the date and time the container was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :ivar lease_status: The lease status of the container. Possible values include: "Locked",
-     "Unlocked".
+    :ivar lease_status: The lease status of the container. Known values are: "Locked", "Unlocked".
     :vartype lease_status: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseStatus
-    :ivar lease_state: Lease state of the container. Possible values include: "Available",
-     "Leased", "Expired", "Breaking", "Broken".
+    :ivar lease_state: Lease state of the container. Known values are: "Available", "Leased",
+     "Expired", "Breaking", "Broken".
     :vartype lease_state: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseState
     :ivar lease_duration: Specifies whether the lease on a container is of infinite or fixed
-     duration, only when the container is leased. Possible values include: "Infinite", "Fixed".
+     duration, only when the container is leased. Known values are: "Infinite", "Fixed".
     :vartype lease_duration: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseDuration
-    :param metadata: A name-value pair to associate with the container as metadata.
-    :type metadata: dict[str, str]
+    :ivar metadata: A name-value pair to associate with the container as metadata.
+    :vartype metadata: dict[str, str]
     :ivar immutability_policy: The ImmutabilityPolicy property of the container.
     :vartype immutability_policy:
      ~azure.mgmt.storage.v2019_04_01.models.ImmutabilityPolicyProperties
@@ -339,10 +396,17 @@ class BlobContainer(AzureEntityResource):
     def __init__(
         self,
         *,
-        public_access: Optional[Union[str, "PublicAccess"]] = None,
+        public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword public_access: Specifies whether data in the container may be accessed publicly and
+         the level of access. Known values are: "Container", "Blob", "None".
+        :paramtype public_access: str or ~azure.mgmt.storage.v2019_04_01.models.PublicAccess
+        :keyword metadata: A name-value pair to associate with the container as metadata.
+        :paramtype metadata: dict[str, str]
+        """
         super(BlobContainer, self).__init__(**kwargs)
         self.public_access = public_access
         self.last_modified_time = None
@@ -377,6 +441,8 @@ class BlobServiceItems(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BlobServiceItems, self).__init__(**kwargs)
         self.value = None
 
@@ -394,20 +460,20 @@ class BlobServiceProperties(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
+    :ivar cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
      elements in the request. If no CorsRule elements are included in the request body, all CORS
      rules will be deleted, and CORS will be disabled for the Blob service.
-    :type cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
-    :param default_service_version: DefaultServiceVersion indicates the default version to use for
+    :vartype cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+    :ivar default_service_version: DefaultServiceVersion indicates the default version to use for
      requests to the Blob service if an incoming request’s version is not specified. Possible values
      include version 2008-10-27 and all more recent versions.
-    :type default_service_version: str
-    :param delete_retention_policy: The blob service properties for soft delete.
-    :type delete_retention_policy: ~azure.mgmt.storage.v2019_04_01.models.DeleteRetentionPolicy
-    :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if set to true.
-    :type automatic_snapshot_policy_enabled: bool
-    :param change_feed: The blob service properties for change feed events.
-    :type change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
+    :vartype default_service_version: str
+    :ivar delete_retention_policy: The blob service properties for soft delete.
+    :vartype delete_retention_policy: ~azure.mgmt.storage.v2019_04_01.models.DeleteRetentionPolicy
+    :ivar automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if set to true.
+    :vartype automatic_snapshot_policy_enabled: bool
+    :ivar change_feed: The blob service properties for change feed events.
+    :vartype change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
     """
 
     _validation = {
@@ -430,13 +496,30 @@ class BlobServiceProperties(Resource):
     def __init__(
         self,
         *,
-        cors: Optional["CorsRules"] = None,
+        cors: Optional["_models.CorsRules"] = None,
         default_service_version: Optional[str] = None,
-        delete_retention_policy: Optional["DeleteRetentionPolicy"] = None,
+        delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = None,
         automatic_snapshot_policy_enabled: Optional[bool] = None,
-        change_feed: Optional["ChangeFeed"] = None,
+        change_feed: Optional["_models.ChangeFeed"] = None,
         **kwargs
     ):
+        """
+        :keyword cors: Specifies CORS rules for the Blob service. You can include up to five CorsRule
+         elements in the request. If no CorsRule elements are included in the request body, all CORS
+         rules will be deleted, and CORS will be disabled for the Blob service.
+        :paramtype cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+        :keyword default_service_version: DefaultServiceVersion indicates the default version to use
+         for requests to the Blob service if an incoming request’s version is not specified. Possible
+         values include version 2008-10-27 and all more recent versions.
+        :paramtype default_service_version: str
+        :keyword delete_retention_policy: The blob service properties for soft delete.
+        :paramtype delete_retention_policy:
+         ~azure.mgmt.storage.v2019_04_01.models.DeleteRetentionPolicy
+        :keyword automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if set to true.
+        :paramtype automatic_snapshot_policy_enabled: bool
+        :keyword change_feed: The blob service properties for change feed events.
+        :paramtype change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
+        """
         super(BlobServiceProperties, self).__init__(**kwargs)
         self.cors = cors
         self.default_service_version = default_service_version
@@ -448,8 +531,8 @@ class BlobServiceProperties(Resource):
 class ChangeFeed(msrest.serialization.Model):
     """The blob service properties for change feed events.
 
-    :param enabled: Indicates whether change feed event logging is enabled for the Blob service.
-    :type enabled: bool
+    :ivar enabled: Indicates whether change feed event logging is enabled for the Blob service.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
@@ -462,6 +545,10 @@ class ChangeFeed(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Indicates whether change feed event logging is enabled for the Blob service.
+        :paramtype enabled: bool
+        """
         super(ChangeFeed, self).__init__(**kwargs)
         self.enabled = enabled
 
@@ -476,7 +563,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: Gets the reason that a storage account name could not be used. The Reason element
-     is only returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
+     is only returned if NameAvailable is false. Known values are: "AccountNameInvalid",
      "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.storage.v2019_04_01.models.Reason
     :ivar message: Gets an error message explaining the Reason value in more detail.
@@ -499,6 +586,8 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
@@ -508,17 +597,17 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the Storage service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -534,9 +623,22 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -549,22 +651,22 @@ class CorsRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allowed_origins: Required. Required if CorsRule element is present. A list of origin
+    :ivar allowed_origins: Required. Required if CorsRule element is present. A list of origin
      domains that will be allowed via CORS, or "*" to allow all domains.
-    :type allowed_origins: list[str]
-    :param allowed_methods: Required. Required if CorsRule element is present. A list of HTTP
+    :vartype allowed_origins: list[str]
+    :ivar allowed_methods: Required. Required if CorsRule element is present. A list of HTTP
      methods that are allowed to be executed by the origin.
-    :type allowed_methods: list[str or
+    :vartype allowed_methods: list[str or
      ~azure.mgmt.storage.v2019_04_01.models.CorsRuleAllowedMethodsItem]
-    :param max_age_in_seconds: Required. Required if CorsRule element is present. The number of
+    :ivar max_age_in_seconds: Required. Required if CorsRule element is present. The number of
      seconds that the client/browser should cache a preflight response.
-    :type max_age_in_seconds: int
-    :param exposed_headers: Required. Required if CorsRule element is present. A list of response
+    :vartype max_age_in_seconds: int
+    :ivar exposed_headers: Required. Required if CorsRule element is present. A list of response
      headers to expose to CORS clients.
-    :type exposed_headers: list[str]
-    :param allowed_headers: Required. Required if CorsRule element is present. A list of headers
+    :vartype exposed_headers: list[str]
+    :ivar allowed_headers: Required. Required if CorsRule element is present. A list of headers
      allowed to be part of the cross-origin request.
-    :type allowed_headers: list[str]
+    :vartype allowed_headers: list[str]
     """
 
     _validation = {
@@ -587,12 +689,30 @@ class CorsRule(msrest.serialization.Model):
         self,
         *,
         allowed_origins: List[str],
-        allowed_methods: List[Union[str, "CorsRuleAllowedMethodsItem"]],
+        allowed_methods: List[Union[str, "_models.CorsRuleAllowedMethodsItem"]],
         max_age_in_seconds: int,
         exposed_headers: List[str],
         allowed_headers: List[str],
         **kwargs
     ):
+        """
+        :keyword allowed_origins: Required. Required if CorsRule element is present. A list of origin
+         domains that will be allowed via CORS, or "*" to allow all domains.
+        :paramtype allowed_origins: list[str]
+        :keyword allowed_methods: Required. Required if CorsRule element is present. A list of HTTP
+         methods that are allowed to be executed by the origin.
+        :paramtype allowed_methods: list[str or
+         ~azure.mgmt.storage.v2019_04_01.models.CorsRuleAllowedMethodsItem]
+        :keyword max_age_in_seconds: Required. Required if CorsRule element is present. The number of
+         seconds that the client/browser should cache a preflight response.
+        :paramtype max_age_in_seconds: int
+        :keyword exposed_headers: Required. Required if CorsRule element is present. A list of response
+         headers to expose to CORS clients.
+        :paramtype exposed_headers: list[str]
+        :keyword allowed_headers: Required. Required if CorsRule element is present. A list of headers
+         allowed to be part of the cross-origin request.
+        :paramtype allowed_headers: list[str]
+        """
         super(CorsRule, self).__init__(**kwargs)
         self.allowed_origins = allowed_origins
         self.allowed_methods = allowed_methods
@@ -604,9 +724,9 @@ class CorsRule(msrest.serialization.Model):
 class CorsRules(msrest.serialization.Model):
     """Sets the CORS rules. You can include up to five CorsRule elements in the request.
 
-    :param cors_rules: The List of CORS rules. You can include up to five CorsRule elements in the
+    :ivar cors_rules: The List of CORS rules. You can include up to five CorsRule elements in the
      request.
-    :type cors_rules: list[~azure.mgmt.storage.v2019_04_01.models.CorsRule]
+    :vartype cors_rules: list[~azure.mgmt.storage.v2019_04_01.models.CorsRule]
     """
 
     _attribute_map = {
@@ -616,9 +736,14 @@ class CorsRules(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        cors_rules: Optional[List["CorsRule"]] = None,
+        cors_rules: Optional[List["_models.CorsRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword cors_rules: The List of CORS rules. You can include up to five CorsRule elements in
+         the request.
+        :paramtype cors_rules: list[~azure.mgmt.storage.v2019_04_01.models.CorsRule]
+        """
         super(CorsRules, self).__init__(**kwargs)
         self.cors_rules = cors_rules
 
@@ -628,12 +753,12 @@ class CustomDomain(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Gets or sets the custom domain name assigned to the storage account.
-     Name is the CNAME source.
-    :type name: str
-    :param use_sub_domain_name: Indicates whether indirect CName validation is enabled. Default
+    :ivar name: Required. Gets or sets the custom domain name assigned to the storage account. Name
+     is the CNAME source.
+    :vartype name: str
+    :ivar use_sub_domain_name: Indicates whether indirect CName validation is enabled. Default
      value is false. This should only be set on updates.
-    :type use_sub_domain_name: bool
+    :vartype use_sub_domain_name: bool
     """
 
     _validation = {
@@ -652,6 +777,14 @@ class CustomDomain(msrest.serialization.Model):
         use_sub_domain_name: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. Gets or sets the custom domain name assigned to the storage account.
+         Name is the CNAME source.
+        :paramtype name: str
+        :keyword use_sub_domain_name: Indicates whether indirect CName validation is enabled. Default
+         value is false. This should only be set on updates.
+        :paramtype use_sub_domain_name: bool
+        """
         super(CustomDomain, self).__init__(**kwargs)
         self.name = name
         self.use_sub_domain_name = use_sub_domain_name
@@ -662,9 +795,9 @@ class DateAfterCreation(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_creation_greater_than: Required. Value indicating the age in days after
+    :ivar days_after_creation_greater_than: Required. Value indicating the age in days after
      creation.
-    :type days_after_creation_greater_than: float
+    :vartype days_after_creation_greater_than: float
     """
 
     _validation = {
@@ -681,6 +814,11 @@ class DateAfterCreation(msrest.serialization.Model):
         days_after_creation_greater_than: float,
         **kwargs
     ):
+        """
+        :keyword days_after_creation_greater_than: Required. Value indicating the age in days after
+         creation.
+        :paramtype days_after_creation_greater_than: float
+        """
         super(DateAfterCreation, self).__init__(**kwargs)
         self.days_after_creation_greater_than = days_after_creation_greater_than
 
@@ -690,9 +828,9 @@ class DateAfterModification(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_modification_greater_than: Required. Value indicating the age in days after
+    :ivar days_after_modification_greater_than: Required. Value indicating the age in days after
      last modification.
-    :type days_after_modification_greater_than: float
+    :vartype days_after_modification_greater_than: float
     """
 
     _validation = {
@@ -709,6 +847,11 @@ class DateAfterModification(msrest.serialization.Model):
         days_after_modification_greater_than: float,
         **kwargs
     ):
+        """
+        :keyword days_after_modification_greater_than: Required. Value indicating the age in days after
+         last modification.
+        :paramtype days_after_modification_greater_than: float
+        """
         super(DateAfterModification, self).__init__(**kwargs)
         self.days_after_modification_greater_than = days_after_modification_greater_than
 
@@ -716,11 +859,11 @@ class DateAfterModification(msrest.serialization.Model):
 class DeleteRetentionPolicy(msrest.serialization.Model):
     """The blob service properties for soft delete.
 
-    :param enabled: Indicates whether DeleteRetentionPolicy is enabled for the Blob service.
-    :type enabled: bool
-    :param days: Indicates the number of days that the deleted blob should be retained. The minimum
+    :ivar enabled: Indicates whether DeleteRetentionPolicy is enabled for the Blob service.
+    :vartype enabled: bool
+    :ivar days: Indicates the number of days that the deleted blob should be retained. The minimum
      specified value can be 1 and the maximum value can be 365.
-    :type days: int
+    :vartype days: int
     """
 
     _validation = {
@@ -739,6 +882,13 @@ class DeleteRetentionPolicy(msrest.serialization.Model):
         days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Indicates whether DeleteRetentionPolicy is enabled for the Blob service.
+        :paramtype enabled: bool
+        :keyword days: Indicates the number of days that the deleted blob should be retained. The
+         minimum specified value can be 1 and the maximum value can be 365.
+        :paramtype days: int
+        """
         super(DeleteRetentionPolicy, self).__init__(**kwargs)
         self.enabled = enabled
         self.days = days
@@ -747,10 +897,10 @@ class DeleteRetentionPolicy(msrest.serialization.Model):
 class Dimension(msrest.serialization.Model):
     """Dimension of blobs, possibly be blob type or access tier.
 
-    :param name: Display name of dimension.
-    :type name: str
-    :param display_name: Display name of dimension.
-    :type display_name: str
+    :ivar name: Display name of dimension.
+    :vartype name: str
+    :ivar display_name: Display name of dimension.
+    :vartype display_name: str
     """
 
     _attribute_map = {
@@ -765,6 +915,12 @@ class Dimension(msrest.serialization.Model):
         display_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Display name of dimension.
+        :paramtype name: str
+        :keyword display_name: Display name of dimension.
+        :paramtype display_name: str
+        """
         super(Dimension, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -775,14 +931,14 @@ class Encryption(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param services: List of services which support encryption.
-    :type services: ~azure.mgmt.storage.v2019_04_01.models.EncryptionServices
-    :param key_source: Required. The encryption keySource (provider). Possible values
-     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
+    :ivar services: List of services which support encryption.
+    :vartype services: ~azure.mgmt.storage.v2019_04_01.models.EncryptionServices
+    :ivar key_source: Required. The encryption keySource (provider). Possible values
+     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Known values are:
      "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
-    :type key_source: str or ~azure.mgmt.storage.v2019_04_01.models.KeySource
-    :param key_vault_properties: Properties provided by key vault.
-    :type key_vault_properties: ~azure.mgmt.storage.v2019_04_01.models.KeyVaultProperties
+    :vartype key_source: str or ~azure.mgmt.storage.v2019_04_01.models.KeySource
+    :ivar key_vault_properties: Properties provided by key vault.
+    :vartype key_vault_properties: ~azure.mgmt.storage.v2019_04_01.models.KeyVaultProperties
     """
 
     _validation = {
@@ -798,11 +954,21 @@ class Encryption(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        key_source: Union[str, "KeySource"] = "Microsoft.Storage",
-        services: Optional["EncryptionServices"] = None,
-        key_vault_properties: Optional["KeyVaultProperties"] = None,
+        key_source: Union[str, "_models.KeySource"] = "Microsoft.Storage",
+        services: Optional["_models.EncryptionServices"] = None,
+        key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword services: List of services which support encryption.
+        :paramtype services: ~azure.mgmt.storage.v2019_04_01.models.EncryptionServices
+        :keyword key_source: Required. The encryption keySource (provider). Possible values
+         (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Known values are:
+         "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
+        :paramtype key_source: str or ~azure.mgmt.storage.v2019_04_01.models.KeySource
+        :keyword key_vault_properties: Properties provided by key vault.
+        :paramtype key_vault_properties: ~azure.mgmt.storage.v2019_04_01.models.KeyVaultProperties
+        """
         super(Encryption, self).__init__(**kwargs)
         self.services = services
         self.key_source = key_source
@@ -814,9 +980,9 @@ class EncryptionService(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: A boolean indicating whether or not the service encrypts the data as it is
+    :ivar enabled: A boolean indicating whether or not the service encrypts the data as it is
      stored.
-    :type enabled: bool
+    :vartype enabled: bool
     :ivar last_enabled_time: Gets a rough estimate of the date/time when the encryption was last
      enabled by the user. Only returned when encryption is enabled. There might be some unencrypted
      blobs which were written after this time, as it is just a rough estimate.
@@ -838,6 +1004,11 @@ class EncryptionService(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: A boolean indicating whether or not the service encrypts the data as it is
+         stored.
+        :paramtype enabled: bool
+        """
         super(EncryptionService, self).__init__(**kwargs)
         self.enabled = enabled
         self.last_enabled_time = None
@@ -848,10 +1019,10 @@ class EncryptionServices(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param blob: The encryption function of the blob storage service.
-    :type blob: ~azure.mgmt.storage.v2019_04_01.models.EncryptionService
-    :param file: The encryption function of the file storage service.
-    :type file: ~azure.mgmt.storage.v2019_04_01.models.EncryptionService
+    :ivar blob: The encryption function of the blob storage service.
+    :vartype blob: ~azure.mgmt.storage.v2019_04_01.models.EncryptionService
+    :ivar file: The encryption function of the file storage service.
+    :vartype file: ~azure.mgmt.storage.v2019_04_01.models.EncryptionService
     :ivar table: The encryption function of the table storage service.
     :vartype table: ~azure.mgmt.storage.v2019_04_01.models.EncryptionService
     :ivar queue: The encryption function of the queue storage service.
@@ -873,10 +1044,16 @@ class EncryptionServices(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        blob: Optional["EncryptionService"] = None,
-        file: Optional["EncryptionService"] = None,
+        blob: Optional["_models.EncryptionService"] = None,
+        file: Optional["_models.EncryptionService"] = None,
         **kwargs
     ):
+        """
+        :keyword blob: The encryption function of the blob storage service.
+        :paramtype blob: ~azure.mgmt.storage.v2019_04_01.models.EncryptionService
+        :keyword file: The encryption function of the file storage service.
+        :paramtype file: ~azure.mgmt.storage.v2019_04_01.models.EncryptionService
+        """
         super(EncryptionServices, self).__init__(**kwargs)
         self.blob = blob
         self.file = file
@@ -925,6 +1102,8 @@ class Endpoints(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Endpoints, self).__init__(**kwargs)
         self.blob = None
         self.queue = None
@@ -955,6 +1134,8 @@ class FileServiceItems(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FileServiceItems, self).__init__(**kwargs)
         self.value = None
 
@@ -972,10 +1153,10 @@ class FileServiceProperties(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param cors: Specifies CORS rules for the File service. You can include up to five CorsRule
+    :ivar cors: Specifies CORS rules for the File service. You can include up to five CorsRule
      elements in the request. If no CorsRule elements are included in the request body, all CORS
      rules will be deleted, and CORS will be disabled for the File service.
-    :type cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+    :vartype cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
     """
 
     _validation = {
@@ -994,9 +1175,15 @@ class FileServiceProperties(Resource):
     def __init__(
         self,
         *,
-        cors: Optional["CorsRules"] = None,
+        cors: Optional["_models.CorsRules"] = None,
         **kwargs
     ):
+        """
+        :keyword cors: Specifies CORS rules for the File service. You can include up to five CorsRule
+         elements in the request. If no CorsRule elements are included in the request body, all CORS
+         rules will be deleted, and CORS will be disabled for the File service.
+        :paramtype cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+        """
         super(FileServiceProperties, self).__init__(**kwargs)
         self.cors = cors
 
@@ -1018,11 +1205,11 @@ class FileShare(AzureEntityResource):
     :vartype etag: str
     :ivar last_modified_time: Returns the date and time the share was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :param metadata: A name-value pair to associate with the share as metadata.
-    :type metadata: dict[str, str]
-    :param share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
+    :ivar metadata: A name-value pair to associate with the share as metadata.
+    :vartype metadata: dict[str, str]
+    :ivar share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
      less than or equal to 5TB (5120).
-    :type share_quota: int
+    :vartype share_quota: int
     """
 
     _validation = {
@@ -1051,6 +1238,13 @@ class FileShare(AzureEntityResource):
         share_quota: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword metadata: A name-value pair to associate with the share as metadata.
+        :paramtype metadata: dict[str, str]
+        :keyword share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
+         less than or equal to 5TB (5120).
+        :paramtype share_quota: int
+        """
         super(FileShare, self).__init__(**kwargs)
         self.last_modified_time = None
         self.metadata = metadata
@@ -1074,11 +1268,11 @@ class FileShareItem(AzureEntityResource):
     :vartype etag: str
     :ivar last_modified_time: Returns the date and time the share was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :param metadata: A name-value pair to associate with the share as metadata.
-    :type metadata: dict[str, str]
-    :param share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
+    :ivar metadata: A name-value pair to associate with the share as metadata.
+    :vartype metadata: dict[str, str]
+    :ivar share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
      less than or equal to 5TB (5120).
-    :type share_quota: int
+    :vartype share_quota: int
     """
 
     _validation = {
@@ -1107,6 +1301,13 @@ class FileShareItem(AzureEntityResource):
         share_quota: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword metadata: A name-value pair to associate with the share as metadata.
+        :paramtype metadata: dict[str, str]
+        :keyword share_quota: The maximum size of the share, in gigabytes. Must be greater than 0, and
+         less than or equal to 5TB (5120).
+        :paramtype share_quota: int
+        """
         super(FileShareItem, self).__init__(**kwargs)
         self.last_modified_time = None
         self.metadata = metadata
@@ -1139,6 +1340,8 @@ class FileShareItems(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FileShareItems, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1153,8 +1356,7 @@ class GeoReplicationStats(msrest.serialization.Model):
      the secondary location is active and operational. - Bootstrap: Indicates initial
      synchronization from the primary location to the secondary location is in progress.This
      typically occurs when replication is first enabled. - Unavailable: Indicates that the secondary
-     location is temporarily unavailable. Possible values include: "Live", "Bootstrap",
-     "Unavailable".
+     location is temporarily unavailable. Known values are: "Live", "Bootstrap", "Unavailable".
     :vartype status: str or ~azure.mgmt.storage.v2019_04_01.models.GeoReplicationStatus
     :ivar last_sync_time: All primary writes preceding this UTC date/time value are guaranteed to
      be available for read operations. Primary writes following this point in time may or may not be
@@ -1182,6 +1384,8 @@ class GeoReplicationStats(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(GeoReplicationStats, self).__init__(**kwargs)
         self.status = None
         self.last_sync_time = None
@@ -1199,7 +1403,7 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: Required. The identity type. Default value: "SystemAssigned".
+    :ivar type: The identity type. Has constant value: "SystemAssigned".
     :vartype type: str
     """
 
@@ -1221,6 +1425,8 @@ class Identity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -1243,11 +1449,11 @@ class ImmutabilityPolicy(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param immutability_period_since_creation_in_days: Required. The immutability period for the
+    :ivar immutability_period_since_creation_in_days: Required. The immutability period for the
      blobs in the container since the policy creation, in days.
-    :type immutability_period_since_creation_in_days: int
+    :vartype immutability_period_since_creation_in_days: int
     :ivar state: The ImmutabilityPolicy state of a blob container, possible values include: Locked
-     and Unlocked. Possible values include: "Locked", "Unlocked".
+     and Unlocked. Known values are: "Locked", "Unlocked".
     :vartype state: str or ~azure.mgmt.storage.v2019_04_01.models.ImmutabilityPolicyState
     """
 
@@ -1275,6 +1481,11 @@ class ImmutabilityPolicy(AzureEntityResource):
         immutability_period_since_creation_in_days: int,
         **kwargs
     ):
+        """
+        :keyword immutability_period_since_creation_in_days: Required. The immutability period for the
+         blobs in the container since the policy creation, in days.
+        :paramtype immutability_period_since_creation_in_days: int
+        """
         super(ImmutabilityPolicy, self).__init__(**kwargs)
         self.immutability_period_since_creation_in_days = immutability_period_since_creation_in_days
         self.state = None
@@ -1289,11 +1500,11 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
     :vartype etag: str
     :ivar update_history: The ImmutabilityPolicy update history of the blob container.
     :vartype update_history: list[~azure.mgmt.storage.v2019_04_01.models.UpdateHistoryProperty]
-    :param immutability_period_since_creation_in_days: The immutability period for the blobs in the
+    :ivar immutability_period_since_creation_in_days: The immutability period for the blobs in the
      container since the policy creation, in days.
-    :type immutability_period_since_creation_in_days: int
+    :vartype immutability_period_since_creation_in_days: int
     :ivar state: The ImmutabilityPolicy state of a blob container, possible values include: Locked
-     and Unlocked. Possible values include: "Locked", "Unlocked".
+     and Unlocked. Known values are: "Locked", "Unlocked".
     :vartype state: str or ~azure.mgmt.storage.v2019_04_01.models.ImmutabilityPolicyState
     """
 
@@ -1316,6 +1527,11 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
         immutability_period_since_creation_in_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword immutability_period_since_creation_in_days: The immutability period for the blobs in
+         the container since the policy creation, in days.
+        :paramtype immutability_period_since_creation_in_days: int
+        """
         super(ImmutabilityPolicyProperties, self).__init__(**kwargs)
         self.etag = None
         self.update_history = None
@@ -1326,20 +1542,18 @@ class ImmutabilityPolicyProperties(msrest.serialization.Model):
 class IPRule(msrest.serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
+    :ivar ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
      address is allowed.
-    :type ip_address_or_range: str
-    :ivar action: The action of IP ACL rule. Default value: "Allow".
+    :vartype ip_address_or_range: str
+    :ivar action: The action of IP ACL rule. The only acceptable values to pass in are None and
+     "Allow". The default value is None.
     :vartype action: str
     """
 
     _validation = {
         'ip_address_or_range': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -1347,27 +1561,35 @@ class IPRule(msrest.serialization.Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         *,
         ip_address_or_range: str,
+        action: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
+         address is allowed.
+        :paramtype ip_address_or_range: str
+        :keyword action: The action of IP ACL rule. The only acceptable values to pass in are None and
+         "Allow". The default value is None.
+        :paramtype action: str
+        """
         super(IPRule, self).__init__(**kwargs)
         self.ip_address_or_range = ip_address_or_range
+        self.action = action
 
 
 class KeyVaultProperties(msrest.serialization.Model):
     """Properties of key vault.
 
-    :param key_name: The name of KeyVault key.
-    :type key_name: str
-    :param key_version: The version of KeyVault key.
-    :type key_version: str
-    :param key_vault_uri: The Uri of KeyVault.
-    :type key_vault_uri: str
+    :ivar key_name: The name of KeyVault key.
+    :vartype key_name: str
+    :ivar key_version: The version of KeyVault key.
+    :vartype key_version: str
+    :ivar key_vault_uri: The Uri of KeyVault.
+    :vartype key_vault_uri: str
     """
 
     _attribute_map = {
@@ -1384,6 +1606,14 @@ class KeyVaultProperties(msrest.serialization.Model):
         key_vault_uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_name: The name of KeyVault key.
+        :paramtype key_name: str
+        :keyword key_version: The version of KeyVault key.
+        :paramtype key_version: str
+        :keyword key_vault_uri: The Uri of KeyVault.
+        :paramtype key_vault_uri: str
+        """
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
@@ -1395,20 +1625,20 @@ class LeaseContainerRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action: Required. Specifies the lease action. Can be one of the available actions.
-     Possible values include: "Acquire", "Renew", "Change", "Release", "Break".
-    :type action: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseContainerRequestAction
-    :param lease_id: Identifies the lease. Can be specified in any valid GUID string format.
-    :type lease_id: str
-    :param break_period: Optional. For a break action, proposed duration the lease should continue
+    :ivar action: Required. Specifies the lease action. Can be one of the available actions. Known
+     values are: "Acquire", "Renew", "Change", "Release", "Break".
+    :vartype action: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseContainerRequestAction
+    :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
+    :vartype lease_id: str
+    :ivar break_period: Optional. For a break action, proposed duration the lease should continue
      before it is broken, in seconds, between 0 and 60.
-    :type break_period: int
-    :param lease_duration: Required for acquire. Specifies the duration of the lease, in seconds,
-     or negative one (-1) for a lease that never expires.
-    :type lease_duration: int
-    :param proposed_lease_id: Optional for acquire, required for change. Proposed lease ID, in a
+    :vartype break_period: int
+    :ivar lease_duration: Required for acquire. Specifies the duration of the lease, in seconds, or
+     negative one (-1) for a lease that never expires.
+    :vartype lease_duration: int
+    :ivar proposed_lease_id: Optional for acquire, required for change. Proposed lease ID, in a
      GUID string format.
-    :type proposed_lease_id: str
+    :vartype proposed_lease_id: str
     """
 
     _validation = {
@@ -1426,13 +1656,29 @@ class LeaseContainerRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action: Union[str, "LeaseContainerRequestAction"],
+        action: Union[str, "_models.LeaseContainerRequestAction"],
         lease_id: Optional[str] = None,
         break_period: Optional[int] = None,
         lease_duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword action: Required. Specifies the lease action. Can be one of the available actions.
+         Known values are: "Acquire", "Renew", "Change", "Release", "Break".
+        :paramtype action: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseContainerRequestAction
+        :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
+        :paramtype lease_id: str
+        :keyword break_period: Optional. For a break action, proposed duration the lease should
+         continue before it is broken, in seconds, between 0 and 60.
+        :paramtype break_period: int
+        :keyword lease_duration: Required for acquire. Specifies the duration of the lease, in seconds,
+         or negative one (-1) for a lease that never expires.
+        :paramtype lease_duration: int
+        :keyword proposed_lease_id: Optional for acquire, required for change. Proposed lease ID, in a
+         GUID string format.
+        :paramtype proposed_lease_id: str
+        """
         super(LeaseContainerRequest, self).__init__(**kwargs)
         self.action = action
         self.lease_id = lease_id
@@ -1444,11 +1690,11 @@ class LeaseContainerRequest(msrest.serialization.Model):
 class LeaseContainerResponse(msrest.serialization.Model):
     """Lease Container response schema.
 
-    :param lease_id: Returned unique lease ID that must be included with any request to delete the
+    :ivar lease_id: Returned unique lease ID that must be included with any request to delete the
      container, or to renew, change, or release the lease.
-    :type lease_id: str
-    :param lease_time_seconds: Approximate time remaining in the lease period, in seconds.
-    :type lease_time_seconds: str
+    :vartype lease_id: str
+    :ivar lease_time_seconds: Approximate time remaining in the lease period, in seconds.
+    :vartype lease_time_seconds: str
     """
 
     _attribute_map = {
@@ -1463,6 +1709,13 @@ class LeaseContainerResponse(msrest.serialization.Model):
         lease_time_seconds: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword lease_id: Returned unique lease ID that must be included with any request to delete
+         the container, or to renew, change, or release the lease.
+        :paramtype lease_id: str
+        :keyword lease_time_seconds: Approximate time remaining in the lease period, in seconds.
+        :paramtype lease_time_seconds: str
+        """
         super(LeaseContainerResponse, self).__init__(**kwargs)
         self.lease_id = lease_id
         self.lease_time_seconds = lease_time_seconds
@@ -1480,9 +1733,9 @@ class LegalHold(msrest.serialization.Model):
      legal hold tags are cleared out. There can be a maximum of 1000 blob containers with
      hasLegalHold=true for a given account.
     :vartype has_legal_hold: bool
-    :param tags: Required. A set of tags. Each tag should be 3 to 23 alphanumeric characters and is
+    :ivar tags: Required. A set of tags. Each tag should be 3 to 23 alphanumeric characters and is
      normalized to lower case at SRP.
-    :type tags: list[str]
+    :vartype tags: list[str]
     """
 
     _validation = {
@@ -1501,6 +1754,11 @@ class LegalHold(msrest.serialization.Model):
         tags: List[str],
         **kwargs
     ):
+        """
+        :keyword tags: Required. A set of tags. Each tag should be 3 to 23 alphanumeric characters and
+         is normalized to lower case at SRP.
+        :paramtype tags: list[str]
+        """
         super(LegalHold, self).__init__(**kwargs)
         self.has_legal_hold = None
         self.tags = tags
@@ -1516,8 +1774,8 @@ class LegalHoldProperties(msrest.serialization.Model):
      legal hold tags are cleared out. There can be a maximum of 1000 blob containers with
      hasLegalHold=true for a given account.
     :vartype has_legal_hold: bool
-    :param tags: A set of tags. The list of LegalHold tags of a blob container.
-    :type tags: list[~azure.mgmt.storage.v2019_04_01.models.TagProperty]
+    :ivar tags: A set of tags. The list of LegalHold tags of a blob container.
+    :vartype tags: list[~azure.mgmt.storage.v2019_04_01.models.TagProperty]
     """
 
     _validation = {
@@ -1532,9 +1790,13 @@ class LegalHoldProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[List["TagProperty"]] = None,
+        tags: Optional[List["_models.TagProperty"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The list of LegalHold tags of a blob container.
+        :paramtype tags: list[~azure.mgmt.storage.v2019_04_01.models.TagProperty]
+        """
         super(LegalHoldProperties, self).__init__(**kwargs)
         self.has_legal_hold = None
         self.tags = tags
@@ -1561,6 +1823,8 @@ class ListAccountSasResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ListAccountSasResponse, self).__init__(**kwargs)
         self.account_sas_token = None
 
@@ -1580,22 +1844,21 @@ class ListContainerItem(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :param public_access: Specifies whether data in the container may be accessed publicly and the
-     level of access. Possible values include: "Container", "Blob", "None".
-    :type public_access: str or ~azure.mgmt.storage.v2019_04_01.models.PublicAccess
+    :ivar public_access: Specifies whether data in the container may be accessed publicly and the
+     level of access. Known values are: "Container", "Blob", "None".
+    :vartype public_access: str or ~azure.mgmt.storage.v2019_04_01.models.PublicAccess
     :ivar last_modified_time: Returns the date and time the container was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :ivar lease_status: The lease status of the container. Possible values include: "Locked",
-     "Unlocked".
+    :ivar lease_status: The lease status of the container. Known values are: "Locked", "Unlocked".
     :vartype lease_status: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseStatus
-    :ivar lease_state: Lease state of the container. Possible values include: "Available",
-     "Leased", "Expired", "Breaking", "Broken".
+    :ivar lease_state: Lease state of the container. Known values are: "Available", "Leased",
+     "Expired", "Breaking", "Broken".
     :vartype lease_state: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseState
     :ivar lease_duration: Specifies whether the lease on a container is of infinite or fixed
-     duration, only when the container is leased. Possible values include: "Infinite", "Fixed".
+     duration, only when the container is leased. Known values are: "Infinite", "Fixed".
     :vartype lease_duration: str or ~azure.mgmt.storage.v2019_04_01.models.LeaseDuration
-    :param metadata: A name-value pair to associate with the container as metadata.
-    :type metadata: dict[str, str]
+    :ivar metadata: A name-value pair to associate with the container as metadata.
+    :vartype metadata: dict[str, str]
     :ivar immutability_policy: The ImmutabilityPolicy property of the container.
     :vartype immutability_policy:
      ~azure.mgmt.storage.v2019_04_01.models.ImmutabilityPolicyProperties
@@ -1647,10 +1910,17 @@ class ListContainerItem(AzureEntityResource):
     def __init__(
         self,
         *,
-        public_access: Optional[Union[str, "PublicAccess"]] = None,
+        public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword public_access: Specifies whether data in the container may be accessed publicly and
+         the level of access. Known values are: "Container", "Blob", "None".
+        :paramtype public_access: str or ~azure.mgmt.storage.v2019_04_01.models.PublicAccess
+        :keyword metadata: A name-value pair to associate with the container as metadata.
+        :paramtype metadata: dict[str, str]
+        """
         super(ListContainerItem, self).__init__(**kwargs)
         self.public_access = public_access
         self.last_modified_time = None
@@ -1690,6 +1960,8 @@ class ListContainerItems(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ListContainerItems, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1716,6 +1988,8 @@ class ListServiceSasResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ListServiceSasResponse, self).__init__(**kwargs)
         self.service_sas_token = None
 
@@ -1735,9 +2009,9 @@ class ManagementPolicy(Resource):
     :vartype type: str
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
-    :param policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
+    :ivar policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
      https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :type policy: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicySchema
+    :vartype policy: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicySchema
     """
 
     _validation = {
@@ -1758,9 +2032,14 @@ class ManagementPolicy(Resource):
     def __init__(
         self,
         *,
-        policy: Optional["ManagementPolicySchema"] = None,
+        policy: Optional["_models.ManagementPolicySchema"] = None,
         **kwargs
     ):
+        """
+        :keyword policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
+         https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+        :paramtype policy: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicySchema
+        """
         super(ManagementPolicy, self).__init__(**kwargs)
         self.last_modified_time = None
         self.policy = policy
@@ -1769,10 +2048,10 @@ class ManagementPolicy(Resource):
 class ManagementPolicyAction(msrest.serialization.Model):
     """Actions are applied to the filtered blobs when the execution condition is met.
 
-    :param base_blob: The management policy action for base blob.
-    :type base_blob: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyBaseBlob
-    :param snapshot: The management policy action for snapshot.
-    :type snapshot: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicySnapShot
+    :ivar base_blob: The management policy action for base blob.
+    :vartype base_blob: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyBaseBlob
+    :ivar snapshot: The management policy action for snapshot.
+    :vartype snapshot: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicySnapShot
     """
 
     _attribute_map = {
@@ -1783,10 +2062,16 @@ class ManagementPolicyAction(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        base_blob: Optional["ManagementPolicyBaseBlob"] = None,
-        snapshot: Optional["ManagementPolicySnapShot"] = None,
+        base_blob: Optional["_models.ManagementPolicyBaseBlob"] = None,
+        snapshot: Optional["_models.ManagementPolicySnapShot"] = None,
         **kwargs
     ):
+        """
+        :keyword base_blob: The management policy action for base blob.
+        :paramtype base_blob: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyBaseBlob
+        :keyword snapshot: The management policy action for snapshot.
+        :paramtype snapshot: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicySnapShot
+        """
         super(ManagementPolicyAction, self).__init__(**kwargs)
         self.base_blob = base_blob
         self.snapshot = snapshot
@@ -1795,14 +2080,14 @@ class ManagementPolicyAction(msrest.serialization.Model):
 class ManagementPolicyBaseBlob(msrest.serialization.Model):
     """Management policy action for base blob.
 
-    :param tier_to_cool: The function to tier blobs to cool storage. Support blobs currently at Hot
+    :ivar tier_to_cool: The function to tier blobs to cool storage. Support blobs currently at Hot
      tier.
-    :type tier_to_cool: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
-    :param tier_to_archive: The function to tier blobs to archive storage. Support blobs currently
+    :vartype tier_to_cool: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
+    :ivar tier_to_archive: The function to tier blobs to archive storage. Support blobs currently
      at Hot or Cool tier.
-    :type tier_to_archive: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
-    :param delete: The function to delete the blob.
-    :type delete: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
+    :vartype tier_to_archive: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
+    :ivar delete: The function to delete the blob.
+    :vartype delete: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
     """
 
     _attribute_map = {
@@ -1814,11 +2099,21 @@ class ManagementPolicyBaseBlob(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        tier_to_cool: Optional["DateAfterModification"] = None,
-        tier_to_archive: Optional["DateAfterModification"] = None,
-        delete: Optional["DateAfterModification"] = None,
+        tier_to_cool: Optional["_models.DateAfterModification"] = None,
+        tier_to_archive: Optional["_models.DateAfterModification"] = None,
+        delete: Optional["_models.DateAfterModification"] = None,
         **kwargs
     ):
+        """
+        :keyword tier_to_cool: The function to tier blobs to cool storage. Support blobs currently at
+         Hot tier.
+        :paramtype tier_to_cool: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
+        :keyword tier_to_archive: The function to tier blobs to archive storage. Support blobs
+         currently at Hot or Cool tier.
+        :paramtype tier_to_archive: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
+        :keyword delete: The function to delete the blob.
+        :paramtype delete: ~azure.mgmt.storage.v2019_04_01.models.DateAfterModification
+        """
         super(ManagementPolicyBaseBlob, self).__init__(**kwargs)
         self.tier_to_cool = tier_to_cool
         self.tier_to_archive = tier_to_archive
@@ -1830,10 +2125,10 @@ class ManagementPolicyDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param actions: Required. An object that defines the action set.
-    :type actions: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyAction
-    :param filters: An object that defines the filter set.
-    :type filters: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyFilter
+    :ivar actions: Required. An object that defines the action set.
+    :vartype actions: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyAction
+    :ivar filters: An object that defines the filter set.
+    :vartype filters: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyFilter
     """
 
     _validation = {
@@ -1848,10 +2143,16 @@ class ManagementPolicyDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        actions: "ManagementPolicyAction",
-        filters: Optional["ManagementPolicyFilter"] = None,
+        actions: "_models.ManagementPolicyAction",
+        filters: Optional["_models.ManagementPolicyFilter"] = None,
         **kwargs
     ):
+        """
+        :keyword actions: Required. An object that defines the action set.
+        :paramtype actions: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyAction
+        :keyword filters: An object that defines the filter set.
+        :paramtype filters: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyFilter
+        """
         super(ManagementPolicyDefinition, self).__init__(**kwargs)
         self.actions = actions
         self.filters = filters
@@ -1862,10 +2163,10 @@ class ManagementPolicyFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param prefix_match: An array of strings for prefixes to be match.
-    :type prefix_match: list[str]
-    :param blob_types: Required. An array of predefined enum values. Only blockBlob is supported.
-    :type blob_types: list[str]
+    :ivar prefix_match: An array of strings for prefixes to be match.
+    :vartype prefix_match: list[str]
+    :ivar blob_types: Required. An array of predefined enum values. Only blockBlob is supported.
+    :vartype blob_types: list[str]
     """
 
     _validation = {
@@ -1884,6 +2185,12 @@ class ManagementPolicyFilter(msrest.serialization.Model):
         prefix_match: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword prefix_match: An array of strings for prefixes to be match.
+        :paramtype prefix_match: list[str]
+        :keyword blob_types: Required. An array of predefined enum values. Only blockBlob is supported.
+        :paramtype blob_types: list[str]
+        """
         super(ManagementPolicyFilter, self).__init__(**kwargs)
         self.prefix_match = prefix_match
         self.blob_types = blob_types
@@ -1894,15 +2201,15 @@ class ManagementPolicyRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Rule is enabled if set to true.
-    :type enabled: bool
-    :param name: Required. A rule name can contain any combination of alpha numeric characters.
-     Rule name is case-sensitive. It must be unique within a policy.
-    :type name: str
-    :param type: Required. The valid value is Lifecycle. Possible values include: "Lifecycle".
-    :type type: str or ~azure.mgmt.storage.v2019_04_01.models.RuleType
-    :param definition: Required. An object that defines the Lifecycle rule.
-    :type definition: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyDefinition
+    :ivar enabled: Rule is enabled if set to true.
+    :vartype enabled: bool
+    :ivar name: Required. A rule name can contain any combination of alpha numeric characters. Rule
+     name is case-sensitive. It must be unique within a policy.
+    :vartype name: str
+    :ivar type: Required. The valid value is Lifecycle. Known values are: "Lifecycle".
+    :vartype type: str or ~azure.mgmt.storage.v2019_04_01.models.RuleType
+    :ivar definition: Required. An object that defines the Lifecycle rule.
+    :vartype definition: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyDefinition
     """
 
     _validation = {
@@ -1922,11 +2229,22 @@ class ManagementPolicyRule(msrest.serialization.Model):
         self,
         *,
         name: str,
-        type: Union[str, "RuleType"],
-        definition: "ManagementPolicyDefinition",
+        type: Union[str, "_models.RuleType"],
+        definition: "_models.ManagementPolicyDefinition",
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Rule is enabled if set to true.
+        :paramtype enabled: bool
+        :keyword name: Required. A rule name can contain any combination of alpha numeric characters.
+         Rule name is case-sensitive. It must be unique within a policy.
+        :paramtype name: str
+        :keyword type: Required. The valid value is Lifecycle. Known values are: "Lifecycle".
+        :paramtype type: str or ~azure.mgmt.storage.v2019_04_01.models.RuleType
+        :keyword definition: Required. An object that defines the Lifecycle rule.
+        :paramtype definition: ~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyDefinition
+        """
         super(ManagementPolicyRule, self).__init__(**kwargs)
         self.enabled = enabled
         self.name = name
@@ -1939,9 +2257,9 @@ class ManagementPolicySchema(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param rules: Required. The Storage Account ManagementPolicies Rules. See more details in:
+    :ivar rules: Required. The Storage Account ManagementPolicies Rules. See more details in:
      https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :type rules: list[~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyRule]
+    :vartype rules: list[~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyRule]
     """
 
     _validation = {
@@ -1955,9 +2273,14 @@ class ManagementPolicySchema(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        rules: List["ManagementPolicyRule"],
+        rules: List["_models.ManagementPolicyRule"],
         **kwargs
     ):
+        """
+        :keyword rules: Required. The Storage Account ManagementPolicies Rules. See more details in:
+         https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+        :paramtype rules: list[~azure.mgmt.storage.v2019_04_01.models.ManagementPolicyRule]
+        """
         super(ManagementPolicySchema, self).__init__(**kwargs)
         self.rules = rules
 
@@ -1965,8 +2288,8 @@ class ManagementPolicySchema(msrest.serialization.Model):
 class ManagementPolicySnapShot(msrest.serialization.Model):
     """Management policy action for snapshot.
 
-    :param delete: The function to delete the blob snapshot.
-    :type delete: ~azure.mgmt.storage.v2019_04_01.models.DateAfterCreation
+    :ivar delete: The function to delete the blob snapshot.
+    :vartype delete: ~azure.mgmt.storage.v2019_04_01.models.DateAfterCreation
     """
 
     _attribute_map = {
@@ -1976,9 +2299,13 @@ class ManagementPolicySnapShot(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        delete: Optional["DateAfterCreation"] = None,
+        delete: Optional["_models.DateAfterCreation"] = None,
         **kwargs
     ):
+        """
+        :keyword delete: The function to delete the blob snapshot.
+        :paramtype delete: ~azure.mgmt.storage.v2019_04_01.models.DateAfterCreation
+        """
         super(ManagementPolicySnapShot, self).__init__(**kwargs)
         self.delete = delete
 
@@ -1986,24 +2313,24 @@ class ManagementPolicySnapShot(msrest.serialization.Model):
 class MetricSpecification(msrest.serialization.Model):
     """Metric specification of operation.
 
-    :param name: Name of metric specification.
-    :type name: str
-    :param display_name: Display name of metric specification.
-    :type display_name: str
-    :param display_description: Display description of metric specification.
-    :type display_description: str
-    :param unit: Unit could be Bytes or Count.
-    :type unit: str
-    :param dimensions: Dimensions of blobs, including blob type and access tier.
-    :type dimensions: list[~azure.mgmt.storage.v2019_04_01.models.Dimension]
-    :param aggregation_type: Aggregation type could be Average.
-    :type aggregation_type: str
-    :param fill_gap_with_zero: The property to decide fill gap with zero or not.
-    :type fill_gap_with_zero: bool
-    :param category: The category this metric specification belong to, could be Capacity.
-    :type category: str
-    :param resource_id_dimension_name_override: Account Resource Id.
-    :type resource_id_dimension_name_override: str
+    :ivar name: Name of metric specification.
+    :vartype name: str
+    :ivar display_name: Display name of metric specification.
+    :vartype display_name: str
+    :ivar display_description: Display description of metric specification.
+    :vartype display_description: str
+    :ivar unit: Unit could be Bytes or Count.
+    :vartype unit: str
+    :ivar dimensions: Dimensions of blobs, including blob type and access tier.
+    :vartype dimensions: list[~azure.mgmt.storage.v2019_04_01.models.Dimension]
+    :ivar aggregation_type: Aggregation type could be Average.
+    :vartype aggregation_type: str
+    :ivar fill_gap_with_zero: The property to decide fill gap with zero or not.
+    :vartype fill_gap_with_zero: bool
+    :ivar category: The category this metric specification belong to, could be Capacity.
+    :vartype category: str
+    :ivar resource_id_dimension_name_override: Account Resource Id.
+    :vartype resource_id_dimension_name_override: str
     """
 
     _attribute_map = {
@@ -2025,13 +2352,33 @@ class MetricSpecification(msrest.serialization.Model):
         display_name: Optional[str] = None,
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
-        dimensions: Optional[List["Dimension"]] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
         aggregation_type: Optional[str] = None,
         fill_gap_with_zero: Optional[bool] = None,
         category: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of metric specification.
+        :paramtype name: str
+        :keyword display_name: Display name of metric specification.
+        :paramtype display_name: str
+        :keyword display_description: Display description of metric specification.
+        :paramtype display_description: str
+        :keyword unit: Unit could be Bytes or Count.
+        :paramtype unit: str
+        :keyword dimensions: Dimensions of blobs, including blob type and access tier.
+        :paramtype dimensions: list[~azure.mgmt.storage.v2019_04_01.models.Dimension]
+        :keyword aggregation_type: Aggregation type could be Average.
+        :paramtype aggregation_type: str
+        :keyword fill_gap_with_zero: The property to decide fill gap with zero or not.
+        :paramtype fill_gap_with_zero: bool
+        :keyword category: The category this metric specification belong to, could be Capacity.
+        :paramtype category: str
+        :keyword resource_id_dimension_name_override: Account Resource Id.
+        :paramtype resource_id_dimension_name_override: str
+        """
         super(MetricSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -2049,18 +2396,18 @@ class NetworkRuleSet(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
-     Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
-     Metrics"), or None to bypass none of those traffics. Possible values include: "None",
-     "Logging", "Metrics", "AzureServices". Default value: "AzureServices".
-    :type bypass: str or ~azure.mgmt.storage.v2019_04_01.models.Bypass
-    :param virtual_network_rules: Sets the virtual network rules.
-    :type virtual_network_rules: list[~azure.mgmt.storage.v2019_04_01.models.VirtualNetworkRule]
-    :param ip_rules: Sets the IP ACL rules.
-    :type ip_rules: list[~azure.mgmt.storage.v2019_04_01.models.IPRule]
-    :param default_action: Required. Specifies the default action of allow or deny when no other
-     rules match. Possible values include: "Allow", "Deny". Default value: "Allow".
-    :type default_action: str or ~azure.mgmt.storage.v2019_04_01.models.DefaultAction
+    :ivar bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible
+     values are any combination of Logging|Metrics|AzureServices (For example, "Logging, Metrics"),
+     or None to bypass none of those traffics. Known values are: "None", "Logging", "Metrics",
+     "AzureServices". Default value: "AzureServices".
+    :vartype bypass: str or ~azure.mgmt.storage.v2019_04_01.models.Bypass
+    :ivar virtual_network_rules: Sets the virtual network rules.
+    :vartype virtual_network_rules: list[~azure.mgmt.storage.v2019_04_01.models.VirtualNetworkRule]
+    :ivar ip_rules: Sets the IP ACL rules.
+    :vartype ip_rules: list[~azure.mgmt.storage.v2019_04_01.models.IPRule]
+    :ivar default_action: Required. Specifies the default action of allow or deny when no other
+     rules match. Known values are: "Allow", "Deny". Default value: "Allow".
+    :vartype default_action: str or ~azure.mgmt.storage.v2019_04_01.models.DefaultAction
     """
 
     _validation = {
@@ -2077,12 +2424,27 @@ class NetworkRuleSet(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        default_action: Union[str, "DefaultAction"] = "Allow",
-        bypass: Optional[Union[str, "Bypass"]] = "AzureServices",
-        virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
-        ip_rules: Optional[List["IPRule"]] = None,
+        default_action: Union[str, "_models.DefaultAction"] = "Allow",
+        bypass: Optional[Union[str, "_models.Bypass"]] = "AzureServices",
+        virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
+        ip_rules: Optional[List["_models.IPRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
+         Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
+         Metrics"), or None to bypass none of those traffics. Known values are: "None", "Logging",
+         "Metrics", "AzureServices". Default value: "AzureServices".
+        :paramtype bypass: str or ~azure.mgmt.storage.v2019_04_01.models.Bypass
+        :keyword virtual_network_rules: Sets the virtual network rules.
+        :paramtype virtual_network_rules:
+         list[~azure.mgmt.storage.v2019_04_01.models.VirtualNetworkRule]
+        :keyword ip_rules: Sets the IP ACL rules.
+        :paramtype ip_rules: list[~azure.mgmt.storage.v2019_04_01.models.IPRule]
+        :keyword default_action: Required. Specifies the default action of allow or deny when no other
+         rules match. Known values are: "Allow", "Deny". Default value: "Allow".
+        :paramtype default_action: str or ~azure.mgmt.storage.v2019_04_01.models.DefaultAction
+        """
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.bypass = bypass
         self.virtual_network_rules = virtual_network_rules
@@ -2093,14 +2455,14 @@ class NetworkRuleSet(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Storage REST API operation definition.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.storage.v2019_04_01.models.OperationDisplay
-    :param origin: The origin of operations.
-    :type origin: str
-    :param service_specification: One property of operation, include metric specifications.
-    :type service_specification: ~azure.mgmt.storage.v2019_04_01.models.ServiceSpecification
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: Display metadata associated with the operation.
+    :vartype display: ~azure.mgmt.storage.v2019_04_01.models.OperationDisplay
+    :ivar origin: The origin of operations.
+    :vartype origin: str
+    :ivar service_specification: One property of operation, include metric specifications.
+    :vartype service_specification: ~azure.mgmt.storage.v2019_04_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -2114,11 +2476,21 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        service_specification: Optional["ServiceSpecification"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: Display metadata associated with the operation.
+        :paramtype display: ~azure.mgmt.storage.v2019_04_01.models.OperationDisplay
+        :keyword origin: The origin of operations.
+        :paramtype origin: str
+        :keyword service_specification: One property of operation, include metric specifications.
+        :paramtype service_specification: ~azure.mgmt.storage.v2019_04_01.models.ServiceSpecification
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -2129,14 +2501,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """Display metadata associated with the operation.
 
-    :param provider: Service provider: Microsoft Storage.
-    :type provider: str
-    :param resource: Resource on which the operation is performed etc.
-    :type resource: str
-    :param operation: Type of operation: get, read, delete, etc.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: Service provider: Microsoft Storage.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed etc.
+    :vartype resource: str
+    :ivar operation: Type of operation: get, read, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -2155,6 +2527,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft Storage.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed etc.
+        :paramtype resource: str
+        :keyword operation: Type of operation: get, read, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -2165,8 +2547,8 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Storage operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Storage operations supported by the Storage resource provider.
-    :type value: list[~azure.mgmt.storage.v2019_04_01.models.Operation]
+    :ivar value: List of Storage operations supported by the Storage resource provider.
+    :vartype value: list[~azure.mgmt.storage.v2019_04_01.models.Operation]
     """
 
     _attribute_map = {
@@ -2176,9 +2558,13 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Storage operations supported by the Storage resource provider.
+        :paramtype value: list[~azure.mgmt.storage.v2019_04_01.models.Operation]
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -2193,11 +2579,11 @@ class Restriction(msrest.serialization.Model):
     :ivar values: The value of restrictions. If the restriction type is set to location. This would
      be different locations where the SKU is restricted.
     :vartype values: list[str]
-    :param reason_code: The reason for the restriction. As of now this can be "QuotaId" or
+    :ivar reason_code: The reason for the restriction. As of now this can be "QuotaId" or
      "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
      subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
-     capacity at DC. Possible values include: "QuotaId", "NotAvailableForSubscription".
-    :type reason_code: str or ~azure.mgmt.storage.v2019_04_01.models.ReasonCode
+     capacity at DC. Known values are: "QuotaId", "NotAvailableForSubscription".
+    :vartype reason_code: str or ~azure.mgmt.storage.v2019_04_01.models.ReasonCode
     """
 
     _validation = {
@@ -2214,9 +2600,16 @@ class Restriction(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        reason_code: Optional[Union[str, "ReasonCode"]] = None,
+        reason_code: Optional[Union[str, "_models.ReasonCode"]] = None,
         **kwargs
     ):
+        """
+        :keyword reason_code: The reason for the restriction. As of now this can be "QuotaId" or
+         "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
+         subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
+         capacity at DC. Known values are: "QuotaId", "NotAvailableForSubscription".
+        :paramtype reason_code: str or ~azure.mgmt.storage.v2019_04_01.models.ReasonCode
+        """
         super(Restriction, self).__init__(**kwargs)
         self.type = None
         self.values = None
@@ -2228,49 +2621,48 @@ class ServiceSasParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param canonicalized_resource: Required. The canonical path to the signed resource.
-    :type canonicalized_resource: str
-    :param resource: The signed services accessible with the service SAS. Possible values include:
-     Blob (b), Container (c), File (f), Share (s). Possible values include: "b", "c", "f", "s".
-    :type resource: str or ~azure.mgmt.storage.v2019_04_01.models.SignedResource
-    :param permissions: The signed permissions for the service SAS. Possible values include: Read
-     (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Possible
-     values include: "r", "d", "w", "l", "a", "c", "u", "p".
-    :type permissions: str or ~azure.mgmt.storage.v2019_04_01.models.Permissions
-    :param ip_address_or_range: An IP address or a range of IP addresses from which to accept
+    :ivar canonicalized_resource: Required. The canonical path to the signed resource.
+    :vartype canonicalized_resource: str
+    :ivar resource: The signed services accessible with the service SAS. Possible values include:
+     Blob (b), Container (c), File (f), Share (s). Known values are: "b", "c", "f", "s".
+    :vartype resource: str or ~azure.mgmt.storage.v2019_04_01.models.SignedResource
+    :ivar permissions: The signed permissions for the service SAS. Possible values include: Read
+     (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Known
+     values are: "r", "d", "w", "l", "a", "c", "u", "p".
+    :vartype permissions: str or ~azure.mgmt.storage.v2019_04_01.models.Permissions
+    :ivar ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
-    :type ip_address_or_range: str
-    :param protocols: The protocol permitted for a request made with the account SAS. Possible
-     values include: "https,http", "https".
-    :type protocols: str or ~azure.mgmt.storage.v2019_04_01.models.HttpProtocol
-    :param shared_access_start_time: The time at which the SAS becomes valid.
-    :type shared_access_start_time: ~datetime.datetime
-    :param shared_access_expiry_time: The time at which the shared access signature becomes
-     invalid.
-    :type shared_access_expiry_time: ~datetime.datetime
-    :param identifier: A unique value up to 64 characters in length that correlates to an access
+    :vartype ip_address_or_range: str
+    :ivar protocols: The protocol permitted for a request made with the account SAS. Known values
+     are: "https,http", "https".
+    :vartype protocols: str or ~azure.mgmt.storage.v2019_04_01.models.HttpProtocol
+    :ivar shared_access_start_time: The time at which the SAS becomes valid.
+    :vartype shared_access_start_time: ~datetime.datetime
+    :ivar shared_access_expiry_time: The time at which the shared access signature becomes invalid.
+    :vartype shared_access_expiry_time: ~datetime.datetime
+    :ivar identifier: A unique value up to 64 characters in length that correlates to an access
      policy specified for the container, queue, or table.
-    :type identifier: str
-    :param partition_key_start: The start of partition key.
-    :type partition_key_start: str
-    :param partition_key_end: The end of partition key.
-    :type partition_key_end: str
-    :param row_key_start: The start of row key.
-    :type row_key_start: str
-    :param row_key_end: The end of row key.
-    :type row_key_end: str
-    :param key_to_sign: The key to sign the account SAS token with.
-    :type key_to_sign: str
-    :param cache_control: The response header override for cache control.
-    :type cache_control: str
-    :param content_disposition: The response header override for content disposition.
-    :type content_disposition: str
-    :param content_encoding: The response header override for content encoding.
-    :type content_encoding: str
-    :param content_language: The response header override for content language.
-    :type content_language: str
-    :param content_type: The response header override for content type.
-    :type content_type: str
+    :vartype identifier: str
+    :ivar partition_key_start: The start of partition key.
+    :vartype partition_key_start: str
+    :ivar partition_key_end: The end of partition key.
+    :vartype partition_key_end: str
+    :ivar row_key_start: The start of row key.
+    :vartype row_key_start: str
+    :ivar row_key_end: The end of row key.
+    :vartype row_key_end: str
+    :ivar key_to_sign: The key to sign the account SAS token with.
+    :vartype key_to_sign: str
+    :ivar cache_control: The response header override for cache control.
+    :vartype cache_control: str
+    :ivar content_disposition: The response header override for content disposition.
+    :vartype content_disposition: str
+    :ivar content_encoding: The response header override for content encoding.
+    :vartype content_encoding: str
+    :ivar content_language: The response header override for content language.
+    :vartype content_language: str
+    :ivar content_type: The response header override for content type.
+    :vartype content_type: str
     """
 
     _validation = {
@@ -2303,10 +2695,10 @@ class ServiceSasParameters(msrest.serialization.Model):
         self,
         *,
         canonicalized_resource: str,
-        resource: Optional[Union[str, "SignedResource"]] = None,
-        permissions: Optional[Union[str, "Permissions"]] = None,
+        resource: Optional[Union[str, "_models.SignedResource"]] = None,
+        permissions: Optional[Union[str, "_models.Permissions"]] = None,
         ip_address_or_range: Optional[str] = None,
-        protocols: Optional[Union[str, "HttpProtocol"]] = None,
+        protocols: Optional[Union[str, "_models.HttpProtocol"]] = None,
         shared_access_start_time: Optional[datetime.datetime] = None,
         shared_access_expiry_time: Optional[datetime.datetime] = None,
         identifier: Optional[str] = None,
@@ -2322,6 +2714,51 @@ class ServiceSasParameters(msrest.serialization.Model):
         content_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword canonicalized_resource: Required. The canonical path to the signed resource.
+        :paramtype canonicalized_resource: str
+        :keyword resource: The signed services accessible with the service SAS. Possible values
+         include: Blob (b), Container (c), File (f), Share (s). Known values are: "b", "c", "f", "s".
+        :paramtype resource: str or ~azure.mgmt.storage.v2019_04_01.models.SignedResource
+        :keyword permissions: The signed permissions for the service SAS. Possible values include: Read
+         (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Known
+         values are: "r", "d", "w", "l", "a", "c", "u", "p".
+        :paramtype permissions: str or ~azure.mgmt.storage.v2019_04_01.models.Permissions
+        :keyword ip_address_or_range: An IP address or a range of IP addresses from which to accept
+         requests.
+        :paramtype ip_address_or_range: str
+        :keyword protocols: The protocol permitted for a request made with the account SAS. Known
+         values are: "https,http", "https".
+        :paramtype protocols: str or ~azure.mgmt.storage.v2019_04_01.models.HttpProtocol
+        :keyword shared_access_start_time: The time at which the SAS becomes valid.
+        :paramtype shared_access_start_time: ~datetime.datetime
+        :keyword shared_access_expiry_time: The time at which the shared access signature becomes
+         invalid.
+        :paramtype shared_access_expiry_time: ~datetime.datetime
+        :keyword identifier: A unique value up to 64 characters in length that correlates to an access
+         policy specified for the container, queue, or table.
+        :paramtype identifier: str
+        :keyword partition_key_start: The start of partition key.
+        :paramtype partition_key_start: str
+        :keyword partition_key_end: The end of partition key.
+        :paramtype partition_key_end: str
+        :keyword row_key_start: The start of row key.
+        :paramtype row_key_start: str
+        :keyword row_key_end: The end of row key.
+        :paramtype row_key_end: str
+        :keyword key_to_sign: The key to sign the account SAS token with.
+        :paramtype key_to_sign: str
+        :keyword cache_control: The response header override for cache control.
+        :paramtype cache_control: str
+        :keyword content_disposition: The response header override for content disposition.
+        :paramtype content_disposition: str
+        :keyword content_encoding: The response header override for content encoding.
+        :paramtype content_encoding: str
+        :keyword content_language: The response header override for content language.
+        :paramtype content_language: str
+        :keyword content_type: The response header override for content type.
+        :paramtype content_type: str
+        """
         super(ServiceSasParameters, self).__init__(**kwargs)
         self.canonicalized_resource = canonicalized_resource
         self.resource = resource
@@ -2346,8 +2783,9 @@ class ServiceSasParameters(msrest.serialization.Model):
 class ServiceSpecification(msrest.serialization.Model):
     """One property of operation, include metric specifications.
 
-    :param metric_specifications: Metric specifications of operation.
-    :type metric_specifications: list[~azure.mgmt.storage.v2019_04_01.models.MetricSpecification]
+    :ivar metric_specifications: Metric specifications of operation.
+    :vartype metric_specifications:
+     list[~azure.mgmt.storage.v2019_04_01.models.MetricSpecification]
     """
 
     _attribute_map = {
@@ -2357,9 +2795,14 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         **kwargs
     ):
+        """
+        :keyword metric_specifications: Metric specifications of operation.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.storage.v2019_04_01.models.MetricSpecification]
+        """
         super(ServiceSpecification, self).__init__(**kwargs)
         self.metric_specifications = metric_specifications
 
@@ -2371,18 +2814,18 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Gets or sets the SKU name. Required for account creation; optional for
-     update. Note that in older versions, SKU name was called accountType. Possible values include:
+    :ivar name: Required. Gets or sets the SKU name. Required for account creation; optional for
+     update. Note that in older versions, SKU name was called accountType. Known values are:
      "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS",
      "Standard_GZRS", "Standard_RAGZRS".
-    :type name: str or ~azure.mgmt.storage.v2019_04_01.models.SkuName
-    :ivar tier: Gets the SKU tier. This is based on the SKU name. Possible values include:
-     "Standard", "Premium".
+    :vartype name: str or ~azure.mgmt.storage.v2019_04_01.models.SkuName
+    :ivar tier: Gets the SKU tier. This is based on the SKU name. Known values are: "Standard",
+     "Premium".
     :vartype tier: str or ~azure.mgmt.storage.v2019_04_01.models.SkuTier
     :ivar resource_type: The type of the resource, usually it is 'storageAccounts'.
     :vartype resource_type: str
-    :ivar kind: Indicates the type of storage account. Possible values include: "Storage",
-     "StorageV2", "BlobStorage", "FileStorage", "BlockBlobStorage".
+    :ivar kind: Indicates the type of storage account. Known values are: "Storage", "StorageV2",
+     "BlobStorage", "FileStorage", "BlockBlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
     :ivar locations: The set of locations that the SKU is available. This will be supported and
      registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.).
@@ -2390,9 +2833,9 @@ class Sku(msrest.serialization.Model):
     :ivar capabilities: The capability information in the specified SKU, including file encryption,
      network ACLs, change notification, etc.
     :vartype capabilities: list[~azure.mgmt.storage.v2019_04_01.models.SKUCapability]
-    :param restrictions: The restrictions because of which SKU cannot be used. This is empty if
+    :ivar restrictions: The restrictions because of which SKU cannot be used. This is empty if
      there are no restrictions.
-    :type restrictions: list[~azure.mgmt.storage.v2019_04_01.models.Restriction]
+    :vartype restrictions: list[~azure.mgmt.storage.v2019_04_01.models.Restriction]
     """
 
     _validation = {
@@ -2417,10 +2860,20 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Union[str, "SkuName"],
-        restrictions: Optional[List["Restriction"]] = None,
+        name: Union[str, "_models.SkuName"],
+        restrictions: Optional[List["_models.Restriction"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. Gets or sets the SKU name. Required for account creation; optional for
+         update. Note that in older versions, SKU name was called accountType. Known values are:
+         "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS",
+         "Standard_GZRS", "Standard_RAGZRS".
+        :paramtype name: str or ~azure.mgmt.storage.v2019_04_01.models.SkuName
+        :keyword restrictions: The restrictions because of which SKU cannot be used. This is empty if
+         there are no restrictions.
+        :paramtype restrictions: list[~azure.mgmt.storage.v2019_04_01.models.Restriction]
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = None
@@ -2457,6 +2910,8 @@ class SKUCapability(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SKUCapability, self).__init__(**kwargs)
         self.name = None
         self.value = None
@@ -2477,10 +2932,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -2505,6 +2960,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -2525,19 +2986,19 @@ class StorageAccount(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
-    :ivar kind: Gets the Kind. Possible values include: "Storage", "StorageV2", "BlobStorage",
+    :ivar kind: Gets the Kind. Known values are: "Storage", "StorageV2", "BlobStorage",
      "FileStorage", "BlockBlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
-     called. Possible values include: "Creating", "ResolvingDNS", "Succeeded".
+     called. Known values are: "Creating", "ResolvingDNS", "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2019_04_01.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -2546,7 +3007,7 @@ class StorageAccount(TrackedResource):
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
     :ivar status_of_primary: Gets the status indicating whether the primary location of the storage
-     account is available or unavailable. Possible values include: "available", "unavailable".
+     account is available or unavailable. Known values are: "available", "unavailable".
     :vartype status_of_primary: str or ~azure.mgmt.storage.v2019_04_01.models.AccountStatus
     :ivar last_geo_failover_time: Gets the timestamp of the most recent instance of a failover to
      the secondary location. Only the most recent timestamp is retained. This element is not
@@ -2558,7 +3019,7 @@ class StorageAccount(TrackedResource):
     :vartype secondary_location: str
     :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
      storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
-     Standard_RAGRS. Possible values include: "available", "unavailable".
+     Standard_RAGRS. Known values are: "available", "unavailable".
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2019_04_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
@@ -2572,39 +3033,39 @@ class StorageAccount(TrackedResource):
      unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
-     for billing. Possible values include: "Hot", "Cool".
+     for billing. Known values are: "Hot", "Cool".
     :vartype access_tier: str or ~azure.mgmt.storage.v2019_04_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Provides the identity based authentication
+    :ivar azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
-    :type azure_files_identity_based_authentication:
+    :vartype azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
-    :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
-    :type enable_https_traffic_only: bool
+    :ivar enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
+    :vartype enable_https_traffic_only: bool
     :ivar network_rule_set: Network rule set.
     :vartype network_rule_set: ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
-    :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
-    :type is_hns_enabled: bool
+    :ivar is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
+    :vartype is_hns_enabled: bool
     :ivar geo_replication_stats: Geo Replication Stats.
     :vartype geo_replication_stats: ~azure.mgmt.storage.v2019_04_01.models.GeoReplicationStats
     :ivar failover_in_progress: If the failover is in progress, the value will be true, otherwise,
      it will be null.
     :vartype failover_in_progress: bool
-    :param large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
-     disabled once it is enabled. Possible values include: "Disabled", "Enabled".
-    :type large_file_shares_state: str or
+    :ivar large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
+     disabled once it is enabled. Known values are: "Disabled", "Enabled".
+    :vartype large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
-    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+    :ivar allow_blob_public_access: Allow or disallow public access to all blobs or containers in
      the storage account. The default interpretation is true for this property.
-    :type allow_blob_public_access: bool
-    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
-     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
-     "TLS1_1", "TLS1_2".
-    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
-    :param allow_shared_key_access: Indicates whether the storage account permits requests to be
+    :vartype allow_blob_public_access: bool
+    :ivar minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Known values are: "TLS1_0", "TLS1_1",
+     "TLS1_2".
+    :vartype minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+    :ivar allow_shared_key_access: Indicates whether the storage account permits requests to be
      authorized with the account access key via Shared Key. If false, then all requests, including
      shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
      default value is null, which is equivalent to true.
-    :type allow_shared_key_access: bool
+    :vartype allow_shared_key_access: bool
     """
 
     _validation = {
@@ -2669,16 +3130,49 @@ class StorageAccount(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
-        azure_files_identity_based_authentication: Optional["AzureFilesIdentityBasedAuthentication"] = None,
+        identity: Optional["_models.Identity"] = None,
+        azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = None,
         enable_https_traffic_only: Optional[bool] = None,
         is_hns_enabled: Optional[bool] = None,
-        large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
+        large_file_shares_state: Optional[Union[str, "_models.LargeFileSharesState"]] = None,
         allow_blob_public_access: Optional[bool] = None,
-        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
+        :keyword azure_files_identity_based_authentication: Provides the identity based authentication
+         settings for Azure Files.
+        :paramtype azure_files_identity_based_authentication:
+         ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
+        :keyword enable_https_traffic_only: Allows https traffic only to storage service if sets to
+         true.
+        :paramtype enable_https_traffic_only: bool
+        :keyword is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
+        :paramtype is_hns_enabled: bool
+        :keyword large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
+         disabled once it is enabled. Known values are: "Disabled", "Enabled".
+        :paramtype large_file_shares_state: str or
+         ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+        :keyword allow_blob_public_access: Allow or disallow public access to all blobs or containers
+         in the storage account. The default interpretation is true for this property.
+        :paramtype allow_blob_public_access: bool
+        :keyword minimum_tls_version: Set the minimum TLS version to be permitted on requests to
+         storage. The default interpretation is TLS 1.0 for this property. Known values are: "TLS1_0",
+         "TLS1_1", "TLS1_2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+        :keyword allow_shared_key_access: Indicates whether the storage account permits requests to be
+         authorized with the account access key via Shared Key. If false, then all requests, including
+         shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
+         default value is null, which is equivalent to true.
+        :paramtype allow_shared_key_access: bool
+        """
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = None
         self.kind = None
@@ -2714,9 +3208,9 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The storage account name.
-    :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Storage/storageAccounts. Default value:
+    :ivar name: Required. The storage account name.
+    :vartype name: str
+    :ivar type: The type of resource, Microsoft.Storage/storageAccounts. Has constant value:
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
@@ -2739,6 +3233,10 @@ class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The storage account name.
+        :paramtype name: str
+        """
         super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = name
 
@@ -2748,60 +3246,60 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sku: Required. Required. Gets or sets the SKU name.
-    :type sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
-    :param kind: Required. Required. Indicates the type of storage account. Possible values
-     include: "Storage", "StorageV2", "BlobStorage", "FileStorage", "BlockBlobStorage".
-    :type kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
-    :param location: Required. Required. Gets or sets the location of the resource. This will be
-     one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
+    :ivar sku: Required. Required. Gets or sets the SKU name.
+    :vartype sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
+    :ivar kind: Required. Required. Indicates the type of storage account. Known values are:
+     "Storage", "StorageV2", "BlobStorage", "FileStorage", "BlockBlobStorage".
+    :vartype kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
+    :ivar location: Required. Required. Gets or sets the location of the resource. This will be one
+     of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
      etc.). The geo region of a resource cannot be changed once it is created, but if an identical
      geo region is specified on update, the request will succeed.
-    :type location: str
-    :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
+    :vartype location: str
+    :ivar tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
      These tags can be used for viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key with a length no
      greater than 128 characters and a value with a length no greater than 256 characters.
-    :type tags: dict[str, str]
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
-    :param custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
+    :ivar custom_domain: User domain assigned to the storage account. Name is the CNAME source.
      Only one custom domain is supported per storage account at this time. To clear the existing
      custom domain, use an empty string for the custom domain name property.
-    :type custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
-    :param encryption: Not applicable. Azure Storage encryption is enabled for all storage accounts
+    :vartype custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
+    :ivar encryption: Not applicable. Azure Storage encryption is enabled for all storage accounts
      and cannot be disabled.
-    :type encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
-    :param network_rule_set: Network rule set.
-    :type network_rule_set: ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
-    :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: "Hot", "Cool".
-    :type access_tier: str or ~azure.mgmt.storage.v2019_04_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Provides the identity based authentication
+    :vartype encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
+    :ivar network_rule_set: Network rule set.
+    :vartype network_rule_set: ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
+    :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
+     for billing. Known values are: "Hot", "Cool".
+    :vartype access_tier: str or ~azure.mgmt.storage.v2019_04_01.models.AccessTier
+    :ivar azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
-    :type azure_files_identity_based_authentication:
+    :vartype azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
-    :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
+    :ivar enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
      The default value is true since API version 2019-04-01.
-    :type enable_https_traffic_only: bool
-    :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
-    :type is_hns_enabled: bool
-    :param large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
-     disabled once it is enabled. Possible values include: "Disabled", "Enabled".
-    :type large_file_shares_state: str or
+    :vartype enable_https_traffic_only: bool
+    :ivar is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
+    :vartype is_hns_enabled: bool
+    :ivar large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
+     disabled once it is enabled. Known values are: "Disabled", "Enabled".
+    :vartype large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
-    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+    :ivar allow_blob_public_access: Allow or disallow public access to all blobs or containers in
      the storage account. The default interpretation is true for this property.
-    :type allow_blob_public_access: bool
-    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
-     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
-     "TLS1_1", "TLS1_2".
-    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
-    :param allow_shared_key_access: Indicates whether the storage account permits requests to be
+    :vartype allow_blob_public_access: bool
+    :ivar minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Known values are: "TLS1_0", "TLS1_1",
+     "TLS1_2".
+    :vartype minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+    :ivar allow_shared_key_access: Indicates whether the storage account permits requests to be
      authorized with the account access key via Shared Key. If false, then all requests, including
      shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
      default value is null, which is equivalent to true.
-    :type allow_shared_key_access: bool
+    :vartype allow_shared_key_access: bool
     """
 
     _validation = {
@@ -2832,24 +3330,80 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sku: "Sku",
-        kind: Union[str, "Kind"],
+        sku: "_models.Sku",
+        kind: Union[str, "_models.Kind"],
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
-        custom_domain: Optional["CustomDomain"] = None,
-        encryption: Optional["Encryption"] = None,
-        network_rule_set: Optional["NetworkRuleSet"] = None,
-        access_tier: Optional[Union[str, "AccessTier"]] = None,
-        azure_files_identity_based_authentication: Optional["AzureFilesIdentityBasedAuthentication"] = None,
+        identity: Optional["_models.Identity"] = None,
+        custom_domain: Optional["_models.CustomDomain"] = None,
+        encryption: Optional["_models.Encryption"] = None,
+        network_rule_set: Optional["_models.NetworkRuleSet"] = None,
+        access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
+        azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = None,
         enable_https_traffic_only: Optional[bool] = None,
         is_hns_enabled: Optional[bool] = None,
-        large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
+        large_file_shares_state: Optional[Union[str, "_models.LargeFileSharesState"]] = None,
         allow_blob_public_access: Optional[bool] = None,
-        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword sku: Required. Required. Gets or sets the SKU name.
+        :paramtype sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
+        :keyword kind: Required. Required. Indicates the type of storage account. Known values are:
+         "Storage", "StorageV2", "BlobStorage", "FileStorage", "BlockBlobStorage".
+        :paramtype kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
+        :keyword location: Required. Required. Gets or sets the location of the resource. This will be
+         one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
+         etc.). The geo region of a resource cannot be changed once it is created, but if an identical
+         geo region is specified on update, the request will succeed.
+        :paramtype location: str
+        :keyword tags: A set of tags. Gets or sets a list of key value pairs that describe the
+         resource. These tags can be used for viewing and grouping this resource (across resource
+         groups). A maximum of 15 tags can be provided for a resource. Each tag must have a key with a
+         length no greater than 128 characters and a value with a length no greater than 256 characters.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
+        :keyword custom_domain: User domain assigned to the storage account. Name is the CNAME source.
+         Only one custom domain is supported per storage account at this time. To clear the existing
+         custom domain, use an empty string for the custom domain name property.
+        :paramtype custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
+        :keyword encryption: Not applicable. Azure Storage encryption is enabled for all storage
+         accounts and cannot be disabled.
+        :paramtype encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
+        :keyword network_rule_set: Network rule set.
+        :paramtype network_rule_set: ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
+        :keyword access_tier: Required for storage accounts where kind = BlobStorage. The access tier
+         used for billing. Known values are: "Hot", "Cool".
+        :paramtype access_tier: str or ~azure.mgmt.storage.v2019_04_01.models.AccessTier
+        :keyword azure_files_identity_based_authentication: Provides the identity based authentication
+         settings for Azure Files.
+        :paramtype azure_files_identity_based_authentication:
+         ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
+        :keyword enable_https_traffic_only: Allows https traffic only to storage service if sets to
+         true. The default value is true since API version 2019-04-01.
+        :paramtype enable_https_traffic_only: bool
+        :keyword is_hns_enabled: Account HierarchicalNamespace enabled if sets to true.
+        :paramtype is_hns_enabled: bool
+        :keyword large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
+         disabled once it is enabled. Known values are: "Disabled", "Enabled".
+        :paramtype large_file_shares_state: str or
+         ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+        :keyword allow_blob_public_access: Allow or disallow public access to all blobs or containers
+         in the storage account. The default interpretation is true for this property.
+        :paramtype allow_blob_public_access: bool
+        :keyword minimum_tls_version: Set the minimum TLS version to be permitted on requests to
+         storage. The default interpretation is TLS 1.0 for this property. Known values are: "TLS1_0",
+         "TLS1_1", "TLS1_2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+        :keyword allow_shared_key_access: Indicates whether the storage account permits requests to be
+         authorized with the account access key via Shared Key. If false, then all requests, including
+         shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
+         default value is null, which is equivalent to true.
+        :paramtype allow_shared_key_access: bool
+        """
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.kind = kind
@@ -2878,8 +3432,8 @@ class StorageAccountKey(msrest.serialization.Model):
     :vartype key_name: str
     :ivar value: Base 64-encoded value of the key.
     :vartype value: str
-    :ivar permissions: Permissions for the key -- read-only or full permissions. Possible values
-     include: "Read", "Full".
+    :ivar permissions: Permissions for the key -- read-only or full permissions. Known values are:
+     "Read", "Full".
     :vartype permissions: str or ~azure.mgmt.storage.v2019_04_01.models.KeyPermission
     """
 
@@ -2899,6 +3453,8 @@ class StorageAccountKey(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageAccountKey, self).__init__(**kwargs)
         self.key_name = None
         self.value = None
@@ -2927,6 +3483,8 @@ class StorageAccountListKeysResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageAccountListKeysResult, self).__init__(**kwargs)
         self.keys = None
 
@@ -2957,6 +3515,8 @@ class StorageAccountListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageAccountListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2967,9 +3527,9 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. The name of storage keys that want to be regenerated, possible
-     values are key1, key2, kerb1, kerb2.
-    :type key_name: str
+    :ivar key_name: Required. The name of storage keys that want to be regenerated, possible values
+     are key1, key2, kerb1, kerb2.
+    :vartype key_name: str
     """
 
     _validation = {
@@ -2986,6 +3546,11 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
         key_name: str,
         **kwargs
     ):
+        """
+        :keyword key_name: Required. The name of storage keys that want to be regenerated, possible
+         values are key1, key2, kerb1, kerb2.
+        :paramtype key_name: str
+        """
         super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
         self.key_name = key_name
 
@@ -2993,55 +3558,54 @@ class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
 class StorageAccountUpdateParameters(msrest.serialization.Model):
     """The parameters that can be provided when updating the storage account properties.
 
-    :param sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
-     Standard_ZRS, Premium_LRS or Premium_ZRS, nor can accounts of those SKU names be updated to any
-     other value.
-    :type sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
-    :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
+    :ivar sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to Standard_ZRS,
+     Premium_LRS or Premium_ZRS, nor can accounts of those SKU names be updated to any other value.
+    :vartype sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
+    :ivar tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
      These tags can be used in viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key no greater in
      length than 128 characters and a value no greater in length than 256 characters.
-    :type tags: dict[str, str]
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
-    :param kind: Optional. Indicates the type of storage account. Currently only StorageV2 value
-     supported by server. Possible values include: "Storage", "StorageV2", "BlobStorage",
-     "FileStorage", "BlockBlobStorage".
-    :type kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
-    :param custom_domain: Custom domain assigned to the storage account by the user. Name is the
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
+    :ivar kind: Optional. Indicates the type of storage account. Currently only StorageV2 value
+     supported by server. Known values are: "Storage", "StorageV2", "BlobStorage", "FileStorage",
+     "BlockBlobStorage".
+    :vartype kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
+    :ivar custom_domain: Custom domain assigned to the storage account by the user. Name is the
      CNAME source. Only one custom domain is supported per storage account at this time. To clear
      the existing custom domain, use an empty string for the custom domain name property.
-    :type custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
-    :param encryption: Provides the encryption settings on the account. The default setting is
+    :vartype custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
+    :ivar encryption: Provides the encryption settings on the account. The default setting is
      unencrypted.
-    :type encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
-    :param access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-     used for billing. Possible values include: "Hot", "Cool".
-    :type access_tier: str or ~azure.mgmt.storage.v2019_04_01.models.AccessTier
-    :param azure_files_identity_based_authentication: Provides the identity based authentication
+    :vartype encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
+    :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
+     for billing. Known values are: "Hot", "Cool".
+    :vartype access_tier: str or ~azure.mgmt.storage.v2019_04_01.models.AccessTier
+    :ivar azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
-    :type azure_files_identity_based_authentication:
+    :vartype azure_files_identity_based_authentication:
      ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
-    :param enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
-    :type enable_https_traffic_only: bool
-    :param network_rule_set: Network rule set.
-    :type network_rule_set: ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
-    :param large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
-     disabled once it is enabled. Possible values include: "Disabled", "Enabled".
-    :type large_file_shares_state: str or
+    :ivar enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
+    :vartype enable_https_traffic_only: bool
+    :ivar network_rule_set: Network rule set.
+    :vartype network_rule_set: ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
+    :ivar large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
+     disabled once it is enabled. Known values are: "Disabled", "Enabled".
+    :vartype large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
-    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+    :ivar allow_blob_public_access: Allow or disallow public access to all blobs or containers in
      the storage account. The default interpretation is true for this property.
-    :type allow_blob_public_access: bool
-    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
-     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
-     "TLS1_1", "TLS1_2".
-    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
-    :param allow_shared_key_access: Indicates whether the storage account permits requests to be
+    :vartype allow_blob_public_access: bool
+    :ivar minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Known values are: "TLS1_0", "TLS1_1",
+     "TLS1_2".
+    :vartype minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+    :ivar allow_shared_key_access: Indicates whether the storage account permits requests to be
      authorized with the account access key via Shared Key. If false, then all requests, including
      shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
      default value is null, which is equivalent to true.
-    :type allow_shared_key_access: bool
+    :vartype allow_shared_key_access: bool
     """
 
     _attribute_map = {
@@ -3064,22 +3628,74 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
-        kind: Optional[Union[str, "Kind"]] = None,
-        custom_domain: Optional["CustomDomain"] = None,
-        encryption: Optional["Encryption"] = None,
-        access_tier: Optional[Union[str, "AccessTier"]] = None,
-        azure_files_identity_based_authentication: Optional["AzureFilesIdentityBasedAuthentication"] = None,
+        identity: Optional["_models.Identity"] = None,
+        kind: Optional[Union[str, "_models.Kind"]] = None,
+        custom_domain: Optional["_models.CustomDomain"] = None,
+        encryption: Optional["_models.Encryption"] = None,
+        access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
+        azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = None,
         enable_https_traffic_only: Optional[bool] = None,
-        network_rule_set: Optional["NetworkRuleSet"] = None,
-        large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
+        network_rule_set: Optional["_models.NetworkRuleSet"] = None,
+        large_file_shares_state: Optional[Union[str, "_models.LargeFileSharesState"]] = None,
         allow_blob_public_access: Optional[bool] = None,
-        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         allow_shared_key_access: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
+         Standard_ZRS, Premium_LRS or Premium_ZRS, nor can accounts of those SKU names be updated to any
+         other value.
+        :paramtype sku: ~azure.mgmt.storage.v2019_04_01.models.Sku
+        :keyword tags: A set of tags. Gets or sets a list of key value pairs that describe the
+         resource. These tags can be used in viewing and grouping this resource (across resource
+         groups). A maximum of 15 tags can be provided for a resource. Each tag must have a key no
+         greater in length than 128 characters and a value no greater in length than 256 characters.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.storage.v2019_04_01.models.Identity
+        :keyword kind: Optional. Indicates the type of storage account. Currently only StorageV2 value
+         supported by server. Known values are: "Storage", "StorageV2", "BlobStorage", "FileStorage",
+         "BlockBlobStorage".
+        :paramtype kind: str or ~azure.mgmt.storage.v2019_04_01.models.Kind
+        :keyword custom_domain: Custom domain assigned to the storage account by the user. Name is the
+         CNAME source. Only one custom domain is supported per storage account at this time. To clear
+         the existing custom domain, use an empty string for the custom domain name property.
+        :paramtype custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
+        :keyword encryption: Provides the encryption settings on the account. The default setting is
+         unencrypted.
+        :paramtype encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
+        :keyword access_tier: Required for storage accounts where kind = BlobStorage. The access tier
+         used for billing. Known values are: "Hot", "Cool".
+        :paramtype access_tier: str or ~azure.mgmt.storage.v2019_04_01.models.AccessTier
+        :keyword azure_files_identity_based_authentication: Provides the identity based authentication
+         settings for Azure Files.
+        :paramtype azure_files_identity_based_authentication:
+         ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
+        :keyword enable_https_traffic_only: Allows https traffic only to storage service if sets to
+         true.
+        :paramtype enable_https_traffic_only: bool
+        :keyword network_rule_set: Network rule set.
+        :paramtype network_rule_set: ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
+        :keyword large_file_shares_state: Allow large file shares if sets to Enabled. It cannot be
+         disabled once it is enabled. Known values are: "Disabled", "Enabled".
+        :paramtype large_file_shares_state: str or
+         ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+        :keyword allow_blob_public_access: Allow or disallow public access to all blobs or containers
+         in the storage account. The default interpretation is true for this property.
+        :paramtype allow_blob_public_access: bool
+        :keyword minimum_tls_version: Set the minimum TLS version to be permitted on requests to
+         storage. The default interpretation is TLS 1.0 for this property. Known values are: "TLS1_0",
+         "TLS1_1", "TLS1_2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
+        :keyword allow_shared_key_access: Indicates whether the storage account permits requests to be
+         authorized with the account access key via Shared Key. If false, then all requests, including
+         shared access signatures, must be authorized with Azure Active Directory (Azure AD). The
+         default value is null, which is equivalent to true.
+        :paramtype allow_shared_key_access: bool
+        """
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.tags = tags
@@ -3118,6 +3734,8 @@ class StorageSkuListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageSkuListResult, self).__init__(**kwargs)
         self.value = None
 
@@ -3159,6 +3777,8 @@ class TagProperty(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TagProperty, self).__init__(**kwargs)
         self.tag = None
         self.timestamp = None
@@ -3173,7 +3793,7 @@ class UpdateHistoryProperty(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar update: The ImmutabilityPolicy update type of a blob container, possible values include:
-     put, lock and extend. Possible values include: "put", "lock", "extend".
+     put, lock and extend. Known values are: "put", "lock", "extend".
     :vartype update: str or ~azure.mgmt.storage.v2019_04_01.models.ImmutabilityPolicyUpdateType
     :ivar immutability_period_since_creation_in_days: The immutability period for the blobs in the
      container since the policy creation, in days.
@@ -3211,6 +3831,8 @@ class UpdateHistoryProperty(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UpdateHistoryProperty, self).__init__(**kwargs)
         self.update = None
         self.immutability_period_since_creation_in_days = None
@@ -3225,7 +3847,7 @@ class Usage(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar unit: Gets the unit of measurement. Possible values include: "Count", "Bytes", "Seconds",
+    :ivar unit: Gets the unit of measurement. Known values are: "Count", "Bytes", "Seconds",
      "Percent", "CountsPerSecond", "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.storage.v2019_04_01.models.UsageUnit
     :ivar current_value: Gets the current count of the allocated resources in the subscription.
@@ -3254,6 +3876,8 @@ class Usage(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Usage, self).__init__(**kwargs)
         self.unit = None
         self.current_value = None
@@ -3264,8 +3888,8 @@ class Usage(msrest.serialization.Model):
 class UsageListResult(msrest.serialization.Model):
     """The response from the List Usages operation.
 
-    :param value: Gets or sets the list of Storage Resource Usages.
-    :type value: list[~azure.mgmt.storage.v2019_04_01.models.Usage]
+    :ivar value: Gets or sets the list of Storage Resource Usages.
+    :vartype value: list[~azure.mgmt.storage.v2019_04_01.models.Usage]
     """
 
     _attribute_map = {
@@ -3275,9 +3899,13 @@ class UsageListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Usage"]] = None,
+        value: Optional[List["_models.Usage"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Gets or sets the list of Storage Resource Usages.
+        :paramtype value: list[~azure.mgmt.storage.v2019_04_01.models.Usage]
+        """
         super(UsageListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -3307,6 +3935,8 @@ class UsageName(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UsageName, self).__init__(**kwargs)
         self.value = None
         self.localized_value = None
@@ -3315,23 +3945,21 @@ class UsageName(msrest.serialization.Model):
 class VirtualNetworkRule(msrest.serialization.Model):
     """Virtual Network rule.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :param virtual_network_resource_id: Required. Resource ID of a subnet, for example:
+    :ivar virtual_network_resource_id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
-    :type virtual_network_resource_id: str
-    :ivar action: The action of virtual network rule. Default value: "Allow".
+    :vartype virtual_network_resource_id: str
+    :ivar action: The action of virtual network rule. The only acceptable values to pass in are
+     None and "Allow". The default value is None.
     :vartype action: str
-    :param state: Gets the state of virtual network rule. Possible values include: "provisioning",
+    :ivar state: Gets the state of virtual network rule. Known values are: "provisioning",
      "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
-    :type state: str or ~azure.mgmt.storage.v2019_04_01.models.State
+    :vartype state: str or ~azure.mgmt.storage.v2019_04_01.models.State
     """
 
     _validation = {
         'virtual_network_resource_id': {'required': True},
-        'action': {'constant': True},
     }
 
     _attribute_map = {
@@ -3340,15 +3968,26 @@ class VirtualNetworkRule(msrest.serialization.Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    action = "Allow"
-
     def __init__(
         self,
         *,
         virtual_network_resource_id: str,
-        state: Optional[Union[str, "State"]] = None,
+        action: Optional[str] = None,
+        state: Optional[Union[str, "_models.State"]] = None,
         **kwargs
     ):
+        """
+        :keyword virtual_network_resource_id: Required. Resource ID of a subnet, for example:
+         /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+        :paramtype virtual_network_resource_id: str
+        :keyword action: The action of virtual network rule. The only acceptable values to pass in are
+         None and "Allow". The default value is None.
+        :paramtype action: str
+        :keyword state: Gets the state of virtual network rule. Known values are: "provisioning",
+         "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
+        :paramtype state: str or ~azure.mgmt.storage.v2019_04_01.models.State
+        """
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.virtual_network_resource_id = virtual_network_resource_id
+        self.action = action
         self.state = state

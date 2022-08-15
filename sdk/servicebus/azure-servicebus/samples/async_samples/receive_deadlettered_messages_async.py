@@ -9,8 +9,6 @@
 Example to show receiving dead-lettered messages from a Service Bus Queue asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus import ServiceBusMessage, ServiceBusSubQueue
@@ -48,5 +46,5 @@ async def main():
                 print(str(msg))
                 await dlq_receiver.complete_message(msg)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+
+asyncio.run(main())

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from ._common import DictMixin
+from ._mixin import DictMixin
 from ._client_base import _parse_conn_str
 
 
@@ -66,7 +66,9 @@ def parse_connection_string(conn_str):
     :type conn_str: str
     :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     """
-    fully_qualified_namespace, policy, key, entity, signature = _parse_conn_str(conn_str, check_case=True)[:-1]
+    fully_qualified_namespace, policy, key, entity, signature = _parse_conn_str(
+        conn_str, check_case=True
+    )[:-1]
     endpoint = "sb://" + fully_qualified_namespace + "/"
     props = {
         "fully_qualified_namespace": fully_qualified_namespace,

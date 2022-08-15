@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AgentPoolType represents types of an agent pool. VirtualMachineScaleSets type is still in
     PREVIEW.
     """
@@ -34,7 +18,7 @@ class AgentPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VIRTUAL_MACHINE_SCALE_SETS = "VirtualMachineScaleSets"
     AVAILABILITY_SET = "AvailabilitySet"
 
-class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceStorageProfileTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage profile specifies what kind of storage used. Choose from StorageAccount and
     ManagedDisks. Leave it empty, we will choose for you based on the orchestrator choice.
     """
@@ -42,7 +26,7 @@ class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMet
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
-class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Size of agent VMs.
     """
 
@@ -221,7 +205,7 @@ class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     STANDARD_NV24 = "Standard_NV24"
     STANDARD_NV6 = "Standard_NV6"
 
-class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+class Count(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Number of masters (VMs) in the container service cluster. Allowed values are 1, 3, and 5. The
     default value is 1.
     """
@@ -230,35 +214,35 @@ class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     THREE = 3
     FIVE = 5
 
-class LoadBalancerSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The load balancer sku for the managed cluster.
     """
 
     STANDARD = "standard"
     BASIC = "basic"
 
-class NetworkPlugin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkPlugin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network plugin used for building Kubernetes network.
     """
 
     AZURE = "azure"
     KUBENET = "kubenet"
 
-class NetworkPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network policy used for building Kubernetes network.
     """
 
     CALICO = "calico"
     AZURE = "azure"
 
-class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
     """
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the managed cluster. Type 'SystemAssigned' will use an implicitly
     created identity in master components and an auto-created user assigned identity in MC_
     resource group in agent nodes. Type 'None' will not use MSI for the managed cluster, service
@@ -268,7 +252,7 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
 
-class ScaleSetEvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScaleSetEvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ScaleSetEvictionPolicy to be used to specify eviction policy for low priority virtual machine
     scale set. Default to Delete.
     """
@@ -276,7 +260,7 @@ class ScaleSetEvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     DELETE = "Delete"
     DEALLOCATE = "Deallocate"
 
-class ScaleSetPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScaleSetPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ScaleSetPriority to be used to specify virtual machine scale set priority. Default to regular.
     """
 

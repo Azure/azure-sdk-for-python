@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ConfigurationDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConfigurationDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data type of the configuration.
     """
 
@@ -35,29 +19,56 @@ class ConfigurationDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     INTEGER = "Integer"
     ENUMERATION = "Enumeration"
 
-class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode to create a new PostgreSQL server.
     """
 
     DEFAULT = "Default"
+    CREATE = "Create"
+    UPDATE = "Update"
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
 
-class Enum8(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreateModeForUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode to update a new PostgreSQL server.
+    """
 
-    POSTGRE_SQL = "PostgreSQL"
-    POSTGRE_SQL_CITUS = "PostgreSQLCitus"
-    MY_SQL = "MySQL"
-    MARIA_DB = "MariaDb"
-    ORACLE = "Oracle"
+    DEFAULT = "Default"
+    UPDATE = "Update"
 
-class HAEnabledEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """stand by count value can be either enabled or disabled
+class FailoverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Failover mode.
+    """
+
+    PLANNED_FAILOVER = "PlannedFailover"
+    FORCED_FAILOVER = "ForcedFailover"
+    PLANNED_SWITCHOVER = "PlannedSwitchover"
+    FORCED_SWITCHOVER = "ForcedSwitchover"
+
+class GeoRedundantBackupEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating whether Geo-Redundant backup is enabled on the server.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The HA mode for the server.
+    """
+
+    DISABLED = "Disabled"
+    ZONE_REDUNDANT = "ZoneRedundant"
+    SAME_ZONE = "SameZone"
+
+class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation.
     """
 
@@ -65,7 +76,14 @@ class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     USER = "user"
     SYSTEM = "system"
 
-class ServerHAState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name availability reason.
+    """
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+class ServerHAState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A state of a HA server that is visible to user.
     """
 
@@ -76,14 +94,14 @@ class ServerHAState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HEALTHY = "Healthy"
     REMOVING_STANDBY = "RemovingStandby"
 
-class ServerPublicNetworkAccessState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerPublicNetworkAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """public network access is enabled or not
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class ServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A state of a server that is visible to user.
     """
 
@@ -95,14 +113,16 @@ class ServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STOPPED = "Stopped"
     UPDATING = "Updating"
 
-class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The version of a server.
     """
 
+    FOURTEEN = "14"
+    THIRTEEN = "13"
     TWELVE = "12"
     ELEVEN = "11"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The tier of the particular SKU, e.g. Burstable.
     """
 

@@ -1,5 +1,211 @@
 # Release History
 
+## 21.0.0 (2022-08-05)
+
+**Features**
+
+  - Added operation AdminRuleCollectionsOperations.begin_delete
+  - Added operation AdminRulesOperations.begin_delete
+  - Added operation AzureFirewallsOperations.begin_list_learned_prefixes
+  - Added operation ConnectivityConfigurationsOperations.begin_delete
+  - Added operation NetworkGroupsOperations.begin_delete
+  - Added operation NetworkManagementClientOperationsMixin.express_route_provider_port
+  - Added operation NetworkManagementClientOperationsMixin.list_active_connectivity_configurations
+  - Added operation NetworkManagementClientOperationsMixin.list_active_security_admin_rules
+  - Added operation NetworkManagementClientOperationsMixin.list_network_manager_effective_connectivity_configurations
+  - Added operation NetworkManagementClientOperationsMixin.list_network_manager_effective_security_admin_rules
+  - Added operation NetworkManagerCommitsOperations.begin_post
+  - Added operation NetworkManagersOperations.begin_delete
+  - Added operation NetworkManagersOperations.patch
+  - Added operation NetworkSecurityPerimetersOperations.check_members
+  - Added operation NetworkSecurityPerimetersOperations.query
+  - Added operation SecurityAdminConfigurationsOperations.begin_delete
+  - Added operation group ExpressRouteProviderPortsLocationOperations
+  - Added operation group ManagementGroupNetworkManagerConnectionsOperations
+  - Added operation group NspAccessRulesReconcileOperations
+  - Added operation group NspAssociationsProxyOperations
+  - Added operation group ScopeConnectionsOperations
+  - Added operation group StaticMembersOperations
+  - Added operation group SubscriptionNetworkManagerConnectionsOperations
+  - Model ApplicationGatewayRoutingRule has a new parameter priority
+  - Model CustomIpPrefix has a new parameter no_internet_advertise
+  - Model FirewallPolicy has a new parameter explicit_proxy
+  - Model FirewallPolicySNAT has a new parameter auto_learn_private_ranges
+  - Model NetworkManagerPropertiesNetworkManagerScopes has a new parameter cross_tenant_scopes
+  - Model NetworkSecurityGroup has a new parameter flush_connection
+  - Model NetworkSecurityPerimeter has a new parameter perimeter_guid
+  - Model PacketCapture has a new parameter scope
+  - Model PacketCapture has a new parameter target_type
+  - Model PacketCaptureParameters has a new parameter scope
+  - Model PacketCaptureParameters has a new parameter target_type
+  - Model PacketCaptureResult has a new parameter scope
+  - Model PacketCaptureResult has a new parameter target_type
+  - Model PacketCaptureResultProperties has a new parameter scope
+  - Model PacketCaptureResultProperties has a new parameter target_type
+  - Model VirtualHub has a new parameter virtual_router_auto_scale_configuration
+
+**Breaking changes**
+
+  - Model ActiveBaseSecurityAdminRule no longer has parameter configuration_display_name
+  - Model ActiveBaseSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model ActiveConnectivityConfiguration no longer has parameter display_name
+  - Model ActiveDefaultSecurityAdminRule no longer has parameter configuration_display_name
+  - Model ActiveDefaultSecurityAdminRule no longer has parameter display_name
+  - Model ActiveDefaultSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model ActiveSecurityAdminRule no longer has parameter configuration_display_name
+  - Model ActiveSecurityAdminRule no longer has parameter display_name
+  - Model ActiveSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model AdminRule no longer has parameter display_name
+  - Model ConfigurationGroup no longer has parameter conditional_membership
+  - Model ConfigurationGroup no longer has parameter display_name
+  - Model ConfigurationGroup no longer has parameter group_members
+  - Model ConfigurationGroup no longer has parameter member_type
+  - Model ConnectivityConfiguration no longer has parameter display_name
+  - Model DefaultAdminRule no longer has parameter display_name
+  - Model EffectiveBaseSecurityAdminRule no longer has parameter configuration_display_name
+  - Model EffectiveBaseSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model EffectiveConnectivityConfiguration no longer has parameter display_name
+  - Model EffectiveDefaultSecurityAdminRule no longer has parameter configuration_display_name
+  - Model EffectiveDefaultSecurityAdminRule no longer has parameter display_name
+  - Model EffectiveDefaultSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model EffectiveSecurityAdminRule no longer has parameter configuration_display_name
+  - Model EffectiveSecurityAdminRule no longer has parameter display_name
+  - Model EffectiveSecurityAdminRule no longer has parameter rule_collection_display_name
+  - Model FirewallPolicy no longer has parameter explicit_proxy_settings
+  - Model NetworkGroup no longer has parameter conditional_membership
+  - Model NetworkGroup no longer has parameter display_name
+  - Model NetworkGroup no longer has parameter group_members
+  - Model NetworkGroup no longer has parameter member_type
+  - Model NetworkManager no longer has parameter display_name
+  - Model NetworkSecurityPerimeter no longer has parameter description
+  - Model NetworkSecurityPerimeter no longer has parameter display_name
+  - Model NetworkSecurityPerimeter no longer has parameter etag
+  - Model NspProfile no longer has parameter enabled_log_categories
+  - Parameter commit_type of model NetworkManagerCommit is now required
+  - Parameter group_connectivity of model ConnectivityGroupItem is now required
+  - Parameter network_group_id of model ConnectivityGroupItem is now required
+  - Parameter network_group_id of model NetworkManagerSecurityGroupItem is now required
+  - Parameter target_locations of model NetworkManagerCommit is now required
+  - Removed operation AdminRuleCollectionsOperations.delete
+  - Removed operation AdminRulesOperations.delete
+  - Removed operation ConnectivityConfigurationsOperations.delete
+  - Removed operation NetworkGroupsOperations.delete
+  - Removed operation NetworkManagerCommitsOperations.post
+  - Removed operation NetworkManagersOperations.delete
+  - Removed operation NetworkManagersOperations.patch_tags
+  - Removed operation SecurityAdminConfigurationsOperations.delete
+
+## 20.0.0 (2022-05-10)
+
+**Features**
+
+  - Added operation FirewallPoliciesOperations.update_tags
+  - Added operation PerimeterAssociableResourceTypesOperations.list
+  - Added operation group ConfigurationPolicyGroupsOperations
+  - Added operation group ExpressRoutePortAuthorizationsOperations
+  - Added operation group NspAccessRulesOperations
+  - Added operation group NspAssociationsOperations
+  - Added operation group NspProfilesOperations
+  - Model ApplicationGateway has a new parameter backend_settings_collection
+  - Model ApplicationGateway has a new parameter listeners
+  - Model ApplicationGateway has a new parameter routing_rules
+  - Model ApplicationGatewayProbe has a new parameter pick_host_name_from_backend_settings
+  - Model BackendAddressPool has a new parameter drain_period_in_seconds
+  - Model ExpressRouteCircuit has a new parameter authorization_key
+  - Model FirewallPolicyIntrusionDetectionConfiguration has a new parameter private_ranges
+  - Model LoadBalancerBackendAddress has a new parameter admin_state
+  - Model NetworkInterface has a new parameter auxiliary_mode
+  - Model P2SConnectionConfiguration has a new parameter configuration_policy_group_associations
+  - Model P2SConnectionConfiguration has a new parameter previous_configuration_policy_group_associations
+  - Model VirtualHub has a new parameter hub_routing_preference
+  - Model VirtualNetworkGatewayConnection has a new parameter gateway_custom_bgp_ip_addresses
+  - Model VirtualNetworkGatewayConnectionListEntity has a new parameter gateway_custom_bgp_ip_addresses
+  - Model VpnServerConfiguration has a new parameter configuration_policy_groups
+  - Model VpnSiteLinkConnection has a new parameter vpn_gateway_custom_bgp_addresses
+
+**Breaking changes**
+
+  - Removed operation PerimeterAssociableResourceTypesOperations.get
+
+## 19.3.0 (2021-11-05)
+
+**Features**
+
+  - Model LoadBalancerBackendAddress has a new parameter inbound_nat_rules_port_mapping
+  - Model VpnNatRuleMapping has a new parameter port_range
+  - Model OwaspCrsExclusionEntry has a new parameter exclusion_managed_rule_sets
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_encryption
+  - Model NetworkInterface has a new parameter vnet_encryption_supported
+  - Model VirtualNetworkGateway has a new parameter disable_ip_sec_replay_protection
+  - Model VirtualNetwork has a new parameter encryption
+  - Model BackendAddressPool has a new parameter inbound_nat_rules
+  - Added operation LoadBalancersOperations.begin_list_inbound_nat_rule_port_mappings
+  - Added operation group FirewallPolicyIdpsSignaturesOverridesOperations
+  - Added operation group RoutingIntentOperations
+  - Added operation group FirewallPolicyIdpsSignaturesOperations
+  - Added operation group FirewallPolicyIdpsSignaturesFilterValuesOperations
+
+## 19.2.0 (2021-10-21)
+
+**Features**
+
+  - Added operation group AdminRuleCollectionsOperations
+  - Added operation group SecurityUserConfigurationsOperations
+  - Added operation group ConnectivityConfigurationsOperations
+  - Added operation group ActiveSecurityUserRulesOperations
+  - Added operation group NetworkManagerCommitsOperations
+  - Added operation group NetworkManagersOperations
+  - Added operation group NetworkManagerDeploymentStatusOperations
+  - Added operation group ActiveConnectivityConfigurationsOperations
+  - Added operation group NetworkManagerEffectiveSecurityAdminRulesOperations
+  - Added operation group UserRuleCollectionsOperations
+  - Added operation group ActiveSecurityAdminRulesOperations
+  - Added operation group UserRulesOperations
+  - Added operation group NetworkGroupsOperations
+  - Added operation group EffectiveVirtualNetworksOperations
+  - Added operation group NetworkSecurityPerimetersOperations
+  - Added operation group PerimeterAssociableResourceTypesOperations
+  - Added operation group AdminRulesOperations
+  - Added operation group SecurityAdminConfigurationsOperations
+  - Added operation group EffectiveConnectivityConfigurationsOperations
+  - Removed old api-version `2017-08-01`
+
+## 19.1.0 (2021-10-09)
+
+**Features**
+
+  - Model ServiceEndpointPolicy has a new parameter service_alias
+  - Model ServiceEndpointPolicy has a new parameter contextual_service_endpoint_policies
+  - Model ApplicationGatewayRequestRoutingRule has a new parameter load_distribution_policy
+  - Model BgpConnection has a new parameter hub_virtual_network_connection
+  - Model BastionHost has a new parameter enable_ip_connect
+  - Model BastionHost has a new parameter disable_copy_paste
+  - Model BastionHost has a new parameter enable_tunneling
+  - Model BastionHost has a new parameter scale_units
+  - Model BastionHost has a new parameter enable_file_copy
+  - Model BastionHost has a new parameter enable_shareable_link
+  - Model DscpConfiguration has a new parameter qos_definition_collection
+  - Model ServiceTagInformation has a new parameter service_tag_change_number
+  - Model VnetRoute has a new parameter bgp_connections
+  - Model VpnGateway has a new parameter enable_bgp_route_translation_for_nat
+  - Model ServiceEndpointPolicyDefinition has a new parameter type
+  - Model ApplicationGateway has a new parameter global_configuration
+  - Model ApplicationGateway has a new parameter load_distribution_policies
+  - Model InboundNatRule has a new parameter frontend_port_range_end
+  - Model InboundNatRule has a new parameter frontend_port_range_start
+  - Model InboundNatRule has a new parameter backend_address_pool
+  - Model PrivateEndpoint has a new parameter ip_configurations
+  - Model PrivateEndpoint has a new parameter application_security_groups
+  - Model PrivateEndpoint has a new parameter custom_network_interface_name
+  - Model NetworkVirtualAppliance has a new parameter ssh_public_key
+  - Model ApplicationGatewayUrlPathMap has a new parameter default_load_distribution_policy
+  - Model FirewallPolicy has a new parameter sql
+  - Model FirewallPolicy has a new parameter explicit_proxy_settings
+  - Model VirtualHub has a new parameter kind
+  - Model ApplicationGatewayPathRule has a new parameter load_distribution_policy
+  - Added operation BastionHostsOperations.begin_update_tags
+  - Added operation group ServiceTagInformationOperations
+
 ## 19.0.0 (2021-05-14)
 
 **Features**
@@ -137,7 +343,7 @@
 
   - Operation ConnectionMonitorsOperations.begin_create_or_update has a new signature
   - Model VirtualHub no longer has parameter enable_virtual_router_route_propogation
-  
+
 ## 16.0.0 (2020-09-15)
 
 **Features**
@@ -240,7 +446,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -248,13 +454,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
 ## 10.2.0 (2020-04-10)

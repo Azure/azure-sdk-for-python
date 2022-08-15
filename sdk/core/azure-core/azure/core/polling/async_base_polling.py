@@ -32,6 +32,7 @@ from .base_polling import (
     LROBasePolling,
     _raise_if_bad_http_status_and_method,
 )
+from ..pipeline._tools import is_rest
 
 __all__ = ["AsyncLROBasePolling"]
 
@@ -116,10 +117,20 @@ class AsyncLROBasePolling(LROBasePolling):
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
+        if is_rest(self._initial_response.http_response):
+            # if I am a azure.core.rest.HttpResponse
+            # want to keep making azure.core.rest calls
+            from azure.core.rest import HttpRequest as RestHttpRequest
+            request = RestHttpRequest("GET", status_link)
+            return await self._client.send_request(
+                request, _return_pipeline_response=True, **self._operation_config
+            )
+        # if I am a azure.core.pipeline.transport.HttpResponse
+        request = self._client.get(status_link)
+
         return await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )

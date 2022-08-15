@@ -43,7 +43,7 @@ class AutomationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutomationList"]:
         """Lists all the security automations in the specified subscription. Use the 'nextLink' property
         in the response to get the next page of security automations for the specified subscription.
@@ -111,7 +111,7 @@ class AutomationsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutomationList"]:
         """Lists all the security automations in the specified resource group. Use the 'nextLink' property
         in the response to get the next page of security automations for the specified resource group.
@@ -184,7 +184,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Automation":
         """Retrieves information about the model of a security automation.
 
@@ -244,7 +244,7 @@ class AutomationsOperations:
         resource_group_name: str,
         automation_name: str,
         automation: "_models.Automation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Automation":
         """Creates or updates a security automation. If a security automation is already created and a
         subsequent request is issued for the same automation id, then it will be updated.
@@ -315,7 +315,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a security automation.
 
@@ -372,7 +372,7 @@ class AutomationsOperations:
         resource_group_name: str,
         automation_name: str,
         automation: "_models.Automation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutomationValidationStatus":
         """Validates the security automation model before create or update. Any validation errors are
         returned to the client.

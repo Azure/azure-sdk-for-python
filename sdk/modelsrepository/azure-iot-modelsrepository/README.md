@@ -175,7 +175,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 <!-- LINKS -->
 [azure_core_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
-[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
+[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core#azure-core-library-exceptions
 [azure_core_kwargs]: https://aka.ms/azsdk/python/options
 [dtdl_spec]: https://github.com/Azure/opendigitaltwins-dtdl/blob/master/DTDL/v2/dtdlv2.md
 [global_azure_repo]: https://devicemodels.azure.com/
@@ -183,4 +183,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [logging_doc]: https://docs.python.org/3.5/library/logging.html
 [pip]: https://pypi.org/project/pip/
 [repo_conventions]: https://github.com/Azure/iot-plugandplay-models-tools/wiki
-[samples_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/modelsrepository/azure-iot-modelsrepository/samples/
+[samples_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/modelsrepository/azure-iot-modelsrepository/samples/

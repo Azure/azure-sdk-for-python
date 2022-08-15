@@ -6,38 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Action
-    from ._models_py3 import AlertingAction
-    from ._models_py3 import AzNsActionGroup
-    from ._models_py3 import Criteria
-    from ._models_py3 import Dimension
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LogMetricTrigger
-    from ._models_py3 import LogSearchRuleResource
-    from ._models_py3 import LogSearchRuleResourceCollection
-    from ._models_py3 import LogSearchRuleResourcePatch
-    from ._models_py3 import LogToMetricAction
-    from ._models_py3 import Resource
-    from ._models_py3 import Schedule
-    from ._models_py3 import Source
-    from ._models_py3 import TriggerCondition
-except (SyntaxError, ImportError):
-    from ._models import Action  # type: ignore
-    from ._models import AlertingAction  # type: ignore
-    from ._models import AzNsActionGroup  # type: ignore
-    from ._models import Criteria  # type: ignore
-    from ._models import Dimension  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LogMetricTrigger  # type: ignore
-    from ._models import LogSearchRuleResource  # type: ignore
-    from ._models import LogSearchRuleResourceCollection  # type: ignore
-    from ._models import LogSearchRuleResourcePatch  # type: ignore
-    from ._models import LogToMetricAction  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import Schedule  # type: ignore
-    from ._models import Source  # type: ignore
-    from ._models import TriggerCondition  # type: ignore
+from ._models_py3 import Action
+from ._models_py3 import AlertingAction
+from ._models_py3 import AzNsActionGroup
+from ._models_py3 import Criteria
+from ._models_py3 import Dimension
+from ._models_py3 import ErrorContract
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LogMetricTrigger
+from ._models_py3 import LogSearchRuleResource
+from ._models_py3 import LogSearchRuleResourceCollection
+from ._models_py3 import LogSearchRuleResourcePatch
+from ._models_py3 import LogToMetricAction
+from ._models_py3 import Resource
+from ._models_py3 import Schedule
+from ._models_py3 import Source
+from ._models_py3 import TriggerCondition
+
 
 from ._monitor_management_client_enums import (
     AlertSeverity,
@@ -48,13 +33,16 @@ from ._monitor_management_client_enums import (
     ProvisioningState,
     QueryType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Action',
     'AlertingAction',
     'AzNsActionGroup',
     'Criteria',
     'Dimension',
+    'ErrorContract',
     'ErrorResponse',
     'LogMetricTrigger',
     'LogSearchRuleResource',
@@ -73,3 +61,5 @@ __all__ = [
     'ProvisioningState',
     'QueryType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

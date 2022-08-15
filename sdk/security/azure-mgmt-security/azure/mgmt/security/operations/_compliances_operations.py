@@ -53,8 +53,8 @@ class CompliancesOperations(object):
         # type: (...) -> Iterable["_models.ComplianceList"]
         """The Compliance scores of the specific management group.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -126,8 +126,8 @@ class CompliancesOperations(object):
         # type: (...) -> "_models.Compliance"
         """Details of a specific Compliance.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :param compliance_name: name of the Compliance.

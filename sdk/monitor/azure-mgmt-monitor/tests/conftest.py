@@ -23,10 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 import platform
+import pytest
 import sys
+
+from dotenv import load_dotenv
+
+from devtools_testutils import test_proxy, add_general_regex_sanitizer
+from devtools_testutils import add_header_regex_sanitizer, add_body_key_sanitizer
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
     collect_ignore_glob.append("*_async.py")
+
+load_dotenv()
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=client_secret, value="00000000-0000-0000-0000-000000000000")
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")

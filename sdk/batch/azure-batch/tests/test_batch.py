@@ -30,8 +30,10 @@ from devtools_testutils import (
 )
 
 
-AZURE_LOCATION = 'westcentralus'
+AZURE_LOCATION = 'southcentralus'
+BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
+DEFAULT_VM_SIZE = 'standard_d2_v2'
 
 
 class BatchTest(AzureMgmtTestCase):
@@ -83,7 +85,7 @@ class BatchTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @JobPreparer()
     def test_batch_applications(self, batch_job, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
@@ -113,7 +115,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(task.application_package_references[0].application_id, 'application_id')
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_certificates(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Add Certificate
@@ -152,7 +154,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_create_pools(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test List Node Agent SKUs
@@ -168,7 +170,7 @@ class BatchTest(AzureMgmtTestCase):
         ]
         test_iaas_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_iaas_'),
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(
                     publisher='MicrosoftWindowsServer',
@@ -202,21 +204,21 @@ class BatchTest(AzureMgmtTestCase):
                                                      '/subnets/subnet1')
         test_network_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_network_'),
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04')
+                node_agent_sku_id='batch.node.ubuntu 18.04')
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_network_pool, models.PoolAddOptions(timeout=45))
 
         test_image_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_image_'),
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(
                     virtual_machine_image_id="/subscriptions/00000000-0000-0000-0000-000000000000"
@@ -226,7 +228,7 @@ class BatchTest(AzureMgmtTestCase):
                                              "/images/FakeImage"
                                              "/versions/version"
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04'
+                node_agent_sku_id='batch.node.ubuntu 18.04'
             )
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_image_pool, models.PoolAddOptions(timeout=45))
@@ -235,14 +237,14 @@ class BatchTest(AzureMgmtTestCase):
         data_disk = models.DataDisk(lun=1, disk_size_gb=50)
         test_disk_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_disk_'),
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
+                node_agent_sku_id='batch.node.ubuntu 18.04',
                 data_disks=[data_disk])
         )
         response = client.pool.add(test_disk_pool)
@@ -254,15 +256,15 @@ class BatchTest(AzureMgmtTestCase):
         # Test Create Pool with Application Licenses
         test_app_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_app_'),
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             application_licenses=["maya"],
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
+                node_agent_sku_id='batch.node.ubuntu 18.04',
                 data_disks=[data_disk])
         )
         response = client.pool.add(test_app_pool)
@@ -273,17 +275,17 @@ class BatchTest(AzureMgmtTestCase):
         # Test Create Pool with Azure Disk Encryption
         test_ade_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_ade_'),
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
                     targets=[models.DiskEncryptionTarget.temporary_disk]
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04')
+                node_agent_sku_id='batch.node.ubuntu 18.04')
         )
         response = client.pool.add(test_ade_pool)
         self.assertIsNone(response)
@@ -310,13 +312,13 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(len(pools), 1)
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_create_pool_with_blobfuse_mount(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Create Iaas Pool
         test_iaas_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_iaas_'),
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(
                     publisher='MicrosoftWindowsServer',
@@ -345,13 +347,13 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(mount_pool.mount_configuration[0].nfs_mount_configuration)
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_update_pools(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Create Paas Pool
         test_paas_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_paas_'),
-            vm_size='small',
+            vm_size=DEFAULT_VM_SIZE,
             cloud_service_configuration=models.CloudServiceConfiguration(
                 os_family='5'
             ),
@@ -393,7 +395,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(pool.state, models.PoolState.active)
         self.assertEqual(pool.allocation_state, models.AllocationState.steady)
         self.assertEqual(pool.cloud_service_configuration.os_family, '5')
-        self.assertEqual(pool.vm_size, 'small')
+        self.assertEqual(pool.vm_size, DEFAULT_VM_SIZE)
         self.assertIsNone(pool.start_task)
         self.assertEqual(pool.metadata[0].name, 'foo2')
         self.assertEqual(pool.metadata[0].value, 'bar2')
@@ -412,7 +414,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION)
     def test_batch_scale_pools(self, batch_pool, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
@@ -433,6 +435,10 @@ class BatchTest(AzureMgmtTestCase):
             '$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue')
         
         # Test Disable Autoscale
+        pool = client.pool.get(batch_pool.name)
+        while self.is_live and pool.allocation_state != models.AllocationState.steady:
+            time.sleep(5)
+            pool = client.pool.get(batch_pool.name)
         response = client.pool.disable_auto_scale(batch_pool.name)
         self.assertIsNone(response)
 
@@ -466,7 +472,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(info, [])
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_job_schedules(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Create Job Schedule
@@ -542,7 +548,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_network_configuration(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Create Pool with Network Config
@@ -567,16 +573,16 @@ class BatchTest(AzureMgmtTestCase):
             )
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.ubuntu 16.04",
+            node_agent_sku_id="batch.node.ubuntu 18.04",
             image_reference=models.ImageReference(
                 publisher="Canonical",
                 offer="UbuntuServer",
-                sku="16.04-LTS")
+                sku="18.04-LTS")
         )
         pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_network_'),
             target_dedicated_nodes=1,
-            vm_size='Standard_A1',
+            vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=virtual_machine_config,
             network_configuration=network_config
         )
@@ -596,7 +602,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].protocol.value, 'udp')
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION, size=2, config='iaas')
     def test_batch_compute_nodes(self, batch_pool, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
@@ -606,6 +612,7 @@ class BatchTest(AzureMgmtTestCase):
         while self.is_live and any([n for n in nodes if n.state != models.ComputeNodeState.idle]):
             time.sleep(10)
             nodes = list(client.compute_node.list(batch_pool.name))
+        self.assertEqual(len(nodes), 2)
 
         # Test Get Compute Node
         node = client.compute_node.get(batch_pool.name, nodes[0].id)
@@ -617,7 +624,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Upload Log
         config = models.UploadBatchServiceLogsConfiguration(
-            container_url = "https://test.blob.core.windows.net:443/test-container", 
+            container_url = "https://computecontainer.blob.core.windows.net/", 
             start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=6))
         result = client.compute_node.upload_batch_service_logs(batch_pool.name, nodes[0].id, config)
         self.assertIsNotNone(result)
@@ -650,14 +657,15 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
-    @PoolPreparer(location=AZURE_LOCATION, size=1, config='paas')
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @PoolPreparer(location=AZURE_LOCATION, size=1)
     def test_batch_compute_node_user(self, batch_pool, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         nodes = list(client.compute_node.list(batch_pool.name))
         while self.is_live and any([n for n in nodes if n.state != models.ComputeNodeState.idle]):
             time.sleep(10)
             nodes = list(client.compute_node.list(batch_pool.name))
+        self.assertEqual(len(nodes), 1)
 
         # Test Add User
         user_name = 'BatchPythonSDKUser'
@@ -671,14 +679,11 @@ class BatchTest(AzureMgmtTestCase):
         response = client.compute_node.update_user(batch_pool.name, nodes[0].id, user_name, user)
         self.assertIsNone(response)
 
-        # Test Get RDP File
-        file_length = 0
-        with io.BytesIO() as file_handle:
-            response = client.compute_node.get_remote_desktop(batch_pool.name, nodes[0].id)
-            if response:
-                for data in response:
-                    file_length += len(data)
-        self.assertTrue(file_length > 0)
+        # Test Get remote login settings
+        remote_login_settings = client.compute_node.get_remote_login_settings(batch_pool.name, nodes[0].id)
+        self.assertIsInstance(remote_login_settings, models.ComputeNodeGetRemoteLoginSettingsResult)
+        self.assertIsNotNone(remote_login_settings.remote_login_ip_address)
+        self.assertIsNotNone(remote_login_settings.remote_login_port)
 
         # Test Delete User
         response = client.compute_node.delete_user(batch_pool.name, nodes[0].id, user_name)
@@ -686,7 +691,7 @@ class BatchTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch4', location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION, name_prefix='batch4')
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT, name_prefix='batch4')
     @PoolPreparer(size=1)
     @JobPreparer()
     def test_batch_files(self, batch_pool, batch_job, **kwargs):
@@ -695,6 +700,7 @@ class BatchTest(AzureMgmtTestCase):
         while self.is_live and any([n for n in nodes if n.state != models.ComputeNodeState.idle]):
             time.sleep(10)
             nodes = list(client.compute_node.list(batch_pool.name))
+        self.assertEqual(len(nodes), 1)
         node = nodes[0].id
         task_id = 'test_task'
         task_param = models.TaskAddParameter(id=task_id, command_line='cmd /c "echo hello world"')
@@ -752,7 +758,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @JobPreparer(on_task_failure=models.OnTaskFailure.perform_exit_options_job_action)
     def test_batch_tasks(self, batch_job, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
@@ -958,14 +964,14 @@ class BatchTest(AzureMgmtTestCase):
             all(t.status == models.TaskAddStatus.success for t in result.value))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_jobs(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Create Job
         auto_pool = models.AutoPoolSpecification(
             pool_lifetime_option=models.PoolLifetimeOption.job,
             pool=models.PoolSpecification(
-                vm_size='small',
+                vm_size=DEFAULT_VM_SIZE,
                 cloud_service_configuration=models.CloudServiceConfiguration(
                     os_family='5'
                 )

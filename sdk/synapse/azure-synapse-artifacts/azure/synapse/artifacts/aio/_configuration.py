@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ArtifactsClientConfiguration(Configuration):
+class ArtifactsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ArtifactsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -26,7 +26,8 @@ class ArtifactsClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
+    :param endpoint: The workspace development endpoint, for example
+     https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
     """
 
@@ -36,15 +37,14 @@ class ArtifactsClientConfiguration(Configuration):
         endpoint: str,
         **kwargs: Any
     ) -> None:
+        super(ArtifactsClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(ArtifactsClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2019-06-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
         kwargs.setdefault('sdk_moniker', 'synapse-artifacts/{}'.format(VERSION))
         self._configure(**kwargs)

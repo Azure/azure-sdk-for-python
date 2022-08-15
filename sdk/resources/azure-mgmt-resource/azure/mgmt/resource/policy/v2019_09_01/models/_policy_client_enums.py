@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class EnforcementMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EnforcementMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
 
@@ -35,7 +20,7 @@ class EnforcementMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The policy effect is not enforced during resource creation or update.
     DO_NOT_ENFORCE = "DoNotEnforce"
 
-class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The data type of the parameter.
     """
 
@@ -47,7 +32,7 @@ class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FLOAT = "Float"
     DATE_TIME = "DateTime"
 
-class PolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, Custom, and Static.
     """
 
@@ -56,7 +41,7 @@ class PolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
     STATIC = "Static"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type. This is the only required field when adding a system assigned identity to a
     resource.
     """

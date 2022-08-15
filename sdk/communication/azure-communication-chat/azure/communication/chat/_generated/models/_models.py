@@ -141,6 +141,8 @@ class ChatMessage(msrest.serialization.Model):
     :param edited_on: The last timestamp (if applicable) when the message was edited. The timestamp
      is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type edited_on: ~datetime.datetime
+    :param metadata: Message metadata.
+    :type metadata: dict[str, str]
     """
 
     _validation = {
@@ -162,6 +164,7 @@ class ChatMessage(msrest.serialization.Model):
         'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
         'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
         'edited_on': {'key': 'editedOn', 'type': 'iso-8601'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(
@@ -179,6 +182,7 @@ class ChatMessage(msrest.serialization.Model):
         self.sender_communication_identifier = kwargs.get('sender_communication_identifier', None)
         self.deleted_on = kwargs.get('deleted_on', None)
         self.edited_on = kwargs.get('edited_on', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class ChatMessageContent(msrest.serialization.Model):
@@ -733,6 +737,8 @@ class SendChatMessageRequest(msrest.serialization.Model):
     :param type: The chat message type. Possible values include: "text", "html", "topicUpdated",
      "participantAdded", "participantRemoved".
     :type type: str or ~azure.communication.chat.models.ChatMessageType
+    :param metadata: Message metadata.
+    :type metadata: dict[str, str]
     """
 
     _validation = {
@@ -743,6 +749,7 @@ class SendChatMessageRequest(msrest.serialization.Model):
         'content': {'key': 'content', 'type': 'str'},
         'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(
@@ -753,6 +760,7 @@ class SendChatMessageRequest(msrest.serialization.Model):
         self.content = kwargs['content']
         self.sender_display_name = kwargs.get('sender_display_name', None)
         self.type = kwargs.get('type', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class SendChatMessageResult(msrest.serialization.Model):
@@ -805,15 +813,38 @@ class SendReadReceiptRequest(msrest.serialization.Model):
         self.chat_message_id = kwargs['chat_message_id']
 
 
+class SendTypingNotificationRequest(msrest.serialization.Model):
+    """Request payload for typing notifications.
+
+    :param sender_display_name: The display name of the typing notification sender. This property
+     is used to populate sender name for push notifications.
+    :type sender_display_name: str
+    """
+
+    _attribute_map = {
+        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SendTypingNotificationRequest, self).__init__(**kwargs)
+        self.sender_display_name = kwargs.get('sender_display_name', None)
+
+
 class UpdateChatMessageRequest(msrest.serialization.Model):
     """Request payload for updating a chat message.
 
     :param content: Chat message content.
     :type content: str
+    :param metadata: Message metadata.
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'content': {'key': 'content', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(
@@ -822,6 +853,7 @@ class UpdateChatMessageRequest(msrest.serialization.Model):
     ):
         super(UpdateChatMessageRequest, self).__init__(**kwargs)
         self.content = kwargs.get('content', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class UpdateChatThreadRequest(msrest.serialization.Model):

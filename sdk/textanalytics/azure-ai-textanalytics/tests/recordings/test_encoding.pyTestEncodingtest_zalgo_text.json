@@ -1,0 +1,66 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "856",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "PiiEntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "o\u0335\u0308\u0307\u0312\u0303\u034B\u0307\u0305\u035B\u030B\u035B\u030E\u0341\u0351\u0304\u0310\u0302\u030E\u031B\u0357\u035D\u0333\u0318\u0318\u0355\u0354\u0355\u0327\u032D\u0327\u031F\u0319\u034E\u0348\u031E\u0322\u0354m\u0335\u035D\u0315\u0304\u030F\u0360\u034C\u0302\u0311\u033D\u034D\u0349\u0317g\u0335\u030B\u0352\u0344\u0360\u0313\u0312\u0308\u030D\u030C\u0343\u0305\u0351\u0312\u0343\u0305\u0305\u0352\u033F\u030F\u0301\u0357\u0300\u0307\u035B\u030F\u0300\u031B\u0344\u0300\u030A\u033E\u0340\u035D\u0314\u0349\u0322\u031E\u0321\u032F\u0320\u0324\u0323\u0355\u0322\u031F\u032B\u032B\u033C\u0330\u0353\u0345\u0321\u0328\u0326\u0321\u0356\u035C\u0327\u0323\u0323\u034E SSN: 859-98-0987",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "61b87d99-89d0-4494-b4cc-c21de09d39b7",
+        "Content-Length": "511",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Wed, 08 Jun 2022 01:34:53 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "88"
+      },
+      "ResponseBody": {
+        "kind": "PiiEntityRecognitionResults",
+        "results": {
+          "documents": [
+            {
+              "redactedText": "o\u0335\u0308\u0307\u0312\u0303\u034B\u0307\u0305\u035B\u030B\u035B\u030E\u0341\u0351\u0304\u0310\u0302\u030E\u031B\u0357\u035D\u0333\u0318\u0318\u0355\u0354\u0355\u0327\u032D\u0327\u031F\u0319\u034E\u0348\u031E\u0322\u0354m\u0335\u035D\u0315\u0304\u030F\u0360\u034C\u0302\u0311\u033D\u034D\u0349\u0317g\u0335\u030B\u0352\u0344\u0360\u0313\u0312\u0308\u030D\u030C\u0343\u0305\u0351\u0312\u0343\u0305\u0305\u0352\u033F\u030F\u0301\u0357\u0300\u0307\u035B\u030F\u0300\u031B\u0344\u0300\u030A\u033E\u0340\u035D\u0314\u0349\u0322\u031E\u0321\u032F\u0320\u0324\u0323\u0355\u0322\u031F\u032B\u032B\u033C\u0330\u0353\u0345\u0321\u0328\u0326\u0321\u0356\u035C\u0327\u0323\u0323\u034E SSN: ***********",
+              "id": "0",
+              "entities": [
+                {
+                  "text": "859-98-0987",
+                  "category": "USSocialSecurityNumber",
+                  "offset": 121,
+                  "length": 11,
+                  "confidenceScore": 0.65
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-01-15"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -6,19 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ManagementGroupDiagnosticSettingsResource
-    from ._models_py3 import ManagementGroupDiagnosticSettingsResourceCollection
-    from ._models_py3 import ManagementGroupLogSettings
-    from ._models_py3 import ManagementGroupProxyOnlyResource
-except (SyntaxError, ImportError):
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ManagementGroupDiagnosticSettingsResource  # type: ignore
-    from ._models import ManagementGroupDiagnosticSettingsResourceCollection  # type: ignore
-    from ._models import ManagementGroupLogSettings  # type: ignore
-    from ._models import ManagementGroupProxyOnlyResource  # type: ignore
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ManagementGroupDiagnosticSettingsResource
+from ._models_py3 import ManagementGroupDiagnosticSettingsResourceCollection
+from ._models_py3 import ManagementGroupLogSettings
+from ._models_py3 import ManagementGroupProxyOnlyResource
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'ErrorResponse',
     'ManagementGroupDiagnosticSettingsResource',
@@ -26,3 +22,5 @@ __all__ = [
     'ManagementGroupLogSettings',
     'ManagementGroupProxyOnlyResource',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

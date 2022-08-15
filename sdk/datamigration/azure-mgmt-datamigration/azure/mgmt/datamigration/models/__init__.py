@@ -82,6 +82,9 @@ try:
     from ._models_py3 import GetTdeCertificatesSqlTaskInput
     from ._models_py3 import GetTdeCertificatesSqlTaskOutput
     from ._models_py3 import GetTdeCertificatesSqlTaskProperties
+    from ._models_py3 import GetUserTablesMySqlTaskInput
+    from ._models_py3 import GetUserTablesMySqlTaskOutput
+    from ._models_py3 import GetUserTablesMySqlTaskProperties
     from ._models_py3 import GetUserTablesOracleTaskInput
     from ._models_py3 import GetUserTablesOracleTaskOutput
     from ._models_py3 import GetUserTablesOracleTaskProperties
@@ -102,6 +105,14 @@ try:
     from ._models_py3 import MigrateMISyncCompleteCommandOutput
     from ._models_py3 import MigrateMISyncCompleteCommandProperties
     from ._models_py3 import MigrateMongoDbTaskProperties
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineDatabaseInput
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineTaskInput
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineTaskOutput
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineTaskOutputError
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineTaskOutputMigrationLevel
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineTaskOutputTableLevel
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlOfflineTaskProperties
     from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncDatabaseInput
     from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskInput
     from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutput
@@ -152,9 +163,11 @@ try:
     from ._models_py3 import MigrateSqlServerSqlDbTaskInput
     from ._models_py3 import MigrateSqlServerSqlDbTaskOutput
     from ._models_py3 import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateSqlServerSqlDbTaskOutputDatabaseLevelValidationResult
     from ._models_py3 import MigrateSqlServerSqlDbTaskOutputError
     from ._models_py3 import MigrateSqlServerSqlDbTaskOutputMigrationLevel
     from ._models_py3 import MigrateSqlServerSqlDbTaskOutputTableLevel
+    from ._models_py3 import MigrateSqlServerSqlDbTaskOutputValidationResult
     from ._models_py3 import MigrateSqlServerSqlDbTaskProperties
     from ._models_py3 import MigrateSqlServerSqlMIDatabaseInput
     from ._models_py3 import MigrateSqlServerSqlMISyncTaskInput
@@ -255,6 +268,7 @@ try:
     from ._models_py3 import SsisMigrationInfo
     from ._models_py3 import StartMigrationScenarioServerRoleResult
     from ._models_py3 import SyncMigrationDatabaseErrorEvent
+    from ._models_py3 import SystemData
     from ._models_py3 import TaskList
     from ._models_py3 import TrackedResource
     from ._models_py3 import UploadOCIDriverTaskInput
@@ -350,6 +364,9 @@ except (SyntaxError, ImportError):
     from ._models import GetTdeCertificatesSqlTaskInput  # type: ignore
     from ._models import GetTdeCertificatesSqlTaskOutput  # type: ignore
     from ._models import GetTdeCertificatesSqlTaskProperties  # type: ignore
+    from ._models import GetUserTablesMySqlTaskInput  # type: ignore
+    from ._models import GetUserTablesMySqlTaskOutput  # type: ignore
+    from ._models import GetUserTablesMySqlTaskProperties  # type: ignore
     from ._models import GetUserTablesOracleTaskInput  # type: ignore
     from ._models import GetUserTablesOracleTaskOutput  # type: ignore
     from ._models import GetUserTablesOracleTaskProperties  # type: ignore
@@ -370,6 +387,14 @@ except (SyntaxError, ImportError):
     from ._models import MigrateMISyncCompleteCommandOutput  # type: ignore
     from ._models import MigrateMISyncCompleteCommandProperties  # type: ignore
     from ._models import MigrateMongoDbTaskProperties  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineDatabaseInput  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineTaskInput  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineTaskOutput  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineTaskOutputDatabaseLevel  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineTaskOutputError  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineTaskOutputMigrationLevel  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineTaskOutputTableLevel  # type: ignore
+    from ._models import MigrateMySqlAzureDbForMySqlOfflineTaskProperties  # type: ignore
     from ._models import MigrateMySqlAzureDbForMySqlSyncDatabaseInput  # type: ignore
     from ._models import MigrateMySqlAzureDbForMySqlSyncTaskInput  # type: ignore
     from ._models import MigrateMySqlAzureDbForMySqlSyncTaskOutput  # type: ignore
@@ -420,9 +445,11 @@ except (SyntaxError, ImportError):
     from ._models import MigrateSqlServerSqlDbTaskInput  # type: ignore
     from ._models import MigrateSqlServerSqlDbTaskOutput  # type: ignore
     from ._models import MigrateSqlServerSqlDbTaskOutputDatabaseLevel  # type: ignore
+    from ._models import MigrateSqlServerSqlDbTaskOutputDatabaseLevelValidationResult  # type: ignore
     from ._models import MigrateSqlServerSqlDbTaskOutputError  # type: ignore
     from ._models import MigrateSqlServerSqlDbTaskOutputMigrationLevel  # type: ignore
     from ._models import MigrateSqlServerSqlDbTaskOutputTableLevel  # type: ignore
+    from ._models import MigrateSqlServerSqlDbTaskOutputValidationResult  # type: ignore
     from ._models import MigrateSqlServerSqlDbTaskProperties  # type: ignore
     from ._models import MigrateSqlServerSqlMIDatabaseInput  # type: ignore
     from ._models import MigrateSqlServerSqlMISyncTaskInput  # type: ignore
@@ -523,6 +550,7 @@ except (SyntaxError, ImportError):
     from ._models import SsisMigrationInfo  # type: ignore
     from ._models import StartMigrationScenarioServerRoleResult  # type: ignore
     from ._models import SyncMigrationDatabaseErrorEvent  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TaskList  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UploadOCIDriverTaskInput  # type: ignore
@@ -549,6 +577,7 @@ from ._data_migration_management_client_enums import (
     BackupMode,
     BackupType,
     CommandState,
+    CreatedByType,
     DataMigrationResultCode,
     DatabaseCompatLevel,
     DatabaseFileType,
@@ -671,6 +700,9 @@ __all__ = [
     'GetTdeCertificatesSqlTaskInput',
     'GetTdeCertificatesSqlTaskOutput',
     'GetTdeCertificatesSqlTaskProperties',
+    'GetUserTablesMySqlTaskInput',
+    'GetUserTablesMySqlTaskOutput',
+    'GetUserTablesMySqlTaskProperties',
     'GetUserTablesOracleTaskInput',
     'GetUserTablesOracleTaskOutput',
     'GetUserTablesOracleTaskProperties',
@@ -691,6 +723,14 @@ __all__ = [
     'MigrateMISyncCompleteCommandOutput',
     'MigrateMISyncCompleteCommandProperties',
     'MigrateMongoDbTaskProperties',
+    'MigrateMySqlAzureDbForMySqlOfflineDatabaseInput',
+    'MigrateMySqlAzureDbForMySqlOfflineTaskInput',
+    'MigrateMySqlAzureDbForMySqlOfflineTaskOutput',
+    'MigrateMySqlAzureDbForMySqlOfflineTaskOutputDatabaseLevel',
+    'MigrateMySqlAzureDbForMySqlOfflineTaskOutputError',
+    'MigrateMySqlAzureDbForMySqlOfflineTaskOutputMigrationLevel',
+    'MigrateMySqlAzureDbForMySqlOfflineTaskOutputTableLevel',
+    'MigrateMySqlAzureDbForMySqlOfflineTaskProperties',
     'MigrateMySqlAzureDbForMySqlSyncDatabaseInput',
     'MigrateMySqlAzureDbForMySqlSyncTaskInput',
     'MigrateMySqlAzureDbForMySqlSyncTaskOutput',
@@ -741,9 +781,11 @@ __all__ = [
     'MigrateSqlServerSqlDbTaskInput',
     'MigrateSqlServerSqlDbTaskOutput',
     'MigrateSqlServerSqlDbTaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlDbTaskOutputDatabaseLevelValidationResult',
     'MigrateSqlServerSqlDbTaskOutputError',
     'MigrateSqlServerSqlDbTaskOutputMigrationLevel',
     'MigrateSqlServerSqlDbTaskOutputTableLevel',
+    'MigrateSqlServerSqlDbTaskOutputValidationResult',
     'MigrateSqlServerSqlDbTaskProperties',
     'MigrateSqlServerSqlMIDatabaseInput',
     'MigrateSqlServerSqlMISyncTaskInput',
@@ -844,6 +886,7 @@ __all__ = [
     'SsisMigrationInfo',
     'StartMigrationScenarioServerRoleResult',
     'SyncMigrationDatabaseErrorEvent',
+    'SystemData',
     'TaskList',
     'TrackedResource',
     'UploadOCIDriverTaskInput',
@@ -868,6 +911,7 @@ __all__ = [
     'BackupMode',
     'BackupType',
     'CommandState',
+    'CreatedByType',
     'DataMigrationResultCode',
     'DatabaseCompatLevel',
     'DatabaseFileType',

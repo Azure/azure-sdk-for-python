@@ -3,21 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-NETWORK_CERTIFICATE = """-----BEGIN CERTIFICATE-----
-MIIBezCCASGgAwIBAgIRAL/+TT7iOY+UWa5Uh484vRYwCgYIKoZIzj0EAwIwFjEU
-MBIGA1UEAwwLQ0NGIE5ldHdvcmswHhcNMjEwMzExMDAwMDAwWhcNMjMwNjExMjM1
-OTU5WjAWMRQwEgYDVQQDDAtDQ0YgTmV0d29yazBZMBMGByqGSM49AgEGCCqGSM49
-AwEHA0IABG4t5blH9yUsJB4Ywm0VcsxxiFTdiWffd4w+m8r3GRfV0i6qaHT44dVK
-rMQH7ymSGCtz5PHqUQhy8ZJWAepDDKijUDBOMAwGA1UdEwQFMAMBAf8wHQYDVR0O
-BBYEFD+OVuRiS6dJICYtesS2Shx/KIEEMB8GA1UdIwQYMBaAFD+OVuRiS6dJICYt
-esS2Shx/KIEEMAoGCCqGSM49BAMCA0gAMEUCICrLXfKPC1DmKdcTKnZwhiEoPvMi
-RboMeODv/0hlL67gAiEA5gvNwskSiYefETGihWTouTqL+uyhDb4s3/R5XcIHaQQ=
------END CERTIFICATE-----"""
-
 # Duplicate certificate from KeyVault.
-# https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/tests/ca.crt
-# https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/tests/ca.key
-USER_CERTIFICATE = """-----BEGIN CERTIFICATE-----
+# https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/tests/ca.crt
+# https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/tests/ca.key
+USER_CERTIFICATE = ("""-----BEGIN CERTIFICATE-----
 MIIDazCCAlOgAwIBAgIUYju9zymmCCF7rCaROzfZs0pNgmkwDQYJKoZIhvcNAQEL
 BQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
 GEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0xOTA4MjgyMjU0MTNaFw0xOTA5
@@ -37,9 +26,9 @@ QKcWfrFcfZ3ZxVAi5Ey+iuvD2VeBf9v5RZI4c9JqswS9xG2A1x/BeGcUk1y/q9E5
 qO/I+6FjXuBpNomTqM897MY3Qzg43rpoCilpOpkRtMHknfhFxt05p+Fn73Fb60ru
 ZsFRA52lsEBxGmI0QmXGjwkUZFwQTXEDUWwId3VJxoHRZwv1gmHfwhkYt+mNWJDa
 mU7AMDzlQRwGC8hpWJRT
------END CERTIFICATE-----
------BEGIN RSA PRIVATE KEY-----
-MIIEpQIBAAKCAQEA9GKzM+WraD5k08S7QjuvZDNxPe23YyYMgFWSUvZj9x0Mh5BT
+-----END CERTIFICATE-----\n"""
+"-----BEGIN RSA PRIVATE KEY-----\n"  #[SuppressMessage("Microsoft.Security", "CS001:SecretInline", Justification="Test secret that is found elsewhere in this repo")]
+"""MIIEpQIBAAKCAQEA9GKzM+WraD5k08S7QjuvZDNxPe23YyYMgFWSUvZj9x0Mh5BT
 W9PXg3gAM3GS0eZ2F1+8sHqME1lXCHt5Pfmf7VHlawJTlXtgjmiBwFGSIYxC6v7v
 Nue//DKqmyl4bMq1jQFQ8ip3Q4L224MTbFE2zKAHvQQi/+X86MLJzy2giDAmEWkC
 VMkmyKE5iotdYRdPQhRUpC/Z730DgxchHXuiRz1q1UbHtpYqDyyXgvS6FBjTWZ26
@@ -64,4 +53,6 @@ mc9SIC5CdqRKqIkoto264Qf82En6xXB2Q0qxe2+z8ZWhNfv1nDYEE9FeevNCx76F
 VCVbHXkCgYEA4+FD1q6iwl9wsAOKFVo+W044/MhKHDsyIED3YOzeRTAWRl2w/KX0
 c5ty2KecGu0cVXoAv2YUttHsuMZfm/QdosZr9UB4CR2lmzRys3LSx6QzCkZeMb/s
 QOMs6SYCPXggdXCAu9EVf5+TtYQg7aQNTTuYErlyq2g/tk3un8bHTwI=
------END RSA PRIVATE KEY-----"""
+-----END RSA PRIVATE KEY-----""")
+
+USER_CERTIFICATE_THUMBPRINT = "5F:23:3D:26:E2:28:88:9C:06:E0:88:21:FA:C7:B2:9A:F8:81:30:6B:F9:15:41:F2:34:05:05:44:4C:AD:5A:B5"

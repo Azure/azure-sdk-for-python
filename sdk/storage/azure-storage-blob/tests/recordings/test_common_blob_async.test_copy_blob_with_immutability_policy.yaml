@@ -1,0 +1,319 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:14 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer250c19ad?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 27 Jul 2021 01:03:15 GMT
+      etag: '"0x8D9509A509F8BEC"'
+      last-modified: Tue, 27 Jul 2021 01:03:15 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/utcontainer250c19ad?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:15 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainersource250c19ad?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 27 Jul 2021 01:03:15 GMT
+      etag: '"0x8D9509A50AFBB89"'
+      last-modified: Tue, 27 Jul 2021 01:03:15 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/utcontainersource250c19ad?restype=container
+- request:
+    body: '{"properties": {"immutableStorageWithVersioning": {"enabled": true}}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '69'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/18.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamestorname/blobServices/default/containers/vlwcontainer250c19ad?api-version=2021-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamestorname/blobServices/default/containers/vlwcontainer250c19ad","name":"vlwcontainer250c19ad","type":"Microsoft.Storage/storageAccounts/blobServices/containers","properties":{"immutableStorageWithVersioning":{"enabled":true},"deleted":false,"remainingRetentionDays":0,"hasImmutabilityPolicy":false,"hasLegalHold":false}}'
+    headers:
+      cache-control: no-cache
+      content-length: '534'
+      content-type: application/json
+      date: Tue, 27 Jul 2021 01:03:16 GMT
+      etag: '"0x8D9509A517F010B"'
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0
+        Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-ratelimit-remaining-subscription-writes: '1199'
+    status:
+      code: 201
+      message: Created
+    url: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-pystoragevvcxz24qcklxmk7ixitybnhw5e2lq242esdcqasxn5hdbshubi5gx6fpjre3i2ce4v/providers/Microsoft.Storage/storageAccounts/storagenamezg2v6qqfijncx/blobServices/default/containers/vlwcontainer250c19ad?api-version=2021-04-01
+- request:
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer250c19ad/blob250c19ad
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: yaNM/IXZgmmMasifdgcavQ==
+      date: Tue, 27 Jul 2021 01:03:16 GMT
+      etag: '"0x8D9509A5196C6DD"'
+      last-modified: Tue, 27 Jul 2021 01:03:17 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: ov8U1LLnyKc=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-10-02'
+      x-ms-version-id: '2021-07-27T01:03:17.3657309Z'
+    status:
+      code: 201
+      message: Created
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/utcontainer250c19ad/blob250c19ad
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-copy-source:
+      - https://storagenamezg2v6qqfijncx.blob.core.windows.net/utcontainer250c19ad/blob250c19ad
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-immutability-policy-mode:
+      - Unlocked
+      x-ms-immutability-policy-until-date:
+      - Tue, 27 Jul 2021 01:03:22 GMT
+      x-ms-legal-hold:
+      - 'true'
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/vlwcontainer250c19ad/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 27 Jul 2021 01:03:16 GMT
+      etag: '"0x8D9509A51A39A7C"'
+      last-modified: Tue, 27 Jul 2021 01:03:17 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id: a353eba7-3c58-45da-8078-978b401bb6ba
+      x-ms-copy-status: success
+      x-ms-version: '2020-10-02'
+      x-ms-version-id: '2021-07-27T01:03:17.4507921Z'
+    status:
+      code: 202
+      message: Accepted
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/vlwcontainer250c19ad/blob1copy
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://storagenamestorname.blob.core.windows.net/vlwcontainer250c19ad/blob1copy
+  response:
+    body:
+      string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      accept-ranges: bytes
+      content-length: '1024'
+      content-range: bytes 0-1023/1024
+      content-type: application/octet-stream
+      date: Tue, 27 Jul 2021 01:03:16 GMT
+      etag: '"0x8D9509A51A39A7C"'
+      last-modified: Tue, 27 Jul 2021 01:03:17 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5: yaNM/IXZgmmMasifdgcavQ==
+      x-ms-blob-type: BlockBlob
+      x-ms-copy-completion-time: Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-copy-id: a353eba7-3c58-45da-8078-978b401bb6ba
+      x-ms-copy-progress: 1024/1024
+      x-ms-copy-source: https://storagenamezg2v6qqfijncx.blob.core.windows.net/utcontainer250c19ad/blob250c19ad
+      x-ms-copy-status: success
+      x-ms-creation-time: Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-immutability-policy-mode: unlocked
+      x-ms-immutability-policy-until-date: Tue, 27 Jul 2021 01:03:22 GMT
+      x-ms-is-current-version: 'true'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-legal-hold: 'true'
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-10-02'
+      x-ms-version-id: '2021-07-27T01:03:17.4507921Z'
+    status:
+      code: 206
+      message: Partial Content
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/vlwcontainer250c19ad/blob1copy
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: DELETE
+    uri: https://storagenamestorname.blob.core.windows.net/vlwcontainer250c19ad/blob1copy?comp=immutabilityPolicies
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 27 Jul 2021 01:03:16 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 200
+      message: OK
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/vlwcontainer250c19ad/blob1copy?comp=immutabilityPolicies
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-legal-hold:
+      - 'false'
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/vlwcontainer250c19ad/blob1copy?comp=legalhold
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 27 Jul 2021 01:03:16 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-legal-hold: 'false'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 200
+      message: OK
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/vlwcontainer250c19ad/blob1copy?comp=legalhold
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 27 Jul 2021 01:03:17 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: DELETE
+    uri: https://storagenamestorname.blob.core.windows.net/vlwcontainer250c19ad/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 27 Jul 2021 01:03:17 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent: 'false'
+      x-ms-version: '2020-10-02'
+    status:
+      code: 202
+      message: Accepted
+    url: https://storagenamezg2v6qqfijncx.blob.core.windows.net/vlwcontainer250c19ad/blob1copy
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/18.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamestorname/blobServices/default/containers/utcontainer250c19ad?api-version=2021-04-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      content-type: text/plain; charset=utf-8
+      date: Tue, 27 Jul 2021 01:03:18 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0
+        Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-ratelimit-remaining-subscription-deletes: '14999'
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-pystoragevvcxz24qcklxmk7ixitybnhw5e2lq242esdcqasxn5hdbshubi5gx6fpjre3i2ce4v/providers/Microsoft.Storage/storageAccounts/storagenamezg2v6qqfijncx/blobServices/default/containers/utcontainer250c19ad?api-version=2021-04-01
+version: 1

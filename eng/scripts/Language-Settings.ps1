@@ -2,8 +2,12 @@ $Language = "python"
 $LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
-$MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
+$MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
+$GithubUri = "https://github.com/Azure/azure-sdk-for-python"
+$PackageRepositoryUri = "https://pypi.org/project"
+
+."$PSScriptRoot/docs/Docs-ToC.ps1"
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
@@ -158,71 +162,325 @@ function Get-python-GithubIoDocIndex()
   # Build up the artifact to service name mapping for GithubIo toc.
   $tocContent = Get-TocMapping -metadata $metadata -artifacts $artifacts
   # Generate yml/md toc files and build site.
-  GenerateDocfxTocContent -tocContent $tocContent -lang "Python"
+  GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-# Updates a python CI configuration json.
-# For "latest", the version attribute is cleared, as default behavior is to pull latest "non-preview".
-# For "preview", we update to >= the target releasing package version.
-function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$null)
+function ValidatePackage
 {
-  $pkgJsonLoc = (Join-Path -Path $ciRepo -ChildPath $locationInDocRepo)
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$false)]
+    [string]$PackageSourceOverride,
+    [Parameter(Mandatory=$false)]
+    [string]$DocValidationImageId
+  ) 
+  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) "validation"
+  if (!(Test-Path $installValidationFolder)) {
+    New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
+  }
+  # Add more validation by replicating as much of the docs CI process as
+  # possible
+  # https://github.com/Azure/azure-sdk-for-python/issues/20109
+  if (!$DocValidationImageId) {
+    Write-Host "Validating using pip command directly on $packageName."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
+  } 
+  else {
+    Write-Host "Validating using $DocValidationImageId on $packageName."
+    DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
+        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -workingDirectory $installValidationFolder
+  }
+}
+function DockerValidation{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$false)]
+    [string]$PackageSourceOverride,
+    [Parameter(Mandatory=$false)]
+    [string]$DocValidationImageId,
+    [Parameter(Mandatory=$false)]
+    [string]$workingDirectory
+  ) 
+  if ($PackageSourceOverride) {
+    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId"
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
+       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1 
+  }
+  else {
+    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId"
+    $commandLine = docker run -v "${workingDirectory}:/workdir/out" `
+      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1
+  }
+  # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
+  # If the docker failed because of docker itself instead of the application, 
+  # we should skip the validation and keep the packages. 
+  
+  if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) { 
+    $commandLine | ForEach-Object { Write-Debug $_ }
+    LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
+    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
+  }
+  elseif ($LASTEXITCODE -ne 0) { 
+    $commandLine | ForEach-Object { Write-Debug $_ }
+    LogWarning "Package $packageName ref docs validation failed."
+    return $false
+  }
+  return $true
+}
 
-  if (-not (Test-Path $pkgJsonLoc)) {
-    Write-Error "Unable to locate package json at location $pkgJsonLoc, exiting."
-    exit(1)
+function FallbackValidation
+{
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$packageName, 
+    [Parameter(Mandatory=$true)]
+    [string]$packageVersion,
+    [Parameter(Mandatory=$true)]
+    [string]$workingDirectory,
+    [Parameter(Mandatory=$false)]
+    [string]$PackageSourceOverride
+  ) 
+  $installTargetFolder = Join-Path $workingDirectory $packageName
+  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
+  $packageExpression = "$packageName$packageVersion"
+  try {
+    $pipInstallOutput = ""
+    if ($PackageSourceOverride) {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder `
+        --extra-index-url=$PackageSourceOverride 2>&1 | Out-Null
+    }
+    else {
+      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+      $pipInstallOutput = pip `
+        install `
+        $packageExpression `
+        --no-cache-dir `
+        --target $installTargetFolder 2>&1 | Out-Null
+    }
+    if ($LASTEXITCODE -ne 0) {
+      LogWarning "pip install failed for $packageExpression"
+      Write-Host $pipInstallOutput
+      return $false
+    }
+  } catch {
+    LogWarning "pip install failed for $packageExpression with exception"
+    LogWarning $_.Exception
+    LogWarning $_.Exception.StackTrace
+    return $false
   }
 
-  $allJson  = Get-Content $pkgJsonLoc | ConvertFrom-Json
-  $visibleInCI = @{}
+  return $true
+}
 
-  for ($i=0; $i -lt $allJson.packages.Length; $i++) {
-    $pkgDef = $allJson.packages[$i]
+$PackageExclusions = @{
+  'azure-mgmt-videoanalyzer' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21563';
+  'azure-mgmt-quota' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21366';
+  'azure-mgmt-webpubsub' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/21346';
+  'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
+  'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
+  'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
+  'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
+  'azure-mgmt-network' = 'Manual process used to build';
 
-    if ($pkgDef.package_info.name) {
-      $visibleInCI[$pkgDef.package_info.name] = $i
+  'azure-mgmt-compute' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-consumption' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-notificationhubs' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-servicebus' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-web' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+
+  'azure-keyvault' = 'Metapackages should not be documented';
+}
+
+function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
+  Write-Host "Excluded packages:"
+  foreach ($excludedPackage in $PackageExclusions.Keys) {
+    Write-Host "  $excludedPackage - $($PackageExclusions[$excludedPackage])"
+  }
+
+  $FilteredMetadata = $DocsMetadata.Where({ !($PackageExclusions.ContainsKey($_.Package)) })
+
+  UpdateDocsMsPackages `
+    (Join-Path $DocsRepoLocation 'ci-configs/packages-preview.json') `
+    'preview' `
+    $FilteredMetadata `
+    $PackageSourceOverride `
+    $DocValidationImageId
+
+  UpdateDocsMsPackages `
+    (Join-Path $DocsRepoLocation 'ci-configs/packages-latest.json') `
+    'latest' `
+    $FilteredMetadata `
+    $PackageSourceOverride `
+    $DocValidationImageId
+}
+
+function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
+  Write-Host "Updating configuration: $DocConfigFile with mode: $Mode"
+  $packageConfig = Get-Content $DocConfigFile -Raw | ConvertFrom-Json
+
+  $outputPackages = @()
+  foreach ($package in $packageConfig.packages) {
+    $packageName = $package.package_info.name
+    if (!$packageName) { 
+      Write-Host "Keeping package with no name: $($package.package_info)"
+      $outputPackages += $package
+      continue
+    }
+
+    if ($package.package_info.install_type -ne 'pypi') { 
+      Write-Host "Keeping package with install_type not 'pypi': $($package.package_info.name)"
+      $outputPackages += $package
+      continue
+    }
+
+    # Do not filter by GA/Preview status because we want differentiate between
+    # tracked and non-tracked packages
+    $matchingPublishedPackageArray = $DocsMetadata.Where( { $_.Package -eq $packageName })
+
+    # If this package does not match any published packages keep it in the list.
+    # This handles packages which are not tracked in metadata but still need to
+    # be built in Docs CI.
+    if ($matchingPublishedPackageArray.Count -eq 0) {
+      Write-Host "Keep non-tracked package: $packageName"
+      $outputPackages += $package
+      continue
+    }
+
+    if ($matchingPublishedPackageArray.Count -gt 1) { 
+      LogWarning "Found more than one matching published package in metadata for $packageName; only updating first entry"
+    }
+    $matchingPublishedPackage = $matchingPublishedPackageArray[0]
+
+    if ($Mode -eq 'preview' -and !$matchingPublishedPackage.VersionPreview.Trim()) { 
+      # If we are in preview mode and the package does not have a superseding
+      # preview version, remove the package from the list. 
+      Write-Host "Remove superseded preview package: $packageName"
+      continue
+    }
+
+    if ($Mode -eq 'latest' -and !$matchingPublishedPackage.VersionGA.Trim()) { 
+      LogWarning "Metadata is missing GA version for GA package $packageName. Keeping existing package."
+      $outputPackages += $package
+      continue
+    }
+
+    $packageVersion = "==$($matchingPublishedPackage.VersionGA)"
+    if ($Mode -eq 'preview') {
+      if (!$matchingPublishedPackage.VersionPreview.Trim()) { 
+        LogWarning "Metadata is missing preview version for preview package $packageName. Keeping existing package."
+        $outputPackages += $package
+        continue
+      }
+      $packageVersion = "==$($matchingPublishedPackage.VersionPreview)"
+    }
+
+    # If upgrading the package, run basic sanity checks against the package
+    if ($package.package_info.version -ne $packageVersion) {
+      Write-Host "New version detected for $packageName ($packageVersion)"
+      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
+        LogWarning "Package is not valid: $packageName. Keeping old version."
+        $outputPackages += $package
+        continue
+      }
+
+      $package.package_info = Add-Member `
+        -InputObject $package.package_info `
+        -MemberType NoteProperty `
+        -Name 'version' `
+        -Value $packageVersion `
+        -PassThru `
+        -Force 
+      if ($PackageSourceOverride) {
+        $package.package_info = Add-Member `
+          -InputObject $package.package_info `
+          -MemberType NoteProperty `
+          -Name 'extra_index_url' `
+          -Value $PackageSourceOverride `
+          -PassThru `
+          -Force 
+      }
+    }
+
+    Write-Host "Keeping tracked package: $packageName."
+    $outputPackages += $package
+  }
+
+  $outputPackagesHash = @{}
+  foreach ($package in $outputPackages) {
+    # In some cases there is no $package.package_info.name, only hash if the 
+    # name is set.
+    if ($package.package_info.name) { 
+      $outputPackagesHash[$package.package_info.name] = $true
     }
   }
 
-  foreach ($releasingPkg in $pkgs) {
-    if ($visibleInCI.ContainsKey($releasingPkg.PackageId)) {
-      $packagesIndex = $visibleInCI[$releasingPkg.PackageId]
-      $existingPackageDef = $allJson.packages[$packagesIndex]
+  $remainingPackages = @() 
+  if ($Mode -eq 'preview') { 
+    $remainingPackages = $DocsMetadata.Where({
+      $_.VersionPreview.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+    })
+  } else {
+    $remainingPackages = $DocsMetadata.Where({
+      $_.VersionGA.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+    })
+  }
 
-      if ($releasingPkg.IsPrerelease) {
-        if (-not $existingPackageDef.package_info.version) {
-          $existingPackageDef.package_info | Add-Member -NotePropertyName version -NotePropertyValue ""
-        }
+  # Add packages that exist in the metadata but are not onboarded in docs config
+  foreach ($package in $remainingPackages) {
+    $packageName = $package.Package
+    $packageVersion = "==$($package.VersionGA)"
+    if ($Mode -eq 'preview') {
+      $packageVersion = "==$($package.VersionPreview)"
+    }
+    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
+      LogWarning "Package is not valid: $packageName. Cannot onboard."
+      continue
+    }
 
-        $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
-      }
-      else {
-        if ($existingPackageDef.package_info.version) {
-          $existingPackageDef.package_info.PSObject.Properties.Remove('version')
-        }
+    Write-Host "Add new package from metadata: $packageName"
+    if ($PackageSourceOverride) {
+      $package = [ordered]@{
+        package_info = [ordered]@{
+          name = $packageName;
+          install_type = 'pypi';
+          prefer_source_distribution = 'true';
+          version = $packageVersion;
+          extra_index_url = $PackageSourceOverride
+        };
+        exclude_path = @("test*","example*","sample*","doc*");
       }
     }
     else {
-      $newItem = New-Object PSObject -Property @{
-        package_info = New-Object PSObject -Property @{
-          prefer_source_distribution = "true"
-          install_type = "pypi"
-          name=$releasingPkg.PackageId
-        }
-        exclude_path = @("test*","example*","sample*","doc*")
+      $package = [ordered]@{
+          package_info = [ordered]@{
+            name = $packageName;
+            install_type = 'pypi';
+            prefer_source_distribution = 'true';
+            version = $packageVersion;
+          };
+          exclude_path = @("test*","example*","sample*","doc*");
       }
-
-      if ($releasingPkg.IsPrerelease) {
-        $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ">=$($releasingPkg.PackageVersion)"
-      }
-
-      $allJson.packages += $newItem
     }
+    $outputPackages += $package
   }
 
-  $jsonContent = $allJson | ConvertTo-Json -Depth 10 | % {$_ -replace "(?m)  (?<=^(?:  )*)", "  " }
-
-  Set-Content -Path $pkgJsonLoc -Value $jsonContent
+  $packageConfig.packages = $outputPackages
+  $packageConfig | ConvertTo-Json -Depth 100 | Set-Content $DocConfigFile
+  Write-Host "Onboarding configuration written to: $DocConfigFile"
 }
 
 # function is used to auto generate API View
@@ -240,7 +498,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
-  $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
+  $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")})
   if (!$files)
   {
     Write-Host "$whlDirectory does not have wheel package for $($artifactName)"
@@ -259,14 +517,15 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   return $packages
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $ReplaceLatestEntryTitle=$True)
 {
   if($null -eq $ReleaseDate)
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version `
+  --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
 
 function GetExistingPackageVersions ($PackageName, $GroupId=$null)
@@ -278,7 +537,56 @@ function GetExistingPackageVersions ($PackageName, $GroupId=$null)
   }
   catch
   {
-    LogError "Failed to retrieve package versions. `n$_"
+    if ($_.Exception.Response.StatusCode -ne 404) 
+    {
+      LogError "Failed to retrieve package versions for ${PackageName}. $($_.Exception.Message)"
+    }
     return $null
+  }
+}
+
+function Get-python-DocsMsMetadataForPackage($PackageInfo) { 
+  $readmeName = $PackageInfo.Name.ToLower()
+  Write-Host "Docs.ms Readme name: $($readmeName)"
+
+  # Readme names (which are used in the URL) should not include redundant terms
+  # when viewed in URL form. For example: 
+  # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage-blobs-readme
+  # Note how the end of the URL doesn't look like:
+  # ".../azure/azure-storage-blobs-readme" 
+
+  # This logic eliminates a preceeding "azure." in the readme filename.
+  # "azure-storage-blobs" -> "storage-blobs"
+  if ($readmeName.StartsWith('azure-')) {
+    $readmeName = $readmeName.Substring(6)
+  }
+
+  New-Object PSObject -Property @{
+    DocsMsReadMeName = $readmeName
+    LatestReadMeLocation  = 'docs-ref-services/latest'
+    PreviewReadMeLocation = 'docs-ref-services/preview'
+    Suffix = ''
+  }
+}
+
+function Import-Dev-Cert-python
+{
+  Write-Host "Python Trust Methodology"
+
+  $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
+
+  python $pathToScript
+}
+
+function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
+{
+  # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
+  if (!$PackageInfos) {
+    $PackageInfos =  @($PackageInfo)
+  }
+
+  foreach ($package in $PackageInfos) {
+    ValidatePackage -packageName $package.Name -packageVersion $package.Version `
+        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId
   }
 }

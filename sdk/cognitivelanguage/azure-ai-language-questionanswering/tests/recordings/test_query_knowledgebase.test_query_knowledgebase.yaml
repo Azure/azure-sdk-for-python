@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: '{"question": "Ports and connectors", "top": 3, "context": {"previousQnaId":
+      4, "previousUserQuery": "Meet Surface Pro 4"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '122'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Ports
+        and connectors\"\n      ],\n      \"answer\": \"** Ports and connectors**\\nSurface
+        Book has the ports you expect from a full-feature laptop. Two full-size USB
+        3.0 ports Connect a USB accessory like a mouse, printer, Ethernet adapter,
+        USB drive, or smartphone.  SD card slot Use the full-size SD card slot with
+        an SD card (sold separately) for extra storage and transferring files.  Mini
+        DisplayPort version 1.2a Share what\u2019s on your Surface screen by connecting
+        it to an HDTV, monitor, or projector. (Video adapters are sold separately.)
+        \ 3.5 mm headset jack Plug in your favorite headset for a little more privacy
+        when listening to music or conference calls.\",\n      \"confidenceScore\":
+        1.0,\n      \"id\": 13,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
+        \       \"Connect devices and accessories\"\n      ],\n      \"answer\": \"**Connect
+        devices and accessories**\\n\\nYou can make photos, videos, and presentations
+        bigger by connecting your Surface Book to a TV, monitor, or projector. Or,
+        connect to an HDTV and watch movies on a big screen.\\n\\nYou can connect
+        monitors, accessories, and other devices directly to your Surface Book using
+        the USB ports, Mini DisplayPorts, or Bluetooth. Or, connect everything to
+        a Surface Dock (sold separately). Surface Dock lets you transform your Surface
+        Book into a full desktop PC using a single cable.\",\n      \"confidenceScore\":
+        0.5214,\n      \"id\": 87,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n
+        \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
+        88,\n            \"displayText\": \"Set up your workspace with Surface Dock\"\n
+        \         },\n          {\n            \"displayOrder\": 1,\n            \"qnaId\":
+        89,\n            \"displayText\": \"Connect a USB accessory (printer, mouse,
+        and more)\"\n          },\n          {\n            \"displayOrder\": 2,\n
+        \           \"qnaId\": 90,\n            \"displayText\": \"Connect to a TV,
+        monitor, or projector\"\n          },\n          {\n            \"displayOrder\":
+        3,\n            \"qnaId\": 97,\n            \"displayText\": \"Add a Bluetooth
+        accessory\"\n          },\n          {\n            \"displayOrder\": 4,\n
+        \           \"qnaId\": 98,\n            \"displayText\": \"Add audio accessories\"\n
+        \         }\n        ]\n      }\n    },\n    {\n      \"questions\": [\n        \"Connect
+        a USB accessory (printer, mouse, and more)\"\n      ],\n      \"answer\":
+        \"**Connect a USB accessory (printer, mouse, and more)**\\n\\nYou can connect
+        a USB accessory like a printer, camera, music player, smartphone, mouse, or
+        external hard drive directly to your Surface Book. \u272A\\n\\nThe USB port
+        is on the side of the keyboard.\\n\\nThe included power supply also has a
+        USB charging port you can use to power other USB devices while you\u2019re
+        charging your Surface.\\n\\nTo install a USB accessory:\\n\\n1.  If your USB
+        accessory has a power cord, plug it in to an electrical outlet.\\n2.  Plug
+        the USB cable attached to the accessory into your Surface.\\n3.  Turn on your
+        accessory (if needed). The first time you plug in a USB accessory, Windows
+        installs any software the accessory requires.\\n\\nFor more info, see [Connect
+        a USB mouse, printer, and more](http://www.microsoft.com/surface/support/hardware-and-drivers/connect-a-usb-phone-camera-mouse-and-more)
+        on Surface.com.\",\n      \"confidenceScore\": 0.44229999999999997,\n      \"id\":
+        89,\n      \"source\": \"surface-book-user-guide-EN.pdf\",\n      \"metadata\":
+        {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    }\n  ]\n}"
+    headers:
+      apim-request-id:
+      - 4d12f143-aa71-497a-b99d-c2debf84058c
+      content-length:
+      - '3711'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1
+      date:
+      - Tue, 02 Aug 2022 22:07:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '613'
+    status:
+      code: 200
+      message: OK
+version: 1

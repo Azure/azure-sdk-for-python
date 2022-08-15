@@ -18,33 +18,39 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PurviewCatalogClientConfiguration(Configuration):
+class PurviewCatalogClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for PurviewCatalogClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: The catalog endpoint of your Purview account. Example:
+     https://{accountName}.purview.azure.com.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
-    :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         endpoint: str,
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
+        super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
-        self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2021-05-01-preview"
+        self.credential = credential
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-catalog/{}'.format(VERSION))
         self._configure(**kwargs)

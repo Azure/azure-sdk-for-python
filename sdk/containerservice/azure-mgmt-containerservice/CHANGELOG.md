@@ -1,5 +1,166 @@
 # Release History
 
+## 20.2.0 (2022-07-25)
+
+**Features**
+
+  - Add a new api-version `2022-06-01`
+
+## 20.1.0 (2022-07-21)
+
+**Features**
+
+  - Added operation group FleetMembersOperations
+  - Added operation group FleetsOperations
+  - Model ManagedClusterSecurityProfile has a new parameter node_restriction
+
+## 20.0.0 (2022-06-09)
+
+**Features**
+
+  - Model AzureKeyVaultKms has a new parameter key_vault_network_access
+  - Model AzureKeyVaultKms has a new parameter key_vault_resource_id
+  - Model ManagedCluster has a new parameter workload_auto_scaler_profile
+  - Model ManagedClusterSecurityProfile has a new parameter defender
+  - Model ManagedClusterStorageProfile has a new parameter blob_csi_driver
+
+**Breaking changes**
+
+  - Model ManagedClusterSecurityProfile no longer has parameter azure_defender
+
+## 19.1.0 (2022-05-13)
+
+**Features**
+
+  - Added operation group TrustedAccessRoleBindingsOperations
+  - Added operation group TrustedAccessRolesOperations
+  - Model AgentPool has a new parameter enable_custom_ca_trust
+  - Model ContainerServiceNetworkProfile has a new parameter network_plugin_mode
+  - Model ManagedCluster has a new parameter storage_profile
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter subnet_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_custom_ca_trust
+  - Model NetworkProfileForSnapshot has a new parameter network_plugin_mode
+
+## 19.0.0 (2022-04-15)
+
+**Features**
+
+  - Added operation ManagedClustersOperations.begin_rotate_service_account_signing_keys
+  - Model AgentPool has a new parameter current_orchestrator_version
+  - Model ManagedCluster has a new parameter creation_data
+  - Model ManagedCluster has a new parameter ingress_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter current_orchestrator_version
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter current_orchestrator_version
+  - Model ManagedClusterHTTPProxyConfig has a new parameter effective_no_proxy
+  - Model ManagedClusterSecurityProfile has a new parameter workload_identity
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+  - Operation AgentPoolsOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+  - Operation ManagedClustersOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+
+## 18.0.0 (2022-03-23)
+
+**Features**
+
+  - Added operation group ManagedClusterSnapshotsOperations
+  - Model ManagedCluster has a new parameter system_data
+  - Model ManagedClusterAccessProfile has a new parameter system_data
+  - Model ManagedClusterSecurityProfile has a new parameter azure_key_vault_kms
+  - Model Resource has a new parameter system_data
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_user_credentials has a new signature
+
+## 17.0.0 (2022-02-21)
+
+**Features**
+
+  - Model AgentPool has a new parameter capacity_reservation_group_id
+  - Model AgentPool has a new parameter host_group_id
+  - Model AgentPool has a new parameter message_of_the_day
+  - Model ManagedCluster has a new parameter current_kubernetes_version
+  - Model ManagedCluster has a new parameter enable_namespace_resources
+  - Model ManagedCluster has a new parameter oidc_issuer_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter host_group_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter message_of_the_day
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter host_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter message_of_the_day
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+
+## 16.4.0 (2021-11-25)
+
+**Features**
+
+  - Model ContainerServiceNetworkProfile has a new parameter service_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter pod_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter ip_families
+  - Model ManagedClusterLoadBalancerProfileManagedOutboundIPs has a new parameter count_ipv6
+
+## 16.3.0 (2021-10-18)
+
+**Features**
+
+  - Model ManagedClusterWindowsProfile has a new parameter gmsa_profile
+  - Model Snapshot has a new parameter vm_size
+  - Model Snapshot has a new parameter os_type
+  - Model Snapshot has a new parameter os_sku
+  - Model Snapshot has a new parameter kubernetes_version
+  - Model Snapshot has a new parameter node_image_version
+  - Model Snapshot has a new parameter enable_fips
+
+## 16.2.0 (2021-09-09)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter workload_runtime
+  - Model ManagedClusterLoadBalancerProfile has a new parameter enable_multiple_standard_load_balancers
+  - Model ManagedClusterAgentPoolProfile has a new parameter creation_data
+  - Model ManagedClusterAgentPoolProfile has a new parameter workload_runtime
+  - Model ManagedCluster has a new parameter public_network_access
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter disable_run_command
+  - Model AgentPool has a new parameter creation_data
+  - Model AgentPool has a new parameter workload_runtime
+  - Added operation group SnapshotsOperations
+
+## 16.1.0 (2021-08-06)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter scale_down_mode
+  - Model ContainerServiceNetworkProfile has a new parameter nat_gateway_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter scale_down_mode
+  - Model ManagedCluster has a new parameter security_profile
+  - Model AgentPool has a new parameter scale_down_mode
+
+## 16.0.0 (2021-06-17)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_ultra_ssd
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_private_cluster_public_fqdn
+  - Model AgentPool has a new parameter enable_ultra_ssd
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_ultra_ssd
+  - Added operation ManagedClustersOperations.list_outbound_network_dependencies_endpoints
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_monitoring_user_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_user_credentials has a new signature
+
 ## 15.1.0 (2021-04-07)
 
 **Features**
@@ -89,20 +250,20 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
 - Most of the operation kwarg have changed. Some of the most noticeable:
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
-  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
 ## 9.4.0 (2020-09-11)
@@ -138,7 +299,7 @@ This version uses a next-generation code generator that introduces important bre
 ## 9.2.0 (2020-06-24)
 
 **Features**
- 
+
   - Model ManagedClusterIdentity has a new parameter user_assigned_identities
   - Model ManagedClusterAADProfile has a new parameter enable_azure_rbac
   - Model ManagedClusterAgentPoolProfile has a new parameter proximity_placement_group_id
@@ -161,8 +322,8 @@ This version uses a next-generation code generator that introduces important bre
 ## 9.0.1 (2020-04-09)
 
 **Bugfixes**
-  
-  - Switch field type to string to avoid unmarshal errors 
+
+  - Switch field type to string to avoid unmarshal errors
 
 ## 9.0.0 (2020-03-24)
 

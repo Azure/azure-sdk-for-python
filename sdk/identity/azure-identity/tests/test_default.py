@@ -24,9 +24,32 @@ from helpers import mock_response, Request, validating_transport
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import MagicMock, Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+    from mock import MagicMock, Mock, patch  # type: ignore
+
+
+def test_close():
+    transport = MagicMock()
+    credential = DefaultAzureCredential(transport=transport)
+    assert not transport.__enter__.called
+    assert not transport.__exit__.called
+
+    credential.close()
+    assert not transport.__enter__.called
+    assert transport.__exit__.called  # call count depends on the chain's composition
+
+
+def test_context_manager():
+    transport = MagicMock()
+    credential = DefaultAzureCredential(transport=transport)
+
+    with credential:
+        assert transport.__enter__.called  # call count depends on the chain's composition
+        assert not transport.__exit__.called
+
+    assert transport.__enter__.called
+    assert transport.__exit__.called
 
 
 def test_iterates_only_once():
@@ -229,46 +252,6 @@ def test_shared_cache_username():
     assert token.token == expected_access_token
 
 
-def test_vscode_arguments(monkeypatch):
-    monkeypatch.delenv(EnvironmentVariables.AZURE_AUTHORITY_HOST, raising=False)
-    monkeypatch.delenv(EnvironmentVariables.AZURE_TENANT_ID, raising=False)
-
-    credential = DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential"
-
-    # DefaultAzureCredential shouldn't specify a default authority or tenant to VisualStudioCodeCredential
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential()
-    mock_credential.assert_called_once_with()
-
-    tenant = {"tenant_id": "the-tenant"}
-
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
-    mock_credential.assert_called_once_with(**tenant)
-
-    # tenant id can also be specified in $AZURE_TENANT_ID
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: tenant["tenant_id"]}):
-        with patch(credential) as mock_credential:
-            DefaultAzureCredential()
-    mock_credential.assert_called_once_with(**tenant)
-
-    # keyword argument should override environment variable
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant["tenant_id"]}):
-        with patch(credential) as mock_credential:
-            DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
-    mock_credential.assert_called_once_with(**tenant)
-
-    # DefaultAzureCredential should pass the authority kwarg along
-    authority = {"authority": "the-authority"}
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(**authority)
-    mock_credential.assert_called_once_with(**authority)
-
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"], **authority)
-    mock_credential.assert_called_once_with(**dict(authority, **tenant))
-
-
 @patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential")
 def test_default_credential_shared_cache_use(mock_credential):
     mock_credential.supported = Mock(return_value=False)
@@ -314,7 +297,13 @@ def test_managed_identity_client_id():
 
 def get_credential_for_shared_cache_test(expected_refresh_token, expected_access_token, cache, **kwargs):
     exclude_other_credentials = {
-        option: True for option in ("exclude_environment_credential", "exclude_managed_identity_credential")
+        option: True
+        for option in (
+            "exclude_cli_credential",
+            "exclude_environment_credential",
+            "exclude_managed_identity_credential",
+            "exclude_powershell_credential",
+        )
     }
     options = dict(exclude_other_credentials, **kwargs)
 
@@ -356,3 +345,28 @@ def test_interactive_browser_tenant_id():
                 exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id
             )
     validate_tenant_id(mock_credential)
+
+
+def test_interactive_browser_client_id():
+    """the credential should allow configuring a client ID for InteractiveBrowserCredential by kwarg"""
+
+    client_id = "client-id"
+
+    def validate_client_id(credential):
+        assert len(credential.call_args_list) == 1, "InteractiveBrowserCredential should be instantiated once"
+        _, kwargs = credential.call_args
+        assert kwargs["client_id"] == client_id
+
+    with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
+        DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_client_id=client_id)
+    validate_client_id(mock_credential)
+
+
+def test_unexpected_kwarg():
+    """the credential shouldn't raise when given an unexpected keyword argument"""
+    DefaultAzureCredential(foo=42)
+
+
+def test_error_tenant_id():
+    with pytest.raises(TypeError):
+        DefaultAzureCredential(tenant_id="foo")

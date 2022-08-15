@@ -50,6 +50,11 @@ __all__ = [
     "TooManyRedirectsError",
     "ODataV4Format",
     "ODataV4Error",
+    "StreamConsumedError",
+    "StreamClosedError",
+    "ResponseNotReadError",
+    "SerializationError",
+    "DeserializationError",
 ]
 
 
@@ -163,7 +168,7 @@ class ODataV4Format(object):
 
         # details is recursive of this very format
         self.details = []  # type: List[ODataV4Format]
-        for detail_node in json_object.get(cls.DETAILS_LABEL, []):
+        for detail_node in json_object.get(cls.DETAILS_LABEL) or []:
             try:
                 self.details.append(self.__class__(detail_node))
             except Exception:  # pylint: disable=broad-except
@@ -330,9 +335,23 @@ class HttpResponseError(AzureError):
             pass
         return None
 
+    def __str__(self):
+        retval = super(HttpResponseError, self).__str__()
+        try:
+            body = self.response.text()
+            if body and not self.error:
+                return "{}\nContent: {}".format(retval, body)[:2048]
+        except Exception:  # pylint: disable=broad-except
+            pass
+        return retval
+
 
 class DecodeError(HttpResponseError):
     """Error raised during response deserialization."""
+
+
+class IncompleteReadError(DecodeError):
+    """Error raised if peer closes the connection before we have received the complete message body."""
 
 
 class ResourceExistsError(HttpResponseError):
@@ -433,3 +452,55 @@ class ODataV4Error(HttpResponseError):
         if self._error_format:
             return str(self._error_format)
         return super(ODataV4Error, self).__str__()
+
+class StreamConsumedError(AzureError):
+    """Error thrown if you try to access the stream of a response once consumed.
+
+    It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
+    """
+    def __init__(self, response):
+        message = (
+            "You are attempting to read or stream the content from request {}. "\
+            "You have likely already consumed this stream, so it can not be accessed anymore.".format(
+                response.request
+            )
+        )
+        super(StreamConsumedError, self).__init__(message)
+
+class StreamClosedError(AzureError):
+    """Error thrown if you try to access the stream of a response once closed.
+
+    It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
+    """
+    def __init__(self, response):
+        message = (
+            "The content for response from request {} can no longer be read or streamed, since the "\
+            "response has already been closed.".format(response.request)
+        )
+        super(StreamClosedError, self).__init__(message)
+
+class ResponseNotReadError(AzureError):
+    """Error thrown if you try to access a response's content without reading first.
+
+    It is thrown if you try to access an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse's content without first reading the response's bytes in first.
+    """
+
+    def __init__(self, response):
+        message = (
+            "You have not read in the bytes for the response from request {}. "\
+            "Call .read() on the response first.".format(
+                response.request
+            )
+        )
+        super(ResponseNotReadError, self).__init__(message)
+
+class SerializationError(ValueError):
+    """Raised if an error is encountered during serialization."""
+    ...
+
+class DeserializationError(ValueError):
+    """Raised if an error is encountered during deserialization."""
+    ...

@@ -3,9 +3,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Dict, Optional, Any, List, Union
+from typing import Any, Union
 from msrest.serialization import Model
 from ._generated.models import KeyValue
+
+try:
+    from json.decoder import JSONDecodeError
+except ImportError:
+    JSONDecodeError = None  # type: ignore
+
+
+PolymorphicConfigurationSetting = Union[
+    "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
+]
 
 
 class ConfigurationSetting(Model):
@@ -59,14 +69,16 @@ class ConfigurationSetting(Model):
 
     @classmethod
     def _from_generated(cls, key_value):
-        # type: (KeyValue) -> ConfigurationSetting
+        # type: (KeyValue) -> PolymorphicConfigurationSetting
         if key_value is None:
-            return None
+            return key_value
         if key_value.content_type is not None:
             try:
                 if key_value.content_type.startswith(
                     FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
-                ) and key_value.key.startswith(FeatureFlagConfigurationSetting.key_prefix):
+                ) and key_value.key.startswith(  # type: ignore
+                    FeatureFlagConfigurationSetting._key_prefix  # pylint: disable=protected-access
+                ):
                     return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                         key_value
                     )
@@ -76,7 +88,7 @@ class ConfigurationSetting(Model):
                     return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
                         key_value
                     )
-            except (KeyError, AttributeError, TypeError):
+            except (KeyError, AttributeError):
                 pass
 
         return cls(
@@ -91,7 +103,7 @@ class ConfigurationSetting(Model):
         )
 
     def _to_generated(self):
-        # type: (...) -> KeyValue
+        # type: () -> KeyValue
         return KeyValue(
             key=self.key,
             label=self.label,
@@ -113,16 +125,20 @@ class FeatureFlagConfigurationSetting(
 
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
-    :ivar key:
-    :vartype key: str
+    :ivar feature_id:
+    :vartype feature_id: str
     :ivar value: The value of the configuration setting
     :vartype value: str
-    :ivar enabled:
-    :vartype enabled: bool
-    :param filters:
-    :type filters: list[dict[str, Any]]
+    :keyword enabled:
+    :paramtype enabled: bool
+    :keyword filters:
+    :paramtype filters: list[dict[str, Any]]
     :param label:
     :type label: str
+    :param display_name:
+    :type display_name: str
+    :param description:
+    :type description: str
     :param content_type:
     :type content_type: str
     :ivar last_modified:
@@ -135,26 +151,26 @@ class FeatureFlagConfigurationSetting(
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
-        "key": {"key": "key", "type": "str"},
+        "feature_id": {"key": "feaure_id", "type": "str"},
         "label": {"key": "label", "type": "str"},
-        "content_type": {"key": "content_type", "type": "str"},
+        "content_type": {"key": "_feature_flag_content_type", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "last_modified": {"key": "last_modified", "type": "iso-8601"},
         "read_only": {"key": "read_only", "type": "bool"},
         "tags": {"key": "tags", "type": "{str}"},
     }
-    key_prefix = ".appconfig.featureflag/"
+    _key_prefix = ".appconfig.featureflag/"
     _feature_flag_content_type = (
         "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
     )
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id, enabled, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
-        # type: (str, bool, Optional[List[Dict[str, Any]]], **Any) -> None
-        super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
-        if not feature_id.startswith(self.key_prefix):
-            feature_id = self.key_prefix + feature_id
-        self.key = feature_id
+    def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value, super-init-not-called
+        # type: (str, **Any) -> None
+        if "key" in kwargs.keys() or "value" in kwargs.keys():
+            raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
+        self.feature_id = feature_id
+        self.key = self._key_prefix + self.feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -163,92 +179,73 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self.value = kwargs.get("value", {"enabled": enabled, "conditions": {"client_filters": filters}})
-
-    def _validate(self):
-        # type: () -> None
-        if not self.key.startswith(self.key_prefix):
-            raise ValueError("All FeatureFlagConfigurationSettings should be prefixed with {}.".format(self.key_prefix))
-        if not (self.value is None or isinstance(self.value, dict)):
-            raise ValueError("Expect 'value' to be a dictionary.")
+        self.filters = kwargs.get("filters", [])
+        self.enabled = kwargs.get("enabled", None)
+        self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
 
     @property
-    def enabled(self):
-        # type: () -> Union[None, bool]
-        self._validate()
-        if self.value is None or "enabled" not in self.value:
-            return None
-        return self.value["enabled"]
-
-    @enabled.setter
-    def enabled(self, new_value):
-        # type: (bool) -> bool
-        self._validate()
-        if self.value is None:
-            self.value = {}
-        self.value["enabled"] = new_value
-
-    @property
-    def filters(self):
-        # type: () -> Union[None, List[Any]]
-        self._validate()
-        if self.value is None:
-            return None
+    def value(self):
         try:
-            return self.value["conditions"]["client_filters"]
-        except KeyError:
-            pass
-        return None
+            temp = json.loads(self._value)
+            temp["enabled"] = self.enabled
 
-    @filters.setter
-    def filters(self, new_filters):
-        # type: (List[Dict[str, Any]]) -> None
-        self._validate()
-        if self.value is None:
-            self.value = {}
+            if "conditions" not in temp.keys():
+                temp["conditions"] = {}
+            temp["conditions"]["client_filters"] = self.filters
+            self._value = json.dumps(temp)
+            return self._value
+        except (JSONDecodeError, ValueError):
+            return self._value
+
+    @value.setter
+    def value(self, new_value):
         try:
-            self.value["conditions"]["client_filters"] = new_filters
-        except KeyError:
-            self.value["conditions"] = {
-                "client_filters": new_filters
-            }
+            temp = json.loads(new_value)
+            self._value = new_value
+            self.enabled = temp.get("enabled", None)
+            self.filters = None
+            conditions = temp.get("conditions", None)
+            if conditions:
+                self.filters = conditions.get("client_filters", None)
+        except (JSONDecodeError, ValueError):
+            self._value = new_value
+            self.enabled = None
+            self.filters = None
 
     @classmethod
     def _from_generated(cls, key_value):
-        # type: (KeyValue) -> FeatureFlagConfigurationSetting
+        # type: (KeyValue) -> Union[FeatureFlagConfigurationSetting, ConfigurationSetting]
+        if key_value is None:
+            return key_value
+        enabled = None
+        filters = None
         try:
-            if key_value is None:
-                return None
-            if key_value.value:
-                try:
-                    key_value.value = json.loads(key_value.value)
-                except json.decoder.JSONDecodeError:
-                    pass
+            temp = json.loads(key_value.value)  # type: ignore
+            if isinstance(temp, dict):
+                enabled = temp.get("enabled")
+                if "conditions" in temp.keys():
+                    filters = temp["conditions"].get("client_filters")
+        except (ValueError, JSONDecodeError):
+            pass
 
-            filters = key_value.value["conditions"]["client_filters"]
-
-            return cls(
-                feature_id=key_value.key,
-                enabled=key_value.value["enabled"],
-                label=key_value.label,
-                content_type=key_value.content_type,
-                last_modified=key_value.last_modified,
-                tags=key_value.tags,
-                read_only=key_value.locked,
-                etag=key_value.etag,
-                filters=filters,
-                value=key_value.value,
-            )
-        except (KeyError, AttributeError):
-            return ConfigurationSetting._from_generated(key_value)
+        return cls(
+            feature_id=key_value.key.lstrip(".appconfig.featureflag").lstrip("/"),  # type: ignore
+            label=key_value.label,
+            content_type=key_value.content_type,
+            last_modified=key_value.last_modified,
+            tags=key_value.tags,
+            read_only=key_value.locked,
+            etag=key_value.etag,
+            enabled=enabled,
+            filters=filters
+        )
 
     def _to_generated(self):
         # type: () -> KeyValue
-
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=json.dumps(self.value),  # NOTE: This has to be added for valid json
+            value=self.value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
@@ -266,20 +263,20 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :vartype etag: str
     :ivar key:
     :vartype key: str
-    :ivar secret_uri:
-    :vartype secret_uri: str
+    :ivar secret_id:
+    :vartype secret_id: str
     :param label:
     :type label: str
     :param content_type:
     :type content_type: str
     :ivar value: The value of the configuration setting
-    :vartype value: str
+    :vartype value: Dict[str, Any]
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {
@@ -297,12 +294,12 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     )
     kind = "SecretReference"
 
-    def __init__(self, key, secret_uri, label=None, **kwargs):
-        # type: (str, str, Optional[str], **Any) -> None
-        self._secret_uri = secret_uri
-        super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
+    def __init__(self, key, secret_id, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (str, str, **Any) -> None
+        if "value" in kwargs.keys():
+            raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
-        self.label = label
+        self.label = kwargs.pop("label", None)
         self.content_type = kwargs.get(
             "content_type", self._secret_reference_content_type
         )
@@ -310,44 +307,47 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
-        self.value = {"secret_uri": self._secret_uri}
+        self.secret_id = secret_id
+        self._value = json.dumps({"uri": secret_id})
 
     @property
-    def secret_uri(self):
-        # type: () -> str
-        self._validate()
-        return self.value['secret_uri']
+    def value(self):
+        try:
+            temp = json.loads(self._value)
+            temp["uri"] = self.secret_id
+            self._value = json.dumps(temp)
+            return self._value
+        except (JSONDecodeError, ValueError):
+            return self._value
 
-    @secret_uri.setter
-    def secret_uri(self, value):
-        if self.value is None or isinstance(self.value, dict):
-            if self.value is None:
-                self.value = {}
-            self.value["secret_uri"] = value
-        else:
-            raise ValueError("Expect 'value' to be a dictionary.")
-
-    def _validate(self):
-        # type: () -> None
-        if not (self.value is None or isinstance(self.value, dict)):
-            raise ValueError("Expect 'value' to be a dictionary or None.")
+    @value.setter
+    def value(self, new_value):
+        try:
+            temp = json.loads(new_value)
+            self._value = new_value
+            self.secret_id = temp.get("uri")
+        except(JSONDecodeError, ValueError):
+            self._value = new_value
+            self.secret_id = None
 
     @classmethod
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> SecretReferenceConfigurationSetting
         if key_value is None:
-            return None
-        if key_value.value:
-            try:
-                key_value.value = json.loads(key_value.value)
-            except json.decoder.JSONDecodeError:
-                pass
+            return key_value
+        secret_uri = None
+        try:
+            temp = json.loads(key_value.value)  # type: ignore
+            secret_uri = temp.get("uri")
+            if not secret_uri:
+                secret_uri = temp.get("secret_uri")
+        except (ValueError, JSONDecodeError):
+            pass
 
         return cls(
-            key=key_value.key,
-            secret_uri=key_value.value[u"secret_uri"],
+            key=key_value.key,  # type: ignore
             label=key_value.label,
-            secret_id=key_value.value,
+            secret_id=secret_uri,  # type: ignore
             last_modified=key_value.last_modified,
             tags=key_value.tags,
             read_only=key_value.locked,
@@ -355,11 +355,11 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
     def _to_generated(self):
-        # type: (...) -> KeyValue
+        # type: () -> KeyValue
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=json.dumps(self.value),
+            value=self.value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,

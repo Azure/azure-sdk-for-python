@@ -1,8 +1,8 @@
 # Live Test Resource Management
 
 Running and recording live tests often requires first creating some resources
-in Azure. Service directories that include a test-resources.json file require
-running [New-TestResources.ps1][] to create these resources and output
+in Azure. Service directories that include a `test-resources.json` or `test-resources.bicep` 
+file require running [New-TestResources.ps1][] to create these resources and output
 environment variables you must set.
 
 The following scripts can be used both in on your desktop for developer
@@ -19,9 +19,10 @@ scenarios as well as on hosted agents for continuous integration testing.
 ## On the Desktop
 
 To set up your Azure account to run live tests, you'll need to log into Azure,
-and set up your resources defined in test-resources.json as shown in the following
-example using Azure Key Vault. The script will create a service principal automatically,
-or you may create a service principal you can save and reuse subsequently.
+and create the resources defined in your `test-resources.json` or `test-resources.bicep` 
+template as shown in the following example using Azure Key Vault. The script will create 
+a service principal automatically, or you may create a service principal that can be reused
+subsequently.
 
 Note that `-Subscription` is an optional parameter but recommended if your account
 is a member of multiple subscriptions. If you didn't specify it when logging in,
@@ -33,8 +34,9 @@ Connect-AzAccount -Subscription 'YOUR SUBSCRIPTION ID'
 eng\common\TestResources\New-TestResources.ps1 keyvault
 ```
 
-The `OutFile` switch will be set by default if you are running this for a .NET project on Windows. This will save test environment settings
-into a test-resources.json.env file next to test-resources.json. The file is protected via DPAPI.
+The `OutFile` switch will be set by default if you are running this for a .NET project on Windows. 
+This will save test environment settings into a `test-resources.json.env` file next to `test-resources.json` 
+or a `test-resources.bicep.env` file next to `test-resources.bicep`. The file is protected via DPAPI.
 The environment file would be scoped to the current repository directory and avoids the need to
 set environment variables or restart your IDE to recognize them.
 
@@ -47,7 +49,7 @@ ${env:KEYVAULT_CLIENT_ID} = '<<secret>>'
 ${env:KEYVAULT_CLIENT_SECRET} = '<<secret>>'
 ${env:KEYVAULT_SUBSCRIPTION_ID} = 'YOUR SUBSCRIPTION ID'
 ${env:KEYVAULT_RESOURCE_GROUP} = 'rg-myusername'
-${env:KEYVAULT_LOCATION} = 'westus2'
+${env:KEYVAULT_LOCATION} = 'westus'
 ${env:KEYVAULT_SKU} = 'premium'
 ${env:AZURE_KEYVAULT_URL} = '<<url>>'
 ```
@@ -73,6 +75,49 @@ setx KEYVAULT_RESOURCE_GROUP ${env:KEYVAULT_RESOURCE_GROUP}
 setx KEYVAULT_LOCATION ${env:KEYVAULT_LOCATION}
 setx KEYVAULT_SKU ${env:KEYVAULT_SKU}
 setx AZURE_KEYVAULT_URL ${env:AZURE_KEYVAULT_URL}
+```
+
+### Pre- and Post- Scripts
+
+Sometimes creating test resources requires either some work to be done prior to or after the main test-resources.json script is executed.
+For these scenarios a `test-resources-pre.ps1` or `test-resources-post.ps1`, respectively, can be created in the same folder as the `test-resources.json` file.
+
+For example, it may be necessary to create artifacts prior to provisioning the actual resource, such as a certificate.
+Typically the created artifact will need to be passed to `test-resources.json` to be used in the ARM template or as output (or both).
+
+Below is an example of how `$templateFileParameters` can be used to pass data from the `pre-` script to `test-resources.json`.
+
+**Snippet from `test-resources-pre.ps1`**
+```powershell
+$cert = New-X509Certificate2 -SubjectName 'E=opensource@microsoft.com, CN=Azure SDK, OU=Azure SDK, O=Microsoft, L=Frisco, S=TX, C=US' -ValidDays 3652
+# Create new entries in $templateFileParameters
+$templateFileParameters['ConfidentialLedgerPrincipalPEM'] = Format-X509Certificate2 -Certificate $cert
+$templateFileParameters['ConfidentialLedgerPrincipalPEMPK'] = Format-X509Certificate2 -Type Pkcs8 -Certificate $cert
+```
+
+**Snippet from the corresponding `test-resources.json`.**
+
+Note that the values present in `$templateFileParameters` will map to parameters of the same name.
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_comment": "Other required parameters would go here... (this is not part of the actual test-resources.json)",
+    "ConfidentialLedgerPrincipalPEM": {
+      "type": "string",
+      "metadata": {
+        "description": "The certificate to configure as a certBasedSecurityPrincipal."
+      }
+    },
+    "ConfidentialLedgerPrincipalPEMPK": {
+      "type": "string",
+      "metadata": {
+        "description": "The certificate to configure as a certBasedSecurityPrincipal."
+      }
+    }
+  },
+}
 ```
 
 ### Cleaning up Resources

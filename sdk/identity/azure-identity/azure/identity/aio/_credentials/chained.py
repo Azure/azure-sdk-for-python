@@ -10,6 +10,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
+from ..._internal import within_credential_chain
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -52,6 +53,7 @@ class ChainedTokenCredential(AsyncContextManager):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
+        within_credential_chain.set(True)
         history = []
         for credential in self.credentials:
             try:
@@ -62,19 +64,21 @@ class ChainedTokenCredential(AsyncContextManager):
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
-                _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
             except Exception as ex:  # pylint: disable=broad-except
                 # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
-                _LOGGER.warning(
+                _LOGGER.debug(
                     '%s.get_token failed: %s raised unexpected error "%s"',
                     self.__class__.__name__,
                     credential.__class__.__name__,
                     ex,
-                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                    exc_info=True,
                 )
                 break
 
+        within_credential_chain.set(False)
         attempts = _get_error_message(history)
-        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
+        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts \
+                  + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at " \
+                    "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
         raise ClientAuthenticationError(message=message)

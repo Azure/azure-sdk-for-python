@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationListResult"]:
         """List all operations provided by Microsoft.Elastic.
 
@@ -59,7 +59,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

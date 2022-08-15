@@ -1,5 +1,83 @@
 # Release History
 
+## 21.1.0 (2022-05-05)
+
+**Features**
+
+  - GA `azure.mgmt.resource.changes`
+
+
+## 21.1.0b1 (2022-04-19)
+
+**Features**
+
+  - Added operation TemplateSpecVersionsOperations.get_built_in
+  - Added operation TemplateSpecVersionsOperations.list_built_ins
+  - Added operation TemplateSpecsOperations.get_built_in
+  - Added operation TemplateSpecsOperations.list_built_ins
+  - Added operation group ChangesOperations
+  - Combined operation files into one.
+
+**Fixes**
+
+  - Fixed duplicated query parameters in pageable operation(for more details, see https://github.com/Azure/azure-sdk-for-python/issues/23828)
+
+## 21.0.0 (2022-03-22)
+
+**Features**
+
+  - Added operation PrivateLinkAssociationOperations.list
+  - Added operation ResourceManagementPrivateLinkOperations.list_by_resource_group
+
+**Breaking changes**
+
+  - Operation PrivateLinkAssociationOperations.get has a new signature
+
+## 20.1.0 (2022-01-25)
+
+**Features**
+
+  - Added operation SubscriptionsOperations.check_zone_peers
+  - Added operation group PrivateLinkAssociationOperations
+  - Added operation group ResourceManagementPrivateLinkOperations
+  - Model ProviderResourceType has a new parameter zone_mappings
+
+## 20.0.0 (2021-09-03)
+
+**Features**
+
+  - Model PolicyAssignment has a new parameter system_data
+  - Model PolicyDefinition has a new parameter system_data
+  - Model Location has a new parameter type
+  - Model PolicySetDefinition has a new parameter system_data
+  - Model LocationMetadata has a new parameter home_location
+  - Model TenantIdDescription has a new parameter tenant_branding_logo_url
+  - Model TenantIdDescription has a new parameter tenant_type
+  - Model TenantIdDescription has a new parameter default_domain
+  - Added operation PolicyAssignmentsOperations.update_by_id
+  - Added operation PolicyAssignmentsOperations.update
+
+**Breaking changes**
+
+  - Operation ProvidersOperations.list_at_tenant_scope has a new signature
+  - Operation ProvidersOperations.list has a new signature
+  - Operation SubscriptionsOperations.list_locations has a new signature
+
+## 19.0.0 (2021-07-19)
+
+**Breaking changes**
+
+  - Operation SubscriptionFeatureRegistrationsOperations.create_or_update has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.delete has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.get has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.list_by_subscription has a new signature
+
+## 18.1.0 (2021-07-13)
+
+**Features**
+
+  - Added operation group SubscriptionFeatureRegistrationsOperations
+
 ## 18.0.0 (2021-05-19)
 
 **Breaking changes**
@@ -103,7 +181,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -111,13 +189,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 # 10.0.0 (2020-06-02)
 
@@ -569,7 +647,7 @@ introduce breaking changes.
   - Deploy resources to multiple resource groups from one template
 
   - Some breaking changes are introduced compared to previous versions:
-    
+
     >   - deployments.list has been renamed
     >     deployments.list_by_resource_group
     >   - resource_groups.list_resources has been moved to

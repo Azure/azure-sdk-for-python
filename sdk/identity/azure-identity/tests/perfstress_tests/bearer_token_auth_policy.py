@@ -26,12 +26,13 @@ class BearerTokenPolicyTest(PerfStressTest):
         credential = Mock(get_token=Mock(return_value=token))
         self.pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential=credential)])
 
-        completed_future = asyncio.Future()
-        completed_future.set_result(token)
-        async_credential = Mock(get_token=Mock(return_value=completed_future))
+        get_token_future = asyncio.Future()
+        get_token_future.set_result(token)
+        async_credential = Mock(get_token=Mock(return_value=get_token_future))
 
-        # returning a token is okay because the policy does nothing with the transport's response
-        async_transport = Mock(send=Mock(return_value=completed_future))
+        send_future = asyncio.Future()
+        send_future.set_result(Mock())
+        async_transport = Mock(send=Mock(return_value=send_future))
         self.async_pipeline = AsyncPipeline(
             async_transport, policies=[AsyncBearerTokenCredentialPolicy(credential=async_credential)]
         )

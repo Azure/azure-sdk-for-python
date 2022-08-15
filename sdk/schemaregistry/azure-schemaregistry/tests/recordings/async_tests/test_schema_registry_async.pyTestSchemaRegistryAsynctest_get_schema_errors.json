@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/fakeschemaid?api-version=2021-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "315adcf5-a159-11ec-9d91-9c2976df0bde"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Fri, 11 Mar 2022 16:34:58 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:68e0972f-83c2-4295-9d57-5b0058b6ebc8_G1, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-03-11T16:34:59"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

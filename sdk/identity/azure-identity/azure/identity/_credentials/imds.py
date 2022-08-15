@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 import os
 from typing import TYPE_CHECKING
 
@@ -21,9 +20,8 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
-_LOGGER = logging.getLogger(__name__)
-
-IMDS_URL = "http://169.254.169.254/metadata/identity/oauth2/token"
+IMDS_AUTHORITY = "http://169.254.169.254"
+IMDS_TOKEN_PATH = "/metadata/identity/oauth2/token"
 
 PIPELINE_SETTINGS = {
     "connection_timeout": 2,
@@ -36,7 +34,11 @@ PIPELINE_SETTINGS = {
 
 
 def get_request(scope, identity_config):
-    request = HttpRequest("GET", os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL, IMDS_URL))
+    url = (
+        os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
+        + IMDS_TOKEN_PATH
+    )
+    request = HttpRequest("GET", url)
     request.format_parameters(dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
     return request
 
@@ -47,14 +49,25 @@ class ImdsCredential(GetTokenMixin):
         super(ImdsCredential, self).__init__()
 
         self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
-        if EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL in os.environ:
+        if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available = True  # type: Optional[bool]
         else:
             self._endpoint_available = None
+        self._error_message = None  # type: Optional[str]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self):
+        self.__exit__()
+
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
@@ -67,16 +80,18 @@ class ImdsCredential(GetTokenMixin):
                 self._client.request_token(*scopes, connection_timeout=0.3, retry_total=0)
                 self._endpoint_available = True
             except HttpResponseError:
-                # received a response, choked on it
+                # IMDS responded
                 self._endpoint_available = True
-            except Exception:  # pylint:disable=broad-except
+            except Exception as ex:  # pylint:disable=broad-except
                 # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
-                _LOGGER.info("No response from the IMDS endpoint.")
+                self._error_message = (
+                    "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
+                )
+                six.raise_from(CredentialUnavailableError(self._error_message), ex)
 
         if not self._endpoint_available:
-            message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
-            raise CredentialUnavailableError(message=message)
+            raise CredentialUnavailableError(self._error_message)
 
         try:
             token = self._client.request_token(*scopes, headers={"Metadata": "true"})
@@ -85,13 +100,13 @@ class ImdsCredential(GetTokenMixin):
             # or the identity with the specified client_id is not available
             if ex.status_code == 400:
                 self._endpoint_available = False
-                message = "ManagedIdentityCredential authentication unavailable. "
+                self._error_message = "ManagedIdentityCredential authentication unavailable. "
                 if self._user_assigned_identity:
-                    message += "The requested identity has not been assigned to this resource."
+                    self._error_message += "The requested identity has not been assigned to this resource."
                 else:
-                    message += "No identity has been assigned to this resource."
-                six.raise_from(CredentialUnavailableError(message=message), ex)
+                    self._error_message += "No identity has been assigned to this resource."
+                six.raise_from(CredentialUnavailableError(message=self._error_message), ex)
 
             # any other error is unexpected
-            six.raise_from(ClientAuthenticationError(message=ex.message, response=ex.response), None)
+            six.raise_from(ClientAuthenticationError(message=ex.message, response=ex.response), ex)
         return token

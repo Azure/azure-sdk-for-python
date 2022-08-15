@@ -42,7 +42,7 @@ class PricingsOperations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PricingList":
         """Lists Security Center pricing configurations in the subscription.
 
@@ -93,7 +93,7 @@ class PricingsOperations:
     async def get(
         self,
         pricing_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Pricing":
         """Gets a provided Security Center pricing configuration in the subscription.
 
@@ -148,7 +148,7 @@ class PricingsOperations:
         self,
         pricing_name: str,
         pricing: "_models.Pricing",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Pricing":
         """Updates a provided Security Center pricing configuration in the subscription.
 

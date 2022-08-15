@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -10,6 +9,7 @@ from datetime import datetime
 import functools
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
@@ -18,121 +18,108 @@ TOTAL_DOC_COUNT_IN_translation = 1
 
 class TestSubmittedTranslations(AsyncDocumentTranslationTest):
 
-
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations(self, client):
+    @recorded_by_proxy_async
+    async def test_list_translations(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # create some translations
         operations_count = 5
         docs_per_operation = 5
-        await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
+        await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses()
-        self.assertIsNotNone(submitted_translations)
+        submitted_translations = client.list_translation_statuses()
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
             self._validate_translations(translation)
-
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    async def test_list_translations_with_pagination(self, client):
-        # prepare data
-        operations_count = 5
-        docs_per_operation = 2
-        results_per_page = 2
-
-        # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, docs_per_operation=docs_per_operation, wait=False)
-
-        # list translations
-        submitted_translations_pages = client.list_all_translation_statuses(results_per_page=results_per_page).by_page()
-        self.assertIsNotNone(submitted_translations_pages)
-
-        # iterate by page
-        async for page in submitted_translations_pages:
-            page_translations = []
-            async for translation in page:
-                page_translations.append(translation)
-                self._validate_translations(translation)
-
-            self.assertLessEqual(len(page_translations), results_per_page)
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_with_skip(self, client):
+    @recorded_by_proxy_async
+    async def test_list_translations_with_skip(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare data
         operations_count = 10
         docs_per_operation = 2
         skip = 5
 
         # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # list translations - unable to assert skip!!
-        all_translations = client.list_all_translation_statuses()
+        all_translations = client.list_translation_statuses()
         all_operations_count = 0
         async for translation in all_translations:
             all_operations_count += 1
 
-        translations_with_skip = client.list_all_translation_statuses(skip=skip)
+        translations_with_skip = client.list_translation_statuses(skip=skip)
         translations_with_skip_count = 0
         async for translation in translations_with_skip:
             translations_with_skip_count += 1
 
         assert all_operations_count - translations_with_skip_count == skip
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_filter_by_status(self, client):
+    @recorded_by_proxy_async
+    async def test_list_translations_filter_by_status(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         operations_count = 5
         docs_per_operation = 1
 
         # create some translations with the status 'Succeeded'
-        completed_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
+        completed_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation, variables=variables)
 
-        # create some translations with the status 'Cancelled'
-        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        # create some translations with the status 'Canceled'
+        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables, container_suffix="cancel")
         for id in translation_ids:
             await client.cancel_translation(id)
-        self.wait(10) # wait for 'cancelled' to propagate
+        self.wait(10) # wait for 'canceled' to propagate
 
         # list translations with status filter
-        statuses = ["Cancelled"]
-        submitted_translations = client.list_all_translation_statuses(statuses=statuses)
+        statuses = ["Canceled"]
+        submitted_translations = client.list_translation_statuses(statuses=statuses)
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertIn(translation.status, statuses)
-            self.assertNotIn(translation.id, completed_translation_ids)
-
+            assert translation.status in statuses
+            assert translation.id not in completed_translation_ids
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_filter_by_ids(self, client):
+    @recorded_by_proxy_async
+    async def test_list_translations_filter_by_ids(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         operations_count = 3
         docs_per_operation = 2
 
         # create some translations
-        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(translation_ids=translation_ids)
-        self.assertIsNotNone(submitted_translations)
+        submitted_translations = client.list_translation_statuses(translation_ids=translation_ids)
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertIn(translation.id, translation_ids)
-
+            assert translation.id in translation_ids
+        return variables
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_filter_by_created_after(self, client):
+    async def test_list_translations_filter_by_created_after(self, **kwargs):
+        client = kwargs.pop("client")
         # create some translations
         operations_count = 3
         docs_per_operation = 2
@@ -142,23 +129,23 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(created_after=start)
-        self.assertIsNotNone(submitted_translations)
+        submitted_translations = client.list_translation_statuses(created_after=start)
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertIn(translation.id, translation_ids)
+            assert translation.id in translation_ids
             assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
-
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_filter_by_created_before(self, client):
+    async def test_list_translations_filter_by_created_before(self, **kwargs):
         '''
             NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
                 'end' must be timezone-aware!
         '''
+        client = kwargs.pop("client")
         operations_count = 5
         docs_per_operation = 1
 
@@ -168,103 +155,100 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(created_before=end)
-        self.assertIsNotNone(submitted_translations)
+        submitted_translations = client.list_translation_statuses(created_before=end)
+        assert submitted_translations is not None
 
         # check statuses
         async for translation in submitted_translations:
-            self.assertLessEqual(translation.created_on.replace(tzinfo=None), end.replace(tzinfo=None))
-            self.assertNotIn(translation.id, translation_ids)
-
+            assert translation.created_on.replace(tzinfo=None) <=  end.replace(tzinfo=None)
+            assert translation.id not in  translation_ids
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_order_by_creation_time_asc(self, client):
+    @recorded_by_proxy_async
+    async def test_list_translations_order_by_creation_time_asc(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         operations_count = 3
         docs_per_operation = 2
 
         # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["createdDateTimeUtc asc"])
-        self.assertIsNotNone(submitted_translations)
+        submitted_translations = client.list_translation_statuses(order_by=["created_on asc"])
+        assert submitted_translations is not None
 
         # check statuses
-        curr = datetime.min
+        current = datetime.min
         async for translation in submitted_translations:
-            assert(translation.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
-            curr = translation.created_on
-
+            assert(translation.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None))
+            current = translation.created_on
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_order_by_creation_time_desc(self, client):
+    @recorded_by_proxy_async
+    async def test_list_translations_order_by_creation_time_desc(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         operations_count = 3
         docs_per_operation = 2
 
         # create some translations
-        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
+        await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation, variables=variables)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(order_by=["createdDateTimeUtc desc"])
-        self.assertIsNotNone(submitted_translations)
+        submitted_translations = client.list_translation_statuses(order_by=["created_on desc"])
+        assert submitted_translations is not None
 
         # check statuses
-        curr = datetime.max
+        current = datetime.max
         async for translation in submitted_translations:
-            assert(translation.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
-            curr = translation.created_on
+            assert(translation.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None))
+            current = translation.created_on
+        return variables
 
-
-    @pytest.mark.skip(reason="not working! - list returned is empty")
+    @pytest.mark.live_test_only()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_mixed_filters(self, client):
+    async def test_list_translations_mixed_filters(self, **kwargs):
+        client = kwargs.pop("client")
         # create some translations
-        operations_count = 15
+        operations_count = 4
         docs_per_operation = 1
-        results_per_page = 2
-        statuses = ["Cancelled"]
-        skip = 2
+        statuses = ["Succeeded"]
+        skip = 1
 
         # create some translations
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
         successful_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=True, docs_per_operation=docs_per_operation)
-        cancelled_translation_ids = await self._begin_multiple_translations_async(client, operations_count, wait=False, docs_per_operation=docs_per_operation)
-        for translation_id in cancelled_translation_ids:
-            await client.cancel_translation(translation_id)
-        self.wait(15) # wait for status to propagate
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list translations
-        submitted_translations = client.list_all_translation_statuses(
+        submitted_translations = client.list_translation_statuses(
             # filters
             statuses=statuses,
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["createdDateTimeUtc asc"],
+            order_by=["created_on asc"],
             # paging
             skip=skip,
-            results_per_page=results_per_page
         ).by_page()
 
         # check statuses
-        curr_time = datetime.min
+        current_time = datetime.min
         async for page in submitted_translations:
             counter = 0
             async for translation in page:
                 counter += 1
                 # assert id
-                self.assertIn(translation.id, cancelled_translation_ids)
-                self.assertNotIn(translation.id, successful_translation_ids)
+                assert translation.id in successful_translation_ids
                 # assert ordering
-                assert(translation.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
-                curr_time = translation.created_on
+                assert(translation.created_on.replace(tzinfo=None) >= current_time.replace(tzinfo=None))
+                current_time = translation.created_on
                 # assert filters
                 assert(translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
                 assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
-                self.assertIn(translation.status, statuses)
-
-            self.assertLessEqual(counter, results_per_page) # assert paging
+                assert translation.status in statuses

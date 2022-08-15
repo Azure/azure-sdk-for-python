@@ -15,9 +15,8 @@ from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake import DataLakeServiceClient
-from testcase import (
-    StorageTestCase,
-    DataLakePreparer)
+from settings.testcase import DataLakePreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -29,7 +28,7 @@ LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 
 class LargeFileTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(account_name,
                                                           account_key)
@@ -79,11 +78,10 @@ class LargeFileTest(StorageTestCase):
         self.assertEqual(self.payload_dropping_policy.append_counter, 1)
         self.assertEqual(self.payload_dropping_policy.append_sizes[0], LARGEST_BLOCK_SIZE)
 
+    @pytest.mark.skip(reason="Pypy3 on Linux failed somehow, skip for now to investigate")
     @pytest.mark.live_test_only
     @DataLakePreparer()
     def test_upload_large_stream_without_network(self, datalake_storage_account_name, datalake_storage_account_key):
-        pytest.skip("Pypy3 on Linux failed somehow, skip for now to investigate")
-
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
         directory_name = self.get_resource_name(TEST_DIRECTORY_PREFIX)

@@ -6,18 +6,13 @@
 # --------------------------------------------------------------------------
 from testcase import PurviewCatalogTest, PurviewCatalogPowerShellPreparer
 from testcase_async import PurviewCatalogTestAsync
-from azure.purview.catalog.rest.types import build_get_all_type_definitions_request
+
 
 class PurviewCatalogSmokeTestAsync(PurviewCatalogTestAsync):
 
     @PurviewCatalogPowerShellPreparer()
     async def test_basic_smoke_test(self, purviewcatalog_endpoint):
         client = self.create_async_client(endpoint=purviewcatalog_endpoint)
-        request = build_get_all_type_definitions_request()
-        response = await client.send_request(request)
-        response.raise_for_status()
-        assert response.status_code == 200
-        json_response = response.json()
+        response = await client.types.get_all_type_definitions()
 
-        # assert that the keys we expect are there
-        assert set(json_response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs'])
+        assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs'])

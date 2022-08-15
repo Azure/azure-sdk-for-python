@@ -9,6 +9,8 @@ DEPENDENCIES = [
     "packaging",
     "wheel",
     "Jinja2",
+    "MarkupSafe==2.0.1",
+    # black,
     "pytoml",
     "json-delta>=2.0",
     # Tests
@@ -23,6 +25,7 @@ DEPENDENCIES = [
     "azure-mgmt-storage",
     "azure-mgmt-keyvault",
     "python-dotenv",
+    "PyYAML"
 ]
 
 setup(
@@ -40,6 +43,8 @@ setup(
             "generate_sdk=packaging_tools.generate_sdk:generate_main",
             "auto_codegen=packaging_tools.auto_codegen:generate_main",
             "auto_package=packaging_tools.auto_package:generate_main",
+            "sdk_generator=packaging_tools.sdk_generator:generate_main",
+            "sdk_package=packaging_tools.sdk_package:generate_main",
         ],
     },
     extras_require={":python_version>='3.5'": ["pytest-asyncio>=0.9.0"]},

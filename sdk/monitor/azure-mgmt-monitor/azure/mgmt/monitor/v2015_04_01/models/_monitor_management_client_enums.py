@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ComparisonOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ComparisonOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the operator that is used to compare the metric data and the threshold.
     """
 
@@ -37,7 +21,16 @@ class ComparisonOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class EventLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operators allowed in the rule condition.
+    """
+
+    GREATER_THAN = "GreaterThan"
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    LESS_THAN = "LessThan"
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
+
+class EventLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the event level
     """
 
@@ -47,7 +40,7 @@ class EventLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INFORMATIONAL = "Informational"
     VERBOSE = "Verbose"
 
-class MetricStatisticType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MetricStatisticType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the metric statistic type. How the metrics from multiple instances are combined.
     """
 
@@ -55,8 +48,9 @@ class MetricStatisticType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MIN = "Min"
     MAX = "Max"
     SUM = "Sum"
+    COUNT = "Count"
 
-class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the recurrence frequency. How often the schedule profile should take effect. This value must be
     Week, meaning each week will have the same set of profiles. For example, to set a daily
     schedule, set **schedule** to every day of the week. The frequency property specifies that the
@@ -72,7 +66,7 @@ class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MONTH = "Month"
     YEAR = "Year"
 
-class ScaleDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScaleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the scale direction. Whether the scaling action increases or decreases the number of instances.
     """
 
@@ -80,7 +74,7 @@ class ScaleDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INCREASE = "Increase"
     DECREASE = "Decrease"
 
-class ScaleRuleMetricDimensionOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScaleRuleMetricDimensionOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the dimension operator. Only 'Equals' and 'NotEquals' are supported. 'Equals' being equal to
     any of the values. 'NotEquals' being not equal to all of the values
     """
@@ -88,15 +82,26 @@ class ScaleRuleMetricDimensionOperationType(with_metaclass(_CaseInsensitiveEnumM
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
 
-class ScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the type of action that should occur when the scale rule fires.
     """
 
     CHANGE_COUNT = "ChangeCount"
     PERCENT_CHANGE_COUNT = "PercentChangeCount"
     EXACT_COUNT = "ExactCount"
+    SERVICE_ALLOWED_NEXT_VALUE = "ServiceAllowedNextValue"
 
-class TimeAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TimeAggregationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregation operators allowed in a rule.
+    """
+
+    AVERAGE = "Average"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
+    LAST = "Last"
+
+class TimeAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """time aggregation type. How the data that is collected should be combined over time. The default
     value is Average.
     """

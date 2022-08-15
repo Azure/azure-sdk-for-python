@@ -4,11 +4,21 @@
 # ------------------------------------
 from abc import abstractmethod
 
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from typing import Optional, Union
+    from cryptography.hazmat.primitives import hashes
+
 _alg_registry = {}
 
 
 class Algorithm(object):
-    _name = None
+    _name = None  # type: Optional[str]
 
     @classmethod
     def name(cls):
@@ -56,7 +66,7 @@ class AuthenticatedSymmetricEncryptionAlgorithm(Algorithm):
 
 
 class SignatureAlgorithm(Algorithm):
-    _default_hash_algorithm = None
+    _default_hash_algorithm = None  # type: Union[hashes.SHA256, hashes.SHA384, hashes.SHA512, None]
 
     @property
     def default_hash_algorithm(self):

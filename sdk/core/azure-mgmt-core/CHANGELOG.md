@@ -1,8 +1,40 @@
-
 # Release History
 
-## 1.2.3 (Unreleased)
+## 1.3.2 (2022-08-11)
 
+### Other Changes
+
+- Updated mindep about `azure-core` from `1.23.0` to `1.24.0`
+
+## 1.3.1 (2022-06-14)
+
+### Other Changes
+
+- Updated mindep about `azure-core` from `1.15.0` to `1.23.0`
+
+## 1.3.0 (2021-07-01)
+
+### Features
+
+- Support CAE
+
+## 1.3.0b3 (2021-06-07)
+
+### Changed
+
+- Updated required `azure-core` version
+
+## 1.3.0b2 (2021-05-13)
+
+### Changed
+
+- Updated required `azure-core` version
+
+## 1.3.0b1 (2021-03-10)
+
+### Features
+
+- ARMChallengeAuthenticationPolicy supports bearer token authorization and CAE challenges
 
 ## 1.2.2 (2020-11-09)
 

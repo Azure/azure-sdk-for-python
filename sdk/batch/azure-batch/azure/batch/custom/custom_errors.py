@@ -27,11 +27,11 @@ class CreateTasksErrorException(Exception):
                     "requests. Check the `errors` property for the inner " \
                     "exceptions."
             else:
-                self.message = errors[0].message
+                self.message = str(errors[0])
         elif failure_tasks:
             if len(failure_tasks) > 1:
                 self.message = \
-                    "Multiple client side errors occured when adding the " \
+                    "Multiple client side errors occurred when adding the " \
                     "tasks. Check the `failure_tasks` property for details on" \
                     " these tasks."
             else:

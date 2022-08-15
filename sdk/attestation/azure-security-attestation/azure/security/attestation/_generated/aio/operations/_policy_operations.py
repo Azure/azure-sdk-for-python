@@ -42,7 +42,7 @@ class PolicyOperations:
     async def get(
         self,
         attestation_type: Union[str, "_models.AttestationType"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyResponse":
         """Retrieves the current policy for an attestation type.
 
@@ -101,7 +101,7 @@ class PolicyOperations:
         self,
         attestation_type: Union[str, "_models.AttestationType"],
         new_attestation_policy: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyResponse":
         """Sets the policy for a given attestation type.
 
@@ -168,7 +168,7 @@ class PolicyOperations:
         self,
         attestation_type: Union[str, "_models.AttestationType"],
         policy_jws: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyResponse":
         """Resets the attestation policy for the specified tenant and reverts to the default policy.
 

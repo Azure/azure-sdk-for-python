@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -37,6 +35,7 @@ extends:
         Path: sdk/identity/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
+    TestProxy: true
     Artifacts:
      - name: azure-identity
        safeName: azureidentity

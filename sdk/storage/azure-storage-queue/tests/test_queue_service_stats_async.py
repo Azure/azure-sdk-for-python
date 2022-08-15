@@ -10,8 +10,8 @@ from azure.storage.queue.aio import QueueServiceClient
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from _shared.asynctestcase import AsyncStorageTestCase
-from _shared.testcase import GlobalResourceGroupPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
+from settings.testcase import QueuePreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -59,24 +59,22 @@ class QueueServiceStatsTestAsync(AsyncStorageTestCase):
         response.http_response.text = lambda encoding=None: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
+    @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
+    async def test_queue_service_stats_f(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Act
         stats = await qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
 
         # Assert
         self._assert_stats_default(stats)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
+    @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
+    async def test_queue_service_stats_when_unavailable(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
 
         # Act
         stats = await qsc.get_service_stats(

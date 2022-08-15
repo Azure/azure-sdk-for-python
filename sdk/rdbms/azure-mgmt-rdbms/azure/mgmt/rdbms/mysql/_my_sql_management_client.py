@@ -6,49 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import MySQLManagementClientConfiguration
+from .operations import AdvisorsOperations, CheckNameAvailabilityOperations, ConfigurationsOperations, DatabasesOperations, FirewallRulesOperations, LocationBasedPerformanceTierOperations, LocationBasedRecommendedActionSessionsOperationStatusOperations, LocationBasedRecommendedActionSessionsResultOperations, LogFilesOperations, MySQLManagementClientOperationsMixin, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QueryTextsOperations, RecommendedActionsOperations, RecoverableServersOperations, ReplicasOperations, ServerAdministratorsOperations, ServerBasedPerformanceTierOperations, ServerKeysOperations, ServerParametersOperations, ServerSecurityAlertPoliciesOperations, ServersOperations, TopQueryStatisticsOperations, VirtualNetworkRulesOperations, WaitStatisticsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
 
-from ._configuration import MySQLManagementClientConfiguration
-from .operations import ServersOperations
-from .operations import ReplicasOperations
-from .operations import FirewallRulesOperations
-from .operations import VirtualNetworkRulesOperations
-from .operations import DatabasesOperations
-from .operations import ConfigurationsOperations
-from .operations import ServerParametersOperations
-from .operations import LogFilesOperations
-from .operations import ServerAdministratorsOperations
-from .operations import RecoverableServersOperations
-from .operations import ServerBasedPerformanceTierOperations
-from .operations import LocationBasedPerformanceTierOperations
-from .operations import CheckNameAvailabilityOperations
-from .operations import Operations
-from .operations import ServerSecurityAlertPoliciesOperations
-from .operations import QueryTextsOperations
-from .operations import TopQueryStatisticsOperations
-from .operations import WaitStatisticsOperations
-from .operations import MySQLManagementClientOperationsMixin
-from .operations import AdvisorsOperations
-from .operations import RecommendedActionsOperations
-from .operations import LocationBasedRecommendedActionSessionsOperationStatusOperations
-from .operations import LocationBasedRecommendedActionSessionsResultOperations
-from .operations import PrivateEndpointConnectionsOperations
-from .operations import PrivateLinkResourcesOperations
-from .operations import ServerKeysOperations
-from . import models
-
-
-class MySQLManagementClient(MySQLManagementClientOperationsMixin):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.
+class MySQLManagementClient(MySQLManagementClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for
+    Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and
+    configurations with new business model.
 
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.rdbms.mysql.operations.ServersOperations
@@ -67,19 +44,24 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin):
     :ivar log_files: LogFilesOperations operations
     :vartype log_files: azure.mgmt.rdbms.mysql.operations.LogFilesOperations
     :ivar server_administrators: ServerAdministratorsOperations operations
-    :vartype server_administrators: azure.mgmt.rdbms.mysql.operations.ServerAdministratorsOperations
+    :vartype server_administrators:
+     azure.mgmt.rdbms.mysql.operations.ServerAdministratorsOperations
     :ivar recoverable_servers: RecoverableServersOperations operations
     :vartype recoverable_servers: azure.mgmt.rdbms.mysql.operations.RecoverableServersOperations
     :ivar server_based_performance_tier: ServerBasedPerformanceTierOperations operations
-    :vartype server_based_performance_tier: azure.mgmt.rdbms.mysql.operations.ServerBasedPerformanceTierOperations
+    :vartype server_based_performance_tier:
+     azure.mgmt.rdbms.mysql.operations.ServerBasedPerformanceTierOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTierOperations operations
-    :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
+    :vartype location_based_performance_tier:
+     azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
-    :vartype check_name_availability: azure.mgmt.rdbms.mysql.operations.CheckNameAvailabilityOperations
+    :vartype check_name_availability:
+     azure.mgmt.rdbms.mysql.operations.CheckNameAvailabilityOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql.operations.Operations
     :ivar server_security_alert_policies: ServerSecurityAlertPoliciesOperations operations
-    :vartype server_security_alert_policies: azure.mgmt.rdbms.mysql.operations.ServerSecurityAlertPoliciesOperations
+    :vartype server_security_alert_policies:
+     azure.mgmt.rdbms.mysql.operations.ServerSecurityAlertPoliciesOperations
     :ivar query_texts: QueryTextsOperations operations
     :vartype query_texts: azure.mgmt.rdbms.mysql.operations.QueryTextsOperations
     :ivar top_query_statistics: TopQueryStatisticsOperations operations
@@ -90,92 +72,148 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin):
     :vartype advisors: azure.mgmt.rdbms.mysql.operations.AdvisorsOperations
     :ivar recommended_actions: RecommendedActionsOperations operations
     :vartype recommended_actions: azure.mgmt.rdbms.mysql.operations.RecommendedActionsOperations
-    :ivar location_based_recommended_action_sessions_operation_status: LocationBasedRecommendedActionSessionsOperationStatusOperations operations
-    :vartype location_based_recommended_action_sessions_operation_status: azure.mgmt.rdbms.mysql.operations.LocationBasedRecommendedActionSessionsOperationStatusOperations
-    :ivar location_based_recommended_action_sessions_result: LocationBasedRecommendedActionSessionsResultOperations operations
-    :vartype location_based_recommended_action_sessions_result: azure.mgmt.rdbms.mysql.operations.LocationBasedRecommendedActionSessionsResultOperations
+    :ivar location_based_recommended_action_sessions_operation_status:
+     LocationBasedRecommendedActionSessionsOperationStatusOperations operations
+    :vartype location_based_recommended_action_sessions_operation_status:
+     azure.mgmt.rdbms.mysql.operations.LocationBasedRecommendedActionSessionsOperationStatusOperations
+    :ivar location_based_recommended_action_sessions_result:
+     LocationBasedRecommendedActionSessionsResultOperations operations
+    :vartype location_based_recommended_action_sessions_result:
+     azure.mgmt.rdbms.mysql.operations.LocationBasedRecommendedActionSessionsResultOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.rdbms.mysql.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections:
+     azure.mgmt.rdbms.mysql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.rdbms.mysql.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources:
+     azure.mgmt.rdbms.mysql.operations.PrivateLinkResourcesOperations
     :ivar server_keys: ServerKeysOperations operations
     :vartype server_keys: azure.mgmt.rdbms.mysql.operations.ServerKeysOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = MySQLManagementClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = MySQLManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
+        self._serialize.client_side_validation = False
         self.servers = ServersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.replicas = ReplicasOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.firewall_rules = FirewallRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.virtual_network_rules = VirtualNetworkRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.databases = DatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.configurations = ConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.server_parameters = ServerParametersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.log_files = LogFilesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.server_administrators = ServerAdministratorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.recoverable_servers = RecoverableServersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.server_based_performance_tier = ServerBasedPerformanceTierOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.check_name_availability = CheckNameAvailabilityOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.query_texts = QueryTextsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.top_query_statistics = TopQueryStatisticsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.wait_statistics = WaitStatisticsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.advisors = AdvisorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.recommended_actions = RecommendedActionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.location_based_recommended_action_sessions_operation_status = LocationBasedRecommendedActionSessionsOperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.location_based_recommended_action_sessions_result = LocationBasedRecommendedActionSessionsResultOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.server_keys = ServerKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

@@ -47,7 +47,7 @@ class TasksOperations:
         service_name: str,
         project_name: str,
         task_type: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TaskList"]:
         """Get tasks in a service.
 
@@ -73,7 +73,7 @@ class TasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -136,7 +136,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         parameters: "_models.ProjectTask",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Create or update task.
 
@@ -164,7 +164,7 @@ class TasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -219,7 +219,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Get task information.
 
@@ -246,7 +246,7 @@ class TasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -294,7 +294,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         delete_running_tasks: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete task.
 
@@ -321,7 +321,7 @@ class TasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -366,7 +366,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         parameters: "_models.ProjectTask",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Create or update task.
 
@@ -394,7 +394,7 @@ class TasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -444,7 +444,7 @@ class TasksOperations:
         service_name: str,
         project_name: str,
         task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Cancel a task.
 
@@ -469,7 +469,7 @@ class TasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -515,7 +515,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         parameters: "_models.CommandProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommandProperties":
         """Execute a command on a task.
 
@@ -542,7 +542,7 @@ class TasksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-07-15-preview"
+        api_version = "2021-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

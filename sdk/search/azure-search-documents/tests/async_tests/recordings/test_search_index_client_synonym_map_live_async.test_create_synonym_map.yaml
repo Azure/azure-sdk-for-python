@@ -10,65 +10,59 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search23141d6a.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search23141d6a.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search23141d6a.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D91BB516E9AB4E\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search23141d6a.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D96CA619B7ADAA\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '272'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:31:23 GMT
-      elapsed-time: '114'
-      etag: W/"0x8D91BB516E9AB4E"
+      date: Tue, 31 Aug 2021 17:38:10 GMT
+      elapsed-time: '406'
+      etag: W/"0x8D96CA619B7ADAA"
       expires: '-1'
-      location: https://search23141d6a.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      location: https://search23141d6a.search.windows.net/synonymmaps('test-syn-map')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 324af78d-b991-11eb-84f3-a0481ca055a9
+      request-id: 364dbea3-0a82-11ec-b1f5-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://search23141d6a.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://search23141d6a.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search23141d6a.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search23141d6a.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns737u3u784+zcby5/iqWM6qq2a8zNu7v9sibzO8/ePN
-        9bJaXi8W2ar5aPTRZVau848efc8Cp2YXBPn3/Wjn3cHTh7tPntzf/fT04fGT/dPf9yNqv8wW1Pyj
-        Nm/abYK0TWDo0/OqXmRAqKnKmv6mb9BHQ5989fp4lH61LNp8lr5uM3qx82danafHi7wuptnvu/xu
-        1syL5UVbLUcpfh+nnx2l3z0mkPlyWl+v2qJa/l759UePluuy/CXf/yX/D9lRC3gUAQAA
+      string: '{"@odata.context":"https://search23141d6a.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D96CA619B7ADAA\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '336'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:31:23 GMT
-      elapsed-time: '19'
+      date: Tue, 31 Aug 2021 17:38:10 GMT
+      elapsed-time: '13'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 3279ff4c-b991-11eb-9430-a0481ca055a9
+      request-id: 36af4d03-0a82-11ec-afe5-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search23141d6a.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://search23141d6a.search.windows.net/synonymmaps?api-version=2021-04-30-Preview
 version: 1

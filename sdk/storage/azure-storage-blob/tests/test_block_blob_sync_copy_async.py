@@ -21,8 +21,8 @@ from azure.storage.blob.aio import (
 
 from azure.storage.blob._shared.policies import StorageContentValidation
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -42,11 +42,11 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
-    async def _setup(self, storage_account, key):
+    async def _setup(self, storage_account_name, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            self.account_url(storage_account_name, "blob"),
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
@@ -79,12 +79,59 @@ class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
+        self.source_blob_url_without_sas = blob.url
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_from_url_and_commit_async(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_from_url_with_oauth(self, storage_account_name, storage_account_key):
         # Arrange
-        await self._setup(storage_account, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key)
+        split = 4 * 1024
+        destination_blob_name = self.get_resource_name('destblob')
+        destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
+        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        token = "Bearer {}".format(access_token.token)
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            await destination_blob_client.stage_block_from_url(
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split)
+        # Assert it passes after passing an oauth credential
+        await destination_blob_client.stage_block_from_url(
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split,
+                source_authorization=token)
+        await destination_blob_client.stage_block_from_url(
+            block_id=2,
+            source_url=self.source_blob_url_without_sas,
+            source_offset=split,
+            source_length=split,
+            source_authorization=token)
+
+        committed, uncommitted = await destination_blob_client.get_block_list('all')
+        self.assertEqual(len(uncommitted), 2)
+        self.assertEqual(len(committed), 0)
+
+        # Act part 2: commit the blocks
+        await destination_blob_client.commit_block_list(['1', '2'])
+
+        # Assert destination blob has right content
+        destination_blob = await destination_blob_client.download_blob()
+        destination_blob_data = await destination_blob.readall()
+        self.assertEqual(len(destination_blob_data), 8 * 1024)
+        self.assertEqual(destination_blob_data, self.source_blob_data)
+        self.assertEqual(self.source_blob_data, destination_blob_data)
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_block_from_url_and_commit_async(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
@@ -116,11 +163,11 @@ class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(content, self.source_blob_data)
         self.assertEqual(len(content), 8 * 1024)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_put_block_from_url_and_vldte_content_md5(self, resource_group, location, storage_account, storage_account_key):
+    async def test_put_block_from_url_and_vldte_content_md5(self, storage_account_name, storage_account_key):
         # Arrange
-        await self._setup(storage_account, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
         src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
@@ -154,11 +201,11 @@ class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(len(uncommitted), 1)
         self.assertEqual(len(committed), 0)
 
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_copy_blob_sync_async(self, resource_group, location, storage_account, storage_account_key):
+    async def test_copy_blob_sync_async(self, storage_account_name, storage_account_key):
         # Arrange
-        await self._setup(storage_account, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
@@ -175,11 +222,11 @@ class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(self.source_blob_data, content)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_sync_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+    async def test_sync_copy_blob_returns_vid(self, storage_account_name, storage_account_key):
         # Arrange
-        await self._setup(storage_account, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 

@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._sql_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AdministratorListResult(msrest.serialization.Model):
@@ -39,6 +41,8 @@ class AdministratorListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AdministratorListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -73,6 +77,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -108,6 +114,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -127,18 +135,18 @@ class Advisor(ProxyResource):
     :ivar location: Resource location.
     :vartype location: str
     :ivar advisor_status: Gets the status of availability of this advisor to customers. Possible
-     values are 'GA', 'PublicPreview', 'LimitedPublicPreview' and 'PrivatePreview'. Possible values
-     include: "GA", "PublicPreview", "LimitedPublicPreview", "PrivatePreview".
+     values are 'GA', 'PublicPreview', 'LimitedPublicPreview' and 'PrivatePreview'. Known values
+     are: "GA", "PublicPreview", "LimitedPublicPreview", "PrivatePreview".
     :vartype advisor_status: str or ~azure.mgmt.sql.models.AdvisorStatus
-    :param auto_execute_status: Gets the auto-execute status (whether to let the system execute the
-     recommendations) of this advisor. Possible values are 'Enabled' and 'Disabled'. Possible values
-     include: "Enabled", "Disabled", "Default".
-    :type auto_execute_status: str or ~azure.mgmt.sql.models.AutoExecuteStatus
+    :ivar auto_execute_status: Gets the auto-execute status (whether to let the system execute the
+     recommendations) of this advisor. Possible values are 'Enabled' and 'Disabled'. Known values
+     are: "Enabled", "Disabled", "Default".
+    :vartype auto_execute_status: str or ~azure.mgmt.sql.models.AutoExecuteStatus
     :ivar auto_execute_status_inherited_from: Gets the resource from which current value of
      auto-execute status is inherited. Auto-execute status can be set on (and inherited from)
      different levels in the resource hierarchy. Possible values are 'Subscription', 'Server',
-     'ElasticPool', 'Database' and 'Default' (when status is not explicitly set on any level).
-     Possible values include: "Default", "Subscription", "Server", "ElasticPool", "Database".
+     'ElasticPool', 'Database' and 'Default' (when status is not explicitly set on any level). Known
+     values are: "Default", "Subscription", "Server", "ElasticPool", "Database".
     :vartype auto_execute_status_inherited_from: str or
      ~azure.mgmt.sql.models.AutoExecuteStatusInheritedFrom
     :ivar recommendations_status: Gets that status of recommendations for this advisor and reason
@@ -183,9 +191,15 @@ class Advisor(ProxyResource):
     def __init__(
         self,
         *,
-        auto_execute_status: Optional[Union[str, "AutoExecuteStatus"]] = None,
+        auto_execute_status: Optional[Union[str, "_models.AutoExecuteStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword auto_execute_status: Gets the auto-execute status (whether to let the system execute
+         the recommendations) of this advisor. Possible values are 'Enabled' and 'Disabled'. Known
+         values are: "Enabled", "Disabled", "Default".
+        :paramtype auto_execute_status: str or ~azure.mgmt.sql.models.AutoExecuteStatus
+        """
         super(Advisor, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -202,16 +216,16 @@ class AutomaticTuningOptions(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param desired_state: Automatic tuning option desired state. Possible values include: "Off",
-     "On", "Default".
-    :type desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeDesired
-    :ivar actual_state: Automatic tuning option actual state. Possible values include: "Off", "On".
+    :ivar desired_state: Automatic tuning option desired state. Known values are: "Off", "On",
+     "Default".
+    :vartype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeDesired
+    :ivar actual_state: Automatic tuning option actual state. Known values are: "Off", "On".
     :vartype actual_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeActual
     :ivar reason_code: Reason code if desired and actual state are different.
     :vartype reason_code: int
-    :ivar reason_desc: Reason description if desired and actual state are different. Possible
-     values include: "Default", "Disabled", "AutoConfigured", "InheritedFromServer",
-     "QueryStoreOff", "QueryStoreReadOnly", "NotSupported".
+    :ivar reason_desc: Reason description if desired and actual state are different. Known values
+     are: "Default", "Disabled", "AutoConfigured", "InheritedFromServer", "QueryStoreOff",
+     "QueryStoreReadOnly", "NotSupported".
     :vartype reason_desc: str or ~azure.mgmt.sql.models.AutomaticTuningDisabledReason
     """
 
@@ -231,9 +245,14 @@ class AutomaticTuningOptions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        desired_state: Optional[Union[str, "AutomaticTuningOptionModeDesired"]] = None,
+        desired_state: Optional[Union[str, "_models.AutomaticTuningOptionModeDesired"]] = None,
         **kwargs
     ):
+        """
+        :keyword desired_state: Automatic tuning option desired state. Known values are: "Off", "On",
+         "Default".
+        :paramtype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeDesired
+        """
         super(AutomaticTuningOptions, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
@@ -246,15 +265,15 @@ class AutomaticTuningServerOptions(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param desired_state: Automatic tuning option desired state. Possible values include: "Off",
-     "On", "Default".
-    :type desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeDesired
-    :ivar actual_state: Automatic tuning option actual state. Possible values include: "Off", "On".
+    :ivar desired_state: Automatic tuning option desired state. Known values are: "Off", "On",
+     "Default".
+    :vartype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeDesired
+    :ivar actual_state: Automatic tuning option actual state. Known values are: "Off", "On".
     :vartype actual_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeActual
     :ivar reason_code: Reason code if desired and actual state are different.
     :vartype reason_code: int
-    :ivar reason_desc: Reason description if desired and actual state are different. Possible
-     values include: "Default", "Disabled", "AutoConfigured".
+    :ivar reason_desc: Reason description if desired and actual state are different. Known values
+     are: "Default", "Disabled", "AutoConfigured".
     :vartype reason_desc: str or ~azure.mgmt.sql.models.AutomaticTuningServerReason
     """
 
@@ -274,9 +293,14 @@ class AutomaticTuningServerOptions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        desired_state: Optional[Union[str, "AutomaticTuningOptionModeDesired"]] = None,
+        desired_state: Optional[Union[str, "_models.AutomaticTuningOptionModeDesired"]] = None,
         **kwargs
     ):
+        """
+        :keyword desired_state: Automatic tuning option desired state. Known values are: "Off", "On",
+         "Default".
+        :paramtype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningOptionModeDesired
+        """
         super(AutomaticTuningServerOptions, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
@@ -298,7 +322,7 @@ class AutoPauseDelayTimeRange(msrest.serialization.Model):
     :vartype step_size: int
     :ivar default: Default value is no value is provided.
     :vartype default: int
-    :ivar unit: Unit of time that delay is expressed in. Possible values include: "Minutes".
+    :ivar unit: Unit of time that delay is expressed in. Known values are: "Minutes".
     :vartype unit: str or ~azure.mgmt.sql.models.PauseDelayTimeUnit
     :ivar do_not_pause_value: Value that is used to not pause (infinite delay before pause).
     :vartype do_not_pause_value: int
@@ -326,6 +350,8 @@ class AutoPauseDelayTimeRange(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AutoPauseDelayTimeRange, self).__init__(**kwargs)
         self.min_value = None
         self.max_value = None
@@ -360,6 +386,8 @@ class AzureADOnlyAuthListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureADOnlyAuthListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -376,9 +404,13 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param retention_days: The backup retention period in days. This is how many days Point-in-Time
+    :ivar retention_days: The backup retention period in days. This is how many days Point-in-Time
      Restore will be supported.
-    :type retention_days: int
+    :vartype retention_days: int
+    :ivar diff_backup_interval_in_hours: The differential backup interval in hours. This is how
+     many interval hours between each differential backup will be supported. This is only applicable
+     to live databases but not dropped databases. Known values are: 12, 24.
+    :vartype diff_backup_interval_in_hours: int or ~azure.mgmt.sql.models.DiffBackupIntervalInHours
     """
 
     _validation = {
@@ -392,16 +424,29 @@ class BackupShortTermRetentionPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'diff_backup_interval_in_hours': {'key': 'properties.diffBackupIntervalInHours', 'type': 'int'},
     }
 
     def __init__(
         self,
         *,
         retention_days: Optional[int] = None,
+        diff_backup_interval_in_hours: Optional[Union[int, "_models.DiffBackupIntervalInHours"]] = None,
         **kwargs
     ):
+        """
+        :keyword retention_days: The backup retention period in days. This is how many days
+         Point-in-Time Restore will be supported.
+        :paramtype retention_days: int
+        :keyword diff_backup_interval_in_hours: The differential backup interval in hours. This is how
+         many interval hours between each differential backup will be supported. This is only applicable
+         to live databases but not dropped databases. Known values are: 12, 24.
+        :paramtype diff_backup_interval_in_hours: int or
+         ~azure.mgmt.sql.models.DiffBackupIntervalInHours
+        """
         super(BackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = retention_days
+        self.diff_backup_interval_in_hours = diff_backup_interval_in_hours
 
 
 class BackupShortTermRetentionPolicyListResult(msrest.serialization.Model):
@@ -429,6 +474,8 @@ class BackupShortTermRetentionPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BackupShortTermRetentionPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -441,9 +488,9 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :ivar type: Required.  Default value: "Microsoft.Sql/servers".
+    :ivar name: Required.
+    :vartype name: str
+    :ivar type:  Has constant value: "Microsoft.Sql/servers".
     :vartype type: str
     """
 
@@ -465,6 +512,10 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        """
         super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -479,7 +530,7 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
     :ivar available: True if the name is available, otherwise false.
     :vartype available: bool
     :ivar reason: The reason code explaining why the name is unavailable. Will be undefined if the
-     name is available. Possible values include: "Invalid", "AlreadyExists".
+     name is available. Known values are: "Invalid", "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.sql.models.CheckNameAvailabilityReason
     :ivar message: A message explaining why the name is unavailable. Will be undefined if the name
      is available.
@@ -504,6 +555,8 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
         self.name = None
         self.available = None
@@ -516,8 +569,8 @@ class CompleteDatabaseRestoreDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param last_backup_name: Required. The last backup name to apply.
-    :type last_backup_name: str
+    :ivar last_backup_name: Required. The last backup name to apply.
+    :vartype last_backup_name: str
     """
 
     _validation = {
@@ -534,6 +587,10 @@ class CompleteDatabaseRestoreDefinition(msrest.serialization.Model):
         last_backup_name: str,
         **kwargs
     ):
+        """
+        :keyword last_backup_name: Required. The last backup name to apply.
+        :paramtype last_backup_name: str
+        """
         super(CompleteDatabaseRestoreDefinition, self).__init__(**kwargs)
         self.last_backup_name = last_backup_name
 
@@ -541,21 +598,21 @@ class CompleteDatabaseRestoreDefinition(msrest.serialization.Model):
 class CopyLongTermRetentionBackupParameters(msrest.serialization.Model):
     """Contains the information necessary to perform long term retention backup copy operation.
 
-    :param target_subscription_id: The subscription that owns the target server.
-    :type target_subscription_id: str
-    :param target_resource_group: The resource group that owns the target server.
-    :type target_resource_group: str
-    :param target_server_resource_id: The resource Id of the target server that owns the database.
-    :type target_server_resource_id: str
-    :param target_server_fully_qualified_domain_name: The fully qualified domain name of the target
+    :ivar target_subscription_id: The subscription that owns the target server.
+    :vartype target_subscription_id: str
+    :ivar target_resource_group: The resource group that owns the target server.
+    :vartype target_resource_group: str
+    :ivar target_server_resource_id: The resource Id of the target server that owns the database.
+    :vartype target_server_resource_id: str
+    :ivar target_server_fully_qualified_domain_name: The fully qualified domain name of the target
      server.
-    :type target_server_fully_qualified_domain_name: str
-    :param target_database_name: The name of the database owns the copied backup.
-    :type target_database_name: str
-    :param target_backup_storage_redundancy: The storage redundancy type of the copied backup.
-     Possible values include: "Geo", "Local", "Zone".
-    :type target_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.TargetBackupStorageRedundancy
+    :vartype target_server_fully_qualified_domain_name: str
+    :ivar target_database_name: The name of the database owns the copied backup.
+    :vartype target_database_name: str
+    :ivar target_backup_storage_redundancy: The storage redundancy type of the copied backup. Known
+     values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype target_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _attribute_map = {
@@ -575,9 +632,27 @@ class CopyLongTermRetentionBackupParameters(msrest.serialization.Model):
         target_server_resource_id: Optional[str] = None,
         target_server_fully_qualified_domain_name: Optional[str] = None,
         target_database_name: Optional[str] = None,
-        target_backup_storage_redundancy: Optional[Union[str, "TargetBackupStorageRedundancy"]] = None,
+        target_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         **kwargs
     ):
+        """
+        :keyword target_subscription_id: The subscription that owns the target server.
+        :paramtype target_subscription_id: str
+        :keyword target_resource_group: The resource group that owns the target server.
+        :paramtype target_resource_group: str
+        :keyword target_server_resource_id: The resource Id of the target server that owns the
+         database.
+        :paramtype target_server_resource_id: str
+        :keyword target_server_fully_qualified_domain_name: The fully qualified domain name of the
+         target server.
+        :paramtype target_server_fully_qualified_domain_name: str
+        :keyword target_database_name: The name of the database owns the copied backup.
+        :paramtype target_database_name: str
+        :keyword target_backup_storage_redundancy: The storage redundancy type of the copied backup.
+         Known values are: "Geo", "Local", "Zone", "GeoZone".
+        :paramtype target_backup_storage_redundancy: str or
+         ~azure.mgmt.sql.models.BackupStorageRedundancy
+        """
         super(CopyLongTermRetentionBackupParameters, self).__init__(**kwargs)
         self.target_subscription_id = target_subscription_id
         self.target_resource_group = target_resource_group
@@ -592,8 +667,8 @@ class CreateDatabaseRestorePointDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param restore_point_label: Required. The restore point label to apply.
-    :type restore_point_label: str
+    :ivar restore_point_label: Required. The restore point label to apply.
+    :vartype restore_point_label: str
     """
 
     _validation = {
@@ -610,6 +685,10 @@ class CreateDatabaseRestorePointDefinition(msrest.serialization.Model):
         restore_point_label: str,
         **kwargs
     ):
+        """
+        :keyword restore_point_label: Required. The restore point label to apply.
+        :paramtype restore_point_label: str
+        """
         super(CreateDatabaseRestorePointDefinition, self).__init__(**kwargs)
         self.restore_point_label = restore_point_label
 
@@ -627,10 +706,10 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -655,6 +734,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -673,11 +758,11 @@ class Database(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The database SKU.
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The database SKU.
     
      The list of SKUs may vary by region and support offer. To determine the SKUs (including the
      SKU name, tier/edition, family, and capacity) that are available to your subscription in an
@@ -693,12 +778,14 @@ class Database(TrackedResource):
     
         Get-AzSqlServerServiceObjective -Location <location>
         `.
-    :type sku: ~azure.mgmt.sql.models.Sku
+    :vartype sku: ~azure.mgmt.sql.models.Sku
     :ivar kind: Kind of database. This is metadata used for the Azure portal experience.
     :vartype kind: str
     :ivar managed_by: Resource that manages the database.
     :vartype managed_by: str
-    :param create_mode: Specifies the mode of database creation.
+    :ivar identity: The Azure Active Directory identity of the database.
+    :vartype identity: ~azure.mgmt.sql.models.DatabaseIdentity
+    :ivar create_mode: Specifies the mode of database creation.
     
      Default: regular database creation.
     
@@ -726,27 +813,27 @@ class Database(TrackedResource):
      ID.
     
      Copy, Secondary, and RestoreLongTermRetentionBackup are not supported for DataWarehouse
-     edition. Possible values include: "Default", "Copy", "Secondary", "PointInTimeRestore",
-     "Restore", "Recovery", "RestoreExternalBackup", "RestoreExternalBackupSecondary",
+     edition. Known values are: "Default", "Copy", "Secondary", "PointInTimeRestore", "Restore",
+     "Recovery", "RestoreExternalBackup", "RestoreExternalBackupSecondary",
      "RestoreLongTermRetentionBackup", "OnlineSecondary".
-    :type create_mode: str or ~azure.mgmt.sql.models.CreateMode
-    :param collation: The collation of the database.
-    :type collation: str
-    :param max_size_bytes: The max size of the database expressed in bytes.
-    :type max_size_bytes: long
-    :param sample_name: The name of the sample schema to apply when creating this database.
-     Possible values include: "AdventureWorksLT", "WideWorldImportersStd", "WideWorldImportersFull".
-    :type sample_name: str or ~azure.mgmt.sql.models.SampleName
-    :param elastic_pool_id: The resource identifier of the elastic pool containing this database.
-    :type elastic_pool_id: str
-    :param source_database_id: The resource identifier of the source database associated with
-     create operation of this database.
-    :type source_database_id: str
-    :ivar status: The status of the database. Possible values include: "Online", "Restoring",
+    :vartype create_mode: str or ~azure.mgmt.sql.models.CreateMode
+    :ivar collation: The collation of the database.
+    :vartype collation: str
+    :ivar max_size_bytes: The max size of the database expressed in bytes.
+    :vartype max_size_bytes: long
+    :ivar sample_name: The name of the sample schema to apply when creating this database. Known
+     values are: "AdventureWorksLT", "WideWorldImportersStd", "WideWorldImportersFull".
+    :vartype sample_name: str or ~azure.mgmt.sql.models.SampleName
+    :ivar elastic_pool_id: The resource identifier of the elastic pool containing this database.
+    :vartype elastic_pool_id: str
+    :ivar source_database_id: The resource identifier of the source database associated with create
+     operation of this database.
+    :vartype source_database_id: str
+    :ivar status: The status of the database. Known values are: "Online", "Restoring",
      "RecoveryPending", "Recovering", "Suspect", "Offline", "Standby", "Shutdown", "EmergencyMode",
      "AutoClosed", "Copying", "Creating", "Inaccessible", "OfflineSecondary", "Pausing", "Paused",
      "Resuming", "Scaling", "OfflineChangingDwPerformanceTiers", "OnlineChangingDwPerformanceTiers",
-     "Disabled".
+     "Disabled", "Stopping", "Stopped", "Starting".
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -761,78 +848,106 @@ class Database(TrackedResource):
     :vartype default_secondary_location: str
     :ivar failover_group_id: Failover Group resource identifier that this database belongs to.
     :vartype failover_group_id: str
-    :param restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+    :ivar restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
      database that will be restored to create the new database.
-    :type restore_point_in_time: ~datetime.datetime
-    :param source_database_deletion_date: Specifies the time that the database was deleted.
-    :type source_database_deletion_date: ~datetime.datetime
-    :param recovery_services_recovery_point_id: The resource identifier of the recovery point
+    :vartype restore_point_in_time: ~datetime.datetime
+    :ivar source_database_deletion_date: Specifies the time that the database was deleted.
+    :vartype source_database_deletion_date: ~datetime.datetime
+    :ivar recovery_services_recovery_point_id: The resource identifier of the recovery point
      associated with create operation of this database.
-    :type recovery_services_recovery_point_id: str
-    :param long_term_retention_backup_resource_id: The resource identifier of the long term
+    :vartype recovery_services_recovery_point_id: str
+    :ivar long_term_retention_backup_resource_id: The resource identifier of the long term
      retention backup associated with create operation of this database.
-    :type long_term_retention_backup_resource_id: str
-    :param recoverable_database_id: The resource identifier of the recoverable database associated
+    :vartype long_term_retention_backup_resource_id: str
+    :ivar recoverable_database_id: The resource identifier of the recoverable database associated
      with create operation of this database.
-    :type recoverable_database_id: str
-    :param restorable_dropped_database_id: The resource identifier of the restorable dropped
+    :vartype recoverable_database_id: str
+    :ivar restorable_dropped_database_id: The resource identifier of the restorable dropped
      database associated with create operation of this database.
-    :type restorable_dropped_database_id: str
-    :param catalog_collation: Collation of the metadata catalog. Possible values include:
+    :vartype restorable_dropped_database_id: str
+    :ivar catalog_collation: Collation of the metadata catalog. Known values are:
      "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
-    :type catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
-    :param zone_redundant: Whether or not this database is zone redundant, which means the replicas
+    :vartype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+    :ivar zone_redundant: Whether or not this database is zone redundant, which means the replicas
      of this database will be spread across multiple availability zones.
-    :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. ``LicenseIncluded`` if you
+    :vartype zone_redundant: bool
+    :ivar license_type: The license type to apply for this database. ``LicenseIncluded`` if you
      need a license, or ``BasePrice`` if you have a license and are eligible for the Azure Hybrid
-     Benefit. Possible values include: "LicenseIncluded", "BasePrice".
-    :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
+     Benefit. Known values are: "LicenseIncluded", "BasePrice".
+    :vartype license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
     :ivar earliest_restore_date: This records the earliest start date and time that restore is
      available for this database (ISO8601 format).
     :vartype earliest_restore_date: ~datetime.datetime
-    :param read_scale: The state of read-only routing. If enabled, connections that have
-     application intent set to readonly in their connection string may be routed to a readonly
-     secondary replica in the same region. Possible values include: "Enabled", "Disabled".
-    :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
-    :param high_availability_replica_count: The number of secondary replicas associated with the
-     database that are used to provide high availability.
-    :type high_availability_replica_count: int
-    :param secondary_type: The secondary type of the database if it is a secondary.  Valid values
-     are Geo and Named. Possible values include: "Geo", "Named".
-    :type secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
+    :ivar read_scale: The state of read-only routing. If enabled, connections that have application
+     intent set to readonly in their connection string may be routed to a readonly secondary replica
+     in the same region. Not applicable to a Hyperscale database within an elastic pool. Known
+     values are: "Enabled", "Disabled".
+    :vartype read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
+    :ivar high_availability_replica_count: The number of secondary replicas associated with the
+     database that are used to provide high availability. Not applicable to a Hyperscale database
+     within an elastic pool.
+    :vartype high_availability_replica_count: int
+    :ivar secondary_type: The secondary type of the database if it is a secondary.  Valid values
+     are Geo and Named. Known values are: "Geo", "Named".
+    :vartype secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
-    :param auto_pause_delay: Time in minutes after which database is automatically paused. A value
+    :ivar auto_pause_delay: Time in minutes after which database is automatically paused. A value
      of -1 means that automatic pause is disabled.
-    :type auto_pause_delay: int
+    :vartype auto_pause_delay: int
     :ivar current_backup_storage_redundancy: The storage account type used to store backups for
-     this database. Possible values include: "Geo", "Local", "Zone".
+     this database. Known values are: "Geo", "Local", "Zone", "GeoZone".
     :vartype current_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.CurrentBackupStorageRedundancy
-    :param requested_backup_storage_redundancy: The storage account type to be used to store
-     backups for this database. Possible values include: "Geo", "Local", "Zone".
-    :type requested_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
-    :param min_capacity: Minimal capacity that database will always have allocated, if not paused.
-    :type min_capacity: float
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar requested_backup_storage_redundancy: The storage account type to be used to store backups
+     for this database. Known values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar min_capacity: Minimal capacity that database will always have allocated, if not paused.
+    :vartype min_capacity: float
     :ivar paused_date: The date when database was paused by user configuration or action(ISO8601
      format). Null if the database is ready.
     :vartype paused_date: ~datetime.datetime
     :ivar resumed_date: The date when database was resumed by user action or database login
      (ISO8601 format). Null if the database is paused.
     :vartype resumed_date: ~datetime.datetime
-    :param maintenance_configuration_id: Maintenance configuration id assigned to the database.
-     This configuration defines the period when the maintenance updates will occur.
-    :type maintenance_configuration_id: str
-    :param is_ledger_on: Whether or not this database is a ledger database, which means all tables
+    :ivar maintenance_configuration_id: Maintenance configuration id assigned to the database. This
+     configuration defines the period when the maintenance updates will occur.
+    :vartype maintenance_configuration_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
      in the database are ledger tables. Note: the value of this property cannot be changed after the
      database has been created.
-    :type is_ledger_on: bool
+    :vartype is_ledger_on: bool
     :ivar is_infra_encryption_enabled: Infra encryption is enabled for this database.
     :vartype is_infra_encryption_enabled: bool
+    :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
+    :vartype federated_client_id: str
+    :ivar source_resource_id: The resource identifier of the source associated with the create
+     operation of this database.
+    
+     When sourceResourceId is specified, sourceDatabaseId, recoverableDatabaseId,
+     restorableDroppedDatabaseId and sourceDatabaseDeletionDate must not be specified and CreateMode
+     must be PointInTimeRestore, Restore or Recover.
+    
+     When createMode is PointInTimeRestore, sourceResourceId must be the resource ID of an existing
+     database or existing sql pool, and restorePointInTime must be specified.
+    
+     When createMode is Restore, sourceResourceId must be the resource ID of restorable dropped
+     database or restorable dropped sql pool.
+    
+     When createMode is Recover, sourceResourceId must be the resource ID of recoverable database
+     or recoverable sql pool.
+    
+     This property allows to restore across subscriptions which is only supported for DataWarehouse
+     edition.
+    
+     When source subscription belongs to a different tenant than target subscription,
+     “x-ms-authorization-auxiliary” header must contain authentication token for the source tenant.
+     For more details about “x-ms-authorization-auxiliary” header see
+     https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant.
+    :vartype source_resource_id: str
     """
 
     _validation = {
@@ -867,6 +982,7 @@ class Database(TrackedResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'DatabaseIdentity'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'long'},
@@ -904,6 +1020,8 @@ class Database(TrackedResource):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'is_ledger_on': {'key': 'properties.isLedgerOn', 'type': 'bool'},
         'is_infra_encryption_enabled': {'key': 'properties.isInfraEncryptionEnabled', 'type': 'bool'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
+        'source_resource_id': {'key': 'properties.sourceResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -911,11 +1029,12 @@ class Database(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.DatabaseIdentity"] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         collation: Optional[str] = None,
         max_size_bytes: Optional[int] = None,
-        sample_name: Optional[Union[str, "SampleName"]] = None,
+        sample_name: Optional[Union[str, "_models.SampleName"]] = None,
         elastic_pool_id: Optional[str] = None,
         source_database_id: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
@@ -924,23 +1043,177 @@ class Database(TrackedResource):
         long_term_retention_backup_resource_id: Optional[str] = None,
         recoverable_database_id: Optional[str] = None,
         restorable_dropped_database_id: Optional[str] = None,
-        catalog_collation: Optional[Union[str, "CatalogCollationType"]] = None,
+        catalog_collation: Optional[Union[str, "_models.CatalogCollationType"]] = None,
         zone_redundant: Optional[bool] = None,
-        license_type: Optional[Union[str, "DatabaseLicenseType"]] = None,
-        read_scale: Optional[Union[str, "DatabaseReadScale"]] = None,
+        license_type: Optional[Union[str, "_models.DatabaseLicenseType"]] = None,
+        read_scale: Optional[Union[str, "_models.DatabaseReadScale"]] = None,
         high_availability_replica_count: Optional[int] = None,
-        secondary_type: Optional[Union[str, "SecondaryType"]] = None,
+        secondary_type: Optional[Union[str, "_models.SecondaryType"]] = None,
         auto_pause_delay: Optional[int] = None,
-        requested_backup_storage_redundancy: Optional[Union[str, "RequestedBackupStorageRedundancy"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         min_capacity: Optional[float] = None,
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
+        federated_client_id: Optional[str] = None,
+        source_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The database SKU.
+        
+         The list of SKUs may vary by region and support offer. To determine the SKUs (including the
+         SKU name, tier/edition, family, and capacity) that are available to your subscription in an
+         Azure region, use the ``Capabilities_ListByLocation`` REST API or one of the following
+         commands:
+        
+         .. code-block:: azurecli
+        
+            az sql db list-editions -l <location> -o table
+            `
+        
+         .. code-block:: powershell
+        
+            Get-AzSqlServerServiceObjective -Location <location>
+            `.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword identity: The Azure Active Directory identity of the database.
+        :paramtype identity: ~azure.mgmt.sql.models.DatabaseIdentity
+        :keyword create_mode: Specifies the mode of database creation.
+        
+         Default: regular database creation.
+        
+         Copy: creates a database as a copy of an existing database. sourceDatabaseId must be specified
+         as the resource ID of the source database.
+        
+         Secondary: creates a database as a secondary replica of an existing database. sourceDatabaseId
+         must be specified as the resource ID of the existing primary database.
+        
+         PointInTimeRestore: Creates a database by restoring a point in time backup of an existing
+         database. sourceDatabaseId must be specified as the resource ID of the existing database, and
+         restorePointInTime must be specified.
+        
+         Recovery: Creates a database by restoring a geo-replicated backup. sourceDatabaseId must be
+         specified as the recoverable database resource ID to restore.
+        
+         Restore: Creates a database by restoring a backup of a deleted database. sourceDatabaseId must
+         be specified. If sourceDatabaseId is the database's original resource ID, then
+         sourceDatabaseDeletionDate must be specified. Otherwise sourceDatabaseId must be the restorable
+         dropped database resource ID and sourceDatabaseDeletionDate is ignored. restorePointInTime may
+         also be specified to restore from an earlier point in time.
+        
+         RestoreLongTermRetentionBackup: Creates a database by restoring from a long term retention
+         vault. recoveryServicesRecoveryPointResourceId must be specified as the recovery point resource
+         ID.
+        
+         Copy, Secondary, and RestoreLongTermRetentionBackup are not supported for DataWarehouse
+         edition. Known values are: "Default", "Copy", "Secondary", "PointInTimeRestore", "Restore",
+         "Recovery", "RestoreExternalBackup", "RestoreExternalBackupSecondary",
+         "RestoreLongTermRetentionBackup", "OnlineSecondary".
+        :paramtype create_mode: str or ~azure.mgmt.sql.models.CreateMode
+        :keyword collation: The collation of the database.
+        :paramtype collation: str
+        :keyword max_size_bytes: The max size of the database expressed in bytes.
+        :paramtype max_size_bytes: long
+        :keyword sample_name: The name of the sample schema to apply when creating this database. Known
+         values are: "AdventureWorksLT", "WideWorldImportersStd", "WideWorldImportersFull".
+        :paramtype sample_name: str or ~azure.mgmt.sql.models.SampleName
+        :keyword elastic_pool_id: The resource identifier of the elastic pool containing this database.
+        :paramtype elastic_pool_id: str
+        :keyword source_database_id: The resource identifier of the source database associated with
+         create operation of this database.
+        :paramtype source_database_id: str
+        :keyword restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+         database that will be restored to create the new database.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword source_database_deletion_date: Specifies the time that the database was deleted.
+        :paramtype source_database_deletion_date: ~datetime.datetime
+        :keyword recovery_services_recovery_point_id: The resource identifier of the recovery point
+         associated with create operation of this database.
+        :paramtype recovery_services_recovery_point_id: str
+        :keyword long_term_retention_backup_resource_id: The resource identifier of the long term
+         retention backup associated with create operation of this database.
+        :paramtype long_term_retention_backup_resource_id: str
+        :keyword recoverable_database_id: The resource identifier of the recoverable database
+         associated with create operation of this database.
+        :paramtype recoverable_database_id: str
+        :keyword restorable_dropped_database_id: The resource identifier of the restorable dropped
+         database associated with create operation of this database.
+        :paramtype restorable_dropped_database_id: str
+        :keyword catalog_collation: Collation of the metadata catalog. Known values are:
+         "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
+        :paramtype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+        :keyword zone_redundant: Whether or not this database is zone redundant, which means the
+         replicas of this database will be spread across multiple availability zones.
+        :paramtype zone_redundant: bool
+        :keyword license_type: The license type to apply for this database. ``LicenseIncluded`` if you
+         need a license, or ``BasePrice`` if you have a license and are eligible for the Azure Hybrid
+         Benefit. Known values are: "LicenseIncluded", "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
+        :keyword read_scale: The state of read-only routing. If enabled, connections that have
+         application intent set to readonly in their connection string may be routed to a readonly
+         secondary replica in the same region. Not applicable to a Hyperscale database within an elastic
+         pool. Known values are: "Enabled", "Disabled".
+        :paramtype read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
+        :keyword high_availability_replica_count: The number of secondary replicas associated with the
+         database that are used to provide high availability. Not applicable to a Hyperscale database
+         within an elastic pool.
+        :paramtype high_availability_replica_count: int
+        :keyword secondary_type: The secondary type of the database if it is a secondary.  Valid values
+         are Geo and Named. Known values are: "Geo", "Named".
+        :paramtype secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
+        :keyword auto_pause_delay: Time in minutes after which database is automatically paused. A
+         value of -1 means that automatic pause is disabled.
+        :paramtype auto_pause_delay: int
+        :keyword requested_backup_storage_redundancy: The storage account type to be used to store
+         backups for this database. Known values are: "Geo", "Local", "Zone", "GeoZone".
+        :paramtype requested_backup_storage_redundancy: str or
+         ~azure.mgmt.sql.models.BackupStorageRedundancy
+        :keyword min_capacity: Minimal capacity that database will always have allocated, if not
+         paused.
+        :paramtype min_capacity: float
+        :keyword maintenance_configuration_id: Maintenance configuration id assigned to the database.
+         This configuration defines the period when the maintenance updates will occur.
+        :paramtype maintenance_configuration_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
+        :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
+        :paramtype federated_client_id: str
+        :keyword source_resource_id: The resource identifier of the source associated with the create
+         operation of this database.
+        
+         When sourceResourceId is specified, sourceDatabaseId, recoverableDatabaseId,
+         restorableDroppedDatabaseId and sourceDatabaseDeletionDate must not be specified and CreateMode
+         must be PointInTimeRestore, Restore or Recover.
+        
+         When createMode is PointInTimeRestore, sourceResourceId must be the resource ID of an existing
+         database or existing sql pool, and restorePointInTime must be specified.
+        
+         When createMode is Restore, sourceResourceId must be the resource ID of restorable dropped
+         database or restorable dropped sql pool.
+        
+         When createMode is Recover, sourceResourceId must be the resource ID of recoverable database
+         or recoverable sql pool.
+        
+         This property allows to restore across subscriptions which is only supported for DataWarehouse
+         edition.
+        
+         When source subscription belongs to a different tenant than target subscription,
+         “x-ms-authorization-auxiliary” header must contain authentication token for the source tenant.
+         For more details about “x-ms-authorization-auxiliary” header see
+         https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant.
+        :paramtype source_resource_id: str
+        """
         super(Database, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
         self.managed_by = None
+        self.identity = identity
         self.create_mode = create_mode
         self.collation = collation
         self.max_size_bytes = max_size_bytes
@@ -978,6 +1251,96 @@ class Database(TrackedResource):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
+        self.federated_client_id = federated_client_id
+        self.source_resource_id = source_resource_id
+
+
+class DatabaseAdvancedThreatProtection(ProxyResource):
+    """A database Advanced Threat Protection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: SystemData of AdvancedThreatProtectionResource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
+    :ivar state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+     disabled or a state has not been applied yet on the specific database or server. Known values
+     are: "New", "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.AdvancedThreatProtectionState
+    :ivar creation_time: Specifies the UTC creation time of the policy.
+    :vartype creation_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'creation_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+         disabled or a state has not been applied yet on the specific database or server. Known values
+         are: "New", "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.AdvancedThreatProtectionState
+        """
+        super(DatabaseAdvancedThreatProtection, self).__init__(**kwargs)
+        self.system_data = None
+        self.state = state
+        self.creation_time = None
+
+
+class DatabaseAdvancedThreatProtectionListResult(msrest.serialization.Model):
+    """A list of the database's Advanced Threat Protection configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.DatabaseAdvancedThreatProtection]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DatabaseAdvancedThreatProtection]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DatabaseAdvancedThreatProtectionListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class DatabaseAutomaticTuning(ProxyResource):
@@ -991,14 +1354,14 @@ class DatabaseAutomaticTuning(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param desired_state: Automatic tuning desired state. Possible values include: "Inherit",
-     "Custom", "Auto", "Unspecified".
-    :type desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningMode
-    :ivar actual_state: Automatic tuning actual state. Possible values include: "Inherit",
-     "Custom", "Auto", "Unspecified".
+    :ivar desired_state: Automatic tuning desired state. Known values are: "Inherit", "Custom",
+     "Auto", "Unspecified".
+    :vartype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningMode
+    :ivar actual_state: Automatic tuning actual state. Known values are: "Inherit", "Custom",
+     "Auto", "Unspecified".
     :vartype actual_state: str or ~azure.mgmt.sql.models.AutomaticTuningMode
-    :param options: Automatic tuning options definition.
-    :type options: dict[str, ~azure.mgmt.sql.models.AutomaticTuningOptions]
+    :ivar options: Automatic tuning options definition.
+    :vartype options: dict[str, ~azure.mgmt.sql.models.AutomaticTuningOptions]
     """
 
     _validation = {
@@ -1020,10 +1383,17 @@ class DatabaseAutomaticTuning(ProxyResource):
     def __init__(
         self,
         *,
-        desired_state: Optional[Union[str, "AutomaticTuningMode"]] = None,
-        options: Optional[Dict[str, "AutomaticTuningOptions"]] = None,
+        desired_state: Optional[Union[str, "_models.AutomaticTuningMode"]] = None,
+        options: Optional[Dict[str, "_models.AutomaticTuningOptions"]] = None,
         **kwargs
     ):
+        """
+        :keyword desired_state: Automatic tuning desired state. Known values are: "Inherit", "Custom",
+         "Auto", "Unspecified".
+        :paramtype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningMode
+        :keyword options: Automatic tuning options definition.
+        :paramtype options: dict[str, ~azure.mgmt.sql.models.AutomaticTuningOptions]
+        """
         super(DatabaseAutomaticTuning, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
@@ -1043,10 +1413,10 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :vartype type: str
     :ivar kind: Resource kind.
     :vartype kind: str
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -1082,6 +1452,10 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      USER_CHANGE_PASSWORD_GROUP
      BATCH_STARTED_GROUP
      BATCH_COMPLETED_GROUP
+     DBCC_GROUP
+     DATABASE_OWNERSHIP_CHANGE_GROUP
+     DATABASE_CHANGE_GROUP
+     LEDGER_OPERATION_GROUP
     
      These are groups that cover all sql statements and stored procedures executed against the
      database, and should not be used in combination with other groups as this will result in
@@ -1114,11 +1488,11 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
      'IsAzureMonitorTargetEnabled' as true.
@@ -1134,20 +1508,22 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-     audit actions are forced to be processed.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
+     actions are forced to be processed.
      The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
-    :type queue_delay_ms: int
-    :param state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
-     isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype queue_delay_ms: int
+    :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+     storage.
+    :vartype is_managed_identity_in_use: bool
+    :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+     isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -1159,9 +1535,9 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
+    :vartype storage_account_access_key: str
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
     """
 
     _validation = {
@@ -1181,6 +1557,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'is_managed_identity_in_use': {'key': 'properties.isManagedIdentityInUse', 'type': 'bool'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
@@ -1195,12 +1572,141 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         is_storage_secondary_key_in_use: Optional[bool] = None,
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
-        state: Optional[Union[str, "BlobAuditingPolicyState"]] = None,
+        is_managed_identity_in_use: Optional[bool] = None,
+        state: Optional[Union[str, "_models.BlobAuditingPolicyState"]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+         DBCC_GROUP
+         DATABASE_OWNERSHIP_CHANGE_GROUP
+         DATABASE_CHANGE_GROUP
+         LEDGER_OPERATION_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
+         'IsAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
+         audit actions are forced to be processed.
+         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+        :paramtype queue_delay_ms: int
+        :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+         storage.
+        :paramtype is_managed_identity_in_use: bool
+        :keyword state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        """
         super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
         self.retention_days = retention_days
@@ -1208,6 +1714,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
         self.queue_delay_ms = queue_delay_ms
+        self.is_managed_identity_in_use = is_managed_identity_in_use
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
@@ -1239,6 +1746,8 @@ class DatabaseBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1255,19 +1764,19 @@ class DatabaseColumn(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param column_type: The column data type. Possible values include: "image", "text",
-     "uniqueidentifier", "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint",
-     "int", "smalldatetime", "real", "money", "datetime", "float", "sql_variant", "ntext", "bit",
-     "decimal", "numeric", "smallmoney", "bigint", "hierarchyid", "geometry", "geography",
-     "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname".
-    :type column_type: str or ~azure.mgmt.sql.models.ColumnDataType
-    :param temporal_type: The table temporal type. Possible values include: "NonTemporalTable",
+    :ivar column_type: The column data type. Known values are: "image", "text", "uniqueidentifier",
+     "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint", "int", "smalldatetime",
+     "real", "money", "datetime", "float", "sql_variant", "ntext", "bit", "decimal", "numeric",
+     "smallmoney", "bigint", "hierarchyid", "geometry", "geography", "varbinary", "varchar",
+     "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname".
+    :vartype column_type: str or ~azure.mgmt.sql.models.ColumnDataType
+    :ivar temporal_type: The table temporal type. Known values are: "NonTemporalTable",
      "HistoryTable", "SystemVersionedTemporalTable".
-    :type temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
-    :param memory_optimized: Whether or not the column belongs to a memory optimized table.
-    :type memory_optimized: bool
-    :param is_computed: Whether or not the column is computed.
-    :type is_computed: bool
+    :vartype temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
+    :ivar memory_optimized: Whether or not the column belongs to a memory optimized table.
+    :vartype memory_optimized: bool
+    :ivar is_computed: Whether or not the column is computed.
+    :vartype is_computed: bool
     """
 
     _validation = {
@@ -1289,12 +1798,27 @@ class DatabaseColumn(ProxyResource):
     def __init__(
         self,
         *,
-        column_type: Optional[Union[str, "ColumnDataType"]] = None,
-        temporal_type: Optional[Union[str, "TableTemporalType"]] = None,
+        column_type: Optional[Union[str, "_models.ColumnDataType"]] = None,
+        temporal_type: Optional[Union[str, "_models.TableTemporalType"]] = None,
         memory_optimized: Optional[bool] = None,
         is_computed: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword column_type: The column data type. Known values are: "image", "text",
+         "uniqueidentifier", "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint",
+         "int", "smalldatetime", "real", "money", "datetime", "float", "sql_variant", "ntext", "bit",
+         "decimal", "numeric", "smallmoney", "bigint", "hierarchyid", "geometry", "geography",
+         "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname".
+        :paramtype column_type: str or ~azure.mgmt.sql.models.ColumnDataType
+        :keyword temporal_type: The table temporal type. Known values are: "NonTemporalTable",
+         "HistoryTable", "SystemVersionedTemporalTable".
+        :paramtype temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
+        :keyword memory_optimized: Whether or not the column belongs to a memory optimized table.
+        :paramtype memory_optimized: bool
+        :keyword is_computed: Whether or not the column is computed.
+        :paramtype is_computed: bool
+        """
         super(DatabaseColumn, self).__init__(**kwargs)
         self.column_type = column_type
         self.temporal_type = temporal_type
@@ -1327,6 +1851,8 @@ class DatabaseColumnListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseColumnListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1343,15 +1869,15 @@ class DatabaseExtensions(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param operation_mode: Operation Mode. Possible values include: "PolybaseImport".
-    :type operation_mode: str or ~azure.mgmt.sql.models.OperationMode
-    :param storage_key_type: Storage key type. Possible values include: "SharedAccessKey",
+    :ivar operation_mode: Operation Mode. Known values are: "PolybaseImport".
+    :vartype operation_mode: str or ~azure.mgmt.sql.models.OperationMode
+    :ivar storage_key_type: Storage key type. Known values are: "SharedAccessKey",
      "StorageAccessKey".
-    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :param storage_key: Storage key.
-    :type storage_key: str
-    :param storage_uri: Storage Uri.
-    :type storage_uri: str
+    :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+    :ivar storage_key: Storage key.
+    :vartype storage_key: str
+    :ivar storage_uri: Storage Uri.
+    :vartype storage_uri: str
     """
 
     _validation = {
@@ -1373,17 +1899,70 @@ class DatabaseExtensions(ProxyResource):
     def __init__(
         self,
         *,
-        operation_mode: Optional[Union[str, "OperationMode"]] = None,
-        storage_key_type: Optional[Union[str, "StorageKeyType"]] = None,
+        operation_mode: Optional[Union[str, "_models.OperationMode"]] = None,
+        storage_key_type: Optional[Union[str, "_models.StorageKeyType"]] = None,
         storage_key: Optional[str] = None,
         storage_uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword operation_mode: Operation Mode. Known values are: "PolybaseImport".
+        :paramtype operation_mode: str or ~azure.mgmt.sql.models.OperationMode
+        :keyword storage_key_type: Storage key type. Known values are: "SharedAccessKey",
+         "StorageAccessKey".
+        :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+        :keyword storage_key: Storage key.
+        :paramtype storage_key: str
+        :keyword storage_uri: Storage Uri.
+        :paramtype storage_uri: str
+        """
         super(DatabaseExtensions, self).__init__(**kwargs)
         self.operation_mode = operation_mode
         self.storage_key_type = storage_key_type
         self.storage_key = storage_key
         self.storage_uri = storage_uri
+
+
+class DatabaseIdentity(msrest.serialization.Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The identity type. Known values are: "None", "UserAssigned".
+    :vartype type: str or ~azure.mgmt.sql.models.DatabaseIdentityType
+    :ivar tenant_id: The Azure Active Directory tenant id.
+    :vartype tenant_id: str
+    :ivar user_assigned_identities: The resource ids of the user assigned identities to use.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.sql.models.DatabaseUserIdentity]
+    """
+
+    _validation = {
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{DatabaseUserIdentity}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.DatabaseIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.DatabaseUserIdentity"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: The identity type. Known values are: "None", "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.sql.models.DatabaseIdentityType
+        :keyword user_assigned_identities: The resource ids of the user assigned identities to use.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.sql.models.DatabaseUserIdentity]
+        """
+        super(DatabaseIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.tenant_id = None
+        self.user_assigned_identities = user_assigned_identities
 
 
 class DatabaseListResult(msrest.serialization.Model):
@@ -1411,6 +1990,8 @@ class DatabaseListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1439,8 +2020,8 @@ class DatabaseOperation(ProxyResource):
     :vartype server_name: str
     :ivar start_time: The operation start time.
     :vartype start_time: ~datetime.datetime
-    :ivar state: The operation state. Possible values include: "Pending", "InProgress",
-     "Succeeded", "Failed", "CancelInProgress", "Cancelled".
+    :ivar state: The operation state. Known values are: "Pending", "InProgress", "Succeeded",
+     "Failed", "CancelInProgress", "Cancelled".
     :vartype state: str or ~azure.mgmt.sql.models.ManagementOperationState
     :ivar error_code: The operation error code.
     :vartype error_code: int
@@ -1502,6 +2083,8 @@ class DatabaseOperation(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseOperation, self).__init__(**kwargs)
         self.database_name = None
         self.operation = None
@@ -1544,6 +2127,8 @@ class DatabaseOperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseOperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1578,6 +2163,8 @@ class DatabaseSchema(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseSchema, self).__init__(**kwargs)
 
 
@@ -1606,6 +2193,8 @@ class DatabaseSchemaListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseSchemaListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1636,6 +2225,8 @@ class DatabaseSecurityAlertListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseSecurityAlertListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1654,27 +2245,26 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :vartype type: str
     :ivar system_data: SystemData of SecurityAlertPolicyResource.
     :vartype system_data: ~azure.mgmt.sql.models.SystemData
-    :param state: Specifies the state of the policy, whether it is enabled or disabled or a policy
-     has not been applied yet on the specific database. Possible values include: "Enabled",
-     "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
+     has not been applied yet on the specific database. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
      Brute_Force.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     :ivar creation_time: Specifies the UTC creation time of the policy.
     :vartype creation_time: ~datetime.datetime
     """
@@ -1705,7 +2295,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "SecurityAlertsPolicyState"]] = None,
+        state: Optional[Union[str, "_models.SecurityAlertsPolicyState"]] = None,
         disabled_alerts: Optional[List[str]] = None,
         email_addresses: Optional[List[str]] = None,
         email_account_admins: Optional[bool] = None,
@@ -1714,6 +2304,30 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
+         policy has not been applied yet on the specific database. Known values are: "Enabled",
+         "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
+         Brute_Force.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
         super(DatabaseSecurityAlertPolicy, self).__init__(**kwargs)
         self.system_data = None
         self.state = state
@@ -1737,11 +2351,11 @@ class DatabaseTable(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param temporal_type: The table temporal type. Possible values include: "NonTemporalTable",
+    :ivar temporal_type: The table temporal type. Known values are: "NonTemporalTable",
      "HistoryTable", "SystemVersionedTemporalTable".
-    :type temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
-    :param memory_optimized: Whether or not the table is memory optimized.
-    :type memory_optimized: bool
+    :vartype temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
+    :ivar memory_optimized: Whether or not the table is memory optimized.
+    :vartype memory_optimized: bool
     """
 
     _validation = {
@@ -1761,10 +2375,17 @@ class DatabaseTable(ProxyResource):
     def __init__(
         self,
         *,
-        temporal_type: Optional[Union[str, "TableTemporalType"]] = None,
+        temporal_type: Optional[Union[str, "_models.TableTemporalType"]] = None,
         memory_optimized: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword temporal_type: The table temporal type. Known values are: "NonTemporalTable",
+         "HistoryTable", "SystemVersionedTemporalTable".
+        :paramtype temporal_type: str or ~azure.mgmt.sql.models.TableTemporalType
+        :keyword memory_optimized: Whether or not the table is memory optimized.
+        :paramtype memory_optimized: bool
+        """
         super(DatabaseTable, self).__init__(**kwargs)
         self.temporal_type = temporal_type
         self.memory_optimized = memory_optimized
@@ -1795,21 +2416,25 @@ class DatabaseTableListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseTableListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
 class DatabaseUpdate(msrest.serialization.Model):
-    """A database resource.
+    """A database update resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param sku: The name and tier of the SKU.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param create_mode: Specifies the mode of database creation.
+    :ivar sku: The name and tier of the SKU.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar identity: Database identity.
+    :vartype identity: ~azure.mgmt.sql.models.DatabaseIdentity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar create_mode: Specifies the mode of database creation.
     
      Default: regular database creation.
     
@@ -1837,27 +2462,27 @@ class DatabaseUpdate(msrest.serialization.Model):
      ID.
     
      Copy, Secondary, and RestoreLongTermRetentionBackup are not supported for DataWarehouse
-     edition. Possible values include: "Default", "Copy", "Secondary", "PointInTimeRestore",
-     "Restore", "Recovery", "RestoreExternalBackup", "RestoreExternalBackupSecondary",
+     edition. Known values are: "Default", "Copy", "Secondary", "PointInTimeRestore", "Restore",
+     "Recovery", "RestoreExternalBackup", "RestoreExternalBackupSecondary",
      "RestoreLongTermRetentionBackup", "OnlineSecondary".
-    :type create_mode: str or ~azure.mgmt.sql.models.CreateMode
-    :param collation: The collation of the database.
-    :type collation: str
-    :param max_size_bytes: The max size of the database expressed in bytes.
-    :type max_size_bytes: long
-    :param sample_name: The name of the sample schema to apply when creating this database.
-     Possible values include: "AdventureWorksLT", "WideWorldImportersStd", "WideWorldImportersFull".
-    :type sample_name: str or ~azure.mgmt.sql.models.SampleName
-    :param elastic_pool_id: The resource identifier of the elastic pool containing this database.
-    :type elastic_pool_id: str
-    :param source_database_id: The resource identifier of the source database associated with
-     create operation of this database.
-    :type source_database_id: str
-    :ivar status: The status of the database. Possible values include: "Online", "Restoring",
+    :vartype create_mode: str or ~azure.mgmt.sql.models.CreateMode
+    :ivar collation: The collation of the database.
+    :vartype collation: str
+    :ivar max_size_bytes: The max size of the database expressed in bytes.
+    :vartype max_size_bytes: long
+    :ivar sample_name: The name of the sample schema to apply when creating this database. Known
+     values are: "AdventureWorksLT", "WideWorldImportersStd", "WideWorldImportersFull".
+    :vartype sample_name: str or ~azure.mgmt.sql.models.SampleName
+    :ivar elastic_pool_id: The resource identifier of the elastic pool containing this database.
+    :vartype elastic_pool_id: str
+    :ivar source_database_id: The resource identifier of the source database associated with create
+     operation of this database.
+    :vartype source_database_id: str
+    :ivar status: The status of the database. Known values are: "Online", "Restoring",
      "RecoveryPending", "Recovering", "Suspect", "Offline", "Standby", "Shutdown", "EmergencyMode",
      "AutoClosed", "Copying", "Creating", "Inaccessible", "OfflineSecondary", "Pausing", "Paused",
      "Resuming", "Scaling", "OfflineChangingDwPerformanceTiers", "OnlineChangingDwPerformanceTiers",
-     "Disabled".
+     "Disabled", "Stopping", "Stopped", "Starting".
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -1872,78 +2497,82 @@ class DatabaseUpdate(msrest.serialization.Model):
     :vartype default_secondary_location: str
     :ivar failover_group_id: Failover Group resource identifier that this database belongs to.
     :vartype failover_group_id: str
-    :param restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+    :ivar restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
      database that will be restored to create the new database.
-    :type restore_point_in_time: ~datetime.datetime
-    :param source_database_deletion_date: Specifies the time that the database was deleted.
-    :type source_database_deletion_date: ~datetime.datetime
-    :param recovery_services_recovery_point_id: The resource identifier of the recovery point
+    :vartype restore_point_in_time: ~datetime.datetime
+    :ivar source_database_deletion_date: Specifies the time that the database was deleted.
+    :vartype source_database_deletion_date: ~datetime.datetime
+    :ivar recovery_services_recovery_point_id: The resource identifier of the recovery point
      associated with create operation of this database.
-    :type recovery_services_recovery_point_id: str
-    :param long_term_retention_backup_resource_id: The resource identifier of the long term
+    :vartype recovery_services_recovery_point_id: str
+    :ivar long_term_retention_backup_resource_id: The resource identifier of the long term
      retention backup associated with create operation of this database.
-    :type long_term_retention_backup_resource_id: str
-    :param recoverable_database_id: The resource identifier of the recoverable database associated
+    :vartype long_term_retention_backup_resource_id: str
+    :ivar recoverable_database_id: The resource identifier of the recoverable database associated
      with create operation of this database.
-    :type recoverable_database_id: str
-    :param restorable_dropped_database_id: The resource identifier of the restorable dropped
+    :vartype recoverable_database_id: str
+    :ivar restorable_dropped_database_id: The resource identifier of the restorable dropped
      database associated with create operation of this database.
-    :type restorable_dropped_database_id: str
-    :param catalog_collation: Collation of the metadata catalog. Possible values include:
+    :vartype restorable_dropped_database_id: str
+    :ivar catalog_collation: Collation of the metadata catalog. Known values are:
      "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
-    :type catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
-    :param zone_redundant: Whether or not this database is zone redundant, which means the replicas
+    :vartype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+    :ivar zone_redundant: Whether or not this database is zone redundant, which means the replicas
      of this database will be spread across multiple availability zones.
-    :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. ``LicenseIncluded`` if you
+    :vartype zone_redundant: bool
+    :ivar license_type: The license type to apply for this database. ``LicenseIncluded`` if you
      need a license, or ``BasePrice`` if you have a license and are eligible for the Azure Hybrid
-     Benefit. Possible values include: "LicenseIncluded", "BasePrice".
-    :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
+     Benefit. Known values are: "LicenseIncluded", "BasePrice".
+    :vartype license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
     :ivar earliest_restore_date: This records the earliest start date and time that restore is
      available for this database (ISO8601 format).
     :vartype earliest_restore_date: ~datetime.datetime
-    :param read_scale: The state of read-only routing. If enabled, connections that have
-     application intent set to readonly in their connection string may be routed to a readonly
-     secondary replica in the same region. Possible values include: "Enabled", "Disabled".
-    :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
-    :param high_availability_replica_count: The number of secondary replicas associated with the
-     database that are used to provide high availability.
-    :type high_availability_replica_count: int
-    :param secondary_type: The secondary type of the database if it is a secondary.  Valid values
-     are Geo and Named. Possible values include: "Geo", "Named".
-    :type secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
+    :ivar read_scale: The state of read-only routing. If enabled, connections that have application
+     intent set to readonly in their connection string may be routed to a readonly secondary replica
+     in the same region. Not applicable to a Hyperscale database within an elastic pool. Known
+     values are: "Enabled", "Disabled".
+    :vartype read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
+    :ivar high_availability_replica_count: The number of secondary replicas associated with the
+     database that are used to provide high availability. Not applicable to a Hyperscale database
+     within an elastic pool.
+    :vartype high_availability_replica_count: int
+    :ivar secondary_type: The secondary type of the database if it is a secondary.  Valid values
+     are Geo and Named. Known values are: "Geo", "Named".
+    :vartype secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
-    :param auto_pause_delay: Time in minutes after which database is automatically paused. A value
+    :ivar auto_pause_delay: Time in minutes after which database is automatically paused. A value
      of -1 means that automatic pause is disabled.
-    :type auto_pause_delay: int
+    :vartype auto_pause_delay: int
     :ivar current_backup_storage_redundancy: The storage account type used to store backups for
-     this database. Possible values include: "Geo", "Local", "Zone".
+     this database. Known values are: "Geo", "Local", "Zone", "GeoZone".
     :vartype current_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.CurrentBackupStorageRedundancy
-    :param requested_backup_storage_redundancy: The storage account type to be used to store
-     backups for this database. Possible values include: "Geo", "Local", "Zone".
-    :type requested_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
-    :param min_capacity: Minimal capacity that database will always have allocated, if not paused.
-    :type min_capacity: float
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar requested_backup_storage_redundancy: The storage account type to be used to store backups
+     for this database. Known values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar min_capacity: Minimal capacity that database will always have allocated, if not paused.
+    :vartype min_capacity: float
     :ivar paused_date: The date when database was paused by user configuration or action(ISO8601
      format). Null if the database is ready.
     :vartype paused_date: ~datetime.datetime
     :ivar resumed_date: The date when database was resumed by user action or database login
      (ISO8601 format). Null if the database is paused.
     :vartype resumed_date: ~datetime.datetime
-    :param maintenance_configuration_id: Maintenance configuration id assigned to the database.
-     This configuration defines the period when the maintenance updates will occur.
-    :type maintenance_configuration_id: str
-    :param is_ledger_on: Whether or not this database is a ledger database, which means all tables
+    :ivar maintenance_configuration_id: Maintenance configuration id assigned to the database. This
+     configuration defines the period when the maintenance updates will occur.
+    :vartype maintenance_configuration_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
      in the database are ledger tables. Note: the value of this property cannot be changed after the
      database has been created.
-    :type is_ledger_on: bool
+    :vartype is_ledger_on: bool
     :ivar is_infra_encryption_enabled: Infra encryption is enabled for this database.
     :vartype is_infra_encryption_enabled: bool
+    :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
+    :vartype federated_client_id: str
     """
 
     _validation = {
@@ -1965,6 +2594,7 @@ class DatabaseUpdate(msrest.serialization.Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'DatabaseIdentity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
@@ -2003,17 +2633,19 @@ class DatabaseUpdate(msrest.serialization.Model):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'is_ledger_on': {'key': 'properties.isLedgerOn', 'type': 'bool'},
         'is_infra_encryption_enabled': {'key': 'properties.isInfraEncryptionEnabled', 'type': 'bool'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.DatabaseIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         collation: Optional[str] = None,
         max_size_bytes: Optional[int] = None,
-        sample_name: Optional[Union[str, "SampleName"]] = None,
+        sample_name: Optional[Union[str, "_models.SampleName"]] = None,
         elastic_pool_id: Optional[str] = None,
         source_database_id: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
@@ -2022,21 +2654,133 @@ class DatabaseUpdate(msrest.serialization.Model):
         long_term_retention_backup_resource_id: Optional[str] = None,
         recoverable_database_id: Optional[str] = None,
         restorable_dropped_database_id: Optional[str] = None,
-        catalog_collation: Optional[Union[str, "CatalogCollationType"]] = None,
+        catalog_collation: Optional[Union[str, "_models.CatalogCollationType"]] = None,
         zone_redundant: Optional[bool] = None,
-        license_type: Optional[Union[str, "DatabaseLicenseType"]] = None,
-        read_scale: Optional[Union[str, "DatabaseReadScale"]] = None,
+        license_type: Optional[Union[str, "_models.DatabaseLicenseType"]] = None,
+        read_scale: Optional[Union[str, "_models.DatabaseReadScale"]] = None,
         high_availability_replica_count: Optional[int] = None,
-        secondary_type: Optional[Union[str, "SecondaryType"]] = None,
+        secondary_type: Optional[Union[str, "_models.SecondaryType"]] = None,
         auto_pause_delay: Optional[int] = None,
-        requested_backup_storage_redundancy: Optional[Union[str, "RequestedBackupStorageRedundancy"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         min_capacity: Optional[float] = None,
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
+        federated_client_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword sku: The name and tier of the SKU.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword identity: Database identity.
+        :paramtype identity: ~azure.mgmt.sql.models.DatabaseIdentity
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword create_mode: Specifies the mode of database creation.
+        
+         Default: regular database creation.
+        
+         Copy: creates a database as a copy of an existing database. sourceDatabaseId must be specified
+         as the resource ID of the source database.
+        
+         Secondary: creates a database as a secondary replica of an existing database. sourceDatabaseId
+         must be specified as the resource ID of the existing primary database.
+        
+         PointInTimeRestore: Creates a database by restoring a point in time backup of an existing
+         database. sourceDatabaseId must be specified as the resource ID of the existing database, and
+         restorePointInTime must be specified.
+        
+         Recovery: Creates a database by restoring a geo-replicated backup. sourceDatabaseId must be
+         specified as the recoverable database resource ID to restore.
+        
+         Restore: Creates a database by restoring a backup of a deleted database. sourceDatabaseId must
+         be specified. If sourceDatabaseId is the database's original resource ID, then
+         sourceDatabaseDeletionDate must be specified. Otherwise sourceDatabaseId must be the restorable
+         dropped database resource ID and sourceDatabaseDeletionDate is ignored. restorePointInTime may
+         also be specified to restore from an earlier point in time.
+        
+         RestoreLongTermRetentionBackup: Creates a database by restoring from a long term retention
+         vault. recoveryServicesRecoveryPointResourceId must be specified as the recovery point resource
+         ID.
+        
+         Copy, Secondary, and RestoreLongTermRetentionBackup are not supported for DataWarehouse
+         edition. Known values are: "Default", "Copy", "Secondary", "PointInTimeRestore", "Restore",
+         "Recovery", "RestoreExternalBackup", "RestoreExternalBackupSecondary",
+         "RestoreLongTermRetentionBackup", "OnlineSecondary".
+        :paramtype create_mode: str or ~azure.mgmt.sql.models.CreateMode
+        :keyword collation: The collation of the database.
+        :paramtype collation: str
+        :keyword max_size_bytes: The max size of the database expressed in bytes.
+        :paramtype max_size_bytes: long
+        :keyword sample_name: The name of the sample schema to apply when creating this database. Known
+         values are: "AdventureWorksLT", "WideWorldImportersStd", "WideWorldImportersFull".
+        :paramtype sample_name: str or ~azure.mgmt.sql.models.SampleName
+        :keyword elastic_pool_id: The resource identifier of the elastic pool containing this database.
+        :paramtype elastic_pool_id: str
+        :keyword source_database_id: The resource identifier of the source database associated with
+         create operation of this database.
+        :paramtype source_database_id: str
+        :keyword restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+         database that will be restored to create the new database.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword source_database_deletion_date: Specifies the time that the database was deleted.
+        :paramtype source_database_deletion_date: ~datetime.datetime
+        :keyword recovery_services_recovery_point_id: The resource identifier of the recovery point
+         associated with create operation of this database.
+        :paramtype recovery_services_recovery_point_id: str
+        :keyword long_term_retention_backup_resource_id: The resource identifier of the long term
+         retention backup associated with create operation of this database.
+        :paramtype long_term_retention_backup_resource_id: str
+        :keyword recoverable_database_id: The resource identifier of the recoverable database
+         associated with create operation of this database.
+        :paramtype recoverable_database_id: str
+        :keyword restorable_dropped_database_id: The resource identifier of the restorable dropped
+         database associated with create operation of this database.
+        :paramtype restorable_dropped_database_id: str
+        :keyword catalog_collation: Collation of the metadata catalog. Known values are:
+         "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
+        :paramtype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+        :keyword zone_redundant: Whether or not this database is zone redundant, which means the
+         replicas of this database will be spread across multiple availability zones.
+        :paramtype zone_redundant: bool
+        :keyword license_type: The license type to apply for this database. ``LicenseIncluded`` if you
+         need a license, or ``BasePrice`` if you have a license and are eligible for the Azure Hybrid
+         Benefit. Known values are: "LicenseIncluded", "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
+        :keyword read_scale: The state of read-only routing. If enabled, connections that have
+         application intent set to readonly in their connection string may be routed to a readonly
+         secondary replica in the same region. Not applicable to a Hyperscale database within an elastic
+         pool. Known values are: "Enabled", "Disabled".
+        :paramtype read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
+        :keyword high_availability_replica_count: The number of secondary replicas associated with the
+         database that are used to provide high availability. Not applicable to a Hyperscale database
+         within an elastic pool.
+        :paramtype high_availability_replica_count: int
+        :keyword secondary_type: The secondary type of the database if it is a secondary.  Valid values
+         are Geo and Named. Known values are: "Geo", "Named".
+        :paramtype secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
+        :keyword auto_pause_delay: Time in minutes after which database is automatically paused. A
+         value of -1 means that automatic pause is disabled.
+        :paramtype auto_pause_delay: int
+        :keyword requested_backup_storage_redundancy: The storage account type to be used to store
+         backups for this database. Known values are: "Geo", "Local", "Zone", "GeoZone".
+        :paramtype requested_backup_storage_redundancy: str or
+         ~azure.mgmt.sql.models.BackupStorageRedundancy
+        :keyword min_capacity: Minimal capacity that database will always have allocated, if not
+         paused.
+        :paramtype min_capacity: float
+        :keyword maintenance_configuration_id: Maintenance configuration id assigned to the database.
+         This configuration defines the period when the maintenance updates will occur.
+        :paramtype maintenance_configuration_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
+        :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
+        :paramtype federated_client_id: str
+        """
         super(DatabaseUpdate, self).__init__(**kwargs)
         self.sku = sku
+        self.identity = identity
         self.tags = tags
         self.create_mode = create_mode
         self.collation = collation
@@ -2075,6 +2819,7 @@ class DatabaseUpdate(msrest.serialization.Model):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
+        self.federated_client_id = federated_client_id
 
 
 class DatabaseUsage(ProxyResource):
@@ -2122,6 +2867,8 @@ class DatabaseUsage(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseUsage, self).__init__(**kwargs)
         self.display_name = None
         self.current_value = None
@@ -2154,9 +2901,43 @@ class DatabaseUsageListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseUsageListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class DatabaseUserIdentity(msrest.serialization.Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The Azure Active Directory principal id.
+    :vartype principal_id: str
+    :ivar client_id: The Azure Active Directory client id.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DatabaseUserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class DatabaseVulnerabilityAssessment(ProxyResource):
@@ -2170,20 +2951,21 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param storage_container_path: A blob storage container path to hold the scan results (e.g.
+    :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
      https://myStorage.blob.core.windows.net/VaScans/).  It is required if server level
      vulnerability assessment policy doesn't set.
-    :type storage_container_path: str
-    :param storage_container_sas_key: A shared access signature (SAS Key) that has write access to
+    :vartype storage_container_path: str
+    :ivar storage_container_sas_key: A shared access signature (SAS Key) that has write access to
      the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey'
      isn't specified, StorageContainerSasKey is required.
-    :type storage_container_sas_key: str
-    :param storage_account_access_key: Specifies the identifier key of the storage account for
+    :vartype storage_container_sas_key: str
+    :ivar storage_account_access_key: Specifies the identifier key of the storage account for
      vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
      storageAccountAccessKey is required.
-    :type storage_account_access_key: str
-    :param recurring_scans: The recurring scans settings.
-    :type recurring_scans: ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
+    :vartype storage_account_access_key: str
+    :ivar recurring_scans: The recurring scans settings.
+    :vartype recurring_scans:
+     ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
     """
 
     _validation = {
@@ -2208,9 +2990,26 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
         storage_container_path: Optional[str] = None,
         storage_container_sas_key: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
-        recurring_scans: Optional["VulnerabilityAssessmentRecurringScansProperties"] = None,
+        recurring_scans: Optional["_models.VulnerabilityAssessmentRecurringScansProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
+         https://myStorage.blob.core.windows.net/VaScans/).  It is required if server level
+         vulnerability assessment policy doesn't set.
+        :paramtype storage_container_path: str
+        :keyword storage_container_sas_key: A shared access signature (SAS Key) that has write access
+         to the blob container specified in 'storageContainerPath' parameter. If
+         'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required.
+        :paramtype storage_container_sas_key: str
+        :keyword storage_account_access_key: Specifies the identifier key of the storage account for
+         vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
+         storageAccountAccessKey is required.
+        :paramtype storage_account_access_key: str
+        :keyword recurring_scans: The recurring scans settings.
+        :paramtype recurring_scans:
+         ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
+        """
         super(DatabaseVulnerabilityAssessment, self).__init__(**kwargs)
         self.storage_container_path = storage_container_path
         self.storage_container_sas_key = storage_container_sas_key
@@ -2243,6 +3042,8 @@ class DatabaseVulnerabilityAssessmentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseVulnerabilityAssessmentListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2259,8 +3060,8 @@ class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param baseline_results: The rule baseline result.
-    :type baseline_results:
+    :ivar baseline_results: The rule baseline result.
+    :vartype baseline_results:
      list[~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaselineItem]
     """
 
@@ -2280,9 +3081,14 @@ class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):
     def __init__(
         self,
         *,
-        baseline_results: Optional[List["DatabaseVulnerabilityAssessmentRuleBaselineItem"]] = None,
+        baseline_results: Optional[List["_models.DatabaseVulnerabilityAssessmentRuleBaselineItem"]] = None,
         **kwargs
     ):
+        """
+        :keyword baseline_results: The rule baseline result.
+        :paramtype baseline_results:
+         list[~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaselineItem]
+        """
         super(DatabaseVulnerabilityAssessmentRuleBaseline, self).__init__(**kwargs)
         self.baseline_results = baseline_results
 
@@ -2292,8 +3098,8 @@ class DatabaseVulnerabilityAssessmentRuleBaselineItem(msrest.serialization.Model
 
     All required parameters must be populated in order to send to Azure.
 
-    :param result: Required. The rule baseline result.
-    :type result: list[str]
+    :ivar result: Required. The rule baseline result.
+    :vartype result: list[str]
     """
 
     _validation = {
@@ -2310,6 +3116,10 @@ class DatabaseVulnerabilityAssessmentRuleBaselineItem(msrest.serialization.Model
         result: List[str],
         **kwargs
     ):
+        """
+        :keyword result: Required. The rule baseline result.
+        :paramtype result: list[str]
+        """
         super(DatabaseVulnerabilityAssessmentRuleBaselineItem, self).__init__(**kwargs)
         self.result = result
 
@@ -2348,6 +3158,8 @@ class DatabaseVulnerabilityAssessmentScansExport(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(DatabaseVulnerabilityAssessmentScansExport, self).__init__(**kwargs)
         self.exported_report_location = None
 
@@ -2367,13 +3179,13 @@ class DataMaskingPolicy(ProxyResource):
     :vartype location: str
     :ivar kind: The kind of data masking policy. Metadata, used for Azure portal.
     :vartype kind: str
-    :param data_masking_state: The state of the data masking policy. Possible values include:
-     "Disabled", "Enabled".
-    :type data_masking_state: str or ~azure.mgmt.sql.models.DataMaskingState
-    :param exempt_principals: The list of the exempt principals. Specifies the semicolon-separated
+    :ivar data_masking_state: The state of the data masking policy. Known values are: "Disabled",
+     "Enabled".
+    :vartype data_masking_state: str or ~azure.mgmt.sql.models.DataMaskingState
+    :ivar exempt_principals: The list of the exempt principals. Specifies the semicolon-separated
      list of database users for which the data masking policy does not apply. The specified users
      receive data results without masking for all of the database queries.
-    :type exempt_principals: str
+    :vartype exempt_principals: str
     :ivar application_principals: The list of the application principals. This is a legacy
      parameter and is no longer used.
     :vartype application_principals: str
@@ -2406,10 +3218,19 @@ class DataMaskingPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        data_masking_state: Optional[Union[str, "DataMaskingState"]] = None,
+        data_masking_state: Optional[Union[str, "_models.DataMaskingState"]] = None,
         exempt_principals: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword data_masking_state: The state of the data masking policy. Known values are:
+         "Disabled", "Enabled".
+        :paramtype data_masking_state: str or ~azure.mgmt.sql.models.DataMaskingState
+        :keyword exempt_principals: The list of the exempt principals. Specifies the
+         semicolon-separated list of database users for which the data masking policy does not apply.
+         The specified users receive data results without masking for all of the database queries.
+        :paramtype exempt_principals: str
+        """
         super(DataMaskingPolicy, self).__init__(**kwargs)
         self.location = None
         self.kind = None
@@ -2436,38 +3257,38 @@ class DataMaskingRule(ProxyResource):
     :vartype kind: str
     :ivar id_properties_id: The rule Id.
     :vartype id_properties_id: str
-    :param alias_name: The alias name. This is a legacy parameter and is no longer used.
-    :type alias_name: str
-    :param rule_state: The rule state. Used to delete a rule. To delete an existing rule, specify
+    :ivar alias_name: The alias name. This is a legacy parameter and is no longer used.
+    :vartype alias_name: str
+    :ivar rule_state: The rule state. Used to delete a rule. To delete an existing rule, specify
      the schemaName, tableName, columnName, maskingFunction, and specify ruleState as disabled.
      However, if the rule doesn't already exist, the rule will be created with ruleState set to
-     enabled, regardless of the provided value of ruleState. Possible values include: "Disabled",
+     enabled, regardless of the provided value of ruleState. Known values are: "Disabled",
      "Enabled".
-    :type rule_state: str or ~azure.mgmt.sql.models.DataMaskingRuleState
-    :param schema_name: The schema name on which the data masking rule is applied.
-    :type schema_name: str
-    :param table_name: The table name on which the data masking rule is applied.
-    :type table_name: str
-    :param column_name: The column name on which the data masking rule is applied.
-    :type column_name: str
-    :param masking_function: The masking function that is used for the data masking rule. Possible
-     values include: "Default", "CCN", "Email", "Number", "SSN", "Text".
-    :type masking_function: str or ~azure.mgmt.sql.models.DataMaskingFunction
-    :param number_from: The numberFrom property of the masking rule. Required if maskingFunction is
+    :vartype rule_state: str or ~azure.mgmt.sql.models.DataMaskingRuleState
+    :ivar schema_name: The schema name on which the data masking rule is applied.
+    :vartype schema_name: str
+    :ivar table_name: The table name on which the data masking rule is applied.
+    :vartype table_name: str
+    :ivar column_name: The column name on which the data masking rule is applied.
+    :vartype column_name: str
+    :ivar masking_function: The masking function that is used for the data masking rule. Known
+     values are: "Default", "CCN", "Email", "Number", "SSN", "Text".
+    :vartype masking_function: str or ~azure.mgmt.sql.models.DataMaskingFunction
+    :ivar number_from: The numberFrom property of the masking rule. Required if maskingFunction is
      set to Number, otherwise this parameter will be ignored.
-    :type number_from: str
-    :param number_to: The numberTo property of the data masking rule. Required if maskingFunction
-     is set to Number, otherwise this parameter will be ignored.
-    :type number_to: str
-    :param prefix_size: If maskingFunction is set to Text, the number of characters to show
-     unmasked in the beginning of the string. Otherwise, this parameter will be ignored.
-    :type prefix_size: str
-    :param suffix_size: If maskingFunction is set to Text, the number of characters to show
-     unmasked at the end of the string. Otherwise, this parameter will be ignored.
-    :type suffix_size: str
-    :param replacement_string: If maskingFunction is set to Text, the character to use for masking
+    :vartype number_from: str
+    :ivar number_to: The numberTo property of the data masking rule. Required if maskingFunction is
+     set to Number, otherwise this parameter will be ignored.
+    :vartype number_to: str
+    :ivar prefix_size: If maskingFunction is set to Text, the number of characters to show unmasked
+     in the beginning of the string. Otherwise, this parameter will be ignored.
+    :vartype prefix_size: str
+    :ivar suffix_size: If maskingFunction is set to Text, the number of characters to show unmasked
+     at the end of the string. Otherwise, this parameter will be ignored.
+    :vartype suffix_size: str
+    :ivar replacement_string: If maskingFunction is set to Text, the character to use for masking
      the unexposed part of the string. Otherwise, this parameter will be ignored.
-    :type replacement_string: str
+    :vartype replacement_string: str
     """
 
     _validation = {
@@ -2503,11 +3324,11 @@ class DataMaskingRule(ProxyResource):
         self,
         *,
         alias_name: Optional[str] = None,
-        rule_state: Optional[Union[str, "DataMaskingRuleState"]] = None,
+        rule_state: Optional[Union[str, "_models.DataMaskingRuleState"]] = None,
         schema_name: Optional[str] = None,
         table_name: Optional[str] = None,
         column_name: Optional[str] = None,
-        masking_function: Optional[Union[str, "DataMaskingFunction"]] = None,
+        masking_function: Optional[Union[str, "_models.DataMaskingFunction"]] = None,
         number_from: Optional[str] = None,
         number_to: Optional[str] = None,
         prefix_size: Optional[str] = None,
@@ -2515,6 +3336,40 @@ class DataMaskingRule(ProxyResource):
         replacement_string: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword alias_name: The alias name. This is a legacy parameter and is no longer used.
+        :paramtype alias_name: str
+        :keyword rule_state: The rule state. Used to delete a rule. To delete an existing rule, specify
+         the schemaName, tableName, columnName, maskingFunction, and specify ruleState as disabled.
+         However, if the rule doesn't already exist, the rule will be created with ruleState set to
+         enabled, regardless of the provided value of ruleState. Known values are: "Disabled",
+         "Enabled".
+        :paramtype rule_state: str or ~azure.mgmt.sql.models.DataMaskingRuleState
+        :keyword schema_name: The schema name on which the data masking rule is applied.
+        :paramtype schema_name: str
+        :keyword table_name: The table name on which the data masking rule is applied.
+        :paramtype table_name: str
+        :keyword column_name: The column name on which the data masking rule is applied.
+        :paramtype column_name: str
+        :keyword masking_function: The masking function that is used for the data masking rule. Known
+         values are: "Default", "CCN", "Email", "Number", "SSN", "Text".
+        :paramtype masking_function: str or ~azure.mgmt.sql.models.DataMaskingFunction
+        :keyword number_from: The numberFrom property of the masking rule. Required if maskingFunction
+         is set to Number, otherwise this parameter will be ignored.
+        :paramtype number_from: str
+        :keyword number_to: The numberTo property of the data masking rule. Required if maskingFunction
+         is set to Number, otherwise this parameter will be ignored.
+        :paramtype number_to: str
+        :keyword prefix_size: If maskingFunction is set to Text, the number of characters to show
+         unmasked in the beginning of the string. Otherwise, this parameter will be ignored.
+        :paramtype prefix_size: str
+        :keyword suffix_size: If maskingFunction is set to Text, the number of characters to show
+         unmasked at the end of the string. Otherwise, this parameter will be ignored.
+        :paramtype suffix_size: str
+        :keyword replacement_string: If maskingFunction is set to Text, the character to use for
+         masking the unexposed part of the string. Otherwise, this parameter will be ignored.
+        :paramtype replacement_string: str
+        """
         super(DataMaskingRule, self).__init__(**kwargs)
         self.location = None
         self.kind = None
@@ -2535,8 +3390,8 @@ class DataMaskingRule(ProxyResource):
 class DataMaskingRuleListResult(msrest.serialization.Model):
     """The response to a list data masking rules request.
 
-    :param value: The list of database data masking rules.
-    :type value: list[~azure.mgmt.sql.models.DataMaskingRule]
+    :ivar value: The list of database data masking rules.
+    :vartype value: list[~azure.mgmt.sql.models.DataMaskingRule]
     """
 
     _attribute_map = {
@@ -2546,9 +3401,13 @@ class DataMaskingRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DataMaskingRule"]] = None,
+        value: Optional[List["_models.DataMaskingRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of database data masking rules.
+        :paramtype value: list[~azure.mgmt.sql.models.DataMaskingRule]
+        """
         super(DataMaskingRuleListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -2586,6 +3445,8 @@ class DataWarehouseUserActivities(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(DataWarehouseUserActivities, self).__init__(**kwargs)
         self.active_queries_count = None
 
@@ -2615,6 +3476,8 @@ class DataWarehouseUserActivitiesListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DataWarehouseUserActivitiesListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2665,6 +3528,8 @@ class DeletedServer(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedServer, self).__init__(**kwargs)
         self.version = None
         self.deletion_time = None
@@ -2697,7 +3562,138 @@ class DeletedServerListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedServerListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class DistributedAvailabilityGroup(ProxyResource):
+    """Distributed availability group between box and Sql Managed Instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar target_database: The name of the target database.
+    :vartype target_database: str
+    :ivar source_endpoint: The source endpoint.
+    :vartype source_endpoint: str
+    :ivar primary_availability_group_name: The primary availability group name.
+    :vartype primary_availability_group_name: str
+    :ivar secondary_availability_group_name: The secondary availability group name.
+    :vartype secondary_availability_group_name: str
+    :ivar replication_mode: The replication mode of a distributed availability group. Parameter
+     will be ignored during link creation. Known values are: "Async", "Sync".
+    :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
+    :ivar distributed_availability_group_id: The distributed availability group id.
+    :vartype distributed_availability_group_id: str
+    :ivar source_replica_id: The source replica id.
+    :vartype source_replica_id: str
+    :ivar target_replica_id: The target replica id.
+    :vartype target_replica_id: str
+    :ivar link_state: The link state.
+    :vartype link_state: str
+    :ivar last_hardened_lsn: The last hardened lsn.
+    :vartype last_hardened_lsn: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'distributed_availability_group_id': {'readonly': True},
+        'source_replica_id': {'readonly': True},
+        'target_replica_id': {'readonly': True},
+        'link_state': {'readonly': True},
+        'last_hardened_lsn': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'target_database': {'key': 'properties.targetDatabase', 'type': 'str'},
+        'source_endpoint': {'key': 'properties.sourceEndpoint', 'type': 'str'},
+        'primary_availability_group_name': {'key': 'properties.primaryAvailabilityGroupName', 'type': 'str'},
+        'secondary_availability_group_name': {'key': 'properties.secondaryAvailabilityGroupName', 'type': 'str'},
+        'replication_mode': {'key': 'properties.replicationMode', 'type': 'str'},
+        'distributed_availability_group_id': {'key': 'properties.distributedAvailabilityGroupId', 'type': 'str'},
+        'source_replica_id': {'key': 'properties.sourceReplicaId', 'type': 'str'},
+        'target_replica_id': {'key': 'properties.targetReplicaId', 'type': 'str'},
+        'link_state': {'key': 'properties.linkState', 'type': 'str'},
+        'last_hardened_lsn': {'key': 'properties.lastHardenedLsn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_database: Optional[str] = None,
+        source_endpoint: Optional[str] = None,
+        primary_availability_group_name: Optional[str] = None,
+        secondary_availability_group_name: Optional[str] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword target_database: The name of the target database.
+        :paramtype target_database: str
+        :keyword source_endpoint: The source endpoint.
+        :paramtype source_endpoint: str
+        :keyword primary_availability_group_name: The primary availability group name.
+        :paramtype primary_availability_group_name: str
+        :keyword secondary_availability_group_name: The secondary availability group name.
+        :paramtype secondary_availability_group_name: str
+        :keyword replication_mode: The replication mode of a distributed availability group. Parameter
+         will be ignored during link creation. Known values are: "Async", "Sync".
+        :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
+        """
+        super(DistributedAvailabilityGroup, self).__init__(**kwargs)
+        self.target_database = target_database
+        self.source_endpoint = source_endpoint
+        self.primary_availability_group_name = primary_availability_group_name
+        self.secondary_availability_group_name = secondary_availability_group_name
+        self.replication_mode = replication_mode
+        self.distributed_availability_group_id = None
+        self.source_replica_id = None
+        self.target_replica_id = None
+        self.link_state = None
+        self.last_hardened_lsn = None
+
+
+class DistributedAvailabilityGroupsListResult(msrest.serialization.Model):
+    """A list of distributed availability groups in instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DistributedAvailabilityGroup]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DistributedAvailabilityGroupsListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -2720,11 +3716,11 @@ class EditionCapability(msrest.serialization.Model):
     :ivar supported_storage_capabilities: The list of supported storage capabilities for this
      edition.
     :vartype supported_storage_capabilities: list[~azure.mgmt.sql.models.StorageCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -2752,6 +3748,10 @@ class EditionCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(EditionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_service_level_objectives = None
@@ -2775,11 +3775,11 @@ class ElasticPool(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The elastic pool SKU.
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The elastic pool SKU.
     
      The list of SKUs may vary by region and support offer. To determine the SKUs (including the
      SKU name, tier/edition, family, and capacity) that are available to your subscription in an
@@ -2789,27 +3789,29 @@ class ElasticPool(TrackedResource):
     
         az sql elastic-pool list-editions -l <location> -o table
         `.
-    :type sku: ~azure.mgmt.sql.models.Sku
+    :vartype sku: ~azure.mgmt.sql.models.Sku
     :ivar kind: Kind of elastic pool. This is metadata used for the Azure portal experience.
     :vartype kind: str
-    :ivar state: The state of the elastic pool. Possible values include: "Creating", "Ready",
-     "Disabled".
+    :ivar state: The state of the elastic pool. Known values are: "Creating", "Ready", "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.ElasticPoolState
     :ivar creation_date: The creation date of the elastic pool (ISO8601 format).
     :vartype creation_date: ~datetime.datetime
-    :param max_size_bytes: The storage limit for the database elastic pool in bytes.
-    :type max_size_bytes: long
-    :param per_database_settings: The per database settings for the elastic pool.
-    :type per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
-    :param zone_redundant: Whether or not this elastic pool is zone redundant, which means the
+    :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
+    :vartype max_size_bytes: long
+    :ivar per_database_settings: The per database settings for the elastic pool.
+    :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
+    :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
      replicas of this elastic pool will be spread across multiple availability zones.
-    :type zone_redundant: bool
-    :param license_type: The license type to apply for this elastic pool. Possible values include:
+    :vartype zone_redundant: bool
+    :ivar license_type: The license type to apply for this elastic pool. Known values are:
      "LicenseIncluded", "BasePrice".
-    :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
-    :param maintenance_configuration_id: Maintenance configuration id assigned to the elastic pool.
+    :vartype license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
+    :ivar maintenance_configuration_id: Maintenance configuration id assigned to the elastic pool.
      This configuration defines the period when the maintenance updates will will occur.
-    :type maintenance_configuration_id: str
+    :vartype maintenance_configuration_id: str
+    :ivar high_availability_replica_count: The number of secondary replicas associated with the
+     elastic pool that are used to provide high availability.
+    :vartype high_availability_replica_count: int
     """
 
     _validation = {
@@ -2837,6 +3839,7 @@ class ElasticPool(TrackedResource):
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
+        'high_availability_replica_count': {'key': 'properties.highAvailabilityReplicaCount', 'type': 'int'},
     }
 
     def __init__(
@@ -2844,14 +3847,48 @@ class ElasticPool(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         max_size_bytes: Optional[int] = None,
-        per_database_settings: Optional["ElasticPoolPerDatabaseSettings"] = None,
+        per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
-        license_type: Optional[Union[str, "ElasticPoolLicenseType"]] = None,
+        license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
+        high_availability_replica_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The elastic pool SKU.
+        
+         The list of SKUs may vary by region and support offer. To determine the SKUs (including the
+         SKU name, tier/edition, family, and capacity) that are available to your subscription in an
+         Azure region, use the ``Capabilities_ListByLocation`` REST API or the following command:
+        
+         .. code-block:: azurecli
+        
+            az sql elastic-pool list-editions -l <location> -o table
+            `.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
+        :paramtype max_size_bytes: long
+        :keyword per_database_settings: The per database settings for the elastic pool.
+        :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
+        :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
+         replicas of this elastic pool will be spread across multiple availability zones.
+        :paramtype zone_redundant: bool
+        :keyword license_type: The license type to apply for this elastic pool. Known values are:
+         "LicenseIncluded", "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
+        :keyword maintenance_configuration_id: Maintenance configuration id assigned to the elastic
+         pool. This configuration defines the period when the maintenance updates will will occur.
+        :paramtype maintenance_configuration_id: str
+        :keyword high_availability_replica_count: The number of secondary replicas associated with the
+         elastic pool that are used to provide high availability.
+        :paramtype high_availability_replica_count: int
+        """
         super(ElasticPool, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
@@ -2862,6 +3899,7 @@ class ElasticPool(TrackedResource):
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
+        self.high_availability_replica_count = high_availability_replica_count
 
 
 class ElasticPoolActivity(ProxyResource):
@@ -2875,8 +3913,8 @@ class ElasticPoolActivity(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: The geo-location where the resource lives.
-    :type location: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
     :ivar end_time: The time the operation finished (ISO8601 format).
     :vartype end_time: ~datetime.datetime
     :ivar error_code: The error code if available.
@@ -2979,6 +4017,10 @@ class ElasticPoolActivity(ProxyResource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(ElasticPoolActivity, self).__init__(**kwargs)
         self.location = location
         self.end_time = None
@@ -3008,8 +4050,8 @@ class ElasticPoolActivityListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of elastic pool activities.
-    :type value: list[~azure.mgmt.sql.models.ElasticPoolActivity]
+    :ivar value: Required. The list of elastic pool activities.
+    :vartype value: list[~azure.mgmt.sql.models.ElasticPoolActivity]
     """
 
     _validation = {
@@ -3023,9 +4065,13 @@ class ElasticPoolActivityListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ElasticPoolActivity"],
+        value: List["_models.ElasticPoolActivity"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of elastic pool activities.
+        :paramtype value: list[~azure.mgmt.sql.models.ElasticPoolActivity]
+        """
         super(ElasticPoolActivityListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -3041,8 +4087,8 @@ class ElasticPoolDatabaseActivity(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: The geo-location where the resource lives.
-    :type location: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
     :ivar database_name: The database name.
     :vartype database_name: str
     :ivar end_time: The time the operation finished (ISO8601 format).
@@ -3126,6 +4172,10 @@ class ElasticPoolDatabaseActivity(ProxyResource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(ElasticPoolDatabaseActivity, self).__init__(**kwargs)
         self.location = location
         self.database_name = None
@@ -3150,8 +4200,8 @@ class ElasticPoolDatabaseActivityListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of elastic pool database activities.
-    :type value: list[~azure.mgmt.sql.models.ElasticPoolDatabaseActivity]
+    :ivar value: Required. The list of elastic pool database activities.
+    :vartype value: list[~azure.mgmt.sql.models.ElasticPoolDatabaseActivity]
     """
 
     _validation = {
@@ -3165,9 +4215,13 @@ class ElasticPoolDatabaseActivityListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ElasticPoolDatabaseActivity"],
+        value: List["_models.ElasticPoolDatabaseActivity"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of elastic pool database activities.
+        :paramtype value: list[~azure.mgmt.sql.models.ElasticPoolDatabaseActivity]
+        """
         super(ElasticPoolDatabaseActivityListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -3185,11 +4239,11 @@ class ElasticPoolEditionCapability(msrest.serialization.Model):
      list[~azure.mgmt.sql.models.ElasticPoolPerformanceLevelCapability]
     :ivar zone_redundant: Whether or not zone redundancy is supported for the edition.
     :vartype zone_redundant: bool
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -3213,6 +4267,10 @@ class ElasticPoolEditionCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ElasticPoolEditionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_elastic_pool_performance_levels = None
@@ -3246,6 +4304,8 @@ class ElasticPoolListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ElasticPoolListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3336,6 +4396,8 @@ class ElasticPoolOperation(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ElasticPoolOperation, self).__init__(**kwargs)
         self.elastic_pool_name = None
         self.operation = None
@@ -3378,6 +4440,8 @@ class ElasticPoolOperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ElasticPoolOperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3390,18 +4454,17 @@ class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(msrest.serialization.M
 
     :ivar limit: The maximum performance level per database.
     :vartype limit: float
-    :ivar unit: Unit type used to measure performance level. Possible values include: "DTU",
-     "VCores".
+    :ivar unit: Unit type used to measure performance level. Known values are: "DTU", "VCores".
     :vartype unit: str or ~azure.mgmt.sql.models.PerformanceLevelUnit
     :ivar supported_per_database_min_performance_levels: The list of supported min database
      performance levels.
     :vartype supported_per_database_min_performance_levels:
      list[~azure.mgmt.sql.models.ElasticPoolPerDatabaseMinPerformanceLevelCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -3425,6 +4488,10 @@ class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(msrest.serialization.M
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ElasticPoolPerDatabaseMaxPerformanceLevelCapability, self).__init__(**kwargs)
         self.limit = None
         self.unit = None
@@ -3440,14 +4507,13 @@ class ElasticPoolPerDatabaseMinPerformanceLevelCapability(msrest.serialization.M
 
     :ivar limit: The minimum performance level per database.
     :vartype limit: float
-    :ivar unit: Unit type used to measure performance level. Possible values include: "DTU",
-     "VCores".
+    :ivar unit: Unit type used to measure performance level. Known values are: "DTU", "VCores".
     :vartype unit: str or ~azure.mgmt.sql.models.PerformanceLevelUnit
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -3469,6 +4535,10 @@ class ElasticPoolPerDatabaseMinPerformanceLevelCapability(msrest.serialization.M
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ElasticPoolPerDatabaseMinPerformanceLevelCapability, self).__init__(**kwargs)
         self.limit = None
         self.unit = None
@@ -3479,10 +4549,10 @@ class ElasticPoolPerDatabaseMinPerformanceLevelCapability(msrest.serialization.M
 class ElasticPoolPerDatabaseSettings(msrest.serialization.Model):
     """Per database settings of an elastic pool.
 
-    :param min_capacity: The minimum capacity all databases are guaranteed.
-    :type min_capacity: float
-    :param max_capacity: The maximum capacity any one database can consume.
-    :type max_capacity: float
+    :ivar min_capacity: The minimum capacity all databases are guaranteed.
+    :vartype min_capacity: float
+    :ivar max_capacity: The maximum capacity any one database can consume.
+    :vartype max_capacity: float
     """
 
     _attribute_map = {
@@ -3497,6 +4567,12 @@ class ElasticPoolPerDatabaseSettings(msrest.serialization.Model):
         max_capacity: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword min_capacity: The minimum capacity all databases are guaranteed.
+        :paramtype min_capacity: float
+        :keyword max_capacity: The maximum capacity any one database can consume.
+        :paramtype max_capacity: float
+        """
         super(ElasticPoolPerDatabaseSettings, self).__init__(**kwargs)
         self.min_capacity = min_capacity
         self.max_capacity = max_capacity
@@ -3530,11 +4606,11 @@ class ElasticPoolPerformanceLevelCapability(msrest.serialization.Model):
     :ivar supported_maintenance_configurations: List of supported maintenance configurations.
     :vartype supported_maintenance_configurations:
      list[~azure.mgmt.sql.models.MaintenanceConfigurationCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -3572,6 +4648,10 @@ class ElasticPoolPerformanceLevelCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ElasticPoolPerformanceLevelCapability, self).__init__(**kwargs)
         self.performance_level = None
         self.sku = None
@@ -3590,23 +4670,27 @@ class ElasticPoolPerformanceLevelCapability(msrest.serialization.Model):
 class ElasticPoolUpdate(msrest.serialization.Model):
     """An elastic pool update.
 
-    :param sku: An ARM Resource SKU.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param max_size_bytes: The storage limit for the database elastic pool in bytes.
-    :type max_size_bytes: long
-    :param per_database_settings: The per database settings for the elastic pool.
-    :type per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
-    :param zone_redundant: Whether or not this elastic pool is zone redundant, which means the
+    :ivar sku: An ARM Resource SKU.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
+    :vartype max_size_bytes: long
+    :ivar per_database_settings: The per database settings for the elastic pool.
+    :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
+    :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
      replicas of this elastic pool will be spread across multiple availability zones.
-    :type zone_redundant: bool
-    :param license_type: The license type to apply for this elastic pool. Possible values include:
+    :vartype zone_redundant: bool
+    :ivar license_type: The license type to apply for this elastic pool. Known values are:
      "LicenseIncluded", "BasePrice".
-    :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
-    :param maintenance_configuration_id: Maintenance configuration id assigned to the elastic pool.
+    :vartype license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
+    :ivar maintenance_configuration_id: Maintenance configuration id assigned to the elastic pool.
      This configuration defines the period when the maintenance updates will will occur.
-    :type maintenance_configuration_id: str
+    :vartype maintenance_configuration_id: str
+    :ivar high_availability_replica_count: The number of secondary replicas associated with the
+     elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+     pools.
+    :vartype high_availability_replica_count: int
     """
 
     _attribute_map = {
@@ -3617,20 +4701,45 @@ class ElasticPoolUpdate(msrest.serialization.Model):
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
+        'high_availability_replica_count': {'key': 'properties.highAvailabilityReplicaCount', 'type': 'int'},
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         max_size_bytes: Optional[int] = None,
-        per_database_settings: Optional["ElasticPoolPerDatabaseSettings"] = None,
+        per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
-        license_type: Optional[Union[str, "ElasticPoolLicenseType"]] = None,
+        license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
+        high_availability_replica_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword sku: An ARM Resource SKU.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
+        :paramtype max_size_bytes: long
+        :keyword per_database_settings: The per database settings for the elastic pool.
+        :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
+        :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
+         replicas of this elastic pool will be spread across multiple availability zones.
+        :paramtype zone_redundant: bool
+        :keyword license_type: The license type to apply for this elastic pool. Known values are:
+         "LicenseIncluded", "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
+        :keyword maintenance_configuration_id: Maintenance configuration id assigned to the elastic
+         pool. This configuration defines the period when the maintenance updates will will occur.
+        :paramtype maintenance_configuration_id: str
+        :keyword high_availability_replica_count: The number of secondary replicas associated with the
+         elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+         pools.
+        :paramtype high_availability_replica_count: int
+        """
         super(ElasticPoolUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.tags = tags
@@ -3639,6 +4748,7 @@ class ElasticPoolUpdate(msrest.serialization.Model):
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
+        self.high_availability_replica_count = high_availability_replica_count
 
 
 class EncryptionProtector(ProxyResource):
@@ -3659,17 +4769,17 @@ class EncryptionProtector(ProxyResource):
     :vartype location: str
     :ivar subregion: Subregion of the encryption protector.
     :vartype subregion: str
-    :param server_key_name: The name of the server key.
-    :type server_key_name: str
-    :param server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
-     Possible values include: "ServiceManaged", "AzureKeyVault".
-    :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+    :ivar server_key_name: The name of the server key.
+    :vartype server_key_name: str
+    :ivar server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+     Known values are: "ServiceManaged", "AzureKeyVault".
+    :vartype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
     :ivar uri: The URI of the server key.
     :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.
     :vartype thumbprint: str
-    :param auto_rotation_enabled: Key auto rotation opt-in flag. Either true or false.
-    :type auto_rotation_enabled: bool
+    :ivar auto_rotation_enabled: Key auto rotation opt-in flag. Either true or false.
+    :vartype auto_rotation_enabled: bool
     """
 
     _validation = {
@@ -3701,10 +4811,19 @@ class EncryptionProtector(ProxyResource):
         self,
         *,
         server_key_name: Optional[str] = None,
-        server_key_type: Optional[Union[str, "ServerKeyType"]] = None,
+        server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         auto_rotation_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword server_key_name: The name of the server key.
+        :paramtype server_key_name: str
+        :keyword server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+         Known values are: "ServiceManaged", "AzureKeyVault".
+        :paramtype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+        :keyword auto_rotation_enabled: Key auto rotation opt-in flag. Either true or false.
+        :paramtype auto_rotation_enabled: bool
+        """
         super(EncryptionProtector, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -3741,7 +4860,83 @@ class EncryptionProtectorListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EncryptionProtectorListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class EndpointCertificate(ProxyResource):
+    """Certificate used on an endpoint on the Managed Instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar public_blob: The certificate public blob.
+    :vartype public_blob: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'public_blob': {'key': 'properties.publicBlob', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        public_blob: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword public_blob: The certificate public blob.
+        :paramtype public_blob: str
+        """
+        super(EndpointCertificate, self).__init__(**kwargs)
+        self.public_blob = public_blob
+
+
+class EndpointCertificateListResult(msrest.serialization.Model):
+    """A list of endpoint certificates on the target instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.EndpointCertificate]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[EndpointCertificate]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(EndpointCertificateListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3751,22 +4946,21 @@ class ExportDatabaseDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_key_type: Required. Storage key type. Possible values include:
-     "SharedAccessKey", "StorageAccessKey".
-    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :param storage_key: Required. Storage key.
-    :type storage_key: str
-    :param storage_uri: Required. Storage Uri.
-    :type storage_uri: str
-    :param administrator_login: Required. Administrator login name.
-    :type administrator_login: str
-    :param administrator_login_password: Required. Administrator login password.
-    :type administrator_login_password: str
-    :param authentication_type: Authentication type.
-    :type authentication_type: str
-    :param network_isolation: Optional resource information to enable network isolation for
-     request.
-    :type network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+    :ivar storage_key_type: Required. Storage key type. Known values are: "SharedAccessKey",
+     "StorageAccessKey".
+    :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+    :ivar storage_key: Required. Storage key.
+    :vartype storage_key: str
+    :ivar storage_uri: Required. Storage Uri.
+    :vartype storage_uri: str
+    :ivar administrator_login: Required. Administrator login name.
+    :vartype administrator_login: str
+    :ivar administrator_login_password: Required. Administrator login password.
+    :vartype administrator_login_password: str
+    :ivar authentication_type: Authentication type.
+    :vartype authentication_type: str
+    :ivar network_isolation: Optional resource information to enable network isolation for request.
+    :vartype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
     """
 
     _validation = {
@@ -3790,15 +4984,33 @@ class ExportDatabaseDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        storage_key_type: Union[str, "StorageKeyType"],
+        storage_key_type: Union[str, "_models.StorageKeyType"],
         storage_key: str,
         storage_uri: str,
         administrator_login: str,
         administrator_login_password: str,
         authentication_type: Optional[str] = None,
-        network_isolation: Optional["NetworkIsolationSettings"] = None,
+        network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_key_type: Required. Storage key type. Known values are: "SharedAccessKey",
+         "StorageAccessKey".
+        :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+        :keyword storage_key: Required. Storage key.
+        :paramtype storage_key: str
+        :keyword storage_uri: Required. Storage Uri.
+        :paramtype storage_uri: str
+        :keyword administrator_login: Required. Administrator login name.
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: Required. Administrator login password.
+        :paramtype administrator_login_password: str
+        :keyword authentication_type: Authentication type.
+        :paramtype authentication_type: str
+        :keyword network_isolation: Optional resource information to enable network isolation for
+         request.
+        :paramtype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+        """
         super(ExportDatabaseDefinition, self).__init__(**kwargs)
         self.storage_key_type = storage_key_type
         self.storage_key = storage_key
@@ -3820,12 +5032,12 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param predicate_expression: Specifies condition of where clause when creating an audit.
-    :type predicate_expression: str
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :ivar predicate_expression: Specifies condition of where clause when creating an audit.
+    :vartype predicate_expression: str
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -3861,6 +5073,10 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      USER_CHANGE_PASSWORD_GROUP
      BATCH_STARTED_GROUP
      BATCH_COMPLETED_GROUP
+     DBCC_GROUP
+     DATABASE_OWNERSHIP_CHANGE_GROUP
+     DATABASE_CHANGE_GROUP
+     LEDGER_OPERATION_GROUP
     
      These are groups that cover all sql statements and stored procedures executed against the
      database, and should not be used in combination with other groups as this will result in
@@ -3893,11 +5109,11 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
      'IsAzureMonitorTargetEnabled' as true.
@@ -3913,20 +5129,22 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-     audit actions are forced to be processed.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
+     actions are forced to be processed.
      The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
-    :type queue_delay_ms: int
-    :param state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
-     isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype queue_delay_ms: int
+    :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+     storage.
+    :vartype is_managed_identity_in_use: bool
+    :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+     isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -3938,9 +5156,9 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
+    :vartype storage_account_access_key: str
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
     """
 
     _validation = {
@@ -3959,6 +5177,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'is_managed_identity_in_use': {'key': 'properties.isManagedIdentityInUse', 'type': 'bool'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
@@ -3974,12 +5193,143 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         is_storage_secondary_key_in_use: Optional[bool] = None,
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
-        state: Optional[Union[str, "BlobAuditingPolicyState"]] = None,
+        is_managed_identity_in_use: Optional[bool] = None,
+        state: Optional[Union[str, "_models.BlobAuditingPolicyState"]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword predicate_expression: Specifies condition of where clause when creating an audit.
+        :paramtype predicate_expression: str
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+         DBCC_GROUP
+         DATABASE_OWNERSHIP_CHANGE_GROUP
+         DATABASE_CHANGE_GROUP
+         LEDGER_OPERATION_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
+         'IsAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
+         audit actions are forced to be processed.
+         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+        :paramtype queue_delay_ms: int
+        :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+         storage.
+        :paramtype is_managed_identity_in_use: bool
+        :keyword state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        """
         super(ExtendedDatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = predicate_expression
         self.retention_days = retention_days
@@ -3987,6 +5337,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
         self.queue_delay_ms = queue_delay_ms
+        self.is_managed_identity_in_use = is_managed_identity_in_use
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
@@ -4018,6 +5369,8 @@ class ExtendedDatabaseBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExtendedDatabaseBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4034,8 +5387,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
-     devops logs will be sent to Azure Monitor.
+    :ivar is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled, devops
+     logs will be sent to Azure Monitor.
      In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
      'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
     
@@ -4049,13 +5402,13 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_devops_audit_enabled: bool
-    :param predicate_expression: Specifies condition of where clause when creating an audit.
-    :type predicate_expression: str
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :vartype is_devops_audit_enabled: bool
+    :ivar predicate_expression: Specifies condition of where clause when creating an audit.
+    :vartype predicate_expression: str
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -4091,6 +5444,10 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      USER_CHANGE_PASSWORD_GROUP
      BATCH_STARTED_GROUP
      BATCH_COMPLETED_GROUP
+     DBCC_GROUP
+     DATABASE_OWNERSHIP_CHANGE_GROUP
+     DATABASE_CHANGE_GROUP
+     LEDGER_OPERATION_GROUP
     
      These are groups that cover all sql statements and stored procedures executed against the
      database, and should not be used in combination with other groups as this will result in
@@ -4123,11 +5480,11 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
      'IsAzureMonitorTargetEnabled' as true.
@@ -4143,20 +5500,22 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-     audit actions are forced to be processed.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
+     actions are forced to be processed.
      The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
-    :type queue_delay_ms: int
-    :param state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
-     isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype queue_delay_ms: int
+    :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+     storage.
+    :vartype is_managed_identity_in_use: bool
+    :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+     isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -4168,9 +5527,9 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
+    :vartype storage_account_access_key: str
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
     """
 
     _validation = {
@@ -4190,6 +5549,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'is_managed_identity_in_use': {'key': 'properties.isManagedIdentityInUse', 'type': 'bool'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
@@ -4206,12 +5566,159 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         is_storage_secondary_key_in_use: Optional[bool] = None,
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
-        state: Optional[Union[str, "BlobAuditingPolicyState"]] = None,
+        is_managed_identity_in_use: Optional[bool] = None,
+        state: Optional[Union[str, "_models.BlobAuditingPolicyState"]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
+         devops logs will be sent to Azure Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
+         'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit'
+         diagnostic logs category on the master database should also be created.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_devops_audit_enabled: bool
+        :keyword predicate_expression: Specifies condition of where clause when creating an audit.
+        :paramtype predicate_expression: str
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+         DBCC_GROUP
+         DATABASE_OWNERSHIP_CHANGE_GROUP
+         DATABASE_CHANGE_GROUP
+         LEDGER_OPERATION_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
+         'IsAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
+         audit actions are forced to be processed.
+         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+        :paramtype queue_delay_ms: int
+        :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+         storage.
+        :paramtype is_managed_identity_in_use: bool
+        :keyword state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        """
         super(ExtendedServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.is_devops_audit_enabled = is_devops_audit_enabled
         self.predicate_expression = predicate_expression
@@ -4220,6 +5727,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
         self.queue_delay_ms = queue_delay_ms
+        self.is_managed_identity_in_use = is_managed_identity_in_use
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
@@ -4251,6 +5759,8 @@ class ExtendedServerBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ExtendedServerBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4269,21 +5779,21 @@ class FailoverGroup(ProxyResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param read_write_endpoint: Read-write endpoint of the failover group instance.
-    :type read_write_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
-    :param read_only_endpoint: Read-only endpoint of the failover group instance.
-    :type read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
-    :ivar replication_role: Local replication role of the failover group instance. Possible values
-     include: "Primary", "Secondary".
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar read_write_endpoint: Read-write endpoint of the failover group instance.
+    :vartype read_write_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
+    :ivar read_only_endpoint: Read-only endpoint of the failover group instance.
+    :vartype read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
+    :ivar replication_role: Local replication role of the failover group instance. Known values
+     are: "Primary", "Secondary".
     :vartype replication_role: str or ~azure.mgmt.sql.models.FailoverGroupReplicationRole
     :ivar replication_state: Replication state of the failover group instance.
     :vartype replication_state: str
-    :param partner_servers: List of partner server information for the failover group.
-    :type partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
-    :param databases: List of databases in the failover group.
-    :type databases: list[str]
+    :ivar partner_servers: List of partner server information for the failover group.
+    :vartype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
+    :ivar databases: List of databases in the failover group.
+    :vartype databases: list[str]
     """
 
     _validation = {
@@ -4313,12 +5823,24 @@ class FailoverGroup(ProxyResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        read_write_endpoint: Optional["FailoverGroupReadWriteEndpoint"] = None,
-        read_only_endpoint: Optional["FailoverGroupReadOnlyEndpoint"] = None,
-        partner_servers: Optional[List["PartnerInfo"]] = None,
+        read_write_endpoint: Optional["_models.FailoverGroupReadWriteEndpoint"] = None,
+        read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
+        partner_servers: Optional[List["_models.PartnerInfo"]] = None,
         databases: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword read_write_endpoint: Read-write endpoint of the failover group instance.
+        :paramtype read_write_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
+        :keyword read_only_endpoint: Read-only endpoint of the failover group instance.
+        :paramtype read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
+        :keyword partner_servers: List of partner server information for the failover group.
+        :paramtype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
+        :keyword databases: List of databases in the failover group.
+        :paramtype databases: list[str]
+        """
         super(FailoverGroup, self).__init__(**kwargs)
         self.location = None
         self.tags = tags
@@ -4355,6 +5877,8 @@ class FailoverGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FailoverGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4363,9 +5887,9 @@ class FailoverGroupListResult(msrest.serialization.Model):
 class FailoverGroupReadOnlyEndpoint(msrest.serialization.Model):
     """Read-only endpoint of the failover group instance.
 
-    :param failover_policy: Failover policy of the read-only endpoint for the failover group.
-     Possible values include: "Disabled", "Enabled".
-    :type failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
+    :ivar failover_policy: Failover policy of the read-only endpoint for the failover group. Known
+     values are: "Disabled", "Enabled".
+    :vartype failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
     """
 
     _attribute_map = {
@@ -4375,9 +5899,14 @@ class FailoverGroupReadOnlyEndpoint(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        failover_policy: Optional[Union[str, "ReadOnlyEndpointFailoverPolicy"]] = None,
+        failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword failover_policy: Failover policy of the read-only endpoint for the failover group.
+         Known values are: "Disabled", "Enabled".
+        :paramtype failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
+        """
         super(FailoverGroupReadOnlyEndpoint, self).__init__(**kwargs)
         self.failover_policy = failover_policy
 
@@ -4387,14 +5916,14 @@ class FailoverGroupReadWriteEndpoint(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param failover_policy: Required. Failover policy of the read-write endpoint for the failover
+    :ivar failover_policy: Required. Failover policy of the read-write endpoint for the failover
      group. If failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required.
-     Possible values include: "Manual", "Automatic".
-    :type failover_policy: str or ~azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy
-    :param failover_with_data_loss_grace_period_minutes: Grace period before failover with data
-     loss is attempted for the read-write endpoint. If failoverPolicy is Automatic then
+     Known values are: "Manual", "Automatic".
+    :vartype failover_policy: str or ~azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy
+    :ivar failover_with_data_loss_grace_period_minutes: Grace period before failover with data loss
+     is attempted for the read-write endpoint. If failoverPolicy is Automatic then
      failoverWithDataLossGracePeriodMinutes is required.
-    :type failover_with_data_loss_grace_period_minutes: int
+    :vartype failover_with_data_loss_grace_period_minutes: int
     """
 
     _validation = {
@@ -4409,10 +5938,20 @@ class FailoverGroupReadWriteEndpoint(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        failover_policy: Union[str, "ReadWriteEndpointFailoverPolicy"],
+        failover_policy: Union[str, "_models.ReadWriteEndpointFailoverPolicy"],
         failover_with_data_loss_grace_period_minutes: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword failover_policy: Required. Failover policy of the read-write endpoint for the failover
+         group. If failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required.
+         Known values are: "Manual", "Automatic".
+        :paramtype failover_policy: str or ~azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy
+        :keyword failover_with_data_loss_grace_period_minutes: Grace period before failover with data
+         loss is attempted for the read-write endpoint. If failoverPolicy is Automatic then
+         failoverWithDataLossGracePeriodMinutes is required.
+        :paramtype failover_with_data_loss_grace_period_minutes: int
+        """
         super(FailoverGroupReadWriteEndpoint, self).__init__(**kwargs)
         self.failover_policy = failover_policy
         self.failover_with_data_loss_grace_period_minutes = failover_with_data_loss_grace_period_minutes
@@ -4421,14 +5960,14 @@ class FailoverGroupReadWriteEndpoint(msrest.serialization.Model):
 class FailoverGroupUpdate(msrest.serialization.Model):
     """A failover group update request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param read_write_endpoint: Read-write endpoint of the failover group instance.
-    :type read_write_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
-    :param read_only_endpoint: Read-only endpoint of the failover group instance.
-    :type read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
-    :param databases: List of databases in the failover group.
-    :type databases: list[str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar read_write_endpoint: Read-write endpoint of the failover group instance.
+    :vartype read_write_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
+    :ivar read_only_endpoint: Read-only endpoint of the failover group instance.
+    :vartype read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
+    :ivar databases: List of databases in the failover group.
+    :vartype databases: list[str]
     """
 
     _attribute_map = {
@@ -4442,11 +5981,21 @@ class FailoverGroupUpdate(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        read_write_endpoint: Optional["FailoverGroupReadWriteEndpoint"] = None,
-        read_only_endpoint: Optional["FailoverGroupReadOnlyEndpoint"] = None,
+        read_write_endpoint: Optional["_models.FailoverGroupReadWriteEndpoint"] = None,
+        read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         databases: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword read_write_endpoint: Read-write endpoint of the failover group instance.
+        :paramtype read_write_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
+        :keyword read_only_endpoint: Read-only endpoint of the failover group instance.
+        :paramtype read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
+        :keyword databases: List of databases in the failover group.
+        :paramtype databases: list[str]
+        """
         super(FailoverGroupUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.read_write_endpoint = read_write_endpoint
@@ -4461,8 +6010,8 @@ class ResourceWithWritableName(msrest.serialization.Model):
 
     :ivar id: Resource ID.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
     """
@@ -4484,6 +6033,10 @@ class ResourceWithWritableName(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        """
         super(ResourceWithWritableName, self).__init__(**kwargs)
         self.id = None
         self.name = name
@@ -4497,8 +6050,8 @@ class ProxyResourceWithWritableName(ResourceWithWritableName):
 
     :ivar id: Resource ID.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
     """
@@ -4520,6 +6073,10 @@ class ProxyResourceWithWritableName(ResourceWithWritableName):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        """
         super(ProxyResourceWithWritableName, self).__init__(name=name, **kwargs)
 
 
@@ -4530,17 +6087,17 @@ class FirewallRule(ProxyResourceWithWritableName):
 
     :ivar id: Resource ID.
     :vartype id: str
-    :param name: Resource name.
-    :type name: str
+    :ivar name: Resource name.
+    :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param start_ip_address: The start IP address of the firewall rule. Must be IPv4 format. Use
+    :ivar start_ip_address: The start IP address of the firewall rule. Must be IPv4 format. Use
      value '0.0.0.0' for all Azure-internal IP addresses.
-    :type start_ip_address: str
-    :param end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
      greater than or equal to startIpAddress. Use value '0.0.0.0' for all Azure-internal IP
      addresses.
-    :type end_ip_address: str
+    :vartype end_ip_address: str
     """
 
     _validation = {
@@ -4564,6 +6121,17 @@ class FirewallRule(ProxyResourceWithWritableName):
         end_ip_address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        :keyword start_ip_address: The start IP address of the firewall rule. Must be IPv4 format. Use
+         value '0.0.0.0' for all Azure-internal IP addresses.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: The end IP address of the firewall rule. Must be IPv4 format. Must be
+         greater than or equal to startIpAddress. Use value '0.0.0.0' for all Azure-internal IP
+         addresses.
+        :paramtype end_ip_address: str
+        """
         super(FirewallRule, self).__init__(name=name, **kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
@@ -4572,8 +6140,8 @@ class FirewallRule(ProxyResourceWithWritableName):
 class FirewallRuleList(msrest.serialization.Model):
     """A list of server firewall rules.
 
-    :param values:
-    :type values: list[~azure.mgmt.sql.models.FirewallRule]
+    :ivar values:
+    :vartype values: list[~azure.mgmt.sql.models.FirewallRule]
     """
 
     _attribute_map = {
@@ -4583,9 +6151,13 @@ class FirewallRuleList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        values: Optional[List["FirewallRule"]] = None,
+        values: Optional[List["_models.FirewallRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword values:
+        :paramtype values: list[~azure.mgmt.sql.models.FirewallRule]
+        """
         super(FirewallRuleList, self).__init__(**kwargs)
         self.values = values
 
@@ -4615,6 +6187,8 @@ class FirewallRuleListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FirewallRuleListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4637,9 +6211,9 @@ class GeoBackupPolicy(ProxyResource):
     :vartype kind: str
     :ivar location: Backup policy location.
     :vartype location: str
-    :param state: Required. The state of the geo backup policy. Possible values include:
-     "Disabled", "Enabled".
-    :type state: str or ~azure.mgmt.sql.models.GeoBackupPolicyState
+    :ivar state: Required. The state of the geo backup policy. Known values are: "Disabled",
+     "Enabled".
+    :vartype state: str or ~azure.mgmt.sql.models.GeoBackupPolicyState
     :ivar storage_type: The storage type of the geo backup policy.
     :vartype storage_type: str
     """
@@ -4667,9 +6241,14 @@ class GeoBackupPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        state: Union[str, "GeoBackupPolicyState"],
+        state: Union[str, "_models.GeoBackupPolicyState"],
         **kwargs
     ):
+        """
+        :keyword state: Required. The state of the geo backup policy. Known values are: "Disabled",
+         "Enabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.GeoBackupPolicyState
+        """
         super(GeoBackupPolicy, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -4680,8 +6259,8 @@ class GeoBackupPolicy(ProxyResource):
 class GeoBackupPolicyListResult(msrest.serialization.Model):
     """The response to a list geo backup policies request.
 
-    :param value: The list of geo backup policies.
-    :type value: list[~azure.mgmt.sql.models.GeoBackupPolicy]
+    :ivar value: The list of geo backup policies.
+    :vartype value: list[~azure.mgmt.sql.models.GeoBackupPolicy]
     """
 
     _attribute_map = {
@@ -4691,9 +6270,13 @@ class GeoBackupPolicyListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["GeoBackupPolicy"]] = None,
+        value: Optional[List["_models.GeoBackupPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of geo backup policies.
+        :paramtype value: list[~azure.mgmt.sql.models.GeoBackupPolicy]
+        """
         super(GeoBackupPolicyListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -4703,22 +6286,21 @@ class ImportExistingDatabaseDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_key_type: Required. Storage key type. Possible values include:
-     "SharedAccessKey", "StorageAccessKey".
-    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :param storage_key: Required. Storage key.
-    :type storage_key: str
-    :param storage_uri: Required. Storage Uri.
-    :type storage_uri: str
-    :param administrator_login: Required. Administrator login name.
-    :type administrator_login: str
-    :param administrator_login_password: Required. Administrator login password.
-    :type administrator_login_password: str
-    :param authentication_type: Authentication type.
-    :type authentication_type: str
-    :param network_isolation: Optional resource information to enable network isolation for
-     request.
-    :type network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+    :ivar storage_key_type: Required. Storage key type. Known values are: "SharedAccessKey",
+     "StorageAccessKey".
+    :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+    :ivar storage_key: Required. Storage key.
+    :vartype storage_key: str
+    :ivar storage_uri: Required. Storage Uri.
+    :vartype storage_uri: str
+    :ivar administrator_login: Required. Administrator login name.
+    :vartype administrator_login: str
+    :ivar administrator_login_password: Required. Administrator login password.
+    :vartype administrator_login_password: str
+    :ivar authentication_type: Authentication type.
+    :vartype authentication_type: str
+    :ivar network_isolation: Optional resource information to enable network isolation for request.
+    :vartype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
     """
 
     _validation = {
@@ -4742,15 +6324,33 @@ class ImportExistingDatabaseDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        storage_key_type: Union[str, "StorageKeyType"],
+        storage_key_type: Union[str, "_models.StorageKeyType"],
         storage_key: str,
         storage_uri: str,
         administrator_login: str,
         administrator_login_password: str,
         authentication_type: Optional[str] = None,
-        network_isolation: Optional["NetworkIsolationSettings"] = None,
+        network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_key_type: Required. Storage key type. Known values are: "SharedAccessKey",
+         "StorageAccessKey".
+        :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+        :keyword storage_key: Required. Storage key.
+        :paramtype storage_key: str
+        :keyword storage_uri: Required. Storage Uri.
+        :paramtype storage_uri: str
+        :keyword administrator_login: Required. Administrator login name.
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: Required. Administrator login password.
+        :paramtype administrator_login_password: str
+        :keyword authentication_type: Authentication type.
+        :paramtype authentication_type: str
+        :keyword network_isolation: Optional resource information to enable network isolation for
+         request.
+        :paramtype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+        """
         super(ImportExistingDatabaseDefinition, self).__init__(**kwargs)
         self.storage_key_type = storage_key_type
         self.storage_key = storage_key
@@ -4786,6 +6386,8 @@ class ImportExportExtensionsOperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ImportExportExtensionsOperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4848,6 +6450,8 @@ class ImportExportExtensionsOperationResult(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ImportExportExtensionsOperationResult, self).__init__(**kwargs)
         self.request_id = None
         self.request_type = None
@@ -4929,6 +6533,8 @@ class ImportExportOperationResult(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ImportExportOperationResult, self).__init__(**kwargs)
         self.request_id = None
         self.request_type = None
@@ -4947,30 +6553,29 @@ class ImportNewDatabaseDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param database_name: Name of the import database.
-    :type database_name: str
-    :param edition: Edition of the import database.
-    :type edition: str
-    :param service_objective_name: Service level objective name of the import database.
-    :type service_objective_name: str
-    :param max_size_bytes: Max size in bytes for the import database.
-    :type max_size_bytes: str
-    :param storage_key_type: Required. Storage key type. Possible values include:
-     "SharedAccessKey", "StorageAccessKey".
-    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :param storage_key: Required. Storage key.
-    :type storage_key: str
-    :param storage_uri: Required. Storage Uri.
-    :type storage_uri: str
-    :param administrator_login: Required. Administrator login name.
-    :type administrator_login: str
-    :param administrator_login_password: Required. Administrator login password.
-    :type administrator_login_password: str
-    :param authentication_type: Authentication type.
-    :type authentication_type: str
-    :param network_isolation: Optional resource information to enable network isolation for
-     request.
-    :type network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+    :ivar database_name: Name of the import database.
+    :vartype database_name: str
+    :ivar edition: Edition of the import database.
+    :vartype edition: str
+    :ivar service_objective_name: Service level objective name of the import database.
+    :vartype service_objective_name: str
+    :ivar max_size_bytes: Max size in bytes for the import database.
+    :vartype max_size_bytes: str
+    :ivar storage_key_type: Required. Storage key type. Known values are: "SharedAccessKey",
+     "StorageAccessKey".
+    :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+    :ivar storage_key: Required. Storage key.
+    :vartype storage_key: str
+    :ivar storage_uri: Required. Storage Uri.
+    :vartype storage_uri: str
+    :ivar administrator_login: Required. Administrator login name.
+    :vartype administrator_login: str
+    :ivar administrator_login_password: Required. Administrator login password.
+    :vartype administrator_login_password: str
+    :ivar authentication_type: Authentication type.
+    :vartype authentication_type: str
+    :ivar network_isolation: Optional resource information to enable network isolation for request.
+    :vartype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
     """
 
     _validation = {
@@ -4998,7 +6603,7 @@ class ImportNewDatabaseDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        storage_key_type: Union[str, "StorageKeyType"],
+        storage_key_type: Union[str, "_models.StorageKeyType"],
         storage_key: str,
         storage_uri: str,
         administrator_login: str,
@@ -5008,9 +6613,35 @@ class ImportNewDatabaseDefinition(msrest.serialization.Model):
         service_objective_name: Optional[str] = None,
         max_size_bytes: Optional[str] = None,
         authentication_type: Optional[str] = None,
-        network_isolation: Optional["NetworkIsolationSettings"] = None,
+        network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
         **kwargs
     ):
+        """
+        :keyword database_name: Name of the import database.
+        :paramtype database_name: str
+        :keyword edition: Edition of the import database.
+        :paramtype edition: str
+        :keyword service_objective_name: Service level objective name of the import database.
+        :paramtype service_objective_name: str
+        :keyword max_size_bytes: Max size in bytes for the import database.
+        :paramtype max_size_bytes: str
+        :keyword storage_key_type: Required. Storage key type. Known values are: "SharedAccessKey",
+         "StorageAccessKey".
+        :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+        :keyword storage_key: Required. Storage key.
+        :paramtype storage_key: str
+        :keyword storage_uri: Required. Storage Uri.
+        :paramtype storage_uri: str
+        :keyword administrator_login: Required. Administrator login name.
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: Required. Administrator login password.
+        :paramtype administrator_login_password: str
+        :keyword authentication_type: Authentication type.
+        :paramtype authentication_type: str
+        :keyword network_isolation: Optional resource information to enable network isolation for
+         request.
+        :paramtype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+        """
         super(ImportNewDatabaseDefinition, self).__init__(**kwargs)
         self.database_name = database_name
         self.edition = edition
@@ -5036,19 +6667,19 @@ class InstanceFailoverGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param read_write_endpoint: Read-write endpoint of the failover group instance.
-    :type read_write_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadWriteEndpoint
-    :param read_only_endpoint: Read-only endpoint of the failover group instance.
-    :type read_only_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadOnlyEndpoint
-    :ivar replication_role: Local replication role of the failover group instance. Possible values
-     include: "Primary", "Secondary".
+    :ivar read_write_endpoint: Read-write endpoint of the failover group instance.
+    :vartype read_write_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadWriteEndpoint
+    :ivar read_only_endpoint: Read-only endpoint of the failover group instance.
+    :vartype read_only_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadOnlyEndpoint
+    :ivar replication_role: Local replication role of the failover group instance. Known values
+     are: "Primary", "Secondary".
     :vartype replication_role: str or ~azure.mgmt.sql.models.InstanceFailoverGroupReplicationRole
     :ivar replication_state: Replication state of the failover group instance.
     :vartype replication_state: str
-    :param partner_regions: Partner region information for the failover group.
-    :type partner_regions: list[~azure.mgmt.sql.models.PartnerRegionInfo]
-    :param managed_instance_pairs: List of managed instance pairs in the failover group.
-    :type managed_instance_pairs: list[~azure.mgmt.sql.models.ManagedInstancePairInfo]
+    :ivar partner_regions: Partner region information for the failover group.
+    :vartype partner_regions: list[~azure.mgmt.sql.models.PartnerRegionInfo]
+    :ivar managed_instance_pairs: List of managed instance pairs in the failover group.
+    :vartype managed_instance_pairs: list[~azure.mgmt.sql.models.ManagedInstancePairInfo]
     """
 
     _validation = {
@@ -5074,12 +6705,22 @@ class InstanceFailoverGroup(ProxyResource):
     def __init__(
         self,
         *,
-        read_write_endpoint: Optional["InstanceFailoverGroupReadWriteEndpoint"] = None,
-        read_only_endpoint: Optional["InstanceFailoverGroupReadOnlyEndpoint"] = None,
-        partner_regions: Optional[List["PartnerRegionInfo"]] = None,
-        managed_instance_pairs: Optional[List["ManagedInstancePairInfo"]] = None,
+        read_write_endpoint: Optional["_models.InstanceFailoverGroupReadWriteEndpoint"] = None,
+        read_only_endpoint: Optional["_models.InstanceFailoverGroupReadOnlyEndpoint"] = None,
+        partner_regions: Optional[List["_models.PartnerRegionInfo"]] = None,
+        managed_instance_pairs: Optional[List["_models.ManagedInstancePairInfo"]] = None,
         **kwargs
     ):
+        """
+        :keyword read_write_endpoint: Read-write endpoint of the failover group instance.
+        :paramtype read_write_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadWriteEndpoint
+        :keyword read_only_endpoint: Read-only endpoint of the failover group instance.
+        :paramtype read_only_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadOnlyEndpoint
+        :keyword partner_regions: Partner region information for the failover group.
+        :paramtype partner_regions: list[~azure.mgmt.sql.models.PartnerRegionInfo]
+        :keyword managed_instance_pairs: List of managed instance pairs in the failover group.
+        :paramtype managed_instance_pairs: list[~azure.mgmt.sql.models.ManagedInstancePairInfo]
+        """
         super(InstanceFailoverGroup, self).__init__(**kwargs)
         self.read_write_endpoint = read_write_endpoint
         self.read_only_endpoint = read_only_endpoint
@@ -5114,6 +6755,8 @@ class InstanceFailoverGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(InstanceFailoverGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -5122,9 +6765,9 @@ class InstanceFailoverGroupListResult(msrest.serialization.Model):
 class InstanceFailoverGroupReadOnlyEndpoint(msrest.serialization.Model):
     """Read-only endpoint of the failover group instance.
 
-    :param failover_policy: Failover policy of the read-only endpoint for the failover group.
-     Possible values include: "Disabled", "Enabled".
-    :type failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
+    :ivar failover_policy: Failover policy of the read-only endpoint for the failover group. Known
+     values are: "Disabled", "Enabled".
+    :vartype failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
     """
 
     _attribute_map = {
@@ -5134,9 +6777,14 @@ class InstanceFailoverGroupReadOnlyEndpoint(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        failover_policy: Optional[Union[str, "ReadOnlyEndpointFailoverPolicy"]] = None,
+        failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword failover_policy: Failover policy of the read-only endpoint for the failover group.
+         Known values are: "Disabled", "Enabled".
+        :paramtype failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
+        """
         super(InstanceFailoverGroupReadOnlyEndpoint, self).__init__(**kwargs)
         self.failover_policy = failover_policy
 
@@ -5146,14 +6794,14 @@ class InstanceFailoverGroupReadWriteEndpoint(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param failover_policy: Required. Failover policy of the read-write endpoint for the failover
+    :ivar failover_policy: Required. Failover policy of the read-write endpoint for the failover
      group. If failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required.
-     Possible values include: "Manual", "Automatic".
-    :type failover_policy: str or ~azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy
-    :param failover_with_data_loss_grace_period_minutes: Grace period before failover with data
-     loss is attempted for the read-write endpoint. If failoverPolicy is Automatic then
+     Known values are: "Manual", "Automatic".
+    :vartype failover_policy: str or ~azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy
+    :ivar failover_with_data_loss_grace_period_minutes: Grace period before failover with data loss
+     is attempted for the read-write endpoint. If failoverPolicy is Automatic then
      failoverWithDataLossGracePeriodMinutes is required.
-    :type failover_with_data_loss_grace_period_minutes: int
+    :vartype failover_with_data_loss_grace_period_minutes: int
     """
 
     _validation = {
@@ -5168,10 +6816,20 @@ class InstanceFailoverGroupReadWriteEndpoint(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        failover_policy: Union[str, "ReadWriteEndpointFailoverPolicy"],
+        failover_policy: Union[str, "_models.ReadWriteEndpointFailoverPolicy"],
         failover_with_data_loss_grace_period_minutes: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword failover_policy: Required. Failover policy of the read-write endpoint for the failover
+         group. If failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required.
+         Known values are: "Manual", "Automatic".
+        :paramtype failover_policy: str or ~azure.mgmt.sql.models.ReadWriteEndpointFailoverPolicy
+        :keyword failover_with_data_loss_grace_period_minutes: Grace period before failover with data
+         loss is attempted for the read-write endpoint. If failoverPolicy is Automatic then
+         failoverWithDataLossGracePeriodMinutes is required.
+        :paramtype failover_with_data_loss_grace_period_minutes: int
+        """
         super(InstanceFailoverGroupReadWriteEndpoint, self).__init__(**kwargs)
         self.failover_policy = failover_policy
         self.failover_with_data_loss_grace_period_minutes = failover_with_data_loss_grace_period_minutes
@@ -5190,20 +6848,20 @@ class InstancePool(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The name and tier of the SKU.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :param subnet_id: Resource ID of the subnet to place this instance pool in.
-    :type subnet_id: str
-    :param v_cores: Count of vCores belonging to this instance pool.
-    :type v_cores: int
-    :param license_type: The license type. Possible values are 'LicenseIncluded' (price for SQL
-     license is included) and 'BasePrice' (without SQL license price). Possible values include:
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The name and tier of the SKU.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar subnet_id: Resource ID of the subnet to place this instance pool in.
+    :vartype subnet_id: str
+    :ivar v_cores: Count of vCores belonging to this instance pool.
+    :vartype v_cores: int
+    :ivar license_type: The license type. Possible values are 'LicenseIncluded' (price for SQL
+     license is included) and 'BasePrice' (without SQL license price). Known values are:
      "LicenseIncluded", "BasePrice".
-    :type license_type: str or ~azure.mgmt.sql.models.InstancePoolLicenseType
+    :vartype license_type: str or ~azure.mgmt.sql.models.InstancePoolLicenseType
     """
 
     _validation = {
@@ -5230,12 +6888,28 @@ class InstancePool(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         subnet_id: Optional[str] = None,
         v_cores: Optional[int] = None,
-        license_type: Optional[Union[str, "InstancePoolLicenseType"]] = None,
+        license_type: Optional[Union[str, "_models.InstancePoolLicenseType"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The name and tier of the SKU.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword subnet_id: Resource ID of the subnet to place this instance pool in.
+        :paramtype subnet_id: str
+        :keyword v_cores: Count of vCores belonging to this instance pool.
+        :paramtype v_cores: int
+        :keyword license_type: The license type. Possible values are 'LicenseIncluded' (price for SQL
+         license is included) and 'BasePrice' (without SQL license price). Known values are:
+         "LicenseIncluded", "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.InstancePoolLicenseType
+        """
         super(InstancePool, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.subnet_id = subnet_id
@@ -5252,11 +6926,11 @@ class InstancePoolEditionCapability(msrest.serialization.Model):
     :vartype name: str
     :ivar supported_families: The supported families.
     :vartype supported_families: list[~azure.mgmt.sql.models.InstancePoolFamilyCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -5278,6 +6952,10 @@ class InstancePoolEditionCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(InstancePoolEditionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_families = None
@@ -5296,11 +6974,11 @@ class InstancePoolFamilyCapability(msrest.serialization.Model):
     :vartype supported_license_types: list[~azure.mgmt.sql.models.LicenseTypeCapability]
     :ivar supported_vcores_values: List of supported virtual cores values.
     :vartype supported_vcores_values: list[~azure.mgmt.sql.models.InstancePoolVcoresCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -5324,6 +7002,10 @@ class InstancePoolFamilyCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(InstancePoolFamilyCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_license_types = None
@@ -5357,6 +7039,8 @@ class InstancePoolListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(InstancePoolListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -5365,8 +7049,8 @@ class InstancePoolListResult(msrest.serialization.Model):
 class InstancePoolUpdate(msrest.serialization.Model):
     """An update to an Instance pool.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -5379,6 +7063,10 @@ class InstancePoolUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(InstancePoolUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -5394,11 +7082,11 @@ class InstancePoolVcoresCapability(msrest.serialization.Model):
     :vartype value: int
     :ivar storage_limit: Storage limit.
     :vartype storage_limit: ~azure.mgmt.sql.models.MaxSizeCapability
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -5422,12 +7110,101 @@ class InstancePoolVcoresCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(InstancePoolVcoresCapability, self).__init__(**kwargs)
         self.name = None
         self.value = None
         self.storage_limit = None
         self.status = None
         self.reason = reason
+
+
+class IPv6FirewallRule(ProxyResourceWithWritableName):
+    """An IPv6 server firewall rule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
+    :vartype start_i_pv6_address: str
+    :ivar end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must be
+     greater than or equal to startIpAddress.
+    :vartype end_i_pv6_address: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'start_i_pv6_address': {'key': 'properties.startIPv6Address', 'type': 'str'},
+        'end_i_pv6_address': {'key': 'properties.endIPv6Address', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        start_i_pv6_address: Optional[str] = None,
+        end_i_pv6_address: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Resource name.
+        :paramtype name: str
+        :keyword start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
+        :paramtype start_i_pv6_address: str
+        :keyword end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must
+         be greater than or equal to startIpAddress.
+        :paramtype end_i_pv6_address: str
+        """
+        super(IPv6FirewallRule, self).__init__(name=name, **kwargs)
+        self.start_i_pv6_address = start_i_pv6_address
+        self.end_i_pv6_address = end_i_pv6_address
+
+
+class IPv6FirewallRuleListResult(msrest.serialization.Model):
+    """The response to a list IPv6 firewall rules request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.IPv6FirewallRule]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IPv6FirewallRule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(IPv6FirewallRuleListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class Job(ProxyResource):
@@ -5441,12 +7218,12 @@ class Job(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param description: User-defined description of the job.
-    :type description: str
+    :ivar description: User-defined description of the job.
+    :vartype description: str
     :ivar version: The job version number.
     :vartype version: int
-    :param schedule: Schedule properties of the job.
-    :type schedule: ~azure.mgmt.sql.models.JobSchedule
+    :ivar schedule: Schedule properties of the job.
+    :vartype schedule: ~azure.mgmt.sql.models.JobSchedule
     """
 
     _validation = {
@@ -5469,9 +7246,15 @@ class Job(ProxyResource):
         self,
         *,
         description: Optional[str] = "",
-        schedule: Optional["JobSchedule"] = None,
+        schedule: Optional["_models.JobSchedule"] = None,
         **kwargs
     ):
+        """
+        :keyword description: User-defined description of the job.
+        :paramtype description: str
+        :keyword schedule: Schedule properties of the job.
+        :paramtype schedule: ~azure.mgmt.sql.models.JobSchedule
+        """
         super(Job, self).__init__(**kwargs)
         self.description = description
         self.version = None
@@ -5491,16 +7274,16 @@ class JobAgent(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The name and tier of the SKU.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :param database_id: Resource ID of the database to store job metadata in.
-    :type database_id: str
-    :ivar state: The state of the job agent. Possible values include: "Creating", "Ready",
-     "Updating", "Deleting", "Disabled".
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The name and tier of the SKU.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar database_id: Resource ID of the database to store job metadata in.
+    :vartype database_id: str
+    :ivar state: The state of the job agent. Known values are: "Creating", "Ready", "Updating",
+     "Deleting", "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.JobAgentState
     """
 
@@ -5528,10 +7311,20 @@ class JobAgent(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         database_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The name and tier of the SKU.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword database_id: Resource ID of the database to store job metadata in.
+        :paramtype database_id: str
+        """
         super(JobAgent, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.database_id = database_id
@@ -5563,6 +7356,8 @@ class JobAgentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobAgentListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -5571,8 +7366,8 @@ class JobAgentListResult(msrest.serialization.Model):
 class JobAgentUpdate(msrest.serialization.Model):
     """An update to an Azure SQL job agent.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -5585,6 +7380,10 @@ class JobAgentUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(JobAgentUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -5600,10 +7399,10 @@ class JobCredential(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param username: The credential user name.
-    :type username: str
-    :param password: The credential password.
-    :type password: str
+    :ivar username: The credential user name.
+    :vartype username: str
+    :ivar password: The credential password.
+    :vartype password: str
     """
 
     _validation = {
@@ -5627,6 +7426,12 @@ class JobCredential(ProxyResource):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword username: The credential user name.
+        :paramtype username: str
+        :keyword password: The credential password.
+        :paramtype password: str
+        """
         super(JobCredential, self).__init__(**kwargs)
         self.username = username
         self.password = password
@@ -5657,6 +7462,8 @@ class JobCredentialListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobCredentialListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -5681,12 +7488,12 @@ class JobExecution(ProxyResource):
     :vartype step_id: int
     :ivar job_execution_id: The unique identifier of the job execution.
     :vartype job_execution_id: str
-    :ivar lifecycle: The detailed state of the job execution. Possible values include: "Created",
+    :ivar lifecycle: The detailed state of the job execution. Known values are: "Created",
      "InProgress", "WaitingForChildJobExecutions", "WaitingForRetry", "Succeeded",
      "SucceededWithSkipped", "Failed", "TimedOut", "Canceled", "Skipped".
     :vartype lifecycle: str or ~azure.mgmt.sql.models.JobExecutionLifecycle
-    :ivar provisioning_state: The ARM provisioning state of the job execution. Possible values
-     include: "Created", "InProgress", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The ARM provisioning state of the job execution. Known values are:
+     "Created", "InProgress", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.ProvisioningState
     :ivar create_time: The time that the job execution was created.
     :vartype create_time: ~datetime.datetime
@@ -5694,8 +7501,8 @@ class JobExecution(ProxyResource):
     :vartype start_time: ~datetime.datetime
     :ivar end_time: The time that the job execution completed.
     :vartype end_time: ~datetime.datetime
-    :param current_attempts: Number of times the job execution has been attempted.
-    :type current_attempts: int
+    :ivar current_attempts: Number of times the job execution has been attempted.
+    :vartype current_attempts: int
     :ivar current_attempt_start_time: Start time of the current attempt.
     :vartype current_attempt_start_time: ~datetime.datetime
     :ivar last_message: The last status or error message.
@@ -5747,6 +7554,10 @@ class JobExecution(ProxyResource):
         current_attempts: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword current_attempts: Number of times the job execution has been attempted.
+        :paramtype current_attempts: int
+        """
         super(JobExecution, self).__init__(**kwargs)
         self.job_version = None
         self.step_name = None
@@ -5788,6 +7599,8 @@ class JobExecutionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobExecutionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -5798,7 +7611,7 @@ class JobExecutionTarget(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of the target. Possible values include: "TargetGroup", "SqlDatabase",
+    :ivar type: The type of the target. Known values are: "TargetGroup", "SqlDatabase",
      "SqlElasticPool", "SqlShardMap", "SqlServer".
     :vartype type: str or ~azure.mgmt.sql.models.JobTargetType
     :ivar server_name: The server name.
@@ -5823,6 +7636,8 @@ class JobExecutionTarget(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobExecutionTarget, self).__init__(**kwargs)
         self.type = None
         self.server_name = None
@@ -5854,6 +7669,8 @@ class JobListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -5862,18 +7679,18 @@ class JobListResult(msrest.serialization.Model):
 class JobSchedule(msrest.serialization.Model):
     """Scheduling properties of a job.
 
-    :param start_time: Schedule start time.
-    :type start_time: ~datetime.datetime
-    :param end_time: Schedule end time.
-    :type end_time: ~datetime.datetime
-    :param type: Schedule interval type. Possible values include: "Once", "Recurring". Default
-     value: "Once".
-    :type type: str or ~azure.mgmt.sql.models.JobScheduleType
-    :param enabled: Whether or not the schedule is enabled.
-    :type enabled: bool
-    :param interval: Value of the schedule's recurring interval, if the ScheduleType is recurring.
+    :ivar start_time: Schedule start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Schedule end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar type: Schedule interval type. Known values are: "Once", "Recurring". Default value:
+     "Once".
+    :vartype type: str or ~azure.mgmt.sql.models.JobScheduleType
+    :ivar enabled: Whether or not the schedule is enabled.
+    :vartype enabled: bool
+    :ivar interval: Value of the schedule's recurring interval, if the ScheduleType is recurring.
      ISO8601 duration format.
-    :type interval: str
+    :vartype interval: str
     """
 
     _attribute_map = {
@@ -5889,11 +7706,25 @@ class JobSchedule(msrest.serialization.Model):
         *,
         start_time: Optional[datetime.datetime] = "0001-01-01T00:00:00+00:00",
         end_time: Optional[datetime.datetime] = "9999-12-31T11:59:59+00:00",
-        type: Optional[Union[str, "JobScheduleType"]] = "Once",
+        type: Optional[Union[str, "_models.JobScheduleType"]] = "Once",
         enabled: Optional[bool] = None,
         interval: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: Schedule start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Schedule end time.
+        :paramtype end_time: ~datetime.datetime
+        :keyword type: Schedule interval type. Known values are: "Once", "Recurring". Default value:
+         "Once".
+        :paramtype type: str or ~azure.mgmt.sql.models.JobScheduleType
+        :keyword enabled: Whether or not the schedule is enabled.
+        :paramtype enabled: bool
+        :keyword interval: Value of the schedule's recurring interval, if the ScheduleType is
+         recurring. ISO8601 duration format.
+        :paramtype interval: str
+        """
         super(JobSchedule, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
@@ -5913,21 +7744,21 @@ class JobStep(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param step_id: The job step's index within the job. If not specified when creating the job
+    :ivar step_id: The job step's index within the job. If not specified when creating the job
      step, it will be created as the last step. If not specified when updating the job step, the
      step id is not modified.
-    :type step_id: int
-    :param target_group: The resource ID of the target group that the job step will be executed on.
-    :type target_group: str
-    :param credential: The resource ID of the job credential that will be used to connect to the
+    :vartype step_id: int
+    :ivar target_group: The resource ID of the target group that the job step will be executed on.
+    :vartype target_group: str
+    :ivar credential: The resource ID of the job credential that will be used to connect to the
      targets.
-    :type credential: str
-    :param action: The action payload of the job step.
-    :type action: ~azure.mgmt.sql.models.JobStepAction
-    :param output: Output destination properties of the job step.
-    :type output: ~azure.mgmt.sql.models.JobStepOutput
-    :param execution_options: Execution options for the job step.
-    :type execution_options: ~azure.mgmt.sql.models.JobStepExecutionOptions
+    :vartype credential: str
+    :ivar action: The action payload of the job step.
+    :vartype action: ~azure.mgmt.sql.models.JobStepAction
+    :ivar output: Output destination properties of the job step.
+    :vartype output: ~azure.mgmt.sql.models.JobStepOutput
+    :ivar execution_options: Execution options for the job step.
+    :vartype execution_options: ~azure.mgmt.sql.models.JobStepExecutionOptions
     """
 
     _validation = {
@@ -5954,11 +7785,29 @@ class JobStep(ProxyResource):
         step_id: Optional[int] = None,
         target_group: Optional[str] = None,
         credential: Optional[str] = None,
-        action: Optional["JobStepAction"] = None,
-        output: Optional["JobStepOutput"] = None,
-        execution_options: Optional["JobStepExecutionOptions"] = None,
+        action: Optional["_models.JobStepAction"] = None,
+        output: Optional["_models.JobStepOutput"] = None,
+        execution_options: Optional["_models.JobStepExecutionOptions"] = None,
         **kwargs
     ):
+        """
+        :keyword step_id: The job step's index within the job. If not specified when creating the job
+         step, it will be created as the last step. If not specified when updating the job step, the
+         step id is not modified.
+        :paramtype step_id: int
+        :keyword target_group: The resource ID of the target group that the job step will be executed
+         on.
+        :paramtype target_group: str
+        :keyword credential: The resource ID of the job credential that will be used to connect to the
+         targets.
+        :paramtype credential: str
+        :keyword action: The action payload of the job step.
+        :paramtype action: ~azure.mgmt.sql.models.JobStepAction
+        :keyword output: Output destination properties of the job step.
+        :paramtype output: ~azure.mgmt.sql.models.JobStepOutput
+        :keyword execution_options: Execution options for the job step.
+        :paramtype execution_options: ~azure.mgmt.sql.models.JobStepExecutionOptions
+        """
         super(JobStep, self).__init__(**kwargs)
         self.step_id = step_id
         self.target_group = target_group
@@ -5973,14 +7822,14 @@ class JobStepAction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Type of action being executed by the job step. Possible values include: "TSql".
-     Default value: "TSql".
-    :type type: str or ~azure.mgmt.sql.models.JobStepActionType
-    :param source: The source of the action to execute. Possible values include: "Inline". Default
-     value: "Inline".
-    :type source: str or ~azure.mgmt.sql.models.JobStepActionSource
-    :param value: Required. The action value, for example the text of the T-SQL script to execute.
-    :type value: str
+    :ivar type: Type of action being executed by the job step. Known values are: "TSql". Default
+     value: "TSql".
+    :vartype type: str or ~azure.mgmt.sql.models.JobStepActionType
+    :ivar source: The source of the action to execute. Known values are: "Inline". Default value:
+     "Inline".
+    :vartype source: str or ~azure.mgmt.sql.models.JobStepActionSource
+    :ivar value: Required. The action value, for example the text of the T-SQL script to execute.
+    :vartype value: str
     """
 
     _validation = {
@@ -5997,10 +7846,21 @@ class JobStepAction(msrest.serialization.Model):
         self,
         *,
         value: str,
-        type: Optional[Union[str, "JobStepActionType"]] = "TSql",
-        source: Optional[Union[str, "JobStepActionSource"]] = "Inline",
+        type: Optional[Union[str, "_models.JobStepActionType"]] = "TSql",
+        source: Optional[Union[str, "_models.JobStepActionSource"]] = "Inline",
         **kwargs
     ):
+        """
+        :keyword type: Type of action being executed by the job step. Known values are: "TSql". Default
+         value: "TSql".
+        :paramtype type: str or ~azure.mgmt.sql.models.JobStepActionType
+        :keyword source: The source of the action to execute. Known values are: "Inline". Default
+         value: "Inline".
+        :paramtype source: str or ~azure.mgmt.sql.models.JobStepActionSource
+        :keyword value: Required. The action value, for example the text of the T-SQL script to
+         execute.
+        :paramtype value: str
+        """
         super(JobStepAction, self).__init__(**kwargs)
         self.type = type
         self.source = source
@@ -6010,18 +7870,18 @@ class JobStepAction(msrest.serialization.Model):
 class JobStepExecutionOptions(msrest.serialization.Model):
     """The execution options of a job step.
 
-    :param timeout_seconds: Execution timeout for the job step.
-    :type timeout_seconds: int
-    :param retry_attempts: Maximum number of times the job step will be reattempted if the first
+    :ivar timeout_seconds: Execution timeout for the job step.
+    :vartype timeout_seconds: int
+    :ivar retry_attempts: Maximum number of times the job step will be reattempted if the first
      attempt fails.
-    :type retry_attempts: int
-    :param initial_retry_interval_seconds: Initial delay between retries for job step execution.
-    :type initial_retry_interval_seconds: int
-    :param maximum_retry_interval_seconds: The maximum amount of time to wait between retries for
+    :vartype retry_attempts: int
+    :ivar initial_retry_interval_seconds: Initial delay between retries for job step execution.
+    :vartype initial_retry_interval_seconds: int
+    :ivar maximum_retry_interval_seconds: The maximum amount of time to wait between retries for
      job step execution.
-    :type maximum_retry_interval_seconds: int
-    :param retry_interval_backoff_multiplier: The backoff multiplier for the time between retries.
-    :type retry_interval_backoff_multiplier: float
+    :vartype maximum_retry_interval_seconds: int
+    :ivar retry_interval_backoff_multiplier: The backoff multiplier for the time between retries.
+    :vartype retry_interval_backoff_multiplier: float
     """
 
     _attribute_map = {
@@ -6042,6 +7902,21 @@ class JobStepExecutionOptions(msrest.serialization.Model):
         retry_interval_backoff_multiplier: Optional[float] = 2,
         **kwargs
     ):
+        """
+        :keyword timeout_seconds: Execution timeout for the job step.
+        :paramtype timeout_seconds: int
+        :keyword retry_attempts: Maximum number of times the job step will be reattempted if the first
+         attempt fails.
+        :paramtype retry_attempts: int
+        :keyword initial_retry_interval_seconds: Initial delay between retries for job step execution.
+        :paramtype initial_retry_interval_seconds: int
+        :keyword maximum_retry_interval_seconds: The maximum amount of time to wait between retries for
+         job step execution.
+        :paramtype maximum_retry_interval_seconds: int
+        :keyword retry_interval_backoff_multiplier: The backoff multiplier for the time between
+         retries.
+        :paramtype retry_interval_backoff_multiplier: float
+        """
         super(JobStepExecutionOptions, self).__init__(**kwargs)
         self.timeout_seconds = timeout_seconds
         self.retry_attempts = retry_attempts
@@ -6075,6 +7950,8 @@ class JobStepListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobStepListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6085,24 +7962,24 @@ class JobStepOutput(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: The output destination type. Possible values include: "SqlDatabase". Default
-     value: "SqlDatabase".
-    :type type: str or ~azure.mgmt.sql.models.JobStepOutputType
-    :param subscription_id: The output destination subscription id.
-    :type subscription_id: str
-    :param resource_group_name: The output destination resource group.
-    :type resource_group_name: str
-    :param server_name: Required. The output destination server name.
-    :type server_name: str
-    :param database_name: Required. The output destination database.
-    :type database_name: str
-    :param schema_name: The output destination schema.
-    :type schema_name: str
-    :param table_name: Required. The output destination table.
-    :type table_name: str
-    :param credential: Required. The resource ID of the credential to use to connect to the output
+    :ivar type: The output destination type. Known values are: "SqlDatabase". Default value:
+     "SqlDatabase".
+    :vartype type: str or ~azure.mgmt.sql.models.JobStepOutputType
+    :ivar subscription_id: The output destination subscription id.
+    :vartype subscription_id: str
+    :ivar resource_group_name: The output destination resource group.
+    :vartype resource_group_name: str
+    :ivar server_name: Required. The output destination server name.
+    :vartype server_name: str
+    :ivar database_name: Required. The output destination database.
+    :vartype database_name: str
+    :ivar schema_name: The output destination schema.
+    :vartype schema_name: str
+    :ivar table_name: Required. The output destination table.
+    :vartype table_name: str
+    :ivar credential: Required. The resource ID of the credential to use to connect to the output
      destination.
-    :type credential: str
+    :vartype credential: str
     """
 
     _validation = {
@@ -6130,12 +8007,32 @@ class JobStepOutput(msrest.serialization.Model):
         database_name: str,
         table_name: str,
         credential: str,
-        type: Optional[Union[str, "JobStepOutputType"]] = "SqlDatabase",
+        type: Optional[Union[str, "_models.JobStepOutputType"]] = "SqlDatabase",
         subscription_id: Optional[str] = None,
         resource_group_name: Optional[str] = None,
         schema_name: Optional[str] = "dbo",
         **kwargs
     ):
+        """
+        :keyword type: The output destination type. Known values are: "SqlDatabase". Default value:
+         "SqlDatabase".
+        :paramtype type: str or ~azure.mgmt.sql.models.JobStepOutputType
+        :keyword subscription_id: The output destination subscription id.
+        :paramtype subscription_id: str
+        :keyword resource_group_name: The output destination resource group.
+        :paramtype resource_group_name: str
+        :keyword server_name: Required. The output destination server name.
+        :paramtype server_name: str
+        :keyword database_name: Required. The output destination database.
+        :paramtype database_name: str
+        :keyword schema_name: The output destination schema.
+        :paramtype schema_name: str
+        :keyword table_name: Required. The output destination table.
+        :paramtype table_name: str
+        :keyword credential: Required. The resource ID of the credential to use to connect to the
+         output destination.
+        :paramtype credential: str
+        """
         super(JobStepOutput, self).__init__(**kwargs)
         self.type = type
         self.subscription_id = subscription_id
@@ -6152,23 +8049,23 @@ class JobTarget(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param membership_type: Whether the target is included or excluded from the group. Possible
-     values include: "Include", "Exclude". Default value: "Include".
-    :type membership_type: str or ~azure.mgmt.sql.models.JobTargetGroupMembershipType
-    :param type: Required. The target type. Possible values include: "TargetGroup", "SqlDatabase",
+    :ivar membership_type: Whether the target is included or excluded from the group. Known values
+     are: "Include", "Exclude". Default value: "Include".
+    :vartype membership_type: str or ~azure.mgmt.sql.models.JobTargetGroupMembershipType
+    :ivar type: Required. The target type. Known values are: "TargetGroup", "SqlDatabase",
      "SqlElasticPool", "SqlShardMap", "SqlServer".
-    :type type: str or ~azure.mgmt.sql.models.JobTargetType
-    :param server_name: The target server name.
-    :type server_name: str
-    :param database_name: The target database name.
-    :type database_name: str
-    :param elastic_pool_name: The target elastic pool name.
-    :type elastic_pool_name: str
-    :param shard_map_name: The target shard map.
-    :type shard_map_name: str
-    :param refresh_credential: The resource ID of the credential that is used during job execution
+    :vartype type: str or ~azure.mgmt.sql.models.JobTargetType
+    :ivar server_name: The target server name.
+    :vartype server_name: str
+    :ivar database_name: The target database name.
+    :vartype database_name: str
+    :ivar elastic_pool_name: The target elastic pool name.
+    :vartype elastic_pool_name: str
+    :ivar shard_map_name: The target shard map.
+    :vartype shard_map_name: str
+    :ivar refresh_credential: The resource ID of the credential that is used during job execution
      to connect to the target and determine the list of databases inside the target.
-    :type refresh_credential: str
+    :vartype refresh_credential: str
     """
 
     _validation = {
@@ -6188,8 +8085,8 @@ class JobTarget(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "JobTargetType"],
-        membership_type: Optional[Union[str, "JobTargetGroupMembershipType"]] = "Include",
+        type: Union[str, "_models.JobTargetType"],
+        membership_type: Optional[Union[str, "_models.JobTargetGroupMembershipType"]] = "Include",
         server_name: Optional[str] = None,
         database_name: Optional[str] = None,
         elastic_pool_name: Optional[str] = None,
@@ -6197,6 +8094,25 @@ class JobTarget(msrest.serialization.Model):
         refresh_credential: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword membership_type: Whether the target is included or excluded from the group. Known
+         values are: "Include", "Exclude". Default value: "Include".
+        :paramtype membership_type: str or ~azure.mgmt.sql.models.JobTargetGroupMembershipType
+        :keyword type: Required. The target type. Known values are: "TargetGroup", "SqlDatabase",
+         "SqlElasticPool", "SqlShardMap", "SqlServer".
+        :paramtype type: str or ~azure.mgmt.sql.models.JobTargetType
+        :keyword server_name: The target server name.
+        :paramtype server_name: str
+        :keyword database_name: The target database name.
+        :paramtype database_name: str
+        :keyword elastic_pool_name: The target elastic pool name.
+        :paramtype elastic_pool_name: str
+        :keyword shard_map_name: The target shard map.
+        :paramtype shard_map_name: str
+        :keyword refresh_credential: The resource ID of the credential that is used during job
+         execution to connect to the target and determine the list of databases inside the target.
+        :paramtype refresh_credential: str
+        """
         super(JobTarget, self).__init__(**kwargs)
         self.membership_type = membership_type
         self.type = type
@@ -6218,8 +8134,8 @@ class JobTargetGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param members: Members of the target group.
-    :type members: list[~azure.mgmt.sql.models.JobTarget]
+    :ivar members: Members of the target group.
+    :vartype members: list[~azure.mgmt.sql.models.JobTarget]
     """
 
     _validation = {
@@ -6238,9 +8154,13 @@ class JobTargetGroup(ProxyResource):
     def __init__(
         self,
         *,
-        members: Optional[List["JobTarget"]] = None,
+        members: Optional[List["_models.JobTarget"]] = None,
         **kwargs
     ):
+        """
+        :keyword members: Members of the target group.
+        :paramtype members: list[~azure.mgmt.sql.models.JobTarget]
+        """
         super(JobTargetGroup, self).__init__(**kwargs)
         self.members = members
 
@@ -6270,6 +8190,8 @@ class JobTargetGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobTargetGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6304,6 +8226,8 @@ class JobVersion(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobVersion, self).__init__(**kwargs)
 
 
@@ -6332,6 +8256,8 @@ class JobVersionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobVersionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6348,10 +8274,10 @@ class LedgerDigestUploads(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param digest_storage_endpoint: The digest storage endpoint, which must be either an Azure blob
+    :ivar digest_storage_endpoint: The digest storage endpoint, which must be either an Azure blob
      storage endpoint or an URI for Azure Confidential Ledger.
-    :type digest_storage_endpoint: str
-    :ivar state: Specifies the state of ledger digest upload. Possible values include: "Enabled",
+    :vartype digest_storage_endpoint: str
+    :ivar state: Specifies the state of ledger digest upload. Known values are: "Enabled",
      "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.LedgerDigestUploadsState
     """
@@ -6377,6 +8303,11 @@ class LedgerDigestUploads(ProxyResource):
         digest_storage_endpoint: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword digest_storage_endpoint: The digest storage endpoint, which must be either an Azure
+         blob storage endpoint or an URI for Azure Confidential Ledger.
+        :paramtype digest_storage_endpoint: str
+        """
         super(LedgerDigestUploads, self).__init__(**kwargs)
         self.digest_storage_endpoint = digest_storage_endpoint
         self.state = None
@@ -6407,6 +8338,8 @@ class LedgerDigestUploadsListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LedgerDigestUploadsListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6419,11 +8352,11 @@ class LicenseTypeCapability(msrest.serialization.Model):
 
     :ivar name: License type identifier.
     :vartype name: str
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -6443,6 +8376,10 @@ class LicenseTypeCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(LicenseTypeCapability, self).__init__(**kwargs)
         self.name = None
         self.status = None
@@ -6461,11 +8398,11 @@ class LocationCapabilities(msrest.serialization.Model):
     :ivar supported_managed_instance_versions: The list of supported managed instance versions.
     :vartype supported_managed_instance_versions:
      list[~azure.mgmt.sql.models.ManagedInstanceVersionCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -6489,12 +8426,124 @@ class LocationCapabilities(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(LocationCapabilities, self).__init__(**kwargs)
         self.name = None
         self.supported_server_versions = None
         self.supported_managed_instance_versions = None
         self.status = None
         self.reason = reason
+
+
+class LogicalDatabaseTransparentDataEncryption(ProxyResource):
+    """A logical database transparent data encryption state.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar state: Specifies the state of the transparent data encryption. Known values are:
+     "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.TransparentDataEncryptionState"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword state: Specifies the state of the transparent data encryption. Known values are:
+         "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
+        """
+        super(LogicalDatabaseTransparentDataEncryption, self).__init__(**kwargs)
+        self.state = state
+
+
+class LogicalDatabaseTransparentDataEncryptionListResult(msrest.serialization.Model):
+    """A list of transparent data encryptions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LogicalDatabaseTransparentDataEncryption]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(LogicalDatabaseTransparentDataEncryptionListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class LogicalServerAdvancedThreatProtectionListResult(msrest.serialization.Model):
+    """A list of the server's Advanced Threat Protection configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ServerAdvancedThreatProtection]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServerAdvancedThreatProtection]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(LogicalServerAdvancedThreatProtectionListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class LogicalServerSecurityAlertPolicyListResult(msrest.serialization.Model):
@@ -6522,6 +8571,8 @@ class LogicalServerSecurityAlertPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LogicalServerSecurityAlertPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6534,7 +8585,7 @@ class LogSizeCapability(msrest.serialization.Model):
 
     :ivar limit: The log size limit (see 'unit' for the units).
     :vartype limit: int
-    :ivar unit: The units that the limit is expressed in. Possible values include: "Megabytes",
+    :ivar unit: The units that the limit is expressed in. Known values are: "Megabytes",
      "Gigabytes", "Terabytes", "Petabytes", "Percent".
     :vartype unit: str or ~azure.mgmt.sql.models.LogSizeUnit
     """
@@ -6553,6 +8604,8 @@ class LogSizeCapability(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LogSizeCapability, self).__init__(**kwargs)
         self.limit = None
         self.unit = None
@@ -6581,12 +8634,12 @@ class LongTermRetentionBackup(ProxyResource):
     :vartype backup_time: ~datetime.datetime
     :ivar backup_expiration_time: The time the long term retention backup will expire.
     :vartype backup_expiration_time: ~datetime.datetime
-    :ivar backup_storage_redundancy: The storage redundancy type of the backup. Possible values
-     include: "Geo", "Local", "Zone".
+    :ivar backup_storage_redundancy: The storage redundancy type of the backup. Known values are:
+     "Geo", "Local", "Zone", "GeoZone".
     :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
-    :param requested_backup_storage_redundancy: The storage redundancy type of the backup. Possible
-     values include: "Geo", "Local", "Zone".
-    :type requested_backup_storage_redundancy: str or
+    :ivar requested_backup_storage_redundancy: The storage redundancy type of the backup. Known
+     values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype requested_backup_storage_redundancy: str or
      ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
@@ -6620,9 +8673,15 @@ class LongTermRetentionBackup(ProxyResource):
     def __init__(
         self,
         *,
-        requested_backup_storage_redundancy: Optional[Union[str, "BackupStorageRedundancy"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         **kwargs
     ):
+        """
+        :keyword requested_backup_storage_redundancy: The storage redundancy type of the backup. Known
+         values are: "Geo", "Local", "Zone", "GeoZone".
+        :paramtype requested_backup_storage_redundancy: str or
+         ~azure.mgmt.sql.models.BackupStorageRedundancy
+        """
         super(LongTermRetentionBackup, self).__init__(**kwargs)
         self.server_name = None
         self.server_create_time = None
@@ -6659,6 +8718,8 @@ class LongTermRetentionBackupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LongTermRetentionBackupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6683,8 +8744,8 @@ class LongTermRetentionBackupOperationResult(ProxyResource):
     :vartype from_backup_resource_id: str
     :ivar to_backup_resource_id: Target backup resource id.
     :vartype to_backup_resource_id: str
-    :ivar target_backup_storage_redundancy: The storage redundancy type of the copied backup.
-     Possible values include: "Geo", "Local", "Zone".
+    :ivar target_backup_storage_redundancy: The storage redundancy type of the copied backup. Known
+     values are: "Geo", "Local", "Zone", "GeoZone".
     :vartype target_backup_storage_redundancy: str or
      ~azure.mgmt.sql.models.BackupStorageRedundancy
     :ivar status: Operation status.
@@ -6723,6 +8784,8 @@ class LongTermRetentionBackupOperationResult(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(LongTermRetentionBackupOperationResult, self).__init__(**kwargs)
         self.request_id = None
         self.operation_type = None
@@ -6744,14 +8807,14 @@ class LongTermRetentionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
-    :type weekly_retention: str
-    :param monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601 format.
-    :type monthly_retention: str
-    :param yearly_retention: The yearly retention policy for an LTR backup in an ISO 8601 format.
-    :type yearly_retention: str
-    :param week_of_year: The week of year to take the yearly backup in an ISO 8601 format.
-    :type week_of_year: int
+    :ivar weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
+    :vartype weekly_retention: str
+    :ivar monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601 format.
+    :vartype monthly_retention: str
+    :ivar yearly_retention: The yearly retention policy for an LTR backup in an ISO 8601 format.
+    :vartype yearly_retention: str
+    :ivar week_of_year: The week of year to take the yearly backup in an ISO 8601 format.
+    :vartype week_of_year: int
     """
 
     _validation = {
@@ -6779,6 +8842,17 @@ class LongTermRetentionPolicy(ProxyResource):
         week_of_year: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
+        :paramtype weekly_retention: str
+        :keyword monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601
+         format.
+        :paramtype monthly_retention: str
+        :keyword yearly_retention: The yearly retention policy for an LTR backup in an ISO 8601 format.
+        :paramtype yearly_retention: str
+        :keyword week_of_year: The week of year to take the yearly backup in an ISO 8601 format.
+        :paramtype week_of_year: int
+        """
         super(LongTermRetentionPolicy, self).__init__(**kwargs)
         self.weekly_retention = weekly_retention
         self.monthly_retention = monthly_retention
@@ -6811,6 +8885,8 @@ class LongTermRetentionPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LongTermRetentionPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -6826,11 +8902,11 @@ class MaintenanceConfigurationCapability(msrest.serialization.Model):
     :ivar zone_redundant: Whether or not zone redundancy is supported for the maintenance
      configuration.
     :vartype zone_redundant: bool
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -6852,6 +8928,10 @@ class MaintenanceConfigurationCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(MaintenanceConfigurationCapability, self).__init__(**kwargs)
         self.name = None
         self.zone_redundant = None
@@ -6870,22 +8950,22 @@ class MaintenanceWindowOptions(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param is_enabled: Whether maintenance windows are enabled for the database.
-    :type is_enabled: bool
-    :param maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
+    :ivar is_enabled: Whether maintenance windows are enabled for the database.
+    :vartype is_enabled: bool
+    :ivar maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
      {Wednesday, 0, 24*\ 60}.
-    :type maintenance_window_cycles: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
-    :param min_duration_in_minutes: Minimum duration of maintenance window.
-    :type min_duration_in_minutes: int
-    :param default_duration_in_minutes: Default duration for maintenance window.
-    :type default_duration_in_minutes: int
-    :param min_cycles: Minimum number of maintenance windows cycles to be set on the database.
-    :type min_cycles: int
-    :param time_granularity_in_minutes: Time granularity in minutes for maintenance windows.
-    :type time_granularity_in_minutes: int
-    :param allow_multiple_maintenance_windows_per_cycle: Whether we allow multiple maintenance
+    :vartype maintenance_window_cycles: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
+    :ivar min_duration_in_minutes: Minimum duration of maintenance window.
+    :vartype min_duration_in_minutes: int
+    :ivar default_duration_in_minutes: Default duration for maintenance window.
+    :vartype default_duration_in_minutes: int
+    :ivar min_cycles: Minimum number of maintenance windows cycles to be set on the database.
+    :vartype min_cycles: int
+    :ivar time_granularity_in_minutes: Time granularity in minutes for maintenance windows.
+    :vartype time_granularity_in_minutes: int
+    :ivar allow_multiple_maintenance_windows_per_cycle: Whether we allow multiple maintenance
      windows per cycle.
-    :type allow_multiple_maintenance_windows_per_cycle: bool
+    :vartype allow_multiple_maintenance_windows_per_cycle: bool
     """
 
     _validation = {
@@ -6911,7 +8991,7 @@ class MaintenanceWindowOptions(ProxyResource):
         self,
         *,
         is_enabled: Optional[bool] = None,
-        maintenance_window_cycles: Optional[List["MaintenanceWindowTimeRange"]] = None,
+        maintenance_window_cycles: Optional[List["_models.MaintenanceWindowTimeRange"]] = None,
         min_duration_in_minutes: Optional[int] = None,
         default_duration_in_minutes: Optional[int] = None,
         min_cycles: Optional[int] = None,
@@ -6919,6 +8999,24 @@ class MaintenanceWindowOptions(ProxyResource):
         allow_multiple_maintenance_windows_per_cycle: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Whether maintenance windows are enabled for the database.
+        :paramtype is_enabled: bool
+        :keyword maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
+         {Wednesday, 0, 24*\ 60}.
+        :paramtype maintenance_window_cycles: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
+        :keyword min_duration_in_minutes: Minimum duration of maintenance window.
+        :paramtype min_duration_in_minutes: int
+        :keyword default_duration_in_minutes: Default duration for maintenance window.
+        :paramtype default_duration_in_minutes: int
+        :keyword min_cycles: Minimum number of maintenance windows cycles to be set on the database.
+        :paramtype min_cycles: int
+        :keyword time_granularity_in_minutes: Time granularity in minutes for maintenance windows.
+        :paramtype time_granularity_in_minutes: int
+        :keyword allow_multiple_maintenance_windows_per_cycle: Whether we allow multiple maintenance
+         windows per cycle.
+        :paramtype allow_multiple_maintenance_windows_per_cycle: bool
+        """
         super(MaintenanceWindowOptions, self).__init__(**kwargs)
         self.is_enabled = is_enabled
         self.maintenance_window_cycles = maintenance_window_cycles
@@ -6940,8 +9038,8 @@ class MaintenanceWindows(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param time_ranges:
-    :type time_ranges: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
+    :ivar time_ranges:
+    :vartype time_ranges: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
     """
 
     _validation = {
@@ -6960,9 +9058,13 @@ class MaintenanceWindows(ProxyResource):
     def __init__(
         self,
         *,
-        time_ranges: Optional[List["MaintenanceWindowTimeRange"]] = None,
+        time_ranges: Optional[List["_models.MaintenanceWindowTimeRange"]] = None,
         **kwargs
     ):
+        """
+        :keyword time_ranges:
+        :paramtype time_ranges: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
+        """
         super(MaintenanceWindows, self).__init__(**kwargs)
         self.time_ranges = time_ranges
 
@@ -6970,13 +9072,13 @@ class MaintenanceWindows(ProxyResource):
 class MaintenanceWindowTimeRange(msrest.serialization.Model):
     """Maintenance window time range.
 
-    :param day_of_week: Day of maintenance window. Possible values include: "Sunday", "Monday",
-     "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday".
-    :type day_of_week: str or ~azure.mgmt.sql.models.DayOfWeek
-    :param start_time: Start time minutes offset from 12am.
-    :type start_time: str
-    :param duration: Duration of maintenance window in minutes.
-    :type duration: str
+    :ivar day_of_week: Day of maintenance window. Known values are: "Sunday", "Monday", "Tuesday",
+     "Wednesday", "Thursday", "Friday", "Saturday".
+    :vartype day_of_week: str or ~azure.mgmt.sql.models.DayOfWeek
+    :ivar start_time: Start time minutes offset from 12am.
+    :vartype start_time: str
+    :ivar duration: Duration of maintenance window in minutes.
+    :vartype duration: str
     """
 
     _attribute_map = {
@@ -6988,11 +9090,20 @@ class MaintenanceWindowTimeRange(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        day_of_week: Optional[Union[str, "DayOfWeek"]] = None,
+        day_of_week: Optional[Union[str, "_models.DayOfWeek"]] = None,
         start_time: Optional[str] = None,
         duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword day_of_week: Day of maintenance window. Known values are: "Sunday", "Monday",
+         "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday".
+        :paramtype day_of_week: str or ~azure.mgmt.sql.models.DayOfWeek
+        :keyword start_time: Start time minutes offset from 12am.
+        :paramtype start_time: str
+        :keyword duration: Duration of maintenance window in minutes.
+        :paramtype duration: str
+        """
         super(MaintenanceWindowTimeRange, self).__init__(**kwargs)
         self.day_of_week = day_of_week
         self.start_time = start_time
@@ -7010,9 +9121,9 @@ class ManagedBackupShortTermRetentionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param retention_days: The backup retention period in days. This is how many days Point-in-Time
+    :ivar retention_days: The backup retention period in days. This is how many days Point-in-Time
      Restore will be supported.
-    :type retention_days: int
+    :vartype retention_days: int
     """
 
     _validation = {
@@ -7034,6 +9145,11 @@ class ManagedBackupShortTermRetentionPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword retention_days: The backup retention period in days. This is how many days
+         Point-in-Time Restore will be supported.
+        :paramtype retention_days: int
+        """
         super(ManagedBackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = retention_days
 
@@ -7063,6 +9179,8 @@ class ManagedBackupShortTermRetentionPolicyListResult(msrest.serialization.Model
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedBackupShortTermRetentionPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7081,65 +9199,64 @@ class ManagedDatabase(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param collation: Collation of the managed database.
-    :type collation: str
-    :ivar status: Status of the database. Possible values include: "Online", "Offline", "Shutdown",
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar collation: Collation of the managed database.
+    :vartype collation: str
+    :ivar status: Status of the database. Known values are: "Online", "Offline", "Shutdown",
      "Creating", "Inaccessible", "Restoring", "Updating".
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: ~datetime.datetime
     :ivar earliest_restore_point: Earliest restore point in time for point in time restore.
     :vartype earliest_restore_point: ~datetime.datetime
-    :param restore_point_in_time: Conditional. If createMode is PointInTimeRestore, this value is
+    :ivar restore_point_in_time: Conditional. If createMode is PointInTimeRestore, this value is
      required. Specifies the point in time (ISO8601 format) of the source database that will be
      restored to create the new database.
-    :type restore_point_in_time: ~datetime.datetime
+    :vartype restore_point_in_time: ~datetime.datetime
     :ivar default_secondary_location: Geo paired region.
     :vartype default_secondary_location: str
-    :param catalog_collation: Collation of the metadata catalog. Possible values include:
+    :ivar catalog_collation: Collation of the metadata catalog. Known values are:
      "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
-    :type catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
-    :param create_mode: Managed database create mode. PointInTimeRestore: Create a database by
+    :vartype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+    :ivar create_mode: Managed database create mode. PointInTimeRestore: Create a database by
      restoring a point in time backup of an existing database. SourceDatabaseName,
      SourceManagedInstanceName and PointInTime must be specified. RestoreExternalBackup: Create a
      database by restoring from external backup files. Collation, StorageContainerUri and
      StorageContainerSasToken must be specified. Recovery: Creates a database by restoring a
      geo-replicated backup. RecoverableDatabaseId must be specified as the recoverable database
      resource ID to restore. RestoreLongTermRetentionBackup: Create a database by restoring from a
-     long term retention backup (longTermRetentionBackupResourceId required). Possible values
-     include: "Default", "RestoreExternalBackup", "PointInTimeRestore", "Recovery",
+     long term retention backup (longTermRetentionBackupResourceId required). Known values are:
+     "Default", "RestoreExternalBackup", "PointInTimeRestore", "Recovery",
      "RestoreLongTermRetentionBackup".
-    :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
-    :param storage_container_uri: Conditional. If createMode is RestoreExternalBackup, this value
-     is required. Specifies the uri of the storage container where backups for this restore are
-     stored.
-    :type storage_container_uri: str
-    :param source_database_id: The resource identifier of the source database associated with
-     create operation of this database.
-    :type source_database_id: str
-    :param restorable_dropped_database_id: The restorable dropped database resource id to restore
+    :vartype create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
+    :ivar storage_container_uri: Conditional. If createMode is RestoreExternalBackup, this value is
+     required. Specifies the uri of the storage container where backups for this restore are stored.
+    :vartype storage_container_uri: str
+    :ivar source_database_id: The resource identifier of the source database associated with create
+     operation of this database.
+    :vartype source_database_id: str
+    :ivar restorable_dropped_database_id: The restorable dropped database resource id to restore
      when creating this database.
-    :type restorable_dropped_database_id: str
-    :param storage_container_sas_token: Conditional. If createMode is RestoreExternalBackup, this
+    :vartype restorable_dropped_database_id: str
+    :ivar storage_container_sas_token: Conditional. If createMode is RestoreExternalBackup, this
      value is required. Specifies the storage container sas token.
-    :type storage_container_sas_token: str
+    :vartype storage_container_sas_token: str
     :ivar failover_group_id: Instance Failover Group resource identifier that this managed database
      belongs to.
     :vartype failover_group_id: str
-    :param recoverable_database_id: The resource identifier of the recoverable database associated
+    :ivar recoverable_database_id: The resource identifier of the recoverable database associated
      with create operation of this database.
-    :type recoverable_database_id: str
-    :param long_term_retention_backup_resource_id: The name of the Long Term Retention backup to be
+    :vartype recoverable_database_id: str
+    :ivar long_term_retention_backup_resource_id: The name of the Long Term Retention backup to be
      used for restore of this managed database.
-    :type long_term_retention_backup_resource_id: str
-    :param auto_complete_restore: Whether to auto complete restore of this managed database.
-    :type auto_complete_restore: bool
-    :param last_backup_name: Last backup file name for restore of this managed database.
-    :type last_backup_name: str
+    :vartype long_term_retention_backup_resource_id: str
+    :ivar auto_complete_restore: Whether to auto complete restore of this managed database.
+    :vartype auto_complete_restore: bool
+    :ivar last_backup_name: Last backup file name for restore of this managed database.
+    :vartype last_backup_name: str
     """
 
     _validation = {
@@ -7186,8 +9303,8 @@ class ManagedDatabase(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         collation: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
-        catalog_collation: Optional[Union[str, "CatalogCollationType"]] = None,
-        create_mode: Optional[Union[str, "ManagedDatabaseCreateMode"]] = None,
+        catalog_collation: Optional[Union[str, "_models.CatalogCollationType"]] = None,
+        create_mode: Optional[Union[str, "_models.ManagedDatabaseCreateMode"]] = None,
         storage_container_uri: Optional[str] = None,
         source_database_id: Optional[str] = None,
         restorable_dropped_database_id: Optional[str] = None,
@@ -7198,6 +9315,55 @@ class ManagedDatabase(TrackedResource):
         last_backup_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword collation: Collation of the managed database.
+        :paramtype collation: str
+        :keyword restore_point_in_time: Conditional. If createMode is PointInTimeRestore, this value is
+         required. Specifies the point in time (ISO8601 format) of the source database that will be
+         restored to create the new database.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword catalog_collation: Collation of the metadata catalog. Known values are:
+         "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
+        :paramtype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+        :keyword create_mode: Managed database create mode. PointInTimeRestore: Create a database by
+         restoring a point in time backup of an existing database. SourceDatabaseName,
+         SourceManagedInstanceName and PointInTime must be specified. RestoreExternalBackup: Create a
+         database by restoring from external backup files. Collation, StorageContainerUri and
+         StorageContainerSasToken must be specified. Recovery: Creates a database by restoring a
+         geo-replicated backup. RecoverableDatabaseId must be specified as the recoverable database
+         resource ID to restore. RestoreLongTermRetentionBackup: Create a database by restoring from a
+         long term retention backup (longTermRetentionBackupResourceId required). Known values are:
+         "Default", "RestoreExternalBackup", "PointInTimeRestore", "Recovery",
+         "RestoreLongTermRetentionBackup".
+        :paramtype create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
+        :keyword storage_container_uri: Conditional. If createMode is RestoreExternalBackup, this value
+         is required. Specifies the uri of the storage container where backups for this restore are
+         stored.
+        :paramtype storage_container_uri: str
+        :keyword source_database_id: The resource identifier of the source database associated with
+         create operation of this database.
+        :paramtype source_database_id: str
+        :keyword restorable_dropped_database_id: The restorable dropped database resource id to restore
+         when creating this database.
+        :paramtype restorable_dropped_database_id: str
+        :keyword storage_container_sas_token: Conditional. If createMode is RestoreExternalBackup, this
+         value is required. Specifies the storage container sas token.
+        :paramtype storage_container_sas_token: str
+        :keyword recoverable_database_id: The resource identifier of the recoverable database
+         associated with create operation of this database.
+        :paramtype recoverable_database_id: str
+        :keyword long_term_retention_backup_resource_id: The name of the Long Term Retention backup to
+         be used for restore of this managed database.
+        :paramtype long_term_retention_backup_resource_id: str
+        :keyword auto_complete_restore: Whether to auto complete restore of this managed database.
+        :paramtype auto_complete_restore: bool
+        :keyword last_backup_name: Last backup file name for restore of this managed database.
+        :paramtype last_backup_name: str
+        """
         super(ManagedDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
         self.status = None
@@ -7243,6 +9409,8 @@ class ManagedDatabaseListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedDatabaseListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7317,6 +9485,8 @@ class ManagedDatabaseRestoreDetailsResult(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedDatabaseRestoreDetailsResult, self).__init__(**kwargs)
         self.status = None
         self.current_restoring_file_name = None
@@ -7341,27 +9511,27 @@ class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: Specifies the state of the policy, whether it is enabled or disabled or a policy
-     has not been applied yet on the specific database. Possible values include: "New", "Enabled",
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
+     has not been applied yet on the specific database. Known values are: "New", "Enabled",
      "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :vartype state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
      Brute_Force.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     :ivar creation_time: Specifies the UTC creation time of the policy.
     :vartype creation_time: ~datetime.datetime
     """
@@ -7390,7 +9560,7 @@ class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "SecurityAlertPolicyState"]] = None,
+        state: Optional[Union[str, "_models.SecurityAlertPolicyState"]] = None,
         disabled_alerts: Optional[List[str]] = None,
         email_addresses: Optional[List[str]] = None,
         email_account_admins: Optional[bool] = None,
@@ -7399,6 +9569,30 @@ class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
+         policy has not been applied yet on the specific database. Known values are: "New", "Enabled",
+         "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
+         Brute_Force.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
         super(ManagedDatabaseSecurityAlertPolicy, self).__init__(**kwargs)
         self.state = state
         self.disabled_alerts = disabled_alerts
@@ -7435,6 +9629,8 @@ class ManagedDatabaseSecurityAlertPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedDatabaseSecurityAlertPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7445,63 +9641,62 @@ class ManagedDatabaseUpdate(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param collation: Collation of the managed database.
-    :type collation: str
-    :ivar status: Status of the database. Possible values include: "Online", "Offline", "Shutdown",
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar collation: Collation of the managed database.
+    :vartype collation: str
+    :ivar status: Status of the database. Known values are: "Online", "Offline", "Shutdown",
      "Creating", "Inaccessible", "Restoring", "Updating".
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: ~datetime.datetime
     :ivar earliest_restore_point: Earliest restore point in time for point in time restore.
     :vartype earliest_restore_point: ~datetime.datetime
-    :param restore_point_in_time: Conditional. If createMode is PointInTimeRestore, this value is
+    :ivar restore_point_in_time: Conditional. If createMode is PointInTimeRestore, this value is
      required. Specifies the point in time (ISO8601 format) of the source database that will be
      restored to create the new database.
-    :type restore_point_in_time: ~datetime.datetime
+    :vartype restore_point_in_time: ~datetime.datetime
     :ivar default_secondary_location: Geo paired region.
     :vartype default_secondary_location: str
-    :param catalog_collation: Collation of the metadata catalog. Possible values include:
+    :ivar catalog_collation: Collation of the metadata catalog. Known values are:
      "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
-    :type catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
-    :param create_mode: Managed database create mode. PointInTimeRestore: Create a database by
+    :vartype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+    :ivar create_mode: Managed database create mode. PointInTimeRestore: Create a database by
      restoring a point in time backup of an existing database. SourceDatabaseName,
      SourceManagedInstanceName and PointInTime must be specified. RestoreExternalBackup: Create a
      database by restoring from external backup files. Collation, StorageContainerUri and
      StorageContainerSasToken must be specified. Recovery: Creates a database by restoring a
      geo-replicated backup. RecoverableDatabaseId must be specified as the recoverable database
      resource ID to restore. RestoreLongTermRetentionBackup: Create a database by restoring from a
-     long term retention backup (longTermRetentionBackupResourceId required). Possible values
-     include: "Default", "RestoreExternalBackup", "PointInTimeRestore", "Recovery",
+     long term retention backup (longTermRetentionBackupResourceId required). Known values are:
+     "Default", "RestoreExternalBackup", "PointInTimeRestore", "Recovery",
      "RestoreLongTermRetentionBackup".
-    :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
-    :param storage_container_uri: Conditional. If createMode is RestoreExternalBackup, this value
-     is required. Specifies the uri of the storage container where backups for this restore are
-     stored.
-    :type storage_container_uri: str
-    :param source_database_id: The resource identifier of the source database associated with
-     create operation of this database.
-    :type source_database_id: str
-    :param restorable_dropped_database_id: The restorable dropped database resource id to restore
+    :vartype create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
+    :ivar storage_container_uri: Conditional. If createMode is RestoreExternalBackup, this value is
+     required. Specifies the uri of the storage container where backups for this restore are stored.
+    :vartype storage_container_uri: str
+    :ivar source_database_id: The resource identifier of the source database associated with create
+     operation of this database.
+    :vartype source_database_id: str
+    :ivar restorable_dropped_database_id: The restorable dropped database resource id to restore
      when creating this database.
-    :type restorable_dropped_database_id: str
-    :param storage_container_sas_token: Conditional. If createMode is RestoreExternalBackup, this
+    :vartype restorable_dropped_database_id: str
+    :ivar storage_container_sas_token: Conditional. If createMode is RestoreExternalBackup, this
      value is required. Specifies the storage container sas token.
-    :type storage_container_sas_token: str
+    :vartype storage_container_sas_token: str
     :ivar failover_group_id: Instance Failover Group resource identifier that this managed database
      belongs to.
     :vartype failover_group_id: str
-    :param recoverable_database_id: The resource identifier of the recoverable database associated
+    :ivar recoverable_database_id: The resource identifier of the recoverable database associated
      with create operation of this database.
-    :type recoverable_database_id: str
-    :param long_term_retention_backup_resource_id: The name of the Long Term Retention backup to be
+    :vartype recoverable_database_id: str
+    :ivar long_term_retention_backup_resource_id: The name of the Long Term Retention backup to be
      used for restore of this managed database.
-    :type long_term_retention_backup_resource_id: str
-    :param auto_complete_restore: Whether to auto complete restore of this managed database.
-    :type auto_complete_restore: bool
-    :param last_backup_name: Last backup file name for restore of this managed database.
-    :type last_backup_name: str
+    :vartype long_term_retention_backup_resource_id: str
+    :ivar auto_complete_restore: Whether to auto complete restore of this managed database.
+    :vartype auto_complete_restore: bool
+    :ivar last_backup_name: Last backup file name for restore of this managed database.
+    :vartype last_backup_name: str
     """
 
     _validation = {
@@ -7539,8 +9734,8 @@ class ManagedDatabaseUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         collation: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
-        catalog_collation: Optional[Union[str, "CatalogCollationType"]] = None,
-        create_mode: Optional[Union[str, "ManagedDatabaseCreateMode"]] = None,
+        catalog_collation: Optional[Union[str, "_models.CatalogCollationType"]] = None,
+        create_mode: Optional[Union[str, "_models.ManagedDatabaseCreateMode"]] = None,
         storage_container_uri: Optional[str] = None,
         source_database_id: Optional[str] = None,
         restorable_dropped_database_id: Optional[str] = None,
@@ -7551,6 +9746,53 @@ class ManagedDatabaseUpdate(msrest.serialization.Model):
         last_backup_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword collation: Collation of the managed database.
+        :paramtype collation: str
+        :keyword restore_point_in_time: Conditional. If createMode is PointInTimeRestore, this value is
+         required. Specifies the point in time (ISO8601 format) of the source database that will be
+         restored to create the new database.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword catalog_collation: Collation of the metadata catalog. Known values are:
+         "DATABASE_DEFAULT", "SQL_Latin1_General_CP1_CI_AS".
+        :paramtype catalog_collation: str or ~azure.mgmt.sql.models.CatalogCollationType
+        :keyword create_mode: Managed database create mode. PointInTimeRestore: Create a database by
+         restoring a point in time backup of an existing database. SourceDatabaseName,
+         SourceManagedInstanceName and PointInTime must be specified. RestoreExternalBackup: Create a
+         database by restoring from external backup files. Collation, StorageContainerUri and
+         StorageContainerSasToken must be specified. Recovery: Creates a database by restoring a
+         geo-replicated backup. RecoverableDatabaseId must be specified as the recoverable database
+         resource ID to restore. RestoreLongTermRetentionBackup: Create a database by restoring from a
+         long term retention backup (longTermRetentionBackupResourceId required). Known values are:
+         "Default", "RestoreExternalBackup", "PointInTimeRestore", "Recovery",
+         "RestoreLongTermRetentionBackup".
+        :paramtype create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
+        :keyword storage_container_uri: Conditional. If createMode is RestoreExternalBackup, this value
+         is required. Specifies the uri of the storage container where backups for this restore are
+         stored.
+        :paramtype storage_container_uri: str
+        :keyword source_database_id: The resource identifier of the source database associated with
+         create operation of this database.
+        :paramtype source_database_id: str
+        :keyword restorable_dropped_database_id: The restorable dropped database resource id to restore
+         when creating this database.
+        :paramtype restorable_dropped_database_id: str
+        :keyword storage_container_sas_token: Conditional. If createMode is RestoreExternalBackup, this
+         value is required. Specifies the storage container sas token.
+        :paramtype storage_container_sas_token: str
+        :keyword recoverable_database_id: The resource identifier of the recoverable database
+         associated with create operation of this database.
+        :paramtype recoverable_database_id: str
+        :keyword long_term_retention_backup_resource_id: The name of the Long Term Retention backup to
+         be used for restore of this managed database.
+        :paramtype long_term_retention_backup_resource_id: str
+        :keyword auto_complete_restore: Whether to auto complete restore of this managed database.
+        :paramtype auto_complete_restore: bool
+        :keyword last_backup_name: Last backup file name for restore of this managed database.
+        :paramtype last_backup_name: str
+        """
         super(ManagedDatabaseUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.collation = collation
@@ -7585,67 +9827,68 @@ class ManagedInstance(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: The Azure Active Directory identity of the managed instance.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
-    :param sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The Azure Active Directory identity of the managed instance.
+    :vartype identity: ~azure.mgmt.sql.models.ResourceIdentity
+    :ivar sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
      BC_Gen5.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :ivar provisioning_state:  Possible values include: "Creating", "Deleting", "Updating",
-     "Unknown", "Succeeded", "Failed".
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar provisioning_state: Known values are: "Creating", "Deleting", "Updating", "Unknown",
+     "Succeeded", "Failed", "Accepted", "Created", "Deleted", "Unrecognized", "Running", "Canceled",
+     "NotSpecified", "Registering", "TimedOut".
     :vartype provisioning_state: str or
      ~azure.mgmt.sql.models.ManagedInstancePropertiesProvisioningState
-    :param managed_instance_create_mode: Specifies the mode of database creation.
+    :ivar managed_instance_create_mode: Specifies the mode of database creation.
     
      Default: Regular instance creation.
     
      Restore: Creates an instance by restoring a set of backups to specific point in time.
-     RestorePointInTime and SourceManagedInstanceId must be specified. Possible values include:
-     "Default", "PointInTimeRestore".
-    :type managed_instance_create_mode: str or ~azure.mgmt.sql.models.ManagedServerCreateMode
+     RestorePointInTime and SourceManagedInstanceId must be specified. Known values are: "Default",
+     "PointInTimeRestore".
+    :vartype managed_instance_create_mode: str or ~azure.mgmt.sql.models.ManagedServerCreateMode
     :ivar fully_qualified_domain_name: The fully qualified domain name of the managed instance.
     :vartype fully_qualified_domain_name: str
-    :param administrator_login: Administrator username for the managed instance. Can only be
+    :ivar administrator_login: Administrator username for the managed instance. Can only be
      specified when the managed instance is being created (and is required for creation).
-    :type administrator_login: str
-    :param administrator_login_password: The administrator login password (required for managed
+    :vartype administrator_login: str
+    :ivar administrator_login_password: The administrator login password (required for managed
      instance creation).
-    :type administrator_login_password: str
-    :param subnet_id: Subnet resource ID for the managed instance.
-    :type subnet_id: str
+    :vartype administrator_login_password: str
+    :ivar subnet_id: Subnet resource ID for the managed instance.
+    :vartype subnet_id: str
     :ivar state: The state of the managed instance.
     :vartype state: str
-    :param license_type: The license type. Possible values are 'LicenseIncluded' (regular price
+    :ivar license_type: The license type. Possible values are 'LicenseIncluded' (regular price
      inclusive of a new SQL license) and 'BasePrice' (discounted AHB price for bringing your own SQL
-     licenses). Possible values include: "LicenseIncluded", "BasePrice".
-    :type license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
-    :param v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
-    :type v_cores: int
-    :param storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
+     licenses). Known values are: "LicenseIncluded", "BasePrice".
+    :vartype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
+    :ivar v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
+    :vartype v_cores: int
+    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
      Increments of 32 GB allowed only.
-    :type storage_size_in_gb: int
-    :param collation: Collation of the managed instance.
-    :type collation: str
+    :vartype storage_size_in_gb: int
+    :ivar collation: Collation of the managed instance.
+    :vartype collation: str
     :ivar dns_zone: The Dns Zone that the managed instance is in.
     :vartype dns_zone: str
-    :param dns_zone_partner: The resource id of another managed instance whose DNS zone this
-     managed instance will share after creation.
-    :type dns_zone_partner: str
-    :param public_data_endpoint_enabled: Whether or not the public data endpoint is enabled.
-    :type public_data_endpoint_enabled: bool
-    :param source_managed_instance_id: The resource identifier of the source managed instance
+    :ivar dns_zone_partner: The resource id of another managed instance whose DNS zone this managed
+     instance will share after creation.
+    :vartype dns_zone_partner: str
+    :ivar public_data_endpoint_enabled: Whether or not the public data endpoint is enabled.
+    :vartype public_data_endpoint_enabled: bool
+    :ivar source_managed_instance_id: The resource identifier of the source managed instance
      associated with create operation of this instance.
-    :type source_managed_instance_id: str
-    :param restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+    :vartype source_managed_instance_id: str
+    :ivar restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
      database that will be restored to create the new database.
-    :type restore_point_in_time: ~datetime.datetime
-    :param proxy_override: Connection type used for connecting to the instance. Possible values
-     include: "Proxy", "Redirect", "Default".
-    :type proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
-    :param timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
+    :vartype restore_point_in_time: ~datetime.datetime
+    :ivar proxy_override: Connection type used for connecting to the instance. Known values are:
+     "Proxy", "Redirect", "Default".
+    :vartype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
+    :ivar timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
      Windows keeps details on supported timezones, including the id, in registry under
      KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
      You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
@@ -7653,29 +9896,39 @@ class ManagedInstance(TrackedResource):
      List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
      PowerShell.
      An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
-    :type timezone_id: str
-    :param instance_pool_id: The Id of the instance pool this managed server belongs to.
-    :type instance_pool_id: str
-    :param maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+    :vartype timezone_id: str
+    :ivar instance_pool_id: The Id of the instance pool this managed server belongs to.
+    :vartype instance_pool_id: str
+    :ivar maintenance_configuration_id: Specifies maintenance configuration id to apply to this
      managed instance.
-    :type maintenance_configuration_id: str
+    :vartype maintenance_configuration_id: str
     :ivar private_endpoint_connections: List of private endpoint connections on a managed instance.
     :vartype private_endpoint_connections: list[~azure.mgmt.sql.models.ManagedInstancePecProperty]
-    :param minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
-    :type minimal_tls_version: str
-    :param storage_account_type: The storage account type used to store backups for this instance.
-     The options are LRS (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
-     (GeoRedundantStorage). Possible values include: "GRS", "LRS", "ZRS".
-    :type storage_account_type: str or ~azure.mgmt.sql.models.StorageAccountType
-    :param zone_redundant: Whether or not the multi-az is enabled.
-    :type zone_redundant: bool
-    :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
-     used by default.
-    :type primary_user_assigned_identity_id: str
-    :param key_id: A CMK URI of the key to use for encryption.
-    :type key_id: str
-    :param administrators: The Azure Active Directory administrator of the server.
-    :type administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
+    :vartype minimal_tls_version: str
+    :ivar current_backup_storage_redundancy: The storage account type used to store backups for
+     this instance. The options are Local (LocallyRedundantStorage), Zone (ZoneRedundantStorage),
+     Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Known values are: "Geo",
+     "Local", "Zone", "GeoZone".
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar requested_backup_storage_redundancy: The storage account type to be used to store backups
+     for this instance. The options are Local (LocallyRedundantStorage), Zone
+     (ZoneRedundantStorage), Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Known
+     values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar zone_redundant: Whether or not the multi-az is enabled.
+    :vartype zone_redundant: bool
+    :ivar primary_user_assigned_identity_id: The resource id of a user assigned identity to be used
+     by default.
+    :vartype primary_user_assigned_identity_id: str
+    :ivar key_id: A CMK URI of the key to use for encryption.
+    :vartype key_id: str
+    :ivar administrators: The Azure Active Directory administrator of the server.
+    :vartype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+    :ivar service_principal: The managed instance's service principal.
+    :vartype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
     """
 
     _validation = {
@@ -7688,6 +9941,7 @@ class ManagedInstance(TrackedResource):
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7720,11 +9974,13 @@ class ManagedInstance(TrackedResource):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ManagedInstancePecProperty]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ManagedInstanceExternalAdministrator'},
+        'service_principal': {'key': 'properties.servicePrincipal', 'type': 'ServicePrincipal'},
     }
 
     def __init__(
@@ -7732,13 +9988,13 @@ class ManagedInstance(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["ResourceIdentity"] = None,
-        sku: Optional["Sku"] = None,
-        managed_instance_create_mode: Optional[Union[str, "ManagedServerCreateMode"]] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        managed_instance_create_mode: Optional[Union[str, "_models.ManagedServerCreateMode"]] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         subnet_id: Optional[str] = None,
-        license_type: Optional[Union[str, "ManagedInstanceLicenseType"]] = None,
+        license_type: Optional[Union[str, "_models.ManagedInstanceLicenseType"]] = None,
         v_cores: Optional[int] = None,
         storage_size_in_gb: Optional[int] = None,
         collation: Optional[str] = None,
@@ -7746,18 +10002,104 @@ class ManagedInstance(TrackedResource):
         public_data_endpoint_enabled: Optional[bool] = None,
         source_managed_instance_id: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
-        proxy_override: Optional[Union[str, "ManagedInstanceProxyOverride"]] = None,
+        proxy_override: Optional[Union[str, "_models.ManagedInstanceProxyOverride"]] = None,
         timezone_id: Optional[str] = None,
         instance_pool_id: Optional[str] = None,
         maintenance_configuration_id: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         zone_redundant: Optional[bool] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         key_id: Optional[str] = None,
-        administrators: Optional["ManagedInstanceExternalAdministrator"] = None,
+        administrators: Optional["_models.ManagedInstanceExternalAdministrator"] = None,
+        service_principal: Optional["_models.ServicePrincipal"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The Azure Active Directory identity of the managed instance.
+        :paramtype identity: ~azure.mgmt.sql.models.ResourceIdentity
+        :keyword sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
+         BC_Gen5.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword managed_instance_create_mode: Specifies the mode of database creation.
+        
+         Default: Regular instance creation.
+        
+         Restore: Creates an instance by restoring a set of backups to specific point in time.
+         RestorePointInTime and SourceManagedInstanceId must be specified. Known values are: "Default",
+         "PointInTimeRestore".
+        :paramtype managed_instance_create_mode: str or ~azure.mgmt.sql.models.ManagedServerCreateMode
+        :keyword administrator_login: Administrator username for the managed instance. Can only be
+         specified when the managed instance is being created (and is required for creation).
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: The administrator login password (required for managed
+         instance creation).
+        :paramtype administrator_login_password: str
+        :keyword subnet_id: Subnet resource ID for the managed instance.
+        :paramtype subnet_id: str
+        :keyword license_type: The license type. Possible values are 'LicenseIncluded' (regular price
+         inclusive of a new SQL license) and 'BasePrice' (discounted AHB price for bringing your own SQL
+         licenses). Known values are: "LicenseIncluded", "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
+        :keyword v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
+        :paramtype v_cores: int
+        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
+         Increments of 32 GB allowed only.
+        :paramtype storage_size_in_gb: int
+        :keyword collation: Collation of the managed instance.
+        :paramtype collation: str
+        :keyword dns_zone_partner: The resource id of another managed instance whose DNS zone this
+         managed instance will share after creation.
+        :paramtype dns_zone_partner: str
+        :keyword public_data_endpoint_enabled: Whether or not the public data endpoint is enabled.
+        :paramtype public_data_endpoint_enabled: bool
+        :keyword source_managed_instance_id: The resource identifier of the source managed instance
+         associated with create operation of this instance.
+        :paramtype source_managed_instance_id: str
+        :keyword restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+         database that will be restored to create the new database.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword proxy_override: Connection type used for connecting to the instance. Known values are:
+         "Proxy", "Redirect", "Default".
+        :paramtype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
+        :keyword timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
+         Windows keeps details on supported timezones, including the id, in registry under
+         KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
+         You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
+         sys.time_zone_info.
+         List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
+         PowerShell.
+         An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
+        :paramtype timezone_id: str
+        :keyword instance_pool_id: The Id of the instance pool this managed server belongs to.
+        :paramtype instance_pool_id: str
+        :keyword maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+         managed instance.
+        :paramtype maintenance_configuration_id: str
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
+        :paramtype minimal_tls_version: str
+        :keyword requested_backup_storage_redundancy: The storage account type to be used to store
+         backups for this instance. The options are Local (LocallyRedundantStorage), Zone
+         (ZoneRedundantStorage), Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Known
+         values are: "Geo", "Local", "Zone", "GeoZone".
+        :paramtype requested_backup_storage_redundancy: str or
+         ~azure.mgmt.sql.models.BackupStorageRedundancy
+        :keyword zone_redundant: Whether or not the multi-az is enabled.
+        :paramtype zone_redundant: bool
+        :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
+         used by default.
+        :paramtype primary_user_assigned_identity_id: str
+        :keyword key_id: A CMK URI of the key to use for encryption.
+        :paramtype key_id: str
+        :keyword administrators: The Azure Active Directory administrator of the server.
+        :paramtype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+        :keyword service_principal: The managed instance's service principal.
+        :paramtype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
+        """
         super(ManagedInstance, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.sku = sku
@@ -7783,11 +10125,13 @@ class ManagedInstance(TrackedResource):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.private_endpoint_connections = None
         self.minimal_tls_version = minimal_tls_version
-        self.storage_account_type = storage_account_type
+        self.current_backup_storage_redundancy = None
+        self.requested_backup_storage_redundancy = requested_backup_storage_redundancy
         self.zone_redundant = zone_redundant
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
         self.key_id = key_id
         self.administrators = administrators
+        self.service_principal = service_principal
 
 
 class ManagedInstanceAdministrator(ProxyResource):
@@ -7801,15 +10145,15 @@ class ManagedInstanceAdministrator(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param administrator_type: Type of the managed instance administrator. Possible values include:
+    :ivar administrator_type: Type of the managed instance administrator. Known values are:
      "ActiveDirectory".
-    :type administrator_type: str or ~azure.mgmt.sql.models.ManagedInstanceAdministratorType
-    :param login: Login name of the managed instance administrator.
-    :type login: str
-    :param sid: SID (object ID) of the managed instance administrator.
-    :type sid: str
-    :param tenant_id: Tenant ID of the managed instance administrator.
-    :type tenant_id: str
+    :vartype administrator_type: str or ~azure.mgmt.sql.models.ManagedInstanceAdministratorType
+    :ivar login: Login name of the managed instance administrator.
+    :vartype login: str
+    :ivar sid: SID (object ID) of the managed instance administrator.
+    :vartype sid: str
+    :ivar tenant_id: Tenant ID of the managed instance administrator.
+    :vartype tenant_id: str
     """
 
     _validation = {
@@ -7831,12 +10175,23 @@ class ManagedInstanceAdministrator(ProxyResource):
     def __init__(
         self,
         *,
-        administrator_type: Optional[Union[str, "ManagedInstanceAdministratorType"]] = None,
+        administrator_type: Optional[Union[str, "_models.ManagedInstanceAdministratorType"]] = None,
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword administrator_type: Type of the managed instance administrator. Known values are:
+         "ActiveDirectory".
+        :paramtype administrator_type: str or ~azure.mgmt.sql.models.ManagedInstanceAdministratorType
+        :keyword login: Login name of the managed instance administrator.
+        :paramtype login: str
+        :keyword sid: SID (object ID) of the managed instance administrator.
+        :paramtype sid: str
+        :keyword tenant_id: Tenant ID of the managed instance administrator.
+        :paramtype tenant_id: str
+        """
         super(ManagedInstanceAdministrator, self).__init__(**kwargs)
         self.administrator_type = administrator_type
         self.login = login
@@ -7869,6 +10224,8 @@ class ManagedInstanceAdministratorListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceAdministratorListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7885,8 +10242,8 @@ class ManagedInstanceAzureADOnlyAuthentication(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+    :vartype azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -7908,6 +10265,10 @@ class ManagedInstanceAzureADOnlyAuthentication(ProxyResource):
         azure_ad_only_authentication: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+        :paramtype azure_ad_only_authentication: bool
+        """
         super(ManagedInstanceAzureADOnlyAuthentication, self).__init__(**kwargs)
         self.azure_ad_only_authentication = azure_ad_only_authentication
 
@@ -7937,6 +10298,8 @@ class ManagedInstanceAzureADOnlyAuthListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceAzureADOnlyAuthListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -7956,11 +10319,11 @@ class ManagedInstanceEditionCapability(msrest.serialization.Model):
     :vartype supported_storage_capabilities: list[~azure.mgmt.sql.models.StorageCapability]
     :ivar zone_redundant: Whether or not zone redundancy is supported for the edition.
     :vartype zone_redundant: bool
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -7986,6 +10349,10 @@ class ManagedInstanceEditionCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ManagedInstanceEditionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_families = None
@@ -8009,17 +10376,17 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
     :ivar kind: Kind of encryption protector. This is metadata used for the Azure portal
      experience.
     :vartype kind: str
-    :param server_key_name: The name of the managed instance key.
-    :type server_key_name: str
-    :param server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
-     Possible values include: "ServiceManaged", "AzureKeyVault".
-    :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+    :ivar server_key_name: The name of the managed instance key.
+    :vartype server_key_name: str
+    :ivar server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+     Known values are: "ServiceManaged", "AzureKeyVault".
+    :vartype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
     :ivar uri: The URI of the server key.
     :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.
     :vartype thumbprint: str
-    :param auto_rotation_enabled: Key auto rotation opt-in flag. Either true or false.
-    :type auto_rotation_enabled: bool
+    :ivar auto_rotation_enabled: Key auto rotation opt-in flag. Either true or false.
+    :vartype auto_rotation_enabled: bool
     """
 
     _validation = {
@@ -8047,10 +10414,19 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
         self,
         *,
         server_key_name: Optional[str] = None,
-        server_key_type: Optional[Union[str, "ServerKeyType"]] = None,
+        server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         auto_rotation_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword server_key_name: The name of the managed instance key.
+        :paramtype server_key_name: str
+        :keyword server_key_type: The encryption protector type like 'ServiceManaged', 'AzureKeyVault'.
+         Known values are: "ServiceManaged", "AzureKeyVault".
+        :paramtype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+        :keyword auto_rotation_enabled: Key auto rotation opt-in flag. Either true or false.
+        :paramtype auto_rotation_enabled: bool
+        """
         super(ManagedInstanceEncryptionProtector, self).__init__(**kwargs)
         self.kind = None
         self.server_key_name = server_key_name
@@ -8085,6 +10461,8 @@ class ManagedInstanceEncryptionProtectorListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceEncryptionProtectorListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8093,20 +10471,19 @@ class ManagedInstanceEncryptionProtectorListResult(msrest.serialization.Model):
 class ManagedInstanceExternalAdministrator(msrest.serialization.Model):
     """Properties of a active directory administrator.
 
-    :param administrator_type: Type of the sever administrator. Possible values include:
-     "ActiveDirectory".
-    :type administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
-    :param principal_type: Principal Type of the sever administrator. Possible values include:
-     "User", "Group", "Application".
-    :type principal_type: str or ~azure.mgmt.sql.models.PrincipalType
-    :param login: Login name of the server administrator.
-    :type login: str
-    :param sid: SID (object ID) of the server administrator.
-    :type sid: str
-    :param tenant_id: Tenant ID of the administrator.
-    :type tenant_id: str
-    :param azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :ivar administrator_type: Type of the sever administrator. Known values are: "ActiveDirectory".
+    :vartype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+    :ivar principal_type: Principal Type of the sever administrator. Known values are: "User",
+     "Group", "Application".
+    :vartype principal_type: str or ~azure.mgmt.sql.models.PrincipalType
+    :ivar login: Login name of the server administrator.
+    :vartype login: str
+    :ivar sid: SID (object ID) of the server administrator.
+    :vartype sid: str
+    :ivar tenant_id: Tenant ID of the administrator.
+    :vartype tenant_id: str
+    :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+    :vartype azure_ad_only_authentication: bool
     """
 
     _attribute_map = {
@@ -8121,14 +10498,30 @@ class ManagedInstanceExternalAdministrator(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        administrator_type: Optional[Union[str, "AdministratorType"]] = None,
-        principal_type: Optional[Union[str, "PrincipalType"]] = None,
+        administrator_type: Optional[Union[str, "_models.AdministratorType"]] = None,
+        principal_type: Optional[Union[str, "_models.PrincipalType"]] = None,
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         azure_ad_only_authentication: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword administrator_type: Type of the sever administrator. Known values are:
+         "ActiveDirectory".
+        :paramtype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+        :keyword principal_type: Principal Type of the sever administrator. Known values are: "User",
+         "Group", "Application".
+        :paramtype principal_type: str or ~azure.mgmt.sql.models.PrincipalType
+        :keyword login: Login name of the server administrator.
+        :paramtype login: str
+        :keyword sid: SID (object ID) of the server administrator.
+        :paramtype sid: str
+        :keyword tenant_id: Tenant ID of the administrator.
+        :paramtype tenant_id: str
+        :keyword azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+        :paramtype azure_ad_only_authentication: bool
+        """
         super(ManagedInstanceExternalAdministrator, self).__init__(**kwargs)
         self.administrator_type = administrator_type
         self.principal_type = principal_type
@@ -8151,11 +10544,11 @@ class ManagedInstanceFamilyCapability(msrest.serialization.Model):
     :vartype supported_license_types: list[~azure.mgmt.sql.models.LicenseTypeCapability]
     :ivar supported_vcores_values: List of supported virtual cores values.
     :vartype supported_vcores_values: list[~azure.mgmt.sql.models.ManagedInstanceVcoresCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -8181,6 +10574,10 @@ class ManagedInstanceFamilyCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ManagedInstanceFamilyCapability, self).__init__(**kwargs)
         self.name = None
         self.sku = None
@@ -8204,12 +10601,11 @@ class ManagedInstanceKey(ProxyResource):
     :ivar kind: Kind of encryption protector. This is metadata used for the Azure portal
      experience.
     :vartype kind: str
-    :param server_key_type: The key type like 'ServiceManaged', 'AzureKeyVault'. Possible values
-     include: "ServiceManaged", "AzureKeyVault".
-    :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
-    :param uri: The URI of the key. If the ServerKeyType is AzureKeyVault, then the URI is
-     required.
-    :type uri: str
+    :ivar server_key_type: The key type like 'ServiceManaged', 'AzureKeyVault'. Known values are:
+     "ServiceManaged", "AzureKeyVault".
+    :vartype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+    :ivar uri: The URI of the key. If the ServerKeyType is AzureKeyVault, then the URI is required.
+    :vartype uri: str
     :ivar thumbprint: Thumbprint of the key.
     :vartype thumbprint: str
     :ivar creation_date: The key creation date.
@@ -8243,10 +10639,18 @@ class ManagedInstanceKey(ProxyResource):
     def __init__(
         self,
         *,
-        server_key_type: Optional[Union[str, "ServerKeyType"]] = None,
+        server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword server_key_type: The key type like 'ServiceManaged', 'AzureKeyVault'. Known values
+         are: "ServiceManaged", "AzureKeyVault".
+        :paramtype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+        :keyword uri: The URI of the key. If the ServerKeyType is AzureKeyVault, then the URI is
+         required.
+        :paramtype uri: str
+        """
         super(ManagedInstanceKey, self).__init__(**kwargs)
         self.kind = None
         self.server_key_type = server_key_type
@@ -8281,6 +10685,8 @@ class ManagedInstanceKeyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceKeyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8311,6 +10717,8 @@ class ManagedInstanceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8339,8 +10747,8 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
     :vartype backup_time: ~datetime.datetime
     :ivar backup_expiration_time: The time the long term retention backup will expire.
     :vartype backup_expiration_time: ~datetime.datetime
-    :ivar backup_storage_redundancy: The storage redundancy type of the backup. Possible values
-     include: "Geo", "Local", "Zone".
+    :ivar backup_storage_redundancy: The storage redundancy type of the backup. Known values are:
+     "Geo", "Local", "Zone", "GeoZone".
     :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
@@ -8374,6 +10782,8 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceLongTermRetentionBackup, self).__init__(**kwargs)
         self.managed_instance_name = None
         self.managed_instance_create_time = None
@@ -8409,6 +10819,8 @@ class ManagedInstanceLongTermRetentionBackupListResult(msrest.serialization.Mode
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceLongTermRetentionBackupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8425,14 +10837,14 @@ class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
-    :type weekly_retention: str
-    :param monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601 format.
-    :type monthly_retention: str
-    :param yearly_retention: The yearly retention policy for an LTR backup in an ISO 8601 format.
-    :type yearly_retention: str
-    :param week_of_year: The week of year to take the yearly backup in an ISO 8601 format.
-    :type week_of_year: int
+    :ivar weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
+    :vartype weekly_retention: str
+    :ivar monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601 format.
+    :vartype monthly_retention: str
+    :ivar yearly_retention: The yearly retention policy for an LTR backup in an ISO 8601 format.
+    :vartype yearly_retention: str
+    :ivar week_of_year: The week of year to take the yearly backup in an ISO 8601 format.
+    :vartype week_of_year: int
     """
 
     _validation = {
@@ -8460,6 +10872,17 @@ class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
         week_of_year: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
+        :paramtype weekly_retention: str
+        :keyword monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601
+         format.
+        :paramtype monthly_retention: str
+        :keyword yearly_retention: The yearly retention policy for an LTR backup in an ISO 8601 format.
+        :paramtype yearly_retention: str
+        :keyword week_of_year: The week of year to take the yearly backup in an ISO 8601 format.
+        :paramtype week_of_year: int
+        """
         super(ManagedInstanceLongTermRetentionPolicy, self).__init__(**kwargs)
         self.weekly_retention = weekly_retention
         self.monthly_retention = monthly_retention
@@ -8492,6 +10915,8 @@ class ManagedInstanceLongTermRetentionPolicyListResult(msrest.serialization.Mode
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceLongTermRetentionPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8504,11 +10929,11 @@ class ManagedInstanceMaintenanceConfigurationCapability(msrest.serialization.Mod
 
     :ivar name: Maintenance configuration name.
     :vartype name: str
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -8528,6 +10953,10 @@ class ManagedInstanceMaintenanceConfigurationCapability(msrest.serialization.Mod
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ManagedInstanceMaintenanceConfigurationCapability, self).__init__(**kwargs)
         self.name = None
         self.status = None
@@ -8556,8 +10985,8 @@ class ManagedInstanceOperation(ProxyResource):
     :vartype percent_complete: int
     :ivar start_time: The operation start time.
     :vartype start_time: ~datetime.datetime
-    :ivar state: The operation state. Possible values include: "Pending", "InProgress",
-     "Succeeded", "Failed", "CancelInProgress", "Cancelled".
+    :ivar state: The operation state. Known values are: "Pending", "InProgress", "Succeeded",
+     "Failed", "CancelInProgress", "Cancelled".
     :vartype state: str or ~azure.mgmt.sql.models.ManagementOperationState
     :ivar error_code: The operation error code.
     :vartype error_code: int
@@ -8625,6 +11054,8 @@ class ManagedInstanceOperation(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceOperation, self).__init__(**kwargs)
         self.managed_instance_name = None
         self.operation = None
@@ -8668,6 +11099,8 @@ class ManagedInstanceOperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceOperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8698,6 +11131,8 @@ class ManagedInstanceOperationParametersPair(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceOperationParametersPair, self).__init__(**kwargs)
         self.current_parameters = None
         self.requested_parameters = None
@@ -8732,6 +11167,8 @@ class ManagedInstanceOperationSteps(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceOperationSteps, self).__init__(**kwargs)
         self.total_steps = None
         self.current_step = None
@@ -8741,10 +11178,10 @@ class ManagedInstanceOperationSteps(msrest.serialization.Model):
 class ManagedInstancePairInfo(msrest.serialization.Model):
     """Pairs of Managed Instances in the failover group.
 
-    :param primary_managed_instance_id: Id of Primary Managed Instance in pair.
-    :type primary_managed_instance_id: str
-    :param partner_managed_instance_id: Id of Partner Managed Instance in pair.
-    :type partner_managed_instance_id: str
+    :ivar primary_managed_instance_id: Id of Primary Managed Instance in pair.
+    :vartype primary_managed_instance_id: str
+    :ivar partner_managed_instance_id: Id of Partner Managed Instance in pair.
+    :vartype partner_managed_instance_id: str
     """
 
     _attribute_map = {
@@ -8759,6 +11196,12 @@ class ManagedInstancePairInfo(msrest.serialization.Model):
         partner_managed_instance_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword primary_managed_instance_id: Id of Primary Managed Instance in pair.
+        :paramtype primary_managed_instance_id: str
+        :keyword partner_managed_instance_id: Id of Partner Managed Instance in pair.
+        :paramtype partner_managed_instance_id: str
+        """
         super(ManagedInstancePairInfo, self).__init__(**kwargs)
         self.primary_managed_instance_id = primary_managed_instance_id
         self.partner_managed_instance_id = partner_managed_instance_id
@@ -8789,6 +11232,8 @@ class ManagedInstancePecProperty(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstancePecProperty, self).__init__(**kwargs)
         self.id = None
         self.properties = None
@@ -8805,11 +11250,11 @@ class ManagedInstancePrivateEndpointConnection(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
-    :param private_link_service_connection_state: Connection State of the Private Endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection State of the Private Endpoint
      Connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.sql.models.ManagedInstancePrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the Private Endpoint Connection.
     :vartype provisioning_state: str
@@ -8834,10 +11279,18 @@ class ManagedInstancePrivateEndpointConnection(ProxyResource):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["ManagedInstancePrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["ManagedInstancePrivateLinkServiceConnectionStateProperty"] = None,
+        private_endpoint: Optional["_models.ManagedInstancePrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.ManagedInstancePrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection State of the Private Endpoint
+         Connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.sql.models.ManagedInstancePrivateLinkServiceConnectionStateProperty
+        """
         super(ManagedInstancePrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -8869,6 +11322,8 @@ class ManagedInstancePrivateEndpointConnectionListResult(msrest.serialization.Mo
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstancePrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8879,11 +11334,11 @@ class ManagedInstancePrivateEndpointConnectionProperties(msrest.serialization.Mo
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
-    :param private_link_service_connection_state: Connection State of the Private Endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection State of the Private Endpoint
      Connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.sql.models.ManagedInstancePrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the Private Endpoint Connection.
     :vartype provisioning_state: str
@@ -8902,10 +11357,18 @@ class ManagedInstancePrivateEndpointConnectionProperties(msrest.serialization.Mo
     def __init__(
         self,
         *,
-        private_endpoint: Optional["ManagedInstancePrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["ManagedInstancePrivateLinkServiceConnectionStateProperty"] = None,
+        private_endpoint: Optional["_models.ManagedInstancePrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.ManagedInstancePrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection State of the Private Endpoint
+         Connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.sql.models.ManagedInstancePrivateLinkServiceConnectionStateProperty
+        """
         super(ManagedInstancePrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -8915,8 +11378,8 @@ class ManagedInstancePrivateEndpointConnectionProperties(msrest.serialization.Mo
 class ManagedInstancePrivateEndpointProperty(msrest.serialization.Model):
     """ManagedInstancePrivateEndpointProperty.
 
-    :param id: Resource id of the private endpoint.
-    :type id: str
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -8929,6 +11392,10 @@ class ManagedInstancePrivateEndpointProperty(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Resource id of the private endpoint.
+        :paramtype id: str
+        """
         super(ManagedInstancePrivateEndpointProperty, self).__init__(**kwargs)
         self.id = id
 
@@ -8966,6 +11433,8 @@ class ManagedInstancePrivateLink(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstancePrivateLink, self).__init__(**kwargs)
         self.properties = None
 
@@ -8995,6 +11464,8 @@ class ManagedInstancePrivateLinkListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstancePrivateLinkListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9025,6 +11496,8 @@ class ManagedInstancePrivateLinkProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstancePrivateLinkProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -9037,10 +11510,10 @@ class ManagedInstancePrivateLinkServiceConnectionStateProperty(msrest.serializat
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status.
-    :type status: str
-    :param description: Required. The private link service connection description.
-    :type description: str
+    :ivar status: Required. The private link service connection status.
+    :vartype status: str
+    :ivar description: Required. The private link service connection description.
+    :vartype description: str
     :ivar actions_required: The private link service connection description.
     :vartype actions_required: str
     """
@@ -9064,6 +11537,12 @@ class ManagedInstancePrivateLinkServiceConnectionStateProperty(msrest.serializat
         description: str,
         **kwargs
     ):
+        """
+        :keyword status: Required. The private link service connection status.
+        :paramtype status: str
+        :keyword description: Required. The private link service connection description.
+        :paramtype description: str
+        """
         super(ManagedInstancePrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -9081,8 +11560,8 @@ class ManagedInstanceQuery(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param query_text: Query text.
-    :type query_text: str
+    :ivar query_text: Query text.
+    :vartype query_text: str
     """
 
     _validation = {
@@ -9104,6 +11583,10 @@ class ManagedInstanceQuery(ProxyResource):
         query_text: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword query_text: Query text.
+        :paramtype query_text: str
+        """
         super(ManagedInstanceQuery, self).__init__(**kwargs)
         self.query_text = query_text
 
@@ -9133,6 +11616,8 @@ class ManagedInstanceQueryStatistics(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceQueryStatistics, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9143,64 +11628,65 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param sku: Managed instance sku.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :param identity: Managed instance identity.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :ivar provisioning_state:  Possible values include: "Creating", "Deleting", "Updating",
-     "Unknown", "Succeeded", "Failed".
+    :ivar sku: Managed instance sku.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar identity: Managed instance identity.
+    :vartype identity: ~azure.mgmt.sql.models.ResourceIdentity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar provisioning_state: Known values are: "Creating", "Deleting", "Updating", "Unknown",
+     "Succeeded", "Failed", "Accepted", "Created", "Deleted", "Unrecognized", "Running", "Canceled",
+     "NotSpecified", "Registering", "TimedOut".
     :vartype provisioning_state: str or
      ~azure.mgmt.sql.models.ManagedInstancePropertiesProvisioningState
-    :param managed_instance_create_mode: Specifies the mode of database creation.
+    :ivar managed_instance_create_mode: Specifies the mode of database creation.
     
      Default: Regular instance creation.
     
      Restore: Creates an instance by restoring a set of backups to specific point in time.
-     RestorePointInTime and SourceManagedInstanceId must be specified. Possible values include:
-     "Default", "PointInTimeRestore".
-    :type managed_instance_create_mode: str or ~azure.mgmt.sql.models.ManagedServerCreateMode
+     RestorePointInTime and SourceManagedInstanceId must be specified. Known values are: "Default",
+     "PointInTimeRestore".
+    :vartype managed_instance_create_mode: str or ~azure.mgmt.sql.models.ManagedServerCreateMode
     :ivar fully_qualified_domain_name: The fully qualified domain name of the managed instance.
     :vartype fully_qualified_domain_name: str
-    :param administrator_login: Administrator username for the managed instance. Can only be
+    :ivar administrator_login: Administrator username for the managed instance. Can only be
      specified when the managed instance is being created (and is required for creation).
-    :type administrator_login: str
-    :param administrator_login_password: The administrator login password (required for managed
+    :vartype administrator_login: str
+    :ivar administrator_login_password: The administrator login password (required for managed
      instance creation).
-    :type administrator_login_password: str
-    :param subnet_id: Subnet resource ID for the managed instance.
-    :type subnet_id: str
+    :vartype administrator_login_password: str
+    :ivar subnet_id: Subnet resource ID for the managed instance.
+    :vartype subnet_id: str
     :ivar state: The state of the managed instance.
     :vartype state: str
-    :param license_type: The license type. Possible values are 'LicenseIncluded' (regular price
+    :ivar license_type: The license type. Possible values are 'LicenseIncluded' (regular price
      inclusive of a new SQL license) and 'BasePrice' (discounted AHB price for bringing your own SQL
-     licenses). Possible values include: "LicenseIncluded", "BasePrice".
-    :type license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
-    :param v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
-    :type v_cores: int
-    :param storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
+     licenses). Known values are: "LicenseIncluded", "BasePrice".
+    :vartype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
+    :ivar v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
+    :vartype v_cores: int
+    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
      Increments of 32 GB allowed only.
-    :type storage_size_in_gb: int
-    :param collation: Collation of the managed instance.
-    :type collation: str
+    :vartype storage_size_in_gb: int
+    :ivar collation: Collation of the managed instance.
+    :vartype collation: str
     :ivar dns_zone: The Dns Zone that the managed instance is in.
     :vartype dns_zone: str
-    :param dns_zone_partner: The resource id of another managed instance whose DNS zone this
-     managed instance will share after creation.
-    :type dns_zone_partner: str
-    :param public_data_endpoint_enabled: Whether or not the public data endpoint is enabled.
-    :type public_data_endpoint_enabled: bool
-    :param source_managed_instance_id: The resource identifier of the source managed instance
+    :ivar dns_zone_partner: The resource id of another managed instance whose DNS zone this managed
+     instance will share after creation.
+    :vartype dns_zone_partner: str
+    :ivar public_data_endpoint_enabled: Whether or not the public data endpoint is enabled.
+    :vartype public_data_endpoint_enabled: bool
+    :ivar source_managed_instance_id: The resource identifier of the source managed instance
      associated with create operation of this instance.
-    :type source_managed_instance_id: str
-    :param restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+    :vartype source_managed_instance_id: str
+    :ivar restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
      database that will be restored to create the new database.
-    :type restore_point_in_time: ~datetime.datetime
-    :param proxy_override: Connection type used for connecting to the instance. Possible values
-     include: "Proxy", "Redirect", "Default".
-    :type proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
-    :param timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
+    :vartype restore_point_in_time: ~datetime.datetime
+    :ivar proxy_override: Connection type used for connecting to the instance. Known values are:
+     "Proxy", "Redirect", "Default".
+    :vartype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
+    :ivar timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
      Windows keeps details on supported timezones, including the id, in registry under
      KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
      You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
@@ -9208,29 +11694,39 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
      List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
      PowerShell.
      An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
-    :type timezone_id: str
-    :param instance_pool_id: The Id of the instance pool this managed server belongs to.
-    :type instance_pool_id: str
-    :param maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+    :vartype timezone_id: str
+    :ivar instance_pool_id: The Id of the instance pool this managed server belongs to.
+    :vartype instance_pool_id: str
+    :ivar maintenance_configuration_id: Specifies maintenance configuration id to apply to this
      managed instance.
-    :type maintenance_configuration_id: str
+    :vartype maintenance_configuration_id: str
     :ivar private_endpoint_connections: List of private endpoint connections on a managed instance.
     :vartype private_endpoint_connections: list[~azure.mgmt.sql.models.ManagedInstancePecProperty]
-    :param minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
-    :type minimal_tls_version: str
-    :param storage_account_type: The storage account type used to store backups for this instance.
-     The options are LRS (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
-     (GeoRedundantStorage). Possible values include: "GRS", "LRS", "ZRS".
-    :type storage_account_type: str or ~azure.mgmt.sql.models.StorageAccountType
-    :param zone_redundant: Whether or not the multi-az is enabled.
-    :type zone_redundant: bool
-    :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
-     used by default.
-    :type primary_user_assigned_identity_id: str
-    :param key_id: A CMK URI of the key to use for encryption.
-    :type key_id: str
-    :param administrators: The Azure Active Directory administrator of the server.
-    :type administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
+    :vartype minimal_tls_version: str
+    :ivar current_backup_storage_redundancy: The storage account type used to store backups for
+     this instance. The options are Local (LocallyRedundantStorage), Zone (ZoneRedundantStorage),
+     Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Known values are: "Geo",
+     "Local", "Zone", "GeoZone".
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar requested_backup_storage_redundancy: The storage account type to be used to store backups
+     for this instance. The options are Local (LocallyRedundantStorage), Zone
+     (ZoneRedundantStorage), Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Known
+     values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar zone_redundant: Whether or not the multi-az is enabled.
+    :vartype zone_redundant: bool
+    :ivar primary_user_assigned_identity_id: The resource id of a user assigned identity to be used
+     by default.
+    :vartype primary_user_assigned_identity_id: str
+    :ivar key_id: A CMK URI of the key to use for encryption.
+    :vartype key_id: str
+    :ivar administrators: The Azure Active Directory administrator of the server.
+    :vartype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+    :ivar service_principal: The managed instance's service principal.
+    :vartype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
     """
 
     _validation = {
@@ -9239,6 +11735,7 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -9267,24 +11764,26 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ManagedInstancePecProperty]'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
+        'requested_backup_storage_redundancy': {'key': 'properties.requestedBackupStorageRedundancy', 'type': 'str'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ManagedInstanceExternalAdministrator'},
+        'service_principal': {'key': 'properties.servicePrincipal', 'type': 'ServicePrincipal'},
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
-        identity: Optional["ResourceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
-        managed_instance_create_mode: Optional[Union[str, "ManagedServerCreateMode"]] = None,
+        managed_instance_create_mode: Optional[Union[str, "_models.ManagedServerCreateMode"]] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         subnet_id: Optional[str] = None,
-        license_type: Optional[Union[str, "ManagedInstanceLicenseType"]] = None,
+        license_type: Optional[Union[str, "_models.ManagedInstanceLicenseType"]] = None,
         v_cores: Optional[int] = None,
         storage_size_in_gb: Optional[int] = None,
         collation: Optional[str] = None,
@@ -9292,18 +11791,101 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         public_data_endpoint_enabled: Optional[bool] = None,
         source_managed_instance_id: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
-        proxy_override: Optional[Union[str, "ManagedInstanceProxyOverride"]] = None,
+        proxy_override: Optional[Union[str, "_models.ManagedInstanceProxyOverride"]] = None,
         timezone_id: Optional[str] = None,
         instance_pool_id: Optional[str] = None,
         maintenance_configuration_id: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        storage_account_type: Optional[Union[str, "StorageAccountType"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         zone_redundant: Optional[bool] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         key_id: Optional[str] = None,
-        administrators: Optional["ManagedInstanceExternalAdministrator"] = None,
+        administrators: Optional["_models.ManagedInstanceExternalAdministrator"] = None,
+        service_principal: Optional["_models.ServicePrincipal"] = None,
         **kwargs
     ):
+        """
+        :keyword sku: Managed instance sku.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword identity: Managed instance identity.
+        :paramtype identity: ~azure.mgmt.sql.models.ResourceIdentity
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword managed_instance_create_mode: Specifies the mode of database creation.
+        
+         Default: Regular instance creation.
+        
+         Restore: Creates an instance by restoring a set of backups to specific point in time.
+         RestorePointInTime and SourceManagedInstanceId must be specified. Known values are: "Default",
+         "PointInTimeRestore".
+        :paramtype managed_instance_create_mode: str or ~azure.mgmt.sql.models.ManagedServerCreateMode
+        :keyword administrator_login: Administrator username for the managed instance. Can only be
+         specified when the managed instance is being created (and is required for creation).
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: The administrator login password (required for managed
+         instance creation).
+        :paramtype administrator_login_password: str
+        :keyword subnet_id: Subnet resource ID for the managed instance.
+        :paramtype subnet_id: str
+        :keyword license_type: The license type. Possible values are 'LicenseIncluded' (regular price
+         inclusive of a new SQL license) and 'BasePrice' (discounted AHB price for bringing your own SQL
+         licenses). Known values are: "LicenseIncluded", "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
+        :keyword v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
+        :paramtype v_cores: int
+        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
+         Increments of 32 GB allowed only.
+        :paramtype storage_size_in_gb: int
+        :keyword collation: Collation of the managed instance.
+        :paramtype collation: str
+        :keyword dns_zone_partner: The resource id of another managed instance whose DNS zone this
+         managed instance will share after creation.
+        :paramtype dns_zone_partner: str
+        :keyword public_data_endpoint_enabled: Whether or not the public data endpoint is enabled.
+        :paramtype public_data_endpoint_enabled: bool
+        :keyword source_managed_instance_id: The resource identifier of the source managed instance
+         associated with create operation of this instance.
+        :paramtype source_managed_instance_id: str
+        :keyword restore_point_in_time: Specifies the point in time (ISO8601 format) of the source
+         database that will be restored to create the new database.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        :keyword proxy_override: Connection type used for connecting to the instance. Known values are:
+         "Proxy", "Redirect", "Default".
+        :paramtype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
+        :keyword timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
+         Windows keeps details on supported timezones, including the id, in registry under
+         KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
+         You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
+         sys.time_zone_info.
+         List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
+         PowerShell.
+         An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
+        :paramtype timezone_id: str
+        :keyword instance_pool_id: The Id of the instance pool this managed server belongs to.
+        :paramtype instance_pool_id: str
+        :keyword maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+         managed instance.
+        :paramtype maintenance_configuration_id: str
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
+        :paramtype minimal_tls_version: str
+        :keyword requested_backup_storage_redundancy: The storage account type to be used to store
+         backups for this instance. The options are Local (LocallyRedundantStorage), Zone
+         (ZoneRedundantStorage), Geo (GeoRedundantStorage) and GeoZone(GeoZoneRedundantStorage). Known
+         values are: "Geo", "Local", "Zone", "GeoZone".
+        :paramtype requested_backup_storage_redundancy: str or
+         ~azure.mgmt.sql.models.BackupStorageRedundancy
+        :keyword zone_redundant: Whether or not the multi-az is enabled.
+        :paramtype zone_redundant: bool
+        :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
+         used by default.
+        :paramtype primary_user_assigned_identity_id: str
+        :keyword key_id: A CMK URI of the key to use for encryption.
+        :paramtype key_id: str
+        :keyword administrators: The Azure Active Directory administrator of the server.
+        :paramtype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
+        :keyword service_principal: The managed instance's service principal.
+        :paramtype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
+        """
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.identity = identity
@@ -9330,11 +11912,13 @@ class ManagedInstanceUpdate(msrest.serialization.Model):
         self.maintenance_configuration_id = maintenance_configuration_id
         self.private_endpoint_connections = None
         self.minimal_tls_version = minimal_tls_version
-        self.storage_account_type = storage_account_type
+        self.current_backup_storage_redundancy = None
+        self.requested_backup_storage_redundancy = requested_backup_storage_redundancy
         self.zone_redundant = zone_redundant
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
         self.key_id = key_id
         self.administrators = administrators
+        self.service_principal = service_principal
 
 
 class ManagedInstanceVcoresCapability(msrest.serialization.Model):
@@ -9359,11 +11943,11 @@ class ManagedInstanceVcoresCapability(msrest.serialization.Model):
     :ivar supported_maintenance_configurations: List of supported maintenance configurations.
     :vartype supported_maintenance_configurations:
      list[~azure.mgmt.sql.models.ManagedInstanceMaintenanceConfigurationCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -9395,6 +11979,10 @@ class ManagedInstanceVcoresCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ManagedInstanceVcoresCapability, self).__init__(**kwargs)
         self.name = None
         self.value = None
@@ -9419,11 +12007,11 @@ class ManagedInstanceVersionCapability(msrest.serialization.Model):
     :ivar supported_instance_pool_editions: The list of supported instance pool editions.
     :vartype supported_instance_pool_editions:
      list[~azure.mgmt.sql.models.InstancePoolEditionCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -9447,6 +12035,10 @@ class ManagedInstanceVersionCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ManagedInstanceVersionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_editions = None
@@ -9466,21 +12058,22 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param storage_container_path: A blob storage container path to hold the scan results (e.g.
+    :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
      https://myStorage.blob.core.windows.net/VaScans/).
-    :type storage_container_path: str
-    :param storage_container_sas_key: A shared access signature (SAS Key) that has write access to
+    :vartype storage_container_path: str
+    :ivar storage_container_sas_key: A shared access signature (SAS Key) that has write access to
      the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey'
      isn't specified, StorageContainerSasKey is required. Applies only if the storage account is not
      behind a Vnet or a firewall.
-    :type storage_container_sas_key: str
-    :param storage_account_access_key: Specifies the identifier key of the storage account for
+    :vartype storage_container_sas_key: str
+    :ivar storage_account_access_key: Specifies the identifier key of the storage account for
      vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
      storageAccountAccessKey is required. Applies only if the storage account is not behind a Vnet
      or a firewall.
-    :type storage_account_access_key: str
-    :param recurring_scans: The recurring scans settings.
-    :type recurring_scans: ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
+    :vartype storage_account_access_key: str
+    :ivar recurring_scans: The recurring scans settings.
+    :vartype recurring_scans:
+     ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
     """
 
     _validation = {
@@ -9505,9 +12098,27 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
         storage_container_path: Optional[str] = None,
         storage_container_sas_key: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
-        recurring_scans: Optional["VulnerabilityAssessmentRecurringScansProperties"] = None,
+        recurring_scans: Optional["_models.VulnerabilityAssessmentRecurringScansProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
+         https://myStorage.blob.core.windows.net/VaScans/).
+        :paramtype storage_container_path: str
+        :keyword storage_container_sas_key: A shared access signature (SAS Key) that has write access
+         to the blob container specified in 'storageContainerPath' parameter. If
+         'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required. Applies only if
+         the storage account is not behind a Vnet or a firewall.
+        :paramtype storage_container_sas_key: str
+        :keyword storage_account_access_key: Specifies the identifier key of the storage account for
+         vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
+         storageAccountAccessKey is required. Applies only if the storage account is not behind a Vnet
+         or a firewall.
+        :paramtype storage_account_access_key: str
+        :keyword recurring_scans: The recurring scans settings.
+        :paramtype recurring_scans:
+         ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
+        """
         super(ManagedInstanceVulnerabilityAssessment, self).__init__(**kwargs)
         self.storage_container_path = storage_container_path
         self.storage_container_sas_key = storage_container_sas_key
@@ -9540,7 +12151,143 @@ class ManagedInstanceVulnerabilityAssessmentListResult(msrest.serialization.Mode
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedInstanceVulnerabilityAssessmentListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ManagedServerDnsAlias(ProxyResource):
+    """A managed server DNS alias.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar azure_dns_record: The fully qualified DNS record for managed server alias.
+    :vartype azure_dns_record: str
+    :ivar public_azure_dns_record: The fully qualified public DNS record for managed server alias.
+    :vartype public_azure_dns_record: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'azure_dns_record': {'readonly': True},
+        'public_azure_dns_record': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_dns_record': {'key': 'properties.azureDnsRecord', 'type': 'str'},
+        'public_azure_dns_record': {'key': 'properties.publicAzureDnsRecord', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ManagedServerDnsAlias, self).__init__(**kwargs)
+        self.azure_dns_record = None
+        self.public_azure_dns_record = None
+
+
+class ManagedServerDnsAliasAcquisition(msrest.serialization.Model):
+    """A managed server DNS alias acquisition request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar old_managed_server_dns_alias_resource_id: Required. The resource ID of the managed server
+     DNS alias that will be acquired to point to this managed server instead.
+    :vartype old_managed_server_dns_alias_resource_id: str
+    """
+
+    _validation = {
+        'old_managed_server_dns_alias_resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'old_managed_server_dns_alias_resource_id': {'key': 'oldManagedServerDnsAliasResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        old_managed_server_dns_alias_resource_id: str,
+        **kwargs
+    ):
+        """
+        :keyword old_managed_server_dns_alias_resource_id: Required. The resource ID of the managed
+         server DNS alias that will be acquired to point to this managed server instead.
+        :paramtype old_managed_server_dns_alias_resource_id: str
+        """
+        super(ManagedServerDnsAliasAcquisition, self).__init__(**kwargs)
+        self.old_managed_server_dns_alias_resource_id = old_managed_server_dns_alias_resource_id
+
+
+class ManagedServerDnsAliasCreation(msrest.serialization.Model):
+    """A managed server dns alias creation request.
+
+    :ivar create_dns_record: Whether or not DNS record should be created for this alias.
+    :vartype create_dns_record: bool
+    """
+
+    _attribute_map = {
+        'create_dns_record': {'key': 'createDnsRecord', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        create_dns_record: Optional[bool] = True,
+        **kwargs
+    ):
+        """
+        :keyword create_dns_record: Whether or not DNS record should be created for this alias.
+        :paramtype create_dns_record: bool
+        """
+        super(ManagedServerDnsAliasCreation, self).__init__(**kwargs)
+        self.create_dns_record = create_dns_record
+
+
+class ManagedServerDnsAliasListResult(msrest.serialization.Model):
+    """A list of managed server DNS aliases.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ManagedServerDnsAlias]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ManagedServerDnsAlias]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ManagedServerDnsAliasListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -9558,27 +12305,26 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
     :vartype type: str
     :ivar system_data: SystemData of SecurityAlertPolicyResource.
     :vartype system_data: ~azure.mgmt.sql.models.SystemData
-    :param state: Specifies the state of the policy, whether it is enabled or disabled or a policy
-     has not been applied yet on the specific database. Possible values include: "Enabled",
-     "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
+     has not been applied yet on the specific database. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
      Brute_Force.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     :ivar creation_time: Specifies the UTC creation time of the policy.
     :vartype creation_time: ~datetime.datetime
     """
@@ -9609,7 +12355,7 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "SecurityAlertsPolicyState"]] = None,
+        state: Optional[Union[str, "_models.SecurityAlertsPolicyState"]] = None,
         disabled_alerts: Optional[List[str]] = None,
         email_addresses: Optional[List[str]] = None,
         email_account_admins: Optional[bool] = None,
@@ -9618,6 +12364,30 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
+         policy has not been applied yet on the specific database. Known values are: "Enabled",
+         "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
+         Brute_Force.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
         super(ManagedServerSecurityAlertPolicy, self).__init__(**kwargs)
         self.system_data = None
         self.state = state
@@ -9655,6 +12425,8 @@ class ManagedServerSecurityAlertPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedServerSecurityAlertPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9671,9 +12443,9 @@ class ManagedTransparentDataEncryption(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: Specifies the state of the transparent data encryption. Possible values include:
+    :ivar state: Specifies the state of the transparent data encryption. Known values are:
      "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
+    :vartype state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
     """
 
     _validation = {
@@ -9692,9 +12464,14 @@ class ManagedTransparentDataEncryption(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "TransparentDataEncryptionState"]] = None,
+        state: Optional[Union[str, "_models.TransparentDataEncryptionState"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the transparent data encryption. Known values are:
+         "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.TransparentDataEncryptionState
+        """
         super(ManagedTransparentDataEncryption, self).__init__(**kwargs)
         self.state = state
 
@@ -9724,6 +12501,8 @@ class ManagedTransparentDataEncryptionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ManagedTransparentDataEncryptionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9736,7 +12515,7 @@ class MaxSizeCapability(msrest.serialization.Model):
 
     :ivar limit: The maximum size limit (see 'unit' for the units).
     :vartype limit: int
-    :ivar unit: The units that the limit is expressed in. Possible values include: "Megabytes",
+    :ivar unit: The units that the limit is expressed in. Known values are: "Megabytes",
      "Gigabytes", "Terabytes", "Petabytes".
     :vartype unit: str or ~azure.mgmt.sql.models.MaxSizeUnit
     """
@@ -9755,6 +12534,8 @@ class MaxSizeCapability(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MaxSizeCapability, self).__init__(**kwargs)
         self.limit = None
         self.unit = None
@@ -9774,11 +12555,11 @@ class MaxSizeRangeCapability(msrest.serialization.Model):
     :vartype scale_size: ~azure.mgmt.sql.models.MaxSizeCapability
     :ivar log_size: Size of transaction log.
     :vartype log_size: ~azure.mgmt.sql.models.LogSizeCapability
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -9804,6 +12585,10 @@ class MaxSizeRangeCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(MaxSizeRangeCapability, self).__init__(**kwargs)
         self.min_value = None
         self.max_value = None
@@ -9824,8 +12609,8 @@ class Metric(msrest.serialization.Model):
     :vartype end_time: ~datetime.datetime
     :ivar time_grain: The time step to be used to summarize the metric values.
     :vartype time_grain: str
-    :ivar unit: The unit of the metric. Possible values include: "count", "bytes", "seconds",
-     "percent", "countPerSecond", "bytesPerSecond".
+    :ivar unit: The unit of the metric. Known values are: "count", "bytes", "seconds", "percent",
+     "countPerSecond", "bytesPerSecond".
     :vartype unit: str or ~azure.mgmt.sql.models.UnitType
     :ivar name: The name information for the metric.
     :vartype name: ~azure.mgmt.sql.models.MetricName
@@ -9855,6 +12640,8 @@ class Metric(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Metric, self).__init__(**kwargs)
         self.start_time = None
         self.end_time = None
@@ -9889,6 +12676,8 @@ class MetricAvailability(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MetricAvailability, self).__init__(**kwargs)
         self.retention = None
         self.time_grain = None
@@ -9902,12 +12691,12 @@ class MetricDefinition(msrest.serialization.Model):
     :ivar name: The name information for the metric.
     :vartype name: ~azure.mgmt.sql.models.MetricName
     :ivar primary_aggregation_type: The primary aggregation type defining how metric values are
-     displayed. Possible values include: "None", "Average", "Count", "Minimum", "Maximum", "Total".
+     displayed. Known values are: "None", "Average", "Count", "Minimum", "Maximum", "Total".
     :vartype primary_aggregation_type: str or ~azure.mgmt.sql.models.PrimaryAggregationType
     :ivar resource_uri: The resource uri of the database.
     :vartype resource_uri: str
-    :ivar unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
-     "Percent", "CountPerSecond", "BytesPerSecond".
+    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
+     "CountPerSecond", "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.sql.models.UnitDefinitionType
     :ivar metric_availabilities: The list of database metric availabilities for the metric.
     :vartype metric_availabilities: list[~azure.mgmt.sql.models.MetricAvailability]
@@ -9933,6 +12722,8 @@ class MetricDefinition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MetricDefinition, self).__init__(**kwargs)
         self.name = None
         self.primary_aggregation_type = None
@@ -9946,8 +12737,8 @@ class MetricDefinitionListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of metric definitions for the database.
-    :type value: list[~azure.mgmt.sql.models.MetricDefinition]
+    :ivar value: Required. The list of metric definitions for the database.
+    :vartype value: list[~azure.mgmt.sql.models.MetricDefinition]
     """
 
     _validation = {
@@ -9961,9 +12752,13 @@ class MetricDefinitionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["MetricDefinition"],
+        value: List["_models.MetricDefinition"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of metric definitions for the database.
+        :paramtype value: list[~azure.mgmt.sql.models.MetricDefinition]
+        """
         super(MetricDefinitionListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -9973,8 +12768,8 @@ class MetricListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of metrics for the database.
-    :type value: list[~azure.mgmt.sql.models.Metric]
+    :ivar value: Required. The list of metrics for the database.
+    :vartype value: list[~azure.mgmt.sql.models.Metric]
     """
 
     _validation = {
@@ -9988,9 +12783,13 @@ class MetricListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Metric"],
+        value: List["_models.Metric"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of metrics for the database.
+        :paramtype value: list[~azure.mgmt.sql.models.Metric]
+        """
         super(MetricListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -10020,6 +12819,8 @@ class MetricName(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MetricName, self).__init__(**kwargs)
         self.value = None
         self.localized_value = None
@@ -10066,6 +12867,8 @@ class MetricValue(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MetricValue, self).__init__(**kwargs)
         self.count = None
         self.average = None
@@ -10082,11 +12885,11 @@ class MinCapacityCapability(msrest.serialization.Model):
 
     :ivar value: Min capacity value.
     :vartype value: float
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -10106,6 +12909,10 @@ class MinCapacityCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(MinCapacityCapability, self).__init__(**kwargs)
         self.value = None
         self.status = None
@@ -10115,10 +12922,10 @@ class MinCapacityCapability(msrest.serialization.Model):
 class Name(msrest.serialization.Model):
     """ARM Usage Name.
 
-    :param value: Usage name value.
-    :type value: str
-    :param localized_value: Usage name localized value.
-    :type localized_value: str
+    :ivar value: Usage name value.
+    :vartype value: str
+    :ivar localized_value: Usage name localized value.
+    :vartype localized_value: str
     """
 
     _attribute_map = {
@@ -10133,6 +12940,12 @@ class Name(msrest.serialization.Model):
         localized_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Usage name value.
+        :paramtype value: str
+        :keyword localized_value: Usage name localized value.
+        :paramtype localized_value: str
+        """
         super(Name, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
@@ -10141,14 +12954,14 @@ class Name(msrest.serialization.Model):
 class NetworkIsolationSettings(msrest.serialization.Model):
     """Contains the ARM resources for which to create private endpoint connection.
 
-    :param storage_account_resource_id: The resource id for the storage account used to store
-     BACPAC file. If set, private endpoint connection will be created for the storage account. Must
-     match storage account used for StorageUri parameter.
-    :type storage_account_resource_id: str
-    :param sql_server_resource_id: The resource id for the SQL server which is the target of this
+    :ivar storage_account_resource_id: The resource id for the storage account used to store BACPAC
+     file. If set, private endpoint connection will be created for the storage account. Must match
+     storage account used for StorageUri parameter.
+    :vartype storage_account_resource_id: str
+    :ivar sql_server_resource_id: The resource id for the SQL server which is the target of this
      request. If set, private endpoint connection will be created for the SQL server. Must match
      server which is target of the operation.
-    :type sql_server_resource_id: str
+    :vartype sql_server_resource_id: str
     """
 
     _attribute_map = {
@@ -10163,6 +12976,16 @@ class NetworkIsolationSettings(msrest.serialization.Model):
         sql_server_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword storage_account_resource_id: The resource id for the storage account used to store
+         BACPAC file. If set, private endpoint connection will be created for the storage account. Must
+         match storage account used for StorageUri parameter.
+        :paramtype storage_account_resource_id: str
+        :keyword sql_server_resource_id: The resource id for the SQL server which is the target of this
+         request. If set, private endpoint connection will be created for the SQL server. Must match
+         server which is target of the operation.
+        :paramtype sql_server_resource_id: str
+        """
         super(NetworkIsolationSettings, self).__init__(**kwargs)
         self.storage_account_resource_id = storage_account_resource_id
         self.sql_server_resource_id = sql_server_resource_id
@@ -10177,8 +13000,7 @@ class Operation(msrest.serialization.Model):
     :vartype name: str
     :ivar display: The localized display information for this particular operation / action.
     :vartype display: ~azure.mgmt.sql.models.OperationDisplay
-    :ivar origin: The intended executor of the operation. Possible values include: "user",
-     "system".
+    :ivar origin: The intended executor of the operation. Known values are: "user", "system".
     :vartype origin: str or ~azure.mgmt.sql.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
     :vartype properties: dict[str, any]
@@ -10202,6 +13024,8 @@ class Operation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
@@ -10243,6 +13067,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -10283,6 +13109,8 @@ class OperationImpact(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationImpact, self).__init__(**kwargs)
         self.name = None
         self.unit = None
@@ -10315,84 +13143,9 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
-class OperationsHealth(ProxyResource):
-    """Operations health status in a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar name_properties_name: Operation name for the service.
-    :vartype name_properties_name: str
-    :ivar health: Operation health status of the service.
-    :vartype health: str
-    :ivar description: Health status description.
-    :vartype description: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'name_properties_name': {'readonly': True},
-        'health': {'readonly': True},
-        'description': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'health': {'key': 'properties.health', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationsHealth, self).__init__(**kwargs)
-        self.name_properties_name = None
-        self.health = None
-        self.description = None
-
-
-class OperationsHealthListResult(msrest.serialization.Model):
-    """A list of service health statuses in a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of results.
-    :vartype value: list[~azure.mgmt.sql.models.OperationsHealth]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationsHealth]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationsHealthListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -10430,6 +13183,8 @@ class OutboundFirewallRule(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(OutboundFirewallRule, self).__init__(**kwargs)
         self.provisioning_state = None
 
@@ -10459,6 +13214,8 @@ class OutboundFirewallRuleListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OutboundFirewallRuleListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -10471,12 +13228,12 @@ class PartnerInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Resource identifier of the partner server.
-    :type id: str
+    :ivar id: Required. Resource identifier of the partner server.
+    :vartype id: str
     :ivar location: Geo location of the partner server.
     :vartype location: str
-    :ivar replication_role: Replication role of the partner server. Possible values include:
-     "Primary", "Secondary".
+    :ivar replication_role: Replication role of the partner server. Known values are: "Primary",
+     "Secondary".
     :vartype replication_role: str or ~azure.mgmt.sql.models.FailoverGroupReplicationRole
     """
 
@@ -10498,6 +13255,10 @@ class PartnerInfo(msrest.serialization.Model):
         id: str,
         **kwargs
     ):
+        """
+        :keyword id: Required. Resource identifier of the partner server.
+        :paramtype id: str
+        """
         super(PartnerInfo, self).__init__(**kwargs)
         self.id = id
         self.location = None
@@ -10509,10 +13270,10 @@ class PartnerRegionInfo(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param location: Geo location of the partner managed instances.
-    :type location: str
-    :ivar replication_role: Replication role of the partner managed instances. Possible values
-     include: "Primary", "Secondary".
+    :ivar location: Geo location of the partner managed instances.
+    :vartype location: str
+    :ivar replication_role: Replication role of the partner managed instances. Known values are:
+     "Primary", "Secondary".
     :vartype replication_role: str or ~azure.mgmt.sql.models.InstanceFailoverGroupReplicationRole
     """
 
@@ -10531,6 +13292,10 @@ class PartnerRegionInfo(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Geo location of the partner managed instances.
+        :paramtype location: str
+        """
         super(PartnerRegionInfo, self).__init__(**kwargs)
         self.location = location
         self.replication_role = None
@@ -10543,8 +13308,7 @@ class PerformanceLevelCapability(msrest.serialization.Model):
 
     :ivar value: Performance level value.
     :vartype value: float
-    :ivar unit: Unit type used to measure performance level. Possible values include: "DTU",
-     "VCores".
+    :ivar unit: Unit type used to measure performance level. Known values are: "DTU", "VCores".
     :vartype unit: str or ~azure.mgmt.sql.models.PerformanceLevelUnit
     """
 
@@ -10562,6 +13326,8 @@ class PerformanceLevelCapability(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PerformanceLevelCapability, self).__init__(**kwargs)
         self.value = None
         self.unit = None
@@ -10578,13 +13344,13 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the private endpoint connection. Possible values include:
+    :ivar provisioning_state: State of the private endpoint connection. Known values are:
      "Approving", "Ready", "Dropping", "Failed", "Rejecting".
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.PrivateEndpointProvisioningState
     """
@@ -10608,10 +13374,18 @@ class PrivateEndpointConnection(ProxyResource):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -10643,6 +13417,8 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -10653,13 +13429,13 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the private endpoint connection. Possible values include:
+    :ivar provisioning_state: State of the private endpoint connection. Known values are:
      "Approving", "Ready", "Dropping", "Failed", "Rejecting".
     :vartype provisioning_state: str or ~azure.mgmt.sql.models.PrivateEndpointProvisioningState
     """
@@ -10677,10 +13453,18 @@ class PrivateEndpointConnectionProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
+        """
         super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -10716,6 +13500,8 @@ class PrivateEndpointConnectionRequestStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpointConnectionRequestStatus, self).__init__(**kwargs)
         self.private_link_service_id = None
         self.private_endpoint_connection_name = None
@@ -10725,8 +13511,8 @@ class PrivateEndpointConnectionRequestStatus(msrest.serialization.Model):
 class PrivateEndpointProperty(msrest.serialization.Model):
     """PrivateEndpointProperty.
 
-    :param id: Resource id of the private endpoint.
-    :type id: str
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -10739,6 +13525,10 @@ class PrivateEndpointProperty(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Resource id of the private endpoint.
+        :paramtype id: str
+        """
         super(PrivateEndpointProperty, self).__init__(**kwargs)
         self.id = id
 
@@ -10776,6 +13566,8 @@ class PrivateLinkResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.properties = None
 
@@ -10805,6 +13597,8 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -10839,6 +13633,8 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResourceProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -10852,13 +13648,13 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status. Possible values include:
+    :ivar status: Required. The private link service connection status. Known values are:
      "Approved", "Pending", "Rejected", "Disconnected".
-    :type status: str or ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateStatus
-    :param description: Required. The private link service connection description.
-    :type description: str
-    :ivar actions_required: The actions required for private link service connection. Possible
-     values include: "None".
+    :vartype status: str or ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateStatus
+    :ivar description: Required. The private link service connection description.
+    :vartype description: str
+    :ivar actions_required: The actions required for private link service connection. Known values
+     are: "None".
     :vartype actions_required: str or
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateActionsRequire
     """
@@ -10878,10 +13674,17 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "PrivateLinkServiceConnectionStateStatus"],
+        status: Union[str, "_models.PrivateLinkServiceConnectionStateStatus"],
         description: str,
         **kwargs
     ):
+        """
+        :keyword status: Required. The private link service connection status. Known values are:
+         "Approved", "Pending", "Rejected", "Disconnected".
+        :paramtype status: str or ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateStatus
+        :keyword description: Required. The private link service connection description.
+        :paramtype description: str
+        """
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -10895,12 +13698,12 @@ class QueryMetricInterval(msrest.serialization.Model):
 
     :ivar interval_start_time: The start time for the metric interval (ISO-8601 format).
     :vartype interval_start_time: str
-    :ivar interval_type: Interval type (length). Possible values include: "PT1H", "P1D".
+    :ivar interval_type: Interval type (length). Known values are: "PT1H", "P1D".
     :vartype interval_type: str or ~azure.mgmt.sql.models.QueryTimeGrainType
     :ivar execution_count: Execution count of a query in this interval.
     :vartype execution_count: long
-    :param metrics: List of metric objects for this interval.
-    :type metrics: list[~azure.mgmt.sql.models.QueryMetricProperties]
+    :ivar metrics: List of metric objects for this interval.
+    :vartype metrics: list[~azure.mgmt.sql.models.QueryMetricProperties]
     """
 
     _validation = {
@@ -10919,9 +13722,13 @@ class QueryMetricInterval(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        metrics: Optional[List["QueryMetricProperties"]] = None,
+        metrics: Optional[List["_models.QueryMetricProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword metrics: List of metric objects for this interval.
+        :paramtype metrics: list[~azure.mgmt.sql.models.QueryMetricProperties]
+        """
         super(QueryMetricInterval, self).__init__(**kwargs)
         self.interval_start_time = None
         self.interval_type = None
@@ -10938,8 +13745,8 @@ class QueryMetricProperties(msrest.serialization.Model):
     :vartype name: str
     :ivar display_name: The UI appropriate name for the metric.
     :vartype display_name: str
-    :ivar unit: The unit of the metric. Possible values include: "percentage", "KB",
-     "microseconds", "count".
+    :ivar unit: The unit of the metric. Known values are: "percentage", "KB", "microseconds",
+     "count".
     :vartype unit: str or ~azure.mgmt.sql.models.QueryMetricUnitType
     :ivar value: The value of the metric.
     :vartype value: float
@@ -10983,6 +13790,8 @@ class QueryMetricProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(QueryMetricProperties, self).__init__(**kwargs)
         self.name = None
         self.display_name = None
@@ -11014,8 +13823,8 @@ class QueryStatistics(ProxyResource):
     :vartype start_time: str
     :ivar end_time: The end time for the metric (ISO-8601 format).
     :vartype end_time: str
-    :param intervals: List of intervals with appropriate metric data.
-    :type intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
+    :ivar intervals: List of intervals with appropriate metric data.
+    :vartype intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
     """
 
     _validation = {
@@ -11042,9 +13851,13 @@ class QueryStatistics(ProxyResource):
     def __init__(
         self,
         *,
-        intervals: Optional[List["QueryMetricInterval"]] = None,
+        intervals: Optional[List["_models.QueryMetricInterval"]] = None,
         **kwargs
     ):
+        """
+        :keyword intervals: List of intervals with appropriate metric data.
+        :paramtype intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
+        """
         super(QueryStatistics, self).__init__(**kwargs)
         self.database_name = None
         self.query_id = None
@@ -11066,8 +13879,8 @@ class QueryStatisticsProperties(msrest.serialization.Model):
     :vartype start_time: str
     :ivar end_time: The end time for the metric (ISO-8601 format).
     :vartype end_time: str
-    :param intervals: List of intervals with appropriate metric data.
-    :type intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
+    :ivar intervals: List of intervals with appropriate metric data.
+    :vartype intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
     """
 
     _validation = {
@@ -11088,9 +13901,13 @@ class QueryStatisticsProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        intervals: Optional[List["QueryMetricInterval"]] = None,
+        intervals: Optional[List["_models.QueryMetricInterval"]] = None,
         **kwargs
     ):
+        """
+        :keyword intervals: List of intervals with appropriate metric data.
+        :paramtype intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
+        """
         super(QueryStatisticsProperties, self).__init__(**kwargs)
         self.database_name = None
         self.query_id = None
@@ -11106,11 +13923,11 @@ class ReadScaleCapability(msrest.serialization.Model):
 
     :ivar max_number_of_replicas: The maximum number of read scale replicas.
     :vartype max_number_of_replicas: int
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -11130,6 +13947,10 @@ class ReadScaleCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ReadScaleCapability, self).__init__(**kwargs)
         self.max_number_of_replicas = None
         self.status = None
@@ -11158,8 +13979,8 @@ class RecommendedAction(ProxyResource):
     :vartype valid_since: ~datetime.datetime
     :ivar last_refresh: Gets time when this recommended action was last refreshed.
     :vartype last_refresh: ~datetime.datetime
-    :param state: Gets the info of the current state the recommended action is in.
-    :type state: ~azure.mgmt.sql.models.RecommendedActionStateInfo
+    :ivar state: Gets the info of the current state the recommended action is in.
+    :vartype state: ~azure.mgmt.sql.models.RecommendedActionStateInfo
     :ivar is_executable_action: Gets if this recommended action is actionable by user.
     :vartype is_executable_action: bool
     :ivar is_revertable_action: Gets if changes applied by this recommended action can be reverted
@@ -11181,14 +14002,14 @@ class RecommendedAction(ProxyResource):
      action on user resource. e.g., time taken for dropping the created index.
     :vartype revert_action_duration: str
     :ivar execute_action_initiated_by: Gets if approval for applying this recommended action was
-     given by user/system. Possible values include: "User", "System".
+     given by user/system. Known values are: "User", "System".
     :vartype execute_action_initiated_by: str or
      ~azure.mgmt.sql.models.RecommendedActionInitiatedBy
     :ivar execute_action_initiated_time: Gets the time when this recommended action was approved
      for execution.
     :vartype execute_action_initiated_time: ~datetime.datetime
     :ivar revert_action_initiated_by: Gets if approval for reverting this recommended action was
-     given by user/system. Possible values include: "User", "System".
+     given by user/system. Known values are: "User", "System".
     :vartype revert_action_initiated_by: str or ~azure.mgmt.sql.models.RecommendedActionInitiatedBy
     :ivar revert_action_initiated_time: Gets the time when this recommended action was approved for
      revert.
@@ -11281,9 +14102,13 @@ class RecommendedAction(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional["RecommendedActionStateInfo"] = None,
+        state: Optional["_models.RecommendedActionStateInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword state: Gets the info of the current state the recommended action is in.
+        :paramtype state: ~azure.mgmt.sql.models.RecommendedActionStateInfo
+        """
         super(RecommendedAction, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -11321,7 +14146,7 @@ class RecommendedActionErrorInfo(msrest.serialization.Model):
      DatabaseHasQdsOff, IndexAlreadyExists.
     :vartype error_code: str
     :ivar is_retryable: Gets whether the error could be ignored and recommended action could be
-     retried. Possible values are: Yes/No. Possible values include: "Yes", "No".
+     retried. Possible values are: Yes/No. Known values are: "Yes", "No".
     :vartype is_retryable: str or ~azure.mgmt.sql.models.IsRetryable
     """
 
@@ -11339,6 +14164,8 @@ class RecommendedActionErrorInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecommendedActionErrorInfo, self).__init__(**kwargs)
         self.error_code = None
         self.is_retryable = None
@@ -11386,6 +14213,8 @@ class RecommendedActionImpactRecord(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecommendedActionImpactRecord, self).__init__(**kwargs)
         self.dimension_name = None
         self.unit = None
@@ -11400,7 +14229,7 @@ class RecommendedActionImplementationInfo(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar method: Gets the method in which this recommended action can be manually implemented.
-     e.g., TSql, AzurePowerShell. Possible values include: "TSql", "AzurePowerShell".
+     e.g., TSql, AzurePowerShell. Known values are: "TSql", "AzurePowerShell".
     :vartype method: str or ~azure.mgmt.sql.models.ImplementationMethod
     :ivar script: Gets the manual implementation script. e.g., T-SQL script that could be executed
      on the database.
@@ -11421,6 +14250,8 @@ class RecommendedActionImplementationInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecommendedActionImplementationInfo, self).__init__(**kwargs)
         self.method = None
         self.script = None
@@ -11464,6 +14295,8 @@ class RecommendedActionMetricInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecommendedActionMetricInfo, self).__init__(**kwargs)
         self.metric_name = None
         self.unit = None
@@ -11479,7 +14312,7 @@ class RecommendedActionStateInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param current_value: Required. Current state the recommended action is in. Some commonly used
+    :ivar current_value: Required. Current state the recommended action is in. Some commonly used
      states are: Active      -> recommended action is active and no action has been taken yet.
      Pending     -> recommended action is approved for and is awaiting execution. Executing   ->
      recommended action is being applied on the user database. Verifying   -> recommended action was
@@ -11489,14 +14322,14 @@ class RecommendedActionStateInfo(msrest.serialization.Model):
      reverted. Reverting   -> changes made while applying recommended action are being reverted on
      the user database. Reverted    -> successfully reverted the changes made by recommended action
      on user database. Ignored     -> user explicitly ignored/discarded the recommended action.
-     Possible values include: "Active", "Pending", "Executing", "Verifying", "PendingRevert",
+     Known values are: "Active", "Pending", "Executing", "Verifying", "PendingRevert",
      "RevertCancelled", "Reverting", "Reverted", "Ignored", "Expired", "Monitoring", "Resolved",
      "Success", "Error".
-    :type current_value: str or ~azure.mgmt.sql.models.RecommendedActionCurrentState
+    :vartype current_value: str or ~azure.mgmt.sql.models.RecommendedActionCurrentState
     :ivar action_initiated_by: Gets who initiated the execution of this recommended action.
      Possible Value are: User    -> When user explicity notified system to apply the recommended
      action. System  -> When auto-execute status of this advisor was set to 'Enabled', in which case
-     the system applied it. Possible values include: "User", "System".
+     the system applied it. Known values are: "User", "System".
     :vartype action_initiated_by: str or ~azure.mgmt.sql.models.RecommendedActionInitiatedBy
     :ivar last_modified: Gets the time when the state was last modified.
     :vartype last_modified: ~datetime.datetime
@@ -11517,9 +14350,25 @@ class RecommendedActionStateInfo(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        current_value: Union[str, "RecommendedActionCurrentState"],
+        current_value: Union[str, "_models.RecommendedActionCurrentState"],
         **kwargs
     ):
+        """
+        :keyword current_value: Required. Current state the recommended action is in. Some commonly
+         used states are: Active      -> recommended action is active and no action has been taken yet.
+         Pending     -> recommended action is approved for and is awaiting execution. Executing   ->
+         recommended action is being applied on the user database. Verifying   -> recommended action was
+         applied and is being verified of its usefulness by the system. Success     -> recommended
+         action was applied and improvement found during verification. Pending Revert  -> verification
+         found little or no improvement so recommended action is queued for revert or user has manually
+         reverted. Reverting   -> changes made while applying recommended action are being reverted on
+         the user database. Reverted    -> successfully reverted the changes made by recommended action
+         on user database. Ignored     -> user explicitly ignored/discarded the recommended action.
+         Known values are: "Active", "Pending", "Executing", "Verifying", "PendingRevert",
+         "RevertCancelled", "Reverting", "Reverted", "Ignored", "Expired", "Monitoring", "Resolved",
+         "Success", "Error".
+        :paramtype current_value: str or ~azure.mgmt.sql.models.RecommendedActionCurrentState
+        """
         super(RecommendedActionStateInfo, self).__init__(**kwargs)
         self.current_value = current_value
         self.action_initiated_by = None
@@ -11537,14 +14386,14 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param op:  Possible values include: "enable", "disable".
-    :type op: str or ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateKind
-    :param schema: Schema name of the column to update.
-    :type schema: str
-    :param table: Table name of the column to update.
-    :type table: str
-    :param column: Column name to update.
-    :type column: str
+    :ivar op: Known values are: "enable", "disable".
+    :vartype op: str or ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateKind
+    :ivar schema: Schema name of the column to update.
+    :vartype schema: str
+    :ivar table: Table name of the column to update.
+    :vartype table: str
+    :ivar column: Column name to update.
+    :vartype column: str
     """
 
     _validation = {
@@ -11566,12 +14415,22 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
     def __init__(
         self,
         *,
-        op: Optional[Union[str, "RecommendedSensitivityLabelUpdateKind"]] = None,
+        op: Optional[Union[str, "_models.RecommendedSensitivityLabelUpdateKind"]] = None,
         schema: Optional[str] = None,
         table: Optional[str] = None,
         column: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword op: Known values are: "enable", "disable".
+        :paramtype op: str or ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateKind
+        :keyword schema: Schema name of the column to update.
+        :paramtype schema: str
+        :keyword table: Table name of the column to update.
+        :paramtype table: str
+        :keyword column: Column name to update.
+        :paramtype column: str
+        """
         super(RecommendedSensitivityLabelUpdate, self).__init__(**kwargs)
         self.op = op
         self.schema = schema
@@ -11582,8 +14441,8 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
 class RecommendedSensitivityLabelUpdateList(msrest.serialization.Model):
     """A list of recommended sensitivity label update operations.
 
-    :param operations:
-    :type operations: list[~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdate]
+    :ivar operations:
+    :vartype operations: list[~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdate]
     """
 
     _attribute_map = {
@@ -11593,9 +14452,13 @@ class RecommendedSensitivityLabelUpdateList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        operations: Optional[List["RecommendedSensitivityLabelUpdate"]] = None,
+        operations: Optional[List["_models.RecommendedSensitivityLabelUpdate"]] = None,
         **kwargs
     ):
+        """
+        :keyword operations:
+        :paramtype operations: list[~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdate]
+        """
         super(RecommendedSensitivityLabelUpdateList, self).__init__(**kwargs)
         self.operations = operations
 
@@ -11646,6 +14509,8 @@ class RecoverableDatabase(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecoverableDatabase, self).__init__(**kwargs)
         self.edition = None
         self.service_level_objective = None
@@ -11658,8 +14523,8 @@ class RecoverableDatabaseListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. A list of recoverable databases.
-    :type value: list[~azure.mgmt.sql.models.RecoverableDatabase]
+    :ivar value: Required. A list of recoverable databases.
+    :vartype value: list[~azure.mgmt.sql.models.RecoverableDatabase]
     """
 
     _validation = {
@@ -11673,9 +14538,13 @@ class RecoverableDatabaseListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["RecoverableDatabase"],
+        value: List["_models.RecoverableDatabase"],
         **kwargs
     ):
+        """
+        :keyword value: Required. A list of recoverable databases.
+        :paramtype value: list[~azure.mgmt.sql.models.RecoverableDatabase]
+        """
         super(RecoverableDatabaseListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -11713,6 +14582,8 @@ class RecoverableManagedDatabase(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecoverableManagedDatabase, self).__init__(**kwargs)
         self.last_available_backup_date = None
 
@@ -11742,6 +14613,8 @@ class RecoverableManagedDatabaseListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecoverableManagedDatabaseListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -11764,22 +14637,25 @@ class ReplicationLink(ProxyResource):
     :vartype partner_database: str
     :ivar partner_location: Resource partner location.
     :vartype partner_location: str
-    :ivar role: Local replication role.
-    :vartype role: str
-    :ivar partner_role: Partner replication role.
-    :vartype partner_role: str
+    :ivar role: Local replication role. Known values are: "Primary", "Secondary",
+     "NonReadableSecondary", "Source", "Copy".
+    :vartype role: str or ~azure.mgmt.sql.models.ReplicationRole
+    :ivar partner_role: Partner replication role. Known values are: "Primary", "Secondary",
+     "NonReadableSecondary", "Source", "Copy".
+    :vartype partner_role: str or ~azure.mgmt.sql.models.ReplicationRole
     :ivar replication_mode: Replication mode.
     :vartype replication_mode: str
     :ivar start_time: Time at which the link was created.
     :vartype start_time: ~datetime.datetime
     :ivar percent_complete: Seeding completion percentage for the link.
     :vartype percent_complete: int
-    :ivar replication_state: Replication state (PENDING, SEEDING, CATCHUP, SUSPENDED).
-    :vartype replication_state: str
+    :ivar replication_state: Replication state (PENDING, SEEDING, CATCHUP, SUSPENDED). Known values
+     are: "PENDING", "SEEDING", "CATCH_UP", "SUSPENDED".
+    :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
     :ivar is_termination_allowed: Whether the user is currently allowed to terminate the link.
     :vartype is_termination_allowed: bool
-    :ivar link_type: Link type (GEO, NAMED).
-    :vartype link_type: str
+    :ivar link_type: Link type (GEO, NAMED). Known values are: "GEO", "NAMED".
+    :vartype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
     """
 
     _validation = {
@@ -11820,6 +14696,8 @@ class ReplicationLink(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ReplicationLink, self).__init__(**kwargs)
         self.partner_server = None
         self.partner_database = None
@@ -11834,7 +14712,7 @@ class ReplicationLink(ProxyResource):
         self.link_type = None
 
 
-class ReplicationLinksListResult(msrest.serialization.Model):
+class ReplicationLinkListResult(msrest.serialization.Model):
     """A list of replication links.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11859,7 +14737,9 @@ class ReplicationLinksListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ReplicationLinksListResult, self).__init__(**kwargs)
+        """
+        """
+        super(ReplicationLinkListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -11869,14 +14749,14 @@ class ResourceIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param user_assigned_identities: The resource ids of the user assigned identities to use.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
+    :ivar user_assigned_identities: The resource ids of the user assigned identities to use.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
     :ivar principal_id: The Azure Active Directory principal id.
     :vartype principal_id: str
-    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
-     and assign an Azure Active Directory principal for the resource. Possible values include:
-     "None", "SystemAssigned", "UserAssigned".
-    :type type: str or ~azure.mgmt.sql.models.IdentityType
+    :ivar type: The identity type. Set this to 'SystemAssigned' in order to automatically create
+     and assign an Azure Active Directory principal for the resource. Known values are: "None",
+     "SystemAssigned", "UserAssigned", "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.sql.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
     """
@@ -11896,54 +14776,19 @@ class ResourceIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        user_assigned_identities: Optional[Dict[str, "UserIdentity"]] = None,
-        type: Optional[Union[str, "IdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserIdentity"]] = None,
+        type: Optional[Union[str, "_models.IdentityType"]] = None,
         **kwargs
     ):
+        """
+        :keyword user_assigned_identities: The resource ids of the user assigned identities to use.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
+        :keyword type: The identity type. Set this to 'SystemAssigned' in order to automatically create
+         and assign an Azure Active Directory principal for the resource. Known values are: "None",
+         "SystemAssigned", "UserAssigned", "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.sql.models.IdentityType
+        """
         super(ResourceIdentity, self).__init__(**kwargs)
-        self.user_assigned_identities = user_assigned_identities
-        self.principal_id = None
-        self.type = type
-        self.tenant_id = None
-
-
-class ResourceIdentityWithUserAssignedIdentities(msrest.serialization.Model):
-    """Azure Active Directory identity configuration for a resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param user_assigned_identities: The resource ids of the user assigned identities to use.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
-    :ivar principal_id: The Azure Active Directory principal id.
-    :vartype principal_id: str
-    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
-     and assign an Azure Active Directory principal for the resource. Possible values include:
-     "None", "SystemAssigned", "UserAssigned".
-    :type type: str or ~azure.mgmt.sql.models.IdentityType
-    :ivar tenant_id: The Azure Active Directory tenant id.
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        user_assigned_identities: Optional[Dict[str, "UserIdentity"]] = None,
-        type: Optional[Union[str, "IdentityType"]] = None,
-        **kwargs
-    ):
-        super(ResourceIdentityWithUserAssignedIdentities, self).__init__(**kwargs)
         self.user_assigned_identities = user_assigned_identities
         self.principal_id = None
         self.type = type
@@ -11955,8 +14800,8 @@ class ResourceMoveDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The target ID for the resource.
-    :type id: str
+    :ivar id: Required. The target ID for the resource.
+    :vartype id: str
     """
 
     _validation = {
@@ -11973,6 +14818,10 @@ class ResourceMoveDefinition(msrest.serialization.Model):
         id: str,
         **kwargs
     ):
+        """
+        :keyword id: Required. The target ID for the resource.
+        :paramtype id: str
+        """
         super(ResourceMoveDefinition, self).__init__(**kwargs)
         self.id = id
 
@@ -11988,19 +14837,16 @@ class RestorableDroppedDatabase(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param sku: The name and tier of the SKU.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar sku: The name and tier of the SKU.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar database_name: The name of the database.
     :vartype database_name: str
     :ivar max_size_bytes: The max size of the database expressed in bytes.
     :vartype max_size_bytes: long
-    :ivar elastic_pool_id: DEPRECATED: The resource name of the elastic pool containing this
-     database. This property is deprecated and the value will always be null.
-    :vartype elastic_pool_id: str
     :ivar creation_date: The creation date of the database (ISO8601 format).
     :vartype creation_date: ~datetime.datetime
     :ivar deletion_date: The deletion date of the database (ISO8601 format).
@@ -12008,9 +14854,8 @@ class RestorableDroppedDatabase(ProxyResource):
     :ivar earliest_restore_date: The earliest restore date of the database (ISO8601 format).
     :vartype earliest_restore_date: ~datetime.datetime
     :ivar backup_storage_redundancy: The storage account type used to store backups for this
-     database. Possible values include: "Geo", "Local", "Zone".
-    :vartype backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RestorableDroppedDatabasePropertiesBackupStorageRedundancy
+     database. Known values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _validation = {
@@ -12019,7 +14864,6 @@ class RestorableDroppedDatabase(ProxyResource):
         'type': {'readonly': True},
         'database_name': {'readonly': True},
         'max_size_bytes': {'readonly': True},
-        'elastic_pool_id': {'readonly': True},
         'creation_date': {'readonly': True},
         'deletion_date': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
@@ -12035,7 +14879,6 @@ class RestorableDroppedDatabase(ProxyResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'long'},
-        'elastic_pool_id': {'key': 'properties.elasticPoolId', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'deletion_date': {'key': 'properties.deletionDate', 'type': 'iso-8601'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
@@ -12045,18 +14888,25 @@ class RestorableDroppedDatabase(ProxyResource):
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword sku: The name and tier of the SKU.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(RestorableDroppedDatabase, self).__init__(**kwargs)
         self.sku = sku
         self.location = location
         self.tags = tags
         self.database_name = None
         self.max_size_bytes = None
-        self.elastic_pool_id = None
         self.creation_date = None
         self.deletion_date = None
         self.earliest_restore_date = None
@@ -12088,6 +14938,8 @@ class RestorableDroppedDatabaseListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestorableDroppedDatabaseListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -12106,10 +14958,10 @@ class RestorableDroppedManagedDatabase(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar database_name: The name of the database.
     :vartype database_name: str
     :ivar creation_date: The creation date of the database (ISO8601 format).
@@ -12150,6 +15002,12 @@ class RestorableDroppedManagedDatabase(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(RestorableDroppedManagedDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.database_name = None
         self.creation_date = None
@@ -12182,6 +15040,8 @@ class RestorableDroppedManagedDatabaseListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestorableDroppedManagedDatabaseListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -12200,7 +15060,7 @@ class RestorePoint(ProxyResource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar restore_point_type: The type of restore point. Possible values include: "CONTINUOUS",
+    :ivar restore_point_type: The type of restore point. Known values are: "CONTINUOUS",
      "DISCRETE".
     :vartype restore_point_type: str or ~azure.mgmt.sql.models.RestorePointType
     :ivar earliest_restore_date: The earliest time to which this database can be restored.
@@ -12237,6 +15097,8 @@ class RestorePoint(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestorePoint, self).__init__(**kwargs)
         self.location = None
         self.restore_point_type = None
@@ -12270,6 +15132,8 @@ class RestorePointListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RestorePointListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -12288,8 +15152,8 @@ class SecurityEvent(ProxyResource):
     :vartype type: str
     :ivar event_time: The time when the security event occurred.
     :vartype event_time: ~datetime.datetime
-    :ivar security_event_type: The type of the security event. Possible values include:
-     "Undefined", "SqlInjectionVulnerability", "SqlInjectionExploit".
+    :ivar security_event_type: The type of the security event. Known values are: "Undefined",
+     "SqlInjectionVulnerability", "SqlInjectionExploit".
     :vartype security_event_type: str or ~azure.mgmt.sql.models.SecurityEventType
     :ivar subscription: The subscription name.
     :vartype subscription: str
@@ -12343,6 +15207,8 @@ class SecurityEvent(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecurityEvent, self).__init__(**kwargs)
         self.event_time = None
         self.security_event_type = None
@@ -12380,6 +15246,8 @@ class SecurityEventCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecurityEventCollection, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -12388,10 +15256,10 @@ class SecurityEventCollection(msrest.serialization.Model):
 class SecurityEventsFilterParameters(msrest.serialization.Model):
     """The properties that are supported in the $filter operation.
 
-    :param event_time: Filter on the event time.
-    :type event_time: ~datetime.datetime
-    :param show_server_records: Whether to show server records or not.
-    :type show_server_records: bool
+    :ivar event_time: Filter on the event time.
+    :vartype event_time: ~datetime.datetime
+    :ivar show_server_records: Whether to show server records or not.
+    :vartype show_server_records: bool
     """
 
     _attribute_map = {
@@ -12406,6 +15274,12 @@ class SecurityEventsFilterParameters(msrest.serialization.Model):
         show_server_records: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword event_time: Filter on the event time.
+        :paramtype event_time: ~datetime.datetime
+        :keyword show_server_records: Whether to show server records or not.
+        :paramtype show_server_records: bool
+        """
         super(SecurityEventsFilterParameters, self).__init__(**kwargs)
         self.event_time = event_time
         self.show_server_records = show_server_records
@@ -12456,6 +15330,8 @@ class SecurityEventSqlInjectionAdditionalProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecurityEventSqlInjectionAdditionalProperties, self).__init__(**kwargs)
         self.threat_id = None
         self.statement = None
@@ -12485,20 +15361,20 @@ class SensitivityLabel(ProxyResource):
     :vartype table_name: str
     :ivar column_name: The column name.
     :vartype column_name: str
-    :param label_name: The label name.
-    :type label_name: str
-    :param label_id: The label ID.
-    :type label_id: str
-    :param information_type: The information type.
-    :type information_type: str
-    :param information_type_id: The information type ID.
-    :type information_type_id: str
+    :ivar label_name: The label name.
+    :vartype label_name: str
+    :ivar label_id: The label ID.
+    :vartype label_id: str
+    :ivar information_type: The information type.
+    :vartype information_type: str
+    :ivar information_type_id: The information type ID.
+    :vartype information_type_id: str
     :ivar is_disabled: Is sensitivity recommendation disabled. Applicable for recommended
      sensitivity label only. Specifies whether the sensitivity recommendation on this column is
      disabled (dismissed) or not.
     :vartype is_disabled: bool
-    :param rank:  Possible values include: "None", "Low", "Medium", "High", "Critical".
-    :type rank: str or ~azure.mgmt.sql.models.SensitivityLabelRank
+    :ivar rank: Known values are: "None", "Low", "Medium", "High", "Critical".
+    :vartype rank: str or ~azure.mgmt.sql.models.SensitivityLabelRank
     """
 
     _validation = {
@@ -12535,9 +15411,21 @@ class SensitivityLabel(ProxyResource):
         label_id: Optional[str] = None,
         information_type: Optional[str] = None,
         information_type_id: Optional[str] = None,
-        rank: Optional[Union[str, "SensitivityLabelRank"]] = None,
+        rank: Optional[Union[str, "_models.SensitivityLabelRank"]] = None,
         **kwargs
     ):
+        """
+        :keyword label_name: The label name.
+        :paramtype label_name: str
+        :keyword label_id: The label ID.
+        :paramtype label_id: str
+        :keyword information_type: The information type.
+        :paramtype information_type: str
+        :keyword information_type_id: The information type ID.
+        :paramtype information_type_id: str
+        :keyword rank: Known values are: "None", "Low", "Medium", "High", "Critical".
+        :paramtype rank: str or ~azure.mgmt.sql.models.SensitivityLabelRank
+        """
         super(SensitivityLabel, self).__init__(**kwargs)
         self.managed_by = None
         self.schema_name = None
@@ -12576,6 +15464,8 @@ class SensitivityLabelListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SensitivityLabelListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -12592,16 +15482,16 @@ class SensitivityLabelUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param op:  Possible values include: "set", "remove".
-    :type op: str or ~azure.mgmt.sql.models.SensitivityLabelUpdateKind
-    :param schema: Schema name of the column to update.
-    :type schema: str
-    :param table: Table name of the column to update.
-    :type table: str
-    :param column: Column name to update.
-    :type column: str
-    :param sensitivity_label: The sensitivity label information to apply on a column.
-    :type sensitivity_label: ~azure.mgmt.sql.models.SensitivityLabel
+    :ivar op: Known values are: "set", "remove".
+    :vartype op: str or ~azure.mgmt.sql.models.SensitivityLabelUpdateKind
+    :ivar schema: Schema name of the column to update.
+    :vartype schema: str
+    :ivar table: Table name of the column to update.
+    :vartype table: str
+    :ivar column: Column name to update.
+    :vartype column: str
+    :ivar sensitivity_label: The sensitivity label information to apply on a column.
+    :vartype sensitivity_label: ~azure.mgmt.sql.models.SensitivityLabel
     """
 
     _validation = {
@@ -12624,13 +15514,25 @@ class SensitivityLabelUpdate(ProxyResource):
     def __init__(
         self,
         *,
-        op: Optional[Union[str, "SensitivityLabelUpdateKind"]] = None,
+        op: Optional[Union[str, "_models.SensitivityLabelUpdateKind"]] = None,
         schema: Optional[str] = None,
         table: Optional[str] = None,
         column: Optional[str] = None,
-        sensitivity_label: Optional["SensitivityLabel"] = None,
+        sensitivity_label: Optional["_models.SensitivityLabel"] = None,
         **kwargs
     ):
+        """
+        :keyword op: Known values are: "set", "remove".
+        :paramtype op: str or ~azure.mgmt.sql.models.SensitivityLabelUpdateKind
+        :keyword schema: Schema name of the column to update.
+        :paramtype schema: str
+        :keyword table: Table name of the column to update.
+        :paramtype table: str
+        :keyword column: Column name to update.
+        :paramtype column: str
+        :keyword sensitivity_label: The sensitivity label information to apply on a column.
+        :paramtype sensitivity_label: ~azure.mgmt.sql.models.SensitivityLabel
+        """
         super(SensitivityLabelUpdate, self).__init__(**kwargs)
         self.op = op
         self.schema = schema
@@ -12642,8 +15544,8 @@ class SensitivityLabelUpdate(ProxyResource):
 class SensitivityLabelUpdateList(msrest.serialization.Model):
     """A list of sensitivity label update operations.
 
-    :param operations:
-    :type operations: list[~azure.mgmt.sql.models.SensitivityLabelUpdate]
+    :ivar operations:
+    :vartype operations: list[~azure.mgmt.sql.models.SensitivityLabelUpdate]
     """
 
     _attribute_map = {
@@ -12653,9 +15555,13 @@ class SensitivityLabelUpdateList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        operations: Optional[List["SensitivityLabelUpdate"]] = None,
+        operations: Optional[List["_models.SensitivityLabelUpdate"]] = None,
         **kwargs
     ):
+        """
+        :keyword operations:
+        :paramtype operations: list[~azure.mgmt.sql.models.SensitivityLabelUpdate]
+        """
         super(SensitivityLabelUpdateList, self).__init__(**kwargs)
         self.operations = operations
 
@@ -12673,22 +15579,22 @@ class Server(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The Azure Active Directory identity of the server.
+    :vartype identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal experience.
     :vartype kind: str
-    :param administrator_login: Administrator username for the server. Once created it cannot be
+    :ivar administrator_login: Administrator username for the server. Once created it cannot be
      changed.
-    :type administrator_login: str
-    :param administrator_login_password: The administrator login password (required for server
+    :vartype administrator_login: str
+    :ivar administrator_login_password: The administrator login password (required for server
      creation).
-    :type administrator_login_password: str
-    :param version: The version of the server.
-    :type version: str
+    :vartype administrator_login_password: str
+    :ivar version: The version of the server.
+    :vartype version: str
     :ivar state: The state of the server.
     :vartype state: str
     :ivar fully_qualified_domain_name: The fully qualified domain name of the server.
@@ -12696,22 +15602,29 @@ class Server(TrackedResource):
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :param minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
-    :type minimal_tls_version: str
-    :param public_network_access: Whether or not public endpoint access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :vartype minimal_tls_version: str
+    :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
-     allows connection from workspace. Possible values include: "Connected", "Disconnected".
+     allows connection from workspace. Known values are: "Connected", "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
-    :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
-     used by default.
-    :type primary_user_assigned_identity_id: str
-    :param key_id: A CMK URI of the key to use for encryption.
-    :type key_id: str
-    :param administrators: The Azure Active Directory identity of the server.
-    :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :ivar primary_user_assigned_identity_id: The resource id of a user assigned identity to be used
+     by default.
+    :vartype primary_user_assigned_identity_id: str
+    :ivar federated_client_id: The Client id used for cross tenant CMK scenario.
+    :vartype federated_client_id: str
+    :ivar key_id: A CMK URI of the key to use for encryption.
+    :vartype key_id: str
+    :ivar administrators: The Azure Active Directory identity of the server.
+    :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
+     this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
+     are: "Enabled", "Disabled".
+    :vartype restrict_outbound_network_access: str or
+     ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     """
 
     _validation = {
@@ -12744,8 +15657,10 @@ class Server(TrackedResource):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -12753,17 +15668,55 @@ class Server(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["ResourceIdentity"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        public_network_access: Optional[Union[str, "ServerPublicNetworkAccess"]] = None,
+        public_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
+        federated_client_id: Optional[str] = None,
         key_id: Optional[str] = None,
-        administrators: Optional["ServerExternalAdministrator"] = None,
+        administrators: Optional["_models.ServerExternalAdministrator"] = None,
+        restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The Azure Active Directory identity of the server.
+        :paramtype identity: ~azure.mgmt.sql.models.ResourceIdentity
+        :keyword administrator_login: Administrator username for the server. Once created it cannot be
+         changed.
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: The administrator login password (required for server
+         creation).
+        :paramtype administrator_login_password: str
+        :keyword version: The version of the server.
+        :paramtype version: str
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :paramtype minimal_tls_version: str
+        :keyword public_network_access: Whether or not public endpoint access is allowed for this
+         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+        :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
+         used by default.
+        :paramtype primary_user_assigned_identity_id: str
+        :keyword federated_client_id: The Client id used for cross tenant CMK scenario.
+        :paramtype federated_client_id: str
+        :keyword key_id: A CMK URI of the key to use for encryption.
+        :paramtype key_id: str
+        :keyword administrators: The Azure Active Directory identity of the server.
+        :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+        :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
+         for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
+         values are: "Enabled", "Disabled".
+        :paramtype restrict_outbound_network_access: str or
+         ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+        """
         super(Server, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.kind = None
@@ -12777,8 +15730,66 @@ class Server(TrackedResource):
         self.public_network_access = public_network_access
         self.workspace_feature = None
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
+        self.federated_client_id = federated_client_id
         self.key_id = key_id
         self.administrators = administrators
+        self.restrict_outbound_network_access = restrict_outbound_network_access
+
+
+class ServerAdvancedThreatProtection(ProxyResource):
+    """A server Advanced Threat Protection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: SystemData of AdvancedThreatProtectionResource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
+    :ivar state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+     disabled or a state has not been applied yet on the specific database or server. Known values
+     are: "New", "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.AdvancedThreatProtectionState
+    :ivar creation_time: Specifies the UTC creation time of the policy.
+    :vartype creation_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'creation_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
+         disabled or a state has not been applied yet on the specific database or server. Known values
+         are: "New", "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.AdvancedThreatProtectionState
+        """
+        super(ServerAdvancedThreatProtection, self).__init__(**kwargs)
+        self.system_data = None
+        self.state = state
+        self.creation_time = None
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -12792,14 +15803,14 @@ class ServerAutomaticTuning(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param desired_state: Automatic tuning desired state. Possible values include: "Custom",
-     "Auto", "Unspecified".
-    :type desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningServerMode
-    :ivar actual_state: Automatic tuning actual state. Possible values include: "Custom", "Auto",
+    :ivar desired_state: Automatic tuning desired state. Known values are: "Custom", "Auto",
+     "Unspecified".
+    :vartype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningServerMode
+    :ivar actual_state: Automatic tuning actual state. Known values are: "Custom", "Auto",
      "Unspecified".
     :vartype actual_state: str or ~azure.mgmt.sql.models.AutomaticTuningServerMode
-    :param options: Automatic tuning options definition.
-    :type options: dict[str, ~azure.mgmt.sql.models.AutomaticTuningServerOptions]
+    :ivar options: Automatic tuning options definition.
+    :vartype options: dict[str, ~azure.mgmt.sql.models.AutomaticTuningServerOptions]
     """
 
     _validation = {
@@ -12821,10 +15832,17 @@ class ServerAutomaticTuning(ProxyResource):
     def __init__(
         self,
         *,
-        desired_state: Optional[Union[str, "AutomaticTuningServerMode"]] = None,
-        options: Optional[Dict[str, "AutomaticTuningServerOptions"]] = None,
+        desired_state: Optional[Union[str, "_models.AutomaticTuningServerMode"]] = None,
+        options: Optional[Dict[str, "_models.AutomaticTuningServerOptions"]] = None,
         **kwargs
     ):
+        """
+        :keyword desired_state: Automatic tuning desired state. Known values are: "Custom", "Auto",
+         "Unspecified".
+        :paramtype desired_state: str or ~azure.mgmt.sql.models.AutomaticTuningServerMode
+        :keyword options: Automatic tuning options definition.
+        :paramtype options: dict[str, ~azure.mgmt.sql.models.AutomaticTuningServerOptions]
+        """
         super(ServerAutomaticTuning, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
@@ -12842,15 +15860,14 @@ class ServerAzureADAdministrator(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param administrator_type: Type of the sever administrator. Possible values include:
-     "ActiveDirectory".
-    :type administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
-    :param login: Login name of the server administrator.
-    :type login: str
-    :param sid: SID (object ID) of the server administrator.
-    :type sid: str
-    :param tenant_id: Tenant ID of the administrator.
-    :type tenant_id: str
+    :ivar administrator_type: Type of the sever administrator. Known values are: "ActiveDirectory".
+    :vartype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+    :ivar login: Login name of the server administrator.
+    :vartype login: str
+    :ivar sid: SID (object ID) of the server administrator.
+    :vartype sid: str
+    :ivar tenant_id: Tenant ID of the administrator.
+    :vartype tenant_id: str
     :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
     :vartype azure_ad_only_authentication: bool
     """
@@ -12876,12 +15893,23 @@ class ServerAzureADAdministrator(ProxyResource):
     def __init__(
         self,
         *,
-        administrator_type: Optional[Union[str, "AdministratorType"]] = None,
+        administrator_type: Optional[Union[str, "_models.AdministratorType"]] = None,
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword administrator_type: Type of the sever administrator. Known values are:
+         "ActiveDirectory".
+        :paramtype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+        :keyword login: Login name of the server administrator.
+        :paramtype login: str
+        :keyword sid: SID (object ID) of the server administrator.
+        :paramtype sid: str
+        :keyword tenant_id: Tenant ID of the administrator.
+        :paramtype tenant_id: str
+        """
         super(ServerAzureADAdministrator, self).__init__(**kwargs)
         self.administrator_type = administrator_type
         self.login = login
@@ -12901,8 +15929,8 @@ class ServerAzureADOnlyAuthentication(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+    :vartype azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -12924,6 +15952,10 @@ class ServerAzureADOnlyAuthentication(ProxyResource):
         azure_ad_only_authentication: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+        :paramtype azure_ad_only_authentication: bool
+        """
         super(ServerAzureADOnlyAuthentication, self).__init__(**kwargs)
         self.azure_ad_only_authentication = azure_ad_only_authentication
 
@@ -12939,8 +15971,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
-     devops logs will be sent to Azure Monitor.
+    :ivar is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled, devops
+     logs will be sent to Azure Monitor.
      In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
      'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
     
@@ -12954,11 +15986,11 @@ class ServerBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_devops_audit_enabled: bool
-    :param retention_days: Specifies the number of days to keep in the audit logs in the storage
+    :vartype is_devops_audit_enabled: bool
+    :ivar retention_days: Specifies the number of days to keep in the audit logs in the storage
      account.
-    :type retention_days: int
-    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+    :vartype retention_days: int
+    :ivar audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
     
      The recommended set of action groups to use is the following combination - this will audit all
      the queries and stored procedures executed against the database, as well as successful and
@@ -12994,6 +16026,10 @@ class ServerBlobAuditingPolicy(ProxyResource):
      USER_CHANGE_PASSWORD_GROUP
      BATCH_STARTED_GROUP
      BATCH_COMPLETED_GROUP
+     DBCC_GROUP
+     DATABASE_OWNERSHIP_CHANGE_GROUP
+     DATABASE_CHANGE_GROUP
+     LEDGER_OPERATION_GROUP
     
      These are groups that cover all sql statements and stored procedures executed against the
      database, and should not be used in combination with other groups as this will result in
@@ -13026,11 +16062,11 @@ class ServerBlobAuditingPolicy(ProxyResource):
     
      For more information, see `Database-Level Audit Actions
      <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
-    :type audit_actions_and_groups: list[str]
-    :param is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
+    :vartype audit_actions_and_groups: list[str]
+    :ivar is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is the
      storage's secondary key.
-    :type is_storage_secondary_key_in_use: bool
-    :param is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+    :vartype is_storage_secondary_key_in_use: bool
+    :ivar is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
      'IsAzureMonitorTargetEnabled' as true.
@@ -13046,20 +16082,22 @@ class ServerBlobAuditingPolicy(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-     audit actions are forced to be processed.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
+     actions are forced to be processed.
      The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
-    :type queue_delay_ms: int
-    :param state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
-     isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype queue_delay_ms: int
+    :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+     storage.
+    :vartype is_managed_identity_in_use: bool
+    :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+     isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -13071,9 +16109,9 @@ class ServerBlobAuditingPolicy(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
+    :vartype storage_account_access_key: str
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
     """
 
     _validation = {
@@ -13092,6 +16130,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
         'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+        'is_managed_identity_in_use': {'key': 'properties.isManagedIdentityInUse', 'type': 'bool'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
@@ -13107,12 +16146,157 @@ class ServerBlobAuditingPolicy(ProxyResource):
         is_storage_secondary_key_in_use: Optional[bool] = None,
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
-        state: Optional[Union[str, "BlobAuditingPolicyState"]] = None,
+        is_managed_identity_in_use: Optional[bool] = None,
+        state: Optional[Union[str, "_models.BlobAuditingPolicyState"]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
+         devops logs will be sent to Azure Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled',
+         'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit'
+         diagnostic logs category on the master database should also be created.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_devops_audit_enabled: bool
+        :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
+         account.
+        :paramtype retention_days: int
+        :keyword audit_actions_and_groups: Specifies the Actions-Groups and Actions to audit.
+        
+         The recommended set of action groups to use is the following combination - this will audit all
+         the queries and stored procedures executed against the database, as well as successful and
+         failed logins:
+        
+         BATCH_COMPLETED_GROUP,
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+         FAILED_DATABASE_AUTHENTICATION_GROUP.
+        
+         This above combination is also the set that is configured by default when enabling auditing
+         from the Azure portal.
+        
+         The supported action groups to audit are (note: choose only specific groups that cover your
+         auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
+        
+         APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+         BACKUP_RESTORE_GROUP
+         DATABASE_LOGOUT_GROUP
+         DATABASE_OBJECT_CHANGE_GROUP
+         DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+         DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+         DATABASE_OPERATION_GROUP
+         DATABASE_PERMISSION_CHANGE_GROUP
+         DATABASE_PRINCIPAL_CHANGE_GROUP
+         DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+         DATABASE_ROLE_MEMBER_CHANGE_GROUP
+         FAILED_DATABASE_AUTHENTICATION_GROUP
+         SCHEMA_OBJECT_ACCESS_GROUP
+         SCHEMA_OBJECT_CHANGE_GROUP
+         SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+         SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+         SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+         USER_CHANGE_PASSWORD_GROUP
+         BATCH_STARTED_GROUP
+         BATCH_COMPLETED_GROUP
+         DBCC_GROUP
+         DATABASE_OWNERSHIP_CHANGE_GROUP
+         DATABASE_CHANGE_GROUP
+         LEDGER_OPERATION_GROUP
+        
+         These are groups that cover all sql statements and stored procedures executed against the
+         database, and should not be used in combination with other groups as this will result in
+         duplicate audit logs.
+        
+         For more information, see `Database-Level Audit Action Groups
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
+        
+         For Database auditing policy, specific Actions can also be specified (note that Actions cannot
+         be specified for Server auditing policy). The supported actions to audit are:
+         SELECT
+         UPDATE
+         INSERT
+         DELETE
+         EXECUTE
+         RECEIVE
+         REFERENCES
+        
+         The general form for defining an action to be audited is:
+         {action} ON {object} BY {principal}
+        
+         Note that :code:`<object>` in the above format can refer to an object like a table, view, or
+         stored procedure, or an entire database or schema. For the latter cases, the forms
+         DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
+        
+         For example:
+         SELECT on dbo.myTable by public
+         SELECT on DATABASE::myDatabase by public
+         SELECT on SCHEMA::mySchema by public
+        
+         For more information, see `Database-Level Audit Actions
+         <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
+        :paramtype audit_actions_and_groups: list[str]
+        :keyword is_storage_secondary_key_in_use: Specifies whether storageAccountAccessKey value is
+         the storage's secondary key.
+        :paramtype is_storage_secondary_key_in_use: bool
+        :keyword is_azure_monitor_target_enabled: Specifies whether audit events are sent to Azure
+         Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
+         'IsAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents'
+         diagnostic logs category on the database should be also created.
+         Note that for server level audit you should use the 'master' database as {databaseName}.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
+         audit actions are forced to be processed.
+         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+        :paramtype queue_delay_ms: int
+        :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+         storage.
+        :paramtype is_managed_identity_in_use: bool
+        :keyword state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        """
         super(ServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.is_devops_audit_enabled = is_devops_audit_enabled
         self.retention_days = retention_days
@@ -13120,6 +16304,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
         self.queue_delay_ms = queue_delay_ms
+        self.is_managed_identity_in_use = is_managed_identity_in_use
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
@@ -13151,6 +16336,8 @@ class ServerBlobAuditingPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerBlobAuditingPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -13173,8 +16360,8 @@ class ServerCommunicationLink(ProxyResource):
     :vartype kind: str
     :ivar state: The state.
     :vartype state: str
-    :param partner_server: The name of the partner server.
-    :type partner_server: str
+    :ivar partner_server: The name of the partner server.
+    :vartype partner_server: str
     """
 
     _validation = {
@@ -13202,6 +16389,10 @@ class ServerCommunicationLink(ProxyResource):
         partner_server: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword partner_server: The name of the partner server.
+        :paramtype partner_server: str
+        """
         super(ServerCommunicationLink, self).__init__(**kwargs)
         self.location = None
         self.kind = None
@@ -13212,8 +16403,8 @@ class ServerCommunicationLink(ProxyResource):
 class ServerCommunicationLinkListResult(msrest.serialization.Model):
     """A list of server communication links.
 
-    :param value: The list of server communication links.
-    :type value: list[~azure.mgmt.sql.models.ServerCommunicationLink]
+    :ivar value: The list of server communication links.
+    :vartype value: list[~azure.mgmt.sql.models.ServerCommunicationLink]
     """
 
     _attribute_map = {
@@ -13223,15 +16414,19 @@ class ServerCommunicationLinkListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ServerCommunicationLink"]] = None,
+        value: Optional[List["_models.ServerCommunicationLink"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of server communication links.
+        :paramtype value: list[~azure.mgmt.sql.models.ServerCommunicationLink]
+        """
         super(ServerCommunicationLinkListResult, self).__init__(**kwargs)
         self.value = value
 
 
 class ServerConnectionPolicy(ProxyResource):
-    """A server secure connection policy.
+    """A server connection policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -13241,42 +16436,79 @@ class ServerConnectionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar kind: Metadata used for the Azure portal experience.
-    :vartype kind: str
     :ivar location: Resource location.
     :vartype location: str
-    :param connection_type: The server connection type. Possible values include: "Default",
-     "Proxy", "Redirect".
-    :type connection_type: str or ~azure.mgmt.sql.models.ServerConnectionType
+    :ivar kind: Metadata used for the Azure portal experience.
+    :vartype kind: str
+    :ivar connection_type: The server connection type. Known values are: "Default", "Redirect",
+     "Proxy".
+    :vartype connection_type: str or ~azure.mgmt.sql.models.ServerConnectionType
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'readonly': True},
         'location': {'readonly': True},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        connection_type: Optional[Union[str, "ServerConnectionType"]] = None,
+        connection_type: Optional[Union[str, "_models.ServerConnectionType"]] = None,
         **kwargs
     ):
+        """
+        :keyword connection_type: The server connection type. Known values are: "Default", "Redirect",
+         "Proxy".
+        :paramtype connection_type: str or ~azure.mgmt.sql.models.ServerConnectionType
+        """
         super(ServerConnectionPolicy, self).__init__(**kwargs)
-        self.kind = None
         self.location = None
+        self.kind = None
         self.connection_type = connection_type
+
+
+class ServerConnectionPolicyListResult(msrest.serialization.Model):
+    """A list of server connection policy objects.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ServerConnectionPolicy]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServerConnectionPolicy]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ServerConnectionPolicyListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class ServerDevOpsAuditingSettings(ProxyResource):
@@ -13292,7 +16524,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
     :vartype type: str
     :ivar system_data: SystemData of ServerDevOpsAuditSettingsResource.
     :vartype system_data: ~azure.mgmt.sql.models.SystemData
-    :param is_azure_monitor_target_enabled: Specifies whether DevOps audit events are sent to Azure
+    :ivar is_azure_monitor_target_enabled: Specifies whether DevOps audit events are sent to Azure
      Monitor.
      In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
      'IsAzureMonitorTargetEnabled' as true.
@@ -13307,16 +16539,15 @@ class ServerDevOpsAuditingSettings(ProxyResource):
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
-    :type is_azure_monitor_target_enabled: bool
-    :param state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
-     isAzureMonitorTargetEnabled are required. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype is_azure_monitor_target_enabled: bool
+    :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+     isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled is required.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the auditing storage
-     account.
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the auditing storage account.
      If state is Enabled and storageEndpoint is specified, not specifying the
      storageAccountAccessKey will use SQL server system-assigned managed identity to access the
      storage.
@@ -13328,9 +16559,9 @@ class ServerDevOpsAuditingSettings(ProxyResource):
      Contributor' RBAC role to the server identity.
         For more information, see `Auditing to storage using Managed Identity authentication
      <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
-    :type storage_account_access_key: str
-    :param storage_account_subscription_id: Specifies the blob storage subscription Id.
-    :type storage_account_subscription_id: str
+    :vartype storage_account_access_key: str
+    :ivar storage_account_subscription_id: Specifies the blob storage subscription Id.
+    :vartype storage_account_subscription_id: str
     """
 
     _validation = {
@@ -13356,12 +16587,53 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         self,
         *,
         is_azure_monitor_target_enabled: Optional[bool] = None,
-        state: Optional[Union[str, "BlobAuditingPolicyState"]] = None,
+        state: Optional[Union[str, "_models.BlobAuditingPolicyState"]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword is_azure_monitor_target_enabled: Specifies whether DevOps audit events are sent to
+         Azure Monitor.
+         In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and
+         'IsAzureMonitorTargetEnabled' as true.
+        
+         When using REST API to configure DevOps audit, Diagnostic Settings with
+         'DevOpsOperationsAudit' diagnostic logs category on the master database should be also created.
+        
+         Diagnostic Settings URI format:
+         PUT
+         https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+        
+         For more information, see `Diagnostic Settings REST API
+         <https://go.microsoft.com/fwlink/?linkid=2033207>`_
+         or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
+        :paramtype is_azure_monitor_target_enabled: bool
+        :keyword state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled are required. Known values are: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). If state is Enabled, storageEndpoint or
+         isAzureMonitorTargetEnabled is required.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the auditing storage
+         account.
+         If state is Enabled and storageEndpoint is specified, not specifying the
+         storageAccountAccessKey will use SQL server system-assigned managed identity to access the
+         storage.
+         Prerequisites for using managed identity authentication:
+        
+        
+         #. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
+         #. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data
+         Contributor' RBAC role to the server identity.
+            For more information, see `Auditing to storage using Managed Identity authentication
+         <https://go.microsoft.com/fwlink/?linkid=2114355>`_.
+        :paramtype storage_account_access_key: str
+        :keyword storage_account_subscription_id: Specifies the blob storage subscription Id.
+        :paramtype storage_account_subscription_id: str
+        """
         super(ServerDevOpsAuditingSettings, self).__init__(**kwargs)
         self.system_data = None
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
@@ -13396,6 +16668,8 @@ class ServerDevOpsAuditSettingsListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerDevOpsAuditSettingsListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -13434,6 +16708,8 @@ class ServerDnsAlias(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerDnsAlias, self).__init__(**kwargs)
         self.azure_dns_record = None
 
@@ -13443,9 +16719,9 @@ class ServerDnsAliasAcquisition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param old_server_dns_alias_id: Required. The id of the server alias that will be acquired to
+    :ivar old_server_dns_alias_id: Required. The id of the server alias that will be acquired to
      point to this server instead.
-    :type old_server_dns_alias_id: str
+    :vartype old_server_dns_alias_id: str
     """
 
     _validation = {
@@ -13462,6 +16738,11 @@ class ServerDnsAliasAcquisition(msrest.serialization.Model):
         old_server_dns_alias_id: str,
         **kwargs
     ):
+        """
+        :keyword old_server_dns_alias_id: Required. The id of the server alias that will be acquired to
+         point to this server instead.
+        :paramtype old_server_dns_alias_id: str
+        """
         super(ServerDnsAliasAcquisition, self).__init__(**kwargs)
         self.old_server_dns_alias_id = old_server_dns_alias_id
 
@@ -13491,6 +16772,8 @@ class ServerDnsAliasListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerDnsAliasListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -13499,20 +16782,19 @@ class ServerDnsAliasListResult(msrest.serialization.Model):
 class ServerExternalAdministrator(msrest.serialization.Model):
     """Properties of a active directory administrator.
 
-    :param administrator_type: Type of the sever administrator. Possible values include:
-     "ActiveDirectory".
-    :type administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
-    :param principal_type: Principal Type of the sever administrator. Possible values include:
-     "User", "Group", "Application".
-    :type principal_type: str or ~azure.mgmt.sql.models.PrincipalType
-    :param login: Login name of the server administrator.
-    :type login: str
-    :param sid: SID (object ID) of the server administrator.
-    :type sid: str
-    :param tenant_id: Tenant ID of the administrator.
-    :type tenant_id: str
-    :param azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :ivar administrator_type: Type of the sever administrator. Known values are: "ActiveDirectory".
+    :vartype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+    :ivar principal_type: Principal Type of the sever administrator. Known values are: "User",
+     "Group", "Application".
+    :vartype principal_type: str or ~azure.mgmt.sql.models.PrincipalType
+    :ivar login: Login name of the server administrator.
+    :vartype login: str
+    :ivar sid: SID (object ID) of the server administrator.
+    :vartype sid: str
+    :ivar tenant_id: Tenant ID of the administrator.
+    :vartype tenant_id: str
+    :ivar azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+    :vartype azure_ad_only_authentication: bool
     """
 
     _attribute_map = {
@@ -13527,14 +16809,30 @@ class ServerExternalAdministrator(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        administrator_type: Optional[Union[str, "AdministratorType"]] = None,
-        principal_type: Optional[Union[str, "PrincipalType"]] = None,
+        administrator_type: Optional[Union[str, "_models.AdministratorType"]] = None,
+        principal_type: Optional[Union[str, "_models.PrincipalType"]] = None,
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         azure_ad_only_authentication: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword administrator_type: Type of the sever administrator. Known values are:
+         "ActiveDirectory".
+        :paramtype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
+        :keyword principal_type: Principal Type of the sever administrator. Known values are: "User",
+         "Group", "Application".
+        :paramtype principal_type: str or ~azure.mgmt.sql.models.PrincipalType
+        :keyword login: Login name of the server administrator.
+        :paramtype login: str
+        :keyword sid: SID (object ID) of the server administrator.
+        :paramtype sid: str
+        :keyword tenant_id: Tenant ID of the administrator.
+        :paramtype tenant_id: str
+        :keyword azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
+        :paramtype azure_ad_only_authentication: bool
+        """
         super(ServerExternalAdministrator, self).__init__(**kwargs)
         self.administrator_type = administrator_type
         self.principal_type = principal_type
@@ -13549,8 +16847,8 @@ class ServerInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param server_id: Required. Server Id.
-    :type server_id: str
+    :ivar server_id: Required. Server Id.
+    :vartype server_id: str
     """
 
     _validation = {
@@ -13567,6 +16865,10 @@ class ServerInfo(msrest.serialization.Model):
         server_id: str,
         **kwargs
     ):
+        """
+        :keyword server_id: Required. Server Id.
+        :paramtype server_id: str
+        """
         super(ServerInfo, self).__init__(**kwargs)
         self.server_id = server_id
 
@@ -13589,12 +16891,12 @@ class ServerKey(ProxyResource):
     :vartype location: str
     :ivar subregion: Subregion of the server key.
     :vartype subregion: str
-    :param server_key_type: The server key type like 'ServiceManaged', 'AzureKeyVault'. Possible
-     values include: "ServiceManaged", "AzureKeyVault".
-    :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
-    :param uri: The URI of the server key. If the ServerKeyType is AzureKeyVault, then the URI is
+    :ivar server_key_type: The server key type like 'ServiceManaged', 'AzureKeyVault'. Known values
+     are: "ServiceManaged", "AzureKeyVault".
+    :vartype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+    :ivar uri: The URI of the server key. If the ServerKeyType is AzureKeyVault, then the URI is
      required.
-    :type uri: str
+    :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.
     :vartype thumbprint: str
     :ivar creation_date: The server key creation date.
@@ -13632,10 +16934,18 @@ class ServerKey(ProxyResource):
     def __init__(
         self,
         *,
-        server_key_type: Optional[Union[str, "ServerKeyType"]] = None,
+        server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword server_key_type: The server key type like 'ServiceManaged', 'AzureKeyVault'. Known
+         values are: "ServiceManaged", "AzureKeyVault".
+        :paramtype server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+        :keyword uri: The URI of the server key. If the ServerKeyType is AzureKeyVault, then the URI is
+         required.
+        :paramtype uri: str
+        """
         super(ServerKey, self).__init__(**kwargs)
         self.kind = None
         self.location = None
@@ -13672,6 +16982,8 @@ class ServerKeyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerKeyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -13702,6 +17014,8 @@ class ServerListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -13728,8 +17042,8 @@ class ServerOperation(ProxyResource):
     :vartype server_name: str
     :ivar start_time: The operation start time.
     :vartype start_time: ~datetime.datetime
-    :ivar state: The operation state. Possible values include: "Pending", "InProgress",
-     "Succeeded", "Failed", "CancelInProgress", "Cancelled".
+    :ivar state: The operation state. Known values are: "Pending", "InProgress", "Succeeded",
+     "Failed", "CancelInProgress", "Cancelled".
     :vartype state: str or ~azure.mgmt.sql.models.ManagementOperationState
     :ivar error_code: The operation error code.
     :vartype error_code: int
@@ -13789,6 +17103,8 @@ class ServerOperation(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerOperation, self).__init__(**kwargs)
         self.operation = None
         self.operation_friendly_name = None
@@ -13830,6 +17146,8 @@ class ServerOperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerOperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -13860,6 +17178,8 @@ class ServerPrivateEndpointConnection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
         self.id = None
         self.properties = None
@@ -13878,27 +17198,26 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :vartype type: str
     :ivar system_data: SystemData of SecurityAlertPolicyResource.
     :vartype system_data: ~azure.mgmt.sql.models.SystemData
-    :param state: Specifies the state of the policy, whether it is enabled or disabled or a policy
-     has not been applied yet on the specific database. Possible values include: "Enabled",
-     "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled or a policy
+     has not been applied yet on the specific database. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
      Brute_Force.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     :ivar creation_time: Specifies the UTC creation time of the policy.
     :vartype creation_time: ~datetime.datetime
     """
@@ -13929,7 +17248,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "SecurityAlertsPolicyState"]] = None,
+        state: Optional[Union[str, "_models.SecurityAlertsPolicyState"]] = None,
         disabled_alerts: Optional[List[str]] = None,
         email_addresses: Optional[List[str]] = None,
         email_account_admins: Optional[bool] = None,
@@ -13938,6 +17257,30 @@ class ServerSecurityAlertPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
+         policy has not been applied yet on the specific database. Known values are: "Enabled",
+         "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.SecurityAlertsPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly, Data_Exfiltration, Unsafe_Action,
+         Brute_Force.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
         super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
         self.system_data = None
         self.state = state
@@ -13948,6 +17291,90 @@ class ServerSecurityAlertPolicy(ProxyResource):
         self.storage_account_access_key = storage_account_access_key
         self.retention_days = retention_days
         self.creation_time = None
+
+
+class ServerTrustCertificate(ProxyResource):
+    """Server trust certificate imported from box to enable connection between box and Sql Managed Instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar public_blob: The certificate public blob.
+    :vartype public_blob: str
+    :ivar thumbprint: The certificate thumbprint.
+    :vartype thumbprint: str
+    :ivar certificate_name: The certificate name.
+    :vartype certificate_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'thumbprint': {'readonly': True},
+        'certificate_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'public_blob': {'key': 'properties.publicBlob', 'type': 'str'},
+        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        'certificate_name': {'key': 'properties.certificateName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        public_blob: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword public_blob: The certificate public blob.
+        :paramtype public_blob: str
+        """
+        super(ServerTrustCertificate, self).__init__(**kwargs)
+        self.public_blob = public_blob
+        self.thumbprint = None
+        self.certificate_name = None
+
+
+class ServerTrustCertificatesListResult(msrest.serialization.Model):
+    """A list of server trust certificates in instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ServerTrustCertificate]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServerTrustCertificate]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ServerTrustCertificatesListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class ServerTrustGroup(ProxyResource):
@@ -13961,10 +17388,10 @@ class ServerTrustGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param group_members: Group members information for the server trust group.
-    :type group_members: list[~azure.mgmt.sql.models.ServerInfo]
-    :param trust_scopes: Trust scope of the server trust group.
-    :type trust_scopes: list[str or
+    :ivar group_members: Group members information for the server trust group.
+    :vartype group_members: list[~azure.mgmt.sql.models.ServerInfo]
+    :ivar trust_scopes: Trust scope of the server trust group.
+    :vartype trust_scopes: list[str or
      ~azure.mgmt.sql.models.ServerTrustGroupPropertiesTrustScopesItem]
     """
 
@@ -13985,10 +17412,17 @@ class ServerTrustGroup(ProxyResource):
     def __init__(
         self,
         *,
-        group_members: Optional[List["ServerInfo"]] = None,
-        trust_scopes: Optional[List[Union[str, "ServerTrustGroupPropertiesTrustScopesItem"]]] = None,
+        group_members: Optional[List["_models.ServerInfo"]] = None,
+        trust_scopes: Optional[List[Union[str, "_models.ServerTrustGroupPropertiesTrustScopesItem"]]] = None,
         **kwargs
     ):
+        """
+        :keyword group_members: Group members information for the server trust group.
+        :paramtype group_members: list[~azure.mgmt.sql.models.ServerInfo]
+        :keyword trust_scopes: Trust scope of the server trust group.
+        :paramtype trust_scopes: list[str or
+         ~azure.mgmt.sql.models.ServerTrustGroupPropertiesTrustScopesItem]
+        """
         super(ServerTrustGroup, self).__init__(**kwargs)
         self.group_members = group_members
         self.trust_scopes = trust_scopes
@@ -14019,6 +17453,8 @@ class ServerTrustGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerTrustGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -14029,18 +17465,18 @@ class ServerUpdate(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param identity: Server identity.
-    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param administrator_login: Administrator username for the server. Once created it cannot be
+    :ivar identity: Server identity.
+    :vartype identity: ~azure.mgmt.sql.models.ResourceIdentity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar administrator_login: Administrator username for the server. Once created it cannot be
      changed.
-    :type administrator_login: str
-    :param administrator_login_password: The administrator login password (required for server
+    :vartype administrator_login: str
+    :ivar administrator_login_password: The administrator login password (required for server
      creation).
-    :type administrator_login_password: str
-    :param version: The version of the server.
-    :type version: str
+    :vartype administrator_login_password: str
+    :ivar version: The version of the server.
+    :vartype version: str
     :ivar state: The state of the server.
     :vartype state: str
     :ivar fully_qualified_domain_name: The fully qualified domain name of the server.
@@ -14048,22 +17484,29 @@ class ServerUpdate(msrest.serialization.Model):
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :param minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
-    :type minimal_tls_version: str
-    :param public_network_access: Whether or not public endpoint access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :vartype minimal_tls_version: str
+    :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
-     allows connection from workspace. Possible values include: "Connected", "Disconnected".
+     allows connection from workspace. Known values are: "Connected", "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
-    :param primary_user_assigned_identity_id: The resource id of a user assigned identity to be
-     used by default.
-    :type primary_user_assigned_identity_id: str
-    :param key_id: A CMK URI of the key to use for encryption.
-    :type key_id: str
-    :param administrators: The Azure Active Directory identity of the server.
-    :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :ivar primary_user_assigned_identity_id: The resource id of a user assigned identity to be used
+     by default.
+    :vartype primary_user_assigned_identity_id: str
+    :ivar federated_client_id: The Client id used for cross tenant CMK scenario.
+    :vartype federated_client_id: str
+    :ivar key_id: A CMK URI of the key to use for encryption.
+    :vartype key_id: str
+    :ivar administrators: The Azure Active Directory identity of the server.
+    :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
+     this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
+     are: "Enabled", "Disabled".
+    :vartype restrict_outbound_network_access: str or
+     ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     """
 
     _validation = {
@@ -14086,25 +17529,63 @@ class ServerUpdate(msrest.serialization.Model):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["ResourceIdentity"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        public_network_access: Optional[Union[str, "ServerPublicNetworkAccess"]] = None,
+        public_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
+        federated_client_id: Optional[str] = None,
         key_id: Optional[str] = None,
-        administrators: Optional["ServerExternalAdministrator"] = None,
+        administrators: Optional["_models.ServerExternalAdministrator"] = None,
+        restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         **kwargs
     ):
+        """
+        :keyword identity: Server identity.
+        :paramtype identity: ~azure.mgmt.sql.models.ResourceIdentity
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword administrator_login: Administrator username for the server. Once created it cannot be
+         changed.
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: The administrator login password (required for server
+         creation).
+        :paramtype administrator_login_password: str
+        :keyword version: The version of the server.
+        :paramtype version: str
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :paramtype minimal_tls_version: str
+        :keyword public_network_access: Whether or not public endpoint access is allowed for this
+         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+        :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
+         used by default.
+        :paramtype primary_user_assigned_identity_id: str
+        :keyword federated_client_id: The Client id used for cross tenant CMK scenario.
+        :paramtype federated_client_id: str
+        :keyword key_id: A CMK URI of the key to use for encryption.
+        :paramtype key_id: str
+        :keyword administrators: The Azure Active Directory identity of the server.
+        :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+        :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
+         for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
+         values are: "Enabled", "Disabled".
+        :paramtype restrict_outbound_network_access: str or
+         ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+        """
         super(ServerUpdate, self).__init__(**kwargs)
         self.identity = identity
         self.tags = tags
@@ -14118,8 +17599,10 @@ class ServerUpdate(msrest.serialization.Model):
         self.public_network_access = public_network_access
         self.workspace_feature = None
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
+        self.federated_client_id = federated_client_id
         self.key_id = key_id
         self.administrators = administrators
+        self.restrict_outbound_network_access = restrict_outbound_network_access
 
 
 class ServerUsage(msrest.serialization.Model):
@@ -14167,6 +17650,8 @@ class ServerUsage(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerUsage, self).__init__(**kwargs)
         self.name = None
         self.resource_name = None
@@ -14182,8 +17667,8 @@ class ServerUsageListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of server metrics for the server.
-    :type value: list[~azure.mgmt.sql.models.ServerUsage]
+    :ivar value: Required. The list of server metrics for the server.
+    :vartype value: list[~azure.mgmt.sql.models.ServerUsage]
     """
 
     _validation = {
@@ -14197,9 +17682,13 @@ class ServerUsageListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ServerUsage"],
+        value: List["_models.ServerUsage"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of server metrics for the server.
+        :paramtype value: list[~azure.mgmt.sql.models.ServerUsage]
+        """
         super(ServerUsageListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -14216,11 +17705,11 @@ class ServerVersionCapability(msrest.serialization.Model):
     :ivar supported_elastic_pool_editions: The list of supported elastic pool editions.
     :vartype supported_elastic_pool_editions:
      list[~azure.mgmt.sql.models.ElasticPoolEditionCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -14244,6 +17733,10 @@ class ServerVersionCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ServerVersionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_editions = None
@@ -14263,21 +17756,22 @@ class ServerVulnerabilityAssessment(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param storage_container_path: A blob storage container path to hold the scan results (e.g.
+    :ivar storage_container_path: A blob storage container path to hold the scan results (e.g.
      https://myStorage.blob.core.windows.net/VaScans/).
-    :type storage_container_path: str
-    :param storage_container_sas_key: A shared access signature (SAS Key) that has write access to
+    :vartype storage_container_path: str
+    :ivar storage_container_sas_key: A shared access signature (SAS Key) that has write access to
      the blob container specified in 'storageContainerPath' parameter. If 'storageAccountAccessKey'
      isn't specified, StorageContainerSasKey is required. Applies only if the storage account is not
      behind a Vnet or a firewall.
-    :type storage_container_sas_key: str
-    :param storage_account_access_key: Specifies the identifier key of the storage account for
+    :vartype storage_container_sas_key: str
+    :ivar storage_account_access_key: Specifies the identifier key of the storage account for
      vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
      storageAccountAccessKey is required. Applies only if the storage account is not behind a Vnet
      or a firewall.
-    :type storage_account_access_key: str
-    :param recurring_scans: The recurring scans settings.
-    :type recurring_scans: ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
+    :vartype storage_account_access_key: str
+    :ivar recurring_scans: The recurring scans settings.
+    :vartype recurring_scans:
+     ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
     """
 
     _validation = {
@@ -14302,9 +17796,27 @@ class ServerVulnerabilityAssessment(ProxyResource):
         storage_container_path: Optional[str] = None,
         storage_container_sas_key: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
-        recurring_scans: Optional["VulnerabilityAssessmentRecurringScansProperties"] = None,
+        recurring_scans: Optional["_models.VulnerabilityAssessmentRecurringScansProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
+         https://myStorage.blob.core.windows.net/VaScans/).
+        :paramtype storage_container_path: str
+        :keyword storage_container_sas_key: A shared access signature (SAS Key) that has write access
+         to the blob container specified in 'storageContainerPath' parameter. If
+         'storageAccountAccessKey' isn't specified, StorageContainerSasKey is required. Applies only if
+         the storage account is not behind a Vnet or a firewall.
+        :paramtype storage_container_sas_key: str
+        :keyword storage_account_access_key: Specifies the identifier key of the storage account for
+         vulnerability assessment scan results. If 'StorageContainerSasKey' isn't specified,
+         storageAccountAccessKey is required. Applies only if the storage account is not behind a Vnet
+         or a firewall.
+        :paramtype storage_account_access_key: str
+        :keyword recurring_scans: The recurring scans settings.
+        :paramtype recurring_scans:
+         ~azure.mgmt.sql.models.VulnerabilityAssessmentRecurringScansProperties
+        """
         super(ServerVulnerabilityAssessment, self).__init__(**kwargs)
         self.storage_container_path = storage_container_path
         self.storage_container_sas_key = storage_container_sas_key
@@ -14337,6 +17849,8 @@ class ServerVulnerabilityAssessmentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerVulnerabilityAssessmentListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -14391,6 +17905,8 @@ class ServiceObjective(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServiceObjective, self).__init__(**kwargs)
         self.service_objective_name = None
         self.is_default = None
@@ -14429,11 +17945,11 @@ class ServiceObjectiveCapability(msrest.serialization.Model):
     :ivar supported_maintenance_configurations: List of supported maintenance configurations.
     :vartype supported_maintenance_configurations:
      list[~azure.mgmt.sql.models.MaintenanceConfigurationCapability]
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -14475,6 +17991,10 @@ class ServiceObjectiveCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(ServiceObjectiveCapability, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -14497,8 +18017,8 @@ class ServiceObjectiveListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of database service objectives.
-    :type value: list[~azure.mgmt.sql.models.ServiceObjective]
+    :ivar value: Required. The list of database service objectives.
+    :vartype value: list[~azure.mgmt.sql.models.ServiceObjective]
     """
 
     _validation = {
@@ -14512,11 +18032,60 @@ class ServiceObjectiveListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ServiceObjective"],
+        value: List["_models.ServiceObjective"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of database service objectives.
+        :paramtype value: list[~azure.mgmt.sql.models.ServiceObjective]
+        """
         super(ServiceObjectiveListResult, self).__init__(**kwargs)
         self.value = value
+
+
+class ServicePrincipal(msrest.serialization.Model):
+    """The managed instance's service principal configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The Azure Active Directory application object id.
+    :vartype principal_id: str
+    :ivar client_id: The Azure Active Directory application client id.
+    :vartype client_id: str
+    :ivar tenant_id: The Azure Active Directory tenant id.
+    :vartype tenant_id: str
+    :ivar type: Service principal type. Known values are: "None", "SystemAssigned".
+    :vartype type: str or ~azure.mgmt.sql.models.ServicePrincipalType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ServicePrincipalType"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: Service principal type. Known values are: "None", "SystemAssigned".
+        :paramtype type: str or ~azure.mgmt.sql.models.ServicePrincipalType
+        """
+        super(ServicePrincipal, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+        self.tenant_id = None
+        self.type = type
 
 
 class Sku(msrest.serialization.Model):
@@ -14524,17 +18093,17 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU, typically, a letter + Number code, e.g. P3.
-    :type name: str
-    :param tier: The tier or edition of the particular SKU, e.g. Basic, Premium.
-    :type tier: str
-    :param size: Size of the particular SKU.
-    :type size: str
-    :param family: If the service has different generations of hardware, for the same SKU, then
-     that can be captured here.
-    :type family: str
-    :param capacity: Capacity of the particular SKU.
-    :type capacity: int
+    :ivar name: Required. The name of the SKU, typically, a letter + Number code, e.g. P3.
+    :vartype name: str
+    :ivar tier: The tier or edition of the particular SKU, e.g. Basic, Premium.
+    :vartype tier: str
+    :ivar size: Size of the particular SKU.
+    :vartype size: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar capacity: Capacity of the particular SKU.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -14559,6 +18128,19 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the SKU, typically, a letter + Number code, e.g. P3.
+        :paramtype name: str
+        :keyword tier: The tier or edition of the particular SKU, e.g. Basic, Premium.
+        :paramtype tier: str
+        :keyword size: Size of the particular SKU.
+        :paramtype size: str
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword capacity: Capacity of the particular SKU.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
@@ -14572,12 +18154,12 @@ class SloUsageMetric(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar service_level_objective: The serviceLevelObjective for SLO usage metric. Possible values
-     include: "System", "System0", "System1", "System2", "System3", "System4", "System2L",
-     "System3L", "System4L", "Free", "Basic", "S0", "S1", "S2", "S3", "S4", "S6", "S7", "S9", "S12",
-     "P1", "P2", "P3", "P4", "P6", "P11", "P15", "PRS1", "PRS2", "PRS4", "PRS6", "DW100", "DW200",
-     "DW300", "DW400", "DW500", "DW600", "DW1000", "DW1200", "DW1000c", "DW1500", "DW1500c",
-     "DW2000", "DW2000c", "DW3000", "DW2500c", "DW3000c", "DW6000", "DW5000c", "DW6000c", "DW7500c",
+    :ivar service_level_objective: The serviceLevelObjective for SLO usage metric. Known values
+     are: "System", "System0", "System1", "System2", "System3", "System4", "System2L", "System3L",
+     "System4L", "Free", "Basic", "S0", "S1", "S2", "S3", "S4", "S6", "S7", "S9", "S12", "P1", "P2",
+     "P3", "P4", "P6", "P11", "P15", "PRS1", "PRS2", "PRS4", "PRS6", "DW100", "DW200", "DW300",
+     "DW400", "DW500", "DW600", "DW1000", "DW1200", "DW1000c", "DW1500", "DW1500c", "DW2000",
+     "DW2000c", "DW3000", "DW2500c", "DW3000c", "DW6000", "DW5000c", "DW6000c", "DW7500c",
      "DW10000c", "DW15000c", "DW30000c", "DS100", "DS200", "DS300", "DS400", "DS500", "DS600",
      "DS1000", "DS1200", "DS1500", "DS2000", "ElasticPool".
     :vartype service_level_objective: str or ~azure.mgmt.sql.models.ServiceObjectiveName
@@ -14603,6 +18185,8 @@ class SloUsageMetric(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SloUsageMetric, self).__init__(**kwargs)
         self.service_level_objective = None
         self.service_level_objective_id = None
@@ -14620,8 +18204,8 @@ class SqlAgentConfiguration(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: The state of Sql Agent. Possible values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.sql.models.SqlAgentConfigurationPropertiesState
+    :ivar state: The state of Sql Agent. Known values are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.SqlAgentConfigurationPropertiesState
     """
 
     _validation = {
@@ -14640,9 +18224,13 @@ class SqlAgentConfiguration(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "SqlAgentConfigurationPropertiesState"]] = None,
+        state: Optional[Union[str, "_models.SqlAgentConfigurationPropertiesState"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: The state of Sql Agent. Known values are: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.sql.models.SqlAgentConfigurationPropertiesState
+        """
         super(SqlAgentConfiguration, self).__init__(**kwargs)
         self.state = state
 
@@ -14652,15 +18240,15 @@ class StorageCapability(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar storage_account_type: The storage account type for the database's backups. Possible
-     values include: "GRS", "LRS", "ZRS".
+    :ivar storage_account_type: The storage account type for the database's backups. Known values
+     are: "GRS", "LRS", "ZRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.sql.models.StorageCapabilityStorageAccountType
-    :ivar status: The status of the capability. Possible values include: "Visible", "Available",
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
      "Default", "Disabled".
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :param reason: The reason for the capability not being available.
-    :type reason: str
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
     """
 
     _validation = {
@@ -14680,6 +18268,10 @@ class StorageCapability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword reason: The reason for the capability not being available.
+        :paramtype reason: str
+        """
         super(StorageCapability, self).__init__(**kwargs)
         self.storage_account_type = None
         self.status = None
@@ -14731,6 +18323,8 @@ class SubscriptionUsage(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SubscriptionUsage, self).__init__(**kwargs)
         self.display_name = None
         self.current_value = None
@@ -14763,6 +18357,8 @@ class SubscriptionUsageListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SubscriptionUsageListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -14781,12 +18377,11 @@ class SyncAgent(ProxyResource):
     :vartype type: str
     :ivar name_properties_name: Name of the sync agent.
     :vartype name_properties_name: str
-    :param sync_database_id: ARM resource id of the sync database in the sync agent.
-    :type sync_database_id: str
+    :ivar sync_database_id: ARM resource id of the sync database in the sync agent.
+    :vartype sync_database_id: str
     :ivar last_alive_time: Last alive time of the sync agent.
     :vartype last_alive_time: ~datetime.datetime
-    :ivar state: State of the sync agent. Possible values include: "Online", "Offline",
-     "NeverConnected".
+    :ivar state: State of the sync agent. Known values are: "Online", "Offline", "NeverConnected".
     :vartype state: str or ~azure.mgmt.sql.models.SyncAgentState
     :ivar is_up_to_date: If the sync agent version is up to date.
     :vartype is_up_to_date: bool
@@ -14827,6 +18422,10 @@ class SyncAgent(ProxyResource):
         sync_database_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword sync_database_id: ARM resource id of the sync database in the sync agent.
+        :paramtype sync_database_id: str
+        """
         super(SyncAgent, self).__init__(**kwargs)
         self.name_properties_name = None
         self.sync_database_id = sync_database_id
@@ -14858,6 +18457,8 @@ class SyncAgentKeyProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncAgentKeyProperties, self).__init__(**kwargs)
         self.sync_agent_key = None
 
@@ -14873,7 +18474,7 @@ class SyncAgentLinkedDatabase(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar database_type: Type of the sync agent linked database. Possible values include:
+    :ivar database_type: Type of the sync agent linked database. Known values are:
      "AzureSqlDatabase", "SqlServerDatabase".
     :vartype database_type: str or ~azure.mgmt.sql.models.SyncMemberDbType
     :ivar database_id: Id of the sync agent linked database.
@@ -14916,6 +18517,8 @@ class SyncAgentLinkedDatabase(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncAgentLinkedDatabase, self).__init__(**kwargs)
         self.database_type = None
         self.database_id = None
@@ -14950,6 +18553,8 @@ class SyncAgentLinkedDatabaseListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncAgentLinkedDatabaseListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -14980,6 +18585,8 @@ class SyncAgentListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncAgentListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -15010,6 +18617,8 @@ class SyncDatabaseIdListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncDatabaseIdListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -15036,6 +18645,8 @@ class SyncDatabaseIdProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncDatabaseIdProperties, self).__init__(**kwargs)
         self.id = None
 
@@ -15065,6 +18676,8 @@ class SyncFullSchemaProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncFullSchemaProperties, self).__init__(**kwargs)
         self.tables = None
         self.last_update_time = None
@@ -15095,6 +18708,8 @@ class SyncFullSchemaPropertiesListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncFullSchemaPropertiesListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -15137,6 +18752,8 @@ class SyncFullSchemaTable(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncFullSchemaTable, self).__init__(**kwargs)
         self.columns = None
         self.error_id = None
@@ -15190,6 +18807,8 @@ class SyncFullSchemaTableColumn(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncFullSchemaTableColumn, self).__init__(**kwargs)
         self.data_size = None
         self.data_type = None
@@ -15211,32 +18830,32 @@ class SyncGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param sku: The name and capacity of the SKU.
-    :type sku: ~azure.mgmt.sql.models.Sku
-    :param interval: Sync interval of the sync group.
-    :type interval: int
+    :ivar sku: The name and capacity of the SKU.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar interval: Sync interval of the sync group.
+    :vartype interval: int
     :ivar last_sync_time: Last sync time of the sync group.
     :vartype last_sync_time: ~datetime.datetime
-    :param conflict_resolution_policy: Conflict resolution policy of the sync group. Possible
-     values include: "HubWin", "MemberWin".
-    :type conflict_resolution_policy: str or ~azure.mgmt.sql.models.SyncConflictResolutionPolicy
-    :param sync_database_id: ARM resource id of the sync database in the sync group.
-    :type sync_database_id: str
-    :param hub_database_user_name: User name for the sync group hub database credential.
-    :type hub_database_user_name: str
-    :param hub_database_password: Password for the sync group hub database credential.
-    :type hub_database_password: str
-    :ivar sync_state: Sync state of the sync group. Possible values include: "NotReady", "Error",
+    :ivar conflict_resolution_policy: Conflict resolution policy of the sync group. Known values
+     are: "HubWin", "MemberWin".
+    :vartype conflict_resolution_policy: str or ~azure.mgmt.sql.models.SyncConflictResolutionPolicy
+    :ivar sync_database_id: ARM resource id of the sync database in the sync group.
+    :vartype sync_database_id: str
+    :ivar hub_database_user_name: User name for the sync group hub database credential.
+    :vartype hub_database_user_name: str
+    :ivar hub_database_password: Password for the sync group hub database credential.
+    :vartype hub_database_password: str
+    :ivar sync_state: Sync state of the sync group. Known values are: "NotReady", "Error",
      "Warning", "Progressing", "Good".
     :vartype sync_state: str or ~azure.mgmt.sql.models.SyncGroupState
-    :param schema: Sync schema of the sync group.
-    :type schema: ~azure.mgmt.sql.models.SyncGroupSchema
-    :param enable_conflict_logging: If conflict logging is enabled.
-    :type enable_conflict_logging: bool
-    :param conflict_logging_retention_in_days: Conflict logging retention period.
-    :type conflict_logging_retention_in_days: int
-    :param use_private_link_connection: If use private link connection is enabled.
-    :type use_private_link_connection: bool
+    :ivar schema: Sync schema of the sync group.
+    :vartype schema: ~azure.mgmt.sql.models.SyncGroupSchema
+    :ivar enable_conflict_logging: If conflict logging is enabled.
+    :vartype enable_conflict_logging: bool
+    :ivar conflict_logging_retention_in_days: Conflict logging retention period.
+    :vartype conflict_logging_retention_in_days: int
+    :ivar use_private_link_connection: If use private link connection is enabled.
+    :vartype use_private_link_connection: bool
     :ivar private_endpoint_name: Private endpoint name of the sync group if use private link
      connection is enabled.
     :vartype private_endpoint_name: str
@@ -15273,18 +18892,42 @@ class SyncGroup(ProxyResource):
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         interval: Optional[int] = None,
-        conflict_resolution_policy: Optional[Union[str, "SyncConflictResolutionPolicy"]] = None,
+        conflict_resolution_policy: Optional[Union[str, "_models.SyncConflictResolutionPolicy"]] = None,
         sync_database_id: Optional[str] = None,
         hub_database_user_name: Optional[str] = None,
         hub_database_password: Optional[str] = None,
-        schema: Optional["SyncGroupSchema"] = None,
+        schema: Optional["_models.SyncGroupSchema"] = None,
         enable_conflict_logging: Optional[bool] = None,
         conflict_logging_retention_in_days: Optional[int] = None,
         use_private_link_connection: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword sku: The name and capacity of the SKU.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
+        :keyword interval: Sync interval of the sync group.
+        :paramtype interval: int
+        :keyword conflict_resolution_policy: Conflict resolution policy of the sync group. Known values
+         are: "HubWin", "MemberWin".
+        :paramtype conflict_resolution_policy: str or
+         ~azure.mgmt.sql.models.SyncConflictResolutionPolicy
+        :keyword sync_database_id: ARM resource id of the sync database in the sync group.
+        :paramtype sync_database_id: str
+        :keyword hub_database_user_name: User name for the sync group hub database credential.
+        :paramtype hub_database_user_name: str
+        :keyword hub_database_password: Password for the sync group hub database credential.
+        :paramtype hub_database_password: str
+        :keyword schema: Sync schema of the sync group.
+        :paramtype schema: ~azure.mgmt.sql.models.SyncGroupSchema
+        :keyword enable_conflict_logging: If conflict logging is enabled.
+        :paramtype enable_conflict_logging: bool
+        :keyword conflict_logging_retention_in_days: Conflict logging retention period.
+        :paramtype conflict_logging_retention_in_days: int
+        :keyword use_private_link_connection: If use private link connection is enabled.
+        :paramtype use_private_link_connection: bool
+        """
         super(SyncGroup, self).__init__(**kwargs)
         self.sku = sku
         self.interval = interval
@@ -15326,6 +18969,8 @@ class SyncGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -15356,6 +19001,8 @@ class SyncGroupLogListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncGroupLogListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -15368,8 +19015,7 @@ class SyncGroupLogProperties(msrest.serialization.Model):
 
     :ivar timestamp: Timestamp of the sync group log.
     :vartype timestamp: ~datetime.datetime
-    :ivar type: Type of the sync group log. Possible values include: "All", "Error", "Warning",
-     "Success".
+    :ivar type: Type of the sync group log. Known values are: "All", "Error", "Warning", "Success".
     :vartype type: str or ~azure.mgmt.sql.models.SyncGroupLogType
     :ivar source: Source of the sync group log.
     :vartype source: str
@@ -15403,6 +19049,8 @@ class SyncGroupLogProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncGroupLogProperties, self).__init__(**kwargs)
         self.timestamp = None
         self.type = None
@@ -15415,10 +19063,10 @@ class SyncGroupLogProperties(msrest.serialization.Model):
 class SyncGroupSchema(msrest.serialization.Model):
     """Properties of sync group schema.
 
-    :param tables: List of tables in sync group schema.
-    :type tables: list[~azure.mgmt.sql.models.SyncGroupSchemaTable]
-    :param master_sync_member_name: Name of master sync member where the schema is from.
-    :type master_sync_member_name: str
+    :ivar tables: List of tables in sync group schema.
+    :vartype tables: list[~azure.mgmt.sql.models.SyncGroupSchemaTable]
+    :ivar master_sync_member_name: Name of master sync member where the schema is from.
+    :vartype master_sync_member_name: str
     """
 
     _attribute_map = {
@@ -15429,10 +19077,16 @@ class SyncGroupSchema(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        tables: Optional[List["SyncGroupSchemaTable"]] = None,
+        tables: Optional[List["_models.SyncGroupSchemaTable"]] = None,
         master_sync_member_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tables: List of tables in sync group schema.
+        :paramtype tables: list[~azure.mgmt.sql.models.SyncGroupSchemaTable]
+        :keyword master_sync_member_name: Name of master sync member where the schema is from.
+        :paramtype master_sync_member_name: str
+        """
         super(SyncGroupSchema, self).__init__(**kwargs)
         self.tables = tables
         self.master_sync_member_name = master_sync_member_name
@@ -15441,10 +19095,10 @@ class SyncGroupSchema(msrest.serialization.Model):
 class SyncGroupSchemaTable(msrest.serialization.Model):
     """Properties of table in sync group schema.
 
-    :param columns: List of columns in sync group schema.
-    :type columns: list[~azure.mgmt.sql.models.SyncGroupSchemaTableColumn]
-    :param quoted_name: Quoted name of sync group schema table.
-    :type quoted_name: str
+    :ivar columns: List of columns in sync group schema.
+    :vartype columns: list[~azure.mgmt.sql.models.SyncGroupSchemaTableColumn]
+    :ivar quoted_name: Quoted name of sync group schema table.
+    :vartype quoted_name: str
     """
 
     _attribute_map = {
@@ -15455,10 +19109,16 @@ class SyncGroupSchemaTable(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        columns: Optional[List["SyncGroupSchemaTableColumn"]] = None,
+        columns: Optional[List["_models.SyncGroupSchemaTableColumn"]] = None,
         quoted_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword columns: List of columns in sync group schema.
+        :paramtype columns: list[~azure.mgmt.sql.models.SyncGroupSchemaTableColumn]
+        :keyword quoted_name: Quoted name of sync group schema table.
+        :paramtype quoted_name: str
+        """
         super(SyncGroupSchemaTable, self).__init__(**kwargs)
         self.columns = columns
         self.quoted_name = quoted_name
@@ -15467,12 +19127,12 @@ class SyncGroupSchemaTable(msrest.serialization.Model):
 class SyncGroupSchemaTableColumn(msrest.serialization.Model):
     """Properties of column in sync group table.
 
-    :param quoted_name: Quoted name of sync group table column.
-    :type quoted_name: str
-    :param data_size: Data size of the column.
-    :type data_size: str
-    :param data_type: Data type of the column.
-    :type data_type: str
+    :ivar quoted_name: Quoted name of sync group table column.
+    :vartype quoted_name: str
+    :ivar data_size: Data size of the column.
+    :vartype data_size: str
+    :ivar data_type: Data type of the column.
+    :vartype data_type: str
     """
 
     _attribute_map = {
@@ -15489,6 +19149,14 @@ class SyncGroupSchemaTableColumn(msrest.serialization.Model):
         data_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword quoted_name: Quoted name of sync group table column.
+        :paramtype quoted_name: str
+        :keyword data_size: Data size of the column.
+        :paramtype data_size: str
+        :keyword data_type: Data type of the column.
+        :paramtype data_type: str
+        """
         super(SyncGroupSchemaTableColumn, self).__init__(**kwargs)
         self.quoted_name = quoted_name
         self.data_size = data_size
@@ -15506,33 +19174,33 @@ class SyncMember(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param database_type: Database type of the sync member. Possible values include:
-     "AzureSqlDatabase", "SqlServerDatabase".
-    :type database_type: str or ~azure.mgmt.sql.models.SyncMemberDbType
-    :param sync_agent_id: ARM resource id of the sync agent in the sync member.
-    :type sync_agent_id: str
-    :param sql_server_database_id: SQL Server database id of the sync member.
-    :type sql_server_database_id: str
-    :param sync_member_azure_database_resource_id: ARM resource id of the sync member logical
+    :ivar database_type: Database type of the sync member. Known values are: "AzureSqlDatabase",
+     "SqlServerDatabase".
+    :vartype database_type: str or ~azure.mgmt.sql.models.SyncMemberDbType
+    :ivar sync_agent_id: ARM resource id of the sync agent in the sync member.
+    :vartype sync_agent_id: str
+    :ivar sql_server_database_id: SQL Server database id of the sync member.
+    :vartype sql_server_database_id: str
+    :ivar sync_member_azure_database_resource_id: ARM resource id of the sync member logical
      database, for sync members in Azure.
-    :type sync_member_azure_database_resource_id: str
-    :param use_private_link_connection: Whether to use private link connection.
-    :type use_private_link_connection: bool
+    :vartype sync_member_azure_database_resource_id: str
+    :ivar use_private_link_connection: Whether to use private link connection.
+    :vartype use_private_link_connection: bool
     :ivar private_endpoint_name: Private endpoint name of the sync member if use private link
      connection is enabled, for sync members in Azure.
     :vartype private_endpoint_name: str
-    :param server_name: Server name of the member database in the sync member.
-    :type server_name: str
-    :param database_name: Database name of the member database in the sync member.
-    :type database_name: str
-    :param user_name: User name of the member database in the sync member.
-    :type user_name: str
-    :param password: Password of the member database in the sync member.
-    :type password: str
-    :param sync_direction: Sync direction of the sync member. Possible values include:
-     "Bidirectional", "OneWayMemberToHub", "OneWayHubToMember".
-    :type sync_direction: str or ~azure.mgmt.sql.models.SyncDirection
-    :ivar sync_state: Sync state of the sync member. Possible values include: "SyncInProgress",
+    :ivar server_name: Server name of the member database in the sync member.
+    :vartype server_name: str
+    :ivar database_name: Database name of the member database in the sync member.
+    :vartype database_name: str
+    :ivar user_name: User name of the member database in the sync member.
+    :vartype user_name: str
+    :ivar password: Password of the member database in the sync member.
+    :vartype password: str
+    :ivar sync_direction: Sync direction of the sync member. Known values are: "Bidirectional",
+     "OneWayMemberToHub", "OneWayHubToMember".
+    :vartype sync_direction: str or ~azure.mgmt.sql.models.SyncDirection
+    :ivar sync_state: Sync state of the sync member. Known values are: "SyncInProgress",
      "SyncSucceeded", "SyncFailed", "DisabledTombstoneCleanup", "DisabledBackupRestore",
      "SyncSucceededWithWarnings", "SyncCancelling", "SyncCancelled", "UnProvisioned",
      "Provisioning", "Provisioned", "ProvisionFailed", "DeProvisioning", "DeProvisioned",
@@ -15569,7 +19237,7 @@ class SyncMember(ProxyResource):
     def __init__(
         self,
         *,
-        database_type: Optional[Union[str, "SyncMemberDbType"]] = None,
+        database_type: Optional[Union[str, "_models.SyncMemberDbType"]] = None,
         sync_agent_id: Optional[str] = None,
         sql_server_database_id: Optional[str] = None,
         sync_member_azure_database_resource_id: Optional[str] = None,
@@ -15578,9 +19246,34 @@ class SyncMember(ProxyResource):
         database_name: Optional[str] = None,
         user_name: Optional[str] = None,
         password: Optional[str] = None,
-        sync_direction: Optional[Union[str, "SyncDirection"]] = None,
+        sync_direction: Optional[Union[str, "_models.SyncDirection"]] = None,
         **kwargs
     ):
+        """
+        :keyword database_type: Database type of the sync member. Known values are: "AzureSqlDatabase",
+         "SqlServerDatabase".
+        :paramtype database_type: str or ~azure.mgmt.sql.models.SyncMemberDbType
+        :keyword sync_agent_id: ARM resource id of the sync agent in the sync member.
+        :paramtype sync_agent_id: str
+        :keyword sql_server_database_id: SQL Server database id of the sync member.
+        :paramtype sql_server_database_id: str
+        :keyword sync_member_azure_database_resource_id: ARM resource id of the sync member logical
+         database, for sync members in Azure.
+        :paramtype sync_member_azure_database_resource_id: str
+        :keyword use_private_link_connection: Whether to use private link connection.
+        :paramtype use_private_link_connection: bool
+        :keyword server_name: Server name of the member database in the sync member.
+        :paramtype server_name: str
+        :keyword database_name: Database name of the member database in the sync member.
+        :paramtype database_name: str
+        :keyword user_name: User name of the member database in the sync member.
+        :paramtype user_name: str
+        :keyword password: Password of the member database in the sync member.
+        :paramtype password: str
+        :keyword sync_direction: Sync direction of the sync member. Known values are: "Bidirectional",
+         "OneWayMemberToHub", "OneWayHubToMember".
+        :paramtype sync_direction: str or ~azure.mgmt.sql.models.SyncDirection
+        """
         super(SyncMember, self).__init__(**kwargs)
         self.database_type = database_type
         self.sync_agent_id = sync_agent_id
@@ -15621,6 +19314,8 @@ class SyncMemberListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SyncMemberListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -15629,20 +19324,20 @@ class SyncMemberListResult(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.sql.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.sql.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.sql.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.sql.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -15658,13 +19353,29 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.sql.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.sql.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -15685,10 +19396,10 @@ class TdeCertificate(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param private_blob: The base64 encoded certificate private blob.
-    :type private_blob: str
-    :param cert_password: The certificate password.
-    :type cert_password: str
+    :ivar private_blob: The base64 encoded certificate private blob.
+    :vartype private_blob: str
+    :ivar cert_password: The certificate password.
+    :vartype cert_password: str
     """
 
     _validation = {
@@ -15712,6 +19423,12 @@ class TdeCertificate(ProxyResource):
         cert_password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword private_blob: The base64 encoded certificate private blob.
+        :paramtype private_blob: str
+        :keyword cert_password: The certificate password.
+        :paramtype cert_password: str
+        """
         super(TdeCertificate, self).__init__(**kwargs)
         self.private_blob = private_blob
         self.cert_password = cert_password
@@ -15754,6 +19471,8 @@ class TimeZone(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(TimeZone, self).__init__(**kwargs)
         self.time_zone_id = None
         self.display_name = None
@@ -15784,6 +19503,8 @@ class TimeZoneListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TimeZoneListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -15800,14 +19521,14 @@ class TopQueries(msrest.serialization.Model):
     :vartype aggregation_function: str
     :ivar observation_metric: Metric used to rank queries.
     :vartype observation_metric: str
-    :ivar interval_type: Interval type (length). Possible values include: "PT1H", "P1D".
+    :ivar interval_type: Interval type (length). Known values are: "PT1H", "P1D".
     :vartype interval_type: str or ~azure.mgmt.sql.models.QueryTimeGrainType
     :ivar start_time: The start time for the metric (ISO-8601 format).
     :vartype start_time: str
     :ivar end_time: The end time for the metric (ISO-8601 format).
     :vartype end_time: str
-    :param queries: List of top resource consuming queries with appropriate metric data.
-    :type queries: list[~azure.mgmt.sql.models.QueryStatisticsProperties]
+    :ivar queries: List of top resource consuming queries with appropriate metric data.
+    :vartype queries: list[~azure.mgmt.sql.models.QueryStatisticsProperties]
     """
 
     _validation = {
@@ -15832,9 +19553,13 @@ class TopQueries(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        queries: Optional[List["QueryStatisticsProperties"]] = None,
+        queries: Optional[List["_models.QueryStatisticsProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword queries: List of top resource consuming queries with appropriate metric data.
+        :paramtype queries: list[~azure.mgmt.sql.models.QueryStatisticsProperties]
+        """
         super(TopQueries, self).__init__(**kwargs)
         self.number_of_queries = None
         self.aggregation_function = None
@@ -15870,159 +19595,20 @@ class TopQueriesListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TopQueriesListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class TransparentDataEncryption(ProxyResource):
-    """Represents a database transparent data encryption configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :param status: The status of the database transparent data encryption. Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.sql.models.TransparentDataEncryptionStatus
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "TransparentDataEncryptionStatus"]] = None,
-        **kwargs
-    ):
-        super(TransparentDataEncryption, self).__init__(**kwargs)
-        self.location = None
-        self.status = status
-
-
-class TransparentDataEncryptionActivity(ProxyResource):
-    """Represents a database transparent data encryption Scan.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar status: The status of the database. Possible values include: "Encrypting", "Decrypting".
-    :vartype status: str or ~azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus
-    :ivar percent_complete: The percent complete of the transparent data encryption scan for a
-     database.
-    :vartype percent_complete: float
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'status': {'readonly': True},
-        'percent_complete': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'percent_complete': {'key': 'properties.percentComplete', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TransparentDataEncryptionActivity, self).__init__(**kwargs)
-        self.location = None
-        self.status = None
-        self.percent_complete = None
-
-
-class TransparentDataEncryptionActivityListResult(msrest.serialization.Model):
-    """Represents the response to a list database transparent data encryption activity request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. The list of database transparent data encryption activities.
-    :type value: list[~azure.mgmt.sql.models.TransparentDataEncryptionActivity]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[TransparentDataEncryptionActivity]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: List["TransparentDataEncryptionActivity"],
-        **kwargs
-    ):
-        super(TransparentDataEncryptionActivityListResult, self).__init__(**kwargs)
-        self.value = value
-
-
-class UnlinkParameters(msrest.serialization.Model):
-    """Represents the parameters for Unlink Replication Link request.
-
-    :param forced_termination: Determines whether link will be terminated in a forced or a friendly
-     way.
-    :type forced_termination: bool
-    """
-
-    _attribute_map = {
-        'forced_termination': {'key': 'forcedTermination', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        *,
-        forced_termination: Optional[bool] = None,
-        **kwargs
-    ):
-        super(UnlinkParameters, self).__init__(**kwargs)
-        self.forced_termination = forced_termination
-
-
 class UpdateLongTermRetentionBackupParameters(msrest.serialization.Model):
     """Contains the information necessary to perform long term retention backup update operation.
 
-    :param requested_backup_storage_redundancy: The storage redundancy type of the copied backup.
-     Possible values include: "Geo", "Local", "Zone".
-    :type requested_backup_storage_redundancy: str or
-     ~azure.mgmt.sql.models.RequestedBackupStorageRedundancy
+    :ivar requested_backup_storage_redundancy: The storage redundancy type of the copied backup.
+     Known values are: "Geo", "Local", "Zone", "GeoZone".
+    :vartype requested_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.BackupStorageRedundancy
     """
 
     _attribute_map = {
@@ -16032,9 +19618,15 @@ class UpdateLongTermRetentionBackupParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        requested_backup_storage_redundancy: Optional[Union[str, "RequestedBackupStorageRedundancy"]] = None,
+        requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         **kwargs
     ):
+        """
+        :keyword requested_backup_storage_redundancy: The storage redundancy type of the copied backup.
+         Known values are: "Geo", "Local", "Zone", "GeoZone".
+        :paramtype requested_backup_storage_redundancy: str or
+         ~azure.mgmt.sql.models.BackupStorageRedundancy
+        """
         super(UpdateLongTermRetentionBackupParameters, self).__init__(**kwargs)
         self.requested_backup_storage_redundancy = requested_backup_storage_redundancy
 
@@ -16050,8 +19642,7 @@ class UpdateManagedInstanceDnsServersOperation(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar status: The status of the DNS refresh operation. Possible values include: "Succeeded",
-     "Failed".
+    :ivar status: The status of the DNS refresh operation. Known values are: "Succeeded", "Failed".
     :vartype status: str or ~azure.mgmt.sql.models.DnsRefreshConfigurationPropertiesStatus
     """
 
@@ -16073,6 +19664,8 @@ class UpdateManagedInstanceDnsServersOperation(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(UpdateManagedInstanceDnsServersOperation, self).__init__(**kwargs)
         self.status = None
 
@@ -16080,14 +19673,14 @@ class UpdateManagedInstanceDnsServersOperation(ProxyResource):
 class UpsertManagedServerOperationParameters(msrest.serialization.Model):
     """UpsertManagedServerOperationParameters.
 
-    :param family:
-    :type family: str
-    :param tier:
-    :type tier: str
-    :param v_cores:
-    :type v_cores: int
-    :param storage_size_in_gb:
-    :type storage_size_in_gb: int
+    :ivar family:
+    :vartype family: str
+    :ivar tier:
+    :vartype tier: str
+    :ivar v_cores:
+    :vartype v_cores: int
+    :ivar storage_size_in_gb:
+    :vartype storage_size_in_gb: int
     """
 
     _attribute_map = {
@@ -16106,6 +19699,16 @@ class UpsertManagedServerOperationParameters(msrest.serialization.Model):
         storage_size_in_gb: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword family:
+        :paramtype family: str
+        :keyword tier:
+        :paramtype tier: str
+        :keyword v_cores:
+        :paramtype v_cores: int
+        :keyword storage_size_in_gb:
+        :paramtype storage_size_in_gb: int
+        """
         super(UpsertManagedServerOperationParameters, self).__init__(**kwargs)
         self.family = family
         self.tier = tier
@@ -16116,13 +19719,13 @@ class UpsertManagedServerOperationParameters(msrest.serialization.Model):
 class UpsertManagedServerOperationStep(msrest.serialization.Model):
     """UpsertManagedServerOperationStep.
 
-    :param order:
-    :type order: int
-    :param name:
-    :type name: str
-    :param status:  Possible values include: "NotStarted", "InProgress", "SlowedDown", "Completed",
+    :ivar order:
+    :vartype order: int
+    :ivar name:
+    :vartype name: str
+    :ivar status: Known values are: "NotStarted", "InProgress", "SlowedDown", "Completed",
      "Failed", "Canceled".
-    :type status: str or ~azure.mgmt.sql.models.UpsertManagedServerOperationStepStatus
+    :vartype status: str or ~azure.mgmt.sql.models.UpsertManagedServerOperationStepStatus
     """
 
     _attribute_map = {
@@ -16136,9 +19739,18 @@ class UpsertManagedServerOperationStep(msrest.serialization.Model):
         *,
         order: Optional[int] = None,
         name: Optional[str] = None,
-        status: Optional[Union[str, "UpsertManagedServerOperationStepStatus"]] = None,
+        status: Optional[Union[str, "_models.UpsertManagedServerOperationStepStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword order:
+        :paramtype order: int
+        :keyword name:
+        :paramtype name: str
+        :keyword status: Known values are: "NotStarted", "InProgress", "SlowedDown", "Completed",
+         "Failed", "Canceled".
+        :paramtype status: str or ~azure.mgmt.sql.models.UpsertManagedServerOperationStepStatus
+        """
         super(UpsertManagedServerOperationStep, self).__init__(**kwargs)
         self.order = order
         self.name = name
@@ -16190,6 +19802,8 @@ class Usage(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Usage, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -16225,6 +19839,8 @@ class UsageListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UsageListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -16255,6 +19871,8 @@ class UserIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -16273,20 +19891,20 @@ class VirtualCluster(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar subnet_id: Subnet resource ID for the virtual cluster.
     :vartype subnet_id: str
-    :param family: If the service has different generations of hardware, for the same SKU, then
-     that can be captured here.
-    :type family: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
     :ivar child_resources: List of resources in this virtual cluster.
     :vartype child_resources: list[str]
-    :param maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+    :ivar maintenance_configuration_id: Specifies maintenance configuration id to apply to this
      virtual cluster.
-    :type maintenance_configuration_id: str
+    :vartype maintenance_configuration_id: str
     """
 
     _validation = {
@@ -16319,6 +19937,18 @@ class VirtualCluster(TrackedResource):
         maintenance_configuration_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+         virtual cluster.
+        :paramtype maintenance_configuration_id: str
+        """
         super(VirtualCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.subnet_id = None
         self.family = family
@@ -16351,6 +19981,8 @@ class VirtualClusterListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VirtualClusterListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -16361,18 +19993,18 @@ class VirtualClusterUpdate(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar subnet_id: Subnet resource ID for the virtual cluster.
     :vartype subnet_id: str
-    :param family: If the service has different generations of hardware, for the same SKU, then
-     that can be captured here.
-    :type family: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
     :ivar child_resources: List of resources in this virtual cluster.
     :vartype child_resources: list[str]
-    :param maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+    :ivar maintenance_configuration_id: Specifies maintenance configuration id to apply to this
      virtual cluster.
-    :type maintenance_configuration_id: str
+    :vartype maintenance_configuration_id: str
     """
 
     _validation = {
@@ -16396,6 +20028,16 @@ class VirtualClusterUpdate(msrest.serialization.Model):
         maintenance_configuration_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+         virtual cluster.
+        :paramtype maintenance_configuration_id: str
+        """
         super(VirtualClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.subnet_id = None
@@ -16415,12 +20057,12 @@ class VirtualNetworkRule(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
-    :type virtual_network_subnet_id: str
-    :param ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network
-     has vnet service endpoint enabled.
-    :type ignore_missing_vnet_service_endpoint: bool
-    :ivar state: Virtual Network Rule State. Possible values include: "Initializing", "InProgress",
+    :ivar virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
+    :vartype virtual_network_subnet_id: str
+    :ivar ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network has
+     vnet service endpoint enabled.
+    :vartype ignore_missing_vnet_service_endpoint: bool
+    :ivar state: Virtual Network Rule State. Known values are: "Initializing", "InProgress",
      "Ready", "Failed", "Deleting", "Unknown".
     :vartype state: str or ~azure.mgmt.sql.models.VirtualNetworkRuleState
     """
@@ -16448,6 +20090,13 @@ class VirtualNetworkRule(ProxyResource):
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
+        :paramtype virtual_network_subnet_id: str
+        :keyword ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network
+         has vnet service endpoint enabled.
+        :paramtype ignore_missing_vnet_service_endpoint: bool
+        """
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.virtual_network_subnet_id = virtual_network_subnet_id
         self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
@@ -16479,6 +20128,8 @@ class VirtualNetworkRuleListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VirtualNetworkRuleListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -16487,13 +20138,13 @@ class VirtualNetworkRuleListResult(msrest.serialization.Model):
 class VulnerabilityAssessmentRecurringScansProperties(msrest.serialization.Model):
     """Properties of a Vulnerability Assessment recurring scans.
 
-    :param is_enabled: Recurring scans state.
-    :type is_enabled: bool
-    :param email_subscription_admins: Specifies that the schedule scan notification will be is sent
+    :ivar is_enabled: Recurring scans state.
+    :vartype is_enabled: bool
+    :ivar email_subscription_admins: Specifies that the schedule scan notification will be is sent
      to the subscription administrators.
-    :type email_subscription_admins: bool
-    :param emails: Specifies an array of e-mail addresses to which the scan notification is sent.
-    :type emails: list[str]
+    :vartype email_subscription_admins: bool
+    :ivar emails: Specifies an array of e-mail addresses to which the scan notification is sent.
+    :vartype emails: list[str]
     """
 
     _attribute_map = {
@@ -16510,6 +20161,15 @@ class VulnerabilityAssessmentRecurringScansProperties(msrest.serialization.Model
         emails: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Recurring scans state.
+        :paramtype is_enabled: bool
+        :keyword email_subscription_admins: Specifies that the schedule scan notification will be is
+         sent to the subscription administrators.
+        :paramtype email_subscription_admins: bool
+        :keyword emails: Specifies an array of e-mail addresses to which the scan notification is sent.
+        :paramtype emails: list[str]
+        """
         super(VulnerabilityAssessmentRecurringScansProperties, self).__init__(**kwargs)
         self.is_enabled = is_enabled
         self.email_subscription_admins = email_subscription_admins
@@ -16541,6 +20201,8 @@ class VulnerabilityAssessmentScanError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VulnerabilityAssessmentScanError, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -16559,9 +20221,9 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):
     :vartype type: str
     :ivar scan_id: The scan ID.
     :vartype scan_id: str
-    :ivar trigger_type: The scan trigger type. Possible values include: "OnDemand", "Recurring".
+    :ivar trigger_type: The scan trigger type. Known values are: "OnDemand", "Recurring".
     :vartype trigger_type: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentScanTriggerType
-    :ivar state: The scan status. Possible values include: "Passed", "Failed", "FailedToRun",
+    :ivar state: The scan status. Known values are: "Passed", "Failed", "FailedToRun",
      "InProgress".
     :vartype state: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentScanState
     :ivar start_time: The scan start time (UTC).
@@ -16608,6 +20270,8 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(VulnerabilityAssessmentScanRecord, self).__init__(**kwargs)
         self.scan_id = None
         self.trigger_type = None
@@ -16644,6 +20308,8 @@ class VulnerabilityAssessmentScanRecordListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VulnerabilityAssessmentScanRecordListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -16660,18 +20326,18 @@ class WorkloadClassifier(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param member_name: The workload classifier member name.
-    :type member_name: str
-    :param label: The workload classifier label.
-    :type label: str
-    :param context: The workload classifier context.
-    :type context: str
-    :param start_time: The workload classifier start time for classification.
-    :type start_time: str
-    :param end_time: The workload classifier end time for classification.
-    :type end_time: str
-    :param importance: The workload classifier importance.
-    :type importance: str
+    :ivar member_name: The workload classifier member name.
+    :vartype member_name: str
+    :ivar label: The workload classifier label.
+    :vartype label: str
+    :ivar context: The workload classifier context.
+    :vartype context: str
+    :ivar start_time: The workload classifier start time for classification.
+    :vartype start_time: str
+    :ivar end_time: The workload classifier end time for classification.
+    :vartype end_time: str
+    :ivar importance: The workload classifier importance.
+    :vartype importance: str
     """
 
     _validation = {
@@ -16703,6 +20369,20 @@ class WorkloadClassifier(ProxyResource):
         importance: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword member_name: The workload classifier member name.
+        :paramtype member_name: str
+        :keyword label: The workload classifier label.
+        :paramtype label: str
+        :keyword context: The workload classifier context.
+        :paramtype context: str
+        :keyword start_time: The workload classifier start time for classification.
+        :paramtype start_time: str
+        :keyword end_time: The workload classifier end time for classification.
+        :paramtype end_time: str
+        :keyword importance: The workload classifier importance.
+        :paramtype importance: str
+        """
         super(WorkloadClassifier, self).__init__(**kwargs)
         self.member_name = member_name
         self.label = label
@@ -16737,6 +20417,8 @@ class WorkloadClassifierListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(WorkloadClassifierListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -16753,18 +20435,18 @@ class WorkloadGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param min_resource_percent: The workload group minimum percentage resource.
-    :type min_resource_percent: int
-    :param max_resource_percent: The workload group cap percentage resource.
-    :type max_resource_percent: int
-    :param min_resource_percent_per_request: The workload group request minimum grant percentage.
-    :type min_resource_percent_per_request: float
-    :param max_resource_percent_per_request: The workload group request maximum grant percentage.
-    :type max_resource_percent_per_request: float
-    :param importance: The workload group importance level.
-    :type importance: str
-    :param query_execution_timeout: The workload group query execution timeout.
-    :type query_execution_timeout: int
+    :ivar min_resource_percent: The workload group minimum percentage resource.
+    :vartype min_resource_percent: int
+    :ivar max_resource_percent: The workload group cap percentage resource.
+    :vartype max_resource_percent: int
+    :ivar min_resource_percent_per_request: The workload group request minimum grant percentage.
+    :vartype min_resource_percent_per_request: float
+    :ivar max_resource_percent_per_request: The workload group request maximum grant percentage.
+    :vartype max_resource_percent_per_request: float
+    :ivar importance: The workload group importance level.
+    :vartype importance: str
+    :ivar query_execution_timeout: The workload group query execution timeout.
+    :vartype query_execution_timeout: int
     """
 
     _validation = {
@@ -16796,6 +20478,20 @@ class WorkloadGroup(ProxyResource):
         query_execution_timeout: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword min_resource_percent: The workload group minimum percentage resource.
+        :paramtype min_resource_percent: int
+        :keyword max_resource_percent: The workload group cap percentage resource.
+        :paramtype max_resource_percent: int
+        :keyword min_resource_percent_per_request: The workload group request minimum grant percentage.
+        :paramtype min_resource_percent_per_request: float
+        :keyword max_resource_percent_per_request: The workload group request maximum grant percentage.
+        :paramtype max_resource_percent_per_request: float
+        :keyword importance: The workload group importance level.
+        :paramtype importance: str
+        :keyword query_execution_timeout: The workload group query execution timeout.
+        :paramtype query_execution_timeout: int
+        """
         super(WorkloadGroup, self).__init__(**kwargs)
         self.min_resource_percent = min_resource_percent
         self.max_resource_percent = max_resource_percent
@@ -16830,6 +20526,8 @@ class WorkloadGroupListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(WorkloadGroupListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None

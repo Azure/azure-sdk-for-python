@@ -14,8 +14,6 @@ Example to show managing queue entities under a ServiceBus Namespace asynchronou
     - List queues under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 import uuid
@@ -73,6 +71,9 @@ async def get_queue_runtime_properties(servicebus_mgmt_client):
     print("Updated at:", queue_runtime_properties.updated_at_utc)
     print("Size in Bytes:", queue_runtime_properties.size_in_bytes)
     print("Message Count:", queue_runtime_properties.total_message_count)
+    print("Active Message Count:", queue_runtime_properties.active_message_count)
+    print("Scheduled Message Count:", queue_runtime_properties.scheduled_message_count)
+    print("Dead-letter Message Count:", queue_runtime_properties.dead_letter_message_count)
     print("Please refer to QueueRuntimeProperties from complete available runtime properties.")
     print("")
 
@@ -85,5 +86,4 @@ async def main():
         await get_queue_runtime_properties(servicebus_mgmt_client)
         await delete_queue(servicebus_mgmt_client)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

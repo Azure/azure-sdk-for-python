@@ -29,9 +29,13 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: PurviewScanningClient
-low-level-client: true
-vendor: true
-package-version: 1.0.0b1
+version-tolerant: true
+package-version: 1.0.0b2
 add-credential: true
 credential-scopes: https://purview.azure.net/.default
+```
+
+``` yaml
+modelerfour:
+  lenient-model-deduplication: true
 ```

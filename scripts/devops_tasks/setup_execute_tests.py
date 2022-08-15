@@ -25,6 +25,7 @@ from common_tasks import (
     clean_coverage,
     is_error_code_5_allowed,
     create_code_coverage_params,
+    filter_packages_by_compatibility_override
 )
 from tox_harness import prep_and_run_tox
 
@@ -283,6 +284,13 @@ if __name__ == "__main__":
         choices=['Build', "Docs", "Regression", "Omit_management"]
     )
 
+    parser.add_argument(
+        "-d",
+        "--dest-dir",
+        dest="dest_dir",
+        help="Location to generate any output files(if any). For e.g. apiview stub file",
+    )
+
 
     args = parser.parse_args()
 
@@ -295,15 +303,20 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
+    compatible_targeted_packages = filter_packages_by_compatibility_override(targeted_packages)
+
+    if targeted_packages != compatible_targeted_packages:
+        logging.info("At least one package incompatible with current platform was detected. Skipping: {}".format(set(targeted_packages) - set(compatible_targeted_packages)))
+
     extended_pytest_args = []
 
-    if len(targeted_packages) == 0:
+    if len(compatible_targeted_packages) == 0:
         exit(0)
 
     if args.xdist:
         extended_pytest_args.extend(["-n", "8", "--dist=loadscope"])
 
     if args.runtype != "none":
-        execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
+        execute_global_install_and_test(args, compatible_targeted_packages, extended_pytest_args)
     else:
-        prep_and_run_tox(targeted_packages, args, extended_pytest_args)
+        prep_and_run_tox(compatible_targeted_packages, args, extended_pytest_args)

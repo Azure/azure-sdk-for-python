@@ -1,0 +1,130 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01\u0026showStats=true",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "373",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "PiiEntityRecognition",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "56",
+              "text": ":)",
+              "language": "en"
+            },
+            {
+              "id": "0",
+              "text": ":(",
+              "language": "en"
+            },
+            {
+              "id": "22",
+              "text": "",
+              "language": "en"
+            },
+            {
+              "id": "19",
+              "text": ":P",
+              "language": "en"
+            },
+            {
+              "id": "1",
+              "text": ":D",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "modelVersion": "latest",
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b1a4a58f-6201-4717-ba8c-953c20868fd2",
+        "Content-Length": "841",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
+        "Date": "Wed, 08 Jun 2022 01:44:53 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "57"
+      },
+      "ResponseBody": {
+        "kind": "PiiEntityRecognitionResults",
+        "results": {
+          "statistics": {
+            "documentsCount": 5,
+            "validDocumentsCount": 4,
+            "erroneousDocumentsCount": 1,
+            "transactionsCount": 4
+          },
+          "documents": [
+            {
+              "redactedText": ":)",
+              "id": "56",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": ":(",
+              "id": "0",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": ":P",
+              "id": "19",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "warnings": []
+            },
+            {
+              "redactedText": ":D",
+              "id": "1",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "warnings": []
+            }
+          ],
+          "errors": [
+            {
+              "id": "22",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid Document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2021-01-15"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

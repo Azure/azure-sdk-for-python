@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._databricks_client import DatabricksClient
-__all__ = ['DatabricksClient']
+from ._azure_databricks_management_client import AzureDatabricksManagementClient
+__all__ = ['AzureDatabricksManagementClient']

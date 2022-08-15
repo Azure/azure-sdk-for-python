@@ -1,38 +1,37 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
-
+from unittest import mock
 from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
 
 class TestContextManager(TextAnalyticsTest):
 
-    @GlobalTextAnalyticsAccountPreparer()
-    def test_close(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    @TextAnalyticsPreparer()
+    def test_close(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
-            text_analytics_account,
-            AzureKeyCredential(text_analytics_account_key),
+            textanalytics_test_endpoint,
+            AzureKeyCredential(textanalytics_test_api_key),
             transport=transport
         )
         client.close()
         assert transport.__enter__.call_count == 0
         assert transport.__exit__.call_count == 1
 
-    @GlobalTextAnalyticsAccountPreparer()
-    def test_context_manager(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    @TextAnalyticsPreparer()
+    def test_context_manager(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
-            text_analytics_account,
-            AzureKeyCredential(text_analytics_account_key),
+            textanalytics_test_endpoint,
+            AzureKeyCredential(textanalytics_test_api_key),
             transport=transport
         )
 

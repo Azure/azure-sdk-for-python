@@ -4,7 +4,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -30,6 +28,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: nspkg
+    TestTimeoutInMinutes: 90
     BuildDocs: False
     Artifacts:
     - name: azure-agrifood-nspkg
@@ -40,6 +39,9 @@ extends:
       skipVerifyChangeLog: true
     - name: azure-ai-translation-nspkg
       safeName: azureaitranslationnspkg
+      skipVerifyChangeLog: true
+    - name: azure-ai-language-nspkg
+      safeName: azureailanguagenspkg
       skipVerifyChangeLog: true
     - name: azure-communication-nspkg
       safeName: azurecommunicationnspkg

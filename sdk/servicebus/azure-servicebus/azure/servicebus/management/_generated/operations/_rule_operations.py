@@ -49,7 +49,7 @@ class RuleOperations(object):
         subscription_name,  # type: str
         rule_name,  # type: str
         enrich=False,  # type: Optional[bool]
-        api_version="2017_04",  # type: Optional[str]
+        api_version="2021_05",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object
@@ -121,7 +121,7 @@ class RuleOperations(object):
         subscription_name,  # type: str
         rule_name,  # type: str
         request_body,  # type: object
-        api_version="2017_04",  # type: Optional[str]
+        api_version="2021_05",  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -207,7 +207,7 @@ class RuleOperations(object):
         topic_name,  # type: str
         subscription_name,  # type: str
         rule_name,  # type: str
-        api_version="2017_04",  # type: Optional[str]
+        api_version="2021_05",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object

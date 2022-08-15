@@ -41,30 +41,11 @@
     "resourceName": "[format('{0}-{1}', parameters('commonPrefix'), parameters('baseName'))]"
   },
   "resources": [
-    {
-      "type": "Microsoft.AgFoodPlatform/farmbeats",
-      "apiVersion": "2020-05-12-preview",
-      "name": "[variables('resourceName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "[parameters('sku')]"
-      }
-    },
-    {
-      "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2019-04-01-preview",
-      "name": "[guid(resourceGroup().id, deployment().name, parameters('commonPrefix'), parameters('baseName'), parameters('testApplicationOid'))]",
-      "properties": {
-        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('serviceAdminRoleId'))]",
-        "principalId": "[parameters('testApplicationOid')]",
-        "scope": "[resourceGroup().id]"
-      }
-    }
   ],
   "outputs": {
     "AGRIFOOD_ENDPOINT": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.AgFoodPlatform/farmbeats', variables('resourceName'))).instanceUri]"
+      "value": "https://internal-sdk-live-test-py.farmbeats.azure.net"
     }
   }
 }

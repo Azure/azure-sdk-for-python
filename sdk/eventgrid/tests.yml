@@ -5,22 +5,17 @@ stages:
     parameters:
       ServiceDirectory: eventgrid
       BuildTargetingString: azure-eventgrid*
+      TestProxy: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
+        AZURE_STORAGE_CONNECTION_STRING: $(python-storage-blob-connection-string)
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        EG_ACCESS_KEY: $(python-sdk-test-eg-access-key)
-        EG_TOPIC_HOSTNAME: $(python-sdk-test-eg-topic-hostname)
-        CLOUD_ACCESS_KEY: $(python-sdk-test-eg-cloud-access-key)
-        CLOUD_TOPIC_HOSTNAME: $(python-sdk-test-eg-cloud-topic-hostname)
-        DOMAIN_ACCESS_KEY: $(python-sdk-test-eg-domain-access-key)
-        DOMAIN_TOPIC_HOSTNAME: $(python-sdk-test-eg-domain-topic-hostname)
-        EG_DOMAIN_ACCESS_KEY: $(python-sdk-test-domain-access-key-eg)
-        EG_DOMAIN_TOPIC_HOSTNAME: $(python-sdk-test-domain-topic-hostname-eg)
         EVENTGRID_SAS: $(python-sdk-test-eg-sas)
-        DOMAIN_NAME: $(python-sdk-test-eg-domain-name)
-        CUSTOM_SCHEMA_ACCESS_KEY: $(python-sdk-test-eg-custom-schema-access-key)
-        CUSTOM_SCHEMA_TOPIC_HOSTNAME: $(python-sdk-test-custom-schema-topic-hostname)
+        STORAGE_QUEUE_NAME: $(python-storage-queue-name)
+        EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT: $(python-eventgrid-partner-endpoint)
+        EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY: $(python-eventgrid-partner-key)
+        EVENTGRID_PARTNER_CHANNEL_NAME: $(python-eventgrid-partner-channel-name)

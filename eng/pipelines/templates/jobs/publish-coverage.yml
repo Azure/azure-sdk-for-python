@@ -13,8 +13,8 @@ parameters:
 jobs:
   - job: Publish_Code_Coverage
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
       - task: UsePythonVersion@0

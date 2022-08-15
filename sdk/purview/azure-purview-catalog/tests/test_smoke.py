@@ -5,18 +5,29 @@
 # license information.
 # --------------------------------------------------------------------------
 from testcase import PurviewCatalogTest, PurviewCatalogPowerShellPreparer
-from azure.purview.catalog.rest.types import build_get_all_type_definitions_request
+from urllib.parse import urlparse
+from azure.purview.catalog.operations._operations import build_entity_delete_by_guids_request, build_entity_list_by_guids_request
+from azure.purview.catalog.operations._patch import build_glossary_import_glossary_terms_via_csv_request_initial, build_entity_import_business_metadata_request
 
 class PurviewCatalogSmokeTest(PurviewCatalogTest):
-
     @PurviewCatalogPowerShellPreparer()
     def test_basic_smoke_test(self, purviewcatalog_endpoint):
         client = self.create_client(endpoint=purviewcatalog_endpoint)
-        request = build_get_all_type_definitions_request()
-        response = client.send_request(request)
-        response.raise_for_status()
-        assert response.status_code == 200
-        json_response = response.json()
+        response = client.types.get_all_type_definitions()
+        assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs'])
 
-        # assert that the keys we expect are there
-        assert set(json_response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs'])
+    def test_delete_by_guids(self):
+        request = build_entity_delete_by_guids_request(guids=["foo", "bar"])
+        assert urlparse(request.url).query == "guid=foo&guid=bar"
+
+    def test_list_by_guids(self):
+        request = build_entity_list_by_guids_request(guids=["foo", "bar"])
+        assert "guid=foo&guid=bar" in urlparse(request.url).query
+
+    def test_glossary_import(self):
+        request = build_glossary_import_glossary_terms_via_csv_request_initial(glossary_guid="111",api_version="2022-03-01-preview",files={},include_term_hierarchy=False)
+        assert "/glossary/111/terms/import" in urlparse(request.url)
+
+    def test_businessmetadata_import(self):
+        request = build_entity_import_business_metadata_request(files={})
+        assert "/atlas/v2/entity/businessmetadata/import" in urlparse(request.url)

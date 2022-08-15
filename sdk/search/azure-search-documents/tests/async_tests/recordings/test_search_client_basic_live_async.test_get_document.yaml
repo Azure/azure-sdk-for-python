@@ -5,401 +5,336 @@ interactions:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPtr9aCR/vcgWOf39LFtOr9PXbXZNX8zyZloXq7aolvTVk7xpU26bFsu0ra6WaXGeXlfr
-        tCze5mm5freur6VBM07fzHP6I7vM02yZZovsB8Xygt47L5ZFe52uqqocpVnarDL6sZzRr3WelSW9
-        kper83WZTqvltMjri5xBpWU1zYBHWjTpKq/P82mbbm+ndXExb9MZ4QJ8Rum0rJqccEsJVtrSe221
-        rgvCO2vbOpsCAuH23Tyd04vUW51Pq8UiJwTaOUFm5MfhyJ/VNPYv8qIs83Wdzn/f9c7O+T41S/Nl
-        eolP06ZIL6t1k2bFIv9BWuYEx7Zq0hkhv35HwzijP6plm66XebrILpbFefGL1nm6KpppQR/hlXwn
-        nfHPh5OqnuWEWDui9iBTmuNNR5a0rbnlQZOu26Ik+M8/zherMpvyaykma5XV51nREui9nd17QHhV
-        5jR3U2pQ5yP6nADspKu6elcsipb/fAiEiWotDQND8QiHj0FMoE1UfIExCwFpBvH9eVW30vuUsHVE
-        AEVp+vKLqr4mYj5nTqHP2uyi+ejR9z4CN9Cfl0V+RT+uiDD0w470o++PPqKRvCUGOltOy/UsJ8Y9
-        z8omH33ULCp8flyW1ZX3cZk17at8WV0yzzylrqlbosHO9s6n23sP3uzsPOL//RT1U1Ob5cVHj+7T
-        a8pkHz36xR+11yu89LIqli21mlY0IcWSIAHj7d29vfHuvd37Dx6M9h+MP31wcP9gl9Cc1vStfXcJ
-        kSLc64o4ti3w5i+WDx99dPry9eeP9u/tffrRL/klv2T0UTab1XlDDZbrsiScqmpBf3zv+7/k/wHb
-        agTvrAMAAA==
+      string: '{"hotelId":"1","hotelName":"Fancy Stay","description":"Best hotel in
+        town if you like luxury hotels. They have an amazing infinity pool, a spa,
+        and a really helpful concierge. The location is perfect -- right downtown,
+        close to all the tourist attractions. We highly recommend this hotel.","descriptionFr":"Meilleur
+        h\u00f4tel en ville si vous aimez les h\u00f4tels de luxe. Ils ont une magnifique
+        piscine \u00e0 d\u00e9bordement, un spa et un concierge tr\u00e8s utile. L''emplacement
+        est parfait \u2013 en plein centre, \u00e0 proximit\u00e9 de toutes les attractions
+        touristiques. Nous recommandons fortement cet h\u00f4tel.","category":"Luxury","tags":["pool","view","wifi","concierge"],"parkingIncluded":false,"smokingAllowed":false,"lastRenovationDate":"2010-06-27T00:00:00Z","rating":5,"location":{"type":"Point","coordinates":[-122.131577,47.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '748'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '171'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '88'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f500377e-b98e-11eb-9758-a0481ca055a9
+      request-id: 5365491a-0a80-11ec-8853-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPtr7aCR/vcgWOf39qsqm8/QLfELfzPJmWhertqiW9N3JPM9WedOm/EJaLNO2ulqO07Pl
-        eTZtR2mWLvDFOHzxWU2vfvv3Xe/snO/Tt2mZU7Ni2aTTeV6n+TK9LMoyd1DWS/qeGgLMNGvzi6q+
-        JghP1rOLvKXP2uyi+ejR9z7iRvT3RL74/uijVVa/LZYXZ8tpuZ7lNLq2Xuejj5pFhY+Py7K6cp+W
-        WdO+ypfVZQYkn1JH1Mnuw4O97Z397b2DNzs7j/h/P0Vd1NRmefHRo116rSKc6IWPHv3ij9rrFV56
-        SaMBYtOqqmfFkiABv+3dvb3x7r3d+w8ejPYfjj99cHD/YJeQnNb0rX13CaoT5nW1yuu2wJu/WD58
-        9NHpy9efP9q/t/fpR7/kl/yS0UfZbFbnDTVYrsuScKqqBf3xve//kv8HNCAEvs8BAAA=
+      string: '{"hotelId":"2","hotelName":"Roach Motel","description":"Cheapest hotel
+        in town. Infact, a motel.","descriptionFr":"H\u00f4tel le moins cher en ville.
+        Infact, un motel.","category":"Budget","tags":["motel","budget"],"parkingIncluded":true,"smokingAllowed":true,"lastRenovationDate":"1982-04-28T00:00:00Z","rating":1,"location":{"type":"Point","coordinates":[-122.131577,49.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '449'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '7'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f53a66c0-b98e-11eb-a61f-a0481ca055a9
+      request-id: 538b2d9f-0a80-11ec-9e90-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPrr30Uj+epEtcvr7dFotq9dtdk2fz/JmWhertqiW9M1P5vV1uqpW6zKrU34lLZZpW10t
-        w6bPamr87d93vbNzvo9GZZ6uynWjrxZ1nubL9LIoy5zem2ZtflHV1/TKk/XsIm/psza7aD569L2P
-        rorzgv6cyOffH320yuq3xfLibDkt17OcsG/rdT76qFlU+Pi4LKsrfHqelQ19XGZN+ypfVpcZsHpK
-        HVEnuw8f3t/eebC9s/tmZ+cR/++nqI+a2iwvPnq0T69VhBO98NGjX/xRe73CSy+rYgnEplVVz4ol
-        QQJ+27t7e+Pde7v3HzwY7X86/vTBwf2DXcJyWtO39t0lyEqo19Uqr9sCb/5i+ZBo/fL154/27+19
-        +tEv+SW/ZPRRNpvVeUMNluuyJJyqakF/fO/7v+T/AeFotq6wAQAA
+      string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
+        hotel in town","descriptionFr":"H\u00f4tel le plus populaire en ville","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,46.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '438'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '6'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '8'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f5449999-b98e-11eb-a493-a0481ca055a9
+      request-id: 5391c3fe-0a80-11ec-b2bf-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPtr/aCR/vcgWOf19+m5V502TvqqqRUPfzfJmWhertqiW9O3LOm/b6/SiqmYpvxW2eFZT
-        m+OmyX+QTqplOv991zs75/vSbJq1+UVVX1OLJ+vZRd7SZ2120Xz06HsfXRXnBf05kc+/P/poldVv
-        i+XF2XJarmc54dnW63z0UbOo8PFxWVZX+PQ8Kxv6uMya9lW+rC4zIPGUOqJOdh8+vL+982B7Z/fN
-        zs4j/t9PUR81tVlefPRon16rCCd64aNHv/ij9nqFl15WxRKITauqnhVLggT8tnf39sa793bvP3gw
-        2j8Yf/rg4P7BLmE5relb++4SBCTU62qV122BN3+xfEhUffn680f79/Y+/eiX/JJfMvoom81A5I8e
-        LddlSTgxrR997/u/5P8BQ8pEppoBAAA=
+      string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
+        hotel","descriptionFr":"Assez bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '6'
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '13'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f54da25d-b98e-11eb-948f-a0481ca055a9
+      request-id: 5398b074-0a80-11ec-af29-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPrr/0Uj+epEtcvr7pFqcX6cvy2ya0zezvJnWxaotqiV9d7ys2nlepxdVNUv5pbDJs5oa
-        fbVMs3Vb5+mkWqbz33e9s3O+Ly2nWZtfVPU1NXqynl3kLX3WZhfNR4++99FVcV7QnxP5/Pujj1ZZ
-        /bZYXpwtp+V6lhOmbb3ORx81iwofH5dldYVPz7OyoY/LrGlf5cvqMgMeT6kj6mRvZ3dve+dge3fv
-        zc7OI/7fT1EfNbVZXnz0aJ9eqwgneuGjR7/4o/Z6hZdeVsUSiE2rqp4VS4IE/AjG3nj33u79Bw9G
-        +wfjTx8c3D/YJSynNX1r312ChIR6Xa3yui3w5i+WDx99dPry9eeP9u/tffrRL/klv2T0UTab1XlD
-        DZbrsiScqmpBf3zv+7/k/wHFXuHynAEAAA==
+      string: '{"hotelId":"5","hotelName":"Comfy Place","description":"Another good
+        hotel","descriptionFr":"Un autre bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"2012-08-12T00:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '424'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '6'
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: f555bef8-b98e-11eb-94a1-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=none
-      User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPvr0o5H89SJb5B89Wq7LcvTRLG+mdbFqi2pJTV6v61VdNMXyorxO83erfNkUl/k4/aKa
-        5WXarIs2b9J5dpmn2TKtpnm23L4s8qsxQfYAPasN9GnW5hdVfW3+brOL5qNH3/v+6KNVVr+lbs6W
-        03I9ywk9adAsKnx8XJbVlfu0zJr2Vb6sLjOAf0pAzTc1fbK8MH+VFXVILczf2WxW5w31KH/WVbWg
-        P773/V/y/wCXiiCEFwEAAA==
-    headers:
-      cache-control: no-cache
-      content-encoding: gzip
-      content-length: '301'
-      content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '5'
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: f55f5b79-b98e-11eb-8aff-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=none
-      User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPnrw0Uj+epEtcvr7i2qW18v0dZtd0zezvJnWxaotqqX7Lqun86LNp+26zkfpZV5fp6uq
-        pE/Sps3Oz9NsOZNPp2WeLcfpcdlU8gF9W9WzbFLm4xD4s5rAH3tw0wX3RfBXed1Uy2Vecidp3qZt
-        /fuud3bygyZd1dWqzqmHddMU3ufZxOtmmrX5RVVff/RouS7L0UdtdtF89Oh73x99tMrqt8Xy4mw5
-        LdeznKghDZpFhY+Py7K6cp+WWdO+ypfVZQaEnxJQ801NnywvzF9lRR1SC/N3NpvVeUM9yp91VS3o
-        j+99/5f8P7YL7o+GAQAA
-    headers:
-      cache-control: no-cache
-      content-encoding: gzip
-      content-length: '357'
-      content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '5'
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: f56a0a2c-b98e-11eb-9c38-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=none
-      User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPjr4aCR/vcgW+UePluuyHH00y5tpXazaolpSk29nTdpUizytq2yWLquiydNsOUuLJl3m
-        79q0rdJ2nqeXeX2drqqymOZp02Z4eZw+ydp5XVWLJp3Tu4uqzst0WlHTYnnRjKlvr6tnNXV2VqbX
-        aZbO1umkXhdtOsvTMqOe122e5m1KXbf0x2We/r7rnZ18J53i5/l+ix/5Q22u3eMvQWicPs9pEFlZ
-        0g/6dJIVyzS7zIp8iS6atM4vGULW5gv6jBsRtgVeAJpT+uKiqq8Nhdrsovno0fe+P/poldVvaTBn
-        y2m5nuVEUmnQLCp8fFyW1ZX7tMya9lW+rC4Zv6cE1HxT0yfLC/NXWVGH1ML8nc1mdd5Qj/InUxTd
-        /5L/BzVdzNPLAQAA
-    headers:
-      cache-control: no-cache
-      content-encoding: gzip
-      content-length: '411'
-      content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '6'
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: f57362c0-b98e-11eb-b485-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=none
-      User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPnr40Uj+epEtcvr7dT6t8zZ9WRXLNv0CX1CDWd5M62LVFtWSmryZ5ym/khZNWszyrCyv
-        07KaZm0+S6tl2tL3i6xYptNqscjraZGVaVa3eX2dVuf87bRor1NqgN/nOX2HL17kV+nvU9Vvx+lx
-        ek6/L4rlus2bNLvKqHGTvikW+cdN+voXrbM6T7PlTF4vmraqi2k6zZctfU6A8DF6GKVZk17lJfXe
-        pBV9WqerMpsSSGpEw8vrvGmpddYSum9ziwCNgeEcE/LFNKM+FxU1zNq2zqZtcSmdT6tmUa2qsmgz
-        GmnRFnkzDkn1rCZiPf94/vuud3bO90Ev9FfM8Hf+MCvzBaGcNkW7lk/SZl2nZZau6mI5LVbUAGTj
-        7w5oZI6aeTrL0fCyKOn3fEnDyomaU2q6e/8eAaGvzWBAzV+0zkv6P41DSdrkaVtXaxoJQWGapLN1
-        2uaLVZPS5BNQpaZSl14GTGrMXRJhi2VTAG46+zhbU8smLYt8/Y7+JMISHjScmn8QcX/RukjPKxoq
-        gTBopeXHa6IyUUtA0vv0/1W5pvm2dGZkHJ3pb4JQfny8YMgPGS/QHJx3UdXXRO4n1brFx/Rpm100
-        Hz363kerqgIPZ0VNsJYzmqlqWSwv6CP6c1rk9UX+0fdHH62y+i19fLaclutZTqJxnpVNPvqIesfn
-        x2VZXeHjtl7Tp2XWtK/yZXWZAdxTQoA63334YGd7Z3d79+DNzv1HOzv0v5+ibmpqQ/092qfXICX0
-        wkePfvFH7fUKL7GkUatpVdWzYkmQgPX2g3vjhw/u7+/cG+3vjB98unP/4FNCclrTl/bVJUSWMK+r
-        VV6DAfEdf/joo9OXrz9/tH9v79OPfskv+SU0+tmMJokbNDRdeXtsPvjo0wcP0vvtPD2+BDDiZNDR
-        zBN90rSE08u6uiSuBOQXvw99OK3WxCBo+dXrY/p7VVGz8qSaocXuzs7e3kfUa11VC+rie7/YFwtq
-        8GQ9u6CpfUVfj9Ld9CfWOTHxE9IeWyfUfVPM8jsE03uHRelkni0mxJSY/elDmrxqgakGhIsaIkk8
-        km5BCiBu+EEyxdwFaEozr2v6cJI1+Ssa3kePHo4/fUh/57MvuUPC+iMPMWralHm+ak4w7o8e7dHf
-        Ub4wTHc5re/OLmcfff+XjG4Y/O9FQNBFuvUFYJNkpT9Z5FdA2XvvJgK0Im0HjU+KHsAbaHAw3unT
-        wOBHLb8eCUYf/XQ2Xf/gB0XaridEkO//kv8H1YQ2uYAGAAA=
-    headers:
-      cache-control: no-cache
-      content-encoding: gzip
-      content-length: '1061'
-      content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
-      elapsed-time: '14'
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: f57cd7d5-b98e-11eb-a3a7-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=none
-      User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPtrd+Wgkf77IFjl9cFKtl2193RSzPP02PqfvZ3kzrYtVW1RLavE6u8zT9Sptq/T+zu+e
-        VufnaVtnswJfZ2XKwJpxmj6r8zz9bvGsGKUXdZ61aVlNMzRKl3lWp7PqatnS/0fp+bos07dFO53n
-        9NdV1szzOv2F6ay+zutRurd/90HarFerqm5H6aS6KovlRZqVZX5NrxbtMm+adJovW3opW87SRVXn
-        4xDpZzWh/fuud3amD6fVsloUTf6D9KfXzS9af4xP8x0eSLOu0zJv0jk+O9/HKNzAlvQXjQnDodFk
-        7bogZNoaTfODJp0U+TJtinbNHzxMV/ab2ZqRq/Pty4JwHqXTddEUyzydVotVKa1a+rgkqq6bnMbd
-        8IcPiRr094jQ4qEzHez4CQwDTWmWDA3yNl2Va/q5nCoJiNz5RVVf0+ifrGcXeUuftdlF89Gj7320
-        t789r2jE53W1bAlM8zZt8vqymObUaEqTSpNXLGnOJpNr+qTOmzZb19my/ej7o49WWf2WsDhbTsv1
-        LCc+Os9KwvWjZlHh8+OyrK7wcVuv6dMya9pX+bK65Nl/SkgRQrsPHz7c3qH/ffpmZ+cR/++n0A+1
-        WV589Ogevabs8tGjX/xRe73CSy+rghAAflU9K5YECWPZfnAwfri/s39wb3Tv/vjhzv7up4TjtKbv
-        7JtLcDchXlervG4LvPeL5cNHH52+fP35o/17e59+9Et+yS8ZfZTNZjRabtAQifP22Hzw0acPd3fS
-        Z9l13rY5T2f6akZQp0ULGj9d1/NsQX8Tqdr8ZV1dFksi56OPXpzQh1MRLPrzq9fH9PeqomblSTVD
-        i70HD3bvfUSd11W1oJ6+94t9/qUGr4nhiBl209+LyJM+yWfp1vEiXxJv5s0dgua1Zm637R2PEtuS
-        eJRFm269lpnmN5VA/AL9Ocma/BWh/9GjvfH+Pv2dz75ksITVR657atmUeb5qWF9QY/o7OvmG35Sl
-        FtnbvP7o+79k1B2gMGj6isYPtH9inZNEUUc3jPOEKD4hOcAgjXT/IuqXQGwer9cffehG/WD86UP6
-        Oxy1xYaa3jRsFYWBcX//l/w/g/6O4X4FAAA=
-    headers:
-      cache-control: no-cache
-      content-encoding: gzip
-      content-length: '938'
-      content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:15:21 GMT
+      date: Tue, 31 Aug 2021 17:24:39 GMT
       elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: f588f22d-b98e-11eb-9dea-a0481ca055a9
+      request-id: 53a1ac97-0a80-11ec-96b4-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2021-04-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: '{"hotelId":"6","hotelName":null,"description":"Surprisingly expensive.
+        Model suites have an ocean-view.","descriptionFr":null,"category":null,"tags":[],"parkingIncluded":null,"smokingAllowed":null,"lastRenovationDate":null,"rating":null,"location":null,"address":null,"rooms":[]}'
+    headers:
+      cache-control: no-cache
+      content-length: '301'
+      content-type: application/json; odata.metadata=none
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '8'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 53a8edac-0a80-11ec-91aa-74c63bed1137
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2021-04-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: '{"hotelId":"7","hotelName":"Modern Stay","description":"Modern architecture,
+        very polite staff and very clean. Also very affordable.","descriptionFr":"Architecture
+        moderne, personnel poli et tr\u00e8s propre. Aussi tr\u00e8s abordable.","category":null,"tags":[],"parkingIncluded":null,"smokingAllowed":null,"lastRenovationDate":null,"rating":null,"location":null,"address":null,"rooms":[]}'
+    headers:
+      cache-control: no-cache
+      content-length: '357'
+      content-type: application/json; odata.metadata=none
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '6'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 53b0436a-0a80-11ec-a764-74c63bed1137
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2021-04-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: '{"hotelId":"8","hotelName":null,"description":"Has some road noise
+        and is next to the very police station. Bathrooms had morel coverings.","descriptionFr":"Il
+        y a du bruit de la route et se trouve \u00e0 c\u00f4t\u00e9 de la station
+        de police. Les salles de bain avaient des rev\u00eatements de morilles.","category":null,"tags":[],"parkingIncluded":null,"smokingAllowed":null,"lastRenovationDate":null,"rating":null,"location":null,"address":null,"rooms":[]}'
+    headers:
+      cache-control: no-cache
+      content-length: '411'
+      content-type: application/json; odata.metadata=none
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '4'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 53b7414b-0a80-11ec-bf95-74c63bed1137
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2021-04-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: '{"hotelId":"9","hotelName":"Secret Point Motel","description":"The
+        hotel is ideally located on the main commercial artery of the city in the
+        heart of New York. A few minutes away is Time''s Square and the historic centre
+        of the city, as well as other places of interest that make New York one of
+        America''s most attractive and cosmopolitan cities.","descriptionFr":"L''h\u00f4tel
+        est id\u00e9alement situ\u00e9 sur la principale art\u00e8re commerciale de
+        la ville en plein c\u0153ur de New York. A quelques minutes se trouve la place
+        du temps et le centre historique de la ville, ainsi que d''autres lieux d''int\u00e9r\u00eat
+        qui font de New York l''une des villes les plus attractives et cosmopolites
+        de l''Am\u00e9rique.","category":"Boutique","tags":["pool","air conditioning","concierge"],"parkingIncluded":false,"smokingAllowed":true,"lastRenovationDate":"1970-01-18T05:00:00Z","rating":4,"location":{"type":"Point","coordinates":[-73.975403,40.760586],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":{"streetAddress":"677
+        5th Ave","city":"New York","stateProvince":"NY","country":"USA","postalCode":"10022"},"rooms":[{"description":"Budget
+        Room, 1 Queen Bed (Cityside)","descriptionFr":"Chambre \u00c9conomique, 1
+        grand lit (c\u00f4t\u00e9 ville)","type":"Budget Room","baseRate":9.69,"bedOptions":"1
+        Queen Bed","sleepsCount":2,"smokingAllowed":true,"tags":["vcr/dvd"]},{"description":"Budget
+        Room, 1 King Bed (Mountain View)","descriptionFr":"Chambre \u00c9conomique,
+        1 tr\u00e8s grand lit (Mountain View)","type":"Budget Room","baseRate":8.09,"bedOptions":"1
+        King Bed","sleepsCount":2,"smokingAllowed":true,"tags":["vcr/dvd","jacuzzi
+        tub"]}]}'
+    headers:
+      cache-control: no-cache
+      content-length: '1061'
+      content-type: application/json; odata.metadata=none
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '10'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 53bf0a95-0a80-11ec-a45a-74c63bed1137
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2021-04-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: '{"hotelId":"10","hotelName":"Countryside Hotel","description":"Save
+        up to 50% off traditional hotels.  Free WiFi, great location near downtown,
+        full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center
+        and more.","descriptionFr":"\u00c9conomisez jusqu''\u00e0 50% sur les h\u00f4tels
+        traditionnels.  WiFi gratuit, tr\u00e8s bien situ\u00e9 pr\u00e8s du centre-ville,
+        cuisine compl\u00e8te, laveuse & s\u00e9cheuse, support 24/7, bowling, centre
+        de fitness et plus encore.","category":"Budget","tags":["24-hour front desk
+        service","coffee in lobby","restaurant"],"parkingIncluded":false,"smokingAllowed":true,"lastRenovationDate":"1999-09-06T00:00:00Z","rating":3,"location":{"type":"Point","coordinates":[-78.940483,35.90416],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":{"streetAddress":"6910
+        Fayetteville Rd","city":"Durham","stateProvince":"NC","country":"USA","postalCode":"27713"},"rooms":[{"description":"Suite,
+        1 King Bed (Amenities)","descriptionFr":"Suite, 1 tr\u00e8s grand lit (Services)","type":"Suite","baseRate":2.44,"bedOptions":"1
+        King Bed","sleepsCount":2,"smokingAllowed":true,"tags":["coffee maker"]},{"description":"Budget
+        Room, 1 Queen Bed (Amenities)","descriptionFr":"Chambre \u00c9conomique, 1
+        grand lit (Services)","type":"Budget Room","baseRate":7.69,"bedOptions":"1
+        Queen Bed","sleepsCount":2,"smokingAllowed":false,"tags":["coffee maker"]}]}'
+    headers:
+      cache-control: no-cache
+      content-length: '938'
+      content-type: application/json; odata.metadata=none
+      date: Tue, 31 Aug 2021 17:24:39 GMT
+      elapsed-time: '6'
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 53c6f174-0a80-11ec-b849-74c63bed1137
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://search496815ac.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2021-04-30-Preview
 version: 1

@@ -21,7 +21,7 @@ def _flatten_args(args):
 
 
 class IndexDocumentsBatch(object):
-    """Represent a batch of upate operations for documents in an Azure
+    """Represent a batch of update operations for documents in an Azure
     Search index.
 
     Index operations are performed in the order in which they are added
@@ -54,7 +54,9 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
-    def add_delete_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
+    def add_delete_actions(
+        self, *documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to delete to the Azure search index.
 
@@ -75,9 +77,11 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
-    def add_merge_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
+    def add_merge_actions(
+        self, *documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
-        """Add documents to merge in to existing documets in the Azure search
+        """Add documents to merge in to existing documents in the Azure search
         index.
 
         Merge updates an existing document with the specified fields. If the
@@ -93,16 +97,18 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "merge")
 
-    def add_merge_or_upload_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
+    def add_merge_or_upload_actions(
+        self, *documents, **kwargs
+    ):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
-        """Add documents to merge in to existing documets in the Azure search
+        """Add documents to merge in to existing documents in the Azure search
         index, or upload if they do not yet exist.
 
         This action behaves like *merge* if a document with the given key
         already exists in the index. If the document does not exist, it behaves
         like *upload* with a new document.
 
-        :param documents: Documents to merge or uplaod into an Azure search
+        :param documents: Documents to merge or upload into an Azure search
          index. May be a single list of documents, or documents as individual
          parameters.
         :type documents: dict or list[dict]
@@ -133,8 +139,7 @@ class IndexDocumentsBatch(object):
 
     def enqueue_actions(self, new_actions, **kwargs):  # pylint: disable=unused-argument
         # type: (Union[IndexAction, List[IndexAction]]) -> None
-        """Enqueue a list of index actions to index.
-        """
+        """Enqueue a list of index actions to index."""
         if isinstance(new_actions, IndexAction):
             with self._lock:
                 self._actions.append(new_actions)

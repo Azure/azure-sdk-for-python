@@ -5,35 +5,42 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
+import asyncio
 from io import SEEK_SET, UnsupportedOperation
-from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disable=unused-import
+from typing import TypeVar, TYPE_CHECKING
 
 import six
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
 
-from .._shared.response_handlers import (
-    process_storage_error,
-    return_response_headers)
+from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import (
     upload_data_chunks,
     upload_substream_blocks,
     BlockBlobChunkUploader,
     PageBlobChunkUploader,
-    AppendBlobChunkUploader)
-from .._shared.encryption import generate_blob_encryption_data, encrypt_blob
+    AppendBlobChunkUploader
+)
 from .._generated.models import (
     BlockLookupList,
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
+from .._encryption import (
+    GCMBlobEncryptionStream,
+    encrypt_blob,
+    get_adjusted_upload_size,
+    get_blob_encryptor_and_padder,
+    generate_blob_encryption_data,
+    _ENCRYPTION_PROTOCOL_V1,
+    _ENCRYPTION_PROTOCOL_V2
+)
 from .._upload_helpers import _convert_mod_error, _any_conditions
 
 if TYPE_CHECKING:
-    from datetime import datetime # pylint: disable=unused-import
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 
-async def upload_block_blob(  # pylint: disable=too-many-locals
+async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         client=None,
         data=None,
         stream=None,
@@ -50,23 +57,32 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             kwargs['modified_access_conditions'].if_none_match = '*'
         adjusted_count = length
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
-            adjusted_count += (16 - (length % 16))
+            adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
         blob_headers = kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
 
+        immutability_policy = kwargs.pop('immutability_policy', None)
+        immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
+        immutability_policy_mode = None if immutability_policy is None else immutability_policy.policy_mode
+        legal_hold = kwargs.pop('legal_hold', None)
+        progress_hook = kwargs.pop('progress_hook', None)
+
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
-                data = data.read(length)
+                if asyncio.iscoroutinefunction(data.read):
+                    data = await data.read(length)
+                else:
+                    data = data.read(length)
                 if not isinstance(data, six.binary_type):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass
             if encryption_options.get('key'):
-                encryption_data, data = encrypt_blob(data, encryption_options['key'])
+                encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
-            return await client.upload(
+            response = await client.upload(
                 body=data,
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
@@ -77,7 +93,15 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 upload_stream_current=0,
                 tier=tier.value if tier else None,
                 blob_tags_string=blob_tags_string,
+                immutability_policy_expiry=immutability_policy_expiry,
+                immutability_policy_mode=immutability_policy_mode,
+                legal_hold=legal_hold,
                 **kwargs)
+
+            if progress_hook:
+                await progress_hook(adjusted_count, adjusted_count)
+
+            return response
 
         use_original_upload_path = blob_settings.use_byte_buffer or \
             validate_content or encryption_options.get('required') or \
@@ -86,20 +110,35 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
         if use_original_upload_path:
-            if encryption_options.get('key'):
-                cek, iv, encryption_data = generate_blob_encryption_data(encryption_options['key'])
+            total_size = length
+            encryptor, padder = None, None
+            if encryption_options and encryption_options.get('key'):
+                cek, iv, encryption_data = generate_blob_encryption_data(
+                    encryption_options['key'],
+                    encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
-                encryption_options['cek'] = cek
-                encryption_options['vector'] = iv
+
+                if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+                    encryptor, padder = get_blob_encryptor_and_padder(cek, iv, True)
+
+                # Adjust total_size for encryption V2
+                if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
+                    # Adjust total_size for encryption V2
+                    total_size = adjusted_count
+                    # V2 wraps the data stream with an encryption stream
+                    stream = GCMBlobEncryptionStream(cek, stream)
+
             block_ids = await upload_data_chunks(
                 service=client,
                 uploader_class=BlockBlobChunkUploader,
-                total_size=length,
+                total_size=total_size,
                 chunk_size=blob_settings.max_block_size,
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
-                encryption_options=encryption_options,
+                progress_hook=progress_hook,
+                encryptor=encryptor,
+                padder=padder,
                 headers=headers,
                 **kwargs
             )
@@ -112,6 +151,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
+                progress_hook=progress_hook,
                 headers=headers,
                 **kwargs
             )
@@ -126,6 +166,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             headers=headers,
             tier=tier.value if tier else None,
             blob_tags_string=blob_tags_string,
+            immutability_policy_expiry=immutability_policy_expiry,
+            immutability_policy_mode=immutability_policy_mode,
+            legal_hold=legal_hold,
             **kwargs)
     except HttpResponseError as error:
         try:
@@ -155,15 +198,22 @@ async def upload_page_blob(
         if length % 512 != 0:
             raise ValueError("Invalid page blob size: {0}. "
                              "The size must be aligned to a 512-byte boundary.".format(length))
+        tier = None
         if kwargs.get('premium_page_blob_tier'):
             premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
             try:
-                headers['x-ms-access-tier'] = premium_page_blob_tier.value
+                tier = premium_page_blob_tier.value
             except AttributeError:
-                headers['x-ms-access-tier'] = premium_page_blob_tier
-        if encryption_options and encryption_options.get('data'):
-            headers['x-ms-meta-encryptiondata'] = encryption_options['data']
+                tier = premium_page_blob_tier
+
+        if encryption_options and encryption_options.get('key'):
+            cek, iv, encryption_data = generate_blob_encryption_data(
+                encryption_options['key'],
+                encryption_options['version'])
+            headers['x-ms-meta-encryptiondata'] = encryption_data
+
         blob_tags_string = kwargs.pop('blob_tags_string', None)
+        progress_hook = kwargs.pop('progress_hook', None)
 
         response = await client.create(
             content_length=0,
@@ -171,11 +221,18 @@ async def upload_page_blob(
             blob_sequence_number=None,
             blob_http_headers=kwargs.pop('blob_headers', None),
             blob_tags_string=blob_tags_string,
+            tier=tier,
             cls=return_response_headers,
             headers=headers,
             **kwargs)
         if length == 0:
             return response
+
+        if encryption_options and encryption_options.get('key'):
+            if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+                encryptor, padder = get_blob_encryptor_and_padder(cek, iv, False)
+                kwargs['encryptor'] = encryptor
+                kwargs['padder'] = padder
 
         kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
         return await upload_data_chunks(
@@ -186,7 +243,7 @@ async def upload_page_blob(
             stream=stream,
             max_concurrency=max_concurrency,
             validate_content=validate_content,
-            encryption_options=encryption_options,
+            progress_hook=progress_hook,
             headers=headers,
             **kwargs)
 
@@ -218,6 +275,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
             max_size=kwargs.pop('maxsize_condition', None),
             append_position=None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
+        progress_hook = kwargs.pop('progress_hook', None)
 
         try:
             if overwrite:
@@ -236,6 +294,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                progress_hook=progress_hook,
                 headers=headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -264,6 +323,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                progress_hook=progress_hook,
                 headers=headers,
                 **kwargs)
     except HttpResponseError as error:

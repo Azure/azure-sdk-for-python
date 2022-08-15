@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationList"]:
         """Lists all of the available REST API operations of the Microsoft.SignalRService provider.
 
@@ -57,7 +57,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

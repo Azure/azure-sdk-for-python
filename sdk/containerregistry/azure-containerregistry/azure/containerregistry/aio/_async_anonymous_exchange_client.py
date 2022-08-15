@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AnonymousACRExchangeClient(object):
+class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
@@ -28,13 +28,11 @@ class AnonymousACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=None,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
             **kwargs
         )
 
@@ -63,11 +61,11 @@ class AnonymousACRExchangeClient(object):
         return access_token.access_token
 
     async def __aenter__(self):
-        self._client.__aenter__()
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        self._client.__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self) -> None:
         """Close sockets opened by the client.

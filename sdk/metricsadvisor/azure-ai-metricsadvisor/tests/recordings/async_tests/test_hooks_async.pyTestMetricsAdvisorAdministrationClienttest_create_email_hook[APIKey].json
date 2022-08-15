@@ -1,0 +1,119 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "212",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "4abcecb2-5e0d-11ec-8c4c-6245b51668de"
+      },
+      "RequestBody": "{\u0022hookType\u0022: \u0022Email\u0022, \u0022hookName\u0022: \u0022testemailhook33bc073a-0885-4845-b87f-d4ce4c195f2b\u0022, \u0022description\u0022: \u0022my email hook\u0022, \u0022externalLink\u0022: \u0022external link\u0022, \u0022hookParameter\u0022: {\u0022toList\u0022: [\u0022yournamehere@microsoft.com\u0022]}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "da80537b-afe1-4050-a3d9-ffc0ea5cee4a",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:12:51 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/94c3037d-7b30-47d3-9998-da9953cd577a",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "297",
+        "X-Request-ID": "da80537b-afe1-4050-a3d9-ffc0ea5cee4a"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/94c3037d-7b30-47d3-9998-da9953cd577a",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "4af18f6a-5e0d-11ec-9ee7-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "5ca8e4e3-c4fb-4ed4-975f-1e3f0bd2537e",
+        "Content-Length": "286",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:12:51 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "176",
+        "X-Request-ID": "5ca8e4e3-c4fb-4ed4-975f-1e3f0bd2537e"
+      },
+      "ResponseBody": {
+        "hookId": "94c3037d-7b30-47d3-9998-da9953cd577a",
+        "hookName": "testemailhook33bc073a-0885-4845-b87f-d4ce4c195f2b",
+        "hookType": "Email",
+        "externalLink": "external link",
+        "description": "my email hook",
+        "admins": [
+          "krpratic@microsoft.com"
+        ],
+        "hookParameter": {
+          "toList": [
+            "yournamehere@microsoft.com"
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/94c3037d-7b30-47d3-9998-da9953cd577a",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "4b116730-5e0d-11ec-b758-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "a776f088-d3d3-40ed-a0cb-6790eb3274ab",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 01:12:52 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "185",
+        "X-Request-ID": "a776f088-d3d3-40ed-a0cb-6790eb3274ab"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/94c3037d-7b30-47d3-9998-da9953cd577a",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "4b32ad4a-5e0d-11ec-bbb2-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "apim-request-id": "42581a32-f912-45b5-882f-0d952987ce0e",
+        "Content-Length": "55",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:12:52 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "99",
+        "X-Request-ID": "42581a32-f912-45b5-882f-0d952987ce0e"
+      },
+      "ResponseBody": {
+        "code": "404 NOT_FOUND",
+        "message": "hookId is invalid."
+      }
+    }
+  ],
+  "Variables": {
+    "email_hook_id": "94c3037d-7b30-47d3-9998-da9953cd577a",
+    "email_hook_name": "testemailhook33bc073a-0885-4845-b87f-d4ce4c195f2b"
+  }
+}

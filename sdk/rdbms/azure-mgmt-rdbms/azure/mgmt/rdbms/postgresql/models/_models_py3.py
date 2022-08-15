@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._postgre_sql_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Resource(msrest.serialization.Model):
@@ -45,6 +47,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -82,6 +86,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -98,8 +104,8 @@ class Configuration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param value: Value of the configuration.
-    :type value: str
+    :ivar value: Value of the configuration.
+    :vartype value: str
     :ivar description: Description of the configuration.
     :vartype description: str
     :ivar default_value: Default value of the configuration.
@@ -108,8 +114,8 @@ class Configuration(ProxyResource):
     :vartype data_type: str
     :ivar allowed_values: Allowed values of the configuration.
     :vartype allowed_values: str
-    :param source: Source of the configuration.
-    :type source: str
+    :ivar source: Source of the configuration.
+    :vartype source: str
     """
 
     _validation = {
@@ -141,6 +147,12 @@ class Configuration(ProxyResource):
         source: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Value of the configuration.
+        :paramtype value: str
+        :keyword source: Source of the configuration.
+        :paramtype source: str
+        """
         super(Configuration, self).__init__(**kwargs)
         self.value = value
         self.description = None
@@ -153,8 +165,8 @@ class Configuration(ProxyResource):
 class ConfigurationListResult(msrest.serialization.Model):
     """A list of server configurations.
 
-    :param value: The list of server configurations.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.Configuration]
+    :ivar value: The list of server configurations.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.Configuration]
     """
 
     _attribute_map = {
@@ -164,9 +176,13 @@ class ConfigurationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Configuration"]] = None,
+        value: Optional[List["_models.Configuration"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of server configurations.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Configuration]
+        """
         super(ConfigurationListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -184,10 +200,10 @@ class Database(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param charset: The charset of the database.
-    :type charset: str
-    :param collation: The collation of the database.
-    :type collation: str
+    :ivar charset: The charset of the database.
+    :vartype charset: str
+    :ivar collation: The collation of the database.
+    :vartype collation: str
     """
 
     _validation = {
@@ -211,6 +227,12 @@ class Database(ProxyResource):
         collation: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword charset: The charset of the database.
+        :paramtype charset: str
+        :keyword collation: The collation of the database.
+        :paramtype collation: str
+        """
         super(Database, self).__init__(**kwargs)
         self.charset = charset
         self.collation = collation
@@ -219,8 +241,8 @@ class Database(ProxyResource):
 class DatabaseListResult(msrest.serialization.Model):
     """A List of databases.
 
-    :param value: The list of databases housed in a server.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.Database]
+    :ivar value: The list of databases housed in a server.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.Database]
     """
 
     _attribute_map = {
@@ -230,9 +252,13 @@ class DatabaseListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Database"]] = None,
+        value: Optional[List["_models.Database"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of databases housed in a server.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Database]
+        """
         super(DatabaseListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -245,7 +271,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -255,13 +281,15 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -304,6 +332,8 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -327,12 +357,12 @@ class FirewallRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param start_ip_address: Required. The start IP address of the server firewall rule. Must be
+    :ivar start_ip_address: Required. The start IP address of the server firewall rule. Must be
      IPv4 format.
-    :type start_ip_address: str
-    :param end_ip_address: Required. The end IP address of the server firewall rule. Must be IPv4
+    :vartype start_ip_address: str
+    :ivar end_ip_address: Required. The end IP address of the server firewall rule. Must be IPv4
      format.
-    :type end_ip_address: str
+    :vartype end_ip_address: str
     """
 
     _validation = {
@@ -358,6 +388,14 @@ class FirewallRule(ProxyResource):
         end_ip_address: str,
         **kwargs
     ):
+        """
+        :keyword start_ip_address: Required. The start IP address of the server firewall rule. Must be
+         IPv4 format.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: Required. The end IP address of the server firewall rule. Must be IPv4
+         format.
+        :paramtype end_ip_address: str
+        """
         super(FirewallRule, self).__init__(**kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
@@ -366,8 +404,8 @@ class FirewallRule(ProxyResource):
 class FirewallRuleListResult(msrest.serialization.Model):
     """A list of firewall rules.
 
-    :param value: The list of firewall rules in a server.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.FirewallRule]
+    :ivar value: The list of firewall rules in a server.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.FirewallRule]
     """
 
     _attribute_map = {
@@ -377,9 +415,13 @@ class FirewallRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["FirewallRule"]] = None,
+        value: Optional[List["_models.FirewallRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of firewall rules in a server.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.FirewallRule]
+        """
         super(FirewallRuleListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -397,16 +439,16 @@ class LogFile(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param size_in_kb: Size of the log file.
-    :type size_in_kb: long
+    :ivar size_in_kb: Size of the log file.
+    :vartype size_in_kb: long
     :ivar created_time: Creation timestamp of the log file.
     :vartype created_time: ~datetime.datetime
     :ivar last_modified_time: Last modified timestamp of the log file.
     :vartype last_modified_time: ~datetime.datetime
-    :param type_properties_type: Type of the log file.
-    :type type_properties_type: str
-    :param url: The url to download the log file from.
-    :type url: str
+    :ivar type_properties_type: Type of the log file.
+    :vartype type_properties_type: str
+    :ivar url: The url to download the log file from.
+    :vartype url: str
     """
 
     _validation = {
@@ -436,6 +478,14 @@ class LogFile(ProxyResource):
         url: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword size_in_kb: Size of the log file.
+        :paramtype size_in_kb: long
+        :keyword type_properties_type: Type of the log file.
+        :paramtype type_properties_type: str
+        :keyword url: The url to download the log file from.
+        :paramtype url: str
+        """
         super(LogFile, self).__init__(**kwargs)
         self.size_in_kb = size_in_kb
         self.created_time = None
@@ -447,8 +497,8 @@ class LogFile(ProxyResource):
 class LogFileListResult(msrest.serialization.Model):
     """A list of log files.
 
-    :param value: The list of log files.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.LogFile]
+    :ivar value: The list of log files.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.LogFile]
     """
 
     _attribute_map = {
@@ -458,9 +508,13 @@ class LogFileListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["LogFile"]] = None,
+        value: Optional[List["_models.LogFile"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of log files.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.LogFile]
+        """
         super(LogFileListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -468,12 +522,12 @@ class LogFileListResult(msrest.serialization.Model):
 class NameAvailability(msrest.serialization.Model):
     """Represents a resource name availability.
 
-    :param message: Error Message.
-    :type message: str
-    :param name_available: Indicates whether the resource name is available.
-    :type name_available: bool
-    :param reason: Reason for name being unavailable.
-    :type reason: str
+    :ivar message: Error Message.
+    :vartype message: str
+    :ivar name_available: Indicates whether the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: Reason for name being unavailable.
+    :vartype reason: str
     """
 
     _attribute_map = {
@@ -490,6 +544,14 @@ class NameAvailability(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message: Error Message.
+        :paramtype message: str
+        :keyword name_available: Indicates whether the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: Reason for name being unavailable.
+        :paramtype reason: str
+        """
         super(NameAvailability, self).__init__(**kwargs)
         self.message = message
         self.name_available = name_available
@@ -501,10 +563,10 @@ class NameAvailabilityRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Resource name to verify.
-    :type name: str
-    :param type: Resource type used for verification.
-    :type type: str
+    :ivar name: Required. Resource name to verify.
+    :vartype name: str
+    :ivar type: Resource type used for verification.
+    :vartype type: str
     """
 
     _validation = {
@@ -523,6 +585,12 @@ class NameAvailabilityRequest(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. Resource name to verify.
+        :paramtype name: str
+        :keyword type: Resource type used for verification.
+        :paramtype type: str
+        """
         super(NameAvailabilityRequest, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -537,11 +605,11 @@ class Operation(msrest.serialization.Model):
     :vartype name: str
     :ivar display: The localized display information for this particular operation or action.
     :vartype display: ~azure.mgmt.rdbms.postgresql.models.OperationDisplay
-    :ivar origin: The intended executor of the operation. Possible values include: "NotSpecified",
-     "user", "system".
+    :ivar origin: The intended executor of the operation. Known values are: "NotSpecified", "user",
+     "system".
     :vartype origin: str or ~azure.mgmt.rdbms.postgresql.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, str]
+    :vartype properties: dict[str, any]
     """
 
     _validation = {
@@ -555,13 +623,15 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{object}'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
@@ -602,6 +672,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -612,8 +684,8 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """A list of resource provider operations.
 
-    :param value: The list of resource provider operations.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.Operation]
+    :ivar value: The list of resource provider operations.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.Operation]
     """
 
     _attribute_map = {
@@ -623,9 +695,13 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of resource provider operations.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Operation]
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -633,8 +709,8 @@ class OperationListResult(msrest.serialization.Model):
 class PerformanceTierListResult(msrest.serialization.Model):
     """A list of performance tiers.
 
-    :param value: The list of performance tiers.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierProperties]
+    :ivar value: The list of performance tiers.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierProperties]
     """
 
     _attribute_map = {
@@ -644,9 +720,13 @@ class PerformanceTierListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PerformanceTierProperties"]] = None,
+        value: Optional[List["_models.PerformanceTierProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of performance tiers.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierProperties]
+        """
         super(PerformanceTierListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -654,24 +734,24 @@ class PerformanceTierListResult(msrest.serialization.Model):
 class PerformanceTierProperties(msrest.serialization.Model):
     """Performance tier properties.
 
-    :param id: ID of the performance tier.
-    :type id: str
-    :param max_backup_retention_days: Maximum Backup retention in days for the performance tier
+    :ivar id: ID of the performance tier.
+    :vartype id: str
+    :ivar max_backup_retention_days: Maximum Backup retention in days for the performance tier
      edition.
-    :type max_backup_retention_days: int
-    :param min_backup_retention_days: Minimum Backup retention in days for the performance tier
+    :vartype max_backup_retention_days: int
+    :ivar min_backup_retention_days: Minimum Backup retention in days for the performance tier
      edition.
-    :type min_backup_retention_days: int
-    :param max_storage_mb: Max storage allowed for a server.
-    :type max_storage_mb: int
-    :param min_large_storage_mb: Max storage allowed for a server.
-    :type min_large_storage_mb: int
-    :param max_large_storage_mb: Max storage allowed for a server.
-    :type max_large_storage_mb: int
-    :param min_storage_mb: Max storage allowed for a server.
-    :type min_storage_mb: int
-    :param service_level_objectives: Service level objectives associated with the performance tier.
-    :type service_level_objectives:
+    :vartype min_backup_retention_days: int
+    :ivar max_storage_mb: Max storage allowed for a server.
+    :vartype max_storage_mb: int
+    :ivar min_large_storage_mb: Max storage allowed for a server.
+    :vartype min_large_storage_mb: int
+    :ivar max_large_storage_mb: Max storage allowed for a server.
+    :vartype max_large_storage_mb: int
+    :ivar min_storage_mb: Max storage allowed for a server.
+    :vartype min_storage_mb: int
+    :ivar service_level_objectives: Service level objectives associated with the performance tier.
+    :vartype service_level_objectives:
      list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierServiceLevelObjectives]
     """
 
@@ -696,9 +776,31 @@ class PerformanceTierProperties(msrest.serialization.Model):
         min_large_storage_mb: Optional[int] = None,
         max_large_storage_mb: Optional[int] = None,
         min_storage_mb: Optional[int] = None,
-        service_level_objectives: Optional[List["PerformanceTierServiceLevelObjectives"]] = None,
+        service_level_objectives: Optional[List["_models.PerformanceTierServiceLevelObjectives"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: ID of the performance tier.
+        :paramtype id: str
+        :keyword max_backup_retention_days: Maximum Backup retention in days for the performance tier
+         edition.
+        :paramtype max_backup_retention_days: int
+        :keyword min_backup_retention_days: Minimum Backup retention in days for the performance tier
+         edition.
+        :paramtype min_backup_retention_days: int
+        :keyword max_storage_mb: Max storage allowed for a server.
+        :paramtype max_storage_mb: int
+        :keyword min_large_storage_mb: Max storage allowed for a server.
+        :paramtype min_large_storage_mb: int
+        :keyword max_large_storage_mb: Max storage allowed for a server.
+        :paramtype max_large_storage_mb: int
+        :keyword min_storage_mb: Max storage allowed for a server.
+        :paramtype min_storage_mb: int
+        :keyword service_level_objectives: Service level objectives associated with the performance
+         tier.
+        :paramtype service_level_objectives:
+         list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierServiceLevelObjectives]
+        """
         super(PerformanceTierProperties, self).__init__(**kwargs)
         self.id = id
         self.max_backup_retention_days = max_backup_retention_days
@@ -713,24 +815,24 @@ class PerformanceTierProperties(msrest.serialization.Model):
 class PerformanceTierServiceLevelObjectives(msrest.serialization.Model):
     """Service level objectives for performance tier.
 
-    :param id: ID for the service level objective.
-    :type id: str
-    :param edition: Edition of the performance tier.
-    :type edition: str
-    :param v_core: vCore associated with the service level objective.
-    :type v_core: int
-    :param hardware_generation: Hardware generation associated with the service level objective.
-    :type hardware_generation: str
-    :param max_backup_retention_days: Maximum Backup retention in days for the performance tier
+    :ivar id: ID for the service level objective.
+    :vartype id: str
+    :ivar edition: Edition of the performance tier.
+    :vartype edition: str
+    :ivar v_core: vCore associated with the service level objective.
+    :vartype v_core: int
+    :ivar hardware_generation: Hardware generation associated with the service level objective.
+    :vartype hardware_generation: str
+    :ivar max_backup_retention_days: Maximum Backup retention in days for the performance tier
      edition.
-    :type max_backup_retention_days: int
-    :param min_backup_retention_days: Minimum Backup retention in days for the performance tier
+    :vartype max_backup_retention_days: int
+    :ivar min_backup_retention_days: Minimum Backup retention in days for the performance tier
      edition.
-    :type min_backup_retention_days: int
-    :param max_storage_mb: Max storage allowed for a server.
-    :type max_storage_mb: int
-    :param min_storage_mb: Max storage allowed for a server.
-    :type min_storage_mb: int
+    :vartype min_backup_retention_days: int
+    :ivar max_storage_mb: Max storage allowed for a server.
+    :vartype max_storage_mb: int
+    :ivar min_storage_mb: Max storage allowed for a server.
+    :vartype min_storage_mb: int
     """
 
     _attribute_map = {
@@ -757,6 +859,26 @@ class PerformanceTierServiceLevelObjectives(msrest.serialization.Model):
         min_storage_mb: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword id: ID for the service level objective.
+        :paramtype id: str
+        :keyword edition: Edition of the performance tier.
+        :paramtype edition: str
+        :keyword v_core: vCore associated with the service level objective.
+        :paramtype v_core: int
+        :keyword hardware_generation: Hardware generation associated with the service level objective.
+        :paramtype hardware_generation: str
+        :keyword max_backup_retention_days: Maximum Backup retention in days for the performance tier
+         edition.
+        :paramtype max_backup_retention_days: int
+        :keyword min_backup_retention_days: Minimum Backup retention in days for the performance tier
+         edition.
+        :paramtype min_backup_retention_days: int
+        :keyword max_storage_mb: Max storage allowed for a server.
+        :paramtype max_storage_mb: int
+        :keyword min_storage_mb: Max storage allowed for a server.
+        :paramtype min_storage_mb: int
+        """
         super(PerformanceTierServiceLevelObjectives, self).__init__(**kwargs)
         self.id = id
         self.edition = edition
@@ -781,11 +903,11 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
@@ -810,10 +932,18 @@ class PrivateEndpointConnection(ProxyResource):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateProperty
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -845,6 +975,8 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -853,8 +985,8 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
 class PrivateEndpointProperty(msrest.serialization.Model):
     """PrivateEndpointProperty.
 
-    :param id: Resource id of the private endpoint.
-    :type id: str
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -867,6 +999,10 @@ class PrivateEndpointProperty(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Resource id of the private endpoint.
+        :paramtype id: str
+        """
         super(PrivateEndpointProperty, self).__init__(**kwargs)
         self.id = id
 
@@ -906,6 +1042,8 @@ class PrivateLinkResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.properties = None
 
@@ -935,6 +1073,8 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -965,6 +1105,8 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResourceProperties, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -977,10 +1119,10 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status.
-    :type status: str
-    :param description: Required. The private link service connection description.
-    :type description: str
+    :ivar status: Required. The private link service connection status.
+    :vartype status: str
+    :ivar description: Required. The private link service connection description.
+    :vartype description: str
     :ivar actions_required: The actions required for private link service connection.
     :vartype actions_required: str
     """
@@ -1004,6 +1146,12 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
         description: str,
         **kwargs
     ):
+        """
+        :keyword status: Required. The private link service connection status.
+        :paramtype status: str
+        :keyword description: Required. The private link service connection description.
+        :paramtype description: str
+        """
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -1065,6 +1213,8 @@ class RecoverableServerResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(RecoverableServerResource, self).__init__(**kwargs)
         self.last_available_backup_date_time = None
         self.service_level_objective = None
@@ -1081,10 +1231,10 @@ class ResourceIdentity(msrest.serialization.Model):
 
     :ivar principal_id: The Azure Active Directory principal id.
     :vartype principal_id: str
-    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
-     and assign an Azure Active Directory principal for the resource. Possible values include:
+    :ivar type: The identity type. Set this to 'SystemAssigned' in order to automatically create
+     and assign an Azure Active Directory principal for the resource. Known values are:
      "SystemAssigned".
-    :type type: str or ~azure.mgmt.rdbms.postgresql.models.IdentityType
+    :vartype type: str or ~azure.mgmt.rdbms.postgresql.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
     """
@@ -1103,9 +1253,15 @@ class ResourceIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "IdentityType"]] = None,
+        type: Optional[Union[str, "_models.IdentityType"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. Set this to 'SystemAssigned' in order to automatically create
+         and assign an Azure Active Directory principal for the resource. Known values are:
+         "SystemAssigned".
+        :paramtype type: str or ~azure.mgmt.rdbms.postgresql.models.IdentityType
+        """
         super(ResourceIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.type = type
@@ -1127,10 +1283,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -1155,6 +1311,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1175,52 +1337,52 @@ class Server(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
-    :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
-    :param administrator_login: The administrator's login name of a server. Can only be specified
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: The Azure Active Directory identity of the server.
+    :vartype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+    :ivar sku: The SKU (pricing tier) of the server.
+    :vartype sku: ~azure.mgmt.rdbms.postgresql.models.Sku
+    :ivar administrator_login: The administrator's login name of a server. Can only be specified
      when the server is being created (and is required for creation).
-    :type administrator_login: str
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+    :vartype administrator_login: str
+    :ivar version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+    :vartype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled", "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
     :ivar byok_enforcement: Status showing whether the server data encryption is enabled with
      customer-managed keys.
     :vartype byok_enforcement: str
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
+    :ivar infrastructure_encryption: Status showing whether the server enabled infrastructure
+     encryption. Known values are: "Enabled", "Disabled".
+    :vartype infrastructure_encryption: str or
      ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param user_visible_state: A state of a server that is visible to user. Possible values
-     include: "Ready", "Dropping", "Disabled", "Inaccessible".
-    :type user_visible_state: str or ~azure.mgmt.rdbms.postgresql.models.ServerState
-    :param fully_qualified_domain_name: The fully qualified domain name of a server.
-    :type fully_qualified_domain_name: str
-    :param earliest_restore_date: Earliest restore point creation time (ISO8601 format).
-    :type earliest_restore_date: ~datetime.datetime
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param replication_role: The replication role of the server.
-    :type replication_role: str
-    :param master_server_id: The master server id of a replica server.
-    :type master_server_id: str
-    :param replica_capacity: The maximum number of replicas that a master server can have.
-    :type replica_capacity: int
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar user_visible_state: A state of a server that is visible to user. Known values are:
+     "Ready", "Dropping", "Disabled", "Inaccessible".
+    :vartype user_visible_state: str or ~azure.mgmt.rdbms.postgresql.models.ServerState
+    :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
+    :vartype fully_qualified_domain_name: str
+    :ivar earliest_restore_date: Earliest restore point creation time (ISO8601 format).
+    :vartype earliest_restore_date: ~datetime.datetime
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :ivar replication_role: The replication role of the server.
+    :vartype replication_role: str
+    :ivar master_server_id: The master server id of a replica server.
+    :vartype master_server_id: str
+    :ivar replica_capacity: The maximum number of replicas that a master server can have.
+    :vartype replica_capacity: int
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.rdbms.postgresql.models.ServerPrivateEndpointConnection]
@@ -1266,23 +1428,69 @@ class Server(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["ResourceIdentity"] = None,
-        sku: Optional["Sku"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
         administrator_login: Optional[str] = None,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        infrastructure_encryption: Optional[Union[str, "InfrastructureEncryption"]] = None,
-        user_visible_state: Optional[Union[str, "ServerState"]] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        user_visible_state: Optional[Union[str, "_models.ServerState"]] = None,
         fully_qualified_domain_name: Optional[str] = None,
         earliest_restore_date: Optional[datetime.datetime] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         replication_role: Optional[str] = None,
         master_server_id: Optional[str] = None,
         replica_capacity: Optional[int] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The Azure Active Directory identity of the server.
+        :paramtype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+        :keyword sku: The SKU (pricing tier) of the server.
+        :paramtype sku: ~azure.mgmt.rdbms.postgresql.models.Sku
+        :keyword administrator_login: The administrator's login name of a server. Can only be specified
+         when the server is being created (and is required for creation).
+        :paramtype administrator_login: str
+        :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+        :paramtype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled", "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or
+         ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+        :keyword infrastructure_encryption: Status showing whether the server enabled infrastructure
+         encryption. Known values are: "Enabled", "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+        :keyword user_visible_state: A state of a server that is visible to user. Known values are:
+         "Ready", "Dropping", "Disabled", "Inaccessible".
+        :paramtype user_visible_state: str or ~azure.mgmt.rdbms.postgresql.models.ServerState
+        :keyword fully_qualified_domain_name: The fully qualified domain name of a server.
+        :paramtype fully_qualified_domain_name: str
+        :keyword earliest_restore_date: Earliest restore point creation time (ISO8601 format).
+        :paramtype earliest_restore_date: ~datetime.datetime
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+        :keyword replication_role: The replication role of the server.
+        :paramtype replication_role: str
+        :keyword master_server_id: The master server id of a replica server.
+        :paramtype master_server_id: str
+        :keyword replica_capacity: The maximum number of replicas that a master server can have.
+        :paramtype replica_capacity: int
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+        """
         super(Server, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.sku = sku
@@ -1316,21 +1524,21 @@ class ServerAdministratorResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar administrator_type: The type of administrator. Default value: "ActiveDirectory".
+    :ivar administrator_type: The type of administrator. The only acceptable values to pass in are
+     None and "ActiveDirectory". The default value is None.
     :vartype administrator_type: str
-    :param login: The server administrator login account name.
-    :type login: str
-    :param sid: The server administrator Sid (Secure ID).
-    :type sid: str
-    :param tenant_id: The server Active Directory Administrator tenant id.
-    :type tenant_id: str
+    :ivar login: The server administrator login account name.
+    :vartype login: str
+    :ivar sid: The server administrator Sid (Secure ID).
+    :vartype sid: str
+    :ivar tenant_id: The server Active Directory Administrator tenant id.
+    :vartype tenant_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'administrator_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -1343,17 +1551,28 @@ class ServerAdministratorResource(ProxyResource):
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
     }
 
-    administrator_type = "ActiveDirectory"
-
     def __init__(
         self,
         *,
+        administrator_type: Optional[str] = None,
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword administrator_type: The type of administrator. The only acceptable values to pass in
+         are None and "ActiveDirectory". The default value is None.
+        :paramtype administrator_type: str
+        :keyword login: The server administrator login account name.
+        :paramtype login: str
+        :keyword sid: The server administrator Sid (Secure ID).
+        :paramtype sid: str
+        :keyword tenant_id: The server Active Directory Administrator tenant id.
+        :paramtype tenant_id: str
+        """
         super(ServerAdministratorResource, self).__init__(**kwargs)
+        self.administrator_type = administrator_type
         self.login = login
         self.sid = sid
         self.tenant_id = tenant_id
@@ -1362,8 +1581,8 @@ class ServerAdministratorResource(ProxyResource):
 class ServerAdministratorResourceListResult(msrest.serialization.Model):
     """The response to a list Active Directory Administrators request.
 
-    :param value: The list of server Active Directory Administrators for the server.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.ServerAdministratorResource]
+    :ivar value: The list of server Active Directory Administrators for the server.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.ServerAdministratorResource]
     """
 
     _attribute_map = {
@@ -1373,9 +1592,13 @@ class ServerAdministratorResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ServerAdministratorResource"]] = None,
+        value: Optional[List["_models.ServerAdministratorResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of server Active Directory Administrators for the server.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.ServerAdministratorResource]
+        """
         super(ServerAdministratorResourceListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1385,16 +1608,16 @@ class ServerForCreate(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
-    :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
-    :param properties: Required. Properties of the server.
-    :type properties: ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate
-    :param location: Required. The location the resource resides in.
-    :type location: str
-    :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar identity: The Azure Active Directory identity of the server.
+    :vartype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+    :ivar sku: The SKU (pricing tier) of the server.
+    :vartype sku: ~azure.mgmt.rdbms.postgresql.models.Sku
+    :ivar properties: Required. Properties of the server.
+    :vartype properties: ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate
+    :ivar location: Required. The location the resource resides in.
+    :vartype location: str
+    :ivar tags: A set of tags. Application-specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -1413,13 +1636,25 @@ class ServerForCreate(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "ServerPropertiesForCreate",
+        properties: "_models.ServerPropertiesForCreate",
         location: str,
-        identity: Optional["ResourceIdentity"] = None,
-        sku: Optional["Sku"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword identity: The Azure Active Directory identity of the server.
+        :paramtype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+        :keyword sku: The SKU (pricing tier) of the server.
+        :paramtype sku: ~azure.mgmt.rdbms.postgresql.models.Sku
+        :keyword properties: Required. Properties of the server.
+        :paramtype properties: ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate
+        :keyword location: Required. The location the resource resides in.
+        :paramtype location: str
+        :keyword tags: A set of tags. Application-specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(ServerForCreate, self).__init__(**kwargs)
         self.identity = identity
         self.sku = sku
@@ -1443,11 +1678,10 @@ class ServerKey(ProxyResource):
     :vartype type: str
     :ivar kind: Kind of encryption protector used to protect the key.
     :vartype kind: str
-    :param server_key_type: The key type like 'AzureKeyVault'. Possible values include:
-     "AzureKeyVault".
-    :type server_key_type: str or ~azure.mgmt.rdbms.postgresql.models.ServerKeyType
-    :param uri: The URI of the key.
-    :type uri: str
+    :ivar server_key_type: The key type like 'AzureKeyVault'. Known values are: "AzureKeyVault".
+    :vartype server_key_type: str or ~azure.mgmt.rdbms.postgresql.models.ServerKeyType
+    :ivar uri: The URI of the key.
+    :vartype uri: str
     :ivar creation_date: The key creation date.
     :vartype creation_date: ~datetime.datetime
     """
@@ -1473,10 +1707,16 @@ class ServerKey(ProxyResource):
     def __init__(
         self,
         *,
-        server_key_type: Optional[Union[str, "ServerKeyType"]] = None,
+        server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword server_key_type: The key type like 'AzureKeyVault'. Known values are: "AzureKeyVault".
+        :paramtype server_key_type: str or ~azure.mgmt.rdbms.postgresql.models.ServerKeyType
+        :keyword uri: The URI of the key.
+        :paramtype uri: str
+        """
         super(ServerKey, self).__init__(**kwargs)
         self.kind = None
         self.server_key_type = server_key_type
@@ -1509,6 +1749,8 @@ class ServerKeyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerKeyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1517,8 +1759,8 @@ class ServerKeyListResult(msrest.serialization.Model):
 class ServerListResult(msrest.serialization.Model):
     """A list of servers.
 
-    :param value: The list of servers.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.Server]
+    :ivar value: The list of servers.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.Server]
     """
 
     _attribute_map = {
@@ -1528,9 +1770,13 @@ class ServerListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Server"]] = None,
+        value: Optional[List["_models.Server"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of servers.
+        :paramtype value: list[~azure.mgmt.rdbms.postgresql.models.Server]
+        """
         super(ServerListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1561,6 +1807,8 @@ class ServerPrivateEndpointConnection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
         self.id = None
         self.properties = None
@@ -1571,13 +1819,13 @@ class ServerPrivateEndpointConnectionProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.rdbms.postgresql.models.ServerPrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the private endpoint connection. Possible values include:
+    :ivar provisioning_state: State of the private endpoint connection. Known values are:
      "Approving", "Ready", "Dropping", "Failed", "Rejecting".
     :vartype provisioning_state: str or
      ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProvisioningState
@@ -1596,10 +1844,18 @@ class ServerPrivateEndpointConnectionProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["ServerPrivateLinkServiceConnectionStateProperty"] = None,
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.ServerPrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.rdbms.postgresql.models.ServerPrivateLinkServiceConnectionStateProperty
+        """
         super(ServerPrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -1613,14 +1869,14 @@ class ServerPrivateLinkServiceConnectionStateProperty(msrest.serialization.Model
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status. Possible values include:
+    :ivar status: Required. The private link service connection status. Known values are:
      "Approved", "Pending", "Rejected", "Disconnected".
-    :type status: str or
+    :vartype status: str or
      ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateStatus
-    :param description: Required. The private link service connection description.
-    :type description: str
-    :ivar actions_required: The actions required for private link service connection. Possible
-     values include: "None".
+    :ivar description: Required. The private link service connection description.
+    :vartype description: str
+    :ivar actions_required: The actions required for private link service connection. Known values
+     are: "None".
     :vartype actions_required: str or
      ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateActionsRequire
     """
@@ -1640,10 +1896,18 @@ class ServerPrivateLinkServiceConnectionStateProperty(msrest.serialization.Model
     def __init__(
         self,
         *,
-        status: Union[str, "PrivateLinkServiceConnectionStateStatus"],
+        status: Union[str, "_models.PrivateLinkServiceConnectionStateStatus"],
         description: str,
         **kwargs
     ):
+        """
+        :keyword status: Required. The private link service connection status. Known values are:
+         "Approved", "Pending", "Rejected", "Disconnected".
+        :paramtype status: str or
+         ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateStatus
+        :keyword description: Required. The private link service connection description.
+        :paramtype description: str
+        """
         super(ServerPrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -1658,28 +1922,28 @@ class ServerPropertiesForCreate(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+    :vartype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+    :ivar infrastructure_encryption: Status showing whether the server enabled infrastructure
+     encryption. Known values are: "Enabled", "Disabled".
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :ivar create_mode: Required. The mode to create a new server.Constant filled by server. Known
+     values are: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
     """
 
     _validation = {
@@ -1703,14 +1967,36 @@ class ServerPropertiesForCreate(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        infrastructure_encryption: Optional[Union[str, "InfrastructureEncryption"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+        :paramtype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled", "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or
+         ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+        :keyword infrastructure_encryption: Status showing whether the server enabled infrastructure
+         encryption. Known values are: "Enabled", "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+        """
         super(ServerPropertiesForCreate, self).__init__(**kwargs)
         self.version = version
         self.ssl_enforcement = ssl_enforcement
@@ -1726,33 +2012,33 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+    :vartype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param administrator_login: Required. The administrator's login name of a server. Can only be
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+    :ivar infrastructure_encryption: Status showing whether the server enabled infrastructure
+     encryption. Known values are: "Enabled", "Disabled".
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :ivar create_mode: Required. The mode to create a new server.Constant filled by server. Known
+     values are: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
+    :ivar administrator_login: Required. The administrator's login name of a server. Can only be
      specified when the server is being created (and is required for creation).
-    :type administrator_login: str
-    :param administrator_login_password: Required. The password of the administrator login.
-    :type administrator_login_password: str
+    :vartype administrator_login: str
+    :ivar administrator_login_password: Required. The password of the administrator login.
+    :vartype administrator_login_password: str
     """
 
     _validation = {
@@ -1778,14 +2064,41 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
         *,
         administrator_login: str,
         administrator_login_password: str,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        infrastructure_encryption: Optional[Union[str, "InfrastructureEncryption"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+        :paramtype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled", "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or
+         ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+        :keyword infrastructure_encryption: Status showing whether the server enabled infrastructure
+         encryption. Known values are: "Enabled", "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+        :keyword administrator_login: Required. The administrator's login name of a server. Can only be
+         specified when the server is being created (and is required for creation).
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: Required. The password of the administrator login.
+        :paramtype administrator_login_password: str
+        """
         super(ServerPropertiesForDefaultCreate, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, infrastructure_encryption=infrastructure_encryption, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.create_mode = 'Default'  # type: str
         self.administrator_login = administrator_login
@@ -1797,30 +2110,30 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+    :vartype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param source_server_id: Required. The source server id to restore from.
-    :type source_server_id: str
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+    :ivar infrastructure_encryption: Status showing whether the server enabled infrastructure
+     encryption. Known values are: "Enabled", "Disabled".
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :ivar create_mode: Required. The mode to create a new server.Constant filled by server. Known
+     values are: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
+    :ivar source_server_id: Required. The source server id to restore from.
+    :vartype source_server_id: str
     """
 
     _validation = {
@@ -1843,14 +2156,38 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
         self,
         *,
         source_server_id: str,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        infrastructure_encryption: Optional[Union[str, "InfrastructureEncryption"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+        :paramtype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled", "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or
+         ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+        :keyword infrastructure_encryption: Status showing whether the server enabled infrastructure
+         encryption. Known values are: "Enabled", "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+        :keyword source_server_id: Required. The source server id to restore from.
+        :paramtype source_server_id: str
+        """
         super(ServerPropertiesForGeoRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, infrastructure_encryption=infrastructure_encryption, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.create_mode = 'GeoRestore'  # type: str
         self.source_server_id = source_server_id
@@ -1861,30 +2198,30 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+    :vartype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param source_server_id: Required. The master server id to create replica from.
-    :type source_server_id: str
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+    :ivar infrastructure_encryption: Status showing whether the server enabled infrastructure
+     encryption. Known values are: "Enabled", "Disabled".
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :ivar create_mode: Required. The mode to create a new server.Constant filled by server. Known
+     values are: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
+    :ivar source_server_id: Required. The master server id to create replica from.
+    :vartype source_server_id: str
     """
 
     _validation = {
@@ -1907,14 +2244,38 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
         self,
         *,
         source_server_id: str,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        infrastructure_encryption: Optional[Union[str, "InfrastructureEncryption"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+        :paramtype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled", "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or
+         ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+        :keyword infrastructure_encryption: Status showing whether the server enabled infrastructure
+         encryption. Known values are: "Enabled", "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+        :keyword source_server_id: Required. The master server id to create replica from.
+        :paramtype source_server_id: str
+        """
         super(ServerPropertiesForReplica, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, infrastructure_encryption=infrastructure_encryption, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.create_mode = 'Replica'  # type: str
         self.source_server_id = source_server_id
@@ -1925,33 +2286,33 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+    :vartype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param source_server_id: Required. The source server id to restore from.
-    :type source_server_id: str
-    :param restore_point_in_time: Required. Restore point creation time (ISO8601 format),
-     specifying the time to restore from.
-    :type restore_point_in_time: ~datetime.datetime
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+    :ivar infrastructure_encryption: Status showing whether the server enabled infrastructure
+     encryption. Known values are: "Enabled", "Disabled".
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :ivar create_mode: Required. The mode to create a new server.Constant filled by server. Known
+     values are: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
+    :ivar source_server_id: Required. The source server id to restore from.
+    :vartype source_server_id: str
+    :ivar restore_point_in_time: Required. Restore point creation time (ISO8601 format), specifying
+     the time to restore from.
+    :vartype restore_point_in_time: ~datetime.datetime
     """
 
     _validation = {
@@ -1977,14 +2338,41 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
         *,
         source_server_id: str,
         restore_point_in_time: datetime.datetime,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        infrastructure_encryption: Optional[Union[str, "InfrastructureEncryption"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword version: Server version. Known values are: "9.5", "9.6", "10", "10.0", "10.2", "11".
+        :paramtype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled", "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or
+         ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+        :keyword infrastructure_encryption: Status showing whether the server enabled infrastructure
+         encryption. Known values are: "Enabled", "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+        :keyword source_server_id: Required. The source server id to restore from.
+        :paramtype source_server_id: str
+        :keyword restore_point_in_time: Required. Restore point creation time (ISO8601 format),
+         specifying the time to restore from.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        """
         super(ServerPropertiesForRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, infrastructure_encryption=infrastructure_encryption, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
         self.create_mode = 'PointInTimeRestore'  # type: str
         self.source_server_id = source_server_id
@@ -2004,25 +2392,25 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param state: Specifies the state of the policy, whether it is enabled or disabled. Possible
-     values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.rdbms.postgresql.models.ServerSecurityAlertPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled. Known values
+     are: "Enabled", "Disabled".
+    :vartype state: str or ~azure.mgmt.rdbms.postgresql.models.ServerSecurityAlertPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     """
 
     _validation = {
@@ -2047,7 +2435,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "ServerSecurityAlertPolicyState"]] = None,
+        state: Optional[Union[str, "_models.ServerSecurityAlertPolicyState"]] = None,
         disabled_alerts: Optional[List[str]] = None,
         email_addresses: Optional[List[str]] = None,
         email_account_admins: Optional[bool] = None,
@@ -2056,6 +2444,28 @@ class ServerSecurityAlertPolicy(ProxyResource):
         retention_days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled. Known
+         values are: "Enabled", "Disabled".
+        :paramtype state: str or ~azure.mgmt.rdbms.postgresql.models.ServerSecurityAlertPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
         super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
         self.state = state
         self.disabled_alerts = disabled_alerts
@@ -2091,6 +2501,8 @@ class ServerSecurityAlertPolicyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerSecurityAlertPolicyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2099,31 +2511,32 @@ class ServerSecurityAlertPolicyListResult(msrest.serialization.Model):
 class ServerUpdateParameters(msrest.serialization.Model):
     """Parameters allowed to update for a server.
 
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
-    :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
-    :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param administrator_login_password: The password of the administrator login.
-    :type administrator_login_password: str
-    :param version: The version of a server. Possible values include: "9.5", "9.6", "10", "10.0",
-     "10.2", "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar identity: The Azure Active Directory identity of the server.
+    :vartype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+    :ivar sku: The SKU (pricing tier) of the server.
+    :vartype sku: ~azure.mgmt.rdbms.postgresql.models.Sku
+    :ivar tags: A set of tags. Application-specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :ivar administrator_login_password: The password of the administrator login.
+    :vartype administrator_login_password: str
+    :ivar version: The version of a server. Known values are: "9.5", "9.6", "10", "10.0", "10.2",
+     "11".
+    :vartype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param replication_role: The replication role of the server.
-    :type replication_role: str
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+    :ivar replication_role: The replication role of the server.
+    :vartype replication_role: str
     """
 
     _attribute_map = {
@@ -2142,18 +2555,47 @@ class ServerUpdateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        identity: Optional["ResourceIdentity"] = None,
-        sku: Optional["Sku"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         administrator_login_password: Optional[str] = None,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         replication_role: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword identity: The Azure Active Directory identity of the server.
+        :paramtype identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+        :keyword sku: The SKU (pricing tier) of the server.
+        :paramtype sku: ~azure.mgmt.rdbms.postgresql.models.Sku
+        :keyword tags: A set of tags. Application-specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+        :keyword administrator_login_password: The password of the administrator login.
+        :paramtype administrator_login_password: str
+        :keyword version: The version of a server. Known values are: "9.5", "9.6", "10", "10.0",
+         "10.2", "11".
+        :paramtype version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled", "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or
+         ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
+        :keyword replication_role: The replication role of the server.
+        :paramtype replication_role: str
+        """
         super(ServerUpdateParameters, self).__init__(**kwargs)
         self.identity = identity
         self.sku = sku
@@ -2172,18 +2614,18 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1,
+    :ivar name: Required. The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1,
      GP_Gen5_8.
-    :type name: str
-    :param tier: The tier of the particular SKU, e.g. Basic. Possible values include: "Basic",
+    :vartype name: str
+    :ivar tier: The tier of the particular SKU, e.g. Basic. Known values are: "Basic",
      "GeneralPurpose", "MemoryOptimized".
-    :type tier: str or ~azure.mgmt.rdbms.postgresql.models.SkuTier
-    :param capacity: The scale up/out capacity, representing server's compute units.
-    :type capacity: int
-    :param size: The size code, to be interpreted by resource as appropriate.
-    :type size: str
-    :param family: The family of hardware.
-    :type family: str
+    :vartype tier: str or ~azure.mgmt.rdbms.postgresql.models.SkuTier
+    :ivar capacity: The scale up/out capacity, representing server's compute units.
+    :vartype capacity: int
+    :ivar size: The size code, to be interpreted by resource as appropriate.
+    :vartype size: str
+    :ivar family: The family of hardware.
+    :vartype family: str
     """
 
     _validation = {
@@ -2203,12 +2645,26 @@ class Sku(msrest.serialization.Model):
         self,
         *,
         name: str,
-        tier: Optional[Union[str, "SkuTier"]] = None,
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
         capacity: Optional[int] = None,
         size: Optional[str] = None,
         family: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1,
+         GP_Gen5_8.
+        :paramtype name: str
+        :keyword tier: The tier of the particular SKU, e.g. Basic. Known values are: "Basic",
+         "GeneralPurpose", "MemoryOptimized".
+        :paramtype tier: str or ~azure.mgmt.rdbms.postgresql.models.SkuTier
+        :keyword capacity: The scale up/out capacity, representing server's compute units.
+        :paramtype capacity: int
+        :keyword size: The size code, to be interpreted by resource as appropriate.
+        :paramtype size: str
+        :keyword family: The family of hardware.
+        :paramtype family: str
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
@@ -2220,16 +2676,15 @@ class Sku(msrest.serialization.Model):
 class StorageProfile(msrest.serialization.Model):
     """Storage Profile properties of a server.
 
-    :param backup_retention_days: Backup retention days for the server.
-    :type backup_retention_days: int
-    :param geo_redundant_backup: Enable Geo-redundant or not for server backup. Possible values
-     include: "Enabled", "Disabled".
-    :type geo_redundant_backup: str or ~azure.mgmt.rdbms.postgresql.models.GeoRedundantBackup
-    :param storage_mb: Max storage allowed for a server.
-    :type storage_mb: int
-    :param storage_autogrow: Enable Storage Auto Grow. Possible values include: "Enabled",
-     "Disabled".
-    :type storage_autogrow: str or ~azure.mgmt.rdbms.postgresql.models.StorageAutogrow
+    :ivar backup_retention_days: Backup retention days for the server.
+    :vartype backup_retention_days: int
+    :ivar geo_redundant_backup: Enable Geo-redundant or not for server backup. Known values are:
+     "Enabled", "Disabled".
+    :vartype geo_redundant_backup: str or ~azure.mgmt.rdbms.postgresql.models.GeoRedundantBackup
+    :ivar storage_mb: Max storage allowed for a server.
+    :vartype storage_mb: int
+    :ivar storage_autogrow: Enable Storage Auto Grow. Known values are: "Enabled", "Disabled".
+    :vartype storage_autogrow: str or ~azure.mgmt.rdbms.postgresql.models.StorageAutogrow
     """
 
     _attribute_map = {
@@ -2243,11 +2698,22 @@ class StorageProfile(msrest.serialization.Model):
         self,
         *,
         backup_retention_days: Optional[int] = None,
-        geo_redundant_backup: Optional[Union[str, "GeoRedundantBackup"]] = None,
+        geo_redundant_backup: Optional[Union[str, "_models.GeoRedundantBackup"]] = None,
         storage_mb: Optional[int] = None,
-        storage_autogrow: Optional[Union[str, "StorageAutogrow"]] = None,
+        storage_autogrow: Optional[Union[str, "_models.StorageAutogrow"]] = None,
         **kwargs
     ):
+        """
+        :keyword backup_retention_days: Backup retention days for the server.
+        :paramtype backup_retention_days: int
+        :keyword geo_redundant_backup: Enable Geo-redundant or not for server backup. Known values are:
+         "Enabled", "Disabled".
+        :paramtype geo_redundant_backup: str or ~azure.mgmt.rdbms.postgresql.models.GeoRedundantBackup
+        :keyword storage_mb: Max storage allowed for a server.
+        :paramtype storage_mb: int
+        :keyword storage_autogrow: Enable Storage Auto Grow. Known values are: "Enabled", "Disabled".
+        :paramtype storage_autogrow: str or ~azure.mgmt.rdbms.postgresql.models.StorageAutogrow
+        """
         super(StorageProfile, self).__init__(**kwargs)
         self.backup_retention_days = backup_retention_days
         self.geo_redundant_backup = geo_redundant_backup
@@ -2258,8 +2724,8 @@ class StorageProfile(msrest.serialization.Model):
 class TagsObject(msrest.serialization.Model):
     """Tags object for patch operations.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -2272,6 +2738,10 @@ class TagsObject(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TagsObject, self).__init__(**kwargs)
         self.tags = tags
 
@@ -2289,12 +2759,12 @@ class VirtualNetworkRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
-    :type virtual_network_subnet_id: str
-    :param ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network
-     has vnet service endpoint enabled.
-    :type ignore_missing_vnet_service_endpoint: bool
-    :ivar state: Virtual Network Rule State. Possible values include: "Initializing", "InProgress",
+    :ivar virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
+    :vartype virtual_network_subnet_id: str
+    :ivar ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network has
+     vnet service endpoint enabled.
+    :vartype ignore_missing_vnet_service_endpoint: bool
+    :ivar state: Virtual Network Rule State. Known values are: "Initializing", "InProgress",
      "Ready", "Deleting", "Unknown".
     :vartype state: str or ~azure.mgmt.rdbms.postgresql.models.VirtualNetworkRuleState
     """
@@ -2322,6 +2792,13 @@ class VirtualNetworkRule(ProxyResource):
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
+        :paramtype virtual_network_subnet_id: str
+        :keyword ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network
+         has vnet service endpoint enabled.
+        :paramtype ignore_missing_vnet_service_endpoint: bool
+        """
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.virtual_network_subnet_id = virtual_network_subnet_id
         self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
@@ -2353,6 +2830,8 @@ class VirtualNetworkRuleListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VirtualNetworkRuleListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None

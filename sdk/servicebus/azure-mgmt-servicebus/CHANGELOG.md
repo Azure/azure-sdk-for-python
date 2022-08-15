@@ -1,5 +1,86 @@
 # Release History
 
+## 8.1.0 (2022-08-10)
+
+### Features Added
+
+  - Model SBNamespace has a new parameter minimum_tls_version
+  - Model SBNamespace has a new parameter public_network_access
+
+## 8.0.0 (2022-08-08)
+
+**Features**
+
+  - Model ArmDisasterRecovery has a new parameter location
+  - Model MigrationConfigProperties has a new parameter location
+  - Model NetworkRuleSet has a new parameter location
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model OperationDisplay has a new parameter description
+  - Model PrivateEndpointConnection has a new parameter location
+  - Model Rule has a new parameter location
+  - Model SBAuthorizationRule has a new parameter location
+  - Model SBNamespace has a new parameter alternate_name
+  - Model SBNamespaceUpdateParameters has a new parameter alternate_name
+  - Model SBQueue has a new parameter location
+  - Model SBSubscription has a new parameter location
+  - Model SBTopic has a new parameter location
+
+**Breaking changes**
+
+  - Model SBNamespaceUpdateParameters no longer has parameter zone_redundant
+
+## 7.1.0 (2021-09-23)
+
+**Features**
+
+  - Model NetworkRuleSet has a new parameter public_network_access
+  - Model NetworkRuleSet has a new parameter trusted_service_access_enabled
+  - Model SBQueue has a new parameter max_message_size_in_kilobytes
+  - Model SBTopic has a new parameter max_message_size_in_kilobytes
+  - Model SBNamespace has a new parameter status
+  - Model SBNamespace has a new parameter disable_local_auth
+  - Model SBSubscription has a new parameter is_client_affine
+  - Model SBSubscription has a new parameter client_affine_properties
+  - Model SBNamespaceUpdateParameters has a new parameter status
+  - Model SBNamespaceUpdateParameters has a new parameter disable_local_auth
+
+## 7.0.0 (2021-08-19)
+
+**Features**
+
+  - Model Rule has a new parameter system_data
+  - Model SBNamespaceUpdateParameters has a new parameter private_endpoint_connections
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model SBTopic has a new parameter system_data
+  - Model Identity has a new parameter user_assigned_identities
+  - Model SBNamespace has a new parameter system_data
+  - Model SBNamespace has a new parameter private_endpoint_connections
+  - Model Encryption has a new parameter require_infrastructure_encryption
+  - Model SBAuthorizationRule has a new parameter system_data
+  - Model SBSubscription has a new parameter system_data
+  - Model KeyVaultProperties has a new parameter key_version
+  - Model KeyVaultProperties has a new parameter identity
+  - Model ArmDisasterRecovery has a new parameter system_data
+  - Model NetworkRuleSet has a new parameter system_data
+  - Model SBQueue has a new parameter system_data
+  - Model MigrationConfigProperties has a new parameter system_data
+  - Added operation NamespacesOperations.list_network_rule_sets
+
+**Breaking changes**
+
+  - Parameter id of model Subnet is now required
+  - Removed operation NamespacesOperations.list_virtual_network_rules
+  - Removed operation NamespacesOperations.migrate
+  - Removed operation NamespacesOperations.delete_ip_filter_rule
+  - Removed operation NamespacesOperations.get_virtual_network_rule
+  - Removed operation NamespacesOperations.create_or_update_ip_filter_rule
+  - Removed operation NamespacesOperations.delete_virtual_network_rule
+  - Removed operation NamespacesOperations.get_ip_filter_rule
+  - Removed operation NamespacesOperations.list_ip_filter_rules
+  - Removed operation NamespacesOperations.create_or_update_virtual_network_rule
+
 ## 6.0.0 (2020-11-23)
 
 **Features**
@@ -41,7 +122,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -49,13 +130,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 1.0.0 (2020-09-16)
 

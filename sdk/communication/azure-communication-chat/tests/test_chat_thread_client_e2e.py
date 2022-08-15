@@ -20,7 +20,7 @@ from azure.communication.chat import (
 from azure.communication.chat._shared.utils import parse_connection_str
 
 from azure_devtools.scenario_tests import RecordingProcessor
-from helper import URIIdentityReplacer
+from _shared.helper import URIIdentityReplacer
 from chat_e2e_helper import ChatURIReplacer
 from _shared.testcase import (
     CommunicationTestCase,
@@ -248,6 +248,12 @@ class ChatThreadClientTest(CommunicationTestCase):
         self._create_thread()
 
         self.chat_thread_client.send_typing_notification()
+
+    @pytest.mark.live_test_only
+    def test_send_typing_notification_with_display_name(self):
+        self._create_thread()
+
+        self.chat_thread_client.send_typing_notification(sender_display_name="John")
 
     @pytest.mark.live_test_only
     def test_send_read_receipt(self):

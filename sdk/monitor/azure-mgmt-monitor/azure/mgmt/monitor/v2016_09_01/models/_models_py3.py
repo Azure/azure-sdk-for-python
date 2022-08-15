@@ -7,21 +7,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -36,6 +38,12 @@ class ErrorResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -46,10 +54,10 @@ class LocalizableString(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. the invariant value.
-    :type value: str
-    :param localized_value: the locale specific value.
-    :type localized_value: str
+    :ivar value: Required. the invariant value.
+    :vartype value: str
+    :ivar localized_value: the locale specific value.
+    :vartype localized_value: str
     """
 
     _validation = {
@@ -68,6 +76,12 @@ class LocalizableString(msrest.serialization.Model):
         localized_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. the invariant value.
+        :paramtype value: str
+        :keyword localized_value: the locale specific value.
+        :paramtype localized_value: str
+        """
         super(LocalizableString, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
@@ -78,14 +92,14 @@ class LogSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param category: Name of a Diagnostic Log category for a resource type this setting is applied
+    :ivar category: Name of a Diagnostic Log category for a resource type this setting is applied
      to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
      diagnostic settings operation.
-    :type category: str
-    :param enabled: Required. a value indicating whether this log is enabled.
-    :type enabled: bool
-    :param retention_policy: the retention policy for this log.
-    :type retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+    :vartype category: str
+    :ivar enabled: Required. a value indicating whether this log is enabled.
+    :vartype enabled: bool
+    :ivar retention_policy: the retention policy for this log.
+    :vartype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
     """
 
     _validation = {
@@ -103,9 +117,19 @@ class LogSettings(msrest.serialization.Model):
         *,
         enabled: bool,
         category: Optional[str] = None,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword category: Name of a Diagnostic Log category for a resource type this setting is
+         applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
+         diagnostic settings operation.
+        :paramtype category: str
+        :keyword enabled: Required. a value indicating whether this log is enabled.
+        :paramtype enabled: bool
+        :keyword retention_policy: the retention policy for this log.
+        :paramtype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+        """
         super(LogSettings, self).__init__(**kwargs)
         self.category = category
         self.enabled = enabled
@@ -117,18 +141,19 @@ class Metric(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: the id, resourceId, of the metric.
-    :type id: str
-    :param type: the resource type of the metric resource.
-    :type type: str
-    :param name: Required. the name and the display name of the metric, i.e. it is localizable
+    :ivar id: the id, resourceId, of the metric.
+    :vartype id: str
+    :ivar type: the resource type of the metric resource.
+    :vartype type: str
+    :ivar name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
-    :type name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
-     "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
-    :type unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
-    :param data: Required. Array of data points representing the metric values.
-    :type data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
+    :vartype name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
+    :ivar unit: Required. the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+    :vartype unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
+    :ivar data: Required. Array of data points representing the metric values.
+    :vartype data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
     """
 
     _validation = {
@@ -148,13 +173,28 @@ class Metric(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: "LocalizableString",
-        unit: Union[str, "Unit"],
-        data: List["MetricValue"],
+        name: "_models.LocalizableString",
+        unit: Union[str, "_models.Unit"],
+        data: List["_models.MetricValue"],
         id: Optional[str] = None,
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: the id, resourceId, of the metric.
+        :paramtype id: str
+        :keyword type: the resource type of the metric resource.
+        :paramtype type: str
+        :keyword name: Required. the name and the display name of the metric, i.e. it is localizable
+         string.
+        :paramtype name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
+        :keyword unit: Required. the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+         "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+         "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
+        :paramtype unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
+        :keyword data: Required. Array of data points representing the metric values.
+        :paramtype data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
+        """
         super(Metric, self).__init__(**kwargs)
         self.id = id
         self.type = type
@@ -168,8 +208,8 @@ class MetricCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. the value of the collection.
-    :type value: list[~$(python-base-namespace).v2016_09_01.models.Metric]
+    :ivar value: Required. the value of the collection.
+    :vartype value: list[~$(python-base-namespace).v2016_09_01.models.Metric]
     """
 
     _validation = {
@@ -183,9 +223,13 @@ class MetricCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Metric"],
+        value: List["_models.Metric"],
         **kwargs
     ):
+        """
+        :keyword value: Required. the value of the collection.
+        :paramtype value: list[~$(python-base-namespace).v2016_09_01.models.Metric]
+        """
         super(MetricCollection, self).__init__(**kwargs)
         self.value = value
 
@@ -195,12 +239,12 @@ class MetricSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param time_grain: Required. the timegrain of the metric in ISO8601 format.
-    :type time_grain: ~datetime.timedelta
-    :param enabled: Required. a value indicating whether this timegrain is enabled.
-    :type enabled: bool
-    :param retention_policy: the retention policy for this timegrain.
-    :type retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+    :ivar time_grain: Required. the timegrain of the metric in ISO8601 format.
+    :vartype time_grain: ~datetime.timedelta
+    :ivar enabled: Required. a value indicating whether this timegrain is enabled.
+    :vartype enabled: bool
+    :ivar retention_policy: the retention policy for this timegrain.
+    :vartype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
     """
 
     _validation = {
@@ -219,9 +263,17 @@ class MetricSettings(msrest.serialization.Model):
         *,
         time_grain: datetime.timedelta,
         enabled: bool,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword time_grain: Required. the timegrain of the metric in ISO8601 format.
+        :paramtype time_grain: ~datetime.timedelta
+        :keyword enabled: Required. a value indicating whether this timegrain is enabled.
+        :paramtype enabled: bool
+        :keyword retention_policy: the retention policy for this timegrain.
+        :paramtype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+        """
         super(MetricSettings, self).__init__(**kwargs)
         self.time_grain = time_grain
         self.enabled = enabled
@@ -233,19 +285,19 @@ class MetricValue(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
-    :type time_stamp: ~datetime.datetime
-    :param average: the average value in the time range.
-    :type average: float
-    :param minimum: the least value in the time range.
-    :type minimum: float
-    :param maximum: the greatest value in the time range.
-    :type maximum: float
-    :param total: the sum of all of the values in the time range.
-    :type total: float
-    :param count: the number of samples in the time range. Can be used to determine the number of
+    :ivar time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
+    :vartype time_stamp: ~datetime.datetime
+    :ivar average: the average value in the time range.
+    :vartype average: float
+    :ivar minimum: the least value in the time range.
+    :vartype minimum: float
+    :ivar maximum: the greatest value in the time range.
+    :vartype maximum: float
+    :ivar total: the sum of all of the values in the time range.
+    :vartype total: float
+    :ivar count: the number of samples in the time range. Can be used to determine the number of
      values that contributed to the average value.
-    :type count: long
+    :vartype count: long
     """
 
     _validation = {
@@ -272,6 +324,21 @@ class MetricValue(msrest.serialization.Model):
         count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword time_stamp: Required. the timestamp for the metric value in ISO 8601 format.
+        :paramtype time_stamp: ~datetime.datetime
+        :keyword average: the average value in the time range.
+        :paramtype average: float
+        :keyword minimum: the least value in the time range.
+        :paramtype minimum: float
+        :keyword maximum: the greatest value in the time range.
+        :paramtype maximum: float
+        :keyword total: the sum of all of the values in the time range.
+        :paramtype total: float
+        :keyword count: the number of samples in the time range. Can be used to determine the number of
+         values that contributed to the average value.
+        :paramtype count: long
+        """
         super(MetricValue, self).__init__(**kwargs)
         self.time_stamp = time_stamp
         self.average = average
@@ -294,10 +361,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -322,6 +389,12 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -335,11 +408,11 @@ class RetentionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. a value indicating whether the retention policy is enabled.
-    :type enabled: bool
-    :param days: Required. the number of days for the retention in days. A value of 0 will retain
+    :ivar enabled: Required. a value indicating whether the retention policy is enabled.
+    :vartype enabled: bool
+    :ivar days: Required. the number of days for the retention in days. A value of 0 will retain
      the events indefinitely.
-    :type days: int
+    :vartype days: int
     """
 
     _validation = {
@@ -359,6 +432,13 @@ class RetentionPolicy(msrest.serialization.Model):
         days: int,
         **kwargs
     ):
+        """
+        :keyword enabled: Required. a value indicating whether the retention policy is enabled.
+        :paramtype enabled: bool
+        :keyword days: Required. the number of days for the retention in days. A value of 0 will retain
+         the events indefinitely.
+        :paramtype days: int
+        """
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = enabled
         self.days = days
@@ -377,29 +457,28 @@ class ServiceDiagnosticSettingsResource(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param storage_account_id: The resource ID of the storage account to which you would like to
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar storage_account_id: The resource ID of the storage account to which you would like to
      send Diagnostic Logs.
-    :type storage_account_id: str
-    :param service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
+    :vartype storage_account_id: str
+    :ivar service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
      would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
      format: '{service bus resource ID}/authorizationrules/{key name}'.
-    :type service_bus_rule_id: str
-    :param event_hub_authorization_rule_id: The resource Id for the event hub namespace
+    :vartype service_bus_rule_id: str
+    :ivar event_hub_authorization_rule_id: The resource Id for the event hub namespace
      authorization rule.
-    :type event_hub_authorization_rule_id: str
-    :param metrics: the list of metric settings.
-    :type metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
-    :param logs: the list of logs settings.
-    :type logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
-    :param workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
+    :vartype event_hub_authorization_rule_id: str
+    :ivar metrics: the list of metric settings.
+    :vartype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+    :ivar logs: the list of logs settings.
+    :vartype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+    :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-    :type workspace_id: str
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+    :vartype workspace_id: str
     """
 
     _validation = {
@@ -431,11 +510,35 @@ class ServiceDiagnosticSettingsResource(Resource):
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
-        metrics: Optional[List["MetricSettings"]] = None,
-        logs: Optional[List["LogSettings"]] = None,
+        metrics: Optional[List["_models.MetricSettings"]] = None,
+        logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword storage_account_id: The resource ID of the storage account to which you would like to
+         send Diagnostic Logs.
+        :paramtype storage_account_id: str
+        :keyword service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
+         would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
+         format: '{service bus resource ID}/authorizationrules/{key name}'.
+        :paramtype service_bus_rule_id: str
+        :keyword event_hub_authorization_rule_id: The resource Id for the event hub namespace
+         authorization rule.
+        :paramtype event_hub_authorization_rule_id: str
+        :keyword metrics: the list of metric settings.
+        :paramtype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+        :keyword logs: the list of logs settings.
+        :paramtype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+        :keyword workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
+         Analytics workspace to which you would like to send Diagnostic Logs. Example:
+         /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+        :paramtype workspace_id: str
+        """
         super(ServiceDiagnosticSettingsResource, self).__init__(location=location, tags=tags, **kwargs)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
@@ -448,27 +551,26 @@ class ServiceDiagnosticSettingsResource(Resource):
 class ServiceDiagnosticSettingsResourcePatch(msrest.serialization.Model):
     """Service diagnostic setting resource for patch operations.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param storage_account_id: The resource ID of the storage account to which you would like to
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar storage_account_id: The resource ID of the storage account to which you would like to
      send Diagnostic Logs.
-    :type storage_account_id: str
-    :param service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
+    :vartype storage_account_id: str
+    :ivar service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
      would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
      format: '{service bus resource ID}/authorizationrules/{key name}'.
-    :type service_bus_rule_id: str
-    :param event_hub_authorization_rule_id: The resource Id for the event hub namespace
+    :vartype service_bus_rule_id: str
+    :ivar event_hub_authorization_rule_id: The resource Id for the event hub namespace
      authorization rule.
-    :type event_hub_authorization_rule_id: str
-    :param metrics: the list of metric settings.
-    :type metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
-    :param logs: the list of logs settings.
-    :type logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
-    :param workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
+    :vartype event_hub_authorization_rule_id: str
+    :ivar metrics: the list of metric settings.
+    :vartype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+    :ivar logs: the list of logs settings.
+    :vartype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+    :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-    :type workspace_id: str
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+    :vartype workspace_id: str
     """
 
     _attribute_map = {
@@ -488,11 +590,33 @@ class ServiceDiagnosticSettingsResourcePatch(msrest.serialization.Model):
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
         event_hub_authorization_rule_id: Optional[str] = None,
-        metrics: Optional[List["MetricSettings"]] = None,
-        logs: Optional[List["LogSettings"]] = None,
+        metrics: Optional[List["_models.MetricSettings"]] = None,
+        logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword storage_account_id: The resource ID of the storage account to which you would like to
+         send Diagnostic Logs.
+        :paramtype storage_account_id: str
+        :keyword service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
+         would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
+         format: '{service bus resource ID}/authorizationrules/{key name}'.
+        :paramtype service_bus_rule_id: str
+        :keyword event_hub_authorization_rule_id: The resource Id for the event hub namespace
+         authorization rule.
+        :paramtype event_hub_authorization_rule_id: str
+        :keyword metrics: the list of metric settings.
+        :paramtype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+        :keyword logs: the list of logs settings.
+        :paramtype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+        :keyword workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
+         Analytics workspace to which you would like to send Diagnostic Logs. Example:
+         /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+        :paramtype workspace_id: str
+        """
         super(ServiceDiagnosticSettingsResourcePatch, self).__init__(**kwargs)
         self.tags = tags
         self.storage_account_id = storage_account_id

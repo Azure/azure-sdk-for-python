@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import msal
 
@@ -14,6 +14,8 @@ from ..._persistent_cache import _load_persistent_cache
 if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
+
+T = TypeVar("T", bound="ClientSecretCredential")
 
 
 class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
@@ -53,7 +55,7 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
         self._secret = client_secret
         super().__init__()
 
-    async def __aenter__(self):
+    async def __aenter__(self:T) -> T:
         await self._client.__aenter__()
         return self
 
@@ -62,8 +64,8 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
-        return self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         return await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)

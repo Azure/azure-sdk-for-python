@@ -29,7 +29,7 @@ User with username and password:
     If not provided, defaults to the 'organizations' tenant, which supports only Azure Active Directory work or
     school accounts.
 
-Please refer to azure.identity library for detailed information here: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+Please refer to azure.identity library for detailed information here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 
 This sample also shows the process of utilizing a different credential object, in this case, DefaultAzureCredential,
 both to demonstrate the ease of adjusting authentication, and to surface another method for doing so.
@@ -46,7 +46,7 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 credential = EnvironmentCredential()
 
 # Note: One has other options to specify the credential.  For instance, DefaultAzureCredential.
-# Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+# Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 # For example user to be logged in can be specified by the environment variable AZURE_USERNAME, consumed via the ManagedIdentityCredential
 # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
 # The docs above specify all mechanisms which the defaultCredential internally support.

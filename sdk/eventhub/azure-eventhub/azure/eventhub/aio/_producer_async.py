@@ -21,9 +21,12 @@ from .._utils import (
     set_message_partition_key,
     trace_message,
     send_context_manager,
+    transform_outbound_single_message,
 )
 from .._constants import TIMEOUT_SYMBOL
+from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ConsumerProducerMixin
+from ._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
@@ -55,7 +58,6 @@ class EventHubProducer(
      periods of inactivity. The default value is `None`, i.e. no keep alive pings.
     :keyword bool auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
      Default value is `True`.
-    :keyword ~asyncio.AbstractEventLoop loop: An event loop. If not specified the default event loop will be used.
     """
 
     def __init__(self, client: "EventHubProducerClient", target: str, **kwargs) -> None:
@@ -69,7 +71,7 @@ class EventHubProducer(
         self.running = False
         self.closed = False
 
-        self._loop = kwargs.get("loop", None)
+        self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         self._max_message_size_on_link = None
         self._client = client
         self._target = target
@@ -79,7 +81,8 @@ class EventHubProducer(
         self._timeout = send_timeout
         self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         self._retry_policy = errors.ErrorPolicy(
-            max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint:disable=protected-access
+            max_retries=self._client._config.max_retries,
+            on_error=_error_handler,  # pylint:disable=protected-access
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
@@ -91,7 +94,7 @@ class EventHubProducer(
         self._handler = None  # type: Optional[SendClientAsync]
         self._outcome = None  # type: Optional[constants.MessageSendResult]
         self._condition = None  # type: Optional[Exception]
-        self._lock = asyncio.Lock(loop=self._loop)
+        self._lock = asyncio.Lock(**self._internal_kwargs)
         self._link_properties = {
             types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
         }
@@ -110,7 +113,7 @@ class EventHubProducer(
             properties=create_properties(
                 self._client._config.user_agent  # pylint:disable=protected-access
             ),
-            loop=self._loop,
+            **self._internal_kwargs
         )
 
     async def _open_with_retry(self) -> Any:
@@ -172,26 +175,35 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         span: Optional[AbstractSpan],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
-        if isinstance(event_data, EventData):
+        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
+            outgoing_event_data = transform_outbound_single_message(
+                event_data, EventData
+            )
             if partition_key:
-                set_message_partition_key(event_data.message, partition_key)
-            wrapper_event_data = event_data
+                set_message_partition_key(outgoing_event_data.message, partition_key)
+            wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
             if isinstance(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
                 if (
-                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
+                    partition_key
+                    and partition_key
+                    != event_data._partition_key  # pylint: disable=protected-access
                 ):
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for event in event_data.message._body_gen: # pylint: disable=protected-access
+                for (
+                    event
+                ) in event_data.message._body_gen:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
@@ -204,7 +216,9 @@ class EventHubProducer(
 
     async def send(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         *,
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None
@@ -236,7 +250,9 @@ class EventHubProducer(
         async with self._lock:
             with send_context_manager() as child:
                 self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                wrapper_event_data = self._wrap_eventdata(
+                    event_data, child, partition_key
+                )
                 self._unsent_events = [wrapper_event_data.message]
 
                 if child:

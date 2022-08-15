@@ -46,7 +46,7 @@ class NamespacesOperations:
     async def check_name_availability(
         self,
         parameters: "_models.CheckNameAvailability",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResult":
         """Check the specified namespace name availability.
 
@@ -91,7 +91,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityResult', pipeline_response)
@@ -104,7 +104,7 @@ class NamespacesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RelayNamespaceListResult"]:
         """Lists all the available namespaces within the subscription regardless of the resourceGroups.
 
@@ -158,7 +158,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -172,7 +172,7 @@ class NamespacesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RelayNamespaceListResult"]:
         """Lists all the available namespaces within the ResourceGroup.
 
@@ -229,7 +229,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -245,7 +245,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         parameters: "_models.RelayNamespace",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayNamespace":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelayNamespace"]
         error_map = {
@@ -283,7 +283,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -303,7 +303,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         parameters: "_models.RelayNamespace",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RelayNamespace"]:
         """Create Azure Relay namespace.
 
@@ -315,8 +315,8 @@ class NamespacesOperations:
         :type parameters: ~azure.mgmt.relay.models.RelayNamespace
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RelayNamespace or the result of cls(response)
@@ -373,7 +373,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -406,7 +406,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -418,7 +418,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing namespace. This operation also removes all associated resources under the
         namespace.
@@ -429,8 +429,8 @@ class NamespacesOperations:
         :type namespace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -483,7 +483,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayNamespace":
         """Returns the description for the specified namespace.
 
@@ -527,7 +527,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayNamespace', pipeline_response)
@@ -543,7 +543,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         parameters: "_models.RelayUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayNamespace":
         """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable.
         This operation is idempotent.
@@ -595,7 +595,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -614,7 +614,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AuthorizationRuleListResult"]:
         """Authorization rules for a namespace.
 
@@ -674,7 +674,7 @@ class NamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -691,7 +691,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         parameters: "_models.AuthorizationRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationRule":
         """Creates or updates an authorization rule for a namespace.
 
@@ -745,7 +745,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -761,7 +761,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a namespace authorization rule.
 
@@ -808,7 +808,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -821,7 +821,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AuthorizationRule":
         """Authorization rule for a namespace by name.
 
@@ -868,7 +868,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AuthorizationRule', pipeline_response)
@@ -884,7 +884,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessKeys":
         """Primary and secondary connection strings to the namespace.
 
@@ -931,7 +931,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)
@@ -948,7 +948,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         parameters: "_models.RegenerateAccessKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessKeys":
         """Regenerates the primary or secondary connection strings to the namespace.
 
@@ -1002,7 +1002,7 @@ class NamespacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AccessKeys', pipeline_response)

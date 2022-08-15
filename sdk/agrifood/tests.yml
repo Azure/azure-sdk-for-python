@@ -5,9 +5,7 @@ stages:
     parameters:
       Location: westcentralus
       ServiceDirectory: agrifood
-      DeployArmTemplate: true
       Clouds: Public_FarmBeats
-      AllocateResourceGroup: false
       CloudConfig:
         Public_Farmbeats:
           SubscriptionConfiguration: $(sub-config-farmbeats-azure-cloud-test-resources)
@@ -16,3 +14,5 @@ stages:
         AZURE_CLIENT_SECRET: $(AGRIFOOD_CLIENT_SECRET)
         AZURE_TENANT_ID: $(AGRIFOOD_TENANT_ID)
         TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'

@@ -44,7 +44,7 @@ class VMIngestionOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VMIngestionDetailsResponse":
         """List the vm ingestion details that will be monitored by the Elastic monitor resource.
 
@@ -65,7 +65,7 @@ class VMIngestionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2020-07-01"
         accept = "application/json"
 
         # Construct URL

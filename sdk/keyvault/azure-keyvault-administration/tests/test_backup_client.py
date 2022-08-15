@@ -2,146 +2,163 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
-from functools import partial
 import time
+from functools import partial
 
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ResourceExistsError
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.keys import KeyClient
-from azure.keyvault.administration import KeyVaultBackupClient, KeyVaultBackupOperation
-from azure.keyvault.administration._internal import parse_folder_url
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
-from six.moves.urllib_parse import urlparse
+from azure.core.exceptions import ResourceExistsError
+from azure.keyvault.administration._internal import parse_folder_url
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
-from _shared.helpers import mock
 from _shared.test_case import KeyVaultTestCase
-from blob_container_preparer import BlobContainerPreparer
+from _test_case import KeyVaultBackupClientPreparer, get_decorator
+
+all_api_versions = get_decorator()
 
 
-@pytest.mark.usefixtures("managed_hsm")
-class BackupClientTests(KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        super(BackupClientTests, self).__init__(*args, match_body=False, **kwargs)
+class TestBackupClientTests(KeyVaultTestCase):
 
-    def setUp(self, *args, **kwargs):
-        if self.is_live:
-            real = urlparse(self.managed_hsm["url"])
-            playback = urlparse(self.managed_hsm["playback_url"])
-            self.scrubber.register_name_pair(real.netloc, playback.netloc)
-        super(BackupClientTests, self).setUp(*args, **kwargs)
+    def create_key_client(self, vault_uri, **kwargs):
+        from azure.keyvault.keys import KeyClient
+        credential = self.get_credential(KeyClient)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
 
-    @property
-    def credential(self):
-        if self.is_live:
-            return DefaultAzureCredential()
-        return mock.Mock(get_token=lambda *_, **__: AccessToken("secret", time.time() + 3600))
-
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @StorageAccountPreparer(random_name_enabled=True)
-    @BlobContainerPreparer()
-    def test_full_backup_and_restore(self, container_uri, sas_token):
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_full_backup_and_restore(self, client, **kwargs):
+        set_bodiless_matcher()
         # backup the vault
-        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = backup_client.begin_backup(container_uri, sas_token)
-
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
+        backup_poller = client.begin_backup(container_uri, sas_token)
         backup_operation = backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
+        assert backup_operation.folder_url
 
         # restore the backup
-        restore_poller = backup_client.begin_restore(backup_status.folder_url, sas_token)
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
+        restore_poller.wait()
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_full_backup_and_restore_rehydration(self, client, **kwargs):
+        set_bodiless_matcher()
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
 
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @StorageAccountPreparer(random_name_enabled=True)
-    @BlobContainerPreparer()
-    def test_selective_key_restore(self, container_uri, sas_token):
+        # backup the vault
+        backup_poller = client.begin_backup(container_uri, sas_token)
+
+        # create a new poller from a continuation token
+        token = backup_poller.continuation_token()
+        rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
+
+        rehydrated_operation = rehydrated.result()
+        assert rehydrated_operation.folder_url
+        backup_operation = backup_poller.result()
+        assert backup_operation.folder_url == rehydrated_operation.folder_url
+
+        # restore the backup
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
+
+        # create a new poller from a continuation token
+        token = restore_poller.continuation_token()
+        rehydrated = client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
+
+        rehydrated.wait()
+        restore_poller.wait()
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_selective_key_restore(self, client, **kwargs):
+        set_bodiless_matcher()
         # create a key to selectively restore
-        key_client = KeyClient(self.managed_hsm["url"], self.credential)
+        managed_hsm_url = kwargs.pop("managed_hsm_url")
+        key_client = self.create_key_client(managed_hsm_url)
         key_name = self.get_resource_name("selective-restore-test-key")
         key_client.create_rsa_key(key_name)
 
-        # backup the vault
-        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = backup_client.begin_backup(container_uri, sas_token)
 
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
+        # backup the vault
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
+        backup_poller = client.begin_backup(container_uri, sas_token)
         backup_operation = backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = backup_client.begin_selective_key_restore(key_name, backup_status.folder_url, sas_token)
-
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token, key_name=key_name)
+        restore_poller.wait()
 
         # delete the key
         delete_function = partial(key_client.begin_delete_key, key_name)
         delete_poller = self._poll_until_no_exception(delete_function, ResourceExistsError)
         delete_poller.wait()
         key_client.purge_deleted_key(key_name)
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultBackupClientPreparer()
+    @recorded_by_proxy
+    def test_backup_client_polling(self, client, **kwargs):
+        set_bodiless_matcher()
+        # if not self.is_live:
+        #     pytest.skip("Poller requests are incompatible with vcrpy in playback")
 
-def test_continuation_token():
-    """Methods returning pollers should accept continuation tokens"""
+        # backup the vault
+        container_uri = kwargs.pop("container_uri")
+        sas_token = kwargs.pop("sas_token")
+        backup_poller = client.begin_backup(container_uri, sas_token)
 
-    expected_token = "token"
-    mock_generated_client = mock.Mock()
+        # create a new poller from a continuation token
+        token = backup_poller.continuation_token()
+        rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
 
-    backup_client = KeyVaultBackupClient("vault-url", object())
-    backup_client._client = mock_generated_client
-    backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
-    backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
-    backup_client.begin_selective_key_restore("storage uri", "sas", "key", continuation_token=expected_token)
+        # check that pollers and polling methods behave as expected
+        if self.is_live:
+            assert backup_poller.status() == "InProgress"
+            assert not backup_poller.done() or backup_poller.polling_method().finished()
+            assert rehydrated.status() == "InProgress"
+            assert not rehydrated.done() or rehydrated.polling_method().finished()
 
-    for method in ("begin_full_backup", "begin_full_restore_operation", "begin_selective_key_restore_operation"):
-        mock_method = getattr(mock_generated_client, method)
-        assert mock_method.call_count == 1
-        _, kwargs = mock_method.call_args
-        assert kwargs["continuation_token"] == expected_token
+        backup_operation = backup_poller.result()
+        assert backup_poller.status() == "Succeeded" and backup_poller.polling_method().status() == "Succeeded"
+        rehydrated_operation = rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        assert backup_operation.folder_url == rehydrated_operation.folder_url
 
+        # rehydrate a poller with a continuation token of a completed operation
+        late_rehydrated = client.begin_backup(container_uri, sas_token, continuation_token=token)
+        assert late_rehydrated.status() == "Succeeded"
+        late_rehydrated.wait()
 
-def assert_in_progress_operation(operation):
-    if isinstance(operation, KeyVaultBackupOperation):
-        assert operation.folder_url is None
-    assert operation.status == "InProgress"
-    assert operation.end_time is None
-    assert isinstance(operation.start_time, datetime)
+        # restore the backup
+        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
 
+        # create a new poller from a continuation token
+        token = restore_poller.continuation_token()
+        rehydrated = client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
 
-def assert_successful_operation(operation):
-    if isinstance(operation, KeyVaultBackupOperation):
-        assert operation.folder_url
-    assert operation.status == "Succeeded"
-    assert isinstance(operation.end_time, datetime)
-    assert operation.start_time < operation.end_time
+        # check that pollers and polling methods behave as expected
+        if self.is_live:
+            assert restore_poller.status() == "InProgress"
+            assert not restore_poller.done() or restore_poller.polling_method().finished()
+            assert rehydrated.status() == "InProgress"
+            assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        rehydrated.wait()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        restore_poller.wait()
+        assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
+
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
 
 @pytest.mark.parametrize(

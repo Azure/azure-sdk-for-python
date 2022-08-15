@@ -7,13 +7,13 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '274'
+      - '277'
       Content-Type:
       - application/json
-      Date:
-      - Tue, 13 Apr 2021 18:38:09 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 20:30:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -23,11 +23,12 @@ interactions:
       string: '{"From": ["Invalid From phone number format"]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 18:38:09 GMT
-      ms-cv: QucM3d0xPEu+KcFVDrOwOw.0
+      date: Tue, 22 Jun 2021 20:30:36 GMT
+      ms-cv: 5YjuVK2z8U+886rY73SotQ.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 11ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 43ms
     status:
       code: 400
       message: Bad Request

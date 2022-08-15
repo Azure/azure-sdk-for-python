@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AgentPoolType represents types of an agent pool. VirtualMachineScaleSets type is still in
     PREVIEW.
     """
@@ -34,7 +18,7 @@ class AgentPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VIRTUAL_MACHINE_SCALE_SETS = "VirtualMachineScaleSets"
     AVAILABILITY_SET = "AvailabilitySet"
 
-class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceStorageProfileTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage profile specifies what kind of storage used. Choose from StorageAccount and
     ManagedDisks. Leave it empty, we will choose for you based on the orchestrator choice.
     """
@@ -42,7 +26,7 @@ class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMet
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
-class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Size of agent VMs.
     """
 
@@ -221,7 +205,7 @@ class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     STANDARD_NV24 = "Standard_NV24"
     STANDARD_NV6 = "Standard_NV6"
 
-class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+class Count(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Number of masters (VMs) in the container service cluster. Allowed values are 1, 3, and 5. The
     default value is 1.
     """
@@ -230,21 +214,21 @@ class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     THREE = 3
     FIVE = 5
 
-class NetworkPlugin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkPlugin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network plugin used for building Kubernetes network.
     """
 
     AZURE = "azure"
     KUBENET = "kubenet"
 
-class NetworkPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network policy used for building Kubernetes network.
     """
 
     CALICO = "calico"
     AZURE = "azure"
 
-class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
     """
 

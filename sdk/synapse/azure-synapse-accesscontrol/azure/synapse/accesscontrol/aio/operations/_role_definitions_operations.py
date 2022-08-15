@@ -43,7 +43,7 @@ class RoleDefinitionsOperations:
         self,
         is_built_in: Optional[bool] = None,
         scope: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.SynapseRoleDefinition"]:
         """List role definitions.
 
@@ -61,7 +61,7 @@ class RoleDefinitionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
@@ -103,7 +103,7 @@ class RoleDefinitionsOperations:
     async def get_role_definition_by_id(
         self,
         role_definition_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SynapseRoleDefinition":
         """Get role definition by role definition Id.
 
@@ -119,7 +119,7 @@ class RoleDefinitionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
@@ -157,7 +157,7 @@ class RoleDefinitionsOperations:
 
     async def list_scopes(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> List[str]:
         """List rbac scopes.
 
@@ -171,7 +171,7 @@ class RoleDefinitionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL

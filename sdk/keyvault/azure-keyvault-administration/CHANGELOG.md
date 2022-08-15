@@ -1,23 +1,93 @@
 # Release History
 
-## 4.0.0b4 (Unreleased)
+## 4.2.0b1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Updated minimum `azure-core` version to 1.24.0
+
+## 4.1.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
+
+## 4.1.0 (2022-03-28)
+
+### Features Added
+- Key Vault API version 7.3 is now the default
+- Added support for multi-tenant authentication when using `azure-identity`
+  1.8.0 or newer ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+### Other Changes
+- (From 4.1.0b3) Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- (From 4.1.0b3) Updated minimum `azure-core` version to 1.20.0
+- (From 4.1.0b2) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698)). See
+  https://aka.ms/azsdk/python/identity/tokencredential for more details on how to integrate
+  this parameter if `get_token` is implemented by a custom credential.
+
+## 4.1.0b3 (2022-02-08)
+
+### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Updated minimum `azure-core` version to 1.20.0
+- (From 4.1.0b2) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+## 4.1.0b2 (2021-11-11)
+
+### Features Added
+- Added support for multi-tenant authentication when using `azure-identity` 1.7.1 or newer
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
+
+### Other Changes
+- Updated minimum `azure-core` version to 1.15.0
+
+## 4.1.0b1 (2021-09-09)
+
+### Features Added
+- Key Vault API version 7.3-preview is now the default
+
+## 4.0.0 (2021-06-22)
 ### Changed
 - Key Vault API version 7.2 is now the default
+- `KeyVaultAccessControlClient.delete_role_assignment` and
+  `.delete_role_definition` no longer raise an error  when the resource to be
+  deleted is not found
+- Raised minimum azure-core version to 1.11.0
 
 ### Added
-- `KeyVaultAccessControlClient.set_role_definition` accepts an optional 
+- `KeyVaultAccessControlClient.set_role_definition` accepts an optional
   `assignable_scopes` keyword-only argument
 
 ### Breaking Changes
+- `KeyVaultAccessControlClient.delete_role_assignment` and
+  `.delete_role_definition` return None
 - Changed parameter order in `KeyVaultAccessControlClient.set_role_definition`.
   `permissions` is now an optional keyword-only argument
-- Renamed `BackupOperation` to `KeyVaultBackupOperation`
-- Renamed `RestoreOperation` to `KeyVaultRestoreOperation`
-- Renamed `SelectiveKeyRestoreOperation` to 
-  `KeyVaultSelectiveKeyRestoreOperation`
-- Renamed `KeyVaultBackupClient.begin_selective_restore` to `begin_selective_key_restore`
-  - Changed parameter order from `folder_url, sas_token, key_name` to
-    `key_name, folder_url, sas_token`
+- Renamed `BackupOperation` to `KeyVaultBackupResult`, and removed all but
+  its `folder_url` property
+- Removed `RestoreOperation` and `SelectiveKeyRestoreOperation` classes
+- Removed `KeyVaultBackupClient.begin_selective_restore`. To restore a
+  single key, pass the key's name to `KeyVaultBackupClient.begin_restore`:
+  ```
+  # before (4.0.0b3):
+  client.begin_selective_restore(folder_url, sas_token, key_name)
+
+  # after:
+  client.begin_restore(folder_url, sas_token, key_name=key_name)
+  ```
+- Removed `KeyVaultBackupClient.get_backup_status` and `.get_restore_status`. Use
+  the pollers returned by `KeyVaultBackupClient.begin_backup` and `.begin_restore`
+  to check whether an operation has completed
 - `KeyVaultRoleAssignment`'s `principal_id`, `role_definition_id`, and `scope`
   are now properties of a `properties` property
   ```
@@ -32,6 +102,12 @@
   - `denied_actions` -> `not_actions`
   - `allowed_data_actions` -> `data_actions`
   - `denied_data_actions` -> `denied_data_actions`
+- Renamed argument `role_assignment_name` to `name` in
+  `KeyVaultAccessControlClient.create_role_assignment`, `.delete_role_assignment`,
+  and `.get_role_assignment`
+- Renamed argument `role_definition_name` to `name` in
+  `KeyVaultAccessControlClient.delete_role_definition` and `.get_role_definition`
+- Renamed argument `role_scope` to `scope` in `KeyVaultAccessControlClient` methods
 
 ## 4.0.0b3 (2021-02-09)
 ### Added

@@ -1,0 +1,43 @@
+{
+    "@id": "dtmi:mymodels:patron;1",
+    "@type": "Interface",
+    "displayName": "Patron",
+    "contents": [
+        {
+            "@type": "Command",
+            "name": "order",
+            "request": {
+                "name": "wallet",
+                "displayName": "available money",
+                "description": "how much the patron is willing to spend",
+                "schema": "double"
+            },
+            "response": {
+                "name": "decision",
+                "displayName": "consumer decision",
+                "schema": "string"
+            }
+        },
+        {
+            "@type": "Property",
+            "name": "totalWaitTime",
+            "displayName": "Total Wait Time",
+            "schema": "double",
+            "comment": "time in seconds that the customer is required to wait"
+        },
+        {
+            "@type": "Property",
+            "name": "satisfaction",
+            "displayName": "Customer Satisfaction",
+            "schema": "integer",
+            "comment": "1-10 scale of how likely to recommend to a friend (NPS)"
+        },
+        {
+            "@type": "Relationship",
+            "name": "locatedIn"
+        }
+    ],
+    "@context": "dtmi:dtdl:context;2",
+    "comment": "This should represent one restaurant visitor.",
+    "description": "As an example, contains all of the properties possible in the DTDL."
+}

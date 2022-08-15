@@ -5,28 +5,23 @@
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.configuration import Configuration
-from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncRetryPolicy
-
+from .._internal import AsyncContextManager
 from ..._internal import _scopes_to_resource
-from ..._internal.managed_identity_client import ManagedIdentityClientBase, _get_policies
+from ..._internal.managed_identity_client import ManagedIdentityClientBase
+from ..._internal.pipeline import build_async_pipeline
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Callable, List, Optional, Union
+    from typing import Any
     from azure.core.credentials import AccessToken
-    from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
-
-    Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
+    from azure.core.pipeline import AsyncPipeline
 
 
 # pylint:disable=async-client-bad-name,missing-client-constructor-parameter-credential
-class AsyncManagedIdentityClient(ManagedIdentityClientBase):
-    def __init__(self, request_factory: "Callable[[str, dict], HttpRequest]", **kwargs: "Any") -> None:
-        config = _get_configuration(**kwargs)
-        super().__init__(request_factory, _config=config, **kwargs)
+class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase):
+    async def __aenter__(self):
+        await self._pipeline.__aenter__()
+        return self
 
     async def close(self) -> None:
         await self._pipeline.__aexit__()
@@ -35,29 +30,12 @@ class AsyncManagedIdentityClient(ManagedIdentityClientBase):
         # pylint:disable=invalid-overridden-method
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
+        kwargs.pop("tenant_id", None)
+        kwargs.pop("claims", None)
         request_time = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response, request_time)
         return token
 
-    def _build_pipeline(
-        self,
-        config: Configuration,
-        policies: "Optional[List[Policy]]" = None,
-        transport: "Optional[AsyncHttpTransport]" = None,
-        **kwargs: "Any"
-    ) -> AsyncPipeline:
-        if policies is None:  # [] is a valid policy list
-            policies = _get_policies(config, **kwargs)
-        if not transport:
-            from azure.core.pipeline.transport import AioHttpTransport
-
-            transport = AioHttpTransport(**kwargs)
-
-        return AsyncPipeline(transport=transport, policies=policies)
-
-
-def _get_configuration(**kwargs: "Any") -> Configuration:
-    config = Configuration()
-    config.retry_policy = AsyncRetryPolicy(**kwargs)
-    return config
+    def _build_pipeline(self, **kwargs: "Any") -> "AsyncPipeline":
+        return build_async_pipeline(**kwargs)

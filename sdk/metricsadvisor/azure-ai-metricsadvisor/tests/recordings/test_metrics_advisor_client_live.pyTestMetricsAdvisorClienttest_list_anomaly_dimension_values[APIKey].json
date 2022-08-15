@@ -1,0 +1,45 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/metrics_advisor_anomaly_detection_configuration_id/anomalies/dimension/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "107",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "b985676c-5e0c-11ec-b622-6245b51668de"
+      },
+      "RequestBody": "{\u0022startTime\u0022: \u00222021-01-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022, \u0022dimensionName\u0022: \u0022region\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b9bb7903-1e93-4646-9eae-1badd9b59877",
+        "Content-Length": "114",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:08:48 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "210",
+        "X-Request-ID": "b9bb7903-1e93-4646-9eae-1badd9b59877"
+      },
+      "ResponseBody": {
+        "value": [
+          "__SUM__",
+          "Karachi",
+          "Mumbai",
+          "Delhi",
+          "Seoul",
+          "Beijing",
+          "Cairo",
+          "New York",
+          "Miami",
+          "Tianjin",
+          "Istanbul"
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

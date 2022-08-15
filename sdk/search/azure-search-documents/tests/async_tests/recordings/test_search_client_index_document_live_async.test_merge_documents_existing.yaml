@@ -10,141 +10,116 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/zR2/z6o0cf3fto9FHTZu26+ehRW6/z0Ud5XVf1F3nTZBfUcLkuS9PipJrRJ3s7O79k
-        ZF7f/1qvf/+X/D+pLXgfiQAAAA==
+      string: '{"value":[{"key":"3","status":true,"errorMessage":null,"statusCode":200},{"key":"4","status":true,"errorMessage":null,"statusCode":200}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '190'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:18:53 GMT
-      elapsed-time: '136'
+      date: Tue, 31 Aug 2021 17:27:37 GMT
+      elapsed-time: '125'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 734dbb19-b98f-11eb-9791-a0481ca055a9
+      request-id: bd3fad91-0a80-11ec-bbb4-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Iv7Hv/cf
-        3N35fwC74FOIBQAAAA==
+      string: "\uFEFF10"
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Thu, 20 May 2021 17:18:56 GMT
+      date: Tue, 31 Aug 2021 17:27:40 GMT
       elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 7548a50d-b98f-11eb-992b-a0481ca055a9
+      request-id: bf4576ec-0a80-11ec-a696-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPrr30Uj+epEtcvr7dFotq9dtdk2fz/JmWhertqiW9M1P5vV1uqpW6zKrU34lLZZpW10t
-        w6bPamr87d93vbNzvo9GZZ6uynWjrxZ1nubL9LIoy5zem2ZtflHV1/TKk/XsIm/psza7aD569L2P
-        rorzgv6cyOffH320yuq3xfLibDkt17OcsG/rdT76qFlU+Pi4LKsrfHqelQ19XGZN+ypfVpcZsHpK
-        HVEnuw8f3t/eebC9s/tmZ+cR/++nqI+a2iwvPnq0S69VhBO98NGjX/xRe73CSy+rYgnEplVVz4ol
-        QQJ+27t7e+Pde7v3HzwY7X86/vTBwf2DXcJyWtO39t0lyEqo19Uqr9sCb/5i+ZBo/fL154/27+19
-        +tEv+SW/ZPRRNpvVeUMNluuyJJyqakF/fO/7v+T/AWwF49ywAQAA
+      string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
+        hotel in town","descriptionFr":"H\u00f4tel le plus populaire en ville","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":1,"location":{"type":"Point","coordinates":[-122.131577,46.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '438'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:18:56 GMT
-      elapsed-time: '15'
+      date: Tue, 31 Aug 2021 17:27:40 GMT
+      elapsed-time: '11'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 7553a184-b98f-11eb-be4f-a0481ca055a9
+      request-id: bf4cb0e5-0a80-11ec-a2ae-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    uri: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR/Oq
-        zcuz2UePPtr/aCR/vcgWOf19+m5V502TvqqqRUPfzfJmWhertqiW9O3LOm/b6/SiqmYpvxW2eFZT
-        m+OmyX+QTqplOv991zs75/vSbJq1+UVVX1OLJ+vZRd7SZ2120Xz06HsfXRXnBf05kc+/P/poldVv
-        i+XF2XJarmc54dnW63z0UbOo8PFxWVZX+PQ8Kxv6uMya9lW+rC4zIPGUOqJOdh8+vL+982B7Z/fN
-        zs4j/t9PUR81tVlefPRoj16rCCd64aNHv/ij9nqFl15WxRKITauqnhVLggT8tnf39sa793bvP3gw
-        2j8Yf/rg4P7BLmE5relb++4SBCTU62qV122BN3+xfEhUffn680f79/Y+/eiX/JJfMvoom81A5I8e
-        LddlSTgxrR997/u/5P8Bin7yTJoBAAA=
+      string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
+        hotel","descriptionFr":"Assez bon h\u00f4tel","category":"Budget","tags":["wifi","budget"],"parkingIncluded":true,"smokingAllowed":false,"lastRenovationDate":"1995-07-01T00:00:00Z","rating":2,"location":{"type":"Point","coordinates":[-122.131577,48.678581],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}},"address":null,"rooms":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '422'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:18:56 GMT
-      elapsed-time: '9'
+      date: Tue, 31 Aug 2021 17:27:40 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 7563ce10-b98f-11eb-a68e-a0481ca055a9
+      request-id: bf56213e-0a80-11ec-9fa0-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    url: https://search76d91e8d.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2021-04-30-Preview
 version: 1

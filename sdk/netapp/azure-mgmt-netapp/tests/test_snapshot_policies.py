@@ -1,11 +1,10 @@
 import time
-import unittest
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtTestCase
-from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, Volume, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
+from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
 from test_account import create_account, delete_account
 from test_pool import delete_pool
-from test_volume import create_volume, delete_volume
+from test_volume import create_volume, delete_volume, create_virtual_network
 from setup import *
 import azure.mgmt.netapp.models
 
@@ -50,56 +49,69 @@ def wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name, 
             break
 
 
-class NetAppAccountTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(NetAppAccountTestCase, self).setUp()
+class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
+
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
 
+
+    # Before tests are run live a resource group needs to be created along with vnet and subnet
+    # Note that when tests are run in live mode it is best to run one test at a time.
+    @recorded_by_proxy
     def test_create_delete_snapshot_policy(self):
-        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
 
-        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, TEST_ACC_1)
-        self.assertEqual(len(list(snapshot_policies_list)), 1)
+        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, account_name=ACCOUNT1)
+        assert len(list(snapshot_policies_list)) == 1
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, live=self.is_live)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
 
-        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, TEST_ACC_1)
-        self.assertEqual(len(list(snapshot_policies_list)), 0)
+        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, ACCOUNT1)
+        assert len(list(snapshot_policies_list)) == 0
 
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
 
+    @recorded_by_proxy
     def test_list_snapshot_policies(self):
-        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1)
-        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, snapshot_policy_only=True)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
+        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, account_name=ACCOUNT1, snapshot_policy_only=True)
 
-        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, TEST_ACC_1)
-        self.assertEqual(len(list(snapshot_policies_list)), 2)
+        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, ACCOUNT1)
+        assert len(list(snapshot_policies_list)) == 2
         snapshot_policies = [TEST_SNAPSHOT_POLICY_1, TEST_SNAPSHOT_POLICY_2]
 
         idx = 0
         for snapshot_policy  in snapshot_policies_list:
-            self.assertEqual(snapshot_policy.name, snapshot_policies[idx])
+            assert snapshot_policy.name == snapshot_policies[idx]
             idx += 1
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, live=self.is_live)
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, live=self.is_live)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_2, account_name=ACCOUNT1, live=self.is_live)
 
-        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, TEST_ACC_1)
-        self.assertEqual(len(list(snapshot_policies_list)), 0)
+        snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, ACCOUNT1)
+        assert len(list(snapshot_policies_list)) == 0
 
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        delete_account(self.client, TEST_RG, ACCOUNT1)
 
+    @recorded_by_proxy
     def test_get_snapshot_policy_by_name(self):
-        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
 
-        snapshot_policy = self.client.snapshot_policies.get(TEST_RG, TEST_ACC_1, TEST_SNAPSHOT_POLICY_1)
-        self.assertEqual(snapshot_policy.name, TEST_ACC_1 + "/" + TEST_SNAPSHOT_POLICY_1)
+        snapshot_policy = self.client.snapshot_policies.get(TEST_RG, ACCOUNT1, TEST_SNAPSHOT_POLICY_1)
+        assert snapshot_policy.name == ACCOUNT1 + "/" + TEST_SNAPSHOT_POLICY_1
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1)
 
+    @recorded_by_proxy
     def test_update_snapshot_policies(self):
-        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
 
         snapshot_policy_body = SnapshotPolicyPatch(
             location=LOCATION,
@@ -109,28 +121,39 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             monthly_schedule={},
             enabled=False
         )
-        snapshot_policy = self.client.snapshot_policies.begin_update(TEST_RG, TEST_ACC_1, TEST_SNAPSHOT_POLICY_1, snapshot_policy_body).result()
-        self.assertEqual(snapshot_policy.daily_schedule.snapshots_to_keep, 1)
-        self.assertEqual(snapshot_policy.daily_schedule.hour, 1)
-        self.assertEqual(snapshot_policy.daily_schedule.minute, 50)
+        snapshot_policy = self.client.snapshot_policies.begin_update(TEST_RG, ACCOUNT1, TEST_SNAPSHOT_POLICY_1, snapshot_policy_body).result()
+        assert snapshot_policy.daily_schedule.snapshots_to_keep == 1
+        assert snapshot_policy.daily_schedule.hour == 1
+        assert snapshot_policy.daily_schedule.minute == 50
 
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1)
 
+    @recorded_by_proxy
     def test_assign_snapshot_policy_to_volume(self):
+        set_bodiless_matcher()
         # create volume and snapshot policy
-        create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        snapshot_policy = create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1)
+        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        VNETNAME = self.get_resource_name(VNET+"-")
+        if self.is_live:
+            SUBNET = create_virtual_network(self.network_client, TEST_RG, LOCATION, VNETNAME, 'default')
+        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=VNETNAME)
+
+        snapshot_policy = create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
         # assign the snapshot policy to the volume
         snapshot = VolumeSnapshotProperties(snapshot_policy_id=snapshot_policy.id)
         data_protection = VolumePatchPropertiesDataProtection(snapshot=snapshot)
         volume_patch = VolumePatch(data_protection=data_protection)
-        volume = self.client.volumes.begin_update(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).result()
+        volume = self.client.volumes.begin_update(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, volume_patch).result()
 
-        self.assertEqual(volume.data_protection.snapshot.snapshot_policy_id, snapshot_policy.id)
+        assert volume.data_protection.snapshot.snapshot_policy_id == snapshot_policy.id
 
         # cleanup
-        delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, live=self.is_live)
-        delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
+        delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
+        if self.is_live:
+            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
+

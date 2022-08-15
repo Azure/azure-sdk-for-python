@@ -1,5 +1,25 @@
 # Release History
 
+## 1.1.0 (2022-03-28)
+
+**Features**
+
+  - Added operation group SignalRCustomCertificatesOperations
+  - Added operation group SignalRCustomDomainsOperations
+  - Model SignalRResource has a new parameter live_trace_configuration
+
+## 1.0.0 (2021-11-01)
+
+**Features**
+
+  - Model SignalRResource has a new parameter disable_aad_auth
+  - Model SignalRResource has a new parameter host_name_prefix
+  - Model SignalRResource has a new parameter resource_log_configuration
+  - Model SignalRResource has a new parameter disable_local_auth
+  - Model SignalRResource has a new parameter public_network_access
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Added operation SignalROperations.list_skus
+
 ## 1.0.0b2 (2021-05-20)
 
 **Features**
@@ -25,7 +45,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -33,13 +53,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.4.0 (2020-05-29)
 
@@ -68,8 +88,8 @@ first place.
     `azure.mgmt.signalr.signalr_client` anymore (import from
     `azure.mgmt.signalr` works like before)
   - SignalRClientConfiguration import has been moved from
-    `azure.mgmt.signalr.signalr_client` 
-    to `azure.mgmt.signalr`  
+    `azure.mgmt.signalr.signalr_client`
+    to `azure.mgmt.signalr`
   - A model `MyClass` from a "models" sub-module cannot be imported
     anymore using `azure.mgmt.signalr.models.my_class` (import from
     `azure.mgmt.signalr.models` works like before)

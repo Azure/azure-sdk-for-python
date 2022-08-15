@@ -6,70 +6,38 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AdmCredential
-    from ._models_py3 import ApnsCredential
-    from ._models_py3 import BaiduCredential
-    from ._models_py3 import CheckAvailabilityParameters
-    from ._models_py3 import CheckAvailabilityResult
-    from ._models_py3 import DebugSendResponse
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import GcmCredential
-    from ._models_py3 import MpnsCredential
-    from ._models_py3 import NamespaceCreateOrUpdateParameters
-    from ._models_py3 import NamespaceListResult
-    from ._models_py3 import NamespacePatchParameters
-    from ._models_py3 import NamespaceResource
-    from ._models_py3 import NotificationHubCreateOrUpdateParameters
-    from ._models_py3 import NotificationHubListResult
-    from ._models_py3 import NotificationHubPatchParameters
-    from ._models_py3 import NotificationHubResource
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PnsCredentialsResource
-    from ._models_py3 import PolicykeyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceListKeys
-    from ._models_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-    from ._models_py3 import SharedAccessAuthorizationRuleListResult
-    from ._models_py3 import SharedAccessAuthorizationRuleProperties
-    from ._models_py3 import SharedAccessAuthorizationRuleResource
-    from ._models_py3 import Sku
-    from ._models_py3 import SubResource
-    from ._models_py3 import WnsCredential
-except (SyntaxError, ImportError):
-    from ._models import AdmCredential  # type: ignore
-    from ._models import ApnsCredential  # type: ignore
-    from ._models import BaiduCredential  # type: ignore
-    from ._models import CheckAvailabilityParameters  # type: ignore
-    from ._models import CheckAvailabilityResult  # type: ignore
-    from ._models import DebugSendResponse  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import GcmCredential  # type: ignore
-    from ._models import MpnsCredential  # type: ignore
-    from ._models import NamespaceCreateOrUpdateParameters  # type: ignore
-    from ._models import NamespaceListResult  # type: ignore
-    from ._models import NamespacePatchParameters  # type: ignore
-    from ._models import NamespaceResource  # type: ignore
-    from ._models import NotificationHubCreateOrUpdateParameters  # type: ignore
-    from ._models import NotificationHubListResult  # type: ignore
-    from ._models import NotificationHubPatchParameters  # type: ignore
-    from ._models import NotificationHubResource  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PnsCredentialsResource  # type: ignore
-    from ._models import PolicykeyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceListKeys  # type: ignore
-    from ._models import SharedAccessAuthorizationRuleCreateOrUpdateParameters  # type: ignore
-    from ._models import SharedAccessAuthorizationRuleListResult  # type: ignore
-    from ._models import SharedAccessAuthorizationRuleProperties  # type: ignore
-    from ._models import SharedAccessAuthorizationRuleResource  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import WnsCredential  # type: ignore
+from ._models_py3 import AdmCredential
+from ._models_py3 import ApnsCredential
+from ._models_py3 import BaiduCredential
+from ._models_py3 import CheckAvailabilityParameters
+from ._models_py3 import CheckAvailabilityResult
+from ._models_py3 import DebugSendResponse
+from ._models_py3 import ErrorResponse
+from ._models_py3 import GcmCredential
+from ._models_py3 import MpnsCredential
+from ._models_py3 import NamespaceCreateOrUpdateParameters
+from ._models_py3 import NamespaceListResult
+from ._models_py3 import NamespacePatchParameters
+from ._models_py3 import NamespaceResource
+from ._models_py3 import NotificationHubCreateOrUpdateParameters
+from ._models_py3 import NotificationHubListResult
+from ._models_py3 import NotificationHubPatchParameters
+from ._models_py3 import NotificationHubResource
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PnsCredentialsResource
+from ._models_py3 import PolicykeyResource
+from ._models_py3 import Resource
+from ._models_py3 import ResourceListKeys
+from ._models_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+from ._models_py3 import SharedAccessAuthorizationRuleListResult
+from ._models_py3 import SharedAccessAuthorizationRuleProperties
+from ._models_py3 import SharedAccessAuthorizationRuleResource
+from ._models_py3 import Sku
+from ._models_py3 import SubResource
+from ._models_py3 import WnsCredential
+
 
 from ._notification_hubs_management_client_enums import (
     AccessRights,

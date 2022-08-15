@@ -7,11 +7,15 @@
 # --------------------------------------------------------------------------
 
 from ._workspaces_operations import WorkspacesOperations
-from ._vnet_peering_operations import VNetPeeringOperations
 from ._operations import Operations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._vnet_peering_operations import VNetPeeringOperations
 
 __all__ = [
     'WorkspacesOperations',
-    'VNetPeeringOperations',
     'Operations',
+    'PrivateLinkResourcesOperations',
+    'PrivateEndpointConnectionsOperations',
+    'VNetPeeringOperations',
 ]

@@ -6,1322 +6,722 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Activity
-    from ._models_py3 import ActivityDependency
-    from ._models_py3 import ActivityPolicy
-    from ._models_py3 import ActivityRun
-    from ._models_py3 import ActivityRunsQueryResponse
-    from ._models_py3 import AddDataFlowToDebugSessionResponse
-    from ._models_py3 import AdditionalColumns
-    from ._models_py3 import AmazonMWSLinkedService
-    from ._models_py3 import AmazonMWSObjectDataset
-    from ._models_py3 import AmazonMWSSource
-    from ._models_py3 import AmazonRedshiftLinkedService
-    from ._models_py3 import AmazonRedshiftSource
-    from ._models_py3 import AmazonRedshiftTableDataset
-    from ._models_py3 import AmazonS3Dataset
-    from ._models_py3 import AmazonS3LinkedService
-    from ._models_py3 import AmazonS3Location
-    from ._models_py3 import AmazonS3ReadSettings
-    from ._models_py3 import AppendVariableActivity
-    from ._models_py3 import ArtifactRenameRequest
-    from ._models_py3 import AutoPauseProperties
-    from ._models_py3 import AutoScaleProperties
-    from ._models_py3 import AvroDataset
-    from ._models_py3 import AvroFormat
-    from ._models_py3 import AvroSink
-    from ._models_py3 import AvroSource
-    from ._models_py3 import AvroWriteSettings
-    from ._models_py3 import AzureBatchLinkedService
-    from ._models_py3 import AzureBlobDataset
-    from ._models_py3 import AzureBlobFSDataset
-    from ._models_py3 import AzureBlobFSLinkedService
-    from ._models_py3 import AzureBlobFSLocation
-    from ._models_py3 import AzureBlobFSReadSettings
-    from ._models_py3 import AzureBlobFSSink
-    from ._models_py3 import AzureBlobFSSource
-    from ._models_py3 import AzureBlobFSWriteSettings
-    from ._models_py3 import AzureBlobStorageLinkedService
-    from ._models_py3 import AzureBlobStorageLocation
-    from ._models_py3 import AzureBlobStorageReadSettings
-    from ._models_py3 import AzureBlobStorageWriteSettings
-    from ._models_py3 import AzureDataExplorerCommandActivity
-    from ._models_py3 import AzureDataExplorerLinkedService
-    from ._models_py3 import AzureDataExplorerSink
-    from ._models_py3 import AzureDataExplorerSource
-    from ._models_py3 import AzureDataExplorerTableDataset
-    from ._models_py3 import AzureDataLakeAnalyticsLinkedService
-    from ._models_py3 import AzureDataLakeStoreDataset
-    from ._models_py3 import AzureDataLakeStoreLinkedService
-    from ._models_py3 import AzureDataLakeStoreLocation
-    from ._models_py3 import AzureDataLakeStoreReadSettings
-    from ._models_py3 import AzureDataLakeStoreSink
-    from ._models_py3 import AzureDataLakeStoreSource
-    from ._models_py3 import AzureDataLakeStoreWriteSettings
-    from ._models_py3 import AzureDatabricksDeltaLakeDataset
-    from ._models_py3 import AzureDatabricksDeltaLakeExportCommand
-    from ._models_py3 import AzureDatabricksDeltaLakeImportCommand
-    from ._models_py3 import AzureDatabricksDeltaLakeLinkedService
-    from ._models_py3 import AzureDatabricksDeltaLakeSink
-    from ._models_py3 import AzureDatabricksDeltaLakeSource
-    from ._models_py3 import AzureDatabricksLinkedService
-    from ._models_py3 import AzureEntityResource
-    from ._models_py3 import AzureFileStorageLinkedService
-    from ._models_py3 import AzureFileStorageLocation
-    from ._models_py3 import AzureFileStorageReadSettings
-    from ._models_py3 import AzureFileStorageWriteSettings
-    from ._models_py3 import AzureFunctionActivity
-    from ._models_py3 import AzureFunctionLinkedService
-    from ._models_py3 import AzureKeyVaultLinkedService
-    from ._models_py3 import AzureKeyVaultSecretReference
-    from ._models_py3 import AzureMLBatchExecutionActivity
-    from ._models_py3 import AzureMLExecutePipelineActivity
-    from ._models_py3 import AzureMLLinkedService
-    from ._models_py3 import AzureMLServiceLinkedService
-    from ._models_py3 import AzureMLUpdateResourceActivity
-    from ._models_py3 import AzureMLWebServiceFile
-    from ._models_py3 import AzureMariaDBLinkedService
-    from ._models_py3 import AzureMariaDBSource
-    from ._models_py3 import AzureMariaDBTableDataset
-    from ._models_py3 import AzureMySqlLinkedService
-    from ._models_py3 import AzureMySqlSink
-    from ._models_py3 import AzureMySqlSource
-    from ._models_py3 import AzureMySqlTableDataset
-    from ._models_py3 import AzurePostgreSqlLinkedService
-    from ._models_py3 import AzurePostgreSqlSink
-    from ._models_py3 import AzurePostgreSqlSource
-    from ._models_py3 import AzurePostgreSqlTableDataset
-    from ._models_py3 import AzureQueueSink
-    from ._models_py3 import AzureSearchIndexDataset
-    from ._models_py3 import AzureSearchIndexSink
-    from ._models_py3 import AzureSearchLinkedService
-    from ._models_py3 import AzureSqlDWLinkedService
-    from ._models_py3 import AzureSqlDWTableDataset
-    from ._models_py3 import AzureSqlDatabaseLinkedService
-    from ._models_py3 import AzureSqlMILinkedService
-    from ._models_py3 import AzureSqlMITableDataset
-    from ._models_py3 import AzureSqlSink
-    from ._models_py3 import AzureSqlSource
-    from ._models_py3 import AzureSqlTableDataset
-    from ._models_py3 import AzureStorageLinkedService
-    from ._models_py3 import AzureTableDataset
-    from ._models_py3 import AzureTableSink
-    from ._models_py3 import AzureTableSource
-    from ._models_py3 import AzureTableStorageLinkedService
-    from ._models_py3 import BigDataPoolReference
-    from ._models_py3 import BigDataPoolResourceInfo
-    from ._models_py3 import BigDataPoolResourceInfoListResult
-    from ._models_py3 import BinaryDataset
-    from ._models_py3 import BinaryReadSettings
-    from ._models_py3 import BinarySink
-    from ._models_py3 import BinarySource
-    from ._models_py3 import BlobEventsTrigger
-    from ._models_py3 import BlobSink
-    from ._models_py3 import BlobSource
-    from ._models_py3 import BlobTrigger
-    from ._models_py3 import CassandraLinkedService
-    from ._models_py3 import CassandraSource
-    from ._models_py3 import CassandraTableDataset
-    from ._models_py3 import ChainingTrigger
-    from ._models_py3 import CloudError
-    from ._models_py3 import CommonDataServiceForAppsEntityDataset
-    from ._models_py3 import CommonDataServiceForAppsLinkedService
-    from ._models_py3 import CommonDataServiceForAppsSink
-    from ._models_py3 import CommonDataServiceForAppsSource
-    from ._models_py3 import CompressionReadSettings
-    from ._models_py3 import ConcurLinkedService
-    from ._models_py3 import ConcurObjectDataset
-    from ._models_py3 import ConcurSource
-    from ._models_py3 import ControlActivity
-    from ._models_py3 import CopyActivity
-    from ._models_py3 import CopyActivityLogSettings
-    from ._models_py3 import CopySink
-    from ._models_py3 import CopySource
-    from ._models_py3 import CopyTranslator
-    from ._models_py3 import CosmosDbLinkedService
-    from ._models_py3 import CosmosDbMongoDbApiCollectionDataset
-    from ._models_py3 import CosmosDbMongoDbApiLinkedService
-    from ._models_py3 import CosmosDbMongoDbApiSink
-    from ._models_py3 import CosmosDbMongoDbApiSource
-    from ._models_py3 import CosmosDbSqlApiCollectionDataset
-    from ._models_py3 import CosmosDbSqlApiSink
-    from ._models_py3 import CosmosDbSqlApiSource
-    from ._models_py3 import CouchbaseLinkedService
-    from ._models_py3 import CouchbaseSource
-    from ._models_py3 import CouchbaseTableDataset
-    from ._models_py3 import CreateDataFlowDebugSessionRequest
-    from ._models_py3 import CreateDataFlowDebugSessionResponse
-    from ._models_py3 import CreateRunResponse
-    from ._models_py3 import CustomActivity
-    from ._models_py3 import CustomActivityReferenceObject
-    from ._models_py3 import CustomDataSourceLinkedService
-    from ._models_py3 import CustomDataset
-    from ._models_py3 import CustomEventsTrigger
-    from ._models_py3 import CustomSetupBase
-    from ._models_py3 import CustomerManagedKeyDetails
-    from ._models_py3 import DWCopyCommandDefaultValue
-    from ._models_py3 import DWCopyCommandSettings
-    from ._models_py3 import DataFlow
-    from ._models_py3 import DataFlowDebugCommandRequest
-    from ._models_py3 import DataFlowDebugCommandResponse
-    from ._models_py3 import DataFlowDebugPackage
-    from ._models_py3 import DataFlowDebugPackageDebugSettings
-    from ._models_py3 import DataFlowDebugPreviewDataRequest
-    from ._models_py3 import DataFlowDebugQueryResponse
-    from ._models_py3 import DataFlowDebugResource
-    from ._models_py3 import DataFlowDebugResultResponse
-    from ._models_py3 import DataFlowDebugSessionInfo
-    from ._models_py3 import DataFlowDebugStatisticsRequest
-    from ._models_py3 import DataFlowFolder
-    from ._models_py3 import DataFlowListResponse
-    from ._models_py3 import DataFlowReference
-    from ._models_py3 import DataFlowResource
-    from ._models_py3 import DataFlowSink
-    from ._models_py3 import DataFlowSource
-    from ._models_py3 import DataFlowSourceSetting
-    from ._models_py3 import DataFlowStagingInfo
-    from ._models_py3 import DataLakeAnalyticsUSQLActivity
-    from ._models_py3 import DataLakeStorageAccountDetails
-    from ._models_py3 import DatabricksNotebookActivity
-    from ._models_py3 import DatabricksSparkJarActivity
-    from ._models_py3 import DatabricksSparkPythonActivity
-    from ._models_py3 import Dataset
-    from ._models_py3 import DatasetBZip2Compression
-    from ._models_py3 import DatasetCompression
-    from ._models_py3 import DatasetDataElement
-    from ._models_py3 import DatasetDebugResource
-    from ._models_py3 import DatasetDeflateCompression
-    from ._models_py3 import DatasetFolder
-    from ._models_py3 import DatasetGZipCompression
-    from ._models_py3 import DatasetListResponse
-    from ._models_py3 import DatasetLocation
-    from ._models_py3 import DatasetReference
-    from ._models_py3 import DatasetResource
-    from ._models_py3 import DatasetSchemaDataElement
-    from ._models_py3 import DatasetStorageFormat
-    from ._models_py3 import DatasetTarCompression
-    from ._models_py3 import DatasetTarGZipCompression
-    from ._models_py3 import DatasetZipDeflateCompression
-    from ._models_py3 import Db2LinkedService
-    from ._models_py3 import Db2Source
-    from ._models_py3 import Db2TableDataset
-    from ._models_py3 import DeleteActivity
-    from ._models_py3 import DeleteDataFlowDebugSessionRequest
-    from ._models_py3 import DelimitedTextDataset
-    from ._models_py3 import DelimitedTextReadSettings
-    from ._models_py3 import DelimitedTextSink
-    from ._models_py3 import DelimitedTextSource
-    from ._models_py3 import DelimitedTextWriteSettings
-    from ._models_py3 import DependencyReference
-    from ._models_py3 import DistcpSettings
-    from ._models_py3 import DocumentDbCollectionDataset
-    from ._models_py3 import DocumentDbCollectionSink
-    from ._models_py3 import DocumentDbCollectionSource
-    from ._models_py3 import DrillLinkedService
-    from ._models_py3 import DrillSource
-    from ._models_py3 import DrillTableDataset
-    from ._models_py3 import DynamicExecutorAllocation
-    from ._models_py3 import DynamicsAXLinkedService
-    from ._models_py3 import DynamicsAXResourceDataset
-    from ._models_py3 import DynamicsAXSource
-    from ._models_py3 import DynamicsCrmEntityDataset
-    from ._models_py3 import DynamicsCrmLinkedService
-    from ._models_py3 import DynamicsCrmSink
-    from ._models_py3 import DynamicsCrmSource
-    from ._models_py3 import DynamicsEntityDataset
-    from ._models_py3 import DynamicsLinkedService
-    from ._models_py3 import DynamicsSink
-    from ._models_py3 import DynamicsSource
-    from ._models_py3 import EloquaLinkedService
-    from ._models_py3 import EloquaObjectDataset
-    from ._models_py3 import EloquaSource
-    from ._models_py3 import EncryptionDetails
-    from ._models_py3 import EntityReference
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorContract
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import EvaluateDataFlowExpressionRequest
-    from ._models_py3 import ExcelDataset
-    from ._models_py3 import ExcelSource
-    from ._models_py3 import ExecuteDataFlowActivity
-    from ._models_py3 import ExecuteDataFlowActivityTypePropertiesCompute
-    from ._models_py3 import ExecutePipelineActivity
-    from ._models_py3 import ExecuteSSISPackageActivity
-    from ._models_py3 import ExecutionActivity
-    from ._models_py3 import ExportSettings
-    from ._models_py3 import ExposureControlRequest
-    from ._models_py3 import ExposureControlResponse
-    from ._models_py3 import Expression
-    from ._models_py3 import FileServerLinkedService
-    from ._models_py3 import FileServerLocation
-    from ._models_py3 import FileServerReadSettings
-    from ._models_py3 import FileServerWriteSettings
-    from ._models_py3 import FileShareDataset
-    from ._models_py3 import FileSystemSink
-    from ._models_py3 import FileSystemSource
-    from ._models_py3 import FilterActivity
-    from ._models_py3 import ForEachActivity
-    from ._models_py3 import FormatReadSettings
-    from ._models_py3 import FormatWriteSettings
-    from ._models_py3 import FtpReadSettings
-    from ._models_py3 import FtpServerLinkedService
-    from ._models_py3 import FtpServerLocation
-    from ._models_py3 import GetMetadataActivity
-    from ._models_py3 import GetSsisObjectMetadataRequest
-    from ._models_py3 import GitHubAccessTokenRequest
-    from ._models_py3 import GitHubAccessTokenResponse
-    from ._models_py3 import GoogleAdWordsLinkedService
-    from ._models_py3 import GoogleAdWordsObjectDataset
-    from ._models_py3 import GoogleAdWordsSource
-    from ._models_py3 import GoogleBigQueryLinkedService
-    from ._models_py3 import GoogleBigQueryObjectDataset
-    from ._models_py3 import GoogleBigQuerySource
-    from ._models_py3 import GoogleCloudStorageLinkedService
-    from ._models_py3 import GoogleCloudStorageLocation
-    from ._models_py3 import GoogleCloudStorageReadSettings
-    from ._models_py3 import GreenplumLinkedService
-    from ._models_py3 import GreenplumSource
-    from ._models_py3 import GreenplumTableDataset
-    from ._models_py3 import HBaseLinkedService
-    from ._models_py3 import HBaseObjectDataset
-    from ._models_py3 import HBaseSource
-    from ._models_py3 import HDInsightHiveActivity
-    from ._models_py3 import HDInsightLinkedService
-    from ._models_py3 import HDInsightMapReduceActivity
-    from ._models_py3 import HDInsightOnDemandLinkedService
-    from ._models_py3 import HDInsightPigActivity
-    from ._models_py3 import HDInsightSparkActivity
-    from ._models_py3 import HDInsightStreamingActivity
-    from ._models_py3 import HdfsLinkedService
-    from ._models_py3 import HdfsLocation
-    from ._models_py3 import HdfsReadSettings
-    from ._models_py3 import HdfsSource
-    from ._models_py3 import HiveLinkedService
-    from ._models_py3 import HiveObjectDataset
-    from ._models_py3 import HiveSource
-    from ._models_py3 import HttpDataset
-    from ._models_py3 import HttpLinkedService
-    from ._models_py3 import HttpReadSettings
-    from ._models_py3 import HttpServerLocation
-    from ._models_py3 import HttpSource
-    from ._models_py3 import HubspotLinkedService
-    from ._models_py3 import HubspotObjectDataset
-    from ._models_py3 import HubspotSource
-    from ._models_py3 import IfConditionActivity
-    from ._models_py3 import ImpalaLinkedService
-    from ._models_py3 import ImpalaObjectDataset
-    from ._models_py3 import ImpalaSource
-    from ._models_py3 import ImportSettings
-    from ._models_py3 import InformixLinkedService
-    from ._models_py3 import InformixSink
-    from ._models_py3 import InformixSource
-    from ._models_py3 import InformixTableDataset
-    from ._models_py3 import IntegrationRuntime
-    from ._models_py3 import IntegrationRuntimeComputeProperties
-    from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
-    from ._models_py3 import IntegrationRuntimeDataFlowProperties
-    from ._models_py3 import IntegrationRuntimeDataProxyProperties
-    from ._models_py3 import IntegrationRuntimeListResponse
-    from ._models_py3 import IntegrationRuntimeReference
-    from ._models_py3 import IntegrationRuntimeResource
-    from ._models_py3 import IntegrationRuntimeSsisCatalogInfo
-    from ._models_py3 import IntegrationRuntimeSsisProperties
-    from ._models_py3 import IntegrationRuntimeVNetProperties
-    from ._models_py3 import JiraLinkedService
-    from ._models_py3 import JiraObjectDataset
-    from ._models_py3 import JiraSource
-    from ._models_py3 import JsonDataset
-    from ._models_py3 import JsonFormat
-    from ._models_py3 import JsonReadSettings
-    from ._models_py3 import JsonSink
-    from ._models_py3 import JsonSource
-    from ._models_py3 import JsonWriteSettings
-    from ._models_py3 import LibraryInfo
-    from ._models_py3 import LibraryListResponse
-    from ._models_py3 import LibraryRequirements
-    from ._models_py3 import LibraryResource
-    from ._models_py3 import LibraryResourceInfo
-    from ._models_py3 import LibraryResourceProperties
-    from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
-    from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
-    from ._models_py3 import LinkedIntegrationRuntimeType
-    from ._models_py3 import LinkedService
-    from ._models_py3 import LinkedServiceDebugResource
-    from ._models_py3 import LinkedServiceListResponse
-    from ._models_py3 import LinkedServiceReference
-    from ._models_py3 import LinkedServiceResource
-    from ._models_py3 import LogLocationSettings
-    from ._models_py3 import LogSettings
-    from ._models_py3 import LogStorageSettings
-    from ._models_py3 import LookupActivity
-    from ._models_py3 import MagentoLinkedService
-    from ._models_py3 import MagentoObjectDataset
-    from ._models_py3 import MagentoSource
-    from ._models_py3 import ManagedIdentity
-    from ._models_py3 import ManagedIntegrationRuntime
-    from ._models_py3 import ManagedVirtualNetworkReference
-    from ._models_py3 import ManagedVirtualNetworkSettings
-    from ._models_py3 import MappingDataFlow
-    from ._models_py3 import MariaDBLinkedService
-    from ._models_py3 import MariaDBSource
-    from ._models_py3 import MariaDBTableDataset
-    from ._models_py3 import MarketoLinkedService
-    from ._models_py3 import MarketoObjectDataset
-    from ._models_py3 import MarketoSource
-    from ._models_py3 import MicrosoftAccessLinkedService
-    from ._models_py3 import MicrosoftAccessSink
-    from ._models_py3 import MicrosoftAccessSource
-    from ._models_py3 import MicrosoftAccessTableDataset
-    from ._models_py3 import MongoDbAtlasCollectionDataset
-    from ._models_py3 import MongoDbAtlasLinkedService
-    from ._models_py3 import MongoDbAtlasSource
-    from ._models_py3 import MongoDbCollectionDataset
-    from ._models_py3 import MongoDbCursorMethodsProperties
-    from ._models_py3 import MongoDbLinkedService
-    from ._models_py3 import MongoDbSource
-    from ._models_py3 import MongoDbV2CollectionDataset
-    from ._models_py3 import MongoDbV2LinkedService
-    from ._models_py3 import MongoDbV2Source
-    from ._models_py3 import MultiplePipelineTrigger
-    from ._models_py3 import MySqlLinkedService
-    from ._models_py3 import MySqlSource
-    from ._models_py3 import MySqlTableDataset
-    from ._models_py3 import NetezzaLinkedService
-    from ._models_py3 import NetezzaPartitionSettings
-    from ._models_py3 import NetezzaSource
-    from ._models_py3 import NetezzaTableDataset
-    from ._models_py3 import Notebook
-    from ._models_py3 import NotebookCell
-    from ._models_py3 import NotebookCellOutputItem
-    from ._models_py3 import NotebookKernelSpec
-    from ._models_py3 import NotebookLanguageInfo
-    from ._models_py3 import NotebookListResponse
-    from ._models_py3 import NotebookMetadata
-    from ._models_py3 import NotebookResource
-    from ._models_py3 import NotebookSessionProperties
-    from ._models_py3 import ODataLinkedService
-    from ._models_py3 import ODataResourceDataset
-    from ._models_py3 import ODataSource
-    from ._models_py3 import OdbcLinkedService
-    from ._models_py3 import OdbcSink
-    from ._models_py3 import OdbcSource
-    from ._models_py3 import OdbcTableDataset
-    from ._models_py3 import Office365Dataset
-    from ._models_py3 import Office365LinkedService
-    from ._models_py3 import Office365Source
-    from ._models_py3 import OperationResult
-    from ._models_py3 import OracleLinkedService
-    from ._models_py3 import OraclePartitionSettings
-    from ._models_py3 import OracleServiceCloudLinkedService
-    from ._models_py3 import OracleServiceCloudObjectDataset
-    from ._models_py3 import OracleServiceCloudSource
-    from ._models_py3 import OracleSink
-    from ._models_py3 import OracleSource
-    from ._models_py3 import OracleTableDataset
-    from ._models_py3 import OrcDataset
-    from ._models_py3 import OrcFormat
-    from ._models_py3 import OrcSink
-    from ._models_py3 import OrcSource
-    from ._models_py3 import OrcWriteSettings
-    from ._models_py3 import ParameterSpecification
-    from ._models_py3 import ParquetDataset
-    from ._models_py3 import ParquetFormat
-    from ._models_py3 import ParquetSink
-    from ._models_py3 import ParquetSource
-    from ._models_py3 import ParquetWriteSettings
-    from ._models_py3 import PaypalLinkedService
-    from ._models_py3 import PaypalObjectDataset
-    from ._models_py3 import PaypalSource
-    from ._models_py3 import PhoenixLinkedService
-    from ._models_py3 import PhoenixObjectDataset
-    from ._models_py3 import PhoenixSource
-    from ._models_py3 import PipelineFolder
-    from ._models_py3 import PipelineListResponse
-    from ._models_py3 import PipelineReference
-    from ._models_py3 import PipelineResource
-    from ._models_py3 import PipelineRun
-    from ._models_py3 import PipelineRunInvokedBy
-    from ._models_py3 import PipelineRunsQueryResponse
-    from ._models_py3 import PolybaseSettings
-    from ._models_py3 import PostgreSqlLinkedService
-    from ._models_py3 import PostgreSqlSource
-    from ._models_py3 import PostgreSqlTableDataset
-    from ._models_py3 import PrestoLinkedService
-    from ._models_py3 import PrestoObjectDataset
-    from ._models_py3 import PrestoSource
-    from ._models_py3 import PrivateEndpoint
-    from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateLinkServiceConnectionState
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import PurviewConfiguration
-    from ._models_py3 import QueryDataFlowDebugSessionsResponse
-    from ._models_py3 import QuickBooksLinkedService
-    from ._models_py3 import QuickBooksObjectDataset
-    from ._models_py3 import QuickBooksSource
-    from ._models_py3 import RecurrenceSchedule
-    from ._models_py3 import RecurrenceScheduleOccurrence
-    from ._models_py3 import RedirectIncompatibleRowSettings
-    from ._models_py3 import RedshiftUnloadSettings
-    from ._models_py3 import RelationalSource
-    from ._models_py3 import RelationalTableDataset
-    from ._models_py3 import RerunTriggerListResponse
-    from ._models_py3 import RerunTriggerResource
-    from ._models_py3 import RerunTumblingWindowTrigger
-    from ._models_py3 import RerunTumblingWindowTriggerActionParameters
-    from ._models_py3 import Resource
-    from ._models_py3 import ResponsysLinkedService
-    from ._models_py3 import ResponsysObjectDataset
-    from ._models_py3 import ResponsysSource
-    from ._models_py3 import RestResourceDataset
-    from ._models_py3 import RestServiceLinkedService
-    from ._models_py3 import RestSink
-    from ._models_py3 import RestSource
-    from ._models_py3 import RetryPolicy
-    from ._models_py3 import RunFilterParameters
-    from ._models_py3 import RunQueryFilter
-    from ._models_py3 import RunQueryOrderBy
-    from ._models_py3 import SSISAccessCredential
-    from ._models_py3 import SSISChildPackage
-    from ._models_py3 import SSISExecutionCredential
-    from ._models_py3 import SSISExecutionParameter
-    from ._models_py3 import SSISLogLocation
-    from ._models_py3 import SSISPackageLocation
-    from ._models_py3 import SSISPropertyOverride
-    from ._models_py3 import SalesforceLinkedService
-    from ._models_py3 import SalesforceMarketingCloudLinkedService
-    from ._models_py3 import SalesforceMarketingCloudObjectDataset
-    from ._models_py3 import SalesforceMarketingCloudSource
-    from ._models_py3 import SalesforceObjectDataset
-    from ._models_py3 import SalesforceServiceCloudLinkedService
-    from ._models_py3 import SalesforceServiceCloudObjectDataset
-    from ._models_py3 import SalesforceServiceCloudSink
-    from ._models_py3 import SalesforceServiceCloudSource
-    from ._models_py3 import SalesforceSink
-    from ._models_py3 import SalesforceSource
-    from ._models_py3 import SapBWLinkedService
-    from ._models_py3 import SapBwCubeDataset
-    from ._models_py3 import SapBwSource
-    from ._models_py3 import SapCloudForCustomerLinkedService
-    from ._models_py3 import SapCloudForCustomerResourceDataset
-    from ._models_py3 import SapCloudForCustomerSink
-    from ._models_py3 import SapCloudForCustomerSource
-    from ._models_py3 import SapEccLinkedService
-    from ._models_py3 import SapEccResourceDataset
-    from ._models_py3 import SapEccSource
-    from ._models_py3 import SapHanaLinkedService
-    from ._models_py3 import SapHanaPartitionSettings
-    from ._models_py3 import SapHanaSource
-    from ._models_py3 import SapHanaTableDataset
-    from ._models_py3 import SapOpenHubLinkedService
-    from ._models_py3 import SapOpenHubSource
-    from ._models_py3 import SapOpenHubTableDataset
-    from ._models_py3 import SapTableLinkedService
-    from ._models_py3 import SapTablePartitionSettings
-    from ._models_py3 import SapTableResourceDataset
-    from ._models_py3 import SapTableSource
-    from ._models_py3 import ScheduleTrigger
-    from ._models_py3 import ScheduleTriggerRecurrence
-    from ._models_py3 import ScriptAction
-    from ._models_py3 import SecretBase
-    from ._models_py3 import SecureString
-    from ._models_py3 import SelfDependencyTumblingWindowTriggerReference
-    from ._models_py3 import SelfHostedIntegrationRuntime
-    from ._models_py3 import ServiceNowLinkedService
-    from ._models_py3 import ServiceNowObjectDataset
-    from ._models_py3 import ServiceNowSource
-    from ._models_py3 import SetVariableActivity
-    from ._models_py3 import SftpLocation
-    from ._models_py3 import SftpReadSettings
-    from ._models_py3 import SftpServerLinkedService
-    from ._models_py3 import SftpWriteSettings
-    from ._models_py3 import SharePointOnlineListLinkedService
-    from ._models_py3 import SharePointOnlineListResourceDataset
-    from ._models_py3 import SharePointOnlineListSource
-    from ._models_py3 import ShopifyLinkedService
-    from ._models_py3 import ShopifyObjectDataset
-    from ._models_py3 import ShopifySource
-    from ._models_py3 import SkipErrorFile
-    from ._models_py3 import Sku
-    from ._models_py3 import SnowflakeDataset
-    from ._models_py3 import SnowflakeExportCopyCommand
-    from ._models_py3 import SnowflakeImportCopyCommand
-    from ._models_py3 import SnowflakeLinkedService
-    from ._models_py3 import SnowflakeSink
-    from ._models_py3 import SnowflakeSource
-    from ._models_py3 import SparkBatchJob
-    from ._models_py3 import SparkBatchJobState
-    from ._models_py3 import SparkJobDefinition
-    from ._models_py3 import SparkJobDefinitionResource
-    from ._models_py3 import SparkJobDefinitionsListResponse
-    from ._models_py3 import SparkJobProperties
-    from ._models_py3 import SparkLinkedService
-    from ._models_py3 import SparkObjectDataset
-    from ._models_py3 import SparkRequest
-    from ._models_py3 import SparkScheduler
-    from ._models_py3 import SparkServiceError
-    from ._models_py3 import SparkServicePlugin
-    from ._models_py3 import SparkSource
-    from ._models_py3 import SqlConnection
-    from ._models_py3 import SqlDWSink
-    from ._models_py3 import SqlDWSource
-    from ._models_py3 import SqlMISink
-    from ._models_py3 import SqlMISource
-    from ._models_py3 import SqlPartitionSettings
-    from ._models_py3 import SqlPool
-    from ._models_py3 import SqlPoolInfoListResult
-    from ._models_py3 import SqlPoolReference
-    from ._models_py3 import SqlPoolStoredProcedureActivity
-    from ._models_py3 import SqlScript
-    from ._models_py3 import SqlScriptContent
-    from ._models_py3 import SqlScriptMetadata
-    from ._models_py3 import SqlScriptResource
-    from ._models_py3 import SqlScriptsListResponse
-    from ._models_py3 import SqlServerLinkedService
-    from ._models_py3 import SqlServerSink
-    from ._models_py3 import SqlServerSource
-    from ._models_py3 import SqlServerStoredProcedureActivity
-    from ._models_py3 import SqlServerTableDataset
-    from ._models_py3 import SqlSink
-    from ._models_py3 import SqlSource
-    from ._models_py3 import SquareLinkedService
-    from ._models_py3 import SquareObjectDataset
-    from ._models_py3 import SquareSource
-    from ._models_py3 import SsisObjectMetadataStatusResponse
-    from ._models_py3 import StagingSettings
-    from ._models_py3 import StartDataFlowDebugSessionRequest
-    from ._models_py3 import StartDataFlowDebugSessionResponse
-    from ._models_py3 import StoreReadSettings
-    from ._models_py3 import StoreWriteSettings
-    from ._models_py3 import StoredProcedureParameter
-    from ._models_py3 import SubResource
-    from ._models_py3 import SubResourceDebugResource
-    from ._models_py3 import SwitchActivity
-    from ._models_py3 import SwitchCase
-    from ._models_py3 import SybaseLinkedService
-    from ._models_py3 import SybaseSource
-    from ._models_py3 import SybaseTableDataset
-    from ._models_py3 import SynapseNotebookActivity
-    from ._models_py3 import SynapseNotebookReference
-    from ._models_py3 import SynapseSparkJobDefinitionActivity
-    from ._models_py3 import SynapseSparkJobReference
-    from ._models_py3 import TabularSource
-    from ._models_py3 import TabularTranslator
-    from ._models_py3 import TarGZipReadSettings
-    from ._models_py3 import TarReadSettings
-    from ._models_py3 import TeradataLinkedService
-    from ._models_py3 import TeradataPartitionSettings
-    from ._models_py3 import TeradataSource
-    from ._models_py3 import TeradataTableDataset
-    from ._models_py3 import TextFormat
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import Transformation
-    from ._models_py3 import Trigger
-    from ._models_py3 import TriggerDependencyProvisioningStatus
-    from ._models_py3 import TriggerDependencyReference
-    from ._models_py3 import TriggerListResponse
-    from ._models_py3 import TriggerPipelineReference
-    from ._models_py3 import TriggerReference
-    from ._models_py3 import TriggerResource
-    from ._models_py3 import TriggerRun
-    from ._models_py3 import TriggerRunsQueryResponse
-    from ._models_py3 import TriggerSubscriptionOperationStatus
-    from ._models_py3 import TumblingWindowTrigger
-    from ._models_py3 import TumblingWindowTriggerDependencyReference
-    from ._models_py3 import TypeConversionSettings
-    from ._models_py3 import UntilActivity
-    from ._models_py3 import UserProperty
-    from ._models_py3 import ValidationActivity
-    from ._models_py3 import VariableSpecification
-    from ._models_py3 import VerticaLinkedService
-    from ._models_py3 import VerticaSource
-    from ._models_py3 import VerticaTableDataset
-    from ._models_py3 import VirtualNetworkProfile
-    from ._models_py3 import WaitActivity
-    from ._models_py3 import WebActivity
-    from ._models_py3 import WebActivityAuthentication
-    from ._models_py3 import WebAnonymousAuthentication
-    from ._models_py3 import WebBasicAuthentication
-    from ._models_py3 import WebClientCertificateAuthentication
-    from ._models_py3 import WebHookActivity
-    from ._models_py3 import WebLinkedService
-    from ._models_py3 import WebLinkedServiceTypeProperties
-    from ._models_py3 import WebSource
-    from ._models_py3 import WebTableDataset
-    from ._models_py3 import Workspace
-    from ._models_py3 import WorkspaceIdentity
-    from ._models_py3 import WorkspaceKeyDetails
-    from ._models_py3 import WorkspaceRepositoryConfiguration
-    from ._models_py3 import WorkspaceUpdateParameters
-    from ._models_py3 import XeroLinkedService
-    from ._models_py3 import XeroObjectDataset
-    from ._models_py3 import XeroSource
-    from ._models_py3 import XmlDataset
-    from ._models_py3 import XmlReadSettings
-    from ._models_py3 import XmlSource
-    from ._models_py3 import ZipDeflateReadSettings
-    from ._models_py3 import ZohoLinkedService
-    from ._models_py3 import ZohoObjectDataset
-    from ._models_py3 import ZohoSource
-except (SyntaxError, ImportError):
-    from ._models import Activity  # type: ignore
-    from ._models import ActivityDependency  # type: ignore
-    from ._models import ActivityPolicy  # type: ignore
-    from ._models import ActivityRun  # type: ignore
-    from ._models import ActivityRunsQueryResponse  # type: ignore
-    from ._models import AddDataFlowToDebugSessionResponse  # type: ignore
-    from ._models import AdditionalColumns  # type: ignore
-    from ._models import AmazonMWSLinkedService  # type: ignore
-    from ._models import AmazonMWSObjectDataset  # type: ignore
-    from ._models import AmazonMWSSource  # type: ignore
-    from ._models import AmazonRedshiftLinkedService  # type: ignore
-    from ._models import AmazonRedshiftSource  # type: ignore
-    from ._models import AmazonRedshiftTableDataset  # type: ignore
-    from ._models import AmazonS3Dataset  # type: ignore
-    from ._models import AmazonS3LinkedService  # type: ignore
-    from ._models import AmazonS3Location  # type: ignore
-    from ._models import AmazonS3ReadSettings  # type: ignore
-    from ._models import AppendVariableActivity  # type: ignore
-    from ._models import ArtifactRenameRequest  # type: ignore
-    from ._models import AutoPauseProperties  # type: ignore
-    from ._models import AutoScaleProperties  # type: ignore
-    from ._models import AvroDataset  # type: ignore
-    from ._models import AvroFormat  # type: ignore
-    from ._models import AvroSink  # type: ignore
-    from ._models import AvroSource  # type: ignore
-    from ._models import AvroWriteSettings  # type: ignore
-    from ._models import AzureBatchLinkedService  # type: ignore
-    from ._models import AzureBlobDataset  # type: ignore
-    from ._models import AzureBlobFSDataset  # type: ignore
-    from ._models import AzureBlobFSLinkedService  # type: ignore
-    from ._models import AzureBlobFSLocation  # type: ignore
-    from ._models import AzureBlobFSReadSettings  # type: ignore
-    from ._models import AzureBlobFSSink  # type: ignore
-    from ._models import AzureBlobFSSource  # type: ignore
-    from ._models import AzureBlobFSWriteSettings  # type: ignore
-    from ._models import AzureBlobStorageLinkedService  # type: ignore
-    from ._models import AzureBlobStorageLocation  # type: ignore
-    from ._models import AzureBlobStorageReadSettings  # type: ignore
-    from ._models import AzureBlobStorageWriteSettings  # type: ignore
-    from ._models import AzureDataExplorerCommandActivity  # type: ignore
-    from ._models import AzureDataExplorerLinkedService  # type: ignore
-    from ._models import AzureDataExplorerSink  # type: ignore
-    from ._models import AzureDataExplorerSource  # type: ignore
-    from ._models import AzureDataExplorerTableDataset  # type: ignore
-    from ._models import AzureDataLakeAnalyticsLinkedService  # type: ignore
-    from ._models import AzureDataLakeStoreDataset  # type: ignore
-    from ._models import AzureDataLakeStoreLinkedService  # type: ignore
-    from ._models import AzureDataLakeStoreLocation  # type: ignore
-    from ._models import AzureDataLakeStoreReadSettings  # type: ignore
-    from ._models import AzureDataLakeStoreSink  # type: ignore
-    from ._models import AzureDataLakeStoreSource  # type: ignore
-    from ._models import AzureDataLakeStoreWriteSettings  # type: ignore
-    from ._models import AzureDatabricksDeltaLakeDataset  # type: ignore
-    from ._models import AzureDatabricksDeltaLakeExportCommand  # type: ignore
-    from ._models import AzureDatabricksDeltaLakeImportCommand  # type: ignore
-    from ._models import AzureDatabricksDeltaLakeLinkedService  # type: ignore
-    from ._models import AzureDatabricksDeltaLakeSink  # type: ignore
-    from ._models import AzureDatabricksDeltaLakeSource  # type: ignore
-    from ._models import AzureDatabricksLinkedService  # type: ignore
-    from ._models import AzureEntityResource  # type: ignore
-    from ._models import AzureFileStorageLinkedService  # type: ignore
-    from ._models import AzureFileStorageLocation  # type: ignore
-    from ._models import AzureFileStorageReadSettings  # type: ignore
-    from ._models import AzureFileStorageWriteSettings  # type: ignore
-    from ._models import AzureFunctionActivity  # type: ignore
-    from ._models import AzureFunctionLinkedService  # type: ignore
-    from ._models import AzureKeyVaultLinkedService  # type: ignore
-    from ._models import AzureKeyVaultSecretReference  # type: ignore
-    from ._models import AzureMLBatchExecutionActivity  # type: ignore
-    from ._models import AzureMLExecutePipelineActivity  # type: ignore
-    from ._models import AzureMLLinkedService  # type: ignore
-    from ._models import AzureMLServiceLinkedService  # type: ignore
-    from ._models import AzureMLUpdateResourceActivity  # type: ignore
-    from ._models import AzureMLWebServiceFile  # type: ignore
-    from ._models import AzureMariaDBLinkedService  # type: ignore
-    from ._models import AzureMariaDBSource  # type: ignore
-    from ._models import AzureMariaDBTableDataset  # type: ignore
-    from ._models import AzureMySqlLinkedService  # type: ignore
-    from ._models import AzureMySqlSink  # type: ignore
-    from ._models import AzureMySqlSource  # type: ignore
-    from ._models import AzureMySqlTableDataset  # type: ignore
-    from ._models import AzurePostgreSqlLinkedService  # type: ignore
-    from ._models import AzurePostgreSqlSink  # type: ignore
-    from ._models import AzurePostgreSqlSource  # type: ignore
-    from ._models import AzurePostgreSqlTableDataset  # type: ignore
-    from ._models import AzureQueueSink  # type: ignore
-    from ._models import AzureSearchIndexDataset  # type: ignore
-    from ._models import AzureSearchIndexSink  # type: ignore
-    from ._models import AzureSearchLinkedService  # type: ignore
-    from ._models import AzureSqlDWLinkedService  # type: ignore
-    from ._models import AzureSqlDWTableDataset  # type: ignore
-    from ._models import AzureSqlDatabaseLinkedService  # type: ignore
-    from ._models import AzureSqlMILinkedService  # type: ignore
-    from ._models import AzureSqlMITableDataset  # type: ignore
-    from ._models import AzureSqlSink  # type: ignore
-    from ._models import AzureSqlSource  # type: ignore
-    from ._models import AzureSqlTableDataset  # type: ignore
-    from ._models import AzureStorageLinkedService  # type: ignore
-    from ._models import AzureTableDataset  # type: ignore
-    from ._models import AzureTableSink  # type: ignore
-    from ._models import AzureTableSource  # type: ignore
-    from ._models import AzureTableStorageLinkedService  # type: ignore
-    from ._models import BigDataPoolReference  # type: ignore
-    from ._models import BigDataPoolResourceInfo  # type: ignore
-    from ._models import BigDataPoolResourceInfoListResult  # type: ignore
-    from ._models import BinaryDataset  # type: ignore
-    from ._models import BinaryReadSettings  # type: ignore
-    from ._models import BinarySink  # type: ignore
-    from ._models import BinarySource  # type: ignore
-    from ._models import BlobEventsTrigger  # type: ignore
-    from ._models import BlobSink  # type: ignore
-    from ._models import BlobSource  # type: ignore
-    from ._models import BlobTrigger  # type: ignore
-    from ._models import CassandraLinkedService  # type: ignore
-    from ._models import CassandraSource  # type: ignore
-    from ._models import CassandraTableDataset  # type: ignore
-    from ._models import ChainingTrigger  # type: ignore
-    from ._models import CloudError  # type: ignore
-    from ._models import CommonDataServiceForAppsEntityDataset  # type: ignore
-    from ._models import CommonDataServiceForAppsLinkedService  # type: ignore
-    from ._models import CommonDataServiceForAppsSink  # type: ignore
-    from ._models import CommonDataServiceForAppsSource  # type: ignore
-    from ._models import CompressionReadSettings  # type: ignore
-    from ._models import ConcurLinkedService  # type: ignore
-    from ._models import ConcurObjectDataset  # type: ignore
-    from ._models import ConcurSource  # type: ignore
-    from ._models import ControlActivity  # type: ignore
-    from ._models import CopyActivity  # type: ignore
-    from ._models import CopyActivityLogSettings  # type: ignore
-    from ._models import CopySink  # type: ignore
-    from ._models import CopySource  # type: ignore
-    from ._models import CopyTranslator  # type: ignore
-    from ._models import CosmosDbLinkedService  # type: ignore
-    from ._models import CosmosDbMongoDbApiCollectionDataset  # type: ignore
-    from ._models import CosmosDbMongoDbApiLinkedService  # type: ignore
-    from ._models import CosmosDbMongoDbApiSink  # type: ignore
-    from ._models import CosmosDbMongoDbApiSource  # type: ignore
-    from ._models import CosmosDbSqlApiCollectionDataset  # type: ignore
-    from ._models import CosmosDbSqlApiSink  # type: ignore
-    from ._models import CosmosDbSqlApiSource  # type: ignore
-    from ._models import CouchbaseLinkedService  # type: ignore
-    from ._models import CouchbaseSource  # type: ignore
-    from ._models import CouchbaseTableDataset  # type: ignore
-    from ._models import CreateDataFlowDebugSessionRequest  # type: ignore
-    from ._models import CreateDataFlowDebugSessionResponse  # type: ignore
-    from ._models import CreateRunResponse  # type: ignore
-    from ._models import CustomActivity  # type: ignore
-    from ._models import CustomActivityReferenceObject  # type: ignore
-    from ._models import CustomDataSourceLinkedService  # type: ignore
-    from ._models import CustomDataset  # type: ignore
-    from ._models import CustomEventsTrigger  # type: ignore
-    from ._models import CustomSetupBase  # type: ignore
-    from ._models import CustomerManagedKeyDetails  # type: ignore
-    from ._models import DWCopyCommandDefaultValue  # type: ignore
-    from ._models import DWCopyCommandSettings  # type: ignore
-    from ._models import DataFlow  # type: ignore
-    from ._models import DataFlowDebugCommandRequest  # type: ignore
-    from ._models import DataFlowDebugCommandResponse  # type: ignore
-    from ._models import DataFlowDebugPackage  # type: ignore
-    from ._models import DataFlowDebugPackageDebugSettings  # type: ignore
-    from ._models import DataFlowDebugPreviewDataRequest  # type: ignore
-    from ._models import DataFlowDebugQueryResponse  # type: ignore
-    from ._models import DataFlowDebugResource  # type: ignore
-    from ._models import DataFlowDebugResultResponse  # type: ignore
-    from ._models import DataFlowDebugSessionInfo  # type: ignore
-    from ._models import DataFlowDebugStatisticsRequest  # type: ignore
-    from ._models import DataFlowFolder  # type: ignore
-    from ._models import DataFlowListResponse  # type: ignore
-    from ._models import DataFlowReference  # type: ignore
-    from ._models import DataFlowResource  # type: ignore
-    from ._models import DataFlowSink  # type: ignore
-    from ._models import DataFlowSource  # type: ignore
-    from ._models import DataFlowSourceSetting  # type: ignore
-    from ._models import DataFlowStagingInfo  # type: ignore
-    from ._models import DataLakeAnalyticsUSQLActivity  # type: ignore
-    from ._models import DataLakeStorageAccountDetails  # type: ignore
-    from ._models import DatabricksNotebookActivity  # type: ignore
-    from ._models import DatabricksSparkJarActivity  # type: ignore
-    from ._models import DatabricksSparkPythonActivity  # type: ignore
-    from ._models import Dataset  # type: ignore
-    from ._models import DatasetBZip2Compression  # type: ignore
-    from ._models import DatasetCompression  # type: ignore
-    from ._models import DatasetDataElement  # type: ignore
-    from ._models import DatasetDebugResource  # type: ignore
-    from ._models import DatasetDeflateCompression  # type: ignore
-    from ._models import DatasetFolder  # type: ignore
-    from ._models import DatasetGZipCompression  # type: ignore
-    from ._models import DatasetListResponse  # type: ignore
-    from ._models import DatasetLocation  # type: ignore
-    from ._models import DatasetReference  # type: ignore
-    from ._models import DatasetResource  # type: ignore
-    from ._models import DatasetSchemaDataElement  # type: ignore
-    from ._models import DatasetStorageFormat  # type: ignore
-    from ._models import DatasetTarCompression  # type: ignore
-    from ._models import DatasetTarGZipCompression  # type: ignore
-    from ._models import DatasetZipDeflateCompression  # type: ignore
-    from ._models import Db2LinkedService  # type: ignore
-    from ._models import Db2Source  # type: ignore
-    from ._models import Db2TableDataset  # type: ignore
-    from ._models import DeleteActivity  # type: ignore
-    from ._models import DeleteDataFlowDebugSessionRequest  # type: ignore
-    from ._models import DelimitedTextDataset  # type: ignore
-    from ._models import DelimitedTextReadSettings  # type: ignore
-    from ._models import DelimitedTextSink  # type: ignore
-    from ._models import DelimitedTextSource  # type: ignore
-    from ._models import DelimitedTextWriteSettings  # type: ignore
-    from ._models import DependencyReference  # type: ignore
-    from ._models import DistcpSettings  # type: ignore
-    from ._models import DocumentDbCollectionDataset  # type: ignore
-    from ._models import DocumentDbCollectionSink  # type: ignore
-    from ._models import DocumentDbCollectionSource  # type: ignore
-    from ._models import DrillLinkedService  # type: ignore
-    from ._models import DrillSource  # type: ignore
-    from ._models import DrillTableDataset  # type: ignore
-    from ._models import DynamicExecutorAllocation  # type: ignore
-    from ._models import DynamicsAXLinkedService  # type: ignore
-    from ._models import DynamicsAXResourceDataset  # type: ignore
-    from ._models import DynamicsAXSource  # type: ignore
-    from ._models import DynamicsCrmEntityDataset  # type: ignore
-    from ._models import DynamicsCrmLinkedService  # type: ignore
-    from ._models import DynamicsCrmSink  # type: ignore
-    from ._models import DynamicsCrmSource  # type: ignore
-    from ._models import DynamicsEntityDataset  # type: ignore
-    from ._models import DynamicsLinkedService  # type: ignore
-    from ._models import DynamicsSink  # type: ignore
-    from ._models import DynamicsSource  # type: ignore
-    from ._models import EloquaLinkedService  # type: ignore
-    from ._models import EloquaObjectDataset  # type: ignore
-    from ._models import EloquaSource  # type: ignore
-    from ._models import EncryptionDetails  # type: ignore
-    from ._models import EntityReference  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorContract  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import EvaluateDataFlowExpressionRequest  # type: ignore
-    from ._models import ExcelDataset  # type: ignore
-    from ._models import ExcelSource  # type: ignore
-    from ._models import ExecuteDataFlowActivity  # type: ignore
-    from ._models import ExecuteDataFlowActivityTypePropertiesCompute  # type: ignore
-    from ._models import ExecutePipelineActivity  # type: ignore
-    from ._models import ExecuteSSISPackageActivity  # type: ignore
-    from ._models import ExecutionActivity  # type: ignore
-    from ._models import ExportSettings  # type: ignore
-    from ._models import ExposureControlRequest  # type: ignore
-    from ._models import ExposureControlResponse  # type: ignore
-    from ._models import Expression  # type: ignore
-    from ._models import FileServerLinkedService  # type: ignore
-    from ._models import FileServerLocation  # type: ignore
-    from ._models import FileServerReadSettings  # type: ignore
-    from ._models import FileServerWriteSettings  # type: ignore
-    from ._models import FileShareDataset  # type: ignore
-    from ._models import FileSystemSink  # type: ignore
-    from ._models import FileSystemSource  # type: ignore
-    from ._models import FilterActivity  # type: ignore
-    from ._models import ForEachActivity  # type: ignore
-    from ._models import FormatReadSettings  # type: ignore
-    from ._models import FormatWriteSettings  # type: ignore
-    from ._models import FtpReadSettings  # type: ignore
-    from ._models import FtpServerLinkedService  # type: ignore
-    from ._models import FtpServerLocation  # type: ignore
-    from ._models import GetMetadataActivity  # type: ignore
-    from ._models import GetSsisObjectMetadataRequest  # type: ignore
-    from ._models import GitHubAccessTokenRequest  # type: ignore
-    from ._models import GitHubAccessTokenResponse  # type: ignore
-    from ._models import GoogleAdWordsLinkedService  # type: ignore
-    from ._models import GoogleAdWordsObjectDataset  # type: ignore
-    from ._models import GoogleAdWordsSource  # type: ignore
-    from ._models import GoogleBigQueryLinkedService  # type: ignore
-    from ._models import GoogleBigQueryObjectDataset  # type: ignore
-    from ._models import GoogleBigQuerySource  # type: ignore
-    from ._models import GoogleCloudStorageLinkedService  # type: ignore
-    from ._models import GoogleCloudStorageLocation  # type: ignore
-    from ._models import GoogleCloudStorageReadSettings  # type: ignore
-    from ._models import GreenplumLinkedService  # type: ignore
-    from ._models import GreenplumSource  # type: ignore
-    from ._models import GreenplumTableDataset  # type: ignore
-    from ._models import HBaseLinkedService  # type: ignore
-    from ._models import HBaseObjectDataset  # type: ignore
-    from ._models import HBaseSource  # type: ignore
-    from ._models import HDInsightHiveActivity  # type: ignore
-    from ._models import HDInsightLinkedService  # type: ignore
-    from ._models import HDInsightMapReduceActivity  # type: ignore
-    from ._models import HDInsightOnDemandLinkedService  # type: ignore
-    from ._models import HDInsightPigActivity  # type: ignore
-    from ._models import HDInsightSparkActivity  # type: ignore
-    from ._models import HDInsightStreamingActivity  # type: ignore
-    from ._models import HdfsLinkedService  # type: ignore
-    from ._models import HdfsLocation  # type: ignore
-    from ._models import HdfsReadSettings  # type: ignore
-    from ._models import HdfsSource  # type: ignore
-    from ._models import HiveLinkedService  # type: ignore
-    from ._models import HiveObjectDataset  # type: ignore
-    from ._models import HiveSource  # type: ignore
-    from ._models import HttpDataset  # type: ignore
-    from ._models import HttpLinkedService  # type: ignore
-    from ._models import HttpReadSettings  # type: ignore
-    from ._models import HttpServerLocation  # type: ignore
-    from ._models import HttpSource  # type: ignore
-    from ._models import HubspotLinkedService  # type: ignore
-    from ._models import HubspotObjectDataset  # type: ignore
-    from ._models import HubspotSource  # type: ignore
-    from ._models import IfConditionActivity  # type: ignore
-    from ._models import ImpalaLinkedService  # type: ignore
-    from ._models import ImpalaObjectDataset  # type: ignore
-    from ._models import ImpalaSource  # type: ignore
-    from ._models import ImportSettings  # type: ignore
-    from ._models import InformixLinkedService  # type: ignore
-    from ._models import InformixSink  # type: ignore
-    from ._models import InformixSource  # type: ignore
-    from ._models import InformixTableDataset  # type: ignore
-    from ._models import IntegrationRuntime  # type: ignore
-    from ._models import IntegrationRuntimeComputeProperties  # type: ignore
-    from ._models import IntegrationRuntimeCustomSetupScriptProperties  # type: ignore
-    from ._models import IntegrationRuntimeDataFlowProperties  # type: ignore
-    from ._models import IntegrationRuntimeDataProxyProperties  # type: ignore
-    from ._models import IntegrationRuntimeListResponse  # type: ignore
-    from ._models import IntegrationRuntimeReference  # type: ignore
-    from ._models import IntegrationRuntimeResource  # type: ignore
-    from ._models import IntegrationRuntimeSsisCatalogInfo  # type: ignore
-    from ._models import IntegrationRuntimeSsisProperties  # type: ignore
-    from ._models import IntegrationRuntimeVNetProperties  # type: ignore
-    from ._models import JiraLinkedService  # type: ignore
-    from ._models import JiraObjectDataset  # type: ignore
-    from ._models import JiraSource  # type: ignore
-    from ._models import JsonDataset  # type: ignore
-    from ._models import JsonFormat  # type: ignore
-    from ._models import JsonReadSettings  # type: ignore
-    from ._models import JsonSink  # type: ignore
-    from ._models import JsonSource  # type: ignore
-    from ._models import JsonWriteSettings  # type: ignore
-    from ._models import LibraryInfo  # type: ignore
-    from ._models import LibraryListResponse  # type: ignore
-    from ._models import LibraryRequirements  # type: ignore
-    from ._models import LibraryResource  # type: ignore
-    from ._models import LibraryResourceInfo  # type: ignore
-    from ._models import LibraryResourceProperties  # type: ignore
-    from ._models import LinkedIntegrationRuntimeKeyAuthorization  # type: ignore
-    from ._models import LinkedIntegrationRuntimeRbacAuthorization  # type: ignore
-    from ._models import LinkedIntegrationRuntimeType  # type: ignore
-    from ._models import LinkedService  # type: ignore
-    from ._models import LinkedServiceDebugResource  # type: ignore
-    from ._models import LinkedServiceListResponse  # type: ignore
-    from ._models import LinkedServiceReference  # type: ignore
-    from ._models import LinkedServiceResource  # type: ignore
-    from ._models import LogLocationSettings  # type: ignore
-    from ._models import LogSettings  # type: ignore
-    from ._models import LogStorageSettings  # type: ignore
-    from ._models import LookupActivity  # type: ignore
-    from ._models import MagentoLinkedService  # type: ignore
-    from ._models import MagentoObjectDataset  # type: ignore
-    from ._models import MagentoSource  # type: ignore
-    from ._models import ManagedIdentity  # type: ignore
-    from ._models import ManagedIntegrationRuntime  # type: ignore
-    from ._models import ManagedVirtualNetworkReference  # type: ignore
-    from ._models import ManagedVirtualNetworkSettings  # type: ignore
-    from ._models import MappingDataFlow  # type: ignore
-    from ._models import MariaDBLinkedService  # type: ignore
-    from ._models import MariaDBSource  # type: ignore
-    from ._models import MariaDBTableDataset  # type: ignore
-    from ._models import MarketoLinkedService  # type: ignore
-    from ._models import MarketoObjectDataset  # type: ignore
-    from ._models import MarketoSource  # type: ignore
-    from ._models import MicrosoftAccessLinkedService  # type: ignore
-    from ._models import MicrosoftAccessSink  # type: ignore
-    from ._models import MicrosoftAccessSource  # type: ignore
-    from ._models import MicrosoftAccessTableDataset  # type: ignore
-    from ._models import MongoDbAtlasCollectionDataset  # type: ignore
-    from ._models import MongoDbAtlasLinkedService  # type: ignore
-    from ._models import MongoDbAtlasSource  # type: ignore
-    from ._models import MongoDbCollectionDataset  # type: ignore
-    from ._models import MongoDbCursorMethodsProperties  # type: ignore
-    from ._models import MongoDbLinkedService  # type: ignore
-    from ._models import MongoDbSource  # type: ignore
-    from ._models import MongoDbV2CollectionDataset  # type: ignore
-    from ._models import MongoDbV2LinkedService  # type: ignore
-    from ._models import MongoDbV2Source  # type: ignore
-    from ._models import MultiplePipelineTrigger  # type: ignore
-    from ._models import MySqlLinkedService  # type: ignore
-    from ._models import MySqlSource  # type: ignore
-    from ._models import MySqlTableDataset  # type: ignore
-    from ._models import NetezzaLinkedService  # type: ignore
-    from ._models import NetezzaPartitionSettings  # type: ignore
-    from ._models import NetezzaSource  # type: ignore
-    from ._models import NetezzaTableDataset  # type: ignore
-    from ._models import Notebook  # type: ignore
-    from ._models import NotebookCell  # type: ignore
-    from ._models import NotebookCellOutputItem  # type: ignore
-    from ._models import NotebookKernelSpec  # type: ignore
-    from ._models import NotebookLanguageInfo  # type: ignore
-    from ._models import NotebookListResponse  # type: ignore
-    from ._models import NotebookMetadata  # type: ignore
-    from ._models import NotebookResource  # type: ignore
-    from ._models import NotebookSessionProperties  # type: ignore
-    from ._models import ODataLinkedService  # type: ignore
-    from ._models import ODataResourceDataset  # type: ignore
-    from ._models import ODataSource  # type: ignore
-    from ._models import OdbcLinkedService  # type: ignore
-    from ._models import OdbcSink  # type: ignore
-    from ._models import OdbcSource  # type: ignore
-    from ._models import OdbcTableDataset  # type: ignore
-    from ._models import Office365Dataset  # type: ignore
-    from ._models import Office365LinkedService  # type: ignore
-    from ._models import Office365Source  # type: ignore
-    from ._models import OperationResult  # type: ignore
-    from ._models import OracleLinkedService  # type: ignore
-    from ._models import OraclePartitionSettings  # type: ignore
-    from ._models import OracleServiceCloudLinkedService  # type: ignore
-    from ._models import OracleServiceCloudObjectDataset  # type: ignore
-    from ._models import OracleServiceCloudSource  # type: ignore
-    from ._models import OracleSink  # type: ignore
-    from ._models import OracleSource  # type: ignore
-    from ._models import OracleTableDataset  # type: ignore
-    from ._models import OrcDataset  # type: ignore
-    from ._models import OrcFormat  # type: ignore
-    from ._models import OrcSink  # type: ignore
-    from ._models import OrcSource  # type: ignore
-    from ._models import OrcWriteSettings  # type: ignore
-    from ._models import ParameterSpecification  # type: ignore
-    from ._models import ParquetDataset  # type: ignore
-    from ._models import ParquetFormat  # type: ignore
-    from ._models import ParquetSink  # type: ignore
-    from ._models import ParquetSource  # type: ignore
-    from ._models import ParquetWriteSettings  # type: ignore
-    from ._models import PaypalLinkedService  # type: ignore
-    from ._models import PaypalObjectDataset  # type: ignore
-    from ._models import PaypalSource  # type: ignore
-    from ._models import PhoenixLinkedService  # type: ignore
-    from ._models import PhoenixObjectDataset  # type: ignore
-    from ._models import PhoenixSource  # type: ignore
-    from ._models import PipelineFolder  # type: ignore
-    from ._models import PipelineListResponse  # type: ignore
-    from ._models import PipelineReference  # type: ignore
-    from ._models import PipelineResource  # type: ignore
-    from ._models import PipelineRun  # type: ignore
-    from ._models import PipelineRunInvokedBy  # type: ignore
-    from ._models import PipelineRunsQueryResponse  # type: ignore
-    from ._models import PolybaseSettings  # type: ignore
-    from ._models import PostgreSqlLinkedService  # type: ignore
-    from ._models import PostgreSqlSource  # type: ignore
-    from ._models import PostgreSqlTableDataset  # type: ignore
-    from ._models import PrestoLinkedService  # type: ignore
-    from ._models import PrestoObjectDataset  # type: ignore
-    from ._models import PrestoSource  # type: ignore
-    from ._models import PrivateEndpoint  # type: ignore
-    from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateLinkServiceConnectionState  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import PurviewConfiguration  # type: ignore
-    from ._models import QueryDataFlowDebugSessionsResponse  # type: ignore
-    from ._models import QuickBooksLinkedService  # type: ignore
-    from ._models import QuickBooksObjectDataset  # type: ignore
-    from ._models import QuickBooksSource  # type: ignore
-    from ._models import RecurrenceSchedule  # type: ignore
-    from ._models import RecurrenceScheduleOccurrence  # type: ignore
-    from ._models import RedirectIncompatibleRowSettings  # type: ignore
-    from ._models import RedshiftUnloadSettings  # type: ignore
-    from ._models import RelationalSource  # type: ignore
-    from ._models import RelationalTableDataset  # type: ignore
-    from ._models import RerunTriggerListResponse  # type: ignore
-    from ._models import RerunTriggerResource  # type: ignore
-    from ._models import RerunTumblingWindowTrigger  # type: ignore
-    from ._models import RerunTumblingWindowTriggerActionParameters  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResponsysLinkedService  # type: ignore
-    from ._models import ResponsysObjectDataset  # type: ignore
-    from ._models import ResponsysSource  # type: ignore
-    from ._models import RestResourceDataset  # type: ignore
-    from ._models import RestServiceLinkedService  # type: ignore
-    from ._models import RestSink  # type: ignore
-    from ._models import RestSource  # type: ignore
-    from ._models import RetryPolicy  # type: ignore
-    from ._models import RunFilterParameters  # type: ignore
-    from ._models import RunQueryFilter  # type: ignore
-    from ._models import RunQueryOrderBy  # type: ignore
-    from ._models import SSISAccessCredential  # type: ignore
-    from ._models import SSISChildPackage  # type: ignore
-    from ._models import SSISExecutionCredential  # type: ignore
-    from ._models import SSISExecutionParameter  # type: ignore
-    from ._models import SSISLogLocation  # type: ignore
-    from ._models import SSISPackageLocation  # type: ignore
-    from ._models import SSISPropertyOverride  # type: ignore
-    from ._models import SalesforceLinkedService  # type: ignore
-    from ._models import SalesforceMarketingCloudLinkedService  # type: ignore
-    from ._models import SalesforceMarketingCloudObjectDataset  # type: ignore
-    from ._models import SalesforceMarketingCloudSource  # type: ignore
-    from ._models import SalesforceObjectDataset  # type: ignore
-    from ._models import SalesforceServiceCloudLinkedService  # type: ignore
-    from ._models import SalesforceServiceCloudObjectDataset  # type: ignore
-    from ._models import SalesforceServiceCloudSink  # type: ignore
-    from ._models import SalesforceServiceCloudSource  # type: ignore
-    from ._models import SalesforceSink  # type: ignore
-    from ._models import SalesforceSource  # type: ignore
-    from ._models import SapBWLinkedService  # type: ignore
-    from ._models import SapBwCubeDataset  # type: ignore
-    from ._models import SapBwSource  # type: ignore
-    from ._models import SapCloudForCustomerLinkedService  # type: ignore
-    from ._models import SapCloudForCustomerResourceDataset  # type: ignore
-    from ._models import SapCloudForCustomerSink  # type: ignore
-    from ._models import SapCloudForCustomerSource  # type: ignore
-    from ._models import SapEccLinkedService  # type: ignore
-    from ._models import SapEccResourceDataset  # type: ignore
-    from ._models import SapEccSource  # type: ignore
-    from ._models import SapHanaLinkedService  # type: ignore
-    from ._models import SapHanaPartitionSettings  # type: ignore
-    from ._models import SapHanaSource  # type: ignore
-    from ._models import SapHanaTableDataset  # type: ignore
-    from ._models import SapOpenHubLinkedService  # type: ignore
-    from ._models import SapOpenHubSource  # type: ignore
-    from ._models import SapOpenHubTableDataset  # type: ignore
-    from ._models import SapTableLinkedService  # type: ignore
-    from ._models import SapTablePartitionSettings  # type: ignore
-    from ._models import SapTableResourceDataset  # type: ignore
-    from ._models import SapTableSource  # type: ignore
-    from ._models import ScheduleTrigger  # type: ignore
-    from ._models import ScheduleTriggerRecurrence  # type: ignore
-    from ._models import ScriptAction  # type: ignore
-    from ._models import SecretBase  # type: ignore
-    from ._models import SecureString  # type: ignore
-    from ._models import SelfDependencyTumblingWindowTriggerReference  # type: ignore
-    from ._models import SelfHostedIntegrationRuntime  # type: ignore
-    from ._models import ServiceNowLinkedService  # type: ignore
-    from ._models import ServiceNowObjectDataset  # type: ignore
-    from ._models import ServiceNowSource  # type: ignore
-    from ._models import SetVariableActivity  # type: ignore
-    from ._models import SftpLocation  # type: ignore
-    from ._models import SftpReadSettings  # type: ignore
-    from ._models import SftpServerLinkedService  # type: ignore
-    from ._models import SftpWriteSettings  # type: ignore
-    from ._models import SharePointOnlineListLinkedService  # type: ignore
-    from ._models import SharePointOnlineListResourceDataset  # type: ignore
-    from ._models import SharePointOnlineListSource  # type: ignore
-    from ._models import ShopifyLinkedService  # type: ignore
-    from ._models import ShopifyObjectDataset  # type: ignore
-    from ._models import ShopifySource  # type: ignore
-    from ._models import SkipErrorFile  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SnowflakeDataset  # type: ignore
-    from ._models import SnowflakeExportCopyCommand  # type: ignore
-    from ._models import SnowflakeImportCopyCommand  # type: ignore
-    from ._models import SnowflakeLinkedService  # type: ignore
-    from ._models import SnowflakeSink  # type: ignore
-    from ._models import SnowflakeSource  # type: ignore
-    from ._models import SparkBatchJob  # type: ignore
-    from ._models import SparkBatchJobState  # type: ignore
-    from ._models import SparkJobDefinition  # type: ignore
-    from ._models import SparkJobDefinitionResource  # type: ignore
-    from ._models import SparkJobDefinitionsListResponse  # type: ignore
-    from ._models import SparkJobProperties  # type: ignore
-    from ._models import SparkLinkedService  # type: ignore
-    from ._models import SparkObjectDataset  # type: ignore
-    from ._models import SparkRequest  # type: ignore
-    from ._models import SparkScheduler  # type: ignore
-    from ._models import SparkServiceError  # type: ignore
-    from ._models import SparkServicePlugin  # type: ignore
-    from ._models import SparkSource  # type: ignore
-    from ._models import SqlConnection  # type: ignore
-    from ._models import SqlDWSink  # type: ignore
-    from ._models import SqlDWSource  # type: ignore
-    from ._models import SqlMISink  # type: ignore
-    from ._models import SqlMISource  # type: ignore
-    from ._models import SqlPartitionSettings  # type: ignore
-    from ._models import SqlPool  # type: ignore
-    from ._models import SqlPoolInfoListResult  # type: ignore
-    from ._models import SqlPoolReference  # type: ignore
-    from ._models import SqlPoolStoredProcedureActivity  # type: ignore
-    from ._models import SqlScript  # type: ignore
-    from ._models import SqlScriptContent  # type: ignore
-    from ._models import SqlScriptMetadata  # type: ignore
-    from ._models import SqlScriptResource  # type: ignore
-    from ._models import SqlScriptsListResponse  # type: ignore
-    from ._models import SqlServerLinkedService  # type: ignore
-    from ._models import SqlServerSink  # type: ignore
-    from ._models import SqlServerSource  # type: ignore
-    from ._models import SqlServerStoredProcedureActivity  # type: ignore
-    from ._models import SqlServerTableDataset  # type: ignore
-    from ._models import SqlSink  # type: ignore
-    from ._models import SqlSource  # type: ignore
-    from ._models import SquareLinkedService  # type: ignore
-    from ._models import SquareObjectDataset  # type: ignore
-    from ._models import SquareSource  # type: ignore
-    from ._models import SsisObjectMetadataStatusResponse  # type: ignore
-    from ._models import StagingSettings  # type: ignore
-    from ._models import StartDataFlowDebugSessionRequest  # type: ignore
-    from ._models import StartDataFlowDebugSessionResponse  # type: ignore
-    from ._models import StoreReadSettings  # type: ignore
-    from ._models import StoreWriteSettings  # type: ignore
-    from ._models import StoredProcedureParameter  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import SubResourceDebugResource  # type: ignore
-    from ._models import SwitchActivity  # type: ignore
-    from ._models import SwitchCase  # type: ignore
-    from ._models import SybaseLinkedService  # type: ignore
-    from ._models import SybaseSource  # type: ignore
-    from ._models import SybaseTableDataset  # type: ignore
-    from ._models import SynapseNotebookActivity  # type: ignore
-    from ._models import SynapseNotebookReference  # type: ignore
-    from ._models import SynapseSparkJobDefinitionActivity  # type: ignore
-    from ._models import SynapseSparkJobReference  # type: ignore
-    from ._models import TabularSource  # type: ignore
-    from ._models import TabularTranslator  # type: ignore
-    from ._models import TarGZipReadSettings  # type: ignore
-    from ._models import TarReadSettings  # type: ignore
-    from ._models import TeradataLinkedService  # type: ignore
-    from ._models import TeradataPartitionSettings  # type: ignore
-    from ._models import TeradataSource  # type: ignore
-    from ._models import TeradataTableDataset  # type: ignore
-    from ._models import TextFormat  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import Transformation  # type: ignore
-    from ._models import Trigger  # type: ignore
-    from ._models import TriggerDependencyProvisioningStatus  # type: ignore
-    from ._models import TriggerDependencyReference  # type: ignore
-    from ._models import TriggerListResponse  # type: ignore
-    from ._models import TriggerPipelineReference  # type: ignore
-    from ._models import TriggerReference  # type: ignore
-    from ._models import TriggerResource  # type: ignore
-    from ._models import TriggerRun  # type: ignore
-    from ._models import TriggerRunsQueryResponse  # type: ignore
-    from ._models import TriggerSubscriptionOperationStatus  # type: ignore
-    from ._models import TumblingWindowTrigger  # type: ignore
-    from ._models import TumblingWindowTriggerDependencyReference  # type: ignore
-    from ._models import TypeConversionSettings  # type: ignore
-    from ._models import UntilActivity  # type: ignore
-    from ._models import UserProperty  # type: ignore
-    from ._models import ValidationActivity  # type: ignore
-    from ._models import VariableSpecification  # type: ignore
-    from ._models import VerticaLinkedService  # type: ignore
-    from ._models import VerticaSource  # type: ignore
-    from ._models import VerticaTableDataset  # type: ignore
-    from ._models import VirtualNetworkProfile  # type: ignore
-    from ._models import WaitActivity  # type: ignore
-    from ._models import WebActivity  # type: ignore
-    from ._models import WebActivityAuthentication  # type: ignore
-    from ._models import WebAnonymousAuthentication  # type: ignore
-    from ._models import WebBasicAuthentication  # type: ignore
-    from ._models import WebClientCertificateAuthentication  # type: ignore
-    from ._models import WebHookActivity  # type: ignore
-    from ._models import WebLinkedService  # type: ignore
-    from ._models import WebLinkedServiceTypeProperties  # type: ignore
-    from ._models import WebSource  # type: ignore
-    from ._models import WebTableDataset  # type: ignore
-    from ._models import Workspace  # type: ignore
-    from ._models import WorkspaceIdentity  # type: ignore
-    from ._models import WorkspaceKeyDetails  # type: ignore
-    from ._models import WorkspaceRepositoryConfiguration  # type: ignore
-    from ._models import WorkspaceUpdateParameters  # type: ignore
-    from ._models import XeroLinkedService  # type: ignore
-    from ._models import XeroObjectDataset  # type: ignore
-    from ._models import XeroSource  # type: ignore
-    from ._models import XmlDataset  # type: ignore
-    from ._models import XmlReadSettings  # type: ignore
-    from ._models import XmlSource  # type: ignore
-    from ._models import ZipDeflateReadSettings  # type: ignore
-    from ._models import ZohoLinkedService  # type: ignore
-    from ._models import ZohoObjectDataset  # type: ignore
-    from ._models import ZohoSource  # type: ignore
+from ._models_py3 import Activity
+from ._models_py3 import ActivityDependency
+from ._models_py3 import ActivityPolicy
+from ._models_py3 import ActivityRun
+from ._models_py3 import ActivityRunsQueryResponse
+from ._models_py3 import AddDataFlowToDebugSessionResponse
+from ._models_py3 import AdditionalColumns
+from ._models_py3 import AmazonMWSLinkedService
+from ._models_py3 import AmazonMWSObjectDataset
+from ._models_py3 import AmazonMWSSource
+from ._models_py3 import AmazonRdsForOracleLinkedService
+from ._models_py3 import AmazonRdsForOraclePartitionSettings
+from ._models_py3 import AmazonRdsForOracleSource
+from ._models_py3 import AmazonRdsForOracleTableDataset
+from ._models_py3 import AmazonRdsForSqlServerLinkedService
+from ._models_py3 import AmazonRdsForSqlServerSource
+from ._models_py3 import AmazonRdsForSqlServerTableDataset
+from ._models_py3 import AmazonRedshiftLinkedService
+from ._models_py3 import AmazonRedshiftSource
+from ._models_py3 import AmazonRedshiftTableDataset
+from ._models_py3 import AmazonS3Dataset
+from ._models_py3 import AmazonS3LinkedService
+from ._models_py3 import AmazonS3Location
+from ._models_py3 import AmazonS3ReadSettings
+from ._models_py3 import AppFiguresLinkedService
+from ._models_py3 import AppendVariableActivity
+from ._models_py3 import ArtifactRenameRequest
+from ._models_py3 import AsanaLinkedService
+from ._models_py3 import AutoPauseProperties
+from ._models_py3 import AutoScaleProperties
+from ._models_py3 import AvroDataset
+from ._models_py3 import AvroFormat
+from ._models_py3 import AvroSink
+from ._models_py3 import AvroSource
+from ._models_py3 import AvroWriteSettings
+from ._models_py3 import AzureBatchLinkedService
+from ._models_py3 import AzureBlobDataset
+from ._models_py3 import AzureBlobFSDataset
+from ._models_py3 import AzureBlobFSLinkedService
+from ._models_py3 import AzureBlobFSLocation
+from ._models_py3 import AzureBlobFSReadSettings
+from ._models_py3 import AzureBlobFSSink
+from ._models_py3 import AzureBlobFSSource
+from ._models_py3 import AzureBlobFSWriteSettings
+from ._models_py3 import AzureBlobStorageLinkedService
+from ._models_py3 import AzureBlobStorageLocation
+from ._models_py3 import AzureBlobStorageReadSettings
+from ._models_py3 import AzureBlobStorageWriteSettings
+from ._models_py3 import AzureDataExplorerCommandActivity
+from ._models_py3 import AzureDataExplorerLinkedService
+from ._models_py3 import AzureDataExplorerSink
+from ._models_py3 import AzureDataExplorerSource
+from ._models_py3 import AzureDataExplorerTableDataset
+from ._models_py3 import AzureDataLakeAnalyticsLinkedService
+from ._models_py3 import AzureDataLakeStoreDataset
+from ._models_py3 import AzureDataLakeStoreLinkedService
+from ._models_py3 import AzureDataLakeStoreLocation
+from ._models_py3 import AzureDataLakeStoreReadSettings
+from ._models_py3 import AzureDataLakeStoreSink
+from ._models_py3 import AzureDataLakeStoreSource
+from ._models_py3 import AzureDataLakeStoreWriteSettings
+from ._models_py3 import AzureDatabricksDeltaLakeDataset
+from ._models_py3 import AzureDatabricksDeltaLakeExportCommand
+from ._models_py3 import AzureDatabricksDeltaLakeImportCommand
+from ._models_py3 import AzureDatabricksDeltaLakeLinkedService
+from ._models_py3 import AzureDatabricksDeltaLakeSink
+from ._models_py3 import AzureDatabricksDeltaLakeSource
+from ._models_py3 import AzureDatabricksLinkedService
+from ._models_py3 import AzureEntityResource
+from ._models_py3 import AzureFileStorageLinkedService
+from ._models_py3 import AzureFileStorageLocation
+from ._models_py3 import AzureFileStorageReadSettings
+from ._models_py3 import AzureFileStorageWriteSettings
+from ._models_py3 import AzureFunctionActivity
+from ._models_py3 import AzureFunctionLinkedService
+from ._models_py3 import AzureKeyVaultLinkedService
+from ._models_py3 import AzureKeyVaultSecretReference
+from ._models_py3 import AzureMLBatchExecutionActivity
+from ._models_py3 import AzureMLExecutePipelineActivity
+from ._models_py3 import AzureMLLinkedService
+from ._models_py3 import AzureMLServiceLinkedService
+from ._models_py3 import AzureMLUpdateResourceActivity
+from ._models_py3 import AzureMLWebServiceFile
+from ._models_py3 import AzureMariaDBLinkedService
+from ._models_py3 import AzureMariaDBSource
+from ._models_py3 import AzureMariaDBTableDataset
+from ._models_py3 import AzureMySqlLinkedService
+from ._models_py3 import AzureMySqlSink
+from ._models_py3 import AzureMySqlSource
+from ._models_py3 import AzureMySqlTableDataset
+from ._models_py3 import AzurePostgreSqlLinkedService
+from ._models_py3 import AzurePostgreSqlSink
+from ._models_py3 import AzurePostgreSqlSource
+from ._models_py3 import AzurePostgreSqlTableDataset
+from ._models_py3 import AzureQueueSink
+from ._models_py3 import AzureSearchIndexDataset
+from ._models_py3 import AzureSearchIndexSink
+from ._models_py3 import AzureSearchLinkedService
+from ._models_py3 import AzureSqlDWLinkedService
+from ._models_py3 import AzureSqlDWTableDataset
+from ._models_py3 import AzureSqlDatabaseLinkedService
+from ._models_py3 import AzureSqlMILinkedService
+from ._models_py3 import AzureSqlMITableDataset
+from ._models_py3 import AzureSqlSink
+from ._models_py3 import AzureSqlSource
+from ._models_py3 import AzureSqlTableDataset
+from ._models_py3 import AzureStorageLinkedService
+from ._models_py3 import AzureTableDataset
+from ._models_py3 import AzureTableSink
+from ._models_py3 import AzureTableSource
+from ._models_py3 import AzureTableStorageLinkedService
+from ._models_py3 import BigDataPoolParametrizationReference
+from ._models_py3 import BigDataPoolReference
+from ._models_py3 import BigDataPoolResourceInfo
+from ._models_py3 import BigDataPoolResourceInfoListResult
+from ._models_py3 import BinaryDataset
+from ._models_py3 import BinaryReadSettings
+from ._models_py3 import BinarySink
+from ._models_py3 import BinarySource
+from ._models_py3 import BlobEventsTrigger
+from ._models_py3 import BlobSink
+from ._models_py3 import BlobSource
+from ._models_py3 import BlobTrigger
+from ._models_py3 import CassandraLinkedService
+from ._models_py3 import CassandraSource
+from ._models_py3 import CassandraTableDataset
+from ._models_py3 import ChainingTrigger
+from ._models_py3 import CloudError
+from ._models_py3 import CommonDataServiceForAppsEntityDataset
+from ._models_py3 import CommonDataServiceForAppsLinkedService
+from ._models_py3 import CommonDataServiceForAppsSink
+from ._models_py3 import CommonDataServiceForAppsSource
+from ._models_py3 import CompressionReadSettings
+from ._models_py3 import ConcurLinkedService
+from ._models_py3 import ConcurObjectDataset
+from ._models_py3 import ConcurSource
+from ._models_py3 import ControlActivity
+from ._models_py3 import CopyActivity
+from ._models_py3 import CopyActivityLogSettings
+from ._models_py3 import CopySink
+from ._models_py3 import CopySource
+from ._models_py3 import CopyTranslator
+from ._models_py3 import CosmosDbLinkedService
+from ._models_py3 import CosmosDbMongoDbApiCollectionDataset
+from ._models_py3 import CosmosDbMongoDbApiLinkedService
+from ._models_py3 import CosmosDbMongoDbApiSink
+from ._models_py3 import CosmosDbMongoDbApiSource
+from ._models_py3 import CosmosDbSqlApiCollectionDataset
+from ._models_py3 import CosmosDbSqlApiSink
+from ._models_py3 import CosmosDbSqlApiSource
+from ._models_py3 import CouchbaseLinkedService
+from ._models_py3 import CouchbaseSource
+from ._models_py3 import CouchbaseTableDataset
+from ._models_py3 import CreateDataFlowDebugSessionRequest
+from ._models_py3 import CreateDataFlowDebugSessionResponse
+from ._models_py3 import CreateRunResponse
+from ._models_py3 import CustomActivity
+from ._models_py3 import CustomActivityReferenceObject
+from ._models_py3 import CustomDataSourceLinkedService
+from ._models_py3 import CustomDataset
+from ._models_py3 import CustomEventsTrigger
+from ._models_py3 import CustomSetupBase
+from ._models_py3 import CustomerManagedKeyDetails
+from ._models_py3 import DWCopyCommandDefaultValue
+from ._models_py3 import DWCopyCommandSettings
+from ._models_py3 import DataFlow
+from ._models_py3 import DataFlowDebugCommandPayload
+from ._models_py3 import DataFlowDebugCommandRequest
+from ._models_py3 import DataFlowDebugCommandResponse
+from ._models_py3 import DataFlowDebugPackage
+from ._models_py3 import DataFlowDebugPackageDebugSettings
+from ._models_py3 import DataFlowDebugPreviewDataRequest
+from ._models_py3 import DataFlowDebugQueryResponse
+from ._models_py3 import DataFlowDebugResource
+from ._models_py3 import DataFlowDebugResultResponse
+from ._models_py3 import DataFlowDebugSessionInfo
+from ._models_py3 import DataFlowDebugStatisticsRequest
+from ._models_py3 import DataFlowFolder
+from ._models_py3 import DataFlowListResponse
+from ._models_py3 import DataFlowReference
+from ._models_py3 import DataFlowResource
+from ._models_py3 import DataFlowSink
+from ._models_py3 import DataFlowSource
+from ._models_py3 import DataFlowSourceSetting
+from ._models_py3 import DataFlowStagingInfo
+from ._models_py3 import DataLakeAnalyticsUSQLActivity
+from ._models_py3 import DataLakeStorageAccountDetails
+from ._models_py3 import DatabricksNotebookActivity
+from ._models_py3 import DatabricksSparkJarActivity
+from ._models_py3 import DatabricksSparkPythonActivity
+from ._models_py3 import Dataset
+from ._models_py3 import DatasetCompression
+from ._models_py3 import DatasetDataElement
+from ._models_py3 import DatasetDebugResource
+from ._models_py3 import DatasetFolder
+from ._models_py3 import DatasetListResponse
+from ._models_py3 import DatasetLocation
+from ._models_py3 import DatasetReference
+from ._models_py3 import DatasetResource
+from ._models_py3 import DatasetSchemaDataElement
+from ._models_py3 import DatasetStorageFormat
+from ._models_py3 import DataworldLinkedService
+from ._models_py3 import Db2LinkedService
+from ._models_py3 import Db2Source
+from ._models_py3 import Db2TableDataset
+from ._models_py3 import DeleteActivity
+from ._models_py3 import DeleteDataFlowDebugSessionRequest
+from ._models_py3 import DelimitedTextDataset
+from ._models_py3 import DelimitedTextReadSettings
+from ._models_py3 import DelimitedTextSink
+from ._models_py3 import DelimitedTextSource
+from ._models_py3 import DelimitedTextWriteSettings
+from ._models_py3 import DependencyReference
+from ._models_py3 import DistcpSettings
+from ._models_py3 import DocumentDbCollectionDataset
+from ._models_py3 import DocumentDbCollectionSink
+from ._models_py3 import DocumentDbCollectionSource
+from ._models_py3 import DrillLinkedService
+from ._models_py3 import DrillSource
+from ._models_py3 import DrillTableDataset
+from ._models_py3 import DynamicExecutorAllocation
+from ._models_py3 import DynamicsAXLinkedService
+from ._models_py3 import DynamicsAXResourceDataset
+from ._models_py3 import DynamicsAXSource
+from ._models_py3 import DynamicsCrmEntityDataset
+from ._models_py3 import DynamicsCrmLinkedService
+from ._models_py3 import DynamicsCrmSink
+from ._models_py3 import DynamicsCrmSource
+from ._models_py3 import DynamicsEntityDataset
+from ._models_py3 import DynamicsLinkedService
+from ._models_py3 import DynamicsSink
+from ._models_py3 import DynamicsSource
+from ._models_py3 import EditTablesRequest
+from ._models_py3 import EloquaLinkedService
+from ._models_py3 import EloquaObjectDataset
+from ._models_py3 import EloquaSource
+from ._models_py3 import EncryptionDetails
+from ._models_py3 import EntityReference
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorContract
+from ._models_py3 import ErrorResponse
+from ._models_py3 import EvaluateDataFlowExpressionRequest
+from ._models_py3 import ExcelDataset
+from ._models_py3 import ExcelSource
+from ._models_py3 import ExecuteDataFlowActivity
+from ._models_py3 import ExecuteDataFlowActivityTypePropertiesCompute
+from ._models_py3 import ExecutePipelineActivity
+from ._models_py3 import ExecuteSSISPackageActivity
+from ._models_py3 import ExecutionActivity
+from ._models_py3 import ExportSettings
+from ._models_py3 import ExposureControlRequest
+from ._models_py3 import ExposureControlResponse
+from ._models_py3 import Expression
+from ._models_py3 import FileServerLinkedService
+from ._models_py3 import FileServerLocation
+from ._models_py3 import FileServerReadSettings
+from ._models_py3 import FileServerWriteSettings
+from ._models_py3 import FileShareDataset
+from ._models_py3 import FileSystemSink
+from ._models_py3 import FileSystemSource
+from ._models_py3 import FilterActivity
+from ._models_py3 import Flowlet
+from ._models_py3 import ForEachActivity
+from ._models_py3 import FormatReadSettings
+from ._models_py3 import FormatWriteSettings
+from ._models_py3 import FtpReadSettings
+from ._models_py3 import FtpServerLinkedService
+from ._models_py3 import FtpServerLocation
+from ._models_py3 import GetMetadataActivity
+from ._models_py3 import GetSsisObjectMetadataRequest
+from ._models_py3 import GitHubAccessTokenRequest
+from ._models_py3 import GitHubAccessTokenResponse
+from ._models_py3 import GitHubClientSecret
+from ._models_py3 import GoogleAdWordsLinkedService
+from ._models_py3 import GoogleAdWordsObjectDataset
+from ._models_py3 import GoogleAdWordsSource
+from ._models_py3 import GoogleBigQueryLinkedService
+from ._models_py3 import GoogleBigQueryObjectDataset
+from ._models_py3 import GoogleBigQuerySource
+from ._models_py3 import GoogleCloudStorageLinkedService
+from ._models_py3 import GoogleCloudStorageLocation
+from ._models_py3 import GoogleCloudStorageReadSettings
+from ._models_py3 import GreenplumLinkedService
+from ._models_py3 import GreenplumSource
+from ._models_py3 import GreenplumTableDataset
+from ._models_py3 import HBaseLinkedService
+from ._models_py3 import HBaseObjectDataset
+from ._models_py3 import HBaseSource
+from ._models_py3 import HDInsightHiveActivity
+from ._models_py3 import HDInsightLinkedService
+from ._models_py3 import HDInsightMapReduceActivity
+from ._models_py3 import HDInsightOnDemandLinkedService
+from ._models_py3 import HDInsightPigActivity
+from ._models_py3 import HDInsightSparkActivity
+from ._models_py3 import HDInsightStreamingActivity
+from ._models_py3 import HdfsLinkedService
+from ._models_py3 import HdfsLocation
+from ._models_py3 import HdfsReadSettings
+from ._models_py3 import HdfsSource
+from ._models_py3 import HiveLinkedService
+from ._models_py3 import HiveObjectDataset
+from ._models_py3 import HiveSource
+from ._models_py3 import HttpDataset
+from ._models_py3 import HttpLinkedService
+from ._models_py3 import HttpReadSettings
+from ._models_py3 import HttpServerLocation
+from ._models_py3 import HttpSource
+from ._models_py3 import HubspotLinkedService
+from ._models_py3 import HubspotObjectDataset
+from ._models_py3 import HubspotSource
+from ._models_py3 import IfConditionActivity
+from ._models_py3 import ImpalaLinkedService
+from ._models_py3 import ImpalaObjectDataset
+from ._models_py3 import ImpalaSource
+from ._models_py3 import ImportSettings
+from ._models_py3 import InformixLinkedService
+from ._models_py3 import InformixSink
+from ._models_py3 import InformixSource
+from ._models_py3 import InformixTableDataset
+from ._models_py3 import IntegrationRuntime
+from ._models_py3 import IntegrationRuntimeComputeProperties
+from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
+from ._models_py3 import IntegrationRuntimeDataFlowProperties
+from ._models_py3 import IntegrationRuntimeDataProxyProperties
+from ._models_py3 import IntegrationRuntimeDebugResource
+from ._models_py3 import IntegrationRuntimeListResponse
+from ._models_py3 import IntegrationRuntimeReference
+from ._models_py3 import IntegrationRuntimeResource
+from ._models_py3 import IntegrationRuntimeSsisCatalogInfo
+from ._models_py3 import IntegrationRuntimeSsisProperties
+from ._models_py3 import IntegrationRuntimeVNetProperties
+from ._models_py3 import JiraLinkedService
+from ._models_py3 import JiraObjectDataset
+from ._models_py3 import JiraSource
+from ._models_py3 import JsonDataset
+from ._models_py3 import JsonFormat
+from ._models_py3 import JsonReadSettings
+from ._models_py3 import JsonSink
+from ._models_py3 import JsonSource
+from ._models_py3 import JsonWriteSettings
+from ._models_py3 import KqlScript
+from ._models_py3 import KqlScriptContent
+from ._models_py3 import KqlScriptContentCurrentConnection
+from ._models_py3 import KqlScriptContentMetadata
+from ._models_py3 import KqlScriptResource
+from ._models_py3 import KqlScriptsResourceCollectionResponse
+from ._models_py3 import LibraryInfo
+from ._models_py3 import LibraryListResponse
+from ._models_py3 import LibraryRequirements
+from ._models_py3 import LibraryResource
+from ._models_py3 import LibraryResourceInfo
+from ._models_py3 import LibraryResourceProperties
+from ._models_py3 import LinkConnection
+from ._models_py3 import LinkConnectionCompute
+from ._models_py3 import LinkConnectionDetailedStatus
+from ._models_py3 import LinkConnectionLandingZone
+from ._models_py3 import LinkConnectionListResponse
+from ._models_py3 import LinkConnectionQueryTableStatus
+from ._models_py3 import LinkConnectionResource
+from ._models_py3 import LinkConnectionSourceDatabase
+from ._models_py3 import LinkConnectionSourceDatabaseTypeProperties
+from ._models_py3 import LinkConnectionTargetDatabase
+from ._models_py3 import LinkTableListResponse
+from ._models_py3 import LinkTableRequest
+from ._models_py3 import LinkTableRequestSource
+from ._models_py3 import LinkTableRequestTarget
+from ._models_py3 import LinkTableRequestTargetDistributionOptions
+from ._models_py3 import LinkTableResource
+from ._models_py3 import LinkTableStatus
+from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
+from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
+from ._models_py3 import LinkedIntegrationRuntimeType
+from ._models_py3 import LinkedService
+from ._models_py3 import LinkedServiceDebugResource
+from ._models_py3 import LinkedServiceListResponse
+from ._models_py3 import LinkedServiceReference
+from ._models_py3 import LinkedServiceResource
+from ._models_py3 import LogLocationSettings
+from ._models_py3 import LogSettings
+from ._models_py3 import LogStorageSettings
+from ._models_py3 import LookupActivity
+from ._models_py3 import MagentoLinkedService
+from ._models_py3 import MagentoObjectDataset
+from ._models_py3 import MagentoSource
+from ._models_py3 import ManagedIdentity
+from ._models_py3 import ManagedIntegrationRuntime
+from ._models_py3 import ManagedVirtualNetworkReference
+from ._models_py3 import ManagedVirtualNetworkSettings
+from ._models_py3 import MappingDataFlow
+from ._models_py3 import MariaDBLinkedService
+from ._models_py3 import MariaDBSource
+from ._models_py3 import MariaDBTableDataset
+from ._models_py3 import MarketoLinkedService
+from ._models_py3 import MarketoObjectDataset
+from ._models_py3 import MarketoSource
+from ._models_py3 import MetastoreRegisterObject
+from ._models_py3 import MetastoreRegistrationResponse
+from ._models_py3 import MetastoreRequestSuccessResponse
+from ._models_py3 import MetastoreUpdateObject
+from ._models_py3 import MetastoreUpdationResponse
+from ._models_py3 import MicrosoftAccessLinkedService
+from ._models_py3 import MicrosoftAccessSink
+from ._models_py3 import MicrosoftAccessSource
+from ._models_py3 import MicrosoftAccessTableDataset
+from ._models_py3 import MongoDbAtlasCollectionDataset
+from ._models_py3 import MongoDbAtlasLinkedService
+from ._models_py3 import MongoDbAtlasSource
+from ._models_py3 import MongoDbCollectionDataset
+from ._models_py3 import MongoDbCursorMethodsProperties
+from ._models_py3 import MongoDbLinkedService
+from ._models_py3 import MongoDbSource
+from ._models_py3 import MongoDbV2CollectionDataset
+from ._models_py3 import MongoDbV2LinkedService
+from ._models_py3 import MongoDbV2Source
+from ._models_py3 import MultiplePipelineTrigger
+from ._models_py3 import MySqlLinkedService
+from ._models_py3 import MySqlSource
+from ._models_py3 import MySqlTableDataset
+from ._models_py3 import NetezzaLinkedService
+from ._models_py3 import NetezzaPartitionSettings
+from ._models_py3 import NetezzaSource
+from ._models_py3 import NetezzaTableDataset
+from ._models_py3 import Notebook
+from ._models_py3 import NotebookCell
+from ._models_py3 import NotebookCellOutputItem
+from ._models_py3 import NotebookFolder
+from ._models_py3 import NotebookKernelSpec
+from ._models_py3 import NotebookLanguageInfo
+from ._models_py3 import NotebookListResponse
+from ._models_py3 import NotebookMetadata
+from ._models_py3 import NotebookParameter
+from ._models_py3 import NotebookResource
+from ._models_py3 import NotebookSessionProperties
+from ._models_py3 import ODataLinkedService
+from ._models_py3 import ODataResourceDataset
+from ._models_py3 import ODataSource
+from ._models_py3 import OdbcLinkedService
+from ._models_py3 import OdbcSink
+from ._models_py3 import OdbcSource
+from ._models_py3 import OdbcTableDataset
+from ._models_py3 import Office365Dataset
+from ._models_py3 import Office365LinkedService
+from ._models_py3 import Office365Source
+from ._models_py3 import OperationResult
+from ._models_py3 import OracleLinkedService
+from ._models_py3 import OraclePartitionSettings
+from ._models_py3 import OracleServiceCloudLinkedService
+from ._models_py3 import OracleServiceCloudObjectDataset
+from ._models_py3 import OracleServiceCloudSource
+from ._models_py3 import OracleSink
+from ._models_py3 import OracleSource
+from ._models_py3 import OracleTableDataset
+from ._models_py3 import OrcDataset
+from ._models_py3 import OrcFormat
+from ._models_py3 import OrcSink
+from ._models_py3 import OrcSource
+from ._models_py3 import OrcWriteSettings
+from ._models_py3 import ParameterSpecification
+from ._models_py3 import ParquetDataset
+from ._models_py3 import ParquetFormat
+from ._models_py3 import ParquetSink
+from ._models_py3 import ParquetSource
+from ._models_py3 import ParquetWriteSettings
+from ._models_py3 import PaypalLinkedService
+from ._models_py3 import PaypalObjectDataset
+from ._models_py3 import PaypalSource
+from ._models_py3 import PhoenixLinkedService
+from ._models_py3 import PhoenixObjectDataset
+from ._models_py3 import PhoenixSource
+from ._models_py3 import PipelineFolder
+from ._models_py3 import PipelineListResponse
+from ._models_py3 import PipelineReference
+from ._models_py3 import PipelineResource
+from ._models_py3 import PipelineRun
+from ._models_py3 import PipelineRunInvokedBy
+from ._models_py3 import PipelineRunsQueryResponse
+from ._models_py3 import PolybaseSettings
+from ._models_py3 import PostgreSqlLinkedService
+from ._models_py3 import PostgreSqlSource
+from ._models_py3 import PostgreSqlTableDataset
+from ._models_py3 import PrestoLinkedService
+from ._models_py3 import PrestoObjectDataset
+from ._models_py3 import PrestoSource
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import ProxyResource
+from ._models_py3 import PurviewConfiguration
+from ._models_py3 import QueryDataFlowDebugSessionsResponse
+from ._models_py3 import QueryTableStatusRequest
+from ._models_py3 import QuickBooksLinkedService
+from ._models_py3 import QuickBooksObjectDataset
+from ._models_py3 import QuickBooksSource
+from ._models_py3 import QuickbaseLinkedService
+from ._models_py3 import RecurrenceSchedule
+from ._models_py3 import RecurrenceScheduleOccurrence
+from ._models_py3 import RedirectIncompatibleRowSettings
+from ._models_py3 import RedshiftUnloadSettings
+from ._models_py3 import RelationalSource
+from ._models_py3 import RelationalTableDataset
+from ._models_py3 import RerunTriggerListResponse
+from ._models_py3 import RerunTriggerResource
+from ._models_py3 import RerunTumblingWindowTrigger
+from ._models_py3 import RerunTumblingWindowTriggerActionParameters
+from ._models_py3 import Resource
+from ._models_py3 import ResponsysLinkedService
+from ._models_py3 import ResponsysObjectDataset
+from ._models_py3 import ResponsysSource
+from ._models_py3 import RestResourceDataset
+from ._models_py3 import RestServiceLinkedService
+from ._models_py3 import RestSink
+from ._models_py3 import RestSource
+from ._models_py3 import RetryPolicy
+from ._models_py3 import RunFilterParameters
+from ._models_py3 import RunQueryFilter
+from ._models_py3 import RunQueryOrderBy
+from ._models_py3 import SSISAccessCredential
+from ._models_py3 import SSISChildPackage
+from ._models_py3 import SSISExecutionCredential
+from ._models_py3 import SSISExecutionParameter
+from ._models_py3 import SSISLogLocation
+from ._models_py3 import SSISPackageLocation
+from ._models_py3 import SSISPropertyOverride
+from ._models_py3 import SalesforceLinkedService
+from ._models_py3 import SalesforceMarketingCloudLinkedService
+from ._models_py3 import SalesforceMarketingCloudObjectDataset
+from ._models_py3 import SalesforceMarketingCloudSource
+from ._models_py3 import SalesforceObjectDataset
+from ._models_py3 import SalesforceServiceCloudLinkedService
+from ._models_py3 import SalesforceServiceCloudObjectDataset
+from ._models_py3 import SalesforceServiceCloudSink
+from ._models_py3 import SalesforceServiceCloudSource
+from ._models_py3 import SalesforceSink
+from ._models_py3 import SalesforceSource
+from ._models_py3 import SapBWLinkedService
+from ._models_py3 import SapBwCubeDataset
+from ._models_py3 import SapBwSource
+from ._models_py3 import SapCloudForCustomerLinkedService
+from ._models_py3 import SapCloudForCustomerResourceDataset
+from ._models_py3 import SapCloudForCustomerSink
+from ._models_py3 import SapCloudForCustomerSource
+from ._models_py3 import SapEccLinkedService
+from ._models_py3 import SapEccResourceDataset
+from ._models_py3 import SapEccSource
+from ._models_py3 import SapHanaLinkedService
+from ._models_py3 import SapHanaPartitionSettings
+from ._models_py3 import SapHanaSource
+from ._models_py3 import SapHanaTableDataset
+from ._models_py3 import SapOpenHubLinkedService
+from ._models_py3 import SapOpenHubSource
+from ._models_py3 import SapOpenHubTableDataset
+from ._models_py3 import SapTableLinkedService
+from ._models_py3 import SapTablePartitionSettings
+from ._models_py3 import SapTableResourceDataset
+from ._models_py3 import SapTableSource
+from ._models_py3 import ScheduleTrigger
+from ._models_py3 import ScheduleTriggerRecurrence
+from ._models_py3 import ScriptAction
+from ._models_py3 import ScriptActivity
+from ._models_py3 import ScriptActivityParameter
+from ._models_py3 import ScriptActivityScriptBlock
+from ._models_py3 import ScriptActivityTypePropertiesLogSettings
+from ._models_py3 import SecretBase
+from ._models_py3 import SecureString
+from ._models_py3 import SelfDependencyTumblingWindowTriggerReference
+from ._models_py3 import SelfHostedIntegrationRuntime
+from ._models_py3 import ServiceNowLinkedService
+from ._models_py3 import ServiceNowObjectDataset
+from ._models_py3 import ServiceNowSource
+from ._models_py3 import SetVariableActivity
+from ._models_py3 import SftpLocation
+from ._models_py3 import SftpReadSettings
+from ._models_py3 import SftpServerLinkedService
+from ._models_py3 import SftpWriteSettings
+from ._models_py3 import SharePointOnlineListLinkedService
+from ._models_py3 import SharePointOnlineListResourceDataset
+from ._models_py3 import SharePointOnlineListSource
+from ._models_py3 import ShopifyLinkedService
+from ._models_py3 import ShopifyObjectDataset
+from ._models_py3 import ShopifySource
+from ._models_py3 import SkipErrorFile
+from ._models_py3 import Sku
+from ._models_py3 import SmartsheetLinkedService
+from ._models_py3 import SnowflakeDataset
+from ._models_py3 import SnowflakeExportCopyCommand
+from ._models_py3 import SnowflakeImportCopyCommand
+from ._models_py3 import SnowflakeLinkedService
+from ._models_py3 import SnowflakeSink
+from ._models_py3 import SnowflakeSource
+from ._models_py3 import SparkBatchJob
+from ._models_py3 import SparkBatchJobState
+from ._models_py3 import SparkConfiguration
+from ._models_py3 import SparkConfigurationListResponse
+from ._models_py3 import SparkConfigurationResource
+from ._models_py3 import SparkJobDefinition
+from ._models_py3 import SparkJobDefinitionFolder
+from ._models_py3 import SparkJobDefinitionResource
+from ._models_py3 import SparkJobDefinitionsListResponse
+from ._models_py3 import SparkJobProperties
+from ._models_py3 import SparkLinkedService
+from ._models_py3 import SparkObjectDataset
+from ._models_py3 import SparkRequest
+from ._models_py3 import SparkScheduler
+from ._models_py3 import SparkServiceError
+from ._models_py3 import SparkServicePlugin
+from ._models_py3 import SparkSource
+from ._models_py3 import SqlConnection
+from ._models_py3 import SqlDWSink
+from ._models_py3 import SqlDWSource
+from ._models_py3 import SqlMISink
+from ._models_py3 import SqlMISource
+from ._models_py3 import SqlPartitionSettings
+from ._models_py3 import SqlPool
+from ._models_py3 import SqlPoolInfoListResult
+from ._models_py3 import SqlPoolReference
+from ._models_py3 import SqlPoolStoredProcedureActivity
+from ._models_py3 import SqlScript
+from ._models_py3 import SqlScriptContent
+from ._models_py3 import SqlScriptFolder
+from ._models_py3 import SqlScriptMetadata
+from ._models_py3 import SqlScriptResource
+from ._models_py3 import SqlScriptsListResponse
+from ._models_py3 import SqlServerLinkedService
+from ._models_py3 import SqlServerSink
+from ._models_py3 import SqlServerSource
+from ._models_py3 import SqlServerStoredProcedureActivity
+from ._models_py3 import SqlServerTableDataset
+from ._models_py3 import SqlSink
+from ._models_py3 import SqlSource
+from ._models_py3 import SquareLinkedService
+from ._models_py3 import SquareObjectDataset
+from ._models_py3 import SquareSource
+from ._models_py3 import SsisObjectMetadataStatusResponse
+from ._models_py3 import StagingSettings
+from ._models_py3 import StartDataFlowDebugSessionRequest
+from ._models_py3 import StartDataFlowDebugSessionResponse
+from ._models_py3 import StoreReadSettings
+from ._models_py3 import StoreWriteSettings
+from ._models_py3 import StoredProcedureParameter
+from ._models_py3 import SubResource
+from ._models_py3 import SubResourceDebugResource
+from ._models_py3 import SwitchActivity
+from ._models_py3 import SwitchCase
+from ._models_py3 import SybaseLinkedService
+from ._models_py3 import SybaseSource
+from ._models_py3 import SybaseTableDataset
+from ._models_py3 import SynapseNotebookActivity
+from ._models_py3 import SynapseNotebookReference
+from ._models_py3 import SynapseSparkJobDefinitionActivity
+from ._models_py3 import SynapseSparkJobReference
+from ._models_py3 import TabularSource
+from ._models_py3 import TabularTranslator
+from ._models_py3 import TarGZipReadSettings
+from ._models_py3 import TarReadSettings
+from ._models_py3 import TeamDeskLinkedService
+from ._models_py3 import TeradataLinkedService
+from ._models_py3 import TeradataPartitionSettings
+from ._models_py3 import TeradataSource
+from ._models_py3 import TeradataTableDataset
+from ._models_py3 import TextFormat
+from ._models_py3 import TrackedResource
+from ._models_py3 import Transformation
+from ._models_py3 import Trigger
+from ._models_py3 import TriggerDependencyProvisioningStatus
+from ._models_py3 import TriggerDependencyReference
+from ._models_py3 import TriggerListResponse
+from ._models_py3 import TriggerPipelineReference
+from ._models_py3 import TriggerReference
+from ._models_py3 import TriggerResource
+from ._models_py3 import TriggerRun
+from ._models_py3 import TriggerRunsQueryResponse
+from ._models_py3 import TriggerSubscriptionOperationStatus
+from ._models_py3 import TumblingWindowTrigger
+from ._models_py3 import TumblingWindowTriggerDependencyReference
+from ._models_py3 import TwilioLinkedService
+from ._models_py3 import TypeConversionSettings
+from ._models_py3 import UntilActivity
+from ._models_py3 import UpdateLandingZoneCredential
+from ._models_py3 import UserProperty
+from ._models_py3 import ValidationActivity
+from ._models_py3 import VariableSpecification
+from ._models_py3 import VerticaLinkedService
+from ._models_py3 import VerticaSource
+from ._models_py3 import VerticaTableDataset
+from ._models_py3 import VirtualNetworkProfile
+from ._models_py3 import WaitActivity
+from ._models_py3 import WebActivity
+from ._models_py3 import WebActivityAuthentication
+from ._models_py3 import WebAnonymousAuthentication
+from ._models_py3 import WebBasicAuthentication
+from ._models_py3 import WebClientCertificateAuthentication
+from ._models_py3 import WebHookActivity
+from ._models_py3 import WebLinkedService
+from ._models_py3 import WebLinkedServiceTypeProperties
+from ._models_py3 import WebSource
+from ._models_py3 import WebTableDataset
+from ._models_py3 import Workspace
+from ._models_py3 import WorkspaceIdentity
+from ._models_py3 import WorkspaceKeyDetails
+from ._models_py3 import WorkspaceRepositoryConfiguration
+from ._models_py3 import WorkspaceUpdateParameters
+from ._models_py3 import XeroLinkedService
+from ._models_py3 import XeroObjectDataset
+from ._models_py3 import XeroSource
+from ._models_py3 import XmlDataset
+from ._models_py3 import XmlReadSettings
+from ._models_py3 import XmlSource
+from ._models_py3 import ZendeskLinkedService
+from ._models_py3 import ZipDeflateReadSettings
+from ._models_py3 import ZohoLinkedService
+from ._models_py3 import ZohoObjectDataset
+from ._models_py3 import ZohoSource
+
 
 from ._artifacts_client_enums import (
+    AmazonRdsForOraclePartitionOption,
     AvroCompressionCodec,
     AzureFunctionActivityMethod,
     AzureSearchIndexWriteBehaviorType,
@@ -1331,7 +731,9 @@ from ._artifacts_client_enums import (
     CellOutputType,
     CompressionCodec,
     CopyBehaviorType,
+    CreateMode,
     DataFlowComputeType,
+    DataFlowDebugCommandType,
     DataFlowReferenceType,
     DatasetCompressionLevel,
     DatasetReferenceType,
@@ -1364,10 +766,12 @@ from ._artifacts_client_enums import (
     IntegrationRuntimeType,
     JsonFormatFilePattern,
     JsonWriteFilePattern,
+    LivyStates,
     MongoDbAuthenticationType,
     NetezzaPartitionOption,
     NodeSize,
     NodeSizeFamily,
+    NotebookParameterType,
     NotebookReferenceType,
     ODataAadServicePrincipalCredentialType,
     ODataAuthenticationType,
@@ -1381,7 +785,9 @@ from ._artifacts_client_enums import (
     PolybaseSettingsRejectType,
     PrestoAuthenticationType,
     RecurrenceFrequency,
+    RequestStatus,
     ResourceIdentityType,
+    ResourceStatus,
     RestServiceAuthenticationType,
     RunQueryFilterOperand,
     RunQueryFilterOperator,
@@ -1394,6 +800,10 @@ from ._artifacts_client_enums import (
     SapHanaPartitionOption,
     SapTablePartitionOption,
     SchedulerCurrentState,
+    ScriptActivityLogDestination,
+    ScriptActivityParameterDirection,
+    ScriptActivityParameterType,
+    ScriptType,
     ServiceNowAuthenticationType,
     SftpAuthenticationType,
     SparkAuthenticationType,
@@ -1411,6 +821,7 @@ from ._artifacts_client_enums import (
     SsisPackageLocationType,
     StoredProcedureParameterType,
     SybaseAuthenticationType,
+    TeamDeskAuthenticationType,
     TeradataAuthenticationType,
     TeradataPartitionOption,
     TriggerReferenceType,
@@ -1422,8 +833,11 @@ from ._artifacts_client_enums import (
     WebActivityMethod,
     WebAuthenticationType,
     WebHookActivityMethod,
+    ZendeskAuthenticationType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Activity',
     'ActivityDependency',
@@ -1435,6 +849,13 @@ __all__ = [
     'AmazonMWSLinkedService',
     'AmazonMWSObjectDataset',
     'AmazonMWSSource',
+    'AmazonRdsForOracleLinkedService',
+    'AmazonRdsForOraclePartitionSettings',
+    'AmazonRdsForOracleSource',
+    'AmazonRdsForOracleTableDataset',
+    'AmazonRdsForSqlServerLinkedService',
+    'AmazonRdsForSqlServerSource',
+    'AmazonRdsForSqlServerTableDataset',
     'AmazonRedshiftLinkedService',
     'AmazonRedshiftSource',
     'AmazonRedshiftTableDataset',
@@ -1442,8 +863,10 @@ __all__ = [
     'AmazonS3LinkedService',
     'AmazonS3Location',
     'AmazonS3ReadSettings',
+    'AppFiguresLinkedService',
     'AppendVariableActivity',
     'ArtifactRenameRequest',
+    'AsanaLinkedService',
     'AutoPauseProperties',
     'AutoScaleProperties',
     'AvroDataset',
@@ -1527,6 +950,7 @@ __all__ = [
     'AzureTableSink',
     'AzureTableSource',
     'AzureTableStorageLinkedService',
+    'BigDataPoolParametrizationReference',
     'BigDataPoolReference',
     'BigDataPoolResourceInfo',
     'BigDataPoolResourceInfoListResult',
@@ -1581,6 +1005,7 @@ __all__ = [
     'DWCopyCommandDefaultValue',
     'DWCopyCommandSettings',
     'DataFlow',
+    'DataFlowDebugCommandPayload',
     'DataFlowDebugCommandRequest',
     'DataFlowDebugCommandResponse',
     'DataFlowDebugPackage',
@@ -1605,22 +1030,17 @@ __all__ = [
     'DatabricksSparkJarActivity',
     'DatabricksSparkPythonActivity',
     'Dataset',
-    'DatasetBZip2Compression',
     'DatasetCompression',
     'DatasetDataElement',
     'DatasetDebugResource',
-    'DatasetDeflateCompression',
     'DatasetFolder',
-    'DatasetGZipCompression',
     'DatasetListResponse',
     'DatasetLocation',
     'DatasetReference',
     'DatasetResource',
     'DatasetSchemaDataElement',
     'DatasetStorageFormat',
-    'DatasetTarCompression',
-    'DatasetTarGZipCompression',
-    'DatasetZipDeflateCompression',
+    'DataworldLinkedService',
     'Db2LinkedService',
     'Db2Source',
     'Db2TableDataset',
@@ -1651,6 +1071,7 @@ __all__ = [
     'DynamicsLinkedService',
     'DynamicsSink',
     'DynamicsSource',
+    'EditTablesRequest',
     'EloquaLinkedService',
     'EloquaObjectDataset',
     'EloquaSource',
@@ -1679,6 +1100,7 @@ __all__ = [
     'FileSystemSink',
     'FileSystemSource',
     'FilterActivity',
+    'Flowlet',
     'ForEachActivity',
     'FormatReadSettings',
     'FormatWriteSettings',
@@ -1689,6 +1111,7 @@ __all__ = [
     'GetSsisObjectMetadataRequest',
     'GitHubAccessTokenRequest',
     'GitHubAccessTokenResponse',
+    'GitHubClientSecret',
     'GoogleAdWordsLinkedService',
     'GoogleAdWordsObjectDataset',
     'GoogleAdWordsSource',
@@ -1740,6 +1163,7 @@ __all__ = [
     'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeDataFlowProperties',
     'IntegrationRuntimeDataProxyProperties',
+    'IntegrationRuntimeDebugResource',
     'IntegrationRuntimeListResponse',
     'IntegrationRuntimeReference',
     'IntegrationRuntimeResource',
@@ -1755,12 +1179,35 @@ __all__ = [
     'JsonSink',
     'JsonSource',
     'JsonWriteSettings',
+    'KqlScript',
+    'KqlScriptContent',
+    'KqlScriptContentCurrentConnection',
+    'KqlScriptContentMetadata',
+    'KqlScriptResource',
+    'KqlScriptsResourceCollectionResponse',
     'LibraryInfo',
     'LibraryListResponse',
     'LibraryRequirements',
     'LibraryResource',
     'LibraryResourceInfo',
     'LibraryResourceProperties',
+    'LinkConnection',
+    'LinkConnectionCompute',
+    'LinkConnectionDetailedStatus',
+    'LinkConnectionLandingZone',
+    'LinkConnectionListResponse',
+    'LinkConnectionQueryTableStatus',
+    'LinkConnectionResource',
+    'LinkConnectionSourceDatabase',
+    'LinkConnectionSourceDatabaseTypeProperties',
+    'LinkConnectionTargetDatabase',
+    'LinkTableListResponse',
+    'LinkTableRequest',
+    'LinkTableRequestSource',
+    'LinkTableRequestTarget',
+    'LinkTableRequestTargetDistributionOptions',
+    'LinkTableResource',
+    'LinkTableStatus',
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
     'LinkedIntegrationRuntimeType',
@@ -1787,6 +1234,11 @@ __all__ = [
     'MarketoLinkedService',
     'MarketoObjectDataset',
     'MarketoSource',
+    'MetastoreRegisterObject',
+    'MetastoreRegistrationResponse',
+    'MetastoreRequestSuccessResponse',
+    'MetastoreUpdateObject',
+    'MetastoreUpdationResponse',
     'MicrosoftAccessLinkedService',
     'MicrosoftAccessSink',
     'MicrosoftAccessSource',
@@ -1812,10 +1264,12 @@ __all__ = [
     'Notebook',
     'NotebookCell',
     'NotebookCellOutputItem',
+    'NotebookFolder',
     'NotebookKernelSpec',
     'NotebookLanguageInfo',
     'NotebookListResponse',
     'NotebookMetadata',
+    'NotebookParameter',
     'NotebookResource',
     'NotebookSessionProperties',
     'ODataLinkedService',
@@ -1874,9 +1328,11 @@ __all__ = [
     'ProxyResource',
     'PurviewConfiguration',
     'QueryDataFlowDebugSessionsResponse',
+    'QueryTableStatusRequest',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
     'QuickBooksSource',
+    'QuickbaseLinkedService',
     'RecurrenceSchedule',
     'RecurrenceScheduleOccurrence',
     'RedirectIncompatibleRowSettings',
@@ -1941,6 +1397,10 @@ __all__ = [
     'ScheduleTrigger',
     'ScheduleTriggerRecurrence',
     'ScriptAction',
+    'ScriptActivity',
+    'ScriptActivityParameter',
+    'ScriptActivityScriptBlock',
+    'ScriptActivityTypePropertiesLogSettings',
     'SecretBase',
     'SecureString',
     'SelfDependencyTumblingWindowTriggerReference',
@@ -1961,6 +1421,7 @@ __all__ = [
     'ShopifySource',
     'SkipErrorFile',
     'Sku',
+    'SmartsheetLinkedService',
     'SnowflakeDataset',
     'SnowflakeExportCopyCommand',
     'SnowflakeImportCopyCommand',
@@ -1969,7 +1430,11 @@ __all__ = [
     'SnowflakeSource',
     'SparkBatchJob',
     'SparkBatchJobState',
+    'SparkConfiguration',
+    'SparkConfigurationListResponse',
+    'SparkConfigurationResource',
     'SparkJobDefinition',
+    'SparkJobDefinitionFolder',
     'SparkJobDefinitionResource',
     'SparkJobDefinitionsListResponse',
     'SparkJobProperties',
@@ -1992,6 +1457,7 @@ __all__ = [
     'SqlPoolStoredProcedureActivity',
     'SqlScript',
     'SqlScriptContent',
+    'SqlScriptFolder',
     'SqlScriptMetadata',
     'SqlScriptResource',
     'SqlScriptsListResponse',
@@ -2027,6 +1493,7 @@ __all__ = [
     'TabularTranslator',
     'TarGZipReadSettings',
     'TarReadSettings',
+    'TeamDeskLinkedService',
     'TeradataLinkedService',
     'TeradataPartitionSettings',
     'TeradataSource',
@@ -2046,8 +1513,10 @@ __all__ = [
     'TriggerSubscriptionOperationStatus',
     'TumblingWindowTrigger',
     'TumblingWindowTriggerDependencyReference',
+    'TwilioLinkedService',
     'TypeConversionSettings',
     'UntilActivity',
+    'UpdateLandingZoneCredential',
     'UserProperty',
     'ValidationActivity',
     'VariableSpecification',
@@ -2077,10 +1546,12 @@ __all__ = [
     'XmlDataset',
     'XmlReadSettings',
     'XmlSource',
+    'ZendeskLinkedService',
     'ZipDeflateReadSettings',
     'ZohoLinkedService',
     'ZohoObjectDataset',
     'ZohoSource',
+    'AmazonRdsForOraclePartitionOption',
     'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'AzureSearchIndexWriteBehaviorType',
@@ -2090,7 +1561,9 @@ __all__ = [
     'CellOutputType',
     'CompressionCodec',
     'CopyBehaviorType',
+    'CreateMode',
     'DataFlowComputeType',
+    'DataFlowDebugCommandType',
     'DataFlowReferenceType',
     'DatasetCompressionLevel',
     'DatasetReferenceType',
@@ -2123,10 +1596,12 @@ __all__ = [
     'IntegrationRuntimeType',
     'JsonFormatFilePattern',
     'JsonWriteFilePattern',
+    'LivyStates',
     'MongoDbAuthenticationType',
     'NetezzaPartitionOption',
     'NodeSize',
     'NodeSizeFamily',
+    'NotebookParameterType',
     'NotebookReferenceType',
     'ODataAadServicePrincipalCredentialType',
     'ODataAuthenticationType',
@@ -2140,7 +1615,9 @@ __all__ = [
     'PolybaseSettingsRejectType',
     'PrestoAuthenticationType',
     'RecurrenceFrequency',
+    'RequestStatus',
     'ResourceIdentityType',
+    'ResourceStatus',
     'RestServiceAuthenticationType',
     'RunQueryFilterOperand',
     'RunQueryFilterOperator',
@@ -2153,6 +1630,10 @@ __all__ = [
     'SapHanaPartitionOption',
     'SapTablePartitionOption',
     'SchedulerCurrentState',
+    'ScriptActivityLogDestination',
+    'ScriptActivityParameterDirection',
+    'ScriptActivityParameterType',
+    'ScriptType',
     'ServiceNowAuthenticationType',
     'SftpAuthenticationType',
     'SparkAuthenticationType',
@@ -2170,6 +1651,7 @@ __all__ = [
     'SsisPackageLocationType',
     'StoredProcedureParameterType',
     'SybaseAuthenticationType',
+    'TeamDeskAuthenticationType',
     'TeradataAuthenticationType',
     'TeradataPartitionOption',
     'TriggerReferenceType',
@@ -2181,4 +1663,7 @@ __all__ = [
     'WebActivityMethod',
     'WebAuthenticationType',
     'WebHookActivityMethod',
+    'ZendeskAuthenticationType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

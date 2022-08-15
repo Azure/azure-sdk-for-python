@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import msal
 
@@ -16,14 +16,16 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
+T = TypeVar("T", bound="CertificateCredential")
+
 
 class CertificateCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates as a service principal using a certificate.
 
-    The certificate must have an RSA private key, because this credential signs assertions using RS256.
-
-    See Azure Active Directory documentation for more information on configuring certificate authentication:
-    https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-microsoft-identity-platform
+    The certificate must have an RSA private key, because this credential signs assertions using RS256. See
+    `Azure Active Directory documentation
+    <https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-microsoft-identity-platform>`_
+    for more information on configuring certificate authentication.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
@@ -62,7 +64,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
         self._client_id = client_id
         super().__init__()
 
-    async def __aenter__(self):
+    async def __aenter__(self:T) -> T:
         await self._client.__aenter__()
         return self
 
@@ -71,8 +73,8 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
-        return self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         return await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)

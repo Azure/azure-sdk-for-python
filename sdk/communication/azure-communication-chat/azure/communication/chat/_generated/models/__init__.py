@@ -30,6 +30,7 @@ try:
     from ._models_py3 import SendChatMessageRequest
     from ._models_py3 import SendChatMessageResult
     from ._models_py3 import SendReadReceiptRequest
+    from ._models_py3 import SendTypingNotificationRequest
     from ._models_py3 import UpdateChatMessageRequest
     from ._models_py3 import UpdateChatThreadRequest
 except (SyntaxError, ImportError):
@@ -56,6 +57,7 @@ except (SyntaxError, ImportError):
     from ._models import SendChatMessageRequest  # type: ignore
     from ._models import SendChatMessageResult  # type: ignore
     from ._models import SendReadReceiptRequest  # type: ignore
+    from ._models import SendTypingNotificationRequest  # type: ignore
     from ._models import UpdateChatMessageRequest  # type: ignore
     from ._models import UpdateChatThreadRequest  # type: ignore
 
@@ -88,6 +90,7 @@ __all__ = [
     'SendChatMessageRequest',
     'SendChatMessageResult',
     'SendReadReceiptRequest',
+    'SendTypingNotificationRequest',
     'UpdateChatMessageRequest',
     'UpdateChatThreadRequest',
     'ChatMessageType',

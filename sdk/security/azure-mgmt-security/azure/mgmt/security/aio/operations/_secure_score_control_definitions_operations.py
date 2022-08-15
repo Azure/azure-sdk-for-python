@@ -43,7 +43,7 @@ class SecureScoreControlDefinitionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecureScoreControlDefinitionList"]:
         """List the available security controls, their assessments, and the max score.
 
@@ -105,7 +105,7 @@ class SecureScoreControlDefinitionsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecureScoreControlDefinitionList"]:
         """For a specified subscription, list the available security controls, their assessments, and the
         max score.

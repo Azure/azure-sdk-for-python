@@ -11,30 +11,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search802607.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://search802607.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search802607.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D91BB40EA34AFF\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search802607.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96CA53A6C3D08\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
-      content-length: '389'
+      content-length: '405'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:24:00 GMT
-      elapsed-time: '43'
-      etag: W/"0x8D91BB40EA34AFF"
+      date: Tue, 31 Aug 2021 17:31:55 GMT
+      elapsed-time: '163'
+      etag: W/"0x8D96CA53A6C3D08"
       expires: '-1'
-      location: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      location: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 2a009c71-b990-11eb-8225-a0481ca055a9
+      request-id: 57292ef7-0a81-11ec-b719-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://search802607.search.windows.net/datasources?api-version=2020-06-30
+    url: https://search802607.search.windows.net/datasources?api-version=2021-04-30-Preview
 - request:
     body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
       "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
@@ -49,42 +49,34 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    uri: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns4PdvY+3Xkwlj/GV8VyVl0142Xe3v3dFnmb4d0fxz9N
-        ta6neXP3d8uXbdFefzQygKnRBUH9fT/aeXfw9OHukyf7O6dP9naPn9z/fT+iVstskdPXTbZYlfk2
-        3hBI9NUsb6Z1sWqLakkt1iv6Mp/R5+31Cq9kP1jX+aSsJvRRs57Ip8t1WY4+mtb5DHhkZfPRo1/8
-        EY1tmU8B53VbF0tCB81+CbWjQWfFMq/RymCSY6Tum9FHv2id19f2HcIiO5lny4v8ad4K1JdVWUy1
-        hTR4mpc5vhloki+n9TUP7PfK9cNf8v8AZlMkXooBAAA=
+      string: '{"@odata.context":"https://search802607.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96CA53A7D3123\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
-      content-length: '374'
+      content-length: '380'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:24:00 GMT
-      elapsed-time: '42'
-      etag: W/"0x8D91BB40EB21AB5"
+      date: Tue, 31 Aug 2021 17:31:55 GMT
+      elapsed-time: '57'
+      etag: W/"0x8D96CA53A7D3123"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 2a32f7e6-b990-11eb-b965-a0481ca055a9
+      request-id: 576402d3-0a81-11ec-9cda-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    url: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
 - request:
     body: '{"name": "sample-datasource", "description": "changed", "type": "azureblob",
       "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
-      "container": {"name": "searchcontainer"}, "@odata.etag": "\"0x8D91BB40EA34AFF\""}'
+      "container": {"name": "searchcontainer"}, "@odata.etag": "\"0x8D96CA53A6C3D08\""}'
     headers:
       Accept:
       - application/json;odata.metadata=minimal
@@ -93,13 +85,13 @@ interactions:
       Content-Type:
       - application/json
       If-Match:
-      - '"0x8D91BB40EA34AFF"'
+      - '"0x8D96CA53A6C3D08"'
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    uri: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -110,16 +102,16 @@ interactions:
       content-language: en
       content-length: '160'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:24:00 GMT
-      elapsed-time: '11'
+      date: Tue, 31 Aug 2021 17:31:55 GMT
+      elapsed-time: '17'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 2a42884e-b990-11eb-b286-a0481ca055a9
+      request-id: 57757755-0a81-11ec-867a-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 412
       message: Precondition Failed
-    url: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+    url: https://search802607.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
 version: 1

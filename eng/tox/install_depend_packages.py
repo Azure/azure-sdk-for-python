@@ -9,15 +9,15 @@
 import argparse
 import os
 import sys
-from subprocess import check_call
 import logging
-from packaging.specifiers import SpecifierSet
-from pkg_resources import Requirement, parse_version
+import re
+from subprocess import check_call
+from pkg_resources import parse_version
+from tox_helper_tasks import parse_req
+
 from pypi_tools.pypi import PyPIClient
 
-setup_parser_path = os.path.abspath(
-    os.path.join(os.path.abspath(__file__), "..", "..", "versioning")
-)
+setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
 sys.path.append(setup_parser_path)
 from setup_parser import get_install_requires
 
@@ -27,16 +27,21 @@ PKGS_TXT_FILE = "packages.txt"
 
 logging.getLogger().setLevel(logging.INFO)
 
+# both min and max overrides are *inclusive* of the version targeted
 MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
-    'azure-common': '1.1.10',
-    'msrest': '0.6.10',
-    'six': '1.9',
-    'typing-extensions': '3.6.5',
-    'opentelemetry-api': '1.3.0'
+    "azure-common": "1.1.10",
+    "msrest": "0.6.10",
+    "typing-extensions": "3.6.5",
+    "opentelemetry-api": "1.3.0",
+    "opentelemetry-sdk": "1.3.0",
+    "azure-core": "1.11.0",
+    "requests": "2.19.0",
+    "six": "1.12.0",
+    "cryptography": "3.3.2"
 }
 
-
 MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "4.0.0"}
+
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # This method identifies latest/ minimal version of dependent packages and installs them from pyPI
@@ -59,7 +64,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
         pkgs_file_path = os.path.join(temp_dir, PKGS_TXT_FILE)
         with open(pkgs_file_path, "w") as pkgs_file:
             for package in released_packages:
-                pkgs_file.write(package + '\n')
+                pkgs_file.write(package + "\n")
         logging.info("Created file %s to track azure packages found on PyPI", pkgs_file_path)
 
 
@@ -67,18 +72,11 @@ def find_released_packages(setup_py_path, dependency_type):
     # this method returns list of required available package on PyPI in format <package-name>==<version>
 
     # parse setup.py and find install requires
-    requires = [r for r in get_install_requires(setup_py_path) if '-nspkg' not in r]
+    requires = [r for r in get_install_requires(setup_py_path) if "-nspkg" not in r]
 
     # Get available version on PyPI for each required package
     avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
     return avlble_packages
-
-
-def parse_req(req):
-    req_object = Requirement.parse(req)
-    pkg_name = req_object.key
-    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
-    return pkg_name, spec
 
 
 def process_requirement(req, dependency_type):
@@ -93,7 +91,9 @@ def process_requirement(req, dependency_type):
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
     if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
-        versions = [v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])]
+        versions = [
+            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
+        ]
 
     if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
         versions = [
@@ -109,11 +109,41 @@ def process_requirement(req, dependency_type):
     # return first version that matches specifier in <package-name>==<version> format
     for version in versions:
         if version in spec:
-            logging.info("Found %s version %s that matches specifier %s", dependency_type, version, spec)
+            logging.info(
+                "Found %s version %s that matches specifier %s",
+                dependency_type,
+                version,
+                spec,
+            )
             return pkg_name + "==" + version
 
-    logging.error("No version is found on PyPI for package %s that matches specifier %s", pkg_name, spec)
+    logging.error(
+        "No version is found on PyPI for package %s that matches specifier %s",
+        pkg_name,
+        spec,
+    )
     return ""
+
+
+def check_req_against_exclusion(req, req_to_exclude):
+    """
+    This function evaluates a requirement from a dev_requirements file against a file name. Returns True
+    if the requirement is for the same package listed in "req_to_exclude". False otherwise.
+
+    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../tools/azure-devtools",
+        "https://docsupport.blob.core.windows.net/repackaged/cffi-1.14.6-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'",
+        "msrestazure>=0.4.11", "pytest" ]
+
+    :param req_to_exclude: A valid and complete python package name. No specifiers.
+    """
+    req_id = ""
+    for c in req:
+        if re.match(r"[A-Za-z0-9_-]", c):
+            req_id += c
+        else:
+            break
+
+    return req_id == req_to_exclude
 
 
 def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
@@ -125,17 +155,18 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
 
     # filter out any package available on PyPI (released_packages)
     # include packages without relative reference and packages not available on PyPI
-    released_packages = [p.split('==')[0] for p in released_packages]
+    released_packages = [p.split("==")[0] for p in released_packages]
     # find prebuilt whl paths in dev requiremente
-    prebuilt_dev_reqs = [os.path.basename(req.replace('\n', '')) for req  in requirements if os.path.sep in req]
+    prebuilt_dev_reqs = [os.path.basename(req.replace("\n", "")) for req in requirements if os.path.sep in req]
     # filter any req if wheel is for a released package
-    req_to_exclude = [req for req in prebuilt_dev_reqs if req.split('-')[0].replace('_', '-') in released_packages]
+    req_to_exclude = [req for req in prebuilt_dev_reqs if req.split("-")[0].replace("_", "-") in released_packages]
     req_to_exclude.extend(released_packages)
 
     filtered_req = [
         req
         for req in requirements
-        if os.path.basename(req.replace('\n', '')) not in req_to_exclude
+        if os.path.basename(req.replace("\n", "")) not in req_to_exclude
+        and not any([check_req_against_exclusion(req, i) for i in req_to_exclude])
     ]
 
     logging.info("Filtered dev requirements: %s", filtered_req)
@@ -170,9 +201,7 @@ def install_packages(packages, req_file):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Install either latest or minimum version of dependent packages."
-    )
+    parser = argparse.ArgumentParser(description="Install either latest or minimum version of dependent packages.")
 
     parser.add_argument(
         "-t",
@@ -186,7 +215,7 @@ if __name__ == "__main__":
         "-d",
         "--dependency-type",
         dest="dependency_type",
-        choices=['Latest', 'Minimum'],
+        choices=["Latest", "Minimum"],
         help="Dependency type to install. Dependency type is either 'Latest' or 'Minimum'",
         required=True,
     )
@@ -202,7 +231,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     setup_path = os.path.join(os.path.abspath(args.target_package), "setup.py")
 
-    if not(os.path.exists(setup_path) and os.path.exists(args.work_dir)):
+    if not (os.path.exists(setup_path) and os.path.exists(args.work_dir)):
         logging.error("Invalid arguments. Please make sure target directory and working directory are valid path")
         sys.exit(1)
 

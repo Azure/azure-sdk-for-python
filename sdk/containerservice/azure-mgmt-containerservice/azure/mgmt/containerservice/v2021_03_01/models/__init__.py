@@ -6,158 +6,82 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AgentPool
-    from ._models_py3 import AgentPoolAvailableVersions
-    from ._models_py3 import AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem
-    from ._models_py3 import AgentPoolListResult
-    from ._models_py3 import AgentPoolUpgradeProfile
-    from ._models_py3 import AgentPoolUpgradeProfilePropertiesUpgradesItem
-    from ._models_py3 import AgentPoolUpgradeSettings
-    from ._models_py3 import CloudError
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Components1Q1Og48SchemasManagedclusterAllof1
-    from ._models_py3 import Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties
-    from ._models_py3 import ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties
-    from ._models_py3 import ContainerServiceDiagnosticsProfile
-    from ._models_py3 import ContainerServiceLinuxProfile
-    from ._models_py3 import ContainerServiceMasterProfile
-    from ._models_py3 import ContainerServiceNetworkProfile
-    from ._models_py3 import ContainerServiceSshConfiguration
-    from ._models_py3 import ContainerServiceSshPublicKey
-    from ._models_py3 import ContainerServiceVMDiagnostics
-    from ._models_py3 import CredentialResult
-    from ._models_py3 import CredentialResults
-    from ._models_py3 import ExtendedLocation
-    from ._models_py3 import KubeletConfig
-    from ._models_py3 import LinuxOSConfig
-    from ._models_py3 import MaintenanceConfiguration
-    from ._models_py3 import MaintenanceConfigurationListResult
-    from ._models_py3 import ManagedCluster
-    from ._models_py3 import ManagedClusterAADProfile
-    from ._models_py3 import ManagedClusterAPIServerAccessProfile
-    from ._models_py3 import ManagedClusterAccessProfile
-    from ._models_py3 import ManagedClusterAddonProfile
-    from ._models_py3 import ManagedClusterAddonProfileIdentity
-    from ._models_py3 import ManagedClusterAgentPoolProfile
-    from ._models_py3 import ManagedClusterAgentPoolProfileProperties
-    from ._models_py3 import ManagedClusterAutoUpgradeProfile
-    from ._models_py3 import ManagedClusterHTTPProxyConfig
-    from ._models_py3 import ManagedClusterIdentity
-    from ._models_py3 import ManagedClusterListResult
-    from ._models_py3 import ManagedClusterLoadBalancerProfile
-    from ._models_py3 import ManagedClusterLoadBalancerProfileManagedOutboundIPs
-    from ._models_py3 import ManagedClusterLoadBalancerProfileOutboundIPPrefixes
-    from ._models_py3 import ManagedClusterLoadBalancerProfileOutboundIPs
-    from ._models_py3 import ManagedClusterPodIdentity
-    from ._models_py3 import ManagedClusterPodIdentityException
-    from ._models_py3 import ManagedClusterPodIdentityProfile
-    from ._models_py3 import ManagedClusterPodIdentityProvisioningInfo
-    from ._models_py3 import ManagedClusterPoolUpgradeProfile
-    from ._models_py3 import ManagedClusterPoolUpgradeProfileUpgradesItem
-    from ._models_py3 import ManagedClusterPropertiesAutoScalerProfile
-    from ._models_py3 import ManagedClusterSKU
-    from ._models_py3 import ManagedClusterServicePrincipalProfile
-    from ._models_py3 import ManagedClusterUpgradeProfile
-    from ._models_py3 import ManagedClusterWindowsProfile
-    from ._models_py3 import OSOptionProfile
-    from ._models_py3 import OSOptionProperty
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationValue
-    from ._models_py3 import PowerState
-    from ._models_py3 import PrivateEndpoint
-    from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionListResult
-    from ._models_py3 import PrivateLinkResource
-    from ._models_py3 import PrivateLinkResourcesListResult
-    from ._models_py3 import PrivateLinkServiceConnectionState
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceReference
-    from ._models_py3 import RunCommandRequest
-    from ._models_py3 import RunCommandResult
-    from ._models_py3 import SubResource
-    from ._models_py3 import SysctlConfig
-    from ._models_py3 import SystemData
-    from ._models_py3 import TagsObject
-    from ._models_py3 import TimeInWeek
-    from ._models_py3 import TimeSpan
-    from ._models_py3 import UserAssignedIdentity
-except (SyntaxError, ImportError):
-    from ._models import AgentPool  # type: ignore
-    from ._models import AgentPoolAvailableVersions  # type: ignore
-    from ._models import AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem  # type: ignore
-    from ._models import AgentPoolListResult  # type: ignore
-    from ._models import AgentPoolUpgradeProfile  # type: ignore
-    from ._models import AgentPoolUpgradeProfilePropertiesUpgradesItem  # type: ignore
-    from ._models import AgentPoolUpgradeSettings  # type: ignore
-    from ._models import CloudError  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import Components1Q1Og48SchemasManagedclusterAllof1  # type: ignore
-    from ._models import Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
-    from ._models import ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties  # type: ignore
-    from ._models import ContainerServiceDiagnosticsProfile  # type: ignore
-    from ._models import ContainerServiceLinuxProfile  # type: ignore
-    from ._models import ContainerServiceMasterProfile  # type: ignore
-    from ._models import ContainerServiceNetworkProfile  # type: ignore
-    from ._models import ContainerServiceSshConfiguration  # type: ignore
-    from ._models import ContainerServiceSshPublicKey  # type: ignore
-    from ._models import ContainerServiceVMDiagnostics  # type: ignore
-    from ._models import CredentialResult  # type: ignore
-    from ._models import CredentialResults  # type: ignore
-    from ._models import ExtendedLocation  # type: ignore
-    from ._models import KubeletConfig  # type: ignore
-    from ._models import LinuxOSConfig  # type: ignore
-    from ._models import MaintenanceConfiguration  # type: ignore
-    from ._models import MaintenanceConfigurationListResult  # type: ignore
-    from ._models import ManagedCluster  # type: ignore
-    from ._models import ManagedClusterAADProfile  # type: ignore
-    from ._models import ManagedClusterAPIServerAccessProfile  # type: ignore
-    from ._models import ManagedClusterAccessProfile  # type: ignore
-    from ._models import ManagedClusterAddonProfile  # type: ignore
-    from ._models import ManagedClusterAddonProfileIdentity  # type: ignore
-    from ._models import ManagedClusterAgentPoolProfile  # type: ignore
-    from ._models import ManagedClusterAgentPoolProfileProperties  # type: ignore
-    from ._models import ManagedClusterAutoUpgradeProfile  # type: ignore
-    from ._models import ManagedClusterHTTPProxyConfig  # type: ignore
-    from ._models import ManagedClusterIdentity  # type: ignore
-    from ._models import ManagedClusterListResult  # type: ignore
-    from ._models import ManagedClusterLoadBalancerProfile  # type: ignore
-    from ._models import ManagedClusterLoadBalancerProfileManagedOutboundIPs  # type: ignore
-    from ._models import ManagedClusterLoadBalancerProfileOutboundIPPrefixes  # type: ignore
-    from ._models import ManagedClusterLoadBalancerProfileOutboundIPs  # type: ignore
-    from ._models import ManagedClusterPodIdentity  # type: ignore
-    from ._models import ManagedClusterPodIdentityException  # type: ignore
-    from ._models import ManagedClusterPodIdentityProfile  # type: ignore
-    from ._models import ManagedClusterPodIdentityProvisioningInfo  # type: ignore
-    from ._models import ManagedClusterPoolUpgradeProfile  # type: ignore
-    from ._models import ManagedClusterPoolUpgradeProfileUpgradesItem  # type: ignore
-    from ._models import ManagedClusterPropertiesAutoScalerProfile  # type: ignore
-    from ._models import ManagedClusterSKU  # type: ignore
-    from ._models import ManagedClusterServicePrincipalProfile  # type: ignore
-    from ._models import ManagedClusterUpgradeProfile  # type: ignore
-    from ._models import ManagedClusterWindowsProfile  # type: ignore
-    from ._models import OSOptionProfile  # type: ignore
-    from ._models import OSOptionProperty  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationValue  # type: ignore
-    from ._models import PowerState  # type: ignore
-    from ._models import PrivateEndpoint  # type: ignore
-    from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateEndpointConnectionListResult  # type: ignore
-    from ._models import PrivateLinkResource  # type: ignore
-    from ._models import PrivateLinkResourcesListResult  # type: ignore
-    from ._models import PrivateLinkServiceConnectionState  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceReference  # type: ignore
-    from ._models import RunCommandRequest  # type: ignore
-    from ._models import RunCommandResult  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import SysctlConfig  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TagsObject  # type: ignore
-    from ._models import TimeInWeek  # type: ignore
-    from ._models import TimeSpan  # type: ignore
-    from ._models import UserAssignedIdentity  # type: ignore
+from ._models_py3 import AgentPool
+from ._models_py3 import AgentPoolAvailableVersions
+from ._models_py3 import AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem
+from ._models_py3 import AgentPoolListResult
+from ._models_py3 import AgentPoolUpgradeProfile
+from ._models_py3 import AgentPoolUpgradeProfilePropertiesUpgradesItem
+from ._models_py3 import AgentPoolUpgradeSettings
+from ._models_py3 import CloudError
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import Components1Q1Og48SchemasManagedclusterAllof1
+from ._models_py3 import Components1Umhcm8SchemasManagedclusteridentityPropertiesUserassignedidentitiesAdditionalproperties
+from ._models_py3 import ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties
+from ._models_py3 import ContainerServiceDiagnosticsProfile
+from ._models_py3 import ContainerServiceLinuxProfile
+from ._models_py3 import ContainerServiceMasterProfile
+from ._models_py3 import ContainerServiceNetworkProfile
+from ._models_py3 import ContainerServiceSshConfiguration
+from ._models_py3 import ContainerServiceSshPublicKey
+from ._models_py3 import ContainerServiceVMDiagnostics
+from ._models_py3 import CredentialResult
+from ._models_py3 import CredentialResults
+from ._models_py3 import ExtendedLocation
+from ._models_py3 import KubeletConfig
+from ._models_py3 import LinuxOSConfig
+from ._models_py3 import MaintenanceConfiguration
+from ._models_py3 import MaintenanceConfigurationListResult
+from ._models_py3 import ManagedCluster
+from ._models_py3 import ManagedClusterAADProfile
+from ._models_py3 import ManagedClusterAPIServerAccessProfile
+from ._models_py3 import ManagedClusterAccessProfile
+from ._models_py3 import ManagedClusterAddonProfile
+from ._models_py3 import ManagedClusterAddonProfileIdentity
+from ._models_py3 import ManagedClusterAgentPoolProfile
+from ._models_py3 import ManagedClusterAgentPoolProfileProperties
+from ._models_py3 import ManagedClusterAutoUpgradeProfile
+from ._models_py3 import ManagedClusterHTTPProxyConfig
+from ._models_py3 import ManagedClusterIdentity
+from ._models_py3 import ManagedClusterListResult
+from ._models_py3 import ManagedClusterLoadBalancerProfile
+from ._models_py3 import ManagedClusterLoadBalancerProfileManagedOutboundIPs
+from ._models_py3 import ManagedClusterLoadBalancerProfileOutboundIPPrefixes
+from ._models_py3 import ManagedClusterLoadBalancerProfileOutboundIPs
+from ._models_py3 import ManagedClusterPodIdentity
+from ._models_py3 import ManagedClusterPodIdentityException
+from ._models_py3 import ManagedClusterPodIdentityProfile
+from ._models_py3 import ManagedClusterPodIdentityProvisioningInfo
+from ._models_py3 import ManagedClusterPoolUpgradeProfile
+from ._models_py3 import ManagedClusterPoolUpgradeProfileUpgradesItem
+from ._models_py3 import ManagedClusterPropertiesAutoScalerProfile
+from ._models_py3 import ManagedClusterSKU
+from ._models_py3 import ManagedClusterServicePrincipalProfile
+from ._models_py3 import ManagedClusterUpgradeProfile
+from ._models_py3 import ManagedClusterWindowsProfile
+from ._models_py3 import OSOptionProfile
+from ._models_py3 import OSOptionProperty
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationValue
+from ._models_py3 import PowerState
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourcesListResult
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import Resource
+from ._models_py3 import ResourceReference
+from ._models_py3 import RunCommandRequest
+from ._models_py3 import RunCommandResult
+from ._models_py3 import SubResource
+from ._models_py3 import SysctlConfig
+from ._models_py3 import SystemData
+from ._models_py3 import TagsObject
+from ._models_py3 import TimeInWeek
+from ._models_py3 import TimeSpan
+from ._models_py3 import UserAssignedIdentity
+
 
 from ._container_service_client_enums import (
     AgentPoolMode,
@@ -191,7 +115,9 @@ from ._container_service_client_enums import (
     UpgradeChannel,
     WeekDay,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AgentPool',
     'AgentPoolAvailableVersions',
@@ -299,3 +225,5 @@ __all__ = [
     'UpgradeChannel',
     'WeekDay',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

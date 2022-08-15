@@ -47,7 +47,7 @@ class VendorSkuPreviewOperations:
         self,
         vendor_name: str,
         sku_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PreviewSubscriptionsList"]:
         """Lists all the preview information of a vendor sku.
 
@@ -65,7 +65,7 @@ class VendorSkuPreviewOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -124,14 +124,14 @@ class VendorSkuPreviewOperations:
         sku_name: str,
         preview_subscription: str,
         parameters: "_models.PreviewSubscription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PreviewSubscription":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PreviewSubscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -184,7 +184,7 @@ class VendorSkuPreviewOperations:
         sku_name: str,
         preview_subscription: str,
         parameters: "_models.PreviewSubscription",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PreviewSubscription"]:
         """Creates or updates preview information of a vendor sku.
 
@@ -199,8 +199,8 @@ class VendorSkuPreviewOperations:
         :type parameters: ~hybrid_network_management_client.models.PreviewSubscription
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PreviewSubscription or the result of cls(response)
@@ -260,7 +260,7 @@ class VendorSkuPreviewOperations:
         vendor_name: str,
         sku_name: str,
         preview_subscription: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PreviewSubscription":
         """Gets the preview information of a vendor sku.
 
@@ -280,7 +280,7 @@ class VendorSkuPreviewOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -323,14 +323,14 @@ class VendorSkuPreviewOperations:
         vendor_name: str,
         sku_name: str,
         preview_subscription: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -370,7 +370,7 @@ class VendorSkuPreviewOperations:
         vendor_name: str,
         sku_name: str,
         preview_subscription: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the preview information of a vendor sku.
 
@@ -382,8 +382,8 @@ class VendorSkuPreviewOperations:
         :type preview_subscription: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

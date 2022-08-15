@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class SymmetricCryptographyProvider(LocalCryptographyProvider):
     def _get_internal_key(self, key):
         # type: (JsonWebKey) -> Key
-        if key.kty not in (KeyType.oct, KeyType.oct_hsm):
+        if key.kty not in (KeyType.oct, KeyType.oct_hsm):  # type: ignore[attr-defined]
             raise ValueError('"key" must be an oct or oct-HSM (symmetric) key')
         return SymmetricKey.from_jwk(key)
 

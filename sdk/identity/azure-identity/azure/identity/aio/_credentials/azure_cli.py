@@ -20,7 +20,7 @@ from ..._credentials.azure_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import _scopes_to_resource
+from ..._internal import _scopes_to_resource, resolve_tenant
 
 if TYPE_CHECKING:
     from typing import Any
@@ -31,7 +31,13 @@ class AzureCliCredential(AsyncContextManager):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
+
+    :keyword str tenant_id: optional tenant to include in the token request.
     """
+    def __init__(self, *, tenant_id: str = ""):
+        AsyncContextManager.__init__(self)
+
+        self.tenant_id = tenant_id
 
     @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
@@ -41,6 +47,8 @@ class AzureCliCredential(AsyncContextManager):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
@@ -52,12 +60,20 @@ class AzureCliCredential(AsyncContextManager):
             return _SyncAzureCliCredential().get_token(*scopes, **kwargs)
 
         resource = _scopes_to_resource(*scopes)
-        output = await _run_command(COMMAND_LINE.format(resource))
+        command = COMMAND_LINE.format(resource)
+        tenant = resolve_tenant(default_tenant=self.tenant_id, **kwargs)
+
+        if tenant:
+            command += " --tenant " + tenant
+        output = await _run_command(command)
 
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(message="Unexpected output from Azure CLI: '{}'".format(sanitized_output))
+            raise ClientAuthenticationError(
+                message="Unexpected output from Azure CLI: '{}'. \n"
+                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                        "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output))
 
         return token
 

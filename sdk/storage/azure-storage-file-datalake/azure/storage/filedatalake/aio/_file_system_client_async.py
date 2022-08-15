@@ -7,7 +7,8 @@
 # pylint: disable=invalid-overridden-method
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Dict, TYPE_CHECKING
+    Union, Optional, Any, Dict, List, Tuple,
+    TYPE_CHECKING
 )
 
 from azure.core.exceptions import HttpResponseError
@@ -18,19 +19,19 @@ from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
+from .._serialize import get_api_version
 from .._deserialize import process_storage_error, is_file_path
 from .._generated.models import ListBlobsIncludeItem
 
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_lease_async import DataLakeLeaseClient
-from .._deserialize import deserialize_path_properties
 from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties, DeletedPathProperties
-from ._list_paths_helper import DeletedPathPropertiesPaged
+from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 
 
 if TYPE_CHECKING:
@@ -60,10 +61,15 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
      :param credential:
          The credentials with which to authenticate. This is optional if the
          account URL already has a SAS token. The value can be a SAS token string,
-         an instance of a AzureSasCredential from azure.core.credentials, an account
-         shared access key, or an instance of a TokenCredentials class from azure.identity.
+         an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
          If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
          - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+         should be the storage account key.
+     :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -78,7 +84,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     def __init__(
             self, account_url,  # type: str
             file_system_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -90,14 +96,20 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             **kwargs)
         # to override the class field _container_client sync version
         kwargs.pop('_hosts', None)
-        self._container_client = ContainerClient(self._blob_account_url, file_system_name,
+        self._container_client = ContainerClient(self._blob_account_url, self.file_system_name,
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
-        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,
+                                                   file_system=self.file_system_name, pipeline=self._pipeline)
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
-                                                                               file_system=file_system_name,
+                                                                               base_url=self._container_client.url,
+                                                                               file_system=self.file_system_name,
                                                                                pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+        self._client._config.version = api_version  # pylint: disable=protected-access
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
@@ -185,9 +197,17 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :param public_access:
             To specify whether data in the file system may be accessed publicly and the level of access.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword file_system_encryption_scope:
+            Specifies the default encryption scope to set on the file system and use for
+            all future writes.
+
+            .. versionadded:: 12.9.0
+
+        :paramtype encryption_scope_options: dict or ~azure.storage.filedatalake.EncryptionScopeOptions
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.filedatalake.aio.FileSystemClient
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -198,8 +218,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 16
                 :caption: Creating a file system in the datalake service.
         """
+        encryption_scope_options = kwargs.pop('encryption_scope_options', None)
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
+                                                             container_encryption_scope=encryption_scope_options,
                                                              **kwargs)
 
     @distributed_trace_async
@@ -235,9 +257,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         renamed_file_system = FileSystemClient(
                 "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                key_resolver_function=self.key_resolver_function)
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
 
     @distributed_trace_async
@@ -466,13 +486,14 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        return self._client.file_system.list_paths(
-            recursive=recursive,
-            max_results=max_results,
+        command = functools.partial(
+            self._client.file_system.list_paths,
             path=path,
             timeout=timeout,
-            cls=deserialize_path_properties,
             **kwargs)
+        return AsyncItemPaged(
+            command, recursive, path=path, max_results=max_results,
+            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
@@ -503,6 +524,23 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -621,6 +659,31 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the file or directory.
+        :keyword str group:
+            The owning group of the file or directory.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :keyword str lease_id:
+            Proposed lease ID, in a GUID string format. The DataLake service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :keyword int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change.
+        :keyword expires_on:
+            The time to set the file to expiry.
+            If the type of expires_on is an int, expiration time will be set
+            as the number of milliseconds elapsed from creation time.
+            If the type of expires_on is datetime, expiration time will be set
+            absolute to the time provided. If no time zone info is provided, this
+            will be interpreted as UTC.
+        :paramtype expires_on: datetime or int
         :keyword str permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file
@@ -787,13 +850,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
-                                       require_encryption=self.require_encryption,
-                                       key_encryption_key=self.key_encryption_key,
-                                       key_resolver_function=self.key_resolver_function,
-                                       loop=self._loop
-                                       )
+                                       loop=self._loop)
 
     def get_file_client(self, file_path  # type: Union[FileProperties, str]
                         ):
@@ -828,10 +888,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function, loop=self._loop)
+            api_version=self.api_version,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline, loop=self._loop)
 
     @distributed_trace
     def list_deleted_paths(self, **kwargs):
@@ -845,7 +903,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         :keyword str path_prefix:
             Filters the results to return only paths under the specified path.
-        :keyword int max_results:
+        :keyword int results_per_page:
             An optional value that specifies the maximum number of items to return per page.
             If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
@@ -855,8 +913,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
         path_prefix = kwargs.pop('path_prefix', None)
-        results_per_page = kwargs.pop('max_results', None)
         timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
             showonly=ListBlobsIncludeItem.deleted,

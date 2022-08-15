@@ -1,0 +1,21 @@
+## IMPORTANT: this file and accompanying assets are the source for snippets in https://docs.microsoft.com/azure/machine-learning!
+## Please reach out to the Azure ML docs & samples team before editing for the first time.
+
+# <component>
+name: prep_taxi_data
+display_name: PrepTaxiData
+version: 1
+type: command
+inputs:
+  raw_data:
+    type: uri_folder
+outputs:
+  prep_data:
+    type: uri_folder
+code: ./prep_src
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cuda11-gpu:3
+command: >-
+  python prep.py
+  --raw_data ${{inputs.raw_data}}
+  --prep_data ${{outputs.prep_data}}
+# </component>

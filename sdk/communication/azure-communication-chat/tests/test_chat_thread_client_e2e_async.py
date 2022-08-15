@@ -20,7 +20,7 @@ from azure.communication.chat import (
 )
 from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
-from helper import URIIdentityReplacer
+from _shared.helper import URIIdentityReplacer
 from chat_e2e_helper import ChatURIReplacer
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
@@ -310,6 +310,18 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
             async with self.chat_thread_client:
                 await self.chat_thread_client.send_typing_notification()
+
+            if not self.is_playback():
+                await self.chat_client.delete_chat_thread(self.thread_id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_send_typing_notification_with_sender_display_name(self):
+        async with self.chat_client:
+            await self._create_thread()
+
+            async with self.chat_thread_client:
+                await self.chat_thread_client.send_typing_notification(sender_display_name="John")
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)

@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -12,11 +11,13 @@ trigger:
     include:
     - sdk/template/
     - scripts/
+    # NOTE: DO NOT INCLUDE BELOW PATH WHEN COPYING THIS FILE
+    # eng/common code changes trigger template pipeline for basic checking.
+    - eng/common/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -25,11 +26,15 @@ pr:
   paths:
     include:
     - sdk/template/
+    # NOTE: DO NOT INCLUDE BELOW PATH WHEN COPYING THIS FILE
+    # eng/common code changes trigger template pipeline for basic checking.
+    - eng/common/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: template
+    ValidateFormatting: true
     Artifacts:
     - name: azure-template
       safeName: azuretemplate

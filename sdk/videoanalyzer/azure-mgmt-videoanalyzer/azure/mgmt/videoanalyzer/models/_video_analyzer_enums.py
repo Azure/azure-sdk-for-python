@@ -87,6 +87,56 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class EncoderSystemPresetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Name of the built-in encoding preset.
+    """
+
+    #: Produces an MP4 file where the video is encoded with H.264 codec at a picture height of 540
+    #: pixels, and at a maximum bitrate of 2000 Kbps. Encoded video has the same average frame rate as
+    #: the input. The aspect ratio of the input is preserved. If the input content has audio, then it
+    #: is encoded with AAC-LC codec at 96 Kbps.
+    SINGLE_LAYER540_P_H264_AAC = "SingleLayer_540p_H264_AAC"
+    #: Produces an MP4 file where the video is encoded with H.264 codec at a picture height of 720
+    #: pixels, and at a maximum bitrate of 3500 Kbps. Encoded video has the same average frame rate as
+    #: the input. The aspect ratio of the input is preserved. If the input content has audio, then it
+    #: is encoded with AAC-LC codec at 96 Kbps.
+    SINGLE_LAYER720_P_H264_AAC = "SingleLayer_720p_H264_AAC"
+    #: Produces an MP4 file where the video is encoded with H.264 codec at a picture height of 1080
+    #: pixels, and at a maximum bitrate of 6000 Kbps. Encoded video has the same average frame rate as
+    #: the input. The aspect ratio of the input is preserved. If the input content has audio, then it
+    #: is encoded with AAC-LC codec at 128 Kbps.
+    SINGLE_LAYER1080_P_H264_AAC = "SingleLayer_1080p_H264_AAC"
+    #: Produces an MP4 file where the video is encoded with H.264 codec at a picture height of 2160
+    #: pixels, and at a maximum bitrate of 16000 Kbps. Encoded video has the same average frame rate
+    #: as the input. The aspect ratio of the input is preserved. If the input content has audio, then
+    #: it is encoded with AAC-LC codec at 128 Kbps.
+    SINGLE_LAYER2160_P_H264_AAC = "SingleLayer_2160p_H264_AAC"
+
+class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Topology kind.
+    """
+
+    #: Live pipeline topology resource.
+    LIVE = "Live"
+    #: Batch pipeline topology resource.
+    BATCH = "Batch"
+
+class LivePipelineState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Current state of the pipeline (read-only).
+    """
+
+    #: The live pipeline is idle and not processing media.
+    INACTIVE = "Inactive"
+    #: The live pipeline is transitioning into the active state.
+    ACTIVATING = "Activating"
+    #: The live pipeline is active and able to process media. If your data source is not available,
+    #: for instance, if your RTSP camera is powered off or unreachable, the pipeline will still be
+    #: active and periodically retrying the connection. Your Azure subscription will be billed for the
+    #: duration in which the live pipeline is in the active state.
+    ACTIVE = "Active"
+    #: The live pipeline is transitioning into the inactive state.
+    DEACTIVATING = "Deactivating"
+
 class MetricAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The metric aggregation type
     """
@@ -109,6 +159,104 @@ class MetricUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The number of milliseconds.
     MILLISECONDS = "Milliseconds"
 
+class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of the parameter.
+    """
+
+    #: The parameter's value is a string.
+    STRING = "String"
+    #: The parameter's value is a string that holds sensitive information.
+    SECRET_STRING = "SecretString"
+    #: The parameter's value is a 32-bit signed integer.
+    INT = "Int"
+    #: The parameter's value is a 64-bit double-precision floating point.
+    DOUBLE = "Double"
+    #: The parameter's value is a boolean value that is either true or false.
+    BOOL = "Bool"
+
+class PipelineJobState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Current state of the pipeline (read-only).
+    """
+
+    #: Pipeline job is processing.
+    PROCESSING = "Processing"
+    #: Pipeline job is canceled.
+    CANCELED = "Canceled"
+    #: Pipeline job completed.
+    COMPLETED = "Completed"
+    #: Pipeline job failed.
+    FAILED = "Failed"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of the Video Analyzer account.
+    """
+
+    #: Provisioning state failed.
+    FAILED = "Failed"
+    #: Provisioning state in progress.
+    IN_PROGRESS = "InProgress"
+    #: Provisioning state succeeded.
+    SUCCEEDED = "Succeeded"
+
+class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether or not public network access is allowed for resources under the Video Analyzer account.
+    """
+
+    #: Public network access is enabled.
+    ENABLED = "Enabled"
+    #: Public network access is disabled.
+    DISABLED = "Disabled"
+
+class RtspTransport(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When using TCP, the RTP
+    packets are interleaved on the TCP RTSP connection. When using HTTP, the RTSP messages are
+    exchanged through long lived HTTP connections, and the RTP packages are interleaved in the HTTP
+    connections alongside the RTSP messages.
+    """
+
+    #: HTTP transport. RTSP messages are exchanged over long running HTTP requests and RTP packets are
+    #: interleaved within the HTTP channel.
+    HTTP = "Http"
+    #: TCP transport. RTSP is used directly over TCP and RTP packets are interleaved within the TCP
+    #: channel.
+    TCP = "Tcp"
+
+class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The SKU name.
+    """
+
+    #: Represents the Live S1 SKU name. Using this SKU you can create live pipelines to capture,
+    #: record, and stream live video from RTSP-capable cameras at bitrate settings from 0.5 Kbps to
+    #: 3000 Kbps.
+    LIVE_S1 = "Live_S1"
+    #: Represents the Batch S1 SKU name. Using this SKU you can create pipeline jobs to process
+    #: recorded content.
+    BATCH_S1 = "Batch_S1"
+
+class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The SKU tier.
+    """
+
+    #: Standard tier.
+    STANDARD = "Standard"
+
 class VideoAnalyzerEndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the endpoint.
     """
@@ -116,15 +264,37 @@ class VideoAnalyzerEndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     #: The client API endpoint.
     CLIENT_API = "ClientApi"
 
+class VideoScaleMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Describes the video scaling mode to be applied. Default mode is 'Pad'. If the mode is 'Pad' or
+    'Stretch' then both width and height must be specified. Else if the mode is
+    'PreserveAspectRatio' then only one of width or height need be provided.
+    """
+
+    #: Pads the video with black horizontal stripes (letterbox) or black vertical stripes (pillar-box)
+    #: so the video is resized to the specified dimensions while not altering the content aspect
+    #: ratio.
+    PAD = "Pad"
+    #: Preserves the same aspect ratio as the input video. If only one video dimension is provided,
+    #: the second dimension is calculated based on the input video aspect ratio. When 2 dimensions are
+    #: provided, the video is resized to fit the most constraining dimension, considering the input
+    #: video size and aspect ratio.
+    PRESERVE_ASPECT_RATIO = "PreserveAspectRatio"
+    #: Stretches the original video so it resized to the specified dimensions.
+    STRETCH = "Stretch"
+
 class VideoType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the video archive. Different archive formats provide different capabilities.
+    """Video content type. Different content types are suitable for different applications and
+    scenarios.
     """
 
     #: Archive is flexible format that represents a video stream associated with wall-clock time. The
     #: video archive can either be continuous or discontinuous. An archive is discontinuous when there
     #: are gaps in the recording due to various reasons, such as the live pipeline being stopped,
     #: camera being disconnected or due to the use of event based recordings through the use of a
-    #: signal gate. Finally, there is no limit to the archive duration and new video data can be
-    #: appended to the existing archive at any time, as long as the same video codec and codec
-    #: parameters are being used.
+    #: signal gate. There is no limit to the archive duration and new video data can be appended to
+    #: the existing archive at any time, as long as the same video codec and codec parameters are
+    #: being used. Videos of this type are suitable for appending and long term archival.
     ARCHIVE = "Archive"
+    #: File represents a video which is stored as a single media file, such as MP4. Videos of this
+    #: type are suitable to be downloaded for external consumption.
+    FILE = "File"

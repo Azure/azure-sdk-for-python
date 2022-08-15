@@ -1,5 +1,393 @@
 # Release History
 
+## 8.0.0b2 (2022-08-11)
+
+### Breaking Changes
+
+  - Renamed model `ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems` to `CassandraClusterDataCenterNodeItem`
+  - Renamed model `Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties` to `ManagedServiceIdentityUserAssignedIdentity`
+
+## 8.0.0b1 (2022-08-03)
+
+**Features**
+
+  - Added operation CassandraClustersOperations.get_backup
+  - Added operation CassandraClustersOperations.list_backups
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation GremlinResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_retrieve_throughput_distribution
+  - Added operation MongoDBResourcesOperations.get_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.get_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.list_mongo_role_definitions
+  - Added operation MongoDBResourcesOperations.list_mongo_user_definitions
+  - Added operation SqlResourcesOperations.begin_create_update_client_encryption_key
+  - Added operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Added operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.get_client_encryption_key
+  - Added operation SqlResourcesOperations.list_client_encryption_keys
+  - Added operation TableResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group DataTransferJobsOperations
+  - Added operation group GraphResourcesOperations
+  - Added operation group RestorableGremlinDatabasesOperations
+  - Added operation group RestorableGremlinGraphsOperations
+  - Added operation group RestorableGremlinResourcesOperations
+  - Added operation group RestorableTableResourcesOperations
+  - Added operation group RestorableTablesOperations
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model ContinuousModeBackupPolicy has a new parameter continuous_mode_properties
+  - Model DataCenterResourceProperties has a new parameter authentication_method_ldap_properties
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_materialized_views
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter keys_metadata
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountGetResults has a new parameter enable_materialized_views
+  - Model DatabaseAccountGetResults has a new parameter keys_metadata
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_materialized_views
+  - Model DatabaseAccountUpdateParameters has a new parameter keys_metadata
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model LocationProperties has a new parameter status
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model RestorableDatabaseAccountGetResult has a new parameter oldest_restorable_time
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter client_encryption_policy
+  - Model RestoreParameters has a new parameter gremlin_databases_to_restore
+  - Model RestoreParameters has a new parameter tables_to_restore
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetPropertiesResource has a new parameter client_encryption_policy
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model SqlContainerResource has a new parameter client_encryption_policy
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+
+**Breaking changes**
+
+  - Operation RestorableMongodbCollectionsOperations.list has a new parameter end_time
+  - Operation RestorableMongodbCollectionsOperations.list has a new parameter start_time
+
+## 7.0.0 (2022-07-22)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group CassandraClustersOperations
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group LocationsOperations
+  - Added operation group ServiceOperations
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter capacity
+  - Model DatabaseAccountGetResults has a new parameter capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter capacity
+  - Model GremlinGraphGetPropertiesResource has a new parameter analytical_storage_ttl
+  - Model GremlinGraphResource has a new parameter analytical_storage_ttl
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+
+## 7.0.0b6 (2022-05-23)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_retrieve_throughput_distribution
+
+**Breaking changes**
+
+  - Removed operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+
+## 7.0.0b5 (2022-04-28)
+
+**Features**
+
+  - Added operation DataTransferJobsOperations.cancel
+  - Added operation DataTransferJobsOperations.pause
+  - Added operation DataTransferJobsOperations.resume
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Model DataTransferJobGetResults has a new parameter processed_count
+  - Model DataTransferJobGetResults has a new parameter total_count
+  - Model DataTransferJobProperties has a new parameter processed_count
+  - Model DataTransferJobProperties has a new parameter total_count
+
+**Breaking changes**
+
+  - Model DataTransferJobGetResults no longer has parameter percentage_complete
+  - Model DataTransferJobProperties no longer has parameter percentage_complete
+
+## 7.0.0b4 (2022-04-14)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Added operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Model ContinuousModeBackupPolicy has a new parameter continuous_mode_properties
+  - Model KeyWrapMetadata has a new parameter algorithm
+  - Model RestorableDatabaseAccountGetResult has a new parameter oldest_restorable_time
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter client_encryption_policy
+  - Model SqlContainerGetPropertiesResource has a new parameter client_encryption_policy
+  - Model SqlContainerResource has a new parameter client_encryption_policy
+
+## 7.0.0b3 (2022-02-18)
+
+**Features**
+
+  - Added operation CassandraClustersOperations.get_backup
+  - Added operation CassandraClustersOperations.list_backups
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation GremlinResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_create_update_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.begin_delete_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.get_mongo_role_definition
+  - Added operation MongoDBResourcesOperations.get_mongo_user_definition
+  - Added operation MongoDBResourcesOperations.list_mongo_role_definitions
+  - Added operation MongoDBResourcesOperations.list_mongo_user_definitions
+  - Added operation SqlResourcesOperations.begin_create_update_client_encryption_key
+  - Added operation SqlResourcesOperations.get_client_encryption_key
+  - Added operation SqlResourcesOperations.list_client_encryption_keys
+  - Added operation TableResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group DataTransferJobsOperations
+  - Added operation group GraphResourcesOperations
+  - Added operation group RestorableGremlinDatabasesOperations
+  - Added operation group RestorableGremlinGraphsOperations
+  - Added operation group RestorableGremlinResourcesOperations
+  - Added operation group RestorableTableResourcesOperations
+  - Added operation group RestorableTablesOperations
+  - Added operation group ServiceOperations
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model DataCenterResourceProperties has a new parameter authentication_method_ldap_properties
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_materialized_views
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountGetResults has a new parameter enable_materialized_views
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_materialized_views
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model LocationProperties has a new parameter status
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model RestoreParameters has a new parameter gremlin_databases_to_restore
+  - Model RestoreParameters has a new parameter tables_to_restore
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+
+**Breaking changes**
+
+  - Operation RestorableMongodbCollectionsOperations.list has a new signature
+  - Operation RestorableMongodbCollectionsOperations.list has a new signature
+
+## 7.0.0b2 (2021-10-26)
+
+**Features**
+
+  - Model DataCenterResourceProperties has a new parameter disk_capacity
+  - Model DataCenterResourceProperties has a new parameter disk_sku
+  - Model DataCenterResourceProperties has a new parameter managed_disk_customer_key_uri
+  - Model DataCenterResourceProperties has a new parameter sku
+  - Model DataCenterResourceProperties has a new parameter availability_zone
+  - Model DataCenterResourceProperties has a new parameter backup_storage_customer_key_uri
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter capacity
+  - Model ClusterResourceProperties has a new parameter cassandra_audit_logging_enabled
+  - Model ClusterResourceProperties has a new parameter deallocated
+  - Model DatabaseAccountGetResults has a new parameter capacity
+  - Added operation MongoDBResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation CassandraClustersOperations.begin_invoke_command
+  - Added operation CassandraClustersOperations.begin_start
+  - Added operation CassandraClustersOperations.begin_deallocate
+  - Added operation CassandraClustersOperations.status
+  - Added operation group LocationsOperations
+
+**Breaking changes**
+
+  - Model MongoDBDatabaseGetResults no longer has parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionGetResults no longer has parameter identity
+  - Model GremlinDatabaseGetResults no longer has parameter identity
+  - Model SqlTriggerCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model LocationProperties no longer has parameter status
+  - Model DatabaseAccountCreateUpdateParameters no longer has parameter diagnostic_log_settings
+  - Model ThroughputSettingsGetResults no longer has parameter identity
+  - Model DatabaseAccountUpdateParameters no longer has parameter diagnostic_log_settings
+  - Model ARMResourceProperties no longer has parameter identity
+  - Model CassandraTableGetResults no longer has parameter identity
+  - Model GremlinGraphGetResults no longer has parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters no longer has parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerGetResults no longer has parameter identity
+  - Model GremlinGraphCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBCollectionGetResults no longer has parameter identity
+  - Model TableGetResults no longer has parameter identity
+  - Model CassandraKeyspaceGetResults no longer has parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters no longer has parameter identity
+  - Model SqlStoredProcedureGetResults no longer has parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters no longer has parameter identity
+  - Model ThroughputSettingsUpdateParameters no longer has parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters no longer has parameter identity
+  - Model TableCreateUpdateParameters no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter diagnostic_log_settings
+  - Model SqlDatabaseGetResults no longer has parameter identity
+  - Model CassandraTableCreateUpdateParameters no longer has parameter identity
+  - Removed operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Removed operation CassandraResourcesOperations.get_cassandra_view
+  - Removed operation CassandraResourcesOperations.list_cassandra_views
+  - Removed operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Removed operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Removed operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Removed operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Removed operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Removed operation CassandraClustersOperations.begin_request_repair
+  - Removed operation CassandraClustersOperations.begin_fetch_node_status
+  - Removed operation CassandraClustersOperations.get_backup
+  - Removed operation CassandraClustersOperations.list_backups
+  - Removed operation group ServiceOperations
+  - Removed operation group CosmosDBManagementClientOperationsMixin
+  - Removed operation group GraphResourcesOperations
+
+## 7.0.0b1 (2021-09-17)
+
+**Features**
+
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation group CassandraClustersOperations
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group ServiceOperations
+  - Added operation group CosmosDBManagementClientOperationsMixin
+  - Added operation group GraphResourcesOperations
+
+**Breaking changes**
+
+  - Parameter create_mode of model DatabaseAccountCreateUpdateParameters is now required
+
+## 6.4.0 (2021-06-22)
+
+**Features**
+
+  - Model ContinuousModeBackupPolicy has a new parameter migration_state
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Model DatabaseAccountGetResults has a new parameter analytical_storage_configuration
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model DatabaseAccountGetResults has a new parameter disable_local_auth
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Model BackupPolicy has a new parameter migration_state
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter analytical_storage_configuration
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter restore_parameters
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter disable_local_auth
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter create_mode
+  - Model PeriodicModeBackupPolicy has a new parameter migration_state
+  - Model DatabaseAccountUpdateParameters has a new parameter analytical_storage_configuration
+  - Model DatabaseAccountUpdateParameters has a new parameter disable_local_auth
+  - Added operation SqlResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group RestorableMongodbDatabasesOperations
+  - Added operation group RestorableDatabaseAccountsOperations
+  - Added operation group RestorableSqlDatabasesOperations
+  - Added operation group RestorableSqlContainersOperations
+  - Added operation group RestorableMongodbResourcesOperations
+  - Added operation group RestorableMongodbCollectionsOperations
+  - Added operation group RestorableSqlResourcesOperations
+
 ## 6.3.0 (2021-05-14)
 
 **Breaking changes**
@@ -158,7 +546,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -166,13 +554,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 1.0.0 (2020-08-17)
 

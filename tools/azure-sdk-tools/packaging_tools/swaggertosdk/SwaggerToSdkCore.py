@@ -22,6 +22,7 @@ from azure_devtools.ci_tools.github_tools import get_files, GithubLink
 _LOGGER = logging.getLogger(__name__)
 
 CONFIG_FILE = "swagger_to_sdk_config_autorest.json"
+CONFIG_FILE_DPG = "swagger_to_sdk_config_dpg.json"
 
 DEFAULT_COMMIT_MESSAGE = "Generated from {hexsha}"
 
@@ -170,7 +171,7 @@ def read_config(sdk_git_folder, config_file):
         return json.loads(config_fd.read())
 
 
-def read_config_from_github(sdk_id, branch="master", gh_token=None):
+def read_config_from_github(sdk_id, branch="main", gh_token=None):
     raw_link = str(get_configuration_github_path(sdk_id, branch))
     _LOGGER.debug("Will try to download: %s", raw_link)
     _LOGGER.debug("Token is defined: %s", gh_token is not None)

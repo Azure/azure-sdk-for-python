@@ -6,8 +6,9 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
+import datetime
 from copy import deepcopy
-from typing import TYPE_CHECKING, Dict, Any, Union, cast, Mapping
+from typing import Any, Union, cast, Mapping, Optional, List, TYPE_CHECKING
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.paging import ItemPaged
@@ -71,7 +72,9 @@ from ._generated._service_bus_management_client import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from . import _constants as constants
+from ._api_version import DEFAULT_VERSION, ApiVersion
 from ._models import (
+    AuthorizationRule,
     QueueRuntimeProperties,
     QueueProperties,
     TopicProperties,
@@ -81,13 +84,14 @@ from ._models import (
     RuleProperties,
     NamespaceProperties,
     TrueRuleFilter,
+    CorrelationRuleFilter,
+    SqlRuleFilter,
+    SqlRuleAction,
 )
 from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
-    from azure.core.credentials import (
-        TokenCredential,
-    )  # pylint:disable=ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
@@ -96,14 +100,27 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
     :param credential: To authenticate to manage the entities of the ServiceBus namespace.
     :type credential: TokenCredential
+    :keyword api_version: The Service Bus API version to use for requests. Default value is the most
+     recent service version that is compatible with the current SDK. Setting to an older version may result
+     in reduced feature compatibility.
+    :paramtype api_version: str or ApiVersion
     """
 
-    def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, TokenCredential, Dict[str, Any]) -> None
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        credential: "TokenCredential",
+        *,
+        api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
+        **kwargs: Any
+    ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
+        self._api_version = api_version
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
-        self._config = ServiceBusManagementClientConfiguration(self._endpoint, **kwargs)
+        self._config = ServiceBusManagementClientConfiguration(
+            self._endpoint, api_version=api_version, **kwargs
+        )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
             endpoint=fully_qualified_namespace, pipeline=self._pipeline
@@ -155,7 +172,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.get(
                     entity_name,
                     enrich=enrich,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -173,7 +190,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,
                     enrich=enrich,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -193,7 +210,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     subscription_name,
                     rule_name,
                     enrich=False,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -223,11 +240,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
 
     @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> ServiceBusAdministrationClient
+    def from_connection_string(
+        cls, conn_str: str, *, api_version: Union[str, ApiVersion] = DEFAULT_VERSION, **kwargs: Any
+    ) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
+        :keyword api_version: The Service Bus API version to use for requests. Default value is the most
+         recent service version that is compatible with the current SDK. Setting to an older version may result
+         in reduced feature compatibility.
+        :paramtype api_version: str or ApiVersion
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
         (
@@ -244,10 +266,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key)  # type: ignore
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2 :]
-        return cls(endpoint, credential, **kwargs)
+        return cls(endpoint, credential, api_version=api_version, **kwargs)
 
-    def get_queue(self, queue_name, **kwargs):
-        # type: (str, Any) -> QueueProperties
+    def get_queue(self, queue_name: str, **kwargs: Any) -> QueueProperties:
         """Get the properties of a queue.
 
         :param str queue_name: The name of the queue.
@@ -278,105 +299,126 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return runtime_properties
 
-    def create_queue(self, queue_name, **kwargs):
-        # type: (str, Any) -> QueueProperties
+    def create_queue(  # pylint: disable=too-many-locals
+        self,
+        queue_name: str,
+        *,
+        authorization_rules: Optional[List[AuthorizationRule]] = None,
+        auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
+        dead_lettering_on_message_expiration: Optional[bool] = None,
+        default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
+        enable_batched_operations: Optional[bool] = None,
+        enable_express: Optional[bool] = None,
+        enable_partitioning: Optional[bool] = None,
+        lock_duration: Optional[Union[datetime.timedelta, str]] = None,
+        max_delivery_count: Optional[int] = None,
+        max_size_in_megabytes: Optional[int] = None,
+        requires_duplicate_detection: Optional[bool] = None,
+        requires_session: Optional[bool] = None,
+        forward_to: Optional[str] = None,
+        user_metadata: Optional[str] = None,
+        forward_dead_lettered_messages_to: Optional[str] = None,
+        max_message_size_in_kilobytes: Optional[int] = None,
+        **kwargs: Any
+    ) -> QueueProperties:
         """Create a queue.
 
         :param queue_name: Name of the queue.
         :type queue_name: str
         :keyword authorization_rules: Authorization rules for resource.
-        :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
+        :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
          letter support when a message expires.
-        :type dead_lettering_on_message_expiration: bool
+        :paramtype dead_lettering_on_message_expiration: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type default_message_time_to_live: Union[~datetime.timedelta, str]
+        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
+        :paramtype duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
-        :type enable_batched_operations: bool
+        :paramtype enable_batched_operations: bool
         :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
          queue holds a message in memory temporarily before writing it to persistent storage.
-        :type enable_express: bool
+        :paramtype enable_express: bool
         :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
          across multiple message brokers.
-        :type enable_partitioning: bool
+        :paramtype enable_partitioning: bool
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type lock_duration: Union[~datetime.timedelta, str]
+        :paramtype lock_duration: Union[~datetime.timedelta, str]
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
-        :type max_delivery_count: int
+        :paramtype max_delivery_count: int
         :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
          memory allocated for the queue.
-        :type max_size_in_megabytes: int
+        :paramtype max_size_in_megabytes: int
         :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
          detection.
-        :type requires_duplicate_detection: bool
+        :paramtype requires_duplicate_detection: bool
         :keyword requires_session: A value that indicates whether the queue supports the concept of
          sessions.
-        :type requires_session: bool
+        :paramtype requires_session: bool
         :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
          are forwarded to.
-        :type forward_to: str
+        :paramtype forward_to: str
         :keyword user_metadata: Custom metdata that user can associate with the description. Max length
          is 1024 chars.
-        :type user_metadata: str
+        :paramtype user_metadata: str
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          dead-lettered messages of this subscription are forwarded to.
-        :type forward_dead_lettered_messages_to: str
+        :paramtype forward_dead_lettered_messages_to: str
+        :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+         can be accepted by the queue. This feature is only available when using a Premium namespace
+         and Service Bus API version "2021-05" or higher.
+         The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
+        :paramtype max_message_size_in_kilobytes: int
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         forward_to = _normalize_entity_path_to_full_path_if_needed(
-            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+            forward_to, self.fully_qualified_namespace
         )
         forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                kwargs.pop("forward_dead_lettered_messages_to", None),
+                forward_dead_lettered_messages_to,
                 self.fully_qualified_namespace,
             )
         )
         queue = QueueProperties(
             queue_name,
-            authorization_rules=kwargs.pop("authorization_rules", None),
-            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
-            dead_lettering_on_message_expiration=kwargs.pop(
-                "dead_lettering_on_message_expiration", None
-            ),
-            default_message_time_to_live=kwargs.pop(
-                "default_message_time_to_live", None
-            ),
-            duplicate_detection_history_time_window=kwargs.pop(
-                "duplicate_detection_history_time_window", None
-            ),
+            authorization_rules=authorization_rules,
+            auto_delete_on_idle=auto_delete_on_idle,
+            dead_lettering_on_message_expiration=dead_lettering_on_message_expiration,
+            default_message_time_to_live=default_message_time_to_live,
+            duplicate_detection_history_time_window=duplicate_detection_history_time_window,
             availability_status=None,
-            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
-            enable_express=kwargs.pop("enable_express", None),
-            enable_partitioning=kwargs.pop("enable_partitioning", None),
-            lock_duration=kwargs.pop("lock_duration", None),
-            max_delivery_count=kwargs.pop("max_delivery_count", None),
-            max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
-            requires_duplicate_detection=kwargs.pop(
-                "requires_duplicate_detection", None
-            ),
-            requires_session=kwargs.pop("requires_session", None),
+            enable_batched_operations=enable_batched_operations,
+            enable_express=enable_express,
+            enable_partitioning=enable_partitioning,
+            lock_duration=lock_duration,
+            max_delivery_count=max_delivery_count,
+            max_size_in_megabytes=max_size_in_megabytes,
+            requires_duplicate_detection=requires_duplicate_detection,
+            requires_session=requires_session,
             status=kwargs.pop("status", None),
             forward_to=forward_to,
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
-            user_metadata=kwargs.pop("user_metadata", None),
+            user_metadata=user_metadata,
+            max_message_size_in_kilobytes=max_message_size_in_kilobytes,
         )
         to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
@@ -392,7 +434,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.put(
                     queue_name,  # type: ignore
                     request_body,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -434,7 +476,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.entity.put(
                 queue.name,  # type: ignore
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -453,7 +495,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
             self._impl.entity.delete(
-                queue_name, api_version=constants.API_VERSION, **kwargs  # type: ignore
+                queue_name, api_version=self._api_version, **kwargs  # type: ignore
             )
 
     def list_queues(self, **kwargs):
@@ -476,6 +518,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -500,6 +543,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -536,8 +580,30 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return topic_description
 
-    def create_topic(self, topic_name, **kwargs):
-        # type: (str, Any) -> TopicProperties
+    def create_topic(
+        self,
+        topic_name: str,
+        *,
+        default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
+        max_size_in_megabytes: Optional[
+            int
+        ] = None,
+        requires_duplicate_detection: Optional[bool] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
+        enable_batched_operations: Optional[bool] = None,
+        size_in_bytes: Optional[int] = None,
+        filtering_messages_before_publishing: Optional[bool] = None,
+        authorization_rules: Optional[List[AuthorizationRule]] = None,
+        support_ordering: Optional[bool] = None,
+        auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
+        enable_partitioning: Optional[bool] = None,
+        enable_express: Optional[bool] = None,
+        user_metadata: Optional[str] = None,
+        max_message_size_in_kilobytes: Optional[int] = None,
+        **kwargs: Any
+    ) -> TopicProperties:
         """Create a topic.
 
         :param topic_name: Name of the topic.
@@ -546,66 +612,69 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type default_message_time_to_live: Union[~datetime.timedelta, str]
+        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
          memory allocated for the topic.
-        :type max_size_in_megabytes: long
+        :paramtype max_size_in_megabytes: int
         :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
          detection.
-        :type requires_duplicate_detection: bool
+        :paramtype requires_duplicate_detection: bool
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
+        :paramtype duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
-        :type enable_batched_operations: bool
+        :paramtype enable_batched_operations: bool
         :keyword size_in_bytes: The size of the topic, in bytes.
-        :type size_in_bytes: int
+        :paramtype size_in_bytes: int
         :keyword filtering_messages_before_publishing: Filter messages before publishing.
-        :type filtering_messages_before_publishing: bool
+        :paramtype filtering_messages_before_publishing: bool
         :keyword authorization_rules: Authorization rules for resource.
-        :type authorization_rules:
+        :paramtype authorization_rules:
          list[~azure.servicebus.management.AuthorizationRule]
         :keyword support_ordering: A value that indicates whether the topic supports ordering.
-        :type support_ordering: bool
+        :paramtype support_ordering: bool
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
          across multiple message brokers.
-        :type enable_partitioning: bool
+        :paramtype enable_partitioning: bool
         :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
          queue holds a message in memory temporarily before writing it to persistent storage.
-        :type enable_express: bool
+        :paramtype enable_express: bool
         :keyword user_metadata: Metadata associated with the topic.
-        :type user_metadata: str
+        :paramtype user_metadata: str
+        :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+         can be accepted by the queue. This feature is only available when using a Premium namespace
+         and Service Bus API version "2021-05" or higher.
+         The minimum allowed value is 1024 while the maximum allowed value is 102400. Default value is 1024.
+        :paramtype max_message_size_in_kilobytes: int
 
         :rtype: ~azure.servicebus.management.TopicProperties
         """
         topic = TopicProperties(
             topic_name,
-            default_message_time_to_live=kwargs.pop(
-                "default_message_time_to_live", None
-            ),
-            max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
-            requires_duplicate_detection=kwargs.pop(
-                "requires_duplicate_detection", None
-            ),
-            duplicate_detection_history_time_window=kwargs.pop(
-                "duplicate_detection_history_time_window", None
-            ),
-            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
-            size_in_bytes=kwargs.pop("size_in_bytes", None),
-            authorization_rules=kwargs.pop("authorization_rules", None),
+            default_message_time_to_live=default_message_time_to_live,
+            max_size_in_megabytes=max_size_in_megabytes,
+            requires_duplicate_detection=requires_duplicate_detection,
+            # TODO: ask why default of 10 mins isn't followed below,
+            duplicate_detection_history_time_window=duplicate_detection_history_time_window,
+            enable_batched_operations=enable_batched_operations,
+            size_in_bytes=size_in_bytes,
+            authorization_rules=authorization_rules,
+            filtering_messages_before_publishing=filtering_messages_before_publishing,
             status=kwargs.pop("status", None),
-            support_ordering=kwargs.pop("support_ordering", None),
-            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
-            enable_partitioning=kwargs.pop("enable_partitioning", None),
+            support_ordering=support_ordering,
+            auto_delete_on_idle=auto_delete_on_idle,
+            enable_partitioning=enable_partitioning,
             availability_status=None,
-            enable_express=kwargs.pop("enable_express", None),
-            user_metadata=kwargs.pop("user_metadata", None),
+            enable_express=enable_express,
+            user_metadata=user_metadata,
+            max_message_size_in_kilobytes=max_message_size_in_kilobytes,
+            **kwargs
         )
         to_create = topic._to_internal_entity()
 
@@ -621,7 +690,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self._impl.entity.put(
                     topic_name,  # type: ignore
                     request_body,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -661,7 +730,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.entity.put(
                 topic.name,  # type: ignore
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -676,7 +745,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_entity_name_type(topic_name)
 
         self._impl.entity.delete(
-            topic_name, api_version=constants.API_VERSION, **kwargs
+            topic_name, api_version=self._api_version, **kwargs  # type: ignore
         )
 
     def list_topics(self, **kwargs):
@@ -699,6 +768,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -723,6 +793,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -775,8 +846,24 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return subscription
 
-    def create_subscription(self, topic_name, subscription_name, **kwargs):
-        # type: (str, str, Any) -> SubscriptionProperties
+    def create_subscription(
+        self,
+        topic_name: str,
+        subscription_name: str,
+        *,
+        lock_duration: Optional[Union[datetime.timedelta, str]] = None,
+        requires_session: Optional[bool] = None,
+        default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
+        dead_lettering_on_message_expiration: Optional[bool] = None,
+        dead_lettering_on_filter_evaluation_exceptions: Optional[bool] = None,
+        max_delivery_count: Optional[int] = None,
+        enable_batched_operations: Optional[bool] = None,
+        forward_to: Optional[str] = None,
+        user_metadata: Optional[str] = None,
+        forward_dead_lettered_messages_to: Optional[str] = None,
+        auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
+        **kwargs: Any
+    ) -> SubscriptionProperties:
         """Create a topic subscription.
 
         :param str topic_name: The topic that will own the
@@ -787,73 +874,67 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type lock_duration: Union[~datetime.timedelta, str]
+        :paramtype lock_duration: Union[~datetime.timedelta, str]
         :keyword requires_session: A value that indicates whether the queue supports the concept of
          sessions.
-        :type requires_session: bool
+        :paramtype requires_session: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type default_message_time_to_live: Union[~datetime.timedelta, str]
+        :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
          has dead letter support when a message expires.
-        :type dead_lettering_on_message_expiration: bool
+        :paramtype dead_lettering_on_message_expiration: bool
         :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
          subscription has dead letter support when a message expires.
-        :type dead_lettering_on_filter_evaluation_exceptions: bool
+        :paramtype dead_lettering_on_filter_evaluation_exceptions: bool
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
-        :type max_delivery_count: int
+        :paramtype max_delivery_count: int
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
-        :type enable_batched_operations: bool
+        :paramtype enable_batched_operations: bool
         :keyword forward_to: The name of the recipient entity to which all the messages sent to the
          subscription are forwarded to.
-        :type forward_to: str
+        :paramtype forward_to: str
         :keyword user_metadata: Metadata associated with the subscription. Maximum number of characters
          is 1024.
-        :type user_metadata: str
+        :paramtype user_metadata: str
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          messages sent to the subscription are forwarded to.
-        :type forward_dead_lettered_messages_to: str
+        :paramtype forward_dead_lettered_messages_to: str
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
          automatically deleted. The minimum duration is 5 minutes.
          Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
-        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
+        :paramtype auto_delete_on_idle: Union[~datetime.timedelta, str]
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
         forward_to = _normalize_entity_path_to_full_path_if_needed(
-            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+            forward_to, self.fully_qualified_namespace
         )
         forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                kwargs.pop("forward_dead_lettered_messages_to", None),
+                forward_dead_lettered_messages_to,
                 self.fully_qualified_namespace,
             )
         )
 
         subscription = SubscriptionProperties(
             subscription_name,
-            lock_duration=kwargs.pop("lock_duration", None),
-            requires_session=kwargs.pop("requires_session", None),
-            default_message_time_to_live=kwargs.pop(
-                "default_message_time_to_live", None
-            ),
-            dead_lettering_on_message_expiration=kwargs.pop(
-                "dead_lettering_on_message_expiration", None
-            ),
-            dead_lettering_on_filter_evaluation_exceptions=kwargs.pop(
-                "dead_lettering_on_filter_evaluation_exceptions", None
-            ),
-            max_delivery_count=kwargs.pop("max_delivery_count", None),
-            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
+            lock_duration=lock_duration,
+            requires_session=requires_session,
+            default_message_time_to_live=default_message_time_to_live,
+            dead_lettering_on_message_expiration=dead_lettering_on_message_expiration,
+            dead_lettering_on_filter_evaluation_exceptions=dead_lettering_on_filter_evaluation_exceptions,
+            max_delivery_count=max_delivery_count,
+            enable_batched_operations=enable_batched_operations,
             status=kwargs.pop("status", None),
             forward_to=forward_to,
-            user_metadata=kwargs.pop("user_metadata", None),
+            user_metadata=user_metadata,
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
-            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
+            auto_delete_on_idle=auto_delete_on_idle,
             availability_status=None,
         )
         to_create = subscription._to_internal_entity(self.fully_qualified_namespace)  # type: ignore  # pylint:disable=protected-access
@@ -872,7 +953,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,  # type: ignore
                     request_body,
-                    api_version=constants.API_VERSION,
+                    api_version=self._api_version,  # type: ignore
                     **kwargs
                 ),
             )
@@ -904,7 +985,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         subscription = deepcopy(
             create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
         )
-        to_update = subscription._to_internal_entity(self.fully_qualified_namespace, kwargs)
+        to_update = subscription._to_internal_entity(
+            self.fully_qualified_namespace, kwargs
+        )
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
@@ -918,7 +1001,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 topic_name,
                 subscription.name,
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -935,7 +1018,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         self._impl.subscription.delete(
-            topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs
+            topic_name, subscription_name, api_version=self._api_version, **kwargs  # type: ignore
         )
 
     def list_subscriptions(self, topic_name, **kwargs):
@@ -960,6 +1043,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -986,6 +1070,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -1018,8 +1103,18 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )  # to remove after #3535 is released.
         return rule_description
 
-    def create_rule(self, topic_name, subscription_name, rule_name, **kwargs):
-        # type: (str, str, str, Any) -> RuleProperties
+    def create_rule(
+        self,
+        topic_name: str,
+        subscription_name: str,
+        rule_name: str,
+        *,
+        filter: Union[  # pylint: disable=redefined-builtin
+            CorrelationRuleFilter, SqlRuleFilter
+        ]=TrueRuleFilter(),
+        action: Optional[SqlRuleAction] = None,
+        **kwargs: Any
+    ) -> RuleProperties:
         """Create a rule for a topic subscription.
 
         :param str topic_name: The topic that will own the
@@ -1029,18 +1124,18 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param rule_name: Name of the rule.
         :type rule_name: str
         :keyword filter: The filter of the rule. The default value is ~azure.servicebus.management.TrueRuleFilter
-        :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
+        :paramtype filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
-        :type action: Optional[~azure.servicebus.management.SqlRuleAction]
+        :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         rule = RuleProperties(
             rule_name,
-            filter=kwargs.pop("filter", TrueRuleFilter()),
-            action=kwargs.pop("action", None),
+            filter=filter,
+            action=action,
             created_at_utc=None,
         )
         to_create = rule._to_internal_entity()
@@ -1058,7 +1153,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,  # type: ignore
                 rule_name,
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,  # type: ignore
                 **kwargs
             )
         entry = RuleDescriptionEntry.deserialize(entry_ele)
@@ -1107,7 +1202,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                api_version=constants.API_VERSION,
+                api_version=self._api_version,  # type: ignore
                 if_match="*",
                 **kwargs
             )
@@ -1130,7 +1225,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name,
             subscription_name,
             rule_name,
-            api_version=constants.API_VERSION,
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
 
@@ -1163,6 +1258,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_rules, topic_name, subscription_name),
+            api_version=self._api_version,  # type: ignore
             **kwargs
         )
         return ItemPaged(get_next, extract_data)
@@ -1173,7 +1269,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
-        entry_el = self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
+        entry_el = self._impl.namespace.get(api_version=self._api_version, **kwargs)  # type: ignore
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return NamespaceProperties._from_internal_entity(
             namespace_entry.title, namespace_entry.content.namespace_properties

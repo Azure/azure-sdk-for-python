@@ -1,5 +1,94 @@
 # Release History
 
+## 13.0.0b5 (2022-07-06)
+
+**Features**
+
+  - Model.DataSourceType has a new enum type `INGESTION`
+
+## 13.0.0b4 (2022-04-08)
+
+**Fixes**
+
+  - Reverted change about client name
+
+## 13.0.0b3 (2022-04-07)
+
+**Features**
+
+  - Added operation group QueriesOperations
+  - Added operation group QueryPacksOperations
+
+## 13.0.0b2 (2022-02-14)
+
+**Features**
+
+  - Added operation TablesOperations.migrate
+
+## 13.0.0b1 (2022-01-18)
+
+**Features**
+
+  - Added operation TablesOperations.begin_create_or_update
+  - Added operation TablesOperations.begin_delete
+  - Added operation TablesOperations.begin_update
+  - Model Table has a new parameter archive_retention_in_days
+  - Model Table has a new parameter last_plan_modified_date
+  - Model Table has a new parameter plan
+  - Model Table has a new parameter provisioning_state
+  - Model Table has a new parameter restored_logs
+  - Model Table has a new parameter result_statistics
+  - Model Table has a new parameter schema
+  - Model Table has a new parameter search_results
+  - Model Table has a new parameter system_data
+  - Model Table has a new parameter total_retention_in_days
+  - Model Workspace has a new parameter default_data_collection_rule_resource_id
+  - Model Workspace has a new parameter system_data
+  - Model WorkspacePatch has a new parameter default_data_collection_rule_resource_id
+
+**Breaking changes**
+
+  - Model Table no longer has parameter is_troubleshoot_enabled
+  - Model Table no longer has parameter is_troubleshooting_allowed
+  - Model Table no longer has parameter last_troubleshoot_date
+  - Removed operation TablesOperations.create
+  - Removed operation TablesOperations.update
+
+## 12.0.0 (2021-11-16)
+
+**Features**
+
+  - Model Table has a new parameter is_troubleshooting_allowed
+  - Model Table has a new parameter last_troubleshoot_date
+  - Model Table has a new parameter is_troubleshoot_enabled
+  - Added operation TablesOperations.create
+  - Added operation ClustersOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation ClustersOperations.update
+
+## 11.0.0 (2021-07-12)
+
+**Features**
+
+  - Model ClusterPatch has a new parameter billing_type
+  - Model Workspace has a new parameter features
+  - Model WorkspacePatch has a new parameter features
+  - Model WorkspaceFeatures has a new parameter disable_local_auth
+
+**Breaking changes**
+
+  - Model Workspace no longer has parameter immediate_purge_data_on30_days
+  - Model Workspace no longer has parameter enable_log_access_using_only_resource_permissions
+  - Model Workspace no longer has parameter cluster_resource_id
+  - Model Workspace no longer has parameter enable_data_export
+  - Model WorkspacePatch no longer has parameter immediate_purge_data_on30_days
+  - Model WorkspacePatch no longer has parameter enable_log_access_using_only_resource_permissions
+  - Model WorkspacePatch no longer has parameter cluster_resource_id
+  - Model WorkspacePatch no longer has parameter enable_data_export
+  - Model CapacityReservationProperties no longer has parameter max_capacity
+
 ## 10.0.0 (2021-05-13)
 
 **Features**
@@ -77,7 +166,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -85,7 +174,7 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 ## 2.0.0(2020-11-09)
 
@@ -206,8 +295,8 @@ caused by usage of classes that were not supposed to be used in the
 first place.
 
   - LogAnalyticsManagementClient cannot be imported from
-    `azure.mgmt.loganalytics.log_analytics_management_client` anymore 
-    (import OperationalInsightsManagementClient from 
+    `azure.mgmt.loganalytics.log_analytics_management_client` anymore
+    (import OperationalInsightsManagementClient from
     `azure.mgmt.loganalytics` works like before)
   - LogAnalyticsManagementClientConfiguration import has been moved from
     `azure.mgmt.loganalytics.log_analytics_management_client` to `azure.mgmt.loganalytics`

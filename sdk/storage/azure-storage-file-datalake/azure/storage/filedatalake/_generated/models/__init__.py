@@ -6,78 +6,64 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AclFailedEntry
-    from ._models_py3 import BlobHierarchyListSegment
-    from ._models_py3 import BlobItemInternal
-    from ._models_py3 import BlobPrefix
-    from ._models_py3 import BlobPropertiesInternal
-    from ._models_py3 import FileSystem
-    from ._models_py3 import FileSystemList
-    from ._models_py3 import LeaseAccessConditions
-    from ._models_py3 import ListBlobsHierarchySegmentResponse
-    from ._models_py3 import ModifiedAccessConditions
-    from ._models_py3 import Path
-    from ._models_py3 import PathHTTPHeaders
-    from ._models_py3 import PathList
-    from ._models_py3 import SetAccessControlRecursiveResponse
-    from ._models_py3 import SourceModifiedAccessConditions
-    from ._models_py3 import StorageError
-    from ._models_py3 import StorageErrorError
-except (SyntaxError, ImportError):
-    from ._models import AclFailedEntry  # type: ignore
-    from ._models import BlobHierarchyListSegment  # type: ignore
-    from ._models import BlobItemInternal  # type: ignore
-    from ._models import BlobPrefix  # type: ignore
-    from ._models import BlobPropertiesInternal  # type: ignore
-    from ._models import FileSystem  # type: ignore
-    from ._models import FileSystemList  # type: ignore
-    from ._models import LeaseAccessConditions  # type: ignore
-    from ._models import ListBlobsHierarchySegmentResponse  # type: ignore
-    from ._models import ModifiedAccessConditions  # type: ignore
-    from ._models import Path  # type: ignore
-    from ._models import PathHTTPHeaders  # type: ignore
-    from ._models import PathList  # type: ignore
-    from ._models import SetAccessControlRecursiveResponse  # type: ignore
-    from ._models import SourceModifiedAccessConditions  # type: ignore
-    from ._models import StorageError  # type: ignore
-    from ._models import StorageErrorError  # type: ignore
+from ._models_py3 import AclFailedEntry
+from ._models_py3 import BlobHierarchyListSegment
+from ._models_py3 import BlobItemInternal
+from ._models_py3 import BlobPrefix
+from ._models_py3 import BlobPropertiesInternal
+from ._models_py3 import CpkInfo
+from ._models_py3 import FileSystem
+from ._models_py3 import FileSystemList
+from ._models_py3 import LeaseAccessConditions
+from ._models_py3 import ListBlobsHierarchySegmentResponse
+from ._models_py3 import ModifiedAccessConditions
+from ._models_py3 import Path
+from ._models_py3 import PathHTTPHeaders
+from ._models_py3 import PathList
+from ._models_py3 import SetAccessControlRecursiveResponse
+from ._models_py3 import SourceModifiedAccessConditions
+from ._models_py3 import StorageError
+from ._models_py3 import StorageErrorError
 
-from ._azure_data_lake_storage_restapi_enums import (
-    ListBlobsIncludeItem,
-    PathExpiryOptions,
-    PathGetPropertiesAction,
-    PathLeaseAction,
-    PathRenameMode,
-    PathResourceType,
-    PathSetAccessControlRecursiveMode,
-    PathUpdateAction,
-)
+from ._azure_data_lake_storage_restapi_enums import ListBlobsIncludeItem
+from ._azure_data_lake_storage_restapi_enums import PathExpiryOptions
+from ._azure_data_lake_storage_restapi_enums import PathGetPropertiesAction
+from ._azure_data_lake_storage_restapi_enums import PathLeaseAction
+from ._azure_data_lake_storage_restapi_enums import PathRenameMode
+from ._azure_data_lake_storage_restapi_enums import PathResourceType
+from ._azure_data_lake_storage_restapi_enums import PathSetAccessControlRecursiveMode
+from ._azure_data_lake_storage_restapi_enums import PathUpdateAction
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AclFailedEntry',
-    'BlobHierarchyListSegment',
-    'BlobItemInternal',
-    'BlobPrefix',
-    'BlobPropertiesInternal',
-    'FileSystem',
-    'FileSystemList',
-    'LeaseAccessConditions',
-    'ListBlobsHierarchySegmentResponse',
-    'ModifiedAccessConditions',
-    'Path',
-    'PathHTTPHeaders',
-    'PathList',
-    'SetAccessControlRecursiveResponse',
-    'SourceModifiedAccessConditions',
-    'StorageError',
-    'StorageErrorError',
-    'ListBlobsIncludeItem',
-    'PathExpiryOptions',
-    'PathGetPropertiesAction',
-    'PathLeaseAction',
-    'PathRenameMode',
-    'PathResourceType',
-    'PathSetAccessControlRecursiveMode',
-    'PathUpdateAction',
+    "AclFailedEntry",
+    "BlobHierarchyListSegment",
+    "BlobItemInternal",
+    "BlobPrefix",
+    "BlobPropertiesInternal",
+    "CpkInfo",
+    "FileSystem",
+    "FileSystemList",
+    "LeaseAccessConditions",
+    "ListBlobsHierarchySegmentResponse",
+    "ModifiedAccessConditions",
+    "Path",
+    "PathHTTPHeaders",
+    "PathList",
+    "SetAccessControlRecursiveResponse",
+    "SourceModifiedAccessConditions",
+    "StorageError",
+    "StorageErrorError",
+    "ListBlobsIncludeItem",
+    "PathExpiryOptions",
+    "PathGetPropertiesAction",
+    "PathLeaseAction",
+    "PathRenameMode",
+    "PathResourceType",
+    "PathSetAccessControlRecursiveMode",
+    "PathUpdateAction",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -6,34 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessControlEntryAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessControlEntryAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Action object.
     """
 
     PERMIT = "Permit"
     DENY = "Deny"
 
-class AutoHealActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AutoHealActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Predefined action to be taken.
     """
 
@@ -41,7 +25,7 @@ class AutoHealActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOG_EVENT = "LogEvent"
     CUSTOM_ACTION = "CustomAction"
 
-class ComputeModeOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ComputeModeOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Shared/dedicated workers.
     """
 
@@ -49,7 +33,7 @@ class ComputeModeOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEDICATED = "Dedicated"
     DYNAMIC = "Dynamic"
 
-class ConnectionStringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionStringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of database.
     """
 
@@ -65,7 +49,7 @@ class ConnectionStringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REDIS_CACHE = "RedisCache"
     POSTGRE_SQL = "PostgreSQL"
 
-class HostingEnvironmentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostingEnvironmentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current status of the App Service Environment.
     """
 
@@ -74,14 +58,14 @@ class HostingEnvironmentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     SCALING = "Scaling"
     DELETING = "Deleting"
 
-class HostType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the hostname is a standard or repository hostname.
     """
 
     STANDARD = "Standard"
     REPOSITORY = "Repository"
 
-class InternalLoadBalancingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InternalLoadBalancingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies which endpoints to serve internally in the Virtual Network for the App Service
     Environment.
     """
@@ -90,20 +74,20 @@ class InternalLoadBalancingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     WEB = "Web"
     PUBLISHING = "Publishing"
 
-class ManagedPipelineMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedPipelineMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed pipeline mode.
     """
 
     INTEGRATED = "Integrated"
     CLASSIC = "Classic"
 
-class ManagedServiceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the operation.
     """
 
@@ -113,7 +97,7 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TIMED_OUT = "TimedOut"
     CREATED = "Created"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the App Service Environment.
     """
 
@@ -123,7 +107,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     IN_PROGRESS = "InProgress"
     DELETING = "Deleting"
 
-class RouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RouteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of route this is:
     DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
     INHERITED - Routes inherited from the real Virtual Network routes
@@ -136,7 +120,7 @@ class RouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INHERITED = "INHERITED"
     STATIC = "STATIC"
 
-class ScmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SCM type.
     """
 
@@ -154,7 +138,7 @@ class ScmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE_DRIVE = "OneDrive"
     VSO = "VSO"
 
-class SiteAvailabilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SiteAvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Management information availability state for the app.
     """
 
@@ -162,7 +146,7 @@ class SiteAvailabilityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     LIMITED = "Limited"
     DISASTER_RECOVERY_MODE = "DisasterRecoveryMode"
 
-class SiteLoadBalancing(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SiteLoadBalancing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Site load balancing.
     """
 
@@ -172,7 +156,7 @@ class SiteLoadBalancing(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WEIGHTED_TOTAL_TRAFFIC = "WeightedTotalTraffic"
     REQUEST_HASH = "RequestHash"
 
-class SslState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SslState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SSL type.
     """
 
@@ -180,7 +164,7 @@ class SslState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SNI_ENABLED = "SniEnabled"
     IP_BASED_ENABLED = "IpBasedEnabled"
 
-class StatusOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StatusOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """App Service plan status.
     """
 
@@ -188,7 +172,7 @@ class StatusOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PENDING = "Pending"
     CREATING = "Creating"
 
-class SupportedTlsVersions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SupportedTlsVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MinTlsVersion: configures the minimum version of TLS required for SSL requests
     """
 
@@ -196,14 +180,14 @@ class SupportedTlsVersions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE1 = "1.1"
     ONE2 = "1.2"
 
-class UsageState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State indicating whether the app has exceeded its quota usage. Read-only.
     """
 
     NORMAL = "Normal"
     EXCEEDED = "Exceeded"
 
-class WorkerSizeOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WorkerSizeOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Size of the machines.
     """
 

@@ -77,6 +77,15 @@ class CommandState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class DatabaseCompatLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of SQL Server database compatibility levels
     """

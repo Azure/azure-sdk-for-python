@@ -1,0 +1,24 @@
+name: test_ws_conn_fs_sp
+type: feature_store
+target: azureml://featurestores/featurestore
+credentials:
+  type: service_principal
+  client_id: client_id
+  client_secret: PasswordPlaceHolder
+  tenant_id: tenant_id
+metadata:
+  name: featurestore
+  description: my featurestore
+  type: feast
+  featurestore_config:
+      project: production
+      provider: feast_azure_provider.azure_provider.AzureProvider
+      online_store:
+          type: redis
+      offline_store:
+          type: feast_azure_provider.mssqlserver.MsSqlServerOfflineStore
+      registry:
+          registry_store_type: feast_azure_provider.registry_store.AzBlobRegistryStore
+          path: FEAST-REGISTRY-PATH
+  connection_config:
+      keyvault_url: dummy_keyvault_url

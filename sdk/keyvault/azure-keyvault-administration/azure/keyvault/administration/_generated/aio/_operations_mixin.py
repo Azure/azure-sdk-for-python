@@ -9,14 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-import warnings
+from typing import Any, Optional
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling import AsyncLROPoller
 
 
 class KeyVaultClientOperationsMixin(object):
@@ -25,29 +20,35 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         azure_storage_blob_container_uri: Optional["_models.SASTokenParameter"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FullBackupOperation"]:
-        """Creates a full backup using a user-provided SAS token to an Azure blob storage container.
+        """Creates a full backup using a user-provided SAS token to an Azure blob storage container. This
+        operation is supported only by the Managed HSM service.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
-         for at least next 24 hours from the time of making this call.
-        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_2.models.SASTokenParameter
+         for at least next 24 hours from the time of making this call. Default value is None.
+        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_3.models.SASTokenParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either FullBackupOperation or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_2.models.FullBackupOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either FullBackupOperation or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_3.models.FullBackupOperation]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_full_backup')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3':
+            from ..v7_3.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_backup'".format(api_version))
         mixin_instance = OperationClass()
@@ -62,7 +63,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         restore_blob_details: Optional["_models.RestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RestoreOperation"]:
         """Restores all key materials using the SAS token pointing to a previously stored Azure Blob
         storage backup folder.
@@ -70,21 +71,26 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored.
-        :type restore_blob_details: ~azure.keyvault.v7_2.models.RestoreOperationParameters
+         successful full backup was stored. Default value is None.
+        :type restore_blob_details: ~azure.keyvault.v7_3.models.RestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either RestoreOperation or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_2.models.RestoreOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either RestoreOperation or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_3.models.RestoreOperation]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_full_restore_operation')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3':
+            from ..v7_3.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
@@ -100,7 +106,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url: str,
         key_name: str,
         restore_blob_details: Optional["_models.SelectiveKeyRestoreOperationParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SelectiveKeyRestoreOperation"]:
         """Restores all key versions of a given key using user supplied SAS token pointing to a previously
         stored Azure Blob storage backup folder.
@@ -110,21 +116,27 @@ class KeyVaultClientOperationsMixin(object):
         :param key_name: The name of the key to be restored from the user supplied backup.
         :type key_name: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored.
-        :type restore_blob_details: ~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperationParameters
+         successful full backup was stored. Default value is None.
+        :type restore_blob_details: ~azure.keyvault.v7_3.models.SelectiveKeyRestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either SelectiveKeyRestoreOperation or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperation]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either SelectiveKeyRestoreOperation or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_3.models.SelectiveKeyRestoreOperation]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_selective_key_restore_operation')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3':
+            from ..v7_3.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_selective_key_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
@@ -139,7 +151,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FullBackupOperation":
         """Returns the status of full backup operation.
 
@@ -149,12 +161,14 @@ class KeyVaultClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FullBackupOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.FullBackupOperation
+        :rtype: ~azure.keyvault.v7_3.models.FullBackupOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('full_backup_status')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3':
+            from ..v7_3.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'full_backup_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -169,7 +183,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestoreOperation":
         """Returns the status of restore operation.
 
@@ -179,12 +193,14 @@ class KeyVaultClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RestoreOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RestoreOperation
+        :rtype: ~azure.keyvault.v7_3.models.RestoreOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('restore_status')
         if api_version == '7.2':
             from ..v7_2.aio.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3':
+            from ..v7_3.aio.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_status'".format(api_version))
         mixin_instance = OperationClass()

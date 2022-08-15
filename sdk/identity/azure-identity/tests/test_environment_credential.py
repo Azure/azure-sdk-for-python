@@ -9,7 +9,7 @@ from azure.identity import CredentialUnavailableError, EnvironmentCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock, mock_response, Request, validating_transport
+from helpers import mock
 
 
 ALL_VARIABLES = {
@@ -101,6 +101,34 @@ def test_certificate_configuration():
     _, kwargs = mock_credential.call_args
     assert kwargs["client_id"] == client_id
     assert kwargs["certificate_path"] == certificate_path
+    assert kwargs["tenant_id"] == tenant_id
+    assert kwargs["foo"] == bar
+
+
+def test_certificate_with_password_configuration():
+    """the credential should pass expected values and any keyword arguments to its inner credential"""
+
+    client_id = "client-id"
+    certificate_path = "..."
+    certificate_password = "password"
+    tenant_id = "tenant_id"
+    bar = "bar"
+
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH: certificate_path,
+        EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD: certificate_password,
+        EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
+    }
+    with mock.patch(EnvironmentCredential.__module__ + ".CertificateCredential") as mock_credential:
+        with mock.patch.dict("os.environ", environment, clear=True):
+            EnvironmentCredential(foo=bar)
+
+    assert mock_credential.call_count == 1
+    _, kwargs = mock_credential.call_args
+    assert kwargs["client_id"] == client_id
+    assert kwargs["certificate_path"] == certificate_path
+    assert kwargs["password"] == certificate_password
     assert kwargs["tenant_id"] == tenant_id
     assert kwargs["foo"] == bar
 

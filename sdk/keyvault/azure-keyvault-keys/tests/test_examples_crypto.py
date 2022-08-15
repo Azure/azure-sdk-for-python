@@ -2,25 +2,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 from azure.keyvault.keys.crypto import CryptographyClient
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
+from _test_case import KeysClientPreparer, get_decorator
+from _keys_test_case import KeysTestCase
 
+all_api_versions = get_decorator(only_vault=True)
 
-all_api_versions = get_decorator(vault_only=True)
-
-
-class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        kwargs["match_body"] = False
-        super(TestCryptoExamples, self).__init__(*args, **kwargs)
-
-    # pylint:disable=unused-variable
-
-    @all_api_versions()
-    @client_setup
+class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_encrypt_decrypt(self, key_client, **kwargs):
+        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key_client.create_rsa_key(key_name)
@@ -54,9 +51,11 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_wrap_unwrap(self, key_client, **kwargs):
+        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
@@ -81,9 +80,11 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         key = result.key
         # [END unwrap_key]
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    @KeysClientPreparer()
+    @recorded_by_proxy
     def test_sign_verify(self, key_client, **kwargs):
+        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
@@ -91,6 +92,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
 
         # [START sign]
         import hashlib
+
         from azure.keyvault.keys.crypto import SignatureAlgorithm
 
         digest = hashlib.sha256(b"plaintext").digest()

@@ -10,6 +10,8 @@ omitted_paths:
   - sdk/identity/azure-identity/tests/*
   - sdk/**/tests/perfstress_tests/*
   - sdk/nspkg/*
+  - sdk/**/swagger/*
+  - sdk/ml/azure-ai-ml/tests/*
 
 language: python
 root_check_enabled: True
@@ -70,12 +72,15 @@ known_content_issues:
   - ['sdk/core/azure-servicemanagement-legacy/README.md', '#4554']
   - ['sdk/eventgrid/azure-eventgrid/README.md', '#4554']
   - ['sdk/monitor/azure-monitor-query/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor-query/samples/README.md', '#4554']
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/tests/perf_tests/README.md', '#4554']
+  - ['sdk/servicebus/azure-servicebus/stress/scripts/README.md', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.md', '#4554']
   - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']
+  - ['cognitivelanguage/azure-ai-language-questionanswering/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-file-datalake/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-file-share/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage/README.md', '#4554']
@@ -83,15 +88,22 @@ known_content_issues:
   - ['sdk/storage/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
   - ['sdk/monitor/azure-monitor-opentelemetry-exporter/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor/README.md', '#4554']
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
   - ['sdk/translation/azure-ai-translation-document/swagger/README.md', '#4554']
   - ['sdk/purview/azure-purview-catalog/swagger/README.md',  '#4554']
   - ['sdk/purview/azure-purview-scanning/swagger/README.md',  '#4554']
   - ['sdk/agrifood/azure-agrifood-farming/swagger/README.md',  '#4554']
+  - ['sdk/purview/azure-purview-account/swagger/README.md', '#4554']
+  - ['sdk/purview/azure-purview-administration/swagger/README.md', '#4554']
   - ['sdk/containerregistry/azure-containerregistry/swagger/README.md', '#4554']
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
   - ['sdk/attestation/azure-security-attestation/swagger/README.md', '#4554']
+  - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.rst', '#4554']
+  - ['sdk/media/azure-media-analytics-edge/README.md', '#4554']
+  - ['sdk/remoterendering/azure-mixedreality-remoterendering/README.md', '#4554']
+  - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']
@@ -136,6 +148,7 @@ known_content_issues:
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
+  - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.md', '#4554']
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
   - 'azure-template'

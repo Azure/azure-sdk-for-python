@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,6 +6,8 @@
 # pylint: disable=protected-access
 
 from typing import Any, IO, Union, List
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -29,6 +30,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     custom forms from trained models. It provides different methods based on inputs from a
     URL and inputs from a stream.
 
+    .. note:: FormRecognizerClient should be used with API versions <=v2.1.
+        To use API versions 2021-09-30-preview and up, instantiate a DocumentAnalysisClient.
+
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
@@ -37,20 +41,21 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :keyword api_version:
-        The API version of the service to use for requests. It defaults to the latest service version.
-        Setting to an older version may result in reduced feature compatibility.
+        The API version of the service to use for requests. It defaults to API version v2.1.
+        Setting to an older version may result in reduced feature compatibility. To use the
+        latest supported API version and features, instantiate a DocumentAnalysisClient instead.
     :paramtype api_version: str or ~azure.ai.formrecognizer.FormRecognizerApiVersion
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
             :start-after: [START create_fr_client_with_key_async]
             :end-before: [END create_fr_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
             :start-after: [START create_fr_client_with_aad_async]
             :end-before: [END create_fr_client_with_aad_async]
             :language: python
@@ -58,12 +63,16 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _prebuilt_callback(
-        self, raw_response, _, headers
-    ):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(
-            self._generated_models.AnalyzeOperationResult, raw_response
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
+    ) -> None:
+        api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        super().__init__(
+            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="form", **kwargs
         )
+
+    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace_async
@@ -102,7 +111,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_receipts_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_receipts_async.py
                 :start-after: [START recognize_receipts_async]
                 :end-before: [END recognize_receipts_async]
                 :language: python
@@ -112,9 +121,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         locale = kwargs.pop("locale", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_receipts_from_url() to analyze a receipt from a URL."
-            )
+            raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type is None and kwargs.get("continuation_token", None) is None:
@@ -126,9 +133,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"locale": locale})
             else:
-                raise ValueError(
-                    "'locale' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'locale' is only available for API version V2_1 and up")
 
         pages = kwargs.pop("pages", None)
 
@@ -138,12 +143,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream=receipt,
+            file_stream=receipt,  # type: ignore
             content_type=content_type,
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -182,7 +185,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_receipts_from_url_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_receipts_from_url_async.py
                 :start-after: [START recognize_receipts_from_url_async]
                 :end-before: [END recognize_receipts_from_url_async]
                 :language: python
@@ -199,9 +202,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"locale": locale})
             else:
-                raise ValueError(
-                    "'locale' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'locale' is only available for API version V2_1 and up")
 
         pages = kwargs.pop("pages", None)
 
@@ -211,12 +212,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream={"source": receipt_url},
+            file_stream={"source": receipt_url},  # type: ignore
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", self._prebuilt_callback),
             polling=True,
@@ -259,7 +258,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_business_cards_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_business_cards_async.py
                 :start-after: [START recognize_business_cards_async]
                 :end-before: [END recognize_business_cards_async]
                 :language: python
@@ -268,9 +267,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_business_cards_from_url() to analyze a business card from a URL."
-            )
+            raise TypeError("Call begin_recognize_business_cards_from_url() to analyze a business card from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -279,7 +276,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_business_card_async(  # type: ignore
-                file_stream=business_card,
+                file_stream=business_card,  # type: ignore
                 content_type=content_type,
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -327,7 +324,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_business_card_async(  # type: ignore
-                file_stream={"source": business_card_url},
+                file_stream={"source": business_card_url},  # type: ignore
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
@@ -336,8 +333,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_business_cards_from_url' is only available for "
-                    "API version V2_1 and up"
+                    "Method 'begin_recognize_business_cards_from_url' is only available for " "API version V2_1 and up"
                 )
             raise e
 
@@ -375,7 +371,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_identity_documents_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_identity_documents_async.py
                 :start-after: [START recognize_identity_documents_async]
                 :end-before: [END recognize_identity_documents_async]
                 :language: python
@@ -395,7 +391,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_id_document_async(  # type: ignore
-                file_stream=identity_document,
+                file_stream=identity_document,  # type: ignore
                 content_type=content_type,
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -441,7 +437,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_id_document_async(  # type: ignore
-                file_stream={"source": identity_document_url},
+                file_stream={"source": identity_document_url},  # type: ignore
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
@@ -456,9 +452,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             raise e
 
     @distributed_trace_async
-    async def begin_recognize_invoices(
-        self, invoice: str, **kwargs: Any
-    ) -> AsyncLROPoller[List[RecognizedForm]]:
+    async def begin_recognize_invoices(self, invoice: str, **kwargs: Any) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
@@ -490,7 +484,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_invoices_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_invoices_async.py
                 :start-after: [START recognize_invoices_async]
                 :end-before: [END recognize_invoices_async]
                 :language: python
@@ -499,9 +493,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_invoice_from_url() to analyze an invoice from a URL."
-            )
+            raise TypeError("Call begin_recognize_invoice_from_url() to analyze an invoice from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -510,7 +502,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_invoice_async(  # type: ignore
-                file_stream=invoice,
+                file_stream=invoice,  # type: ignore
                 content_type=content_type,
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -519,9 +511,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             )
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
-                raise ValueError(
-                    "Method 'begin_recognize_invoices' is only available for API version V2_1 and up"
-                )
+                raise ValueError("Method 'begin_recognize_invoices' is only available for API version V2_1 and up")
             raise e
 
     @distributed_trace_async
@@ -557,7 +547,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         try:
             return await self._client.begin_analyze_invoice_async(  # type: ignore
-                file_stream={"source": invoice_url},
+                file_stream={"source": invoice_url},  # type: ignore
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
@@ -566,17 +556,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_invoices_from_url' is "
-                    "only available for API version V2_1 and up"
+                    "Method 'begin_recognize_invoices_from_url' is " "only available for API version V2_1 and up"
                 )
             raise e
 
-    def _content_callback(
-        self, raw_response, _, headers
-    ):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(
-            self._generated_models.AnalyzeOperationResult, raw_response
-        )
+    def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_content_result(analyze_result)
 
     @distributed_trace_async
@@ -617,7 +602,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_content_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_content_async.py
                 :start-after: [START recognize_content_async]
                 :end-before: [END recognize_content_async]
                 :language: python
@@ -629,9 +614,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         reading_order = kwargs.pop("reading_order", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_content_from_url() to analyze a document from a URL."
-            )
+            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
 
         if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(form)
@@ -642,28 +625,22 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         if reading_order:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"reading_order": reading_order})
             else:
-                raise ValueError(
-                    "'reading_order' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'reading_order' is only available for API version V2_1 and up")
 
         if language:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"language": language})
             else:
-                raise ValueError(
-                    "'language' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'language' is only available for API version V2_1 and up")
 
         return await self._client.begin_analyze_layout_async(  # type: ignore
-            file_stream=form,
+            file_stream=form,  # type: ignore
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
             polling=True,
@@ -671,9 +648,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def begin_recognize_content_from_url(
-        self, form_url: str, **kwargs: Any
-    ) -> AsyncLROPoller[List[FormPage]]:
+    async def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> AsyncLROPoller[List[FormPage]]:
         """Extract text and layout information from a given document.
         The input document must be the location (URL) of the document to be analyzed.
 
@@ -711,28 +686,22 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         if reading_order:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"reading_order": reading_order})
             else:
-                raise ValueError(
-                    "'reading_order' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'reading_order' is only available for API version V2_1 and up")
 
         if language:
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"language": language})
             else:
-                raise ValueError(
-                    "'language' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'language' is only available for API version V2_1 and up")
 
         return await self._client.begin_analyze_layout_async(  # type: ignore
-            file_stream={"source": form_url},
+            file_stream={"source": form_url},  # type: ignore
             cls=kwargs.pop("cls", self._content_callback),
             polling=True,
             **kwargs
@@ -763,12 +732,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_custom_forms_async.py
+            .. literalinclude:: ../samples/v3.1/async_samples/sample_recognize_custom_forms_async.py
                 :start-after: [START recognize_custom_forms_async]
                 :end-before: [END recognize_custom_forms_async]
                 :language: python
@@ -779,33 +748,23 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         content_type = kwargs.pop("content_type", None)
         continuation_token = kwargs.pop("continuation_token", None)
         if content_type == "application/json":
-            raise TypeError(
-                "Call begin_recognize_custom_forms_from_url() to analyze a document from a URL."
-            )
+            raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a URL.")
         if content_type is None and continuation_token is None:
             content_type = get_content_type(form)
 
         pages = kwargs.pop("pages", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        def analyze_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(
-                self._generated_models.AnalyzeOperationResult, raw_response
-            )
+        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = AsyncLROBasePolling(
-            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-        )
+        polling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -813,12 +772,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         return await self._client.begin_analyze_with_custom_model(  # type: ignore
-            file_stream=form,
+            file_stream=form,  # type: ignore
             model_id=model_id,
             include_text_details=include_field_elements,
             content_type=content_type,
@@ -848,32 +805,24 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-        polling_interval = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         pages = kwargs.pop("pages", None)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        def analyze_callback(
-            raw_response, _, headers
-        ):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(
-                self._generated_models.AnalyzeOperationResult, raw_response
-            )
+        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         callback = kwargs.pop("cls", analyze_callback)
-        polling = AsyncLROBasePolling(
-            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
-        )
+        polling = AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -881,12 +830,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             if self._api_version == FormRecognizerApiVersion.V2_1:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError(
-                    "'pages' is only available for API version V2_1 and up"
-                )
+                raise ValueError("'pages' is only available for API version V2_1 and up")
 
         return await self._client.begin_analyze_with_custom_model(  # type: ignore
-            file_stream={"source": form_url},
+            file_stream={"source": form_url},  # type: ignore
             model_id=model_id,
             include_text_details=include_field_elements,
             cls=callback,

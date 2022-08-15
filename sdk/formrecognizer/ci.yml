@@ -3,10 +3,8 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
-    - feature/*
     - release/*
   paths:
     include:
@@ -16,7 +14,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -30,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: formrecognizer
+    TestProxy: true
     Artifacts:
     - name: azure-ai-formrecognizer
       safeName: azureaiformrecognizer

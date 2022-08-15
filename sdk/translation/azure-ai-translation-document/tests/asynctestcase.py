@@ -1,31 +1,22 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
+from devtools_testutils import (
+    AzureRecordedTestCase
+)
 from testcase import DocumentTranslationTest, Document
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
-class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
-    def __init__(self, method_name):
-        super(AsyncDocumentTranslationTest, self).__init__(method_name)
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity.aio import ClientSecretCredential
-            return ClientSecretCredential(
-                os.getenv("TRANSLATION_TENANT_ID"),
-                os.getenv("TRANSLATION_CLIENT_ID"),
-                os.getenv("TRANSLATION_CLIENT_SECRET"),
-            )
+class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCase):
 
     async def _begin_and_validate_translation_async(self, async_client, translation_inputs, total_docs_count, language=None):
         # submit operation
         poller = await async_client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
+        assert poller.id is not None
+        assert poller.details.id is not None
         # wait for result
         doc_statuses = await poller.result()
         # validate
@@ -36,8 +27,10 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
     # client helpers
     async def _begin_multiple_translations_async(self, async_client, operations_count, **kwargs):
+        container_suffix = kwargs.pop('container_suffix', "")
+        variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', True)
-        language_code = kwargs.pop('language_code', "es")
+        language = kwargs.pop('language', "es")
         docs_per_operation = kwargs.pop('docs_per_operation', 2)
         result_ids = []
         for i in range(operations_count):
@@ -49,8 +42,8 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                 no need for async container clients!
             '''
             blob_data = Document.create_dummy_docs(docs_per_operation)
-            source_container_sas_url = self.create_source_container(data=blob_data)
-            target_container_sas_url = self.create_target_container()
+            source_container_sas_url = self.create_source_container(data=blob_data, variables=variables, container_suffix=str(i)+container_suffix)
+            target_container_sas_url = self.create_target_container(variables=variables, container_suffix=str(i)+container_suffix)
 
             # prepare translation inputs
             translation_inputs = [
@@ -59,7 +52,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code=language_code
+                            language=language
                         )
                     ]
                 )
@@ -67,7 +60,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
             # submit multiple operations
             poller = await async_client.begin_translation(translation_inputs)
-            self.assertIsNotNone(poller.id)
+            assert poller.id is not None
             if wait_for_operation:
                 await poller.result()
             else:
@@ -77,14 +70,15 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         return result_ids
 
     async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
-        # get input parms
+        # get input params
+        variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', False)
-        language_code = kwargs.pop('language_code', "es")
+        language = kwargs.pop('language', "es")
 
         # prepare containers and test data
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=blob_data, variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -93,15 +87,14 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code=language_code
+                        language=language
                     )
                 ]
             )
         ]
-
         # submit operation
         poller = await async_client.begin_translation(translation_inputs)
-        self.assertIsNotNone(poller.id)
+        assert poller.id is not None
         # wait for result
         if wait_for_operation:
             result = await poller.result()

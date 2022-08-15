@@ -59,7 +59,7 @@
       "type": "string",
       "defaultValue": "10",
       "metadata": {
-        "description": "The maximum duration, in minutes, that a single test is permitted to run before it is considered at-risk for being hung."
+        "description": "The maximum duration, in minutes, that a single test is permitted to run before it is considered at-risk of not responding"
       }
     }
   },
@@ -70,11 +70,14 @@
     "eventHubsNamespace": "[concat('eh-', parameters('baseName'))]",
     "eventHubName": "[concat('eh-', parameters('baseName'), '-hub')]",
     "eventHubAuthRuleName": "[concat('eh-', parameters('baseName'), '-hub-auth-rule')]",
-    "storageAccount": "[concat('blb', parameters('baseName'))]",
+    "storageAccount": "[concat('storage', parameters('baseName'))]",
     "containerName": "your-blob-container-name",
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "eventHubsAuthRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventHubsNamespace'), variables('defaultSASKeyName'))]",
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccount'))]",
+    "tablesMgmtApiVersion": "2019-04-01",
+    "tablesAuthorizationApiVersion": "2018-09-01-preview",
+    "tableDataContributorRoleId": "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3"
   },
   "resources": [
     {
@@ -141,6 +144,48 @@
       ]
     },
     {
+          "type": "Microsoft.DocumentDB/databaseAccounts",
+          "apiVersion": "2020-04-01",
+          "name": "[variables('storageAccount')]",
+          "location": "[parameters('location')]",
+          "tags": {
+              "defaultExperience": "Azure Table",
+              "hidden-cosmos-mmspecial": "",
+              "CosmosAccountType": "Non-Production"
+          },
+          "kind": "GlobalDocumentDB",
+          "properties": {
+              "publicNetworkAccess": "Enabled",
+              "enableAutomaticFailover": false,
+              "enableMultipleWriteLocations": false,
+              "isVirtualNetworkFilterEnabled": false,
+              "virtualNetworkRules": [],
+              "disableKeyBasedMetadataWriteAccess": false,
+              "enableFreeTier": false,
+              "enableAnalyticalStorage": false,
+              "databaseAccountOfferType": "Standard",
+              "consistencyPolicy": {
+                  "defaultConsistencyLevel": "BoundedStaleness",
+                  "maxIntervalInSeconds": 86400,
+                  "maxStalenessPrefix": 1000000
+              },
+              "locations": [
+                  {
+                      "locationName": "[parameters('location')]",
+                      "provisioningState": "Succeeded",
+                      "failoverPriority": 0,
+                      "isZoneRedundant": false
+                  }
+              ],
+              "capabilities": [
+                  {
+                      "name": "EnableTable"
+                  }
+              ],
+              "ipRules": []
+          }
+    },
+    {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2019-04-01-preview",
       "name": "[guid(resourceGroup().id, deployment().name, parameters('baseName'), variables('eventHubsDataOwnerRoleId'), parameters('testApplicationOid'))]",
@@ -158,6 +203,15 @@
         "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('contributorRoleId'))]",
         "principalId": "[parameters('testApplicationOid')]",
         "scope": "[resourceGroup().id]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "[variables('tablesAuthorizationApiVersion')]",
+      "name": "[guid(concat('tableDataContributorRoleId', resourceGroup().id))]",
+      "properties": {
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('tableDataContributorRoleId'))]",
+          "principalId": "[parameters('testApplicationOid')]"
       }
     }
   ],
@@ -197,6 +251,14 @@
     "AZURE_STORAGE_ACCESS_KEY":{
       "type": "string",
       "value": "[listKeys(variables('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+    },
+    "AZURE_TABLES_CONN_STR": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccount'), ';AccountKey=', listKeys(variables('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=', parameters('storageEndpointSuffix'))]"
+    },
+    "AZURE_COSMOS_CONN_STR": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccount'), ';AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('storageAccount')), '2020-04-01').primaryMasterKey, ';TableEndpoint=https://', variables('storageAccount'), '.table.cosmos.azure.com:443/')]"
     }
   }
 }

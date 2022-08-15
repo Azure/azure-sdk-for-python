@@ -125,7 +125,8 @@ class QueryOperations:
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type body: ~monitor_query_client.models.QueryBody
-        :param prefer: Optional. The prefer header to set server timeout,.
+        :param prefer: Optional. The prefer header to set server timeout, query statistics and
+         visualization information.
         :type prefer: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryResults, or the result of cls(response)

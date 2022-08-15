@@ -1,5 +1,237 @@
 # Release History
 
+## 27.2.0 (2022-06-29)
+
+**Features**
+
+  - Model CloudService has a new parameter system_data
+  - Model CloudServiceNetworkProfile has a new parameter slot_type
+
+## 27.1.0 (2022-06-09)
+
+**Features**
+
+  - Added operation CommunityGalleryImageVersionsOperations.list
+  - Added operation CommunityGalleryImagesOperations.list
+  - Added operation VirtualMachineImagesOperations.list_by_edge_zone
+  - Model CommunityGalleryImage has a new parameter architecture
+  - Model CommunityGalleryImage has a new parameter eula
+  - Model CommunityGalleryImage has a new parameter privacy_statement_uri
+  - Model CommunityGalleryImageVersion has a new parameter exclude_from_latest
+  - Model CommunityGalleryImageVersion has a new parameter storage_profile
+  - Model DiskEncryptionSet has a new parameter federated_client_id
+  - Model DiskEncryptionSetUpdate has a new parameter federated_client_id
+  - Model DiskRestorePoint has a new parameter security_profile
+  - Model EncryptionSetIdentity has a new parameter user_assigned_identities
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter advanced_settings
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter settings
+  - Model ImageDiskReference has a new parameter community_gallery_image_id
+  - Model ImageDiskReference has a new parameter shared_gallery_image_id
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model SharedGalleryImage has a new parameter architecture
+  - Model SharedGalleryImageVersion has a new parameter exclude_from_latest
+  - Model SharedGalleryImageVersion has a new parameter storage_profile
+  - Model Snapshot has a new parameter copy_completion_error
+
+## 27.0.0 (2022-05-17)
+
+**Features**
+
+  - Model AutomaticOSUpgradePolicy has a new parameter use_rolling_upgrade_policy
+  - Model DedicatedHostGroup has a new parameter additional_capabilities
+  - Model DedicatedHostGroupUpdate has a new parameter additional_capabilities
+  - Model DiskRestorePointReplicationStatus has a new parameter completion_percent
+  - Model LinuxPatchSettings has a new parameter automatic_by_platform_settings
+  - Model PatchSettings has a new parameter automatic_by_platform_settings
+  - Model ProximityPlacementGroup has a new parameter intent
+  - Model ProximityPlacementGroup has a new parameter zones
+  - Model VMGalleryApplication has a new parameter enable_automatic_upgrade
+  - Model VMGalleryApplication has a new parameter treat_failure_as_deployment_failure
+  - Model VirtualMachineScaleSetDataDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetOSDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetUpdateOSDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetVM has a new parameter identity
+  - Operation VirtualMachineRunCommandsOperations.begin_create_or_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineRunCommandsOperations.begin_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_create_or_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_update has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachineScaleSetVMsOperations.begin_run_command has a new optional and keyword-only parameter content_type
+  - Operation VirtualMachinesOperations.begin_run_command has a new optional and keyword-only parameter content_type
+
+**Breaking changes**
+
+  - Model PurchasePlan no longer has parameter promotion_code
+
+## 26.1.0 (2022-02-28)
+
+**Features**
+
+  - Model Disk has a new parameter data_access_auth_mode
+  - Model DiskUpdate has a new parameter data_access_auth_mode
+  - Model GalleryImage has a new parameter architecture
+  - Model GalleryImageUpdate has a new parameter architecture
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model Snapshot has a new parameter data_access_auth_mode
+  - Model SnapshotUpdate has a new parameter data_access_auth_mode
+  - Model SupportedCapabilities has a new parameter architecture
+  - Model VirtualMachineImage has a new parameter architecture
+
+## 26.0.0 (2022-02-14)
+
+**Features**
+
+  - Model Gallery has a new parameter sharing_status
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter target_extended_locations
+  - Model GalleryArtifactPublishingProfileBase has a new parameter target_extended_locations
+  - Model GalleryImageVersionPublishingProfile has a new parameter target_extended_locations
+  - Model GalleryUpdate has a new parameter sharing_status
+  - Model OSDiskImageEncryption has a new parameter security_profile
+  - Model SharingProfile has a new parameter community_gallery_info
+
+**Breaking changes**
+
+  - Operation GalleriesOperations.get has a new signature
+
+## 25.0.0 (2022-01-28)
+
+**Features**
+
+  - Added operation DedicatedHostsOperations.begin_restart
+  - Model AutomaticRepairsPolicy has a new parameter repair_action
+  - Model CapacityReservation has a new parameter time_created
+  - Model CapacityReservationUpdate has a new parameter time_created
+  - Model DedicatedHost has a new parameter time_created
+  - Model DedicatedHostUpdate has a new parameter time_created
+  - Model ImageReference has a new parameter community_gallery_image_id
+  - Model ManagedDiskParameters has a new parameter security_profile
+  - Model RestorePoint has a new parameter instance_view
+  - Model RestorePoint has a new parameter source_restore_point
+  - Model VirtualMachine has a new parameter time_created
+  - Model VirtualMachineExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSet has a new parameter time_created
+  - Model VirtualMachineScaleSetExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetManagedDiskParameters has a new parameter security_profile
+  - Model VirtualMachineScaleSetOSProfile has a new parameter allow_extension_operations
+  - Model VirtualMachineScaleSetUpdatePublicIPAddressConfiguration has a new parameter public_ip_prefix
+  - Model VirtualMachineScaleSetVMExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetVMExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetVMProfile has a new parameter hardware_profile
+  - Model VirtualMachineUpdate has a new parameter time_created
+
+**Breaking changes**
+
+  - Model PurchasePlan no longer has parameter promotion_code
+  - Operation RestorePointsOperations.get has a new signature
+  - Operation VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk has a new signature
+  - Operation VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk has a new signature
+  - Operation VirtualMachinesOperations.list has a new signature
+  - Operation VirtualMachinesOperations.list_all has a new signature
+
+## 24.0.1 (2022-01-17)
+
+**Bugfixes**
+
+  - Added support for Python3.6 back
+
+## 24.0.0 (2022-01-06)
+
+**Features**
+
+  - Model AccessUri has a new parameter security_data_access_sas
+  - Model CreationData has a new parameter security_data_uri
+  - Model DiskRestorePoint has a new parameter replication_state
+  - Model DiskRestorePoint has a new parameter source_resource_location
+  - Model DiskSecurityProfile has a new parameter secure_vm_disk_encryption_set_id
+  - Model GrantAccessData has a new parameter get_secure_vm_guest_state_sas
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model RestorePoint has a new parameter time_created
+  - Model Snapshot has a new parameter security_profile
+  - Model SnapshotUpdate has a new parameter supported_capabilities
+
+**Breaking changes**
+
+  - Model RestorePoint no longer has parameter provisioning_details
+
+## 23.1.0 (2021-10-12)
+
+**Features**
+
+  - Model PurchasePlanAutoGenerated has a new parameter promotion_code
+  - Model Disk has a new parameter public_network_access
+  - Model Disk has a new parameter completion_percent
+  - Model Disk has a new parameter supported_capabilities
+  - Model SnapshotUpdate has a new parameter public_network_access
+  - Model Snapshot has a new parameter public_network_access
+  - Model Snapshot has a new parameter completion_percent
+  - Model Snapshot has a new parameter supported_capabilities
+  - Model DiskRestorePoint has a new parameter network_access_policy
+  - Model DiskRestorePoint has a new parameter disk_access_id
+  - Model DiskRestorePoint has a new parameter public_network_access
+  - Model DiskRestorePoint has a new parameter supported_capabilities
+  - Model DiskRestorePoint has a new parameter completion_percent
+  - Model DiskAccess has a new parameter extended_location
+  - Model DiskEncryptionSet has a new parameter auto_key_rotation_error
+  - Model DiskUpdate has a new parameter public_network_access
+  - Model DiskUpdate has a new parameter supported_capabilities
+  - Added operation group CommunityGalleryImageVersionsOperations
+  - Added operation group CommunityGalleriesOperations
+  - Added operation group CommunityGalleryImagesOperations
+
+## 23.0.0 (2021-09-02)
+
+**Features**
+
+  - Model HardwareProfile has a new parameter vm_size_properties
+  - Model VirtualMachineScaleSetVMProfile has a new parameter application_profile
+  - Model AdditionalCapabilities has a new parameter hibernation_enabled
+  - Model VirtualMachine has a new parameter application_profile
+  - Model VirtualMachineScaleSetVMExtensionUpdate has a new parameter suppress_failures
+  - Model Gallery has a new parameter soft_delete_policy
+  - Model ScaleInPolicy has a new parameter force_deletion
+  - Model VirtualMachineScaleSetExtensionUpdate has a new parameter suppress_failures
+  - Model GalleryArtifactPublishingProfileBase has a new parameter replication_mode
+  - Model GalleryImageVersionPublishingProfile has a new parameter replication_mode
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter replication_mode
+  - Model ImageReference has a new parameter shared_gallery_image_id
+  - Model VirtualMachineUpdate has a new parameter application_profile
+  - Model VirtualMachineScaleSetVMExtension has a new parameter suppress_failures
+  - Model ResourceSkuLocationInfo has a new parameter type
+  - Model ResourceSkuLocationInfo has a new parameter extended_locations
+  - Model VirtualMachineScaleSetExtension has a new parameter suppress_failures
+  - Model VirtualMachineExtension has a new parameter suppress_failures
+  - Model VirtualMachineExtensionUpdate has a new parameter suppress_failures
+  - Model GalleryUpdate has a new parameter soft_delete_policy
+
+**Breaking changes**
+
+  - Operation ResourceSkusOperations.list has a new signature
+  - Operation VirtualMachinesOperations.begin_deallocate has a new signature
+
+## 22.1.0 (2021-07-22)
+
+**Features**
+
+  - Model VirtualMachineUpdate has a new parameter capacity_reservation
+  - Model VirtualMachine has a new parameter capacity_reservation
+  - Model VirtualMachineScaleSet has a new parameter spot_restore_policy
+  - Model VirtualMachineScaleSetVMProfile has a new parameter capacity_reservation
+  - Added operation group CapacityReservationsOperations
+  - Added operation group CapacityReservationGroupsOperations
+
+## 22.0.0 (2021-07-08)
+
+**Features**
+
+  - Model RestorePointSourceMetadata has a new parameter location
+  - Added operation DiskRestorePointOperations.begin_revoke_access
+  - Added operation DiskRestorePointOperations.begin_grant_access
+
+**Breaking changes**
+
+  - Model PublicIPAddressSku has a new signature
+
 ## 21.0.0 (2021-05-25)
 
 **Features**
@@ -232,7 +464,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -240,13 +472,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 12.0.0 (2020-03-23)
 

@@ -25,8 +25,7 @@
 import json
 import time
 
-from six.moves.urllib.parse import urlparse
-import six
+from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import exceptions
@@ -56,14 +55,12 @@ def _request_body_from_data(data):
         str, unicode, file-like stream object, or None
 
     """
-    if data is None or isinstance(data, six.string_types) or _is_readable_stream(data):
+    if data is None or isinstance(data, str) or _is_readable_stream(data):
         return data
     if isinstance(data, (dict, list, tuple)):
 
         json_dumped = json.dumps(data, separators=(",", ":"))
 
-        if six.PY2:
-            return json_dumped.decode("utf-8")
         return json_dumped
     return None
 
@@ -77,7 +74,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         useWriteEndpoint, useAlternateWriteEndpoint information
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client:
-        Pipeline client to process the resquest
+        Pipeline client to process the request
     :param azure.core.HttpRequest request:
         The request object to send through the pipeline
     :return: tuple of (result, headers)
@@ -144,8 +141,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     headers = dict(response.headers)
 
     data = response.body()
-    if data and not six.PY2:
-        # python 3 compatible: convert data from byte to unicode string
+    if data:
         data = data.decode("utf-8")
 
     if response.status_code == 404:
@@ -201,7 +197,7 @@ def SynchronizedRequest(
     :rtype: tuple of (dict dict)
     """
     request.data = _request_body_from_data(request_data)
-    if request.data and isinstance(request.data, six.string_types):
+    if request.data and isinstance(request.data, str):
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0

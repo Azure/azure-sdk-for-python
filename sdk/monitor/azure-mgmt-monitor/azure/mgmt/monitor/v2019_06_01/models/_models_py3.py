@@ -6,19 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActionGroupList(msrest.serialization.Model):
     """A list of action groups.
 
-    :param value: The list of action groups.
-    :type value: list[~$(python-base-namespace).v2019_06_01.models.ActionGroupResource]
-    :param next_link: Provides the link to retrieve the next set of elements.
-    :type next_link: str
+    :ivar value: The list of action groups.
+    :vartype value: list[~$(python-base-namespace).v2019_06_01.models.ActionGroupResource]
+    :ivar next_link: Provides the link to retrieve the next set of elements.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -29,10 +33,16 @@ class ActionGroupList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActionGroupResource"]] = None,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of action groups.
+        :paramtype value: list[~$(python-base-namespace).v2019_06_01.models.ActionGroupResource]
+        :keyword next_link: Provides the link to retrieve the next set of elements.
+        :paramtype next_link: str
+        """
         super(ActionGroupList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -41,11 +51,11 @@ class ActionGroupList(msrest.serialization.Model):
 class ActionGroupPatchBody(msrest.serialization.Model):
     """An action group object for the body of patch operations.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param enabled: Indicates whether this action group is enabled. If an action group is not
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar enabled: Indicates whether this action group is enabled. If an action group is not
      enabled, then none of its actions will be activated.
-    :type enabled: bool
+    :vartype enabled: bool
     """
 
     _attribute_map = {
@@ -60,12 +70,19 @@ class ActionGroupPatchBody(msrest.serialization.Model):
         enabled: Optional[bool] = True,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword enabled: Indicates whether this action group is enabled. If an action group is not
+         enabled, then none of its actions will be activated.
+        :paramtype enabled: bool
+        """
         super(ActionGroupPatchBody, self).__init__(**kwargs)
         self.tags = tags
         self.enabled = enabled
 
 
-class Resource(msrest.serialization.Model):
+class AzureResource(msrest.serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -78,10 +95,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -106,7 +123,13 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(Resource, self).__init__(**kwargs)
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super(AzureResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -114,7 +137,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ActionGroupResource(Resource):
+class ActionGroupResource(AzureResource):
     """An action group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -127,42 +150,43 @@ class ActionGroupResource(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param group_short_name: The short name of the action group. This will be used in SMS messages.
-    :type group_short_name: str
-    :param enabled: Indicates whether this action group is enabled. If an action group is not
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
+    :vartype group_short_name: str
+    :ivar enabled: Indicates whether this action group is enabled. If an action group is not
      enabled, then none of its receivers will receive communications.
-    :type enabled: bool
-    :param email_receivers: The list of email receivers that are part of this action group.
-    :type email_receivers: list[~$(python-base-namespace).v2019_06_01.models.EmailReceiver]
-    :param sms_receivers: The list of SMS receivers that are part of this action group.
-    :type sms_receivers: list[~$(python-base-namespace).v2019_06_01.models.SmsReceiver]
-    :param webhook_receivers: The list of webhook receivers that are part of this action group.
-    :type webhook_receivers: list[~$(python-base-namespace).v2019_06_01.models.WebhookReceiver]
-    :param itsm_receivers: The list of ITSM receivers that are part of this action group.
-    :type itsm_receivers: list[~$(python-base-namespace).v2019_06_01.models.ItsmReceiver]
-    :param azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
-     action group.
-    :type azure_app_push_receivers: list[~$(python-base-
-     namespace).v2019_06_01.models.AzureAppPushReceiver]
-    :param automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
+    :vartype enabled: bool
+    :ivar email_receivers: The list of email receivers that are part of this action group.
+    :vartype email_receivers: list[~$(python-base-namespace).v2019_06_01.models.EmailReceiver]
+    :ivar sms_receivers: The list of SMS receivers that are part of this action group.
+    :vartype sms_receivers: list[~$(python-base-namespace).v2019_06_01.models.SmsReceiver]
+    :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
+    :vartype webhook_receivers: list[~$(python-base-namespace).v2019_06_01.models.WebhookReceiver]
+    :ivar itsm_receivers: The list of ITSM receivers that are part of this action group.
+    :vartype itsm_receivers: list[~$(python-base-namespace).v2019_06_01.models.ItsmReceiver]
+    :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
+     group.
+    :vartype azure_app_push_receivers:
+     list[~$(python-base-namespace).v2019_06_01.models.AzureAppPushReceiver]
+    :ivar automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
      this action group.
-    :type automation_runbook_receivers: list[~$(python-base-
-     namespace).v2019_06_01.models.AutomationRunbookReceiver]
-    :param voice_receivers: The list of voice receivers that are part of this action group.
-    :type voice_receivers: list[~$(python-base-namespace).v2019_06_01.models.VoiceReceiver]
-    :param logic_app_receivers: The list of logic app receivers that are part of this action group.
-    :type logic_app_receivers: list[~$(python-base-namespace).v2019_06_01.models.LogicAppReceiver]
-    :param azure_function_receivers: The list of azure function receivers that are part of this
+    :vartype automation_runbook_receivers:
+     list[~$(python-base-namespace).v2019_06_01.models.AutomationRunbookReceiver]
+    :ivar voice_receivers: The list of voice receivers that are part of this action group.
+    :vartype voice_receivers: list[~$(python-base-namespace).v2019_06_01.models.VoiceReceiver]
+    :ivar logic_app_receivers: The list of logic app receivers that are part of this action group.
+    :vartype logic_app_receivers:
+     list[~$(python-base-namespace).v2019_06_01.models.LogicAppReceiver]
+    :ivar azure_function_receivers: The list of azure function receivers that are part of this
      action group.
-    :type azure_function_receivers: list[~$(python-base-
-     namespace).v2019_06_01.models.AzureFunctionReceiver]
-    :param arm_role_receivers: The list of ARM role receivers that are part of this action group.
+    :vartype azure_function_receivers:
+     list[~$(python-base-namespace).v2019_06_01.models.AzureFunctionReceiver]
+    :ivar arm_role_receivers: The list of ARM role receivers that are part of this action group.
      Roles are Azure RBAC roles and only built-in roles are supported.
-    :type arm_role_receivers: list[~$(python-base-namespace).v2019_06_01.models.ArmRoleReceiver]
+    :vartype arm_role_receivers: list[~$(python-base-namespace).v2019_06_01.models.ArmRoleReceiver]
     """
 
     _validation = {
@@ -200,18 +224,61 @@ class ActionGroupResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
         enabled: Optional[bool] = True,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[List["VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[List["LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[List["AzureFunctionReceiver"]] = None,
-        arm_role_receivers: Optional[List["ArmRoleReceiver"]] = None,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
+        arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword group_short_name: The short name of the action group. This will be used in SMS
+         messages.
+        :paramtype group_short_name: str
+        :keyword enabled: Indicates whether this action group is enabled. If an action group is not
+         enabled, then none of its receivers will receive communications.
+        :paramtype enabled: bool
+        :keyword email_receivers: The list of email receivers that are part of this action group.
+        :paramtype email_receivers: list[~$(python-base-namespace).v2019_06_01.models.EmailReceiver]
+        :keyword sms_receivers: The list of SMS receivers that are part of this action group.
+        :paramtype sms_receivers: list[~$(python-base-namespace).v2019_06_01.models.SmsReceiver]
+        :keyword webhook_receivers: The list of webhook receivers that are part of this action group.
+        :paramtype webhook_receivers:
+         list[~$(python-base-namespace).v2019_06_01.models.WebhookReceiver]
+        :keyword itsm_receivers: The list of ITSM receivers that are part of this action group.
+        :paramtype itsm_receivers: list[~$(python-base-namespace).v2019_06_01.models.ItsmReceiver]
+        :keyword azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
+         action group.
+        :paramtype azure_app_push_receivers:
+         list[~$(python-base-namespace).v2019_06_01.models.AzureAppPushReceiver]
+        :keyword automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
+         this action group.
+        :paramtype automation_runbook_receivers:
+         list[~$(python-base-namespace).v2019_06_01.models.AutomationRunbookReceiver]
+        :keyword voice_receivers: The list of voice receivers that are part of this action group.
+        :paramtype voice_receivers: list[~$(python-base-namespace).v2019_06_01.models.VoiceReceiver]
+        :keyword logic_app_receivers: The list of logic app receivers that are part of this action
+         group.
+        :paramtype logic_app_receivers:
+         list[~$(python-base-namespace).v2019_06_01.models.LogicAppReceiver]
+        :keyword azure_function_receivers: The list of azure function receivers that are part of this
+         action group.
+        :paramtype azure_function_receivers:
+         list[~$(python-base-namespace).v2019_06_01.models.AzureFunctionReceiver]
+        :keyword arm_role_receivers: The list of ARM role receivers that are part of this action group.
+         Roles are Azure RBAC roles and only built-in roles are supported.
+        :paramtype arm_role_receivers:
+         list[~$(python-base-namespace).v2019_06_01.models.ArmRoleReceiver]
+        """
         super(ActionGroupResource, self).__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
         self.enabled = enabled
@@ -232,19 +299,18 @@ class ArmRoleReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the arm role receiver. Names must be unique across all
+    :ivar name: Required. The name of the arm role receiver. Names must be unique across all
      receivers within an action group.
-    :type name: str
-    :param role_id: Required. The arm role id.
-    :type role_id: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
-    :type use_common_alert_schema: bool
+    :vartype name: str
+    :ivar role_id: Required. The arm role id.
+    :vartype role_id: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
     """
 
     _validation = {
         'name': {'required': True},
         'role_id': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -258,9 +324,18 @@ class ArmRoleReceiver(msrest.serialization.Model):
         *,
         name: str,
         role_id: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the arm role receiver. Names must be unique across all
+         receivers within an action group.
+        :paramtype name: str
+        :keyword role_id: Required. The arm role id.
+        :paramtype role_id: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        """
         super(ArmRoleReceiver, self).__init__(**kwargs)
         self.name = name
         self.role_id = role_id
@@ -272,21 +347,21 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param automation_account_id: Required. The Azure automation account Id which holds this
-     runbook and authenticate to Azure resource.
-    :type automation_account_id: str
-    :param runbook_name: Required. The name for this runbook.
-    :type runbook_name: str
-    :param webhook_resource_id: Required. The resource id for webhook linked to this runbook.
-    :type webhook_resource_id: str
-    :param is_global_runbook: Required. Indicates whether this instance is global runbook.
-    :type is_global_runbook: bool
-    :param name: Indicates name of the webhook.
-    :type name: str
-    :param service_uri: The URI where webhooks should be sent.
-    :type service_uri: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
-    :type use_common_alert_schema: bool
+    :ivar automation_account_id: Required. The Azure automation account Id which holds this runbook
+     and authenticate to Azure resource.
+    :vartype automation_account_id: str
+    :ivar runbook_name: Required. The name for this runbook.
+    :vartype runbook_name: str
+    :ivar webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+    :vartype webhook_resource_id: str
+    :ivar is_global_runbook: Required. Indicates whether this instance is global runbook.
+    :vartype is_global_runbook: bool
+    :ivar name: Indicates name of the webhook.
+    :vartype name: str
+    :ivar service_uri: The URI where webhooks should be sent.
+    :vartype service_uri: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
     """
 
     _validation = {
@@ -294,7 +369,6 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         'runbook_name': {'required': True},
         'webhook_resource_id': {'required': True},
         'is_global_runbook': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -314,11 +388,28 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         runbook_name: str,
         webhook_resource_id: str,
         is_global_runbook: bool,
-        use_common_alert_schema: bool,
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword automation_account_id: Required. The Azure automation account Id which holds this
+         runbook and authenticate to Azure resource.
+        :paramtype automation_account_id: str
+        :keyword runbook_name: Required. The name for this runbook.
+        :paramtype runbook_name: str
+        :keyword webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+        :paramtype webhook_resource_id: str
+        :keyword is_global_runbook: Required. Indicates whether this instance is global runbook.
+        :paramtype is_global_runbook: bool
+        :keyword name: Indicates name of the webhook.
+        :paramtype name: str
+        :keyword service_uri: The URI where webhooks should be sent.
+        :paramtype service_uri: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        """
         super(AutomationRunbookReceiver, self).__init__(**kwargs)
         self.automation_account_id = automation_account_id
         self.runbook_name = runbook_name
@@ -334,11 +425,11 @@ class AzureAppPushReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the Azure mobile app push receiver. Names must be unique
+    :ivar name: Required. The name of the Azure mobile app push receiver. Names must be unique
      across all receivers within an action group.
-    :type name: str
-    :param email_address: Required. The email address registered for the Azure mobile app.
-    :type email_address: str
+    :vartype name: str
+    :ivar email_address: Required. The email address registered for the Azure mobile app.
+    :vartype email_address: str
     """
 
     _validation = {
@@ -358,6 +449,13 @@ class AzureAppPushReceiver(msrest.serialization.Model):
         email_address: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the Azure mobile app push receiver. Names must be unique
+         across all receivers within an action group.
+        :paramtype name: str
+        :keyword email_address: Required. The email address registered for the Azure mobile app.
+        :paramtype email_address: str
+        """
         super(AzureAppPushReceiver, self).__init__(**kwargs)
         self.name = name
         self.email_address = email_address
@@ -368,17 +466,17 @@ class AzureFunctionReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the azure function receiver. Names must be unique across all
+    :ivar name: Required. The name of the azure function receiver. Names must be unique across all
      receivers within an action group.
-    :type name: str
-    :param function_app_resource_id: Required. The azure resource id of the function app.
-    :type function_app_resource_id: str
-    :param function_name: Required. The function name in the function app.
-    :type function_name: str
-    :param http_trigger_url: Required. The http trigger url where http request sent to.
-    :type http_trigger_url: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
-    :type use_common_alert_schema: bool
+    :vartype name: str
+    :ivar function_app_resource_id: Required. The azure resource id of the function app.
+    :vartype function_app_resource_id: str
+    :ivar function_name: Required. The function name in the function app.
+    :vartype function_name: str
+    :ivar http_trigger_url: Required. The http trigger url where http request sent to.
+    :vartype http_trigger_url: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
     """
 
     _validation = {
@@ -386,7 +484,6 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         'function_app_resource_id': {'required': True},
         'function_name': {'required': True},
         'http_trigger_url': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -404,9 +501,22 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         function_app_resource_id: str,
         function_name: str,
         http_trigger_url: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the azure function receiver. Names must be unique across
+         all receivers within an action group.
+        :paramtype name: str
+        :keyword function_app_resource_id: Required. The azure resource id of the function app.
+        :paramtype function_app_resource_id: str
+        :keyword function_name: Required. The function name in the function app.
+        :paramtype function_name: str
+        :keyword http_trigger_url: Required. The http trigger url where http request sent to.
+        :paramtype http_trigger_url: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        """
         super(AzureFunctionReceiver, self).__init__(**kwargs)
         self.name = name
         self.function_app_resource_id = function_app_resource_id
@@ -422,22 +532,21 @@ class EmailReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the email receiver. Names must be unique across all
-     receivers within an action group.
-    :type name: str
-    :param email_address: Required. The email address of this receiver.
-    :type email_address: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
-    :type use_common_alert_schema: bool
-    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
-     "Enabled", "Disabled".
+    :ivar name: Required. The name of the email receiver. Names must be unique across all receivers
+     within an action group.
+    :vartype name: str
+    :ivar email_address: Required. The email address of this receiver.
+    :vartype email_address: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_06_01.models.ReceiverStatus
     """
 
     _validation = {
         'name': {'required': True},
         'email_address': {'required': True},
-        'use_common_alert_schema': {'required': True},
         'status': {'readonly': True},
     }
 
@@ -453,9 +562,18 @@ class EmailReceiver(msrest.serialization.Model):
         *,
         name: str,
         email_address: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the email receiver. Names must be unique across all
+         receivers within an action group.
+        :paramtype name: str
+        :keyword email_address: Required. The email address of this receiver.
+        :paramtype email_address: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        """
         super(EmailReceiver, self).__init__(**kwargs)
         self.name = name
         self.email_address = email_address
@@ -468,8 +586,8 @@ class EnableRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param receiver_name: Required. The name of the receiver to resubscribe.
-    :type receiver_name: str
+    :ivar receiver_name: Required. The name of the receiver to resubscribe.
+    :vartype receiver_name: str
     """
 
     _validation = {
@@ -486,6 +604,10 @@ class EnableRequest(msrest.serialization.Model):
         receiver_name: str,
         **kwargs
     ):
+        """
+        :keyword receiver_name: Required. The name of the receiver to resubscribe.
+        :paramtype receiver_name: str
+        """
         super(EnableRequest, self).__init__(**kwargs)
         self.receiver_name = receiver_name
 
@@ -493,10 +615,10 @@ class EnableRequest(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -511,6 +633,12 @@ class ErrorResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -521,20 +649,20 @@ class ItsmReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the Itsm receiver. Names must be unique across all receivers
+    :ivar name: Required. The name of the Itsm receiver. Names must be unique across all receivers
      within an action group.
-    :type name: str
-    :param workspace_id: Required. OMS LA instance identifier.
-    :type workspace_id: str
-    :param connection_id: Required. Unique identification of ITSM connection among multiple defined
+    :vartype name: str
+    :ivar workspace_id: Required. OMS LA instance identifier.
+    :vartype workspace_id: str
+    :ivar connection_id: Required. Unique identification of ITSM connection among multiple defined
      in above workspace.
-    :type connection_id: str
-    :param ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
+    :vartype connection_id: str
+    :ivar ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
      CreateMultipleWorkItems option will be part of this blob as well.
-    :type ticket_configuration: str
-    :param region: Required. Region in which workspace resides. Supported
+    :vartype ticket_configuration: str
+    :ivar region: Required. Region in which workspace resides. Supported
      values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
-    :type region: str
+    :vartype region: str
     """
 
     _validation = {
@@ -563,6 +691,22 @@ class ItsmReceiver(msrest.serialization.Model):
         region: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the Itsm receiver. Names must be unique across all
+         receivers within an action group.
+        :paramtype name: str
+        :keyword workspace_id: Required. OMS LA instance identifier.
+        :paramtype workspace_id: str
+        :keyword connection_id: Required. Unique identification of ITSM connection among multiple
+         defined in above workspace.
+        :paramtype connection_id: str
+        :keyword ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
+         CreateMultipleWorkItems option will be part of this blob as well.
+        :paramtype ticket_configuration: str
+        :keyword region: Required. Region in which workspace resides. Supported
+         values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
+        :paramtype region: str
+        """
         super(ItsmReceiver, self).__init__(**kwargs)
         self.name = name
         self.workspace_id = workspace_id
@@ -576,22 +720,21 @@ class LogicAppReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the logic app receiver. Names must be unique across all
+    :ivar name: Required. The name of the logic app receiver. Names must be unique across all
      receivers within an action group.
-    :type name: str
-    :param resource_id: Required. The azure resource id of the logic app receiver.
-    :type resource_id: str
-    :param callback_url: Required. The callback url where http request sent to.
-    :type callback_url: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
-    :type use_common_alert_schema: bool
+    :vartype name: str
+    :ivar resource_id: Required. The azure resource id of the logic app receiver.
+    :vartype resource_id: str
+    :ivar callback_url: Required. The callback url where http request sent to.
+    :vartype callback_url: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
     """
 
     _validation = {
         'name': {'required': True},
         'resource_id': {'required': True},
         'callback_url': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -607,9 +750,20 @@ class LogicAppReceiver(msrest.serialization.Model):
         name: str,
         resource_id: str,
         callback_url: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the logic app receiver. Names must be unique across all
+         receivers within an action group.
+        :paramtype name: str
+        :keyword resource_id: Required. The azure resource id of the logic app receiver.
+        :paramtype resource_id: str
+        :keyword callback_url: Required. The callback url where http request sent to.
+        :paramtype callback_url: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        """
         super(LogicAppReceiver, self).__init__(**kwargs)
         self.name = name
         self.resource_id = resource_id
@@ -624,14 +778,14 @@ class SmsReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SMS receiver. Names must be unique across all receivers
+    :ivar name: Required. The name of the SMS receiver. Names must be unique across all receivers
      within an action group.
-    :type name: str
-    :param country_code: Required. The country code of the SMS receiver.
-    :type country_code: str
-    :param phone_number: Required. The phone number of the SMS receiver.
-    :type phone_number: str
-    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+    :vartype name: str
+    :ivar country_code: Required. The country code of the SMS receiver.
+    :vartype country_code: str
+    :ivar phone_number: Required. The phone number of the SMS receiver.
+    :vartype phone_number: str
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2019_06_01.models.ReceiverStatus
     """
@@ -658,6 +812,15 @@ class SmsReceiver(msrest.serialization.Model):
         phone_number: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the SMS receiver. Names must be unique across all
+         receivers within an action group.
+        :paramtype name: str
+        :keyword country_code: Required. The country code of the SMS receiver.
+        :paramtype country_code: str
+        :keyword phone_number: Required. The phone number of the SMS receiver.
+        :paramtype phone_number: str
+        """
         super(SmsReceiver, self).__init__(**kwargs)
         self.name = name
         self.country_code = country_code
@@ -670,13 +833,13 @@ class VoiceReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the voice receiver. Names must be unique across all
-     receivers within an action group.
-    :type name: str
-    :param country_code: Required. The country code of the voice receiver.
-    :type country_code: str
-    :param phone_number: Required. The phone number of the voice receiver.
-    :type phone_number: str
+    :ivar name: Required. The name of the voice receiver. Names must be unique across all receivers
+     within an action group.
+    :vartype name: str
+    :ivar country_code: Required. The country code of the voice receiver.
+    :vartype country_code: str
+    :ivar phone_number: Required. The phone number of the voice receiver.
+    :vartype phone_number: str
     """
 
     _validation = {
@@ -699,6 +862,15 @@ class VoiceReceiver(msrest.serialization.Model):
         phone_number: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the voice receiver. Names must be unique across all
+         receivers within an action group.
+        :paramtype name: str
+        :keyword country_code: Required. The country code of the voice receiver.
+        :paramtype country_code: str
+        :keyword phone_number: Required. The phone number of the voice receiver.
+        :paramtype phone_number: str
+        """
         super(VoiceReceiver, self).__init__(**kwargs)
         self.name = name
         self.country_code = country_code
@@ -710,27 +882,26 @@ class WebhookReceiver(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the webhook receiver. Names must be unique across all
+    :ivar name: Required. The name of the webhook receiver. Names must be unique across all
      receivers within an action group.
-    :type name: str
-    :param service_uri: Required. The URI where webhooks should be sent.
-    :type service_uri: str
-    :param use_common_alert_schema: Required. Indicates whether to use common alert schema.
-    :type use_common_alert_schema: bool
-    :param use_aad_auth: Indicates whether or not use AAD authentication.
-    :type use_aad_auth: bool
-    :param object_id: Indicates the webhook app object Id for aad auth.
-    :type object_id: str
-    :param identifier_uri: Indicates the identifier uri for aad auth.
-    :type identifier_uri: str
-    :param tenant_id: Indicates the tenant id for aad auth.
-    :type tenant_id: str
+    :vartype name: str
+    :ivar service_uri: Required. The URI where webhooks should be sent.
+    :vartype service_uri: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
+    :ivar use_aad_auth: Indicates whether or not use AAD authentication.
+    :vartype use_aad_auth: bool
+    :ivar object_id: Indicates the webhook app object Id for aad auth.
+    :vartype object_id: str
+    :ivar identifier_uri: Indicates the identifier uri for aad auth.
+    :vartype identifier_uri: str
+    :ivar tenant_id: Indicates the tenant id for aad auth.
+    :vartype tenant_id: str
     """
 
     _validation = {
         'name': {'required': True},
         'service_uri': {'required': True},
-        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
@@ -748,13 +919,30 @@ class WebhookReceiver(msrest.serialization.Model):
         *,
         name: str,
         service_uri: str,
-        use_common_alert_schema: bool,
+        use_common_alert_schema: Optional[bool] = False,
         use_aad_auth: Optional[bool] = False,
         object_id: Optional[str] = None,
         identifier_uri: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the webhook receiver. Names must be unique across all
+         receivers within an action group.
+        :paramtype name: str
+        :keyword service_uri: Required. The URI where webhooks should be sent.
+        :paramtype service_uri: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        :keyword use_aad_auth: Indicates whether or not use AAD authentication.
+        :paramtype use_aad_auth: bool
+        :keyword object_id: Indicates the webhook app object Id for aad auth.
+        :paramtype object_id: str
+        :keyword identifier_uri: Indicates the identifier uri for aad auth.
+        :paramtype identifier_uri: str
+        :keyword tenant_id: Indicates the tenant id for aad auth.
+        :paramtype tenant_id: str
+        """
         super(WebhookReceiver, self).__init__(**kwargs)
         self.name = name
         self.service_uri = service_uri

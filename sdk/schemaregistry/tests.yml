@@ -6,15 +6,14 @@ stages:
       ServiceDirectory: schemaregistry
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-schemaregistry*
-      AllocateResourceGroup: false
-      DeployArmTemplate: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(python-schema-registry-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(python-schema-registry-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(python-schema-registry-sdk-test-client-secret)
-        SCHEMA_REGISTRY_ENDPOINT: $(python-schema-registry-sdk-test-endpoint)
-        SCHEMA_REGISTRY_GROUP: $(python-schema-registry-sdk-test-group)
+        SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE: $(python-schema-registry-sdk-test-endpoint)
+        SCHEMAREGISTRY_GROUP: $(python-schema-registry-sdk-test-group)
+        AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
       MatrixFilters:
         - '"PythonVersion=^(?!pypy3).*"'

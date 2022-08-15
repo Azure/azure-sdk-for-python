@@ -5,3 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 from .v2019_11_01.models import *
+from .v2021_01_01.models import *

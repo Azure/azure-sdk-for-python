@@ -4,9 +4,11 @@
 # ------------------------------------
 from datetime import datetime
 import json
+import re
 import sys
 
 from azure.identity import AzureCliCredential, CredentialUnavailableError
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -148,3 +150,97 @@ def test_timeout():
     with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=TimeoutExpired("", 42))):
         with pytest.raises(CredentialUnavailableError):
             AzureCliCredential().get_token("scope")
+
+
+def test_multitenant_authentication_class():
+    default_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def fake_check_output(command_line, **_):
+        match = re.search("--tenant (.*)", command_line[-1])
+        tenant = match.groups()[0] if match else default_tenant
+        assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        return json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": first_token if tenant == default_tenant else second_token,
+                "subscription": "some-guid",
+                "tenant": tenant,
+                "tokenType": "Bearer",
+            }
+        )
+
+    with mock.patch(CHECK_OUTPUT, fake_check_output):
+        token = AzureCliCredential().get_token("scope")
+        assert token.token == first_token
+
+        token = AzureCliCredential(tenant_id= default_tenant).get_token("scope")
+        assert token.token == first_token
+
+        token = AzureCliCredential(tenant_id= second_tenant).get_token("scope")
+        assert token.token == second_token
+        
+def test_multitenant_authentication():
+    default_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def fake_check_output(command_line, **_):
+        match = re.search("--tenant (.*)", command_line[-1])
+        tenant = match.groups()[0] if match else default_tenant
+        assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        return json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": first_token if tenant == default_tenant else second_token,
+                "subscription": "some-guid",
+                "tenant": tenant,
+                "tokenType": "Bearer",
+            }
+        )
+
+    credential = AzureCliCredential()
+    with mock.patch(CHECK_OUTPUT, fake_check_output):
+        token = credential.get_token("scope")
+        assert token.token == first_token
+
+        token = credential.get_token("scope", tenant_id=default_tenant)
+        assert token.token == first_token
+
+        token = credential.get_token("scope", tenant_id=second_tenant)
+        assert token.token == second_token
+
+        # should still default to the first tenant
+        token = credential.get_token("scope")
+        assert token.token == first_token
+
+def test_multitenant_authentication_not_allowed():
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    def fake_check_output(command_line, **_):
+        match = re.search("--tenant (.*)", command_line[-1])
+        assert match is None or match[1] == expected_tenant
+        return json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": expected_token,
+                "subscription": "some-guid",
+                "tenant": expected_token,
+                "tokenType": "Bearer",
+            }
+        )
+
+    credential = AzureCliCredential()
+    with mock.patch(CHECK_OUTPUT, fake_check_output):
+        token = credential.get_token("scope")
+        assert token.token == expected_token
+
+        with mock.patch.dict(
+            "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
+        ):
+            token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+        assert token.token == expected_token

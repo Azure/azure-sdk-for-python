@@ -1,4 +1,147 @@
 trigger: none
-
+variables:
+  - template: /eng/pipelines/templates/variables/globals.yml
 jobs:
   - template: /eng/common/pipelines/templates/jobs/docindex.yml
+
+  - job: UpdateDocsMsBuildConfig
+    pool:
+      vmImage: ubuntu-20.04
+    variables:
+      DocRepoLocation: $(Pipeline.Workspace)/docs
+      DocRepoOwner: MicrosoftDocs
+      DocRepoName: azure-docs-sdk-python
+      DocValidationImageId: azuresdkimages.azurecr.io/pyrefautocr:latest
+    steps:
+      # Docs CI uses Python 3.6.8 but that is not available on this image
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.6'
+        inputs:
+          versionSpec: '3.6'
+
+      # Docs CI upgrades pip, wheel, and setuptools
+      - pwsh: pip install --upgrade pip wheel setuptools
+        displayName: Update python tools for package verification
+
+      # Pull and build the docker image.
+      - template: /eng/common/pipelines/templates/steps/docker-pull-image.yml
+        parameters:
+          ContainerRegistryClientId: $(azuresdkimages-cr-clientid)
+          ContainerRegistryClientSecret: $(azuresdkimages-cr-clientsecret)
+          ImageId: "$(DocValidationImageId)"
+      # Sync docs repo onboarding files/folders
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          SkipDefaultCheckout: true
+          Paths:
+            - ci-configs/
+            - metadata/
+            - docs-ref-mapping/
+            - docs-ref-services/
+          Repositories:
+            - Name: $(DocRepoOwner)/$(DocRepoName)
+              WorkingDirectory: $(DocRepoLocation)
+
+      # Call update docs ci script to onboard packages
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsPackages.ps1
+          arguments: -DocRepoLocation $(DocRepoLocation) -ImageId '$(DocValidationImageId)'
+        displayName: Update Docs Onboarding
+        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
+
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -TenantId '$(opensource-aad-tenant-id)' 
+            -ClientId '$(opensource-aad-app-id)' 
+            -ClientSecret '$(opensource-aad-secret)'
+        displayName: Generate Service Level Readme
+
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsToc.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
+        displayName: Generate ToC
+
+      # Push changes to docs repo
+      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+        parameters:
+          WorkingDirectory: $(DocRepoLocation)
+
+      - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+        parameters:
+          BaseRepoBranch: $(DefaultBranch)
+          BaseRepoOwner: $(DocRepoOwner)
+          CommitMsg: "Update docs CI configuration"
+          TargetRepoName: $(DocRepoName)
+          TargetRepoOwner: $(DocRepoOwner)
+          WorkingDirectory: $(DocRepoLocation)
+
+      # Prepare daily docs CI
+      - template: /eng/common/pipelines/templates/steps/set-daily-docs-branch-name.yml
+        parameters:
+          DailyBranchVariableName: DailyDocsBranchName
+      - pwsh: |
+          $ErrorActionPreference = "Continue"
+          git checkout "origin/$(DailyDocsBranchName)" 2>&1 | Out-Null
+          $LASTEXITCODE = 0 # This ignores any error from git checkout
+          git status
+        displayName: Checkout daily branch if it exists
+        workingDirectory: $(DocRepoLocation)
+
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsPackages.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -PackageSourceOverride "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+        displayName: Update Docs Onboarding for Daily branch
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -TenantId '$(opensource-aad-tenant-id)' 
+            -ClientId '$(opensource-aad-app-id)' 
+            -ClientSecret '$(opensource-aad-secret)'
+        displayName: Generate Service Level Readme
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsToc.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
+        displayName: Generate ToC for Daily Docs
+
+      - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+        parameters:
+          BaseRepoBranch: $(DailyDocsBranchName)
+          BaseRepoOwner: $(DocRepoOwner)
+          CommitMsg: "Update targeting packages based on release metadata. (Daily docs)"
+          TargetRepoName: $(DocRepoName)
+          TargetRepoOwner: $(DocRepoOwner)
+          WorkingDirectory: $(DocRepoLocation)
+          ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts
+
+      - task: PowerShell@2
+        displayName: Queue Docs CI build
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Queue-Pipeline.ps1
+          arguments: >
+            -Organization "apidrop"
+            -Project "Content%20CI"
+            -DefinitionId 3453
+            -Base64EncodedAuthToken "$(azuresdk-apidrop-devops-queue-build-pat)"
+            -BuildParametersJson (@{ params = (Get-Content ./eng/dailydocsconfig.json -Raw) -replace '%%DailyDocsBranchName%%', "$(DailyDocsBranchName)" } | ConvertTo-Json)

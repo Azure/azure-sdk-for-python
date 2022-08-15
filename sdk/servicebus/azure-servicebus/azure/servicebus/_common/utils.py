@@ -24,7 +24,7 @@ from typing import (
     cast
 )
 from contextlib import contextmanager
-from msrest.serialization import UTC
+from msrest.serialization import TZ_UTC
 
 try:
     from urlparse import urlparse
@@ -81,11 +81,11 @@ _log = logging.getLogger(__name__)
 
 
 def utc_from_timestamp(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp, tz=UTC())
+    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 
 def utc_now():
-    return datetime.datetime.now(UTC())
+    return datetime.datetime.now(TZ_UTC)
 
 
 def build_uri(address, entity):
@@ -173,6 +173,9 @@ def create_authentication(client):
             timeout=client._config.auth_timeout,
             http_proxy=client._config.http_proxy,
             transport_type=client._config.transport_type,
+            custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+            port=client._config.connection_port,
+            verify=client._config.connection_verify
         )
         auth.update_token()
         return auth
@@ -184,6 +187,10 @@ def create_authentication(client):
         timeout=client._config.auth_timeout,
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
+        refresh_window=300,
+        custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+        port=client._config.connection_port,
+        verify=client._config.connection_verify
     )
 
 

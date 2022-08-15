@@ -1,0 +1,43 @@
+$schema: http://azureml/sdk-2-0/ParallelComponent.json
+name: batch_score_with_tabular_input
+type: parallel
+version: 1.0.0
+display_name: BatchScore
+description: parallel component for batch score
+
+inputs:
+  job_data_path:
+    type: mltable
+    description: The data to be split and scored in parallel.
+    optional: false
+  score_model:
+    type: uri_folder
+    description: The model for batch score.
+    optional: false
+
+outputs:
+  job_out_path:
+    type: uri_file
+
+max_concurrency_per_instance: 2
+mini_batch_size: "100"
+mini_batch_error_threshold: 5
+logging_level: "DEBUG"
+retry_settings:
+  max_retries: 2
+  timeout: 60
+
+input_data: ${{inputs.job_data_path}}
+
+task:
+  type: run_function
+  code: ./src
+  entry_script: tabular_batch_inference.py
+  environment:
+    name: "prs-env"
+    version: 1
+    image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+    conda_file: ./environment_parallel.yml
+  program_arguments: >-
+    --model ${{inputs.score_model}}
+  append_row_to: ${{outputs.job_out_path}}

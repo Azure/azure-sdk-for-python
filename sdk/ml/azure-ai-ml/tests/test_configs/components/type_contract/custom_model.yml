@@ -1,0 +1,40 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoft_samples_command_component_custom_input_outputs
+display_name: CommandComponentCustomInputOutputs
+description: This is the command component with input/output types of custom model
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_custom_model:
+    type: custom_model
+
+  component_in_trition_model:
+    type: triton_model
+
+#  component_in_openai_model:
+#    type: openai_model
+
+outputs:
+  component_out_custom_model:
+    type: custom_model
+
+  component_out_trition_model:
+    type: triton_model
+
+#  component_out_openai_model:
+#    type: openai_model
+
+command: |
+  python -c "
+    import pickle
+    with open('${{inputs.component_in_custom_model}}/model.pkl', 'rb') as f:
+        model = pickle.load(f)
+  "
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

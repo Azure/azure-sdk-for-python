@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Type
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -18,11 +18,10 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    PERCENTAGE,
-    TARGETING,
-    TIME_WINDOW,
+    FILTER_PERCENTAGE,
+    FILTER_TARGETING,
+    FILTER_TIME_WINDOW,
 )
-from azure.identity import DefaultAzureCredential
 
 from consts import (
     KEY,
@@ -38,16 +37,9 @@ from wrapper import app_config_decorator
 import pytest
 import copy
 import datetime
-import os
-import logging
+import json
 import re
-import functools
 from uuid import uuid4
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 
 class AppConfigurationClientTest(AzureTestCase):
@@ -484,13 +476,12 @@ class AppConfigurationClientTest(AzureTestCase):
             assert key1.enabled == key2.enabled
             assert len(key1.filters) == len(key2.filters)
         elif isinstance(key1, SecretReferenceConfigurationSetting):
-            assert key1.secret_uri == key2.secret_uri
+            assert key1.secret_id == key2.secret_id
         else:
             assert key1.value == key2.value
 
     @app_config_decorator
     def test_sync_tokens(self, client):
-
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
         sync_token_header = self._order_dict(sync_tokens)
         sync_token_header = ",".join(str(x) for x in sync_token_header.values())
@@ -526,7 +517,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
-        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         self._assert_same_keys(feature_flag, set_flag)
@@ -535,20 +526,21 @@ class AppConfigurationClientTest(AzureTestCase):
         changed_flag = client.set_configuration_setting(set_flag)
 
         changed_flag.enabled = False
-        assert changed_flag.value['enabled'] == False
+        temp = json.loads(changed_flag.value)
+        assert temp['enabled'] == False
 
-        c = copy.deepcopy(changed_flag.value)
+        c = json.loads(changed_flag.value)
         c['enabled'] = True
-        changed_flag.value = c
+        changed_flag.value = json.dumps(c)
         assert changed_flag.enabled == True
 
-        changed_flag.value = {}
+        changed_flag.value = json.dumps({})
         assert changed_flag.enabled == None
-        assert changed_flag.value == {}
+        assert changed_flag.value == json.dumps({'enabled': None, "conditions": {"client_filters": None}})
 
-        with pytest.raises(ValueError):
-            set_flag.value = "bad_value"
-            _ = set_flag.enabled
+        set_flag.value = "bad_value"
+        assert set_flag.enabled == None
+        assert set_flag.filters == None
 
         client.delete_configuration_setting(changed_flag.key)
 
@@ -565,15 +557,15 @@ class AppConfigurationClientTest(AzureTestCase):
         assert isinstance(updated_flag, SecretReferenceConfigurationSetting)
         new_uri = "https://aka.ms/azsdk"
         new_uri2 = "https://aka.ms/azsdk/python"
-        updated_flag.secret_uri = new_uri
-        assert updated_flag.value['secret_uri'] == new_uri
+        updated_flag.secret_id = new_uri
+        temp = json.loads(updated_flag.value)
+        assert temp['uri'] == new_uri
 
-        updated_flag.value = {'secret_uri': new_uri2}
-        assert updated_flag.secret_uri == new_uri2
+        updated_flag.value = json.dumps({'uri': new_uri2})
+        assert updated_flag.secret_id == new_uri2
 
-        with pytest.raises(ValueError):
-            set_flag.value = "bad_value"
-            _ = set_flag.secret_uri
+        set_flag.value = "bad_value"
+        assert set_flag.secret_id == None
 
         client.delete_configuration_setting(secret_reference.key)
 
@@ -581,10 +573,10 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_targeting(self, client):
         new = FeatureFlagConfigurationSetting(
             "newflag",
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TARGETING,
+                    "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
                             u"Users": [u"abc", u"def"],
@@ -608,7 +600,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         updated_sent_config.filters.append(
             {
-                "name": TARGETING,
+                "name": FILTER_TARGETING,
                 "parameters": {
                     u"Audience": {
                         u"Users": [u"abcd", u"defg"],
@@ -618,9 +610,10 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             }
         )
+
         updated_sent_config.filters.append(
             {
-                "name": TARGETING,
+                "name": FILTER_TARGETING,
                 "parameters": {
                     u"Audience": {
                         u"Users": [u"abcde", u"defgh"],
@@ -641,10 +634,35 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_time_window(self, client):
         new = FeatureFlagConfigurationSetting(
             'time_window',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
+                    "parameters": {
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                }
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.filters[0]["parameters"]["Start"] = "Thurs, 11 Mar 2021 05:00:00 GMT"
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        client.delete_configuration_setting(new_sent.key)
+
+    @app_config_decorator
+    def test_feature_filter_time_window(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            enabled=True,
+            filters=[
+                {
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
                         "End": "Fri, 02 Apr 2021 04:00:00 GMT"
@@ -666,10 +684,10 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_custom(self, client):
         new = FeatureFlagConfigurationSetting(
             'custom',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"
@@ -691,23 +709,23 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_multiple(self, client):
         new = FeatureFlagConfigurationSetting(
             'custom',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10
                     }
                 },
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
                         "End": "Fri, 02 Apr 2021 04:00:00 GMT"
                     }
                 },
                 {
-                    "name": TARGETING,
+                    "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
                             u"Users": [u"abcde", u"defgh"],
@@ -739,10 +757,10 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_breaking1(self, client):
         new = FeatureFlagConfigurationSetting(
             'breaking1',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
                         "End": "Fri, 02 Apr 2021 04:00:00 GMT"
@@ -755,10 +773,10 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking2',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
                         "End": "not even trying to be a date"
@@ -772,10 +790,10 @@ class AppConfigurationClientTest(AzureTestCase):
         # This will show up as a Custom filter
         new = FeatureFlagConfigurationSetting(
             'breaking3',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
                         "End": "not even trying to be a date"
@@ -788,10 +806,10 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking4',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": "stringystring"
                 },
             ]
@@ -801,10 +819,10 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking5',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TARGETING,
+                    "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
                             u"Users": '123'
@@ -818,10 +836,10 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking6',
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": TARGETING,
+                    "name": FILTER_TARGETING,
                     "parameters": "invalidformat"
                 }
             ]
@@ -831,7 +849,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking7',
-            True,
+            enabled=True,
             filters=[
                 {
                     'abc': 'def'
@@ -843,7 +861,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking8',
-            True,
+            enabled=True,
             filters=[
                 {
                     'abc': 'def'
@@ -870,3 +888,12 @@ class AppConfigurationClientTest(AzureTestCase):
         new.content_type = "fkaeyjfdkal;"
         client.set_configuration_setting(new)
         new1 = client.get_configuration_setting(new.key)
+
+    @app_config_decorator
+    def test_type_error(self, client):
+        with pytest.raises(TypeError):
+            _ = FeatureFlagConfigurationSetting("blash", key="blash")
+        with pytest.raises(TypeError):
+            _ = FeatureFlagConfigurationSetting("blash", value="blash")
+        with pytest.raises(TypeError):
+            _ = SecretReferenceConfigurationSetting("blash", value="blash")

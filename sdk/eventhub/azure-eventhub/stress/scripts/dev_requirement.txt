@@ -1,0 +1,9 @@
+psutil
+azure-eventhub
+azure-eventhub-checkpointstoreblob
+azure-eventhub-checkpointstoreblob-aio
+azure-servicebus==0.50.3
+azure-storage-blob
+azure-identity
+opencensus-ext-azure
+python-dotenv

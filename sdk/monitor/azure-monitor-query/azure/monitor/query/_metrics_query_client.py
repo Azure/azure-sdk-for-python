@@ -7,24 +7,40 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, List
+from msrest.serialization import Serializer
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
 )
 
-from ._models import MetricsResult, MetricDefinition, MetricNamespace
+from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
 
 if TYPE_CHECKING:
+    from datetime import timedelta
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
 
 
-class MetricsQueryClient(object):
-    """MetricsQueryClient
+class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
+    """MetricsQueryClient should be used to collect numeric data from monitored resources into a
+    time series database. Metrics are numerical values that are collected at regular intervals and
+    describe some aspect of a system at a particular time. Metrics are lightweight and capable of
+    supporting near real-time scenarios, making them particularly useful for alerting and
+    fast detection of issues.
 
-    :param credential: The credential to authenticate the client
+    .. admonition:: Example:
+
+    .. literalinclude:: ../samples/sample_metrics_query.py
+        :start-after: [START metrics_client_auth_with_token_cred]
+        :end-before: [END metrics_client_auth_with_token_cred]
+        :language: python
+        :dedent: 0
+        :caption: Creating the MetricsQueryClient with a TokenCredential.
+
+    :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: str
@@ -32,47 +48,47 @@ class MetricsQueryClient(object):
 
     def __init__(self, credential, **kwargs):
         # type: (TokenCredential, Any) -> None
-        endpoint = kwargs.pop('endpoint', 'https://management.azure.com')
+        audience = kwargs.pop("audience", None)
+        endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
+            endpoint = "https://" + endpoint
+        self._endpoint = endpoint
         self._client = MonitorQueryClient(
             credential=credential,
-            base_url=endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential),
+            base_url=self._endpoint,
+            authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
-    def query(self, resource_uri, metric_names, duration=None, **kwargs):
-        # type: (str, list, str, Any) -> MetricsResult
+    @distributed_trace
+    def query_resource(self, resource_uri, metric_names, **kwargs):
+        # type: (str, List[str], Any) -> MetricsQueryResult
         """Lists the metric values for a resource.
-
-        **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
-        recommended to specify the timespan. If not, the entire dataset is queried.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
-        :type metric_names: list
-        :param str duration: The duration for which to query the data. This can also be accompanied
-         with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
-        :keyword datetime start_time: The start time from which to query the data. This should be accompanied
-         with either end_time or duration.
-        :keyword datetime end_time: The end time till which to query the data. This should be accompanied
-         with either start_time or duration.
-        :keyword interval: The interval (i.e. timegrain) of the query.
-        :paramtype interval: ~datetime.timedelta
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
-        :paramtype aggregation: str
-        :keyword top: The maximum number of records to retrieve.
+        :type metric_names: list[str]
+        :keyword timespan: The timespan for which to query the data. This can be a timedelta,
+         a timedelta and a start datetime, or a start datetime/end datetime.
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+         or tuple[~datetime.datetime, ~datetime.datetime]
+        :keyword granularity: The granularity (i.e. timegrain) of the query.
+        :paramtype granularity: ~datetime.timedelta
+        :keyword aggregations: The list of aggregation types to retrieve. Use
+         `azure.monitor.query.MetricAggregationType` enum to get each aggregation type.
+        :paramtype aggregations: list[str]
+        :keyword max_results: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
-        :paramtype top: int
-        :keyword orderby: The aggregation to use for sorting results and the direction of the sort.
+        :paramtype max_results: int
+        :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
          Examples: sum asc.
-        :paramtype orderby: str
+        :paramtype order_by: str
         :keyword filter: The **$filter** is used to reduce the set of metric data
          returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
          Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **$filter=A eq ‘a1’ and
@@ -82,69 +98,97 @@ class MetricsQueryClient(object):
          series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
          ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
          B eq ‘\ *’ and C eq ‘*\ ’**.
+         To use the split feature, set the value to * - for example, like "City eq '*'"
         :paramtype filter: str
-        :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details.
-        :paramtype result_type: str or ~monitor_query_client.models.ResultType
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
-        :return: Response, or the result of cls(response)
-        :rtype: ~azure.monitor.query.MetricsResult
+        :return: A MetricsQueryResult object.
+        :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_metrics_query_client.py
+            :start-after: [START send_metrics_query]
+            :end-before: [END send_metrics_query]
+            :language: python
+            :dedent: 0
+            :caption: Get a response for a single Metrics Query
         """
-        start = kwargs.pop('start_time', None)
-        end = kwargs.pop('end_time', None)
-        timespan = construct_iso8601(start, end, duration)
+
+        aggregations = kwargs.pop("aggregations", None)
+        if aggregations:
+            kwargs.setdefault("aggregation", ",".join(aggregations))
+        timespan = construct_iso8601(kwargs.pop("timespan", None))
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
-        generated = self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
-        return MetricsResult._from_generated(generated) # pylint: disable=protected-access
+        kwargs.setdefault("top", kwargs.pop("max_results", None))
+        kwargs.setdefault("interval", kwargs.pop("granularity", None))
+        kwargs.setdefault("orderby", kwargs.pop("order_by", None))
+        kwargs.setdefault("metricnamespace", kwargs.pop("metric_namespace", None))
+        generated = self._metrics_op.list(
+            resource_uri, connection_verify=False, **kwargs
+        )
+        return MetricsQueryResult._from_generated( # pylint: disable=protected-access
+            generated
+        )
 
+    @distributed_trace
     def list_metric_namespaces(self, resource_uri, **kwargs):
         # type: (str, Any) -> ItemPaged[MetricNamespace]
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :keyword start_time: The ISO 8601 conform Date start time from which to query for metric
-         namespaces.
-        :paramtype start_time: str
-        :return: An iterator like instance of either MetricNamespaceCollection or the result of cls(response)
+        :keyword start_time: The start time from which to query for metric
+         namespaces. This should be provided as a datetime object.
+        :paramtype start_time: ~datetime.datetime
+        :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        start_time = kwargs.pop("start_time", None)
+        if start_time:
+            start_time = Serializer.serialize_iso(start_time)
         return self._namespace_op.list(
             resource_uri,
+            start_time,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricNamespace._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricNamespace._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
-    def list_metric_definitions(self, resource_uri, metric_namespace=None, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[MetricDefinition]
+    @distributed_trace
+    def list_metric_definitions(self, resource_uri, **kwargs):
+        # type: (str, Any) -> ItemPaged[MetricDefinition]
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param metric_namespace: Metric namespace to query metric definitions for.
-        :type metric_namespace: str
-        :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
+        :keyword namespace: Metric namespace to query metric definitions for.
+        :paramtype namespace: str
+        :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        metric_namespace = kwargs.pop("namespace", None)
         return self._definitions_op.list(
             resource_uri,
             metric_namespace,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
-                    MetricDefinition._from_generated(x) for x in objs # pylint: disable=protected-access
-                ]
+                    MetricDefinition._from_generated(x) # pylint: disable=protected-access
+                    for x in objs
+                ],
             ),
-            **kwargs)
+            **kwargs
+        )
 
     def close(self):
         # type: () -> None

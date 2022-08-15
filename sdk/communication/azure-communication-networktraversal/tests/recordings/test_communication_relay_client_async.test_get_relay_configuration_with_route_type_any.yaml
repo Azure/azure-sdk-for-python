@@ -1,0 +1,73 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      x-ms-date:
+      - Wed, 23 Mar 2022 18:20:55 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
+  response:
+    body:
+      string: '{"identity": {"id": "sanitized"}}'
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-10-31-preview, 2021-11-01, 2022-06-01
+      content-length: '101'
+      content-type: application/json; charset=utf-8
+      date: Wed, 23 Mar 2022 18:20:55 GMT
+      ms-cv: 7dp+TD6o9UmpvvCFEk9CzQ.0
+      request-context: appId=
+      strict-transport-security: max-age=2592000
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 24ms
+    status:
+      code: 201
+      message: Created
+    url: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
+- request:
+    body: '{"id": "sanitized", "routeType": "any", "ttl": 172800}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '124'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      x-ms-date:
+      - Wed, 23 Mar 2022 18:20:55 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
+  response:
+    body:
+      string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2022-03-25T18:20:55.8698682+00:00"}'
+    headers:
+      api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
+        2022-03-01-preview
+      content-length: '305'
+      content-type: application/json; charset=utf-8
+      date: Wed, 23 Mar 2022 18:20:55 GMT
+      ms-cv: GWGJa3VoFkCmT6tfB/5g8Q.0
+      request-context: appId=
+      strict-transport-security: max-age=2592000
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 22ms
+    status:
+      code: 200
+      message: OK
+    url: https://smstestapp.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
+version: 1

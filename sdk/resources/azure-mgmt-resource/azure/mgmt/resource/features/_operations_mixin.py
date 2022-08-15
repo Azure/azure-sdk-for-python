@@ -10,17 +10,12 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.mgmt.core.exceptions import ARMErrorFormat
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Iterable
+
+    from azure.core.paging import ItemPaged
 
 
 class FeatureClientOperationsMixin(object):
@@ -29,16 +24,20 @@ class FeatureClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.OperationListResult"]
         """Lists all of the available Microsoft.Features REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2021_07_01.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('list_operations')
         if api_version == '2015-12-01':
             from .v2015_12_01.operations import FeatureClientOperationsMixin as OperationClass
+        elif api_version == '2021-07-01':
+            from .v2021_07_01.operations import FeatureClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_operations'".format(api_version))
         mixin_instance = OperationClass()

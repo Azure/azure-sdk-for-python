@@ -1,15 +1,15 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
+from typing import Any, Union
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
-from .._policies import TextAnalyticsResponseHookPolicy
+from .._policies import TextAnalyticsResponseHookPolicy, QuotaExceededPolicy
 from .._user_agent import USER_AGENT
-from .._base_client import TextAnalyticsApiVersion
+from .._version import DEFAULT_API_VERSION
 
 
 def _authentication_policy(credential):
@@ -21,20 +21,57 @@ def _authentication_policy(credential):
             name="Ocp-Apim-Subscription-Key", credential=credential
         )
     elif credential is not None and not hasattr(credential, "get_token"):
-        raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
-                        "or a token credential from azure.identity".format(type(credential)))
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
     return authentication_policy
 
 
-class AsyncTextAnalyticsClientBase(object):
-    def __init__(self, endpoint, credential, **kwargs):
+class AsyncTextAnalyticsClientBase:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs: Any
+    ) -> None:
+        http_logging_policy = HttpLoggingPolicy(**kwargs)
+        http_logging_policy.allowed_header_names.update(
+            {
+                "Operation-Location",
+                "apim-request-id",
+                "x-envoy-upstream-service-time",
+                "Strict-Transport-Security",
+                "x-content-type-options",
+            }
+        )
+        http_logging_policy.allowed_query_params.update(
+            {
+                "model-version",
+                "showStats",
+                "loggingOptOut",
+                "domain",
+                "stringIndexType",
+                "piiCategories",
+                "$top",
+                "$skip",
+                "opinionMining",
+                "api-version"
+            }
+        )
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
-            credential=credential,
-            api_version=kwargs.pop("api_version", TextAnalyticsApiVersion.V3_1_PREVIEW),
+            credential=credential,  # type: ignore
+            api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
-            authentication_policy=_authentication_policy(credential),
-            custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),
+            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),
+            http_logging_policy=kwargs.pop("http_logging_policy", http_logging_policy),
+            per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             **kwargs
         )
 

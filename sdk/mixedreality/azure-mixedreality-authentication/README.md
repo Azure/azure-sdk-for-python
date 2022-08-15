@@ -12,7 +12,7 @@ token from the STS that can be used to access Mixed Reality services.
 
 ## Currently supported environments
 
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7, 3.8, and 3.9.
+This package has been tested with Python 3.6+.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ This package has been tested with Python 2.7, 3.5, 3.6, 3.7, 3.8, and 3.9.
   - [Azure Remote Rendering](https://docs.microsoft.com/azure/remote-rendering/)
   - [Azure Spatial Anchors](https://docs.microsoft.com/azure/spatial-anchors/)
 - Familiarity with the authentication and credential concepts from the [Azure Identity library][azure_identity].
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 3.6 or later is required to use this package.
 
 ## Install the package
 
@@ -162,7 +162,7 @@ python samples\client_sample_async.py
 
 # Troubleshooting
 
-The [troubleshooting](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#troubleshooting)
+The [troubleshooting](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#troubleshooting)
 section for Azure Identity can be helpful when troubleshooting authentication issues.
 
 # Next steps
@@ -186,7 +186,7 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 If you'd like to contribute to this library, please read the
-[contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md) to learn more about how to
+[contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md) to learn more about how to
 build and test the code.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
@@ -194,6 +194,6 @@ build and test the code.
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_portal]: https://portal.azure.com
-[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [register_aad_app]: https://docs.microsoft.com/azure/spatial-anchors/concepts/authentication
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential

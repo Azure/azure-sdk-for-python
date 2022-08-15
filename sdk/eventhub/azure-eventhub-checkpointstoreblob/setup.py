@@ -51,34 +51,31 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub-checkpointstoreblob',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub-checkpointstoreblob',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         # dependencies for the vendored storage blob
-        "azure-core<2.0.0,>=1.10.0",
+        "azure-core<2.0.0,>=1.20.1",
         "msrest>=0.6.18",
         "cryptography>=2.1.4",
         # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
-    ],
-    extras_require={
-        # dependencies for the vendored storage blob
-        ":python_version<'3.0'": ['futures'],
-        ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.5'": ["typing"]
-        # end of dependencies for the vendored storage blob
-    },
+    ]
 )

@@ -25,8 +25,6 @@ steps:
       script: |
         function SparseCheckout([Array]$paths, [Hashtable]$repository)
         {
-            $paths = $paths -Join ' '
-
             $dir = $repository.WorkingDirectory
             if (!$dir) {
               $dir = "./$($repository.Name)"
@@ -38,13 +36,23 @@ steps:
               $hasInitialized = $true
               Write-Host "Repository $($repository.Name) has already been initialized. Skipping this step."
             } else {
+              Write-Host "Repository $($repository.Name) is being initialized."
+
               Write-Host "git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) ."
               git clone --no-checkout --filter=tree:0 https://github.com/$($repository.Name) .
+
+              Write-Host "git sparse-checkout init"
               git sparse-checkout init
-              git sparse-checkout set eng
+
+              # Set non-cone mode otherwise path filters will not work in git >= 2.37.0
+              # See https://github.blog/2022-06-27-highlights-from-git-2-37/#tidbits
+              Write-Host "git sparse-checkout set --no-cone '/*' '!/*/' '/eng'"
+              git sparse-checkout set --no-cone '/*' '!/*/' '/eng'
             }
 
-            $gitsparsecmd = "git sparse-checkout add $paths"
+            # Prevent wildcard expansion in Invoke-Expression (e.g. for checkout path '/*')
+            $quotedPaths = $paths | ForEach-Object { "'$_'" }
+            $gitsparsecmd = "git sparse-checkout add $quotedPaths"
             Write-Host $gitsparsecmd
             Invoke-Expression -Command $gitsparsecmd
 
@@ -53,8 +61,9 @@ steps:
 
             # sparse-checkout commands after initial checkout will auto-checkout again
             if (!$hasInitialized) {
-              Write-Host "git checkout $($repository.Commitish)"
-              git checkout $($repository.Commitish)  # this will use the default branch if repo.Commitish is empty
+              Write-Host "git -c advice.detachedHead=false checkout $($repository.Commitish)"
+              # This will use the default branch if repo.Commitish is empty
+              git -c advice.detachedHead=false checkout $($repository.Commitish)
             } else {
               Write-Host "Skipping checkout as repo has already been initialized"
             }

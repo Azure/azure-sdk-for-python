@@ -1,0 +1,187 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "352",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kind": "SentimentAnalysis",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "one",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "two",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "three",
+              "language": "en"
+            },
+            {
+              "id": "4",
+              "text": "four",
+              "language": "en"
+            },
+            {
+              "id": "5",
+              "text": "five",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "stringIndexType": "UnicodeCodePoint"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "7cc45015-7022-4b2d-8ddb-f9d2736d1f42",
+        "Content-Length": "1383",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=5,CognitiveServices.TextAnalytics.TextRecords=5",
+        "Date": "Wed, 08 Jun 2022 01:14:43 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "30"
+      },
+      "ResponseBody": {
+        "kind": "SentimentAnalysisResults",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.06,
+                "neutral": 0.9,
+                "negative": 0.04
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.06,
+                    "neutral": 0.9,
+                    "negative": 0.04
+                  },
+                  "offset": 0,
+                  "length": 3,
+                  "text": "one"
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "2",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.06,
+                "neutral": 0.89,
+                "negative": 0.05
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.06,
+                    "neutral": 0.89,
+                    "negative": 0.05
+                  },
+                  "offset": 0,
+                  "length": 3,
+                  "text": "two"
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "3",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.07,
+                "neutral": 0.88,
+                "negative": 0.05
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.07,
+                    "neutral": 0.88,
+                    "negative": 0.05
+                  },
+                  "offset": 0,
+                  "length": 5,
+                  "text": "three"
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "4",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.09,
+                "neutral": 0.86,
+                "negative": 0.05
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.09,
+                    "neutral": 0.86,
+                    "negative": 0.05
+                  },
+                  "offset": 0,
+                  "length": 4,
+                  "text": "four"
+                }
+              ],
+              "warnings": []
+            },
+            {
+              "id": "5",
+              "sentiment": "neutral",
+              "confidenceScores": {
+                "positive": 0.07,
+                "neutral": 0.89,
+                "negative": 0.04
+              },
+              "sentences": [
+                {
+                  "sentiment": "neutral",
+                  "confidenceScores": {
+                    "positive": 0.07,
+                    "neutral": 0.89,
+                    "negative": 0.04
+                  },
+                  "offset": 0,
+                  "length": 4,
+                  "text": "five"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-10-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

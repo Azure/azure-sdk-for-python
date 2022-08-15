@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Supported permissions for data actions.
     """
 
@@ -50,6 +35,10 @@ class DataAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WRITE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/write/action"
     #: Get role definition.
     READ_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/read/action"
+    #: Create or update role definition.
+    WRITE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/write/action"
+    #: Delete role definition.
+    DELETE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action"
     #: Encrypt using an HSM key.
     ENCRYPT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/encrypt/action"
     #: Decrypt using an HSM key.
@@ -89,13 +78,13 @@ class DataAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Read an HSM restore status.
     READ_HSM_RESTORE_STATUS = "Microsoft.KeyVault/managedHsm/restore/status/action"
 
-class RoleDefinitionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The role definition type.
     """
 
     MICROSOFT_AUTHORIZATION_ROLE_DEFINITIONS = "Microsoft.Authorization/roleDefinitions"
 
-class RoleScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The role scope.
     """
 
@@ -104,7 +93,7 @@ class RoleScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Keys scope.
     KEYS = "/keys"
 
-class RoleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The role type.
     """
 

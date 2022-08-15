@@ -5,31 +5,25 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:46:02 GMT
+      - Thu, 07 Oct 2021 05:47:08 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-10-02'
     method: GET
-    uri: https://pyacrstoragestorname-secondary.blob.core.windows.net/?restype=service&comp=stats
+    uri: https://storagename-secondary.blob.core.windows.net/?restype=service&comp=stats
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
       content-type: application/xml
-      date: Fri, 25 Oct 2019 18:46:02 GMT
+      date: Thu, 07 Oct 2021 05:47:08 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-version: '2019-02-02'
+      vary: Origin
+      x-ms-version: '2020-10-02'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageaxjsxydtp4nt-secondary.blob.core.windows.net
-        - /
-        - restype=service&comp=stats
-        - ''
+    url: https://emilydevtest-secondary.blob.core.windows.net/?restype=service&comp=stats
 version: 1

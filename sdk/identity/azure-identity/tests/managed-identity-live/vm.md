@@ -117,16 +117,6 @@ echo -e `az vm run-command invoke \
 Do this for each VM, that is to say, once passing `--ids $VM_ID_SYSTEM_ASSIGNED` and again
 passing `--ids $VM_ID_USER_ASSIGNED`:
 
-## Python 2
-```sh
-echo -e `az vm run-command invoke \
-    --ids $VM_ID_SYSTEM_ASSIGNED \
-    --command-id RunShellScript \
-    --scripts "cd /sdk/sdk/identity/azure-identity/tests/managed-identity-live && \
-               export AZURE_IDENTITY_TEST_VAULT_URL=https://$KEY_VAULT_NAME.vault.azure.net && \
-               python2 -m pytest -v --log-level=DEBUG"`
-```
-
 ## Python 3
 ```sh
 echo -e `az vm run-command invoke \
@@ -140,7 +130,7 @@ echo -e `az vm run-command invoke \
 Successful test output looks like this:
 ```
 ============================= test session starts ==============================
-platform linux -- Python 3.6.9, pytest-5.3.2, py-1.8.1, pluggy-0.13.1 -- /usr/bin/python3
+platform linux -- Python 3.9.9, pytest-5.3.2, py-1.8.1, pluggy-0.13.1 -- /usr/bin/python3
 cachedir: .pytest_cache
 rootdir: /azure-sdk-for-python, inifile: setup.cfg
 plugins: asyncio-0.10.0

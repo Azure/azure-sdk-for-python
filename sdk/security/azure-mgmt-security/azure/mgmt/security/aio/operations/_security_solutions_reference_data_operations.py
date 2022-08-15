@@ -42,7 +42,7 @@ class SecuritySolutionsReferenceDataOperations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecuritySolutionsReferenceDataList":
         """Gets a list of all supported Security Solutions for the subscription.
 
@@ -92,7 +92,7 @@ class SecuritySolutionsReferenceDataOperations:
 
     async def list_by_home_region(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecuritySolutionsReferenceDataList":
         """Gets list of all supported Security Solutions for subscription and location.
 

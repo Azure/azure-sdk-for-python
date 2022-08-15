@@ -1,0 +1,61 @@
+
+type: pipeline
+
+description: "Dummy train-score-eval pipeline with local components"
+display_name: "e2e_registered_components"
+
+inputs:
+  pipeline_job_training_input:
+    path: ./data
+#  pipeline_job_test_input:
+#    path: ./data
+  pipeline_job_training_max_epocs: 20
+  pipeline_job_training_learning_rate: 1.8
+  pipeline_job_learning_rate_schedule: 'time-based'
+
+outputs:
+  pipeline_job_trained_model:
+    mode: upload
+#  pipeline_job_scored_data:
+#    mode: upload
+  pipeline_job_evaluation_report:
+#    mode: upload
+
+#settings:
+#  datastore: azureml:workspaceblobstore
+
+compute: azureml:cpu-cluster
+
+jobs:
+  train_job:
+    type: command
+    compute: azureml:cpu-cluster
+    component: file:./train.yml
+    inputs:
+      training_data: ${{parent.inputs.pipeline_job_training_input}}
+      max_epocs: ${{parent.inputs.pipeline_job_training_max_epocs}}
+      learning_rate: ${{parent.inputs.pipeline_job_training_learning_rate}}
+      learning_rate_schedule: ${{parent.inputs.pipeline_job_learning_rate_schedule}}
+    outputs:
+      model_output: ${{parent.outputs.pipeline_job_trained_model}}
+
+  score_job:
+    type: command
+    component: file:./score.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      model_input: ${{parent.jobs.train_job.outputs.model_output}}
+      test_data:
+        path: ./data
+    outputs:
+      score_output:
+        mode: upload
+
+  evaluate_job:
+    type: command
+    component: file:./eval.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      scoring_result: ${{parent.jobs.score_job.outputs.score_output}}
+    outputs:
+      eval_output: ${{parent.outputs.pipeline_job_evaluation_report}}

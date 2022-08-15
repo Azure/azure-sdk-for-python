@@ -1,4 +1,3 @@
-# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -15,7 +14,7 @@ from azure.ai.textanalytics._models import (
 
 from azure.ai.textanalytics._response_handlers import sentiment_result
 
-from azure.ai.textanalytics._generated.v3_1_preview_5 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1 import models as _generated_models
 
 
 @pytest.fixture

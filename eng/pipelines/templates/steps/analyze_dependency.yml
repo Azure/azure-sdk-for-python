@@ -1,3 +1,6 @@
+parameters:
+  ScanPath: ''
+
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -6,10 +9,13 @@ steps:
      versionSpec: '$(PythonVersion)'
 
   - pwsh: |
-     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
-     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
-    displayName: 'Verify Readmes'
+     python -m pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+    displayName: 'Install Python Tools'
     condition: succeededOrFailed()
+
+  - template: /eng/common/pipelines/templates/steps/verify-readme.yml
+    parameters:
+      ScanPath: ${{ parameters.ScanPath }}
 
   - pwsh: |
       mkdir "$(Build.ArtifactStagingDirectory)/reports"
@@ -19,7 +25,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(),ne(variables['Skip.AnalyzeDependencies'],'true'))
     inputs:
      scriptPath: 'scripts/analyze_deps.py'
-     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports/data.js"'
+     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"'

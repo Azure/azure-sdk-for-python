@@ -15,13 +15,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AnonymousACRExchangeClient(object):
+class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
@@ -29,13 +29,11 @@ class AnonymousACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self.credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=None,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self.credential_scope),
             **kwargs
         )
 

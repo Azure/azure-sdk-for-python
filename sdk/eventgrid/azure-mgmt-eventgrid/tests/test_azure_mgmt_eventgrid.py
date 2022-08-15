@@ -26,25 +26,26 @@ from azure.mgmt.eventgrid.models import (
     RetryPolicy
 )
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
-class MgmtEventGridTest(AzureMgmtTestCase):
+class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtEventGridTest, self).setUp()
+    def setup_method(self, method):
         self.eventgrid_client = self.create_mgmt_client(EventGridManagementClient)
 
     def process(self, result):
         pass
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_topic_types(self, resource_group, location):
         # List all topic types
         for result in self.eventgrid_client.topic_types.list():
             self.process(result)
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_user_topics(self, resource_group, location):
         topic_name = "kalspython1"
         eventsubscription_name = "kalspythonEventSubscription2"
@@ -52,7 +53,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         # Create a new topic and verify that it is created successfully
         topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, Topic(location="westcentralus"))
         topic = topic_result_create.result()
-        self.assertEqual(topic.name, topic_name)
+        assert topic.name == topic_name
 
         # Create a new event subscription to this topic
         # Use this for recording mode
@@ -68,7 +69,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         event_subscription_info = EventSubscription(destination=destination, filter=filter)
         es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
         event_subscription = es_result_create.result()
-        self.assertEqual(eventsubscription_name, event_subscription.name)
+        assert eventsubscription_name == event_subscription.name
 
         # Delete the event subscription
         self.eventgrid_client.event_subscriptions.delete(scope, eventsubscription_name).wait()
@@ -78,6 +79,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_input_mappings_and_queue_destination(self, resource_group, location):
         topic_name = "kalspython2"
         eventsubscription_name = "kalspythonEventSubscription3"
@@ -87,8 +89,8 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         topic = Topic(location="westcentralus", tags=None, input_schema=input_schema, input_schema_mapping=None)
         topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, topic)
         topic = topic_result_create.result()
-        self.assertEqual(topic.name, topic_name)
-        self.assertEqual(topic.input_schema, "CloudEventV01Schema")
+        assert topic.name == topic_name
+        assert topic.input_schema == "CloudEventV01Schema"
 
         # Create a new event subscription to this topic
         # Use this for recording mode
@@ -116,7 +118,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         )
         es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
         event_subscription = es_result_create.result()
-        self.assertEqual(eventsubscription_name, event_subscription.name)
+        assert eventsubscription_name == event_subscription.name
 
         # Delete the event subscription
         self.eventgrid_client.event_subscriptions.delete(scope, eventsubscription_name).wait()
@@ -126,6 +128,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_domains_and_advanced_filter(self, resource_group, location):
         domain_name = "kalspythond1"
         eventsubscription_name = "kalspythonEventSubscription2"
@@ -133,7 +136,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         # Create a new domain and verify that it is created successfully
         domain_result_create = self.eventgrid_client.domains.create_or_update(resource_group.name, domain_name, Domain(location="westcentralus"))
         domain = domain_result_create.result()
-        self.assertEqual(domain.name, domain_name)
+        assert domain.name == domain_name
 
         # Create a new event subscription to this domain
         # Use this for recording mode
@@ -152,7 +155,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         event_subscription_info = EventSubscription(destination=destination, filter=filter)
         es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
         event_subscription = es_result_create.result()
-        self.assertEqual(eventsubscription_name, event_subscription.name)
+        assert eventsubscription_name == event_subscription.name
 
         # Delete the event subscription
         self.eventgrid_client.event_subscriptions.delete(scope, eventsubscription_name).wait()

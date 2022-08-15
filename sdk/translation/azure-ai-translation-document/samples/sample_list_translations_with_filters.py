@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -9,7 +8,7 @@ FILE: sample_list_translations_with_filters.py
 
 DESCRIPTION:
     This sample demonstrates how to list all the submitted translation operations for the resource
-    using different kind of filters/sorting/paging options
+    using different kind of filters/sorting/paging options.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -48,13 +47,12 @@ def sample_list_translations_with_filters():
     '''
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
-    statuses = ["Cancelled", "Failed"]
-    order_by = ["createdDateTimeUtc desc"]
-    results_per_page = 2
+    statuses = ["Canceled", "Failed"]
+    order_by = ["created_on desc"]
     skip = 3
 
     # list translation operations
-    submitted_translations = client.list_all_translation_statuses(
+    submitted_translations = client.list_translation_statuses(
         # filters
         statuses=statuses,
         created_after=start,
@@ -63,7 +61,6 @@ def sample_list_translations_with_filters():
         order_by=order_by,
         # paging
         skip=skip,
-        results_per_page=results_per_page
     ).by_page()
 
     # check statuses
@@ -73,16 +70,16 @@ def sample_list_translations_with_filters():
 
 
 def display_translation_info(translation):
-    print("ID: {}".format(translation.id))
-    print("Status: {}".format(translation.status))
-    print("Created on: {}".format(translation.created_on))
-    print("Last updated on: {}".format(translation.last_updated_on))
-    print("Total number of translations on documents: {}".format(translation.documents_total_count))
-    print("Total number of characters charged: {}".format(translation.total_characters_charged))
+    print(f"ID: {translation.id}")
+    print(f"Status: {translation.status}")
+    print(f"Created on: {translation.created_on}")
+    print(f"Last updated on: {translation.last_updated_on}")
+    print(f"Total number of translations on documents: {translation.documents_total_count}")
+    print(f"Total number of characters charged: {translation.total_characters_charged}")
     print("\nOf total documents...")
-    print("{} failed".format(translation.documents_failed_count))
-    print("{} succeeded".format(translation.documents_succeeded_count))
-    print("{} cancelled\n".format(translation.documents_cancelled_count))
+    print(f"{translation.documents_failed_count} failed")
+    print(f"{translation.documents_succeeded_count} succeeded")
+    print(f"{translation.documents_canceled_count} canceled\n")
 
 
 if __name__ == '__main__':

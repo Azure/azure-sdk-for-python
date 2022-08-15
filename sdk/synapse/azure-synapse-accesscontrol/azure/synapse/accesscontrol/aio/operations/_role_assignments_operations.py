@@ -44,7 +44,7 @@ class RoleAssignmentsOperations:
         subject: "_models.SubjectInfo",
         actions: List["_models.RequiredAction"],
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckPrincipalAccessResponse":
         """Check if the given principalId has access to perform list of actions at a given scope.
 
@@ -66,7 +66,7 @@ class RoleAssignmentsOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.CheckPrincipalAccessRequest(subject=subject, actions=actions, scope=scope)
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -112,7 +112,7 @@ class RoleAssignmentsOperations:
         principal_id: Optional[str] = None,
         scope: Optional[str] = None,
         continuation_token_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignmentDetailsList":
         """List role assignments.
 
@@ -134,7 +134,7 @@ class RoleAssignmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
@@ -186,7 +186,7 @@ class RoleAssignmentsOperations:
         principal_id: str,
         scope: str,
         principal_type: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignmentDetails":
         """Create role assignment.
 
@@ -212,7 +212,7 @@ class RoleAssignmentsOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         _request = _models.RoleAssignmentRequest(role_id=role_id, principal_id=principal_id, scope=scope, principal_type=principal_type)
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -256,7 +256,7 @@ class RoleAssignmentsOperations:
     async def get_role_assignment_by_id(
         self,
         role_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RoleAssignmentDetails":
         """Get role assignment by role assignment Id.
 
@@ -272,7 +272,7 @@ class RoleAssignmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
@@ -312,7 +312,7 @@ class RoleAssignmentsOperations:
         self,
         role_assignment_id: str,
         scope: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete role assignment by role assignment Id.
 
@@ -330,7 +330,7 @@ class RoleAssignmentsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01-preview"
+        api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL

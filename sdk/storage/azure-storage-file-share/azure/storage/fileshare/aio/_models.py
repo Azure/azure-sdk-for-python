@@ -11,7 +11,7 @@ from azure.core.exceptions import HttpResponseError
 
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from .._generated.models import DirectoryItem
-from .._models import Handle, ShareProperties
+from .._models import Handle, ShareProperties, DirectoryProperties, FileProperties
 
 
 def _wrap_item(item):
@@ -173,6 +173,6 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
-        self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])
+        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
+        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items]) # pylint: disable = protected-access
         return self._response.next_marker or None, self.current_page

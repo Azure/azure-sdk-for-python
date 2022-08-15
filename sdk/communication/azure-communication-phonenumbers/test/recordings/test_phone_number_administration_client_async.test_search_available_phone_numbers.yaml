@@ -9,30 +9,31 @@ interactions:
       - '131'
       Content-Type:
       - application/json
-      Date:
-      - Wed, 07 Apr 2021 18:48:54 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 12 Jan 2022 16:28:17 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2
   response:
     body:
       string: ''
     headers:
       access-control-expose-headers: Location,Operation-Location,operation-id,search-id
-      api-supported-versions: '2021-03-07'
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2
       content-length: '0'
-      date: Wed, 07 Apr 2021 18:48:56 GMT
-      ms-cv: /OjVQPdlhka/jerEeAhXtw.0
-      operation-id: search_2eb536a6-57c8-46f8-b15a-7b4424c425a2
-      operation-location: /phoneNumbers/operations/search_2eb536a6-57c8-46f8-b15a-7b4424c425a2?api-version=2021-03-07
+      date: Wed, 12 Jan 2022 16:28:18 GMT
+      ms-cv: j0wnfJQmYkCRbaw5ds3lrg.0
+      operation-id: search_8c7b9296-ccca-468a-90ca-d51bcbbed8d3
+      operation-location: /phoneNumbers/operations/search_8c7b9296-ccca-468a-90ca-d51bcbbed8d3?api-version=2022-01-11-preview2
       request-context: appId=
-      search-id: 2eb536a6-57c8-46f8-b15a-7b4424c425a2
-      x-processing-time: 4020ms
+      search-id: 8c7b9296-ccca-468a-90ca-d51bcbbed8d3
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 4646ms
     status:
       code: 202
       message: Accepted
-    url: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2
 version: 1

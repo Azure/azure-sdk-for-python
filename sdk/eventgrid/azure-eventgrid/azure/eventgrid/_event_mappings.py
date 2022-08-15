@@ -1,18 +1,22 @@
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
+
+# THE VALUES IN THE ENUM ARE AUTO-GENERATED. DO NOT EDIT THIS MANUALLY.
 # --------------------------------------------------------------------------------------------
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 # pylint: disable=line-too-long
-
-class SystemEventNames(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     This enum represents the names of the various event types for the system events published to
     Azure Event Grid. To check the list of recognizable system topics,
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
-    # these names below are for backward compat only - refrain from using them.
+    # These names at the top are 'corrected' aliases of duplicate values that appear below, which are
+    # deprecated but maintained for backwards compatibility.
     AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
 
     ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
@@ -51,7 +55,7 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
-    # backward compat names end here.
+    # Aliases end here
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
@@ -90,53 +94,59 @@ class SystemEventNames(str, Enum):
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
 
-    AgriFoodFarmingApplicationDataChangedEventName = 'Microsoft.AgFoodPlatform.ApplicationDataChanged'
+    AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
 
-    AgriFoodFarmingBoundaryChangedEventName = 'Microsoft.AgFoodPlatform.BoundaryChanged'
+    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.ApiCreated'
 
-    AgriFoodFarmingCropChangedEventName = 'Microsoft.AgFoodPlatform.CropChanged'
+    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.ApiDeleted'
 
-    AgriFoodFarmingCropVarietyChangedEventName = 'Microsoft.AgFoodPlatform.CropVarietyChanged'
+    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.ApiReleaseCreated'
 
-    AgriFoodFarmingFarmChangedEventName = 'Microsoft.AgFoodPlatform.FarmChanged'
+    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.ApiReleaseDeleted'
 
-    AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged'
+    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.ApiReleaseUpdated'
 
-    AgriFoodFarmingFarmerChangedEventName = 'Microsoft.AgFoodPlatform.FarmerChanged'
+    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
 
-    AgriFoodFarmingFieldChangedEventName = 'Microsoft.AgFoodPlatform.FieldChanged'
+    ApiManagementProductCreatedEventName = 'Microsoft.ApiManagement.ProductCreated'
 
-    AgriFoodFarmingHarvestDataChangedEventName = 'Microsoft.AgFoodPlatform.HarvestDataChanged'
+    ApiManagementProductDeletedEventName = 'Microsoft.ApiManagement.ProductDeleted'
 
-    AgriFoodFarmingPlantingDataChangedEventName = 'Microsoft.AgFoodPlatform.PlantingDataChanged'
+    ApiManagementProductUpdatedEventName = 'Microsoft.ApiManagement.ProductUpdated'
 
-    AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged'
+    ApiManagementSubscriptionCreatedEventName = 'Microsoft.ApiManagement.SubscriptionCreated'
 
-    AgriFoodFarmingSeasonChangedEventName = 'Microsoft.AgFoodPlatform.SeasonChanged'
+    ApiManagementSubscriptionDeletedEventName = 'Microsoft.ApiManagement.SubscriptionDeleted'
 
-    AgriFoodFarmingSeasonalFieldChangedEventName = 'Microsoft.AgFoodPlatform.SeasonalFieldChanged'
+    ApiManagementSubscriptionUpdatedEventName = 'Microsoft.ApiManagement.SubscriptionUpdated'
 
-    AgriFoodFarmingTillageDataChangedEventName = 'Microsoft.AgFoodPlatform.TillageDataChanged'
+    ApiManagementUserCreatedEventName = 'Microsoft.ApiManagement.UserCreated'
 
-    AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged'
+    ApiManagementUserDeletedEventName = 'Microsoft.ApiManagement.UserDeleted'
+
+    ApiManagementUserUpdatedEventName = 'Microsoft.ApiManagement.UserUpdated'
 
     AppConfigurationKeyValueDeletedEventName = 'Microsoft.AppConfiguration.KeyValueDeleted'
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
-
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
 
     ContainerRegistryImageDeletedEventName = 'Microsoft.ContainerRegistry.ImageDeleted'
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
+
+    HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
+
+    HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
+
+    HealthcareFhirResourceUpdatedEventName = 'Microsoft.HealthcareApis.FhirResourceUpdated'
 
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
@@ -147,8 +157,6 @@ class SystemEventNames(str, Enum):
     IotHubDeviceDisconnectedEventName = 'Microsoft.Devices.DeviceDisconnected'
 
     IotHubDeviceTelemetryEventName = 'Microsoft.Devices.DeviceTelemetry'
-
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     KeyVaultCertificateExpiredEventName = 'Microsoft.KeyVault.CertificateExpired'
 
@@ -167,6 +175,8 @@ class SystemEventNames(str, Enum):
     KeyVaultSecretNearExpiryEventName = 'Microsoft.KeyVault.SecretNearExpiry'
 
     KeyVaultSecretNewVersionCreatedEventName = 'Microsoft.KeyVault.SecretNewVersionCreated'
+
+    KeyVaultVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     MachineLearningServicesDatasetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
 
@@ -213,6 +223,8 @@ class SystemEventNames(str, Enum):
     MediaJobScheduledEventName = 'Microsoft.Media.JobScheduled'
 
     MediaJobStateChangeEventName = 'Microsoft.Media.JobStateChange'
+
+    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeat'
 
     MediaLiveEventConnectionRejectedEventName = 'Microsoft.Media.LiveEventConnectionRejected'
 
@@ -326,5 +338,10 @@ class SystemEventNames(str, Enum):
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
 
-    # servicebus alias
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'

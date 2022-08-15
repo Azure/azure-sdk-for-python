@@ -1,0 +1,55 @@
+{
+    "id": "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/components/test_389889218331/versions/0.0.1",
+    "name": null,
+    "type": null,
+    "properties": {
+        "description": null,
+        "tags": null,
+        "properties": {},
+        "isAnonymous": false,
+        "componentSpec": {
+            "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
+            "name": "microsoftsamples_command_component_basic",
+            "_source": "CLASS",
+            "version": "0.0.1",
+            "type": "command",
+            "display_name": "CommandComponentBasic",
+            "description": "This is the basic command component",
+            "tags": {
+                "tag": "tagvalue",
+                "owner": "sdkteam"
+            },
+            "is_deterministic": "True",
+            "inputs": {
+                "component_in_path": {
+                    "name": "component_in_path",
+                    "optional": "False",
+                    "description": "A path",
+                    "type": "uri_folder"
+                },
+                "component_in_number": {
+                    "name": "component_in_number",
+                    "optional": "True",
+                    "description": "A number",
+                    "type": "Number",
+                    "default": "10.99"
+                }
+            },
+            "outputs": {
+                "component_out_path": {
+                    "name": "component_out_path",
+                    "type": "uri_folder"
+                }
+            },
+            "command": "echo Hello World & echo [${{inputs.component_in_number}}] & echo ${{inputs.component_in_path}} & echo ${{outputs.component_out_path}} > ${{outputs.component_out_path}}/component_in_number",
+            "environment": "azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+            "code": "azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/codes/221061b5-a6de-4d60-81fd-3a852cdfe1db/versions/1"
+        }
+    },
+    "systemData": {
+        "createdAt": "2021-08-19T02:58:14.9644668Z",
+        "createdBy": "Zhen Ruan",
+        "createdByType": "User",
+        "lastModifiedAt": "2021-08-19T02:58:15.7637279Z"
+    }
+}

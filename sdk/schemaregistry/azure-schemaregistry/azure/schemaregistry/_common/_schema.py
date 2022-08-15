@@ -23,71 +23,53 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional
+from typing import Any
 
 
 class SchemaProperties(object):
     """
     Meta properties of a schema.
 
-    :ivar schema_id: References specific schema in registry namespace.
-    :type schema_id: str
-    :ivar location: URL location of schema, identified by schema group, schema name, and version.
-    :type location: str
-    :ivar location_by_id: URL location of schema, identified by schema ID.
-    :type location_by_id: str
-    :ivar serialization_type: Serialization type for the schema being stored.
-    :type serialization_type: str
-    :ivar version: Version of the returned schema.
-    :type version: int
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
-            :start-after: [START print_schema_properties]
-            :end-before: [END print_schema_properties]
-            :language: python
-            :dedent: 4
-            :caption: SchemaProperties object.
-
+    :ivar id: References specific schema in registry namespace.
+    :vartype id: str
+    :ivar format: Format for the schema being stored.
+    :vartype format: ~azure.schemaregistry.SchemaFormat
+    :ivar group_name: Schema group under which schema is stored.
+    :vartype group_name: str
+    :ivar name: Name of schema.
+    :vartype name: str
     """
-    def __init__(
-        self,
-        schema_id=None,
-        **kwargs
-    ):
-        # type: (Optional[str], Any) -> None
-        self.location = kwargs.get('Location')
-        self.schema_id = schema_id or kwargs.get("X-Schema-Id")
-        self.location_by_id = kwargs.get('X-Schema-Id-Location')
-        self.serialization_type = kwargs.get('X-Schema-Type')
-        self.version = kwargs.get('X-Schema-Version')
+
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        self.id = kwargs.pop("id")
+        self.format = kwargs.pop("format")
+        self.group_name = kwargs.pop("group_name")
+        self.name = kwargs.pop("name")
+
+    def __repr__(self):
+        return (
+            f"SchemaProperties(id={self.id}, format={self.format}, "
+            f"group_name={self.group_name}, name={self.name})"[:1024]
+        )
 
 
 class Schema(object):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar schema_content: The content of the schema.
-    :type schema_content: str
-    :ivar schema_properties: The properties of the schema.
-    :type schema_properties: SchemaProperties
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
-            :start-after: [START print_schema]
-            :end-before: [END print_schema]
-            :language: python
-            :dedent: 4
-            :caption: Schema object.
-
+    :ivar definition: The content of the schema.
+    :vartype definition: str
+    :ivar properties: The properties of the schema.
+    :vartype properties: SchemaProperties
     """
-    def __init__(
-        self,
-        schema_content,
-        schema_properties,
-    ):
-        # type: (str, SchemaProperties) -> None
-        self.schema_content = schema_content
-        self.schema_properties = schema_properties
+
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        self.definition = kwargs.pop("definition")
+        self.properties = kwargs.pop("properties")
+
+    def __repr__(self):
+        return "Schema(definition={}, properties={})".format(
+            self.definition, self.properties
+        )[:1024]

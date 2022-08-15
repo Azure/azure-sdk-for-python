@@ -22,7 +22,8 @@ class ListBlobsTest(_ContainerTest):
                     next_upload = next(pending)
                     running.add(next_upload)
             except StopIteration:
-                await asyncio.wait(running, return_when=asyncio.ALL_COMPLETED)
+                if running:
+                    await asyncio.wait(running, return_when=asyncio.ALL_COMPLETED)
                 break
 
     def run_sync(self):

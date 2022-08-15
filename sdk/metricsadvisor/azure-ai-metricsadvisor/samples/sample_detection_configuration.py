@@ -77,7 +77,7 @@ def sample_create_detection_config():
         metric_id=metric_id,
         description="anomaly detection config for metric",
         whole_series_detection_condition=MetricDetectionCondition(
-            cross_conditions_operator="OR",
+            condition_operator="OR",
             change_threshold_condition=change_threshold_condition,
             hard_threshold_condition=hard_threshold_condition,
             smart_detection_condition=smart_detection_condition
@@ -109,7 +109,7 @@ def sample_get_detection_config(detection_config_id):
     print("\nWhole Series Detection Conditions:\n")
     conditions = config.whole_series_detection_condition
 
-    print("Use {} operator for multiple detection conditions".format(conditions.cross_conditions_operator))
+    print("Use {} operator for multiple detection conditions".format(conditions.condition_operator))
 
     print("Smart Detection Condition:")
     print("- Sensitivity: {}".format(conditions.smart_detection_condition.sensitivity))
@@ -194,13 +194,13 @@ def sample_update_detection_config(detection_config):
         detection_config,
         series_group_detection_conditions=[
             MetricSeriesGroupDetectionCondition(
-                series_group_key={"city": "Seoul"},
+                series_group_key={"region": "Seoul"},
                 smart_detection_condition=smart_detection_condition
             )
         ],
         series_detection_conditions=[
             MetricSingleSeriesDetectionCondition(
-                series_key={"city": "Osaka", "category": "Cell Phones"},
+                series_key={"region": "Osaka", "category": "Cell Phones"},
                 smart_detection_condition=smart_detection_condition
             )
         ]

@@ -35,10 +35,10 @@ class TextModerationOperations(object):
 
     def screen_text(
             self, text_content_type, text_content, language=None, autocorrect=False, pii=False, list_id=None, classify=False, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Detect profanity and match against custom and shared blacklists.
+        """Detect profanity and match against custom and shared blocklists.
 
         Detects profanity in more than 100 languages and match against custom
-        and shared blacklists.
+        and shared blocklists.
 
         :param text_content_type: The content type. Possible values include:
          'text/plain', 'text/html', 'text/xml', 'text/markdown'

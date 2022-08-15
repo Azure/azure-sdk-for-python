@@ -1,6 +1,7 @@
-recursive-include tests *.py
+recursive-include tests *.py *.json
 recursive-include samples *.py *.md
 include *.md
+include LICENSE
 include azure/__init__.py
 include azure/ai/__init__.py
 include azure/ai/formrecognizer/py.typed

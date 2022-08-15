@@ -184,8 +184,8 @@ def sample_list_alerts(alert_config_id):
 
     results = client.list_alerts(
         alert_configuration_id=alert_config_id,
-        start_time=datetime.datetime(2020, 1, 1),
-        end_time=datetime.datetime(2020, 9, 9),
+        start_time=datetime.datetime(2021, 1, 1),
+        end_time=datetime.datetime(2021, 9, 9),
         time_mode="AnomalyTime",
     )
 
@@ -193,7 +193,7 @@ def sample_list_alerts(alert_config_id):
     for result in results:
         tolist.append(result)
         print("Alert id: {}".format(result.id))
-        print("Create on: {}".format(result.created_on))
+        print("Create time: {}".format(result.created_time))
     return tolist
     # [END list_alerts]
 
@@ -214,7 +214,7 @@ def sample_list_anomalies_for_alert(alert_config_id, alert_id):
             alert_id=alert_id,
         )
     for result in results:
-        print("Create on: {}".format(result.created_on))
+        print("Create time: {}".format(result.created_time))
         print("Severity: {}".format(result.severity))
         print("Status: {}".format(result.status))
 
@@ -243,7 +243,7 @@ def sample_update_alert_config(alert_config):
         detection_configuration_id=detection_configuration_id,
         alert_scope=MetricAnomalyAlertScope(
             scope_type="SeriesGroup",
-            series_group_in_scope={'city': 'Shenzhen'}
+            series_group_in_scope={'region': 'Shenzhen'}
         ),
         alert_conditions=MetricAnomalyAlertConditions(
             metric_boundary_condition=MetricBoundaryCondition(
@@ -304,6 +304,7 @@ if __name__ == '__main__':
     if len(alerts) > 0:
         print("\n---Query anomalies using alert id...")
         alert_id = alerts[0].id
+        print("alert_id: " + alert_id)
         sample_list_anomalies_for_alert(alert_config.id, alert_id)
     print("\n---Update an anomaly alert configuration...")
     sample_update_alert_config(alert_config)

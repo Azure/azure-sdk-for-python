@@ -1,5 +1,32 @@
 # Release History
 
+## 1.0.0b3 (2022-06-06)
+
+**Features**
+
+  - Added model AssessmentDayOfWeek
+  - Added model AutoBackupDaysOfWeek
+
+## 1.0.0b2 (2022-03-02)
+
+**Features**
+
+  - Added operation SqlVirtualMachinesOperations.begin_redeploy
+  - Added operation SqlVirtualMachinesOperations.begin_start_assessment
+  - Model AutoBackupSettings has a new parameter days_of_week
+  - Model AutoBackupSettings has a new parameter storage_container_name
+  - Model AvailabilityGroupListener has a new parameter availability_group_configuration
+  - Model AvailabilityGroupListener has a new parameter system_data
+  - Model ServerConfigurationsManagementSettings has a new parameter sql_instance_settings
+  - Model SqlVirtualMachine has a new parameter assessment_settings
+  - Model SqlVirtualMachine has a new parameter system_data
+  - Model SqlVirtualMachineGroup has a new parameter system_data
+  - Model StorageConfigurationSettings has a new parameter sql_system_db_on_data_disk
+
+**Breaking changes**
+
+  - Operation AvailabilityGroupListenersOperations.get has a new signature
+
 ## 1.0.0b1 (2021-05-19)
 
 This is beta preview version.
@@ -14,7 +41,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -22,13 +49,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.5.0 (2019-11-27)
 

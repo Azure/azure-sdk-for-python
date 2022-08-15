@@ -6,6 +6,7 @@
 
 
 import logging
+import time
 import pytest
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -25,7 +26,9 @@ from servicebus_preparer import (
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
     ServiceBusQueueAuthorizationRulePreparer,
-    CachedServiceBusQueuePreparer
+    CachedServiceBusQueuePreparer,
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusSubscriptionPreparer
 )
 from utilities import get_logger
 
@@ -137,7 +140,9 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
         await client.close()
@@ -173,6 +178,51 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         assert not sender._handler and not sender._running
         assert not receiver._handler and not receiver._running
         assert len(client._handlers) == 0
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        # the previous sender/receiver can not longer be referenced, there might be a delay in CPython
+        # to remove the reference, so len of handlers should be less than 4
+        assert len(client._handlers) < 4
+        await client.close()
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        queue_sender = None
+        queue_receiver = None
+        assert len(client._handlers) < 2
+
+        await client.close()
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        topic_sender = None
+        subscription_receiver = None
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
+
+        await client.close()
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
+
+        await client.close()
+        for _ in range(5):
+            queue_sender = client.get_queue_sender(servicebus_queue.name)
+            queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+            topic_sender = client.get_topic_sender(servicebus_topic.name)
+            subscription_receiver = client.get_subscription_receiver(servicebus_topic.name,
+                                                                     servicebus_subscription.name)
+        assert len(client._handlers) < 15
+        await client.close()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -352,3 +402,122 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         async with client:
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
+
+    async def test_backoff_fixed_retry(self):
+        client = ServiceBusClient(
+            'fake.host.com',
+            'fake_eh',
+            retry_mode='fixed'
+        )
+        # queue sender
+        sender = await client.get_queue_sender('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        # exp = 0.8 * (2 ** 1) = 1.6
+        # time.sleep() in _backoff will take AT LEAST time 'exp' for retry_mode='exponential'
+        # check that fixed is less than 'exp'
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # topic sender
+        sender = await client.get_topic_sender('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # queue receiver 
+        receiver = await client.get_queue_receiver('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # subscription receiver 
+        receiver = await client.get_subscription_receiver('fake_topic', 'fake_sub')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+    async def test_custom_client_id_queue_sender_async(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        custom_id = "my_custom_id"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name, client_identifier=custom_id)
+            assert queue_sender.client_identifier is not None
+            assert queue_sender.client_identifier == custom_id
+
+    async def test_default_client_id_queue_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
+            assert queue_sender.client_identifier is not None
+            assert "SBSender" in queue_sender.client_identifier
+
+    async def test_custom_client_id_queue_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        custom_id = "my_custom_id"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, client_identifier=custom_id)
+            assert queue_receiver.client_identifier is not None
+            assert queue_receiver.client_identifier == custom_id
+
+    async def test_default_client_id_queue_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        queue_name = "queue_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
+            assert queue_receiver.client_identifier is not None
+            assert "SBReceiver" in queue_receiver.client_identifier
+
+    async def test_custom_client_id_topic_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        custom_id = "my_custom_id"
+        topic_name = "topic_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name, client_identifier=custom_id)
+            assert topic_sender.client_identifier is not None
+            assert topic_sender.client_identifier == custom_id
+
+    async def test_default_client_id_topic_sender(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        topic_name = "topic_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
+            assert topic_sender.client_identifier is not None
+            assert "SBSender" in topic_sender.client_identifier
+
+    async def test_default_client_id_subscription_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        topic_name = "topic_name"
+        sub_name = "sub_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name)
+            assert subscription_receiver.client_identifier is not None
+            assert "SBReceiver" in subscription_receiver.client_identifier
+
+    async def test_custom_client_id_subscription_receiver(self, **kwargs):
+        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+        custom_id = "my_custom_id"
+        topic_name = "topic_name"
+        sub_name = "sub_name"
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        async with servicebus_client:
+            subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name, client_identifier=custom_id)
+            assert subscription_receiver.client_identifier is not None
+            assert subscription_receiver.client_identifier == custom_id

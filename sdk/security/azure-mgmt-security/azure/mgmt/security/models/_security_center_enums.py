@@ -53,58 +53,61 @@ class AdaptiveApplicationControlIssue(with_metaclass(_CaseInsensitiveEnumMeta, s
     EXECUTABLE_VIOLATIONS_AUDITED = "ExecutableViolationsAudited"
     RULES_VIOLATED_MANUALLY = "RulesViolatedManually"
 
-class AlertIntent(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kill chain related intent behind the alert. Could contain multiple enum values (separated by
-    commas)
+class AdditionalWorkspaceDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Data types sent to workspace.
     """
 
-    UNKNOWN = "Unknown"
-    PRE_ATTACK = "PreAttack"
-    INITIAL_ACCESS = "InitialAccess"
-    PERSISTENCE = "Persistence"
-    PRIVILEGE_ESCALATION = "PrivilegeEscalation"
-    DEFENSE_EVASION = "DefenseEvasion"
-    CREDENTIAL_ACCESS = "CredentialAccess"
-    DISCOVERY = "Discovery"
-    LATERAL_MOVEMENT = "LateralMovement"
-    EXECUTION = "Execution"
-    COLLECTION = "Collection"
-    EXFILTRATION = "Exfiltration"
-    COMMAND_AND_CONTROL = "CommandAndControl"
-    IMPACT = "Impact"
-    PROBING = "Probing"
-    EXPLOITATION = "Exploitation"
+    ALERTS = "Alerts"
+    RAW_EVENTS = "RawEvents"
+
+class AdditionalWorkspaceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Workspace type.
+    """
+
+    SENTINEL = "Sentinel"
 
 class AlertNotifications(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to send security alerts notifications to the security contact
     """
 
-    ON = "On"  #: Get notifications on new alerts.
-    OFF = "Off"  #: Don't get notifications on new alerts.
+    #: Get notifications on new alerts.
+    ON = "On"
+    #: Don't get notifications on new alerts.
+    OFF = "Off"
 
 class AlertSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The severity of the alert
+    """The risk level of the threat that was detected. Learn more:
+    https://docs.microsoft.com/en-us/azure/security-center/security-center-alerts-overview#how-are-alerts-classified.
     """
 
+    #: Informational.
     INFORMATIONAL = "Informational"
+    #: Low.
     LOW = "Low"
+    #: Medium.
     MEDIUM = "Medium"
+    #: High.
     HIGH = "High"
 
 class AlertStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The life cycle status of the alert.
     """
 
-    ACTIVE = "Active"  #: An alert which doesn't specify a value is assigned the status 'Active'.
-    RESOLVED = "Resolved"  #: Alert closed after handling.
-    DISMISSED = "Dismissed"  #: Alert dismissed as false positive.
+    #: An alert which doesn't specify a value is assigned the status 'Active'.
+    ACTIVE = "Active"
+    #: Alert closed after handling.
+    RESOLVED = "Resolved"
+    #: Alert dismissed as false positive.
+    DISMISSED = "Dismissed"
 
 class AlertsToAdmins(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to send security alerts notifications to subscription admins
     """
 
-    ON = "On"  #: Send notification on new alerts to the subscription's admins.
-    OFF = "Off"  #: Don't send notification on new alerts to the subscription's admins.
+    #: Send notification on new alerts to the subscription's admins.
+    ON = "On"
+    #: Don't send notification on new alerts to the subscription's admins.
+    OFF = "Off"
 
 class AssessedResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sub-assessment resource type
@@ -118,54 +121,77 @@ class AssessmentStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Programmatic code for the status of the assessment
     """
 
-    HEALTHY = "Healthy"  #: The resource is healthy.
-    UNHEALTHY = "Unhealthy"  #: The resource has a security issue that needs to be addressed.
-    NOT_APPLICABLE = "NotApplicable"  #: Assessment for this resource did not happen.
+    #: The resource is healthy.
+    HEALTHY = "Healthy"
+    #: The resource has a security issue that needs to be addressed.
+    UNHEALTHY = "Unhealthy"
+    #: Assessment for this resource did not happen.
+    NOT_APPLICABLE = "NotApplicable"
 
 class AssessmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """BuiltIn if the assessment based on built-in Azure Policy definition, Custom if the assessment
     based on custom Azure Policy definition
     """
 
-    BUILT_IN = "BuiltIn"  #: Azure Security Center managed assessments.
-    CUSTOM_POLICY = "CustomPolicy"  #: User defined policies that are automatically ingested from Azure Policy to Azure Security Center.
-    CUSTOMER_MANAGED = "CustomerManaged"  #: User assessments pushed directly by the user or other third party to Azure Security Center.
-    VERIFIED_PARTNER = "VerifiedPartner"  #: An assessment that was created by a verified 3rd party if the user connected it to ASC.
+    #: Azure Security Center managed assessments.
+    BUILT_IN = "BuiltIn"
+    #: User defined policies that are automatically ingested from Azure Policy to Azure Security
+    #: Center.
+    CUSTOM_POLICY = "CustomPolicy"
+    #: User assessments pushed directly by the user or other third party to Azure Security Center.
+    CUSTOMER_MANAGED = "CustomerManaged"
+    #: An assessment that was created by a verified 3rd party if the user connected it to ASC.
+    VERIFIED_PARTNER = "VerifiedPartner"
 
 class AuthenticationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """State of the multi-cloud connector
     """
 
-    VALID = "Valid"  #: Valid connector.
-    INVALID = "Invalid"  #: Invalid connector.
-    EXPIRED = "Expired"  #: the connection has expired.
-    INCORRECT_POLICY = "IncorrectPolicy"  #: Incorrect policy of the connector.
+    #: Valid connector.
+    VALID = "Valid"
+    #: Invalid connector.
+    INVALID = "Invalid"
+    #: the connection has expired.
+    EXPIRED = "Expired"
+    #: Incorrect policy of the connector.
+    INCORRECT_POLICY = "IncorrectPolicy"
 
 class AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Connect to your cloud account, for AWS use either account credentials or role-based
     authentication. For GCP use account organization credentials.
     """
 
-    AWS_CREDS = "awsCreds"  #: AWS cloud account connector user credentials authentication.
-    AWS_ASSUME_ROLE = "awsAssumeRole"  #: AWS account connector assume role authentication.
-    GCP_CREDENTIALS = "gcpCredentials"  #: GCP account connector service to service authentication.
-
-class AuthorizationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Authorized state of the device.
-    """
-
-    AUTHORIZED = "Authorized"
-    UNAUTHORIZED = "Unauthorized"
+    #: AWS cloud account connector user credentials authentication.
+    AWS_CREDS = "awsCreds"
+    #: AWS account connector assume role authentication.
+    AWS_ASSUME_ROLE = "awsAssumeRole"
+    #: GCP account connector service to service authentication.
+    GCP_CREDENTIALS = "gcpCredentials"
 
 class AutoProvision(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes what kind of security agent provisioning action to take
     """
 
-    ON = "On"  #: Install missing security agent on VMs automatically.
-    OFF = "Off"  #: Do not install security agent on the VMs automatically.
+    #: Install missing security agent on VMs automatically.
+    ON = "On"
+    #: Do not install security agent on the VMs automatically.
+    OFF = "Off"
 
-class Category(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The category of resource that is at risk when the assessment is unhealthy
+class BundleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Alert Simulator supported bundles.
+    """
+
+    APP_SERVICES = "AppServices"
+    DNS = "DNS"
+    KEY_VAULTS = "KeyVaults"
+    KUBERNETES_SERVICE = "KubernetesService"
+    RESOURCE_MANAGER = "ResourceManager"
+    SQL_SERVERS = "SqlServers"
+    STORAGE_ACCOUNTS = "StorageAccounts"
+    VIRTUAL_MACHINES = "VirtualMachines"
+
+class Categories(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The categories of resource that is at risk when the assessment is unhealthy
     """
 
     COMPUTE = "Compute"
@@ -193,26 +219,24 @@ class ControlType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of security control (for example, BuiltIn)
     """
 
-    BUILT_IN = "BuiltIn"  #: Azure Security Center managed assessments.
-    CUSTOM = "Custom"  #: Non Azure Security Center managed assessments.
+    #: Azure Security Center managed assessments.
+    BUILT_IN = "BuiltIn"
+    #: Non Azure Security Center managed assessments.
+    CUSTOM = "Custom"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class DataSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    TWIN_DATA = "TwinData"  #: Devices twin data.
-
-class DeviceCriticality(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Device criticality.
-    """
-
-    IMPORTANT = "Important"
-    STANDARD = "Standard"
-
-class DeviceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Device status.
-    """
-
-    ACTIVE = "Active"
-    REMOVED = "Removed"
+    #: Devices twin data.
+    TWIN_DATA = "TwinData"
 
 class Direction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The rule's direction
@@ -220,6 +244,16 @@ class Direction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
+
+class EndOfSupportStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """End of support status.
+    """
+
+    NONE = "None"
+    NO_LONGER_SUPPORTED = "noLongerSupported"
+    VERSION_NO_LONGER_SUPPORTED = "versionNoLongerSupported"
+    UPCOMING_NO_LONGER_SUPPORTED = "upcomingNoLongerSupported"
+    UPCOMING_VERSION_NO_LONGER_SUPPORTED = "upcomingVersionNoLongerSupported"
 
 class EnforcementMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The application control policy enforcement/protection mode of the machine group
@@ -237,7 +271,7 @@ class EnforcementSupport(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NOT_SUPPORTED = "NotSupported"
     UNKNOWN = "Unknown"
 
-class Enum15(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum13(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ACTIVATE = "Activate"
     DISMISS = "Dismiss"
@@ -245,15 +279,17 @@ class Enum15(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESOLVE = "Resolve"
     CLOSE = "Close"
 
-class Enum17(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum15(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     EFFECTIVE = "effective"
     CUSTOM = "custom"
 
-class Enum3(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum69(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     MCAS = "MCAS"
     WDATP = "WDATP"
+    WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW = "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW"
+    SENTINEL = "Sentinel"
 
 class EventSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """A valid event source type.
@@ -263,20 +299,28 @@ class EventSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUB_ASSESSMENTS = "SubAssessments"
     ALERTS = "Alerts"
     SECURE_SCORES = "SecureScores"
+    SECURE_SCORES_SNAPSHOT = "SecureScoresSnapshot"
     SECURE_SCORE_CONTROLS = "SecureScoreControls"
+    SECURE_SCORE_CONTROLS_SNAPSHOT = "SecureScoreControlsSnapshot"
+    REGULATORY_COMPLIANCE_ASSESSMENT = "RegulatoryComplianceAssessment"
+    REGULATORY_COMPLIANCE_ASSESSMENT_SNAPSHOT = "RegulatoryComplianceAssessmentSnapshot"
 
 class ExpandControlsEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    DEFINITION = "definition"  #: Add definition object for each control.
+    #: Add definition object for each control.
+    DEFINITION = "definition"
 
 class ExpandEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    LINKS = "links"  #: All links associated with an assessment.
-    METADATA = "metadata"  #: Assessment metadata.
+    #: All links associated with an assessment.
+    LINKS = "links"
+    #: Assessment metadata.
+    METADATA = "metadata"
 
 class ExportData(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    RAW_EVENTS = "RawEvents"  #: Agent raw events.
+    #: Agent raw events.
+    RAW_EVENTS = "RawEvents"
 
 class ExternalSecuritySolutionKindEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the external solution
@@ -301,9 +345,12 @@ class HybridComputeProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, st
     """State of the service principal and its secret
     """
 
-    VALID = "Valid"  #: Valid service principal details.
-    INVALID = "Invalid"  #: Invalid service principal details.
-    EXPIRED = "Expired"  #: the service principal details are expired.
+    #: Valid service principal details.
+    VALID = "Valid"
+    #: Invalid service principal details.
+    INVALID = "Invalid"
+    #: the service principal details are expired.
+    EXPIRED = "Expired"
 
 class ImplementationEffort(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The implementation effort required to remediate this assessment
@@ -318,60 +365,103 @@ class Intent(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     of Azure Security Center's supported kill chain intents.
     """
 
-    UNKNOWN = "Unknown"  #: Unknown.
-    PRE_ATTACK = "PreAttack"  #: PreAttack could be either an attempt to access a certain resource regardless of a malicious intent, or a failed attempt to gain access to a target system to gather information prior to exploitation. This step is usually detected as an attempt, originating from outside the network, to scan the target system and find a way in.  Further details on the PreAttack stage can be read in `MITRE Pre-Att&ck matrix <https://attack.mitre.org/matrices/pre/>`_.
-    INITIAL_ACCESS = "InitialAccess"  #: InitialAccess is the stage where an attacker manages to get foothold on the attacked resource.
-    PERSISTENCE = "Persistence"  #: Persistence is any access, action, or configuration change to a system that gives a threat actor a persistent presence on that system.
-    PRIVILEGE_ESCALATION = "PrivilegeEscalation"  #: Privilege escalation is the result of actions that allow an adversary to obtain a higher level of permissions on a system or network.
-    DEFENSE_EVASION = "DefenseEvasion"  #: Defense evasion consists of techniques an adversary may use to evade detection or avoid other defenses.
-    CREDENTIAL_ACCESS = "CredentialAccess"  #: Credential access represents techniques resulting in access to or control over system, domain, or service credentials that are used within an enterprise environment.
-    DISCOVERY = "Discovery"  #: Discovery consists of techniques that allow the adversary to gain knowledge about the system and internal network.
-    LATERAL_MOVEMENT = "LateralMovement"  #: Lateral movement consists of techniques that enable an adversary to access and control remote systems on a network and could, but does not necessarily, include execution of tools on remote systems.
-    EXECUTION = "Execution"  #: The execution tactic represents techniques that result in execution of adversary-controlled code on a local or remote system.
-    COLLECTION = "Collection"  #: Collection consists of techniques used to identify and gather information, such as sensitive files, from a target network prior to exfiltration.
-    EXFILTRATION = "Exfiltration"  #: Exfiltration refers to techniques and attributes that result or aid in the adversary removing files and information from a target network.
-    COMMAND_AND_CONTROL = "CommandAndControl"  #: The command and control tactic represents how adversaries communicate with systems under their control within a target network.
-    IMPACT = "Impact"  #: Impact events primarily try to directly reduce the availability or integrity of a system, service, or network; including manipulation of data to impact a business or operational process.
-    PROBING = "Probing"  #: Probing could be either an attempt to access a certain resource regardless of a malicious intent, or a failed attempt to gain access to a target system to gather information prior to exploitation.
-    EXPLOITATION = "Exploitation"  #: Exploitation is the stage where an attacker manages to get a foothold on the attacked resource. This stage is relevant for compute hosts and resources such as user accounts, certificates etc.
+    #: Unknown.
+    UNKNOWN = "Unknown"
+    #: PreAttack could be either an attempt to access a certain resource regardless of a malicious
+    #: intent, or a failed attempt to gain access to a target system to gather information prior to
+    #: exploitation. This step is usually detected as an attempt, originating from outside the
+    #: network, to scan the target system and find a way in.  Further details on the PreAttack stage
+    #: can be read in `MITRE Pre-Att&ck matrix <https://attack.mitre.org/matrices/pre/>`_.
+    PRE_ATTACK = "PreAttack"
+    #: InitialAccess is the stage where an attacker manages to get foothold on the attacked resource.
+    INITIAL_ACCESS = "InitialAccess"
+    #: Persistence is any access, action, or configuration change to a system that gives a threat
+    #: actor a persistent presence on that system.
+    PERSISTENCE = "Persistence"
+    #: Privilege escalation is the result of actions that allow an adversary to obtain a higher level
+    #: of permissions on a system or network.
+    PRIVILEGE_ESCALATION = "PrivilegeEscalation"
+    #: Defense evasion consists of techniques an adversary may use to evade detection or avoid other
+    #: defenses.
+    DEFENSE_EVASION = "DefenseEvasion"
+    #: Credential access represents techniques resulting in access to or control over system, domain,
+    #: or service credentials that are used within an enterprise environment.
+    CREDENTIAL_ACCESS = "CredentialAccess"
+    #: Discovery consists of techniques that allow the adversary to gain knowledge about the system
+    #: and internal network.
+    DISCOVERY = "Discovery"
+    #: Lateral movement consists of techniques that enable an adversary to access and control remote
+    #: systems on a network and could, but does not necessarily, include execution of tools on remote
+    #: systems.
+    LATERAL_MOVEMENT = "LateralMovement"
+    #: The execution tactic represents techniques that result in execution of adversary-controlled
+    #: code on a local or remote system.
+    EXECUTION = "Execution"
+    #: Collection consists of techniques used to identify and gather information, such as sensitive
+    #: files, from a target network prior to exfiltration.
+    COLLECTION = "Collection"
+    #: Exfiltration refers to techniques and attributes that result or aid in the adversary removing
+    #: files and information from a target network.
+    EXFILTRATION = "Exfiltration"
+    #: The command and control tactic represents how adversaries communicate with systems under their
+    #: control within a target network.
+    COMMAND_AND_CONTROL = "CommandAndControl"
+    #: Impact events primarily try to directly reduce the availability or integrity of a system,
+    #: service, or network; including manipulation of data to impact a business or operational
+    #: process.
+    IMPACT = "Impact"
+    #: Probing could be either an attempt to access a certain resource regardless of a malicious
+    #: intent, or a failed attempt to gain access to a target system to gather information prior to
+    #: exploitation.
+    PROBING = "Probing"
+    #: Exploitation is the stage where an attacker manages to get a foothold on the attacked resource.
+    #: This stage is relevant for compute hosts and resources such as user accounts, certificates etc.
+    EXPLOITATION = "Exploitation"
 
-class MacSignificance(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether this is the primary secondary MAC address of the device
+class KindEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of alert simulation.
     """
 
-    PRIMARY = "Primary"
-    SECONDARY = "Secondary"
-
-class ManagementState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Managed state of the device.
-    """
-
-    MANAGED = "Managed"
-    UNMANAGED = "Unmanaged"
+    #: Simulate alerts according to bundles.
+    BUNDLES = "Bundles"
 
 class Operator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """A valid comparer operator to use. A case-insensitive comparison will be applied for String
     PropertyType.
     """
 
+    #: Applies for decimal and non-decimal operands.
     EQUALS = "Equals"
+    #: Applies only for decimal operands.
     GREATER_THAN = "GreaterThan"
+    #: Applies only for decimal operands.
     GREATER_THAN_OR_EQUAL_TO = "GreaterThanOrEqualTo"
+    #: Applies only for decimal operands.
     LESSER_THAN = "LesserThan"
+    #: Applies only for decimal operands.
     LESSER_THAN_OR_EQUAL_TO = "LesserThanOrEqualTo"
+    #: Applies  for decimal and non-decimal operands.
     NOT_EQUALS = "NotEquals"
+    #: Applies only for non-decimal operands.
     CONTAINS = "Contains"
+    #: Applies only for non-decimal operands.
     STARTS_WITH = "StartsWith"
+    #: Applies only for non-decimal operands.
     ENDS_WITH = "EndsWith"
 
 class PermissionProperty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """A permission detected in the cloud account.
     """
 
-    AWS_AWS_SECURITY_HUB_READ_ONLY_ACCESS = "AWS::AWSSecurityHubReadOnlyAccess"  #: This permission provides read only access to AWS Security Hub resources.
-    AWS_SECURITY_AUDIT = "AWS::SecurityAudit"  #: This permission grants access to read security configuration metadata.
-    AWS_AMAZON_SSM_AUTOMATION_ROLE = "AWS::AmazonSSMAutomationRole"  #: The permission provides for EC2 Automation service to execute activities defined within Automation documents.
-    GCP_SECURITY_CENTER_ADMIN_VIEWER = "GCP::Security Center Admin Viewer"  #: This permission provides read only access to GCP Security Command Center.
+    #: This permission provides read only access to AWS Security Hub resources.
+    AWS_AWS_SECURITY_HUB_READ_ONLY_ACCESS = "AWS::AWSSecurityHubReadOnlyAccess"
+    #: This permission grants access to read security configuration metadata.
+    AWS_SECURITY_AUDIT = "AWS::SecurityAudit"
+    #: The permission provides for EC2 Automation service to execute activities defined within
+    #: Automation documents.
+    AWS_AMAZON_SSM_AUTOMATION_ROLE = "AWS::AmazonSSMAutomationRole"
+    #: This permission provides read only access to GCP Security Command Center.
+    GCP_SECURITY_CENTER_ADMIN_VIEWER = "GCP::Security Center Admin Viewer"
 
 class PricingTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The pricing tier value. Azure Security Center is provided in two pricing tiers: free and
@@ -379,15 +469,10 @@ class PricingTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     advanced security capabilities, while the free tier offers basic security features.
     """
 
-    FREE = "Free"  #: Get free Azure security center experience with basic security features.
-    STANDARD = "Standard"  #: Get the standard Azure security center experience with advanced security features.
-
-class ProgrammingState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether this device is programming
-    """
-
-    PROGRAMMING_DEVICE = "ProgrammingDevice"
-    NOT_PROGRAMMING_DEVICE = "NotProgrammingDevice"
+    #: Get free Azure security center experience with basic security features.
+    FREE = "Free"
+    #: Get the standard Azure security center experience with advanced security features.
+    STANDARD = "Standard"
 
 class PropertyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The data type of the compared operands (string, integer, floating point number or a boolean
@@ -412,14 +497,6 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     UPDATING = "Updating"
-
-class PurdueLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Purdue level of the device.
-    """
-
-    PROCESS_CONTROL = "ProcessControl"
-    SUPERVISORY = "Supervisory"
-    ENTERPRISE = "Enterprise"
 
 class Rank(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The rank of the sensitivity label.
@@ -447,18 +524,6 @@ class RecommendationConfigStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class RecommendationSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The severity of the recommendation
-    """
-
-    UNKNOWN = "Unknown"
-    NOT_APPLICABLE = "NotApplicable"
-    HEALTHY = "Healthy"
-    OFF_BY_POLICY = "OffByPolicy"
-    LOW = "Low"
-    MEDIUM = "Medium"
-    HIGH = "High"
-
 class RecommendationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The initial recommendation status of the machine group or machine
     """
@@ -472,29 +537,50 @@ class RecommendationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of IoT Security recommendation.
     """
 
-    IO_T_ACRAUTHENTICATION = "IoT_ACRAuthentication"  #: Authentication schema used for pull an edge module from an ACR repository does not use Service Principal Authentication.
-    IO_T_AGENT_SENDS_UNUTILIZED_MESSAGES = "IoT_AgentSendsUnutilizedMessages"  #: IoT agent message size capacity is currently underutilized, causing an increase in the number of sent messages. Adjust message intervals for better utilization.
-    IO_T_BASELINE = "IoT_Baseline"  #: Identified security related system configuration issues.
-    IO_T_EDGE_HUB_MEM_OPTIMIZE = "IoT_EdgeHubMemOptimize"  #: You can optimize Edge Hub memory usage by turning off protocol heads for any protocols not used by Edge modules in your solution.
-    IO_T_EDGE_LOGGING_OPTIONS = "IoT_EdgeLoggingOptions"  #: Logging is disabled for this edge module.
-    IO_T_INCONSISTENT_MODULE_SETTINGS = "IoT_InconsistentModuleSettings"  #: A minority within a device security group has inconsistent Edge Module settings with the rest of their group.
-    IO_T_INSTALL_AGENT = "IoT_InstallAgent"  #: Install the Azure Security of Things Agent.
-    IO_T_IPFILTER_DENY_ALL = "IoT_IPFilter_DenyAll"  #: IP Filter Configuration should have rules defined for allowed traffic and should deny all other traffic by default.
-    IO_T_IPFILTER_PERMISSIVE_RULE = "IoT_IPFilter_PermissiveRule"  #: An Allow IP Filter rules source IP range is too large. Overly permissive rules might expose your IoT hub to malicious intenders.
-    IO_T_OPEN_PORTS = "IoT_OpenPorts"  #: A listening endpoint was found on the device.
-    IO_T_PERMISSIVE_FIREWALL_POLICY = "IoT_PermissiveFirewallPolicy"  #: An Allowed firewall policy was found (INPUT/OUTPUT). The policy should Deny all traffic by default and define rules to allow necessary communication to/from the device.
-    IO_T_PERMISSIVE_INPUT_FIREWALL_RULES = "IoT_PermissiveInputFirewallRules"  #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP addresses or Ports.
-    IO_T_PERMISSIVE_OUTPUT_FIREWALL_RULES = "IoT_PermissiveOutputFirewallRules"  #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP addresses or Ports.
-    IO_T_PRIVILEGED_DOCKER_OPTIONS = "IoT_PrivilegedDockerOptions"  #: Edge module is configured to run in privileged mode, with extensive Linux capabilities or with host-level network access (send/receive data to host machine).
-    IO_T_SHARED_CREDENTIALS = "IoT_SharedCredentials"  #: Same authentication credentials to the IoT Hub used by multiple devices. This could indicate an illegitimate device impersonating a legitimate device. It also exposes the risk of device impersonation by an attacker.
-    IO_T_VULNERABLE_TLS_CIPHER_SUITE = "IoT_VulnerableTLSCipherSuite"  #: Insecure TLS configurations detected. Immediate upgrade recommended.
-
-class RelationToIpStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether the relation of the mac to the ip address is certain or a guess
-    """
-
-    GUESS = "Guess"
-    CERTAIN = "Certain"
+    #: Authentication schema used for pull an edge module from an ACR repository does not use Service
+    #: Principal Authentication.
+    IO_T_ACRAUTHENTICATION = "IoT_ACRAuthentication"
+    #: IoT agent message size capacity is currently underutilized, causing an increase in the number
+    #: of sent messages. Adjust message intervals for better utilization.
+    IO_T_AGENT_SENDS_UNUTILIZED_MESSAGES = "IoT_AgentSendsUnutilizedMessages"
+    #: Identified security related system configuration issues.
+    IO_T_BASELINE = "IoT_Baseline"
+    #: You can optimize Edge Hub memory usage by turning off protocol heads for any protocols not used
+    #: by Edge modules in your solution.
+    IO_T_EDGE_HUB_MEM_OPTIMIZE = "IoT_EdgeHubMemOptimize"
+    #: Logging is disabled for this edge module.
+    IO_T_EDGE_LOGGING_OPTIONS = "IoT_EdgeLoggingOptions"
+    #: A minority within a device security group has inconsistent Edge Module settings with the rest
+    #: of their group.
+    IO_T_INCONSISTENT_MODULE_SETTINGS = "IoT_InconsistentModuleSettings"
+    #: Install the Azure Security of Things Agent.
+    IO_T_INSTALL_AGENT = "IoT_InstallAgent"
+    #: IP Filter Configuration should have rules defined for allowed traffic and should deny all other
+    #: traffic by default.
+    IO_T_IPFILTER_DENY_ALL = "IoT_IPFilter_DenyAll"
+    #: An Allow IP Filter rules source IP range is too large. Overly permissive rules might expose
+    #: your IoT hub to malicious intenders.
+    IO_T_IPFILTER_PERMISSIVE_RULE = "IoT_IPFilter_PermissiveRule"
+    #: A listening endpoint was found on the device.
+    IO_T_OPEN_PORTS = "IoT_OpenPorts"
+    #: An Allowed firewall policy was found (INPUT/OUTPUT). The policy should Deny all traffic by
+    #: default and define rules to allow necessary communication to/from the device.
+    IO_T_PERMISSIVE_FIREWALL_POLICY = "IoT_PermissiveFirewallPolicy"
+    #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP
+    #: addresses or Ports.
+    IO_T_PERMISSIVE_INPUT_FIREWALL_RULES = "IoT_PermissiveInputFirewallRules"
+    #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP
+    #: addresses or Ports.
+    IO_T_PERMISSIVE_OUTPUT_FIREWALL_RULES = "IoT_PermissiveOutputFirewallRules"
+    #: Edge module is configured to run in privileged mode, with extensive Linux capabilities or with
+    #: host-level network access (send/receive data to host machine).
+    IO_T_PRIVILEGED_DOCKER_OPTIONS = "IoT_PrivilegedDockerOptions"
+    #: Same authentication credentials to the IoT Hub used by multiple devices. This could indicate an
+    #: illegitimate device impersonating a legitimate device. It also exposes the risk of device
+    #: impersonation by an attacker.
+    IO_T_SHARED_CREDENTIALS = "IoT_SharedCredentials"
+    #: Insecure TLS configurations detected. Immediate upgrade recommended.
+    IO_T_VULNERABLE_TLS_CIPHER_SUITE = "IoT_VulnerableTLSCipherSuite"
 
 class ReportedSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Assessed alert severity.
@@ -517,20 +603,29 @@ class ResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the resource regarding a single assessment
     """
 
-    HEALTHY = "Healthy"  #: This assessment on the resource is healthy.
-    NOT_APPLICABLE = "NotApplicable"  #: This assessment is not applicable to this resource.
-    OFF_BY_POLICY = "OffByPolicy"  #: This assessment is turned off by policy on this subscription.
-    NOT_HEALTHY = "NotHealthy"  #: This assessment on the resource is not healthy.
+    #: This assessment on the resource is healthy.
+    HEALTHY = "Healthy"
+    #: This assessment is not applicable to this resource.
+    NOT_APPLICABLE = "NotApplicable"
+    #: This assessment is turned off by policy on this subscription.
+    OFF_BY_POLICY = "OffByPolicy"
+    #: This assessment on the resource is not healthy.
+    NOT_HEALTHY = "NotHealthy"
 
 class RuleSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The rule severity.
     """
 
-    HIGH = "High"  #: High.
-    MEDIUM = "Medium"  #: Medium.
-    LOW = "Low"  #: Low.
-    INFORMATIONAL = "Informational"  #: Informational.
-    OBSOLETE = "Obsolete"  #: Obsolete.
+    #: High.
+    HIGH = "High"
+    #: Medium.
+    MEDIUM = "Medium"
+    #: Low.
+    LOW = "Low"
+    #: Informational.
+    INFORMATIONAL = "Informational"
+    #: Obsolete.
+    OBSOLETE = "Obsolete"
 
 class RuleState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Possible states of the rule
@@ -544,41 +639,47 @@ class RuleStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The rule result status.
     """
 
-    NON_FINDING = "NonFinding"  #: NonFinding.
-    FINDING = "Finding"  #: Finding.
-    INTERNAL_ERROR = "InternalError"  #: InternalError.
+    #: NonFinding.
+    NON_FINDING = "NonFinding"
+    #: Finding.
+    FINDING = "Finding"
+    #: InternalError.
+    INTERNAL_ERROR = "InternalError"
 
 class RuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The rule type.
     """
 
-    BINARY = "Binary"  #: Binary.
-    BASELINE_EXPECTED = "BaselineExpected"  #: BaselineExpected.
-    POSITIVE_LIST = "PositiveList"  #: PositiveList.
-    NEGATIVE_LIST = "NegativeList"  #: NegativeList.
-
-class ScanningFunctionality(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether the device is a scanner
-    """
-
-    SCANNER_DEVICE = "ScannerDevice"
-    NOT_SCANNER_DEVICE = "NotScannerDevice"
+    #: Binary.
+    BINARY = "Binary"
+    #: BaselineExpected.
+    BASELINE_EXPECTED = "BaselineExpected"
+    #: PositiveList.
+    POSITIVE_LIST = "PositiveList"
+    #: NegativeList.
+    NEGATIVE_LIST = "NegativeList"
 
 class ScanState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The scan status.
     """
 
-    FAILED = "Failed"  #: Failed.
-    FAILED_TO_RUN = "FailedToRun"  #: FailedToRun.
-    IN_PROGRESS = "InProgress"  #: InProgress.
-    PASSED = "Passed"  #: Passed.
+    #: Failed.
+    FAILED = "Failed"
+    #: FailedToRun.
+    FAILED_TO_RUN = "FailedToRun"
+    #: InProgress.
+    IN_PROGRESS = "InProgress"
+    #: Passed.
+    PASSED = "Passed"
 
 class ScanTriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The scan trigger type.
     """
 
-    ON_DEMAND = "OnDemand"  #: OnDemand.
-    RECURRING = "Recurring"  #: Recurring.
+    #: OnDemand.
+    ON_DEMAND = "OnDemand"
+    #: Recurring.
+    RECURRING = "Recurring"
 
 class SecurityFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The security family of the discovered solution
@@ -596,14 +697,6 @@ class SecuritySolutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SensorStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the IoT sensor
-    """
-
-    OK = "Ok"
-    DISCONNECTED = "Disconnected"
-    UNAVAILABLE = "Unavailable"
-
 class ServerVulnerabilityAssessmentPropertiesProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioningState of the vulnerability assessment capability on the VM
     """
@@ -615,11 +708,12 @@ class ServerVulnerabilityAssessmentPropertiesProvisioningState(with_metaclass(_C
     DEPROVISIONING = "Deprovisioning"
 
 class SettingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """the kind of the settings string (DataExportSettings)
+    """the kind of the settings string
     """
 
     DATA_EXPORT_SETTINGS = "DataExportSettings"
     ALERT_SUPPRESSION_SETTING = "AlertSuppressionSetting"
+    ALERT_SYNC_SETTINGS = "AlertSyncSettings"
 
 class Severity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The sub-assessment severity level
@@ -633,9 +727,12 @@ class Source(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The platform where the assessed resource resides
     """
 
-    AZURE = "Azure"  #: Resource is in Azure.
-    ON_PREMISE = "OnPremise"  #: Resource in an on premise machine connected to Azure cloud.
-    ON_PREMISE_SQL = "OnPremiseSql"  #: SQL Resource in an on premise machine connected to Azure cloud.
+    #: Resource is in Azure.
+    AZURE = "Azure"
+    #: Resource in an on premise machine connected to Azure cloud.
+    ON_PREMISE = "OnPremise"
+    #: SQL Resource in an on premise machine connected to Azure cloud.
+    ON_PREMISE_SQL = "OnPremiseSql"
 
 class SourceSystem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The source type of the machine group
@@ -651,10 +748,15 @@ class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Aggregative state based on the standard's supported controls states
     """
 
-    PASSED = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state.
-    FAILED = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed.
-    SKIPPED = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped.
-    UNSUPPORTED = "Unsupported"  #: No supported regulatory compliance data for the given standard.
+    #: All supported regulatory compliance controls in the given standard have a passed state.
+    PASSED = "Passed"
+    #: At least one supported regulatory compliance control in the given standard has a state of
+    #: failed.
+    FAILED = "Failed"
+    #: All supported regulatory compliance controls in the given standard have a state of skipped.
+    SKIPPED = "Skipped"
+    #: No supported regulatory compliance data for the given standard.
+    UNSUPPORTED = "Unsupported"
 
 class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the port
@@ -675,9 +777,12 @@ class SubAssessmentStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     """Programmatic code for the status of the assessment
     """
 
-    HEALTHY = "Healthy"  #: The resource is healthy.
-    UNHEALTHY = "Unhealthy"  #: The resource has a security issue that needs to be addressed.
-    NOT_APPLICABLE = "NotApplicable"  #: Assessment for this resource did not happen.
+    #: The resource is healthy.
+    HEALTHY = "Healthy"
+    #: The resource has a security issue that needs to be addressed.
+    UNHEALTHY = "Unhealthy"
+    #: Assessment for this resource did not happen.
+    NOT_APPLICABLE = "NotApplicable"
 
 class Threats(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Threats impact of the assessment
@@ -692,15 +797,6 @@ class Threats(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MISSING_COVERAGE = "missingCoverage"
     DENIAL_OF_SERVICE = "denialOfService"
 
-class TiStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """TI Status of the IoT sensor
-    """
-
-    OK = "Ok"
-    FAILED = "Failed"
-    IN_PROGRESS = "InProgress"
-    UPDATE_AVAILABLE = "UpdateAvailable"
-
 class TransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TCP = "TCP"
@@ -710,8 +806,10 @@ class UnmaskedIpLoggingStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     """Unmasked IP address logging status
     """
 
-    DISABLED = "Disabled"  #: Unmasked IP logging is disabled.
-    ENABLED = "Enabled"  #: Unmasked IP logging is enabled.
+    #: Unmasked IP logging is disabled.
+    DISABLED = "Disabled"
+    #: Unmasked IP logging is enabled.
+    ENABLED = "Enabled"
 
 class UserImpact(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The user impact of the assessment
@@ -725,13 +823,7 @@ class ValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The value type of the items in the list.
     """
 
-    IP_CIDR = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
-    STRING = "String"  #: Any string value.
-
-class VersionKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of the version
-    """
-
-    LATEST = "Latest"
-    PREVIOUS = "Previous"
-    PREVIEW = "Preview"
+    #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    IP_CIDR = "IpCidr"
+    #: Any string value.
+    STRING = "String"

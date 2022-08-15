@@ -7,15 +7,31 @@
 # --------------------------------------------------------------------------
 
 from ._services_operations import ServicesOperations
-from ._operations import Operations
-from ._operation_results_operations import OperationResultsOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._workspaces_operations import WorkspacesOperations
+from ._dicom_services_operations import DicomServicesOperations
+from ._iot_connectors_operations import IotConnectorsOperations
+from ._fhir_destinations_operations import FhirDestinationsOperations
+from ._iot_connector_fhir_destination_operations import IotConnectorFhirDestinationOperations
+from ._fhir_services_operations import FhirServicesOperations
+from ._workspace_private_endpoint_connections_operations import WorkspacePrivateEndpointConnectionsOperations
+from ._workspace_private_link_resources_operations import WorkspacePrivateLinkResourcesOperations
+from ._operations import Operations
+from ._operation_results_operations import OperationResultsOperations
 
 __all__ = [
     'ServicesOperations',
-    'Operations',
-    'OperationResultsOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'WorkspacesOperations',
+    'DicomServicesOperations',
+    'IotConnectorsOperations',
+    'FhirDestinationsOperations',
+    'IotConnectorFhirDestinationOperations',
+    'FhirServicesOperations',
+    'WorkspacePrivateEndpointConnectionsOperations',
+    'WorkspacePrivateLinkResourcesOperations',
+    'Operations',
+    'OperationResultsOperations',
 ]

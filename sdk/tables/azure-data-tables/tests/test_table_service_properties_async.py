@@ -8,7 +8,8 @@
 import time
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.exceptions import HttpResponseError
 
@@ -21,8 +22,9 @@ from async_preparers import tables_decorator_async
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TestTableServicePropertiesAsync(AzureRecordedTestCase, TableTestCase):
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_table_service_properties_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -37,11 +39,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Assert
         assert resp is None
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         self._assert_properties_default(await tsc.get_service_properties())
 
     # --Test cases per feature ---------------------------------------
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_set_logging_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -53,11 +56,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = await tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_set_hour_metrics_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -69,11 +73,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_set_minute_metrics_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -86,11 +91,12 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_set_cors_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -114,12 +120,13 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
         # Assert
         if self.is_live:
-            time.sleep(30)
+            time.sleep(45)
         received_props = await tsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_too_many_cors_rules_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
@@ -132,6 +139,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
             await tsc.set_service_properties(cors=cors)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_retention_too_long_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)

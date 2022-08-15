@@ -6,62 +6,122 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Account
-    from ._models_py3 import AccountList
-    from ._models_py3 import AccountUpdate
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Instance
-    from ._models_py3 import InstanceList
-    from ._models_py3 import IotHubSettings
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import Resource
-    from ._models_py3 import TagUpdate
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import Account  # type: ignore
-    from ._models import AccountList  # type: ignore
-    from ._models import AccountUpdate  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Instance  # type: ignore
-    from ._models import InstanceList  # type: ignore
-    from ._models import IotHubSettings  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import TagUpdate  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import Account
+from ._models_py3 import AccountList
+from ._models_py3 import AccountUpdate
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import ConnectionDetails
+from ._models_py3 import DiagnosticStorageProperties
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import GroupConnectivityInformation
+from ._models_py3 import GroupInformation
+from ._models_py3 import GroupInformationProperties
+from ._models_py3 import Instance
+from ._models_py3 import InstanceList
+from ._models_py3 import IotHubSettings
+from ._models_py3 import Location
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateEndpointConnectionProxy
+from ._models_py3 import PrivateEndpointConnectionProxyListResult
+from ._models_py3 import PrivateEndpointConnectionProxyProperties
+from ._models_py3 import PrivateEndpointUpdate
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkResourceProperties
+from ._models_py3 import PrivateLinkServiceConnection
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import PrivateLinkServiceProxy
+from ._models_py3 import PrivateLinkServiceProxyRemotePrivateEndpointConnection
+from ._models_py3 import ProxyResource
+from ._models_py3 import RemotePrivateEndpoint
+from ._models_py3 import RemotePrivateEndpointConnection
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TagUpdate
+from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
+
 
 from ._device_update_enums import (
     ActionType,
+    AuthenticationType,
+    CheckNameAvailabilityReason,
+    CreatedByType,
+    GroupIdProvisioningState,
+    ManagedServiceIdentityType,
     Origin,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointConnectionProxyProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
     ProvisioningState,
+    PublicNetworkAccess,
+    Role,
+    SKU,
 )
 
 __all__ = [
     'Account',
     'AccountList',
     'AccountUpdate',
+    'CheckNameAvailabilityRequest',
+    'CheckNameAvailabilityResponse',
+    'ConnectionDetails',
+    'DiagnosticStorageProperties',
     'ErrorAdditionalInfo',
-    'ErrorDefinition',
+    'ErrorDetail',
     'ErrorResponse',
+    'GroupConnectivityInformation',
+    'GroupInformation',
+    'GroupInformationProperties',
     'Instance',
     'InstanceList',
     'IotHubSettings',
+    'Location',
+    'ManagedServiceIdentity',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateEndpointConnectionProxy',
+    'PrivateEndpointConnectionProxyListResult',
+    'PrivateEndpointConnectionProxyProperties',
+    'PrivateEndpointUpdate',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkServiceConnection',
+    'PrivateLinkServiceConnectionState',
+    'PrivateLinkServiceProxy',
+    'PrivateLinkServiceProxyRemotePrivateEndpointConnection',
+    'ProxyResource',
+    'RemotePrivateEndpoint',
+    'RemotePrivateEndpointConnection',
     'Resource',
+    'SystemData',
     'TagUpdate',
     'TrackedResource',
+    'UserAssignedIdentity',
     'ActionType',
+    'AuthenticationType',
+    'CheckNameAvailabilityReason',
+    'CreatedByType',
+    'GroupIdProvisioningState',
+    'ManagedServiceIdentityType',
     'Origin',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointConnectionProxyProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
     'ProvisioningState',
+    'PublicNetworkAccess',
+    'Role',
+    'SKU',
 ]

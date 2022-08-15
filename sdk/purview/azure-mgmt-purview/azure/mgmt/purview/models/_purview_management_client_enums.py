@@ -26,6 +26,24 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that last modified the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class Name(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the sku name.
     """
@@ -44,6 +62,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SOFT_DELETED = "SoftDeleted"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
 
 class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the public network access.
@@ -61,6 +80,8 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALREADY_EXISTS = "AlreadyExists"
 
 class ScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The scope where the default account is set.
+    """
 
     TENANT = "Tenant"
     SUBSCRIPTION = "Subscription"

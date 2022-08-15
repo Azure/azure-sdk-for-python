@@ -50,7 +50,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -136,28 +136,8 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = kwargs.get('error', None)
 
 
-class EventHandlerSettings(msrest.serialization.Model):
-    """The settings for event handler in webpubsub service.
-
-    :param items: Get or set the EventHandler items. The key is the hub name and the value is the
-     corresponding EventHandlerTemplate.
-    :type items: dict[str, list[~azure.mgmt.webpubsub.models.EventHandlerTemplate]]
-    """
-
-    _attribute_map = {
-        'items': {'key': 'items', 'type': '{[EventHandlerTemplate]}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EventHandlerSettings, self).__init__(**kwargs)
-        self.items = kwargs.get('items', None)
-
-
-class EventHandlerTemplate(msrest.serialization.Model):
-    """EventHandler template item settings.
+class EventHandler(msrest.serialization.Model):
+    """Properties of event handler.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -177,15 +157,8 @@ class EventHandlerTemplate(msrest.serialization.Model):
      and "event2"
         3. The single event name, for example, "event1", it matches "event1".
     :type user_event_pattern: str
-    :param system_event_pattern: Gets ot sets the system event pattern.
-     There are 2 kind of patterns supported:
-    
-     .. code-block::
-    
-        1. The single event name, for example, "connect", it matches "connect"
-        2. Combine multiple events with ",", for example "connect,disconnected", it matches event
-     "connect" and "disconnected".
-    :type system_event_pattern: str
+    :param system_events: Gets ot sets the list of system events.
+    :type system_events: list[str]
     :param auth: Gets or sets the auth settings for an event handler. If not set, no auth is used.
     :type auth: ~azure.mgmt.webpubsub.models.UpstreamAuthSettings
     """
@@ -197,7 +170,7 @@ class EventHandlerTemplate(msrest.serialization.Model):
     _attribute_map = {
         'url_template': {'key': 'urlTemplate', 'type': 'str'},
         'user_event_pattern': {'key': 'userEventPattern', 'type': 'str'},
-        'system_event_pattern': {'key': 'systemEventPattern', 'type': 'str'},
+        'system_events': {'key': 'systemEvents', 'type': '[str]'},
         'auth': {'key': 'auth', 'type': 'UpstreamAuthSettings'},
     }
 
@@ -205,11 +178,66 @@ class EventHandlerTemplate(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(EventHandlerTemplate, self).__init__(**kwargs)
+        super(EventHandler, self).__init__(**kwargs)
         self.url_template = kwargs['url_template']
         self.user_event_pattern = kwargs.get('user_event_pattern', None)
-        self.system_event_pattern = kwargs.get('system_event_pattern', None)
+        self.system_events = kwargs.get('system_events', None)
         self.auth = kwargs.get('auth', None)
+
+
+class LiveTraceCategory(msrest.serialization.Model):
+    """Live trace category configuration of a Microsoft.SignalRService resource.
+
+    :param name: Gets or sets the live trace category's name.
+     Available values: ConnectivityLogs, MessagingLogs.
+     Case insensitive.
+    :type name: str
+    :param enabled: Indicates whether or the live trace category is enabled.
+     Available values: true, false.
+     Case insensitive.
+    :type enabled: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LiveTraceCategory, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
+class LiveTraceConfiguration(msrest.serialization.Model):
+    """Live trace configuration of a Microsoft.SignalRService resource.
+
+    :param enabled: Indicates whether or not enable live trace.
+     When it's set to true, live trace client can connect to the service.
+     Otherwise, live trace client can't connect to the service, so that you are unable to receive
+     any log, no matter what you configure in "categories".
+     Available values: true, false.
+     Case insensitive.
+    :type enabled: str
+    :param categories: Gets or sets the list of category configurations.
+    :type categories: list[~azure.mgmt.webpubsub.models.LiveTraceCategory]
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'str'},
+        'categories': {'key': 'categories', 'type': '[LiveTraceCategory]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LiveTraceConfiguration, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', "false")
+        self.categories = kwargs.get('categories', None)
 
 
 class LogSpecification(msrest.serialization.Model):
@@ -683,6 +711,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
     :param private_endpoint: Private endpoint associated with the private endpoint connection.
     :type private_endpoint: ~azure.mgmt.webpubsub.models.PrivateEndpoint
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :param private_link_service_connection_state: Connection state.
     :type private_link_service_connection_state:
      ~azure.mgmt.webpubsub.models.PrivateLinkServiceConnectionState
@@ -694,6 +724,7 @@ class PrivateEndpointConnection(ProxyResource):
         'type': {'readonly': True},
         'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'group_ids': {'readonly': True},
     }
 
     _attribute_map = {
@@ -703,6 +734,7 @@ class PrivateEndpointConnection(ProxyResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
     }
 
@@ -714,6 +746,7 @@ class PrivateEndpointConnection(ProxyResource):
         self.system_data = None
         self.provisioning_state = None
         self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.group_ids = None
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
 
 
@@ -850,7 +883,7 @@ class RegenerateKeyParameters(msrest.serialization.Model):
     """Parameters describes the request to regenerate access keys.
 
     :param key_type: The keyType to regenerate. Must be either 'primary' or
-     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary".
+     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary", "Salt".
     :type key_type: str or ~azure.mgmt.webpubsub.models.KeyType
     """
 
@@ -864,6 +897,52 @@ class RegenerateKeyParameters(msrest.serialization.Model):
     ):
         super(RegenerateKeyParameters, self).__init__(**kwargs)
         self.key_type = kwargs.get('key_type', None)
+
+
+class ResourceLogCategory(msrest.serialization.Model):
+    """Resource log category configuration of a Microsoft.SignalRService resource.
+
+    :param name: Gets or sets the resource log category's name.
+     Available values: ConnectivityLogs, MessagingLogs.
+     Case insensitive.
+    :type name: str
+    :param enabled: Indicates whether or the resource log category is enabled.
+     Available values: true, false.
+     Case insensitive.
+    :type enabled: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceLogCategory, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
+class ResourceLogConfiguration(msrest.serialization.Model):
+    """Resource log configuration of a Microsoft.SignalRService resource.
+
+    :param categories: Gets or sets the list of category configurations.
+    :type categories: list[~azure.mgmt.webpubsub.models.ResourceLogCategory]
+    """
+
+    _attribute_map = {
+        'categories': {'key': 'categories', 'type': '[ResourceLogCategory]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceLogConfiguration, self).__init__(**kwargs)
+        self.categories = kwargs.get('categories', None)
 
 
 class ResourceSku(msrest.serialization.Model):
@@ -1172,6 +1251,118 @@ class SignalRServiceUsageName(msrest.serialization.Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class Sku(msrest.serialization.Model):
+    """Describes an available sku.".
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_type: The resource type that this object applies to.
+    :vartype resource_type: str
+    :ivar sku: The exact set of keys that define this sku.
+    :vartype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+    :ivar capacity: Specifies the unit of the resource.
+    :vartype capacity: ~azure.mgmt.webpubsub.models.SkuCapacity
+    """
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'sku': {'readonly': True},
+        'capacity': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'ResourceSku'},
+        'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Sku, self).__init__(**kwargs)
+        self.resource_type = None
+        self.sku = None
+        self.capacity = None
+
+
+class SkuCapacity(msrest.serialization.Model):
+    """Describes scaling information of a sku.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar minimum: The lowest permitted capacity for this resource.
+    :vartype minimum: int
+    :ivar maximum: The highest permitted capacity for this resource.
+    :vartype maximum: int
+    :ivar default: The default capacity.
+    :vartype default: int
+    :ivar allowed_values: Allows capacity value list.
+    :vartype allowed_values: list[int]
+    :ivar scale_type: The scale type applicable to the sku. Possible values include: "None",
+     "Manual", "Automatic".
+    :vartype scale_type: str or ~azure.mgmt.webpubsub.models.ScaleType
+    """
+
+    _validation = {
+        'minimum': {'readonly': True},
+        'maximum': {'readonly': True},
+        'default': {'readonly': True},
+        'allowed_values': {'readonly': True},
+        'scale_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+        'allowed_values': {'key': 'allowedValues', 'type': '[int]'},
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuCapacity, self).__init__(**kwargs)
+        self.minimum = None
+        self.maximum = None
+        self.default = None
+        self.allowed_values = None
+        self.scale_type = None
+
+
+class SkuList(msrest.serialization.Model):
+    """The list skus operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of skus available for the resource.
+    :vartype value: list[~azure.mgmt.webpubsub.models.Sku]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Sku]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -1310,51 +1501,102 @@ class UserAssignedIdentityProperty(msrest.serialization.Model):
         self.client_id = None
 
 
-class WebPubSubFeature(msrest.serialization.Model):
-    """Feature of a resource, which controls the runtime behavior.
+class WebPubSubHub(ProxyResource):
+    """A hub setting.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param flag: Required. FeatureFlags is the supported features of Azure SignalR service.
-    
-    
-     * EnableConnectivityLogs: "true"/"false", to enable/disable the connectivity log category
-     respectively.
-     * EnableMessagingLogs: "true"/"false", to enable/disable the connectivity log category
-     respectively.
-     * EnableLiveTrace: Live Trace allows you to know what's happening inside Azure SignalR
-     service, it will give you live traces in real time, it will be helpful when you developing your
-     own Azure SignalR based web application or self-troubleshooting some issues. Please note that
-     live traces are counted as outbound messages that will be charged. Values allowed:
-     "true"/"false", to enable/disable live trace feature. Possible values include:
-     "EnableConnectivityLogs", "EnableMessagingLogs", "EnableLiveTrace".
-    :type flag: str or ~azure.mgmt.webpubsub.models.FeatureFlags
-    :param value: Required. Value of the feature flag. See Azure SignalR service document
-     https://docs.microsoft.com/azure/azure-signalr/ for allowed values.
-    :type value: str
-    :param properties: Optional properties related to this feature.
-    :type properties: dict[str, str]
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
+    :param properties: Required. Properties of the hub setting.
+    :type properties: ~azure.mgmt.webpubsub.models.WebPubSubHubProperties
     """
 
     _validation = {
-        'flag': {'required': True},
-        'value': {'required': True, 'max_length': 128, 'min_length': 1},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
-        'flag': {'key': 'flag', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'WebPubSubHubProperties'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(WebPubSubFeature, self).__init__(**kwargs)
-        self.flag = kwargs['flag']
-        self.value = kwargs['value']
-        self.properties = kwargs.get('properties', None)
+        super(WebPubSubHub, self).__init__(**kwargs)
+        self.system_data = None
+        self.properties = kwargs['properties']
+
+
+class WebPubSubHubList(msrest.serialization.Model):
+    """Hub setting list.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param value: List of hub settings to this resource.
+    :type value: list[~azure.mgmt.webpubsub.models.WebPubSubHub]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[WebPubSubHub]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebPubSubHubList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = None
+
+
+class WebPubSubHubProperties(msrest.serialization.Model):
+    """Properties of a hub.
+
+    :param event_handlers: Event handler of a hub.
+    :type event_handlers: list[~azure.mgmt.webpubsub.models.EventHandler]
+    :param anonymous_connect_policy: The settings for configuring if anonymous connections are
+     allowed for this hub: "allow" or "deny". Default to "deny".
+    :type anonymous_connect_policy: str
+    """
+
+    _attribute_map = {
+        'event_handlers': {'key': 'eventHandlers', 'type': '[EventHandler]'},
+        'anonymous_connect_policy': {'key': 'anonymousConnectPolicy', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebPubSubHubProperties, self).__init__(**kwargs)
+        self.event_handlers = kwargs.get('event_handlers', None)
+        self.anonymous_connect_policy = kwargs.get('anonymous_connect_policy', "deny")
 
 
 class WebPubSubKeys(msrest.serialization.Model):
@@ -1464,17 +1706,17 @@ class WebPubSubResource(TrackedResource):
      list[~azure.mgmt.webpubsub.models.SharedPrivateLinkResource]
     :param tls: TLS settings.
     :type tls: ~azure.mgmt.webpubsub.models.WebPubSubTlsSettings
-    :param features: List of the featureFlags.
-    
-     FeatureFlags that are not included in the parameters for the update operation will not be
-     modified.
-     And the response will only include featureFlags that are explicitly set.
-     When a featureFlag is not explicitly set, its globally default value will be used
-     But keep in mind, the default value doesn't mean "false". It varies in terms of different
-     FeatureFlags.
-    :type features: list[~azure.mgmt.webpubsub.models.WebPubSubFeature]
-    :param event_handler: The settings for event handler in webpubsub service.
-    :type event_handler: ~azure.mgmt.webpubsub.models.EventHandlerSettings
+    :ivar host_name_prefix: Deprecated.
+    :vartype host_name_prefix: str
+    :param live_trace_configuration: Live trace configuration of a Microsoft.SignalRService
+     resource.
+    :type live_trace_configuration: ~azure.mgmt.webpubsub.models.LiveTraceConfiguration
+    :param resource_log_configuration: Resource log configuration of a Microsoft.SignalRService
+     resource.
+     If resourceLogConfiguration isn't null or empty, it will override options
+     "EnableConnectivityLog" and "EnableMessagingLogs" in features.
+     Otherwise, use options "EnableConnectivityLog" and "EnableMessagingLogs" in features.
+    :type resource_log_configuration: ~azure.mgmt.webpubsub.models.ResourceLogConfiguration
     :param network_ac_ls: Network ACLs.
     :type network_ac_ls: ~azure.mgmt.webpubsub.models.WebPubSubNetworkACLs
     :param public_network_access: Enable or disable public network access. Default to "Enabled".
@@ -1482,6 +1724,14 @@ class WebPubSubResource(TrackedResource):
      When it's Disabled, public network access is always disabled no matter what you set in network
      ACLs.
     :type public_network_access: str
+    :param disable_local_auth: DisableLocalAuth
+     Enable or disable local auth with AccessKey
+     When set as true, connection with AccessKey=xxx won't work.
+    :type disable_local_auth: bool
+    :param disable_aad_auth: DisableLocalAuth
+     Enable or disable aad auth
+     When set as true, connection with AuthType=aad won't work.
+    :type disable_aad_auth: bool
     """
 
     _validation = {
@@ -1497,6 +1747,7 @@ class WebPubSubResource(TrackedResource):
         'version': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
         'shared_private_link_resources': {'readonly': True},
+        'host_name_prefix': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1517,10 +1768,13 @@ class WebPubSubResource(TrackedResource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
         'tls': {'key': 'properties.tls', 'type': 'WebPubSubTlsSettings'},
-        'features': {'key': 'properties.features', 'type': '[WebPubSubFeature]'},
-        'event_handler': {'key': 'properties.eventHandler', 'type': 'EventHandlerSettings'},
+        'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
+        'live_trace_configuration': {'key': 'properties.liveTraceConfiguration', 'type': 'LiveTraceConfiguration'},
+        'resource_log_configuration': {'key': 'properties.resourceLogConfiguration', 'type': 'ResourceLogConfiguration'},
         'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'WebPubSubNetworkACLs'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'disable_aad_auth': {'key': 'properties.disableAadAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -1540,10 +1794,13 @@ class WebPubSubResource(TrackedResource):
         self.private_endpoint_connections = None
         self.shared_private_link_resources = None
         self.tls = kwargs.get('tls', None)
-        self.features = kwargs.get('features', None)
-        self.event_handler = kwargs.get('event_handler', None)
+        self.host_name_prefix = None
+        self.live_trace_configuration = kwargs.get('live_trace_configuration', None)
+        self.resource_log_configuration = kwargs.get('resource_log_configuration', None)
         self.network_ac_ls = kwargs.get('network_ac_ls', None)
         self.public_network_access = kwargs.get('public_network_access', "Enabled")
+        self.disable_local_auth = kwargs.get('disable_local_auth', False)
+        self.disable_aad_auth = kwargs.get('disable_aad_auth', False)
 
 
 class WebPubSubResourceList(msrest.serialization.Model):
@@ -1587,4 +1844,4 @@ class WebPubSubTlsSettings(msrest.serialization.Model):
         **kwargs
     ):
         super(WebPubSubTlsSettings, self).__init__(**kwargs)
-        self.client_cert_enabled = kwargs.get('client_cert_enabled', None)
+        self.client_cert_enabled = kwargs.get('client_cert_enabled', True)

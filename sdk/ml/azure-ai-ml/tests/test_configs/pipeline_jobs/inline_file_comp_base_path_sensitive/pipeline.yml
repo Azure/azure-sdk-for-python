@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: pipeline_with_inline_file_comp_base_path_sensitive
+description: With path sensitive attribute in different levels (pipeline/node/component/component.environment).
+
+jobs:
+  command_node:
+    type: command
+    component: file:./component/component.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      iris:
+        type: uri_file
+        path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    environment:
+      build:
+        path: ../../environment/environment_files
+        dockerfile_path: DockerfileNonDefault
+  command_node_file_ref:
+    type: command
+    component: ./component/component.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      iris:
+        type: uri_file
+        path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    environment:
+      build:
+        path: ../../environment/environment_files
+        dockerfile_path: DockerfileNonDefault

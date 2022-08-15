@@ -44,7 +44,7 @@ class RegulatoryComplianceStandardsOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RegulatoryComplianceStandardList"]:
         """Supported regulatory compliance standards details and state.
 
@@ -115,7 +115,7 @@ class RegulatoryComplianceStandardsOperations:
     async def get(
         self,
         regulatory_compliance_standard_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegulatoryComplianceStandard":
         """Supported regulatory compliance details state for selected standard.
 

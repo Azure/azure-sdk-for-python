@@ -8,6 +8,7 @@ from ..._exceptions import CredentialUnavailableError
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import _VSCodeCredentialBase
 
 if TYPE_CHECKING:
@@ -39,26 +40,34 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         if self._client:
             await self._client.__aexit__()
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
-          Studio Code
+            Studio Code
         """
         if self._unavailable_reason:
-            raise CredentialUnavailableError(message=self._unavailable_reason)
+            error_message = self._unavailable_reason \
+                            + '\n' \
+                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
+                              " to troubleshoot this issue."
+            raise CredentialUnavailableError(message=error_message)
         if not self._client:
             raise CredentialUnavailableError("Initialization failed")
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes)
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         refresh_token = self._get_refresh_token()

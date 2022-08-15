@@ -24,13 +24,14 @@ from ._shared.models import(
     UserDelegationKey
 )
 from ._generated.models import (
-    RehydratePriority
+    RehydratePriority,
 )
 from ._models import (
     BlobType,
     BlockState,
     StandardBlobTier,
     PremiumPageBlobTier,
+    BlobImmutabilityPolicyMode,
     SequenceNumberAction,
     PublicAccess,
     BlobAnalyticsLogging,
@@ -54,10 +55,12 @@ from ._models import (
     BlobQueryError,
     DelimitedJsonDialect,
     DelimitedTextDialect,
+    QuickQueryDialect,
     ArrowDialect,
     ArrowType,
     ObjectReplicationPolicy,
-    ObjectReplicationRule
+    ObjectReplicationRule,
+    ImmutabilityPolicy
 )
 from ._list_blobs_helper import BlobPrefix
 
@@ -67,7 +70,7 @@ __version__ = VERSION
 def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        credential=None,  # type: Any
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs):
     # type: (...) -> Dict[str, Any]
     """Upload data to a given URL
@@ -82,10 +85,12 @@ def upload_blob_to_url(
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword bool overwrite:
         Whether the blob to be uploaded should overwrite the current data.
         If True, upload_blob_to_url will overwrite any existing data. If set to False, the
@@ -124,7 +129,7 @@ def _download_to_stream(client, handle, **kwargs):
 def download_blob_from_url(
         blob_url,  # type: str
         output,  # type: str
-        credential=None,  # type: Any
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs):
     # type: (...) -> None
     """Download the contents of a blob to a local file or stream.
@@ -138,10 +143,12 @@ def download_blob_from_url(
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials,
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword bool overwrite:
         Whether the local file should be overwritten if it already exists. The default value is
         `False` - in which case a ValueError will be raised if the file already exists. If set to
@@ -194,6 +201,8 @@ __all__ = [
     'StandardBlobTier',
     'PremiumPageBlobTier',
     'SequenceNumberAction',
+    'BlobImmutabilityPolicyMode',
+    'ImmutabilityPolicy',
     'PublicAccess',
     'BlobAnalyticsLogging',
     'Metrics',
@@ -210,6 +219,7 @@ __all__ = [
     'BlobBlock',
     'PageRange',
     'AccessPolicy',
+    'QuickQueryDialect',
     'ContainerSasPermissions',
     'BlobSasPermissions',
     'ResourceTypes',

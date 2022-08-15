@@ -1,0 +1,18 @@
+version: "2" 
+services:
+
+  # Zipkin
+  zipkin-all-in-one:
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
+  # spell-checker:ignore OTELCOL
+  otel-collector: 
+    image: otel/opentelemetry-collector:latest 
+    command: ["--config=/etc/otel-collector-config.yaml", "${OTELCOL_ARGS}"] 
+    volumes: 
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml 
+    ports: 
+      - "4317:4317"       # OTLP gRPC receiver
+    depends_on:
+      - zipkin-all-in-one

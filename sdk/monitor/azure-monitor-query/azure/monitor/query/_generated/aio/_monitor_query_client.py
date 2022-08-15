@@ -16,8 +16,8 @@ from ._configuration import MonitorQueryClientConfiguration
 from .operations import QueryOperations
 from .operations import MetadataOperations
 from .operations import MetricDefinitionsOperations
-from .operations import MetricNamespacesOperations
 from .operations import MetricsOperations
+from .operations import MetricNamespacesOperations
 from .. import models
 
 
@@ -30,10 +30,10 @@ class MonitorQueryClient(object):
     :vartype metadata: monitor_query_client.aio.operations.MetadataOperations
     :ivar metric_definitions: MetricDefinitionsOperations operations
     :vartype metric_definitions: monitor_query_client.aio.operations.MetricDefinitionsOperations
-    :ivar metric_namespaces: MetricNamespacesOperations operations
-    :vartype metric_namespaces: monitor_query_client.aio.operations.MetricNamespacesOperations
     :ivar metrics: MetricsOperations operations
     :vartype metrics: monitor_query_client.aio.operations.MetricsOperations
+    :ivar metric_namespaces: MetricNamespacesOperations operations
+    :vartype metric_namespaces: monitor_query_client.aio.operations.MetricNamespacesOperations
     :param host: server parameter.
     :type host: str
     :param str base_url: Service URL
@@ -61,9 +61,9 @@ class MonitorQueryClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.metric_definitions = MetricDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.metric_namespaces = MetricNamespacesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.metrics = MetricsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.metric_namespaces = MetricNamespacesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:

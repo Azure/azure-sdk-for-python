@@ -1,0 +1,31 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: '{{ .Release.Name }}-{{ .Release.Revision }}'
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    experiment.chaos-mesh.org/pause: 'true'
+  labels:
+    scenario: 'stress'
+    release: '{{ .Release.Name }}'
+    revision: '{{ .Release.Revision }}'
+spec:
+  scheduler:
+    cron: '@every 30s'
+  duration: '10s'
+  action: loss
+  direction: to
+  externalTargets:
+    - 'servicebus.windows.net'
+  mode: one
+  selector:
+    labelSelectors:
+      testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
+      chaos: 'true'
+    namespaces:
+      - {{ .Release.Namespace }}
+    podPhaseSelectors:
+      - 'Running'
+  loss:
+    loss: '100'
+    correlation: '100'

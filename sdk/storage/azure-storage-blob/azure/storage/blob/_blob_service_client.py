@@ -5,35 +5,35 @@
 # --------------------------------------------------------------------------
 
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+    Any, Dict, List, Optional, TypeVar, Union,
     TYPE_CHECKING
 )
+from urllib.parse import urlparse
 
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
-
-from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
-from ._shared.models import LocationMode
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.models import LocationMode
 from ._shared.parser import _to_utc_datetime
-from ._shared.response_handlers import return_response_headers, process_storage_error, \
+from ._shared.response_handlers import (
+    return_response_headers,
+    process_storage_error,
     parse_to_internal_user_delegation_key
+)
 from ._generated import AzureBlobStorage
 from ._generated.models import StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import ContainerPropertiesPaged
-from ._list_blobs_helper import FilteredBlobPaged
-from ._serialize import get_api_version
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
+from ._encryption import StorageEncryptionMixin
+from ._list_blobs_helper import FilteredBlobPaged
+from ._models import ContainerPropertiesPaged
+from ._serialize import get_api_version
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -51,8 +51,10 @@ if TYPE_CHECKING:
         FilteredBlob
     )
 
+ClassType = TypeVar("ClassType")
 
-class BlobServiceClient(StorageAccountHostsMixin):
+
+class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -61,7 +63,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
     can also be retrieved using the `get_client` functions.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
     #optional-configuration>`_.
 
     :param str account_url:
@@ -71,13 +73,15 @@ class BlobServiceClient(StorageAccountHostsMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -116,7 +120,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -132,9 +136,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
+        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -144,10 +148,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
-        ):  # type: (...) -> BlobServiceClient
+        ):  # type: (...) -> ClassType
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
@@ -156,9 +161,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A Blob service client.
         :rtype: ~azure.storage.blob.BlobServiceClient
 
@@ -402,6 +409,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Specifies that deleted containers to be returned in the response. This is for container restore enabled
             account. The default value is `False`.
             .. versionadded:: 12.4.0
+        :keyword bool include_system:
+            Flag specifying that system containers should be included.
+            .. versionadded:: 12.10.0
         :keyword int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
@@ -423,6 +433,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         include_deleted = kwargs.pop('include_deleted', None)
         if include_deleted:
             include.append("deleted")
+        include_system = kwargs.pop('include_system', None)
+        if include_system:
+            include.append("system")
 
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -624,14 +637,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Specifies the name of the deleted container to restore.
         :param str deleted_container_version:
             Specifies the version of the deleted container to restore.
-        :keyword str new_name:
-            The new name for the deleted container to be restored to.
-            If not specified deleted_container_name will be used as the restored container name.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         new_name = kwargs.pop('new_name', None)
+        if new_name:
+            warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
             container._client.container.restore(deleted_container_name=deleted_container_name,  # pylint: disable = protected-access
@@ -675,8 +687,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             self.url, container_name=container_name,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
@@ -728,5 +740,5 @@ class BlobServiceClient(StorageAccountHostsMixin):
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
+            require_encryption=self.require_encryption, encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)

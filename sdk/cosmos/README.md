@@ -6,7 +6,7 @@ Use the Azure Cosmos DB SQL API SDKs for application development and database ma
 
 ## Contents of this folder
 
-### [azure-cosmos](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/cosmos/azure-cosmos)
+### [azure-cosmos](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos)
 
 This is the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service. High level capabilities are:
 
@@ -17,7 +17,7 @@ This is the Azure Cosmos DB SQL API SDK for Python to manage databases and the J
 
 Use this package if you are creating an application or exploring data.
 
-### [azure-mgmt-cosmosdb](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/cosmos/azure-mgmt-cosmosdb)
+### [azure-mgmt-cosmosdb](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-mgmt-cosmosdb)
 
 This is the Microsoft Azure Cosmos DB Management Client Library. High level capabilities are:
 
@@ -34,7 +34,7 @@ This is the Microsoft Azure Cosmos DB Management Client Library. High level capa
 
 Use this package if you are creating an account level management application.
 
-### [azure-mgmt-documentdb](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/cosmos/azure-mgmt-documentdb)
+### [azure-mgmt-documentdb](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-mgmt-documentdb)
 
 Legacy DocumentDB SDK.
 

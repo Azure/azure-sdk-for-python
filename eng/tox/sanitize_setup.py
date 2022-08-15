@@ -9,6 +9,7 @@
 
 import argparse
 import sys
+import re
 import os
 import logging
 import glob
@@ -96,7 +97,7 @@ def process_requires(setup_py_path):
     requires = [
         Requirement.parse(r)
         for r in get_install_requires(setup_py_path)
-        if r.startswith("azure") and "-nspkg" not in r
+        if r.startswith("azure")
     ]
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}
@@ -109,7 +110,20 @@ def process_requires(setup_py_path):
             version = get_version(pkg_name)
             base_version = get_base_version(pkg_name)
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
-            new_req = old_req.replace(version, "{}{}".format(base_version, DEV_BUILD_IDENTIFIER))
+            # to properly replace the version, we must replace the entire version, not a partial piece of it
+            #       {} =             <must have a base version>
+            #       (                <optionally, we have a prerelease version>
+            #        (               <we must have 0 or 1 prerelease versions>
+            #            (a|b|rc)    <we must have a prelease identifier>
+            #            \d+         <followed by a number of digits N>
+            #        )?
+            #        (               <optionally, we have a postrelease version>
+            #            \.post      <which is ".post">
+            #            \d+         <followed by number of digits N>
+            #        )?
+            #       )?
+            rx = r'{}(((a|b|rc)\d+)?(\.post\d+)?)?'.format(base_version)
+            new_req = re.sub(rx, "{}{}1".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 

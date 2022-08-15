@@ -1,8 +1,10 @@
 azure-core>=0.0.0b1
 azure-identity>=0.0.0b1
 azure-cosmos>=4.0.0b5
-azure-eventhub>=0.0.0b1
+azure-eventhub>=0.0.0b1,!=5.8.0a1
 azure-keyvault-certificates>=0.0.0b1
 azure-keyvault-keys>=0.0.0b1
 azure-keyvault-secrets>=0.0.0b1
 azure-storage-blob>=0.0.0b1
+# Required for template release to trigger smoke tests
+azure-template>=0.0.0b1

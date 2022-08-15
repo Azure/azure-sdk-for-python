@@ -38,12 +38,6 @@ parameters:
   - name: JobName
     type: string
     default: 'Test'
-  - name: AllocateResourceGroup
-    type: boolean
-    default: true
-  - name: DeployArmTemplate
-    type: boolean
-    default: false
   - name: TestTimeoutInMinutes
     type: number
     default: 120
@@ -55,7 +49,7 @@ parameters:
     default: 'Public'
   - name: SupportedClouds
     type: string
-    default: 'Public,Canary'
+    default: 'Public'
   - name: CloudConfig
     type: object
     default:
@@ -92,12 +86,12 @@ parameters:
   - name: PlatformPostSteps
     type: object
     default: []
+  - name: TestProxy
+    type: boolean
+    default: false
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
-  # TODO: re-enable tests-weekly allow filter once sovereign cloud live tests are stable: https://github.com/Azure/azure-sdk/issues/2074
-  # Run all clouds by default for weekly test pipeline, except for clouds specifically unsupported by the calling pipeline
-  # - ${{ if or(contains(parameters.Clouds, cloud.key), contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
   - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
     - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
       - stage: ${{ cloud.key }}_${{ parameters.JobName }}
@@ -105,6 +99,9 @@ stages:
         jobs:
         - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
           parameters:
+            SparseCheckoutPaths:
+              # Python recording files are implicit excluded here since they are using '.yaml' file extension.
+              - "sdk/${{ parameters.ServiceDirectory }}/**/*.json"
             JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
             AdditionalParameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -123,9 +120,8 @@ stages:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
-              AllocateResourceGroup: ${{ parameters.AllocateResourceGroup }}
-              DeployArmTemplate: ${{ parameters.DeployArmTemplate }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+              TestProxy: ${{ parameters.TestProxy }}
             MatrixConfigs:
               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
               - ${{ each config in parameters.MatrixConfigs }}:

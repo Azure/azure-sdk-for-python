@@ -1,41 +1,33 @@
-# --------------------------------------------------------------------------
-#
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 # --------------------------------------------------------------------------
-import platform
-import sys
 
-# fixture needs to be visible from conftest
-from _shared.testcase import storage_account
+import os
 
-# Ignore async tests for Python < 3.5
-collect_ignore_glob = []
-if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
-    collect_ignore_glob.append("*_async.py")
+import pytest
 
-def pytest_configure(config):
-    # register an additional marker
-    config.addinivalue_line(
-        "usefixtures", "storage_account"
-    )
+from devtools_testutils import (
+    add_general_regex_sanitizer,
+    add_header_regex_sanitizer,
+    add_oauth_response_sanitizer,
+    add_uri_regex_sanitizer,
+    test_proxy
+)
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    tenant_id = os.environ.get("STORAGE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_oauth_response_sanitizer()
+
+    add_header_regex_sanitizer(key="x-ms-copy-source-authorization", value="Sanitized")
+    add_header_regex_sanitizer(key="x-ms-encryption-key", value="Sanitized")
+    add_header_regex_sanitizer(key="x-ms-encryption-key-sha256", value="Sanitized")
+
+    add_uri_regex_sanitizer(regex=r"\.preprod\.", value=".")

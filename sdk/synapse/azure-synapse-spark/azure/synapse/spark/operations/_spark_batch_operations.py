@@ -109,7 +109,7 @@ class SparkBatchOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_batch_jobs.metadata = {'url': '/batches'}  # type: ignore
+    get_spark_batch_jobs.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}  # type: ignore
 
     def create_spark_batch_job(
         self,
@@ -174,7 +174,7 @@ class SparkBatchOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_spark_batch_job.metadata = {'url': '/batches'}  # type: ignore
+    create_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}  # type: ignore
 
     def get_spark_batch_job(
         self,
@@ -235,7 +235,7 @@ class SparkBatchOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_batch_job.metadata = {'url': '/batches/{batchId}'}  # type: ignore
+    get_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}  # type: ignore
 
     def cancel_spark_batch_job(
         self,
@@ -285,4 +285,4 @@ class SparkBatchOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_spark_batch_job.metadata = {'url': '/batches/{batchId}'}  # type: ignore
+    cancel_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}  # type: ignore

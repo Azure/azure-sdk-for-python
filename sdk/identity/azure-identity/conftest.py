@@ -5,14 +5,11 @@
 import os
 import sys
 
+from unittest import mock
 import pytest
 import six
+from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live, add_body_key_sanitizer
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
-
-
-if sys.version_info < (3, 5, 3):
-    collect_ignore_glob = ["*_async.py"]
-
 
 RECORD_IMDS = "--record-imds"
 
@@ -50,12 +47,12 @@ def record_imds_test(request):
     Recorded IMDS tests run as expected in playback. However, because they require particular live environments, a
     custom pytest option ("--record-imds") controls whether they're included in a live test run.
     """
-    if request.instance.is_live and not request.session.config.getoption(RECORD_IMDS):
+    if is_live() and not request.session.config.getoption(RECORD_IMDS):
         pytest.skip('Run "pytest {}" to record a live run of this test'.format(RECORD_IMDS))
 
 
 @pytest.fixture()
-def live_service_principal():  # pylint:disable=inconsistent-return-statements
+def live_service_principal():
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
 
     missing_variables = [
@@ -77,33 +74,58 @@ def live_service_principal():  # pylint:disable=inconsistent-return-statements
         }
 
 
+def get_certificate_parameters(content, password_protected_content, password, extension):
+    # type: (bytes, bytes, str, str) -> dict
+    current_directory = os.path.dirname(__file__)
+    parameters = {
+        "cert_bytes": six.ensure_binary(content),
+        "cert_path": os.path.join(current_directory, "certificate." + extension),
+        "cert_with_password_bytes": six.ensure_binary(password_protected_content),
+        "cert_with_password_path": os.path.join(current_directory, "certificate-with-password." + extension),
+        "password": password,
+    }
+
+    try:
+        with open(parameters["cert_path"], "wb") as f:
+            f.write(parameters["cert_bytes"])
+        with open(parameters["cert_with_password_path"], "wb") as f:
+            f.write(parameters["cert_with_password_bytes"])
+    except IOError as ex:
+        pytest.skip("Failed to write a file: {}".format(ex))
+
+    return parameters
+
+
 @pytest.fixture()
-def live_certificate(live_service_principal):
+def live_pem_certificate(live_service_principal):
     content = os.environ.get("PEM_CONTENT")
     password_protected_content = os.environ.get("PEM_CONTENT_PASSWORD_PROTECTED")
     password = os.environ.get("CERTIFICATE_PASSWORD")
 
     if content and password_protected_content and password:
-        current_directory = os.path.dirname(__file__)
-        parameters = {
-            "cert_bytes": six.ensure_binary(content),
-            "cert_path": os.path.join(current_directory, "certificate.pem"),
-            "cert_with_password_bytes": six.ensure_binary(password_protected_content),
-            "cert_with_password_path": os.path.join(current_directory, "certificate-with-password.pem"),
-            "password": password,
-        }
-
-        try:
-            with open(parameters["cert_path"], "wb") as f:
-                f.write(parameters["cert_bytes"])
-            with open(parameters["cert_with_password_path"], "wb") as f:
-                f.write(parameters["cert_with_password_bytes"])
-        except IOError as ex:
-            pytest.skip("Failed to write a file: {}".format(ex))
-
+        parameters = get_certificate_parameters(content, password_protected_content, password, "pem")
         return dict(live_service_principal, **parameters)
 
     pytest.skip("Missing PEM certificate configuration")
+
+
+@pytest.fixture()
+def live_pfx_certificate(live_service_principal):
+    # PFX bytes arrive base64 encoded because Key Vault secrets have string values
+    encoded_content = os.environ.get("PFX_CONTENT")
+    encoded_password_protected_content = os.environ.get("PFX_CONTENT_PASSWORD_PROTECTED")
+    password = os.environ.get("CERTIFICATE_PASSWORD")
+
+    if encoded_content and encoded_password_protected_content and password:
+        import base64
+
+        content = base64.b64decode(six.ensure_binary(encoded_content))
+        password_protected_content = base64.b64decode(six.ensure_binary(encoded_password_protected_content))
+
+        parameters = get_certificate_parameters(content, password_protected_content, password, "pfx")
+        return dict(live_service_principal, **parameters)
+
+    pytest.skip("Missing PFX certificate configuration")
 
 
 @pytest.fixture()
@@ -139,3 +161,54 @@ def event_loop():
 
     yield loop
     loop.close()
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    if EnvironmentVariables.MSI_ENDPOINT in os.environ:
+        url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+        PLAYBACK_URL = "https://msi-endpoint/token"
+        add_general_regex_sanitizer(regex=url, value=PLAYBACK_URL)
+    if "USER_ASSIGNED_IDENTITY_CLIENT_ID" in os.environ:
+        PLAYBACK_CLIENT_ID = "client-id"
+        user_assigned_identity_client_id = os.environ.get("USER_ASSIGNED_IDENTITY_CLIENT_ID")
+        add_general_regex_sanitizer(regex=user_assigned_identity_client_id, value=PLAYBACK_CLIENT_ID)
+    if "CAE_ARM_URL" in os.environ and "CAE_TENANT_ID" in os.environ and "CAE_USERNAME" in os.environ:
+        try:
+            from six.moves.urllib_parse import urlparse
+            arm_url = os.environ["CAE_ARM_URL"]
+            real = urlparse(arm_url)
+            add_general_regex_sanitizer(regex=real.netloc, value="management.azure.com")
+            add_general_regex_sanitizer(regex=os.environ["CAE_TENANT_ID"], value="tenant")
+            add_general_regex_sanitizer(regex=os.environ["CAE_USERNAME"], value="username")
+        except Exception:
+            pass
+    if "OBO_TENANT_ID" in os.environ and "OBO_USERNAME" in os.environ:
+        add_general_regex_sanitizer(regex=os.environ["OBO_TENANT_ID"], value="tenant")
+        add_general_regex_sanitizer(regex=os.environ["OBO_USERNAME"], value="username")
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def patch_async_sleep():
+    async def immediate_return(_):
+        return
+
+    if not is_live():
+        with mock.patch("asyncio.sleep", immediate_return):
+            yield
+
+    else:
+        yield
+
+
+@pytest.fixture(scope="session", autouse=True)
+def patch_sleep():
+    def immediate_return(_):
+        return
+
+    if not is_live():
+        with mock.patch("time.sleep", immediate_return):
+            yield
+
+    else:
+        yield

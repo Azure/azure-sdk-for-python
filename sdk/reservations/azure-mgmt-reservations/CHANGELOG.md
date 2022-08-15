@@ -1,5 +1,41 @@
 # Release History
 
+## 2.0.0 (2022-04-20)
+
+**Features**
+
+  - Added operation ReservationOperations.list_all
+  - Added operation ReservationOrderOperations.change_directory
+  - Model CalculatePriceResponseProperties has a new parameter grand_total
+  - Model CalculatePriceResponseProperties has a new parameter is_tax_included
+  - Model CalculatePriceResponseProperties has a new parameter net_total
+  - Model CalculatePriceResponseProperties has a new parameter tax_total
+  - Model Catalog has a new parameter capabilities
+  - Model Catalog has a new parameter msrp
+  - Model Catalog has a new parameter size
+  - Model Catalog has a new parameter tier
+  - Model CurrentQuotaLimit has a new parameter id
+  - Model CurrentQuotaLimit has a new parameter name
+  - Model CurrentQuotaLimit has a new parameter type
+  - Model CurrentQuotaLimitBase has a new parameter id
+  - Model CurrentQuotaLimitBase has a new parameter name
+  - Model CurrentQuotaLimitBase has a new parameter type
+  - Model OperationResponse has a new parameter is_data_action
+  - Model OperationResponse has a new parameter properties
+  - Model QuotaRequestOneResourceSubmitResponse has a new parameter id_properties_id
+  - Model QuotaRequestOneResourceSubmitResponse has a new parameter name_properties_name
+  - Model QuotaRequestOneResourceSubmitResponse has a new parameter type_properties_type
+  - Model ReservationOrderResponse has a new parameter benefit_start_time
+  - Model ReservationOrderResponse has a new parameter system_data
+  - Model ReservationResponse has a new parameter kind
+  - Model ReservationResponse has a new parameter system_data
+
+**Breaking changes**
+
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new parameter offer_id
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new parameter plan_id
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new parameter publisher_id
+
 ## 1.0.0 (2021-05-20)
 
 **Features**
@@ -27,7 +63,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -35,13 +71,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.8.0 (2020-07-15)
 
@@ -183,7 +219,7 @@ use no more than one client per process.
 **Notes**
 
   -   - Changed Update Reservation API
-        
+
           - Added optional InstanceFlexibility parameter
 
   - Support for InstanceFlexibility
@@ -196,17 +232,17 @@ use no more than one client per process.
 **Breaking change**
 
   -   - Updated Get Catalog API
-        
+
           - Added required parameter 'reserved_resource_type'
           - Added optional parameter 'location'
 
   -   - Updated Catalog model
-        
+
           - Renamed property 'capabilities' to 'sku_properties'
           - Removed properties 'size' and 'tier'
 
   -   - Updated ReservationProperties model
-        
+
           - Removed property 'kind'
 
 ## 0.1.0 (2017-11-03)

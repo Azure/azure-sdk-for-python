@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"token": "sanitized", "appId": "sanitized", "userId": "sanitized"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '83'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      x-ms-date:
+      - Wed, 03 Aug 2022 09:15:01 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
+  response:
+    body:
+      string: '{"error": {"code": "InvalidAccessToken", "message": "Provided access
+        token is not valid."}}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Wed, 03 Aug 2022 09:15:01 GMT
+      ms-cv:
+      - du4aSDNQk0O97B/77s1Arw.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 39ms
+    status:
+      code: 401
+      message: Unauthorized
+version: 1

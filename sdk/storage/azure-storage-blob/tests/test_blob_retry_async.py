@@ -14,12 +14,12 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, ResponseCallback
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from _shared.testcase import ResponseCallback, GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # test constants
 PUT_BLOCK_SIZE = 4 * 1024
@@ -66,14 +66,13 @@ class StorageBlobRetryTestAsync(AsyncStorageTestCase):
             return self.wrapped_stream.tell()
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_retry_put_block_with_seekable_stream_async(self, resource_group, location, storage_account,
-                                                              storage_account_key):
+    async def test_retry_put_block_with_seekable_stream_async(self, storage_account_name, storage_account_key):
         pytest.skip("Aiohttp closes stream after request - cannot rewind.")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -102,12 +101,11 @@ class StorageBlobRetryTestAsync(AsyncStorageTestCase):
         self.assertEqual(content, data)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_retry_put_block_with_non_seekable_stream_async(self, resource_group, location, storage_account,
-                                                                  storage_account_key):
+    async def test_retry_put_block_with_non_seekable_stream_async(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -137,12 +135,11 @@ class StorageBlobRetryTestAsync(AsyncStorageTestCase):
         self.assertEqual(content, data)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_retry_put_block_with_non_seekable_stream_fail_async(self, resource_group, location, storage_account,
-                                                                       storage_account_key):
+    async def test_retry_put_block_with_non_seekable_stream_fail_async(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')

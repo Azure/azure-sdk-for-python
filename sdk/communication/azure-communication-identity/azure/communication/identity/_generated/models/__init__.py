@@ -14,6 +14,7 @@ try:
     from ._models_py3 import CommunicationIdentityAccessTokenRequest
     from ._models_py3 import CommunicationIdentityAccessTokenResult
     from ._models_py3 import CommunicationIdentityCreateRequest
+    from ._models_py3 import TeamsUserExchangeTokenRequest
 except (SyntaxError, ImportError):
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
@@ -22,6 +23,7 @@ except (SyntaxError, ImportError):
     from ._models import CommunicationIdentityAccessTokenRequest  # type: ignore
     from ._models import CommunicationIdentityAccessTokenResult  # type: ignore
     from ._models import CommunicationIdentityCreateRequest  # type: ignore
+    from ._models import TeamsUserExchangeTokenRequest  # type: ignore
 
 from ._communication_identity_client_enums import (
     CommunicationTokenScope,
@@ -35,5 +37,6 @@ __all__ = [
     'CommunicationIdentityAccessTokenRequest',
     'CommunicationIdentityAccessTokenResult',
     'CommunicationIdentityCreateRequest',
+    'TeamsUserExchangeTokenRequest',
     'CommunicationTokenScope',
 ]

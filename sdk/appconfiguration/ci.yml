@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -31,7 +29,8 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: appconfiguration
-    VerifyAutorest: true
+    VerifyAutorest: false
+    ValidateFormatting: false
     Artifacts:
     - name: azure-appconfiguration
       safeName: azureappconfiguration

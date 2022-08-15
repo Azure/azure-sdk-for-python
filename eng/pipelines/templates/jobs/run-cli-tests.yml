@@ -1,0 +1,87 @@
+resources:
+  repositories:
+    - repository: AzureCLI
+      type: github
+      name: azure/azure-cli
+      endpoint: Azure
+      ref: refs/heads/dev
+
+parameters:
+  - name: TargetRepoPackages
+    type: object
+    default: 
+      - 'sdk/core/azure-core'
+    # a list of any resolvable pip install. EG:
+    # - https://<path-to-blobstorage>/blah.whl
+    # - <packagename>==<version>
+  - name: InjectedPackages
+    type: object
+    default: []
+  - name: PythonVersion
+    type: string
+    default: "3.9"
+  - name: TargetModules
+    type: string
+    default: "appservice botservice cloud network azure-cli-core azure-cli-telemetry"
+
+jobs:
+  - job:
+    displayName: 'Run Azure CLI Tests'
+
+    variables:
+      - template: ../variables/globals.yml
+
+    strategy:
+      matrix:
+        linux:
+          imageName: 'ubuntu-20.04'
+          poolName: 'azsdk-pool-mms-ubuntu-2004-general'
+        # windows:
+        #   imageName: 'windows-2019'
+        #   poolName: 'azsdk-pool-mms-win-2019-general'
+        # mac:
+        #   imageName: 'macos-11'
+        #   poolName: 'Azure Pipelines'
+
+    pool:
+      vmImage: $(imageName)
+      name: '$(poolName)'
+
+    steps:
+      - checkout: self
+        path: 's'
+
+      - checkout: AzureCLI
+        fetchDepth: 1
+        path: 'cli'
+
+      - template: /eng/pipelines/templates/steps/use-python-version.yml
+        parameters:
+          versionSpec: '${{ parameters.PythonVersion }}'
+
+      - template: .azure-pipelines/templates/azdev_setup.yml@AzureCLI
+        parameters:
+          CLIRepoPath: $(Agent.BuildDirectory)/cli
+
+      - ${{ each artifact in parameters.TargetRepoPackages }}:
+        - bash: |
+            set -ev
+            source env/bin/activate
+            pip install -e $(Build.SourcesDirectory)/${{ artifact }}
+          displayName: Install ${{ artifact }} 
+
+      - ${{ each package_spec in parameters.InjectedPackages }}:
+        - bash: |
+            set -ev
+            source env/bin/activate
+            pip install -e ${{ package_spec }}
+          displayName: Install ${{ package_spec }} 
+
+      - bash: |
+          set -ev
+          source env/bin/activate
+
+          python -m pip freeze
+
+          python $(Agent.BuildDirectory)/cli/scripts/ci/automation_full_test.py "1" "1" "latest" "${{ parameters.TargetModules }}"
+        displayName: Run Tests

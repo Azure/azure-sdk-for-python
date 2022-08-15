@@ -25,7 +25,8 @@
 # --------------------------------------------------------------------------
 
 import logging
-from collections.abc import Iterable
+import collections.abc
+from typing import Any, Awaitable
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -38,14 +39,16 @@ from .pipeline.policies import (
 )
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, TypeVar
 except ImportError:
     TYPE_CHECKING = False
+
+HTTPRequestType = TypeVar("HTTPRequestType")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 
 if TYPE_CHECKING:
     from typing import (
         List,
-        Any,
         Dict,
         Union,
         IO,
@@ -57,6 +60,26 @@ if TYPE_CHECKING:
     )  # pylint: disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
+
+class _AsyncContextManager(collections.abc.Awaitable):
+
+    def __init__(self, wrapped: collections.abc.Awaitable):
+        super().__init__()
+        self.wrapped = wrapped
+        self.response = None
+
+    def __await__(self):
+        return self.wrapped.__await__()
+
+    async def __aenter__(self):
+        self.response = await self
+        return self.response
+
+    async def __aexit__(self, *args):
+        await self.response.__aexit__(*args)
+
+    async def close(self):
+        await self.response.close()
 
 
 class AsyncPipelineClient(PipelineClientBase):
@@ -121,7 +144,7 @@ class AsyncPipelineClient(PipelineClientBase):
                 config.proxy_policy,
                 ContentDecodePolicy(**kwargs)
             ]
-            if isinstance(per_call_policies, Iterable):
+            if isinstance(per_call_policies, collections.abc.Iterable):
                 policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
@@ -130,7 +153,7 @@ class AsyncPipelineClient(PipelineClientBase):
                              config.retry_policy,
                              config.authentication_policy,
                              config.custom_hook_policy])
-            if isinstance(per_retry_policies, Iterable):
+            if isinstance(per_retry_policies, collections.abc.Iterable):
                 policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
@@ -139,13 +162,13 @@ class AsyncPipelineClient(PipelineClientBase):
                              DistributedTracingPolicy(**kwargs),
                              config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
         else:
-            if isinstance(per_call_policies, Iterable):
+            if isinstance(per_call_policies, collections.abc.Iterable):
                 per_call_policies_list = list(per_call_policies)
             else:
                 per_call_policies_list = [per_call_policies]
             per_call_policies_list.extend(policies)
             policies = per_call_policies_list
-            if isinstance(per_retry_policies, Iterable):
+            if isinstance(per_retry_policies, collections.abc.Iterable):
                 per_retry_policies_list = list(per_retry_policies)
             else:
                 per_retry_policies_list = [per_retry_policies]
@@ -168,3 +191,36 @@ class AsyncPipelineClient(PipelineClientBase):
             transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies)
+
+    async def _make_pipeline_call(self, request, **kwargs):
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
+        pipeline_response = await self._pipeline.run(
+            request, **kwargs  # pylint: disable=protected-access
+        )
+        if return_pipeline_response:
+            return pipeline_response
+        return pipeline_response.http_response
+
+    def send_request(
+        self,
+        request: HTTPRequestType,
+        *,
+        stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHTTPResponseType]:
+        """Method that runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest('GET', 'http://www.example.com')
+        <HttpRequest [GET], url: 'http://www.example.com'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
+        return _AsyncContextManager(wrapped=wrapped)

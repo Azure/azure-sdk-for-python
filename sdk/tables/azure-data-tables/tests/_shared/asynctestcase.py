@@ -16,6 +16,7 @@ from azure.data.tables import (
     EdmType,
 )
 from azure.data.tables.aio import TableServiceClient
+from azure.identity.aio import DefaultAzureCredential
 
 from devtools_testutils import is_live
 
@@ -33,11 +34,16 @@ class AsyncFakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
-    async def get_token(self, *args):
+    async def get_token(self, *args, **kwargs):
         return self.token
 
 
 class AsyncTableTestCase(TableTestCase):
+    def get_token_credential(self):
+        if is_live():
+            return DefaultAzureCredential()
+        return self.generate_fake_token()
+
     def generate_fake_token(self):
         return AsyncFakeTokenCredential()
 
@@ -116,9 +122,9 @@ class AsyncTableTestCase(TableTestCase):
         metadata = await self.table.create_entity(entity=entity)
         return entity, metadata["etag"]
 
-    async def _set_up(self, account_name, account_key, url="table"):
+    async def _set_up(self, account_name, credential, url="table"):
         account_url = self.account_url(account_name, url)
-        self.ts = TableServiceClient(account_url, credential=account_key)
+        self.ts = TableServiceClient(account_url, credential=credential)
         self.table_name = self.get_resource_name("uttable")
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:

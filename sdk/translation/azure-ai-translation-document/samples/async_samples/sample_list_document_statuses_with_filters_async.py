@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -8,8 +7,8 @@
 FILE: sample_list_document_statuses_with_filters_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to list all the document in a translation operation for the resource
-    using different kind of filters/sorting/paging options
+    This sample demonstrates how to list all the documents in a translation operation for the resource
+    using different kind of filters/sorting/paging options.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -50,23 +49,21 @@ async def sample_list_document_statuses_with_filters_async():
     '''
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
-    statuses = ["Cancelled", "Failed"]
-    order_by = ["createdDateTimeUtc desc"]
-    results_per_page = 2
+    statuses = ["Canceled", "Failed"]
+    order_by = ["created_on desc"]
     skip = 3
 
     async with client:
-        filtered_docs = client.list_all_document_statuses(
+        filtered_docs = client.list_document_statuses(
             translation_id,
             # filters
             statuses=statuses,
-            translated_after=start,
-            translated_before=end,
+            created_after=start,
+            created_before=end,
             # ordering
             order_by=order_by,
             # paging
             skip=skip,
-            results_per_page=results_per_page
         ).by_page()
 
         # check statuses
@@ -75,17 +72,16 @@ async def sample_list_document_statuses_with_filters_async():
                 display_doc_info(doc)
 
 def display_doc_info(document):
-    print("Document ID: {}".format(document.id))
-    print("Document status: {}".format(document.status))
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
     if document.status == "Succeeded":
-        print("Source document location: {}".format(document.source_document_url))
-        print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translated_to))
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
 
 
 async def main():
     await sample_list_document_statuses_with_filters_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

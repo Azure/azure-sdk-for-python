@@ -11,33 +11,38 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '274'
+      - '277'
       Content-Type:
       - application/json
-      Date:
-      - Mon, 26 Apr 2021 20:44:56 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 20:30:33 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
     body:
-      string: ''
+      string: '{"error": {"code": "InternalError", "message": "The server encountered
+        an internal error."}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
-      content-length:
-      - '0'
+      content-type:
+      - application/json
       date:
-      - Mon, 26 Apr 2021 20:44:56 GMT
+      - Tue, 22 Jun 2021 20:30:34 GMT
       ms-cv:
-      - J4SJhRMiv0iKUhAQqxUttw.0
+      - JLPu8nvoPUyp8DcG8QBtSg.0
       request-context:
       - appId=
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 278ms
+      - 532ms
     status:
       code: 401
       message: Unauthorized

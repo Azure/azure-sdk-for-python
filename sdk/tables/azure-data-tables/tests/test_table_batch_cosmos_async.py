@@ -10,14 +10,14 @@ import os
 import sys
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import (
     ResourceNotFoundError,
-    HttpResponseError,
-    ClientAuthenticationError
+    ClientAuthenticationError,
 )
 from azure.data.tables import (
     TableEntity,
@@ -29,7 +29,7 @@ from azure.data.tables import (
     TransactionOperation,
     TableSasPermissions,
     generate_table_sas,
-    TableErrorCode
+    TableErrorCode,
 )
 from azure.data.tables.aio import TableServiceClient
 
@@ -40,9 +40,15 @@ from async_preparers import cosmos_decorator_async
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
+class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_single_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -73,7 +79,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_single_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -108,7 +120,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -142,7 +160,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -180,7 +204,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -207,7 +237,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -236,7 +272,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -265,7 +307,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -294,7 +342,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -325,7 +379,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -362,7 +422,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -434,7 +500,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -459,7 +531,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -492,7 +570,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             resp = await self.table.submit_transaction(batch)
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -508,6 +592,11 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @pytest.mark.live_test_only  # Request bodies are very large
     @cosmos_decorator_async
     async def test_batch_request_too_large(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -531,7 +620,13 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_batch_with_bad_kwarg(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -560,6 +655,11 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @pytest.mark.live_test_only
     @cosmos_decorator_async
     async def test_batch_sas_auth(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -602,5 +702,101 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 total_entities += 1
 
             assert total_entities == transaction_count
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_batch_with_specialchar_partitionkey(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            await table2.create_table()
+
+            # Act
+            entity1 = {
+                'PartitionKey': "A'aaa\"_bbbb2",
+                'RowKey': '"A\'aaa"_bbbb2',
+                'test': '"A\'aaa"_bbbb2'
+            }
+            await self.table.submit_transaction([("create", entity1)])
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            await self.table.submit_transaction([("upsert", entity1, {'mode': 'merge'})])
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            await self.table.submit_transaction([("upsert", entity1, {'mode': 'replace'})])
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            await self.table.submit_transaction([("update", entity1, {'mode': 'merge'})])
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            await self.table.submit_transaction([("update", entity1, {'mode': 'replace'})])
+            get_entity = await self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            entity_results = self.table.list_entities()
+            async for entity in entity_results:
+                assert entity == entity1
+                get_entity = await self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'])
+                assert get_entity == entity1
+
+            await self.table.submit_transaction([("delete", entity1)])
+
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_async_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            # Act
+            transaction_count = 10
+            async def generate_entities(count):
+                for i in range(count):
+                    yield ("upsert", {'PartitionKey': 'async_inserts', 'RowKey': str(i)})
+
+            batch = generate_entities(transaction_count)
+            transaction_result = await self.table.submit_transaction(batch)
+
+            # Assert
+            self._assert_valid_batch_transaction(transaction_result, transaction_count)
+            assert 'etag' in transaction_result[0]
+
+            entities = self.table.query_entities("PartitionKey eq 'async_inserts'")
+            entities = [e async for e in entities]
+
+            # Assert
+            assert len(entities) ==  transaction_count
         finally:
             await self._tear_down()

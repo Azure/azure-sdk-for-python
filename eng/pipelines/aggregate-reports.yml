@@ -3,66 +3,109 @@ trigger: none
 pr:
   branches:
     include:
-      - master
       - main
   paths:
     include:
       - eng/pipelines/aggregate-reports.yml
 
-jobs:
-- job: 'ValidateDependencies'
-  variables:
+pool:
+  name: azsdk-pool-mms-win-2019-general
+  vmImage: MMS2019
+
+variables:
   - template: ./templates/variables/globals.yml
 
-  pool:
-    name: azsdk-pool-mms-win-2019-general
-    vmImage: MMS2019
+stages:
+  - stage: ValidateDependencies
+    displayName: Validate Dependencies
 
-  steps:
-  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
-  
-  - task: AzureFileCopy@2
-    displayName: 'Upload dependency report'
-    condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
-    inputs:
-      sourcePath: '$(Build.ArtifactStagingDirectory)/reports'
-      azureSubscription: 'Azure SDK Artifacts'
-      destination: AzureBlob
-      storage: azuresdkartifacts
-      containerName: 'azure-sdk-for-python'
-      blobPrefix: dependencies
+    jobs:
+      - job: ValidateDependencies
+        timeoutInMinutes: 120
+        steps:
 
-  - task: PowerShell@2
-    displayName: "Verify Repository Resource Refs"
-    inputs:
-      pwsh: true
-      workingDirectory: $(Build.SourcesDirectory)
-      filePath: eng/common/scripts/Verify-Resource-Ref.ps1
+          - template: /eng/pipelines/templates/steps/analyze_dependency.yml
+            parameters:
+              ScanPath: $(Build.SourcesDirectory)
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
-    displayName: 'Run CredScan'
-    condition: succeededOrFailed()
-    inputs:
-      suppressionsFile: 'eng\CredScanSuppression.json'
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@2
-    displayName: 'Post Analysis'
-    condition: succeededOrFailed()
-    inputs:
-      GdnBreakAllTools: false
-      GdnBreakGdnToolCredScan: true
-      GdnBreakGdnToolCredScanSeverity: Error
-      GdnBreakBaselineFiles: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-      GdnBreakBaselines: baseline   
-      # Used for generating baseline file.   
-      # GdnBreakOutputBaselineFile: python
-      # GdnBreakOutputBaseline: baseline
-    continueOnError: true
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
-    displayName: 'Publish Security Analysis Logs'
-    continueOnError: true
-    condition: succeededOrFailed()
-  - template: ../common/pipelines/templates/steps/verify-links.yml
-    parameters:
-      Directory: ""
-      CheckLinkGuidance: $true
-      Condition: succeededOrFailed()
+          - task: AzureFileCopy@4
+            displayName: 'Upload Dependency Report'
+            condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
+            inputs:
+              sourcePath: '$(Build.ArtifactStagingDirectory)/reports/*'
+              azureSubscription: 'Azure SDK Artifacts'
+              destination: AzureBlob
+              storage: azuresdkartifacts
+              containerName: 'azure-sdk-for-python'
+              blobPrefix: dependencies
+              AdditionalArgumentsForBlobCopy: '--exclude-pattern=*data.js*'
+
+          - task: AzureFileCopy@4
+            displayName: 'Upload Dependency Graph'
+            condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
+            inputs:
+              sourcePath: '$(Build.ArtifactStagingDirectory)/reports/*'
+              azureSubscription: 'Azure SDK Artifacts'
+              destination: AzureBlob
+              storage: azuresdkartifacts
+              containerName: 'azure-sdk-for-python'
+              blobPrefix: dependencies/dependencyGraph
+              AdditionalArgumentsForBlobCopy: '--include-pattern=*data.js*'
+
+          - task: PowerShell@2
+            displayName: "Verify Repository Resource Refs"
+            inputs:
+              pwsh: true
+              workingDirectory: $(Build.SourcesDirectory)
+              filePath: eng/common/scripts/Verify-Resource-Ref.ps1
+
+          - template: ../common/pipelines/templates/steps/verify-links.yml
+            parameters:
+              Directory: ""
+              CheckLinkGuidance: $true
+              Condition: succeededOrFailed()
+
+  - stage: ComplianceTools
+    displayName: Compliance Tools
+    dependsOn: []
+
+    jobs:
+      - job: ComplianceTools
+        timeoutInMinutes: 120
+        steps:
+          - template: /eng/common/pipelines/templates/steps/credscan.yml
+            parameters:
+              BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
+
+          - pwsh: |
+              azcopy copy "https://azuresdkartifacts.blob.core.windows.net/policheck/PythonPoliCheckExclusion.mdb?$(azuresdk-policheck-blob-SAS)" `
+              "$(Build.BinariesDirectory)"
+            displayName: 'Download PoliCheck Exclusion Database'
+            condition: succeededOrFailed()
+
+          - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@2
+            displayName: 'Run PoliCheck'
+            inputs:
+              targetType: F
+              targetArgument: '$(Build.SourcesDirectory)'
+              result: PoliCheck.sarif
+              optionsFC: 0
+              optionsXS: 1
+              optionsPE: 1|2|3|4
+              optionsRulesDBPath: "$(Build.BinariesDirectory)/PythonPoliCheckExclusion.mdb"
+              optionsUEPATH: "$(Build.SourcesDirectory)/eng/guardian-tools/policheck/PolicheckExclusions.xml"
+            condition: succeededOrFailed()
+
+          - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@2
+            displayName: 'Post Analysis (PoliCheck)'
+            inputs:
+              GdnBreakAllTools: false
+              GdnBreakGdnToolPoliCheck: true
+              GdnBreakGdnToolPoliCheckSeverity: Warning
+            condition: succeededOrFailed()
+            continueOnError: true
+
+          - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
+            displayName: 'Publish Security Analysis Logs'
+            continueOnError: true
+            condition: succeededOrFailed()
