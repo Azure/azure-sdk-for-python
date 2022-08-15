@@ -4,12 +4,13 @@
 
 import logging
 
-from azure.ai.ml._schema import NestedField, PathAwareSchema
-from azure.ai.ml._schema.assets.environment import EnvironmentSchema, AnonymousEnvironmentSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, UnionField, RegistryStr
-from azure.ai.ml._schema.assets.model import AnonymousModelSchema
-from azure.ai.ml.constants import AzureMLResourceType
 from marshmallow import fields
+
+from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema
+from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
+from azure.ai.ml._schema.assets.model import AnonymousModelSchema
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, RegistryStr, UnionField
+from azure.ai.ml.constants import AzureMLResourceType
 
 from .code_configuration_schema import CodeConfigurationSchema
 
@@ -32,7 +33,8 @@ class DeploymentSchema(PathAwareSchema):
         metadata={"description": "Reference to the model asset for the endpoint deployment."},
     )
     code_configuration = NestedField(
-        CodeConfigurationSchema, metadata={"description": "Code configuration for the endpoint deployment."}
+        CodeConfigurationSchema,
+        metadata={"description": "Code configuration for the endpoint deployment."},
     )
     environment = UnionField(
         [

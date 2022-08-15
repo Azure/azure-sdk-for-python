@@ -131,7 +131,7 @@ def main():
         lgb_train,
         num_boost_round=10,
         init_model=gbm,
-        learning_rates=lambda iter: 0.05 * (0.99 ** iter),
+        learning_rates=lambda iter: 0.05 * (0.99**iter),
         valid_sets=lgb_eval,
     )
 

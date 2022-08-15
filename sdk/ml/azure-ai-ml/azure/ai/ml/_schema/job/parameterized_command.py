@@ -2,15 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._schema import NestedField, PathAwareSchema
-from azure.ai.ml.constants import AzureMLResourceType
 from marshmallow import fields
 
+from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
+from azure.ai.ml.constants import AzureMLResourceType
 
-from ..assets.code_asset import AnonymousCodeAssetSchema
 from ..assets.environment import AnonymousEnvironmentSchema
-from ..core.fields import ArmVersionedStr, UnionField, RegistryStr, LocalPathField, SerializeValidatedUrl, GitStr
+from ..core.fields import ArmVersionedStr, GitStr, LocalPathField, RegistryStr, SerializeValidatedUrl, UnionField
 from .distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 
 
@@ -22,7 +22,12 @@ class ParameterizedCommandSchema(PathAwareSchema):
         required=True,
     )
     code = UnionField(
-        [LocalPathField, SerializeValidatedUrl(), GitStr(), ArmVersionedStr(azureml_type=AzureMLResourceType.CODE)],
+        [
+            LocalPathField,
+            SerializeValidatedUrl(),
+            GitStr(),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
+        ],
         metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
     )
     environment = UnionField(

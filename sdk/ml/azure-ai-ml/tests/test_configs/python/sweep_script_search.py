@@ -1,5 +1,4 @@
 # imports
-import os
 import mlflow
 import argparse
 
@@ -51,9 +50,7 @@ def process_data(df):
     y = enc.fit_transform(y)
 
     # train/test split
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # return splits and encoder
     return X_train, X_test, y_train, y_test, enc

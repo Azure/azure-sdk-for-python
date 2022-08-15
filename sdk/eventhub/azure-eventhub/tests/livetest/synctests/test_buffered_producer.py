@@ -504,3 +504,51 @@ def test_long_sleep(connection_str, uamqp_transport):
 
     consumer.close()
     receive_thread.join()
+
+@pytest.mark.liveTest
+def test_long_wait_small_buffer(connection_str):
+    received_events = defaultdict(list)
+
+    def on_event(partition_context, event):
+        received_events[partition_context.partition_id].append(event)
+
+    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
+    receive_thread = Thread(target=consumer.receive, args=(on_event,))
+    receive_thread.daemon = True
+    receive_thread.start()
+
+    sent_events = defaultdict(list)
+
+    def on_success(events, pid):
+        sent_events[pid].extend(events)
+
+    def on_error(events, pid, err):
+        on_error.err = err
+
+    on_error.err = None  # ensure no error
+    producer = EventHubProducerClient.from_connection_string(
+        connection_str,
+        buffered_mode=True,
+        on_success=on_success,
+        on_error=on_error,
+        auth_timeout=3, 
+        retry_total=3, 
+        retry_mode='fixed',
+        retry_backoff_factor=0.01,
+        max_wait_time=10,
+        max_buffer_length=100
+    )
+
+    with producer:
+        for i in range(100):
+            producer.send_event(EventData("test"))
+            time.sleep(.1)
+
+    time.sleep(60)
+
+    assert not on_error.err
+    assert sum([len(sent_events[key]) for key in sent_events]) == 100
+    assert sum([len(received_events[key]) for key in received_events]) == 100
+
+    consumer.close()
+    receive_thread.join()

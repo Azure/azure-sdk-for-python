@@ -112,10 +112,6 @@ def create_yaml_without_identity_type(tmp_path: Path) -> Path:
 location: centraluseuap
 name: myendpoint2
 auth_mode: Key
-identity:
-    type: user_assigned
-    user_assigned_identities:
-        - resource_id: ""
 """
     p = tmp_path / "create_yaml_without_identity_type.yaml"
     p.write_text(content)

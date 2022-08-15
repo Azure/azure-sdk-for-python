@@ -7,7 +7,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
-from .._policies import TextAnalyticsResponseHookPolicy
+from .._policies import TextAnalyticsResponseHookPolicy, QuotaExceededPolicy
 from .._user_agent import USER_AGENT
 from .._version import DEFAULT_API_VERSION
 
@@ -71,6 +71,7 @@ class AsyncTextAnalyticsClientBase:
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),
             http_logging_policy=kwargs.pop("http_logging_policy", http_logging_policy),
+            per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             **kwargs
         )
 

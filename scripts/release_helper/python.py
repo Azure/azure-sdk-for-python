@@ -9,8 +9,9 @@ from common import IssueProcess, Common, get_origin_link_and_tag, IssuePackage
 from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_python_release_pipeline, run_pipeline
 
 # assignee dict which will be assigned to handle issues
-_PYTHON_OWNER = {'azure-sdk', 'msyyc'}
-_PYTHON_ASSIGNEE = {'BigCat20196', 'Wzb123456789'}
+_PYTHON_OWNER = {'azure-sdk', 'Wzb123456789', 'BigCat20196'}
+_PYTHON_ASSIGNEE = {'msyyc'}
+
 # labels
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
@@ -18,6 +19,7 @@ _BRANCH_ATTENTION = 'base-branch-attention'
 _7_DAY_ATTENTION = '7days attention'
 _MultiAPI = 'MultiAPI'
 _ON_TIME = 'on time'
+_HOLD_ON = 'HoldOn'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
@@ -113,7 +115,11 @@ class IssueProcessPython(IssueProcess):
 
     def on_time_policy(self):
         if _ON_TIME in self.issue_package.labels_name:
-            self.bot_advice.append('on time')
+            self.bot_advice.append('On time')
+
+    def hold_on_policy(self):
+        if _HOLD_ON in self.issue_package.labels_name:
+            self.bot_advice.append('Hold on')
 
     def remind_policy(self):
         if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
@@ -132,6 +138,7 @@ class IssueProcessPython(IssueProcess):
         self.multi_api_policy()
         self.attention_policy()
         self.on_time_policy()
+        self.hold_on_policy()
         self.remind_policy()
 
 

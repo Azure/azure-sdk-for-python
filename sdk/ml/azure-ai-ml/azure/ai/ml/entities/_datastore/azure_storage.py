@@ -2,30 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from pathlib import Path
 from typing import Dict, Union
-from azure.ai.ml.entities._datastore.datastore import Datastore
-from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    AzureBlobDatastore as RestAzureBlobDatastore,
-    AzureFileDatastore as RestAzureFileDatastore,
-    AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore,
-    DatastoreData,
-    DatastoreType,
-)
-from azure.ai.ml._schema._datastore import AzureFileSchema, AzureBlobSchema, AzureDataLakeGen2Schema
+from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
+from azure.ai.ml._restclient.v2022_05_01.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2022_05_01.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
+from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._datastore.credentials import (
     AccountKeyCredentials,
+    CertificateCredentials,
     SasTokenCredentials,
     ServicePrincipalCredentials,
-    CertificateCredentials,
 )
+from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
+from azure.ai.ml.entities._util import load_from_dict
 
 from ._constants import HTTPS
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
-from azure.ai.ml.entities._util import load_from_dict
 
 
 class AzureFileDatastore(Datastore):

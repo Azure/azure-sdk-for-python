@@ -2,16 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    DatastoreType,
-)
-from azure.ai.ml.constants import AzureMLResourceType
-from azure.ai.ml._schema import NestedField, PathAwareSchema
-from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField, ArmStr
-from azure.ai.ml._utils.utils import camel_to_snake
 from marshmallow import fields, post_load
+
+from azure.ai.ml._restclient.v2022_05_01.models import DatastoreType
+from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema
+from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField
+from azure.ai.ml._utils.utils import camel_to_snake
 
 from .credentials import (
     AccountKeySchema,
@@ -24,7 +24,7 @@ from .credentials import (
 
 class AzureStorageSchema(PathAwareSchema):
     name = fields.Str(required=True)
-    id = ArmStr(azureml_type=AzureMLResourceType.DATASTORE, dump_only=True)
+    id = fields.Str(dump_only=True)
     account_name = fields.Str(required=True)
     endpoint = fields.Str()
     protocol = fields.Str()
@@ -34,7 +34,9 @@ class AzureStorageSchema(PathAwareSchema):
 
 class AzureFileSchema(AzureStorageSchema):
     type = StringTransformedEnum(
-        allowed_values=DatastoreType.AZURE_FILE, casing_transform=camel_to_snake, required=True
+        allowed_values=DatastoreType.AZURE_FILE,
+        casing_transform=camel_to_snake,
+        required=True,
     )
     file_share_name = fields.Str(required=True)
     credentials = UnionField(
@@ -54,11 +56,17 @@ class AzureFileSchema(AzureStorageSchema):
 
 class AzureBlobSchema(AzureStorageSchema):
     type = StringTransformedEnum(
-        allowed_values=DatastoreType.AZURE_BLOB, casing_transform=camel_to_snake, required=True
+        allowed_values=DatastoreType.AZURE_BLOB,
+        casing_transform=camel_to_snake,
+        required=True,
     )
     container_name = fields.Str(required=True)
     credentials = UnionField(
-        [NestedField(AccountKeySchema), NestedField(SasTokenSchema), NestedField(NoneCredentialsSchema)],
+        [
+            NestedField(AccountKeySchema),
+            NestedField(SasTokenSchema),
+            NestedField(NoneCredentialsSchema),
+        ],
     )
 
     @post_load
@@ -76,7 +84,11 @@ class AzureDataLakeGen2Schema(AzureStorageSchema):
     )
     filesystem = fields.Str(required=True)
     credentials = UnionField(
-        [NestedField(ServicePrincipalSchema), NestedField(CertificateSchema), NestedField(NoneCredentialsSchema)]
+        [
+            NestedField(ServicePrincipalSchema),
+            NestedField(CertificateSchema),
+            NestedField(NoneCredentialsSchema),
+        ]
     )
 
     @post_load
