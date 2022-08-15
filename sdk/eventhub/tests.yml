@@ -7,8 +7,6 @@ stages:
       BuildTargetingString: azure-eventhub
       MatrixReplace:
         - TestSamples=.*/true
-      MatrixFilters:
-        - PythonVersion=^(?!pypy3).*
       EnvVars:
         AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR: $(python-eh-livetest-event-hub-storage-data-lake-enabled-conn-str)
         IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)

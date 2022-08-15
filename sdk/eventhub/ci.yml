@@ -35,8 +35,6 @@ extends:
         Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
         Selection: sparse
         GenerateVMJobs: true
-    MatrixFilters:
-      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-eventhub
       safeName: azureeventhub
