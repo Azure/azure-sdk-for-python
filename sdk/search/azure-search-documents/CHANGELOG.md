@@ -110,6 +110,15 @@
 - Added support for semantic search
 - Added normalizer support
 
+## 11.2.2 (2022-04-14)
+
+### Bugs Fixed
+- Fixes a bug allowing users to set keys for cognitive service skills using the API. Exposes `DefaultCognitiveServicesAccount` and `CognitiveServicesAccountKey`
+
+## 11.2.1 (2022-01-10)
+
+Minor updates.
+
 ## 11.2.0 (2021-06-08)
 
 This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
