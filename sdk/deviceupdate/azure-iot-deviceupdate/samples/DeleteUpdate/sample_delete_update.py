@@ -14,20 +14,25 @@ from azure.core.exceptions import HttpResponseError
 # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 
 # Set the following environment variables for this particular sample:
-# DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, DEVICEUPDATE_DEVICE
+# DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID,
+# DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION
 try:
-    endpoint = os.environ["DEVICEUPDATE_ACCOUNT_ENDPOINT"]
+    endpoint = os.environ["DEVICEUPDATE_ENDPOINT"]
     instance = os.environ["DEVICEUPDATE_INSTANCE_ID"]
-    device = os.environ["DEVICEUPDATE_DEVICE"]
+    update_provider = os.environ["DEVICEUPDATE_UPDATE_PROVIDER"]
+    update_name = os.environ["DEVICEUPDATE_UPDATE_NAME"]
+    update_version = "2022.812.234.42"  # os.environ["DEVICEUPDATE_UPDATE_VERSION"]
 except KeyError:
-    print("Missing one of environment variables: DEVICEUPDATE_ACCOUNT_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, DEVICEUPDATE_DEVICE")
+    print("Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, "
+          "DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION")
     exit()
 
 # Build a client through AAD
 client = DeviceUpdateClient(credential=DefaultAzureCredential(), endpoint=endpoint, instance_id=instance)
 
 try:
-    response = client.device_management.get_device(device)
-    print(response)
+    response = client.device_update.begin_delete_update(update_provider, update_name, update_version)
+    response.wait
+
 except HttpResponseError as e:
-    print('Failed to get device message: {}'.format(e.response.json()))
+    print('Failed to delete update: {}'.format(e.response.json()))

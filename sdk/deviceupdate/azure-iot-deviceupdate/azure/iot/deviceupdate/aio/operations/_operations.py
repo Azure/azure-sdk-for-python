@@ -28,43 +28,43 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ...operations._operations import (
-    build_device_management_collect_logs_request,
     build_device_management_create_or_update_deployment_request,
+    build_device_management_delete_deployment_for_device_class_subgroup_request,
     build_device_management_delete_deployment_request,
     build_device_management_delete_device_class_request,
-    build_device_management_delete_device_class_subgroup_deployment_request,
     build_device_management_delete_device_class_subgroup_request,
     build_device_management_delete_group_request,
+    build_device_management_get_best_updates_for_device_class_subgroup_request,
     build_device_management_get_deployment_for_device_class_subgroup_request,
     build_device_management_get_deployment_request,
     build_device_management_get_deployment_status_request,
     build_device_management_get_device_class_request,
     build_device_management_get_device_class_subgroup_deployment_status_request,
-    build_device_management_get_device_class_subgroup_details_request,
+    build_device_management_get_device_class_subgroup_request,
     build_device_management_get_device_class_subgroup_update_compliance_request,
     build_device_management_get_device_module_request,
     build_device_management_get_device_request,
     build_device_management_get_group_request,
-    build_device_management_get_group_update_compliance_request,
-    build_device_management_get_log_collection_operation_detailed_status_request,
-    build_device_management_get_log_collection_operation_request,
+    build_device_management_get_log_collection_detailed_status_request,
+    build_device_management_get_log_collection_request,
     build_device_management_get_operation_request,
+    build_device_management_get_update_compliance_for_group_request,
     build_device_management_get_update_compliance_request,
     build_device_management_import_devices_request,
-    build_device_management_list_best_updates_for_device_class_subgroup_request,
     build_device_management_list_best_updates_for_group_request,
     build_device_management_list_deployments_for_device_class_subgroup_request,
     build_device_management_list_deployments_for_group_request,
     build_device_management_list_device_class_subgroups_for_group_request,
     build_device_management_list_device_classes_request,
     build_device_management_list_device_health_request,
-    build_device_management_list_devices_for_device_class_subgroup_deployment_request,
+    build_device_management_list_device_states_for_device_class_subgroup_deployment_request,
     build_device_management_list_devices_request,
     build_device_management_list_groups_request,
     build_device_management_list_installable_updates_for_device_class_request,
-    build_device_management_list_log_collection_operations_request,
+    build_device_management_list_log_collections_request,
     build_device_management_list_operations_request,
     build_device_management_retry_deployment_request,
+    build_device_management_start_log_collection_request,
     build_device_management_stop_deployment_request,
     build_device_management_update_device_class_request,
     build_device_update_delete_update_request,
@@ -114,7 +114,7 @@ class DeviceUpdateOperations:
 
         :keyword search: Request updates matching a free-text search expression. Default value is None.
         :paramtype search: str
-        :keyword filter: Filter updates by its properties. Default value is None.
+        :keyword filter: Optional to filter updates by isDeployable property. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
@@ -133,12 +133,19 @@ class DeviceUpdateOperations:
                     ],
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
                       update was created. Required.
+                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was imported. Required.
+                    "manifestVersion": "str",  # Schema version of manifest used to import the
+                      update. Required.
+                    "updateId": {
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
+                    },
                     "description": "str",  # Optional. Update description specified by creator.
                     "etag": "str",  # Optional. Update ETag.
                     "friendlyName": "str",  # Optional. Friendly update name specified by
                       importer.
-                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
-                      update was imported. Required.
                     "installedCriteria": "str",  # Optional. String interpreted by Device Update
                       client to determine if the update is installed on the device. Deprecated in
                       latest import manifest schema.
@@ -168,8 +175,6 @@ class DeviceUpdateOperations:
                     },
                     "isDeployable": True,  # Optional. Default value is True. Whether the update
                       can be deployed to a device on its own.
-                    "manifestVersion": "str",  # Schema version of manifest used to import the
-                      update. Required.
                     "referencedBy": [
                         {
                             "name": "str",  # Update name. Required.
@@ -179,11 +184,6 @@ class DeviceUpdateOperations:
                     ],
                     "scanResult": "str",  # Optional. Update aggregate scan result (calculated
                       from payload file scan results).
-                    "updateId": {
-                        "name": "str",  # Update name. Required.
-                        "provider": "str",  # Update provider. Required.
-                        "version": "str"  # Update version. Required.
-                    },
                     "updateType": "str"  # Optional. Update type. Deprecated in latest import
                       manifest schema.
                 }
@@ -309,7 +309,9 @@ class DeviceUpdateOperations:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
 
-        :param update_to_import: The update to be imported. Required.
+        :param update_to_import: The update to be imported (see schema
+         https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json for details).
+         Required.
         :type update_to_import: list[JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -331,17 +333,6 @@ class DeviceUpdateOperations:
                 # JSON input template you can fill out and use as your body input.
                 update_to_import = [
                     {
-                        "files": [
-                            {
-                                "filename": "str",  # Update file name as specified
-                                  inside import manifest. Required.
-                                "url": "str"  # Azure Blob location from which the
-                                  update file can be downloaded by Device Update for IoT Hub. This is
-                                  typically a read-only SAS-protected blob URL with an expiration set
-                                  to at least 4 hours. Required.
-                            }
-                        ],
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "importManifest": {
                             "hashes": {
                                 "str": "str"  # A JSON object containing the hash(es)
@@ -355,7 +346,18 @@ class DeviceUpdateOperations:
                               manifest can be downloaded by Device Update for IoT Hub. This is
                               typically a read-only SAS-protected blob URL with an expiration set to at
                               least 4 hours. Required.
-                        }
+                        },
+                        "files": [
+                            {
+                                "filename": "str",  # Update file name as specified
+                                  inside import manifest. Required.
+                                "url": "str"  # Azure Blob location from which the
+                                  update file can be downloaded by Device Update for IoT Hub. This is
+                                  typically a read-only SAS-protected blob URL with an expiration set
+                                  to at least 4 hours. Required.
+                            }
+                        ],
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     }
                 ]
         """
@@ -367,7 +369,9 @@ class DeviceUpdateOperations:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
 
-        :param update_to_import: The update to be imported. Required.
+        :param update_to_import: The update to be imported (see schema
+         https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json for details).
+         Required.
         :type update_to_import: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -389,8 +393,9 @@ class DeviceUpdateOperations:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
 
-        :param update_to_import: The update to be imported. Is either a list type or a IO type.
-         Required.
+        :param update_to_import: The update to be imported (see schema
+         https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json for details). Is
+         either a list type or a IO type. Required.
         :type update_to_import: list[JSON] or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -483,12 +488,19 @@ class DeviceUpdateOperations:
                     ],
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
                       update was created. Required.
+                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was imported. Required.
+                    "manifestVersion": "str",  # Schema version of manifest used to import the
+                      update. Required.
+                    "updateId": {
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
+                    },
                     "description": "str",  # Optional. Update description specified by creator.
                     "etag": "str",  # Optional. Update ETag.
                     "friendlyName": "str",  # Optional. Friendly update name specified by
                       importer.
-                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
-                      update was imported. Required.
                     "installedCriteria": "str",  # Optional. String interpreted by Device Update
                       client to determine if the update is installed on the device. Deprecated in
                       latest import manifest schema.
@@ -518,8 +530,6 @@ class DeviceUpdateOperations:
                     },
                     "isDeployable": True,  # Optional. Default value is True. Whether the update
                       can be deployed to a device on its own.
-                    "manifestVersion": "str",  # Schema version of manifest used to import the
-                      update. Required.
                     "referencedBy": [
                         {
                             "name": "str",  # Update name. Required.
@@ -529,11 +539,6 @@ class DeviceUpdateOperations:
                     ],
                     "scanResult": "str",  # Optional. Update aggregate scan result (calculated
                       from payload file scan results).
-                    "updateId": {
-                        "name": "str",  # Update name. Required.
-                        "provider": "str",  # Update provider. Required.
-                        "version": "str"  # Update version. Required.
-                    },
                     "updateType": "str"  # Optional. Update type. Deprecated in latest import
                       manifest schema.
                 }
@@ -856,7 +861,7 @@ class DeviceUpdateOperations:
         :type provider: str
         :param name: Update name. Required.
         :type name: str
-        :keyword filter: Filter updates by its properties. Default value is None.
+        :keyword filter: Optional to filter updates by isDeployable property. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of str
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
@@ -1051,10 +1056,6 @@ class DeviceUpdateOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "downloadHandler": {
-                        "id": "str"  # Download handler identifier. Required.
-                    },
-                    "etag": "str",  # Optional. File ETag.
                     "fileId": "str",  # File identity, generated by server at import time.
                       Required.
                     "fileName": "str",  # File name. Required.
@@ -1062,6 +1063,11 @@ class DeviceUpdateOperations:
                         "str": "str"  # Mapping of hashing algorithm to base64 encoded hash
                           values. Required.
                     },
+                    "sizeInBytes": 0,  # File size in number of bytes. Required.
+                    "downloadHandler": {
+                        "id": "str"  # Download handler identifier. Required.
+                    },
+                    "etag": "str",  # Optional. File ETag.
                     "mimeType": "str",  # Optional. File MIME type.
                     "properties": {
                         "str": "str"  # Optional. Optional file properties (not consumed by
@@ -1074,19 +1080,18 @@ class DeviceUpdateOperations:
                                 "str": "str"  # Mapping of hashing algorithm to
                                   base64 encoded hash values. Required.
                             },
+                            "sizeInBytes": 0,  # File size in number of bytes. Required.
                             "mimeType": "str",  # Optional. File MIME type.
                             "properties": {
                                 "str": "str"  # Optional. Optional file properties
                                   (not consumed by service but pass-through to device).
                             },
                             "scanDetails": "str",  # Optional. Anti-malware scan details.
-                            "scanResult": "str",  # Optional. Anti-malware scan result.
-                            "sizeInBytes": 0  # File size in number of bytes. Required.
+                            "scanResult": "str"  # Optional. Anti-malware scan result.
                         }
                     ],
                     "scanDetails": "str",  # Optional. Anti-malware scan details.
-                    "scanResult": "str",  # Optional. Anti-malware scan result.
-                    "sizeInBytes": 0  # File size in number of bytes. Required.
+                    "scanResult": "str"  # Optional. Anti-malware scan result.
                 }
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1142,7 +1147,7 @@ class DeviceUpdateOperations:
         """Get a list of all import update operations. Completed operations are kept for 7 days before
         auto-deleted. Delete operations are not returned by this API version.
 
-        :keyword filter: Restricts the set of operations returned. Only one specific filter is
+        :keyword filter: Optional to filter operations by status property. Only one specific filter is
          supported: "status eq 'NotStarted' or status eq 'Running'". Default value is None.
         :paramtype filter: str
         :keyword top: Specifies a non-negative integer n that limits the number of items returned from
@@ -1160,8 +1165,15 @@ class DeviceUpdateOperations:
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
                       operation was created. Required.
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "error": {
                         "code": "str",  # Server defined error code. Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "details": [
                             ...
                         ],
@@ -1174,30 +1186,23 @@ class DeviceUpdateOperations:
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
                     "etag": "str",  # Optional. Operation ETag.
-                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
-                      operation status was last updated. Required.
-                    "operationId": "str",  # Operation Id. Required.
                     "resourceLocation": "str",  # Optional. Location of the imported update when
                       operation is successful.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "traceId": "str",  # Optional. Operation correlation identity that can used
                       by Microsoft Support for troubleshooting.
                     "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     }
                 }
         """
@@ -1287,8 +1292,15 @@ class DeviceUpdateOperations:
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
                       operation was created. Required.
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "error": {
                         "code": "str",  # Server defined error code. Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "details": [
                             ...
                         ],
@@ -1301,30 +1313,23 @@ class DeviceUpdateOperations:
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
                     "etag": "str",  # Optional. Operation ETag.
-                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
-                      operation status was last updated. Required.
-                    "operationId": "str",  # Operation Id. Required.
                     "resourceLocation": "str",  # Optional. Location of the imported update when
                       operation is successful.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "traceId": "str",  # Optional. Operation correlation identity that can used
                       by Microsoft Support for troubleshooting.
                     "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     }
                 }
         """
@@ -1393,10 +1398,14 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_device_classes(self, **kwargs: Any) -> AsyncIterable[JSON]:
-        """Gets a list of all device classes (unique combinations of device manufacturer and model) for
+    def list_device_classes(self, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable[JSON]:
+        """Gets a list of all device classes (sets of devices compatible with the same updates based on
+        the model Id and compat properties reported in the Device Update PnP interface in IoT Hub) for
         all devices connected to Device Update for IoT Hub.
 
+        :keyword filter: Restricts the set of device classes returned. You can filter on friendly name.
+         Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1406,16 +1415,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "bestCompatibleUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
-                        }
-                    },
-                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassId": "str",  # The device class identifier. This is generated
+                      from the model Id and the compat properties reported by the device update agent
+                      in the Device Update PnP interface in IoT Hub. It is a hex-encoded SHA1 hash.
+                      Required.
                     "deviceClassProperties": {
                         "compatProperties": {
                             "str": "str"  # The compat properties of the device class.
@@ -1432,6 +1435,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               of the device class. Intended to be a more readable form of the contract
                               model Id. Required.
                         }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "friendlyName": "str"  # Optional. The device class friendly name. This can
                       be updated by callers after the device class has been automatically created.
@@ -1450,6 +1462,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 request = build_device_management_list_device_classes_request(
                     instance_id=self._config.instance_id,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1514,16 +1527,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "bestCompatibleUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
-                        }
-                    },
-                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassId": "str",  # The device class identifier. This is generated
+                      from the model Id and the compat properties reported by the device update agent
+                      in the Device Update PnP interface in IoT Hub. It is a hex-encoded SHA1 hash.
+                      Required.
                     "deviceClassProperties": {
                         "compatProperties": {
                             "str": "str"  # The compat properties of the device class.
@@ -1540,6 +1547,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               of the device class. Intended to be a more readable form of the contract
                               model Id. Required.
                         }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "friendlyName": "str"  # Optional. The device class friendly name. This can
                       be updated by callers after the device class has been automatically created.
@@ -1613,21 +1629,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # JSON input template you can fill out and use as your body input.
                 device_class_patch = {
-                    "friendlyName": "str"  # The device class friendly name. Required.
+                    "friendlyName": "str"  # The device class friendly name. Friendly name can be
+                      1-100 characters, alphanumeric, dot, and dash. Required.
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "bestCompatibleUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
-                        }
-                    },
-                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassId": "str",  # The device class identifier. This is generated
+                      from the model Id and the compat properties reported by the device update agent
+                      in the Device Update PnP interface in IoT Hub. It is a hex-encoded SHA1 hash.
+                      Required.
                     "deviceClassProperties": {
                         "compatProperties": {
                             "str": "str"  # The compat properties of the device class.
@@ -1644,6 +1655,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               of the device class. Intended to be a more readable form of the contract
                               model Id. Required.
                         }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "friendlyName": "str"  # Optional. The device class friendly name. This can
                       be updated by callers after the device class has been automatically created.
@@ -1678,16 +1698,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "bestCompatibleUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
-                        }
-                    },
-                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassId": "str",  # The device class identifier. This is generated
+                      from the model Id and the compat properties reported by the device update agent
+                      in the Device Update PnP interface in IoT Hub. It is a hex-encoded SHA1 hash.
+                      Required.
                     "deviceClassProperties": {
                         "compatProperties": {
                             "str": "str"  # The compat properties of the device class.
@@ -1704,6 +1718,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               of the device class. Intended to be a more readable form of the contract
                               model Id. Required.
                         }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "friendlyName": "str"  # Optional. The device class friendly name. This can
                       be updated by callers after the device class has been automatically created.
@@ -1733,16 +1756,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "bestCompatibleUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
-                        }
-                    },
-                    "deviceClassId": "str",  # The device class identifier. Required.
+                    "deviceClassId": "str",  # The device class identifier. This is generated
+                      from the model Id and the compat properties reported by the device update agent
+                      in the Device Update PnP interface in IoT Hub. It is a hex-encoded SHA1 hash.
+                      Required.
                     "deviceClassProperties": {
                         "compatProperties": {
                             "str": "str"  # The compat properties of the device class.
@@ -1759,6 +1776,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               of the device class. Intended to be a more readable form of the contract
                               model Id. Required.
                         }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "friendlyName": "str"  # Optional. The device class friendly name. This can
                       be updated by callers after the device class has been automatically created.
@@ -1820,7 +1846,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     async def delete_device_class(  # pylint: disable=inconsistent-return-statements
         self, device_class_id: str, **kwargs: Any
     ) -> None:
-        """Deletes a device class.
+        """Deletes a device class. Device classes are created automatically when Device Update-enabled
+        devices are connected to the hub but are not automatically cleaned up since they are referenced
+        by DeviceClassSubgroups. If the user has deleted all DeviceClassSubgroups for a device class
+        they can also delete the device class to remove the records from the system and to stop
+        checking the compatibility of this device class with new updates. If a device is ever
+        reconnected for this device class it will be re-created.
 
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -1876,13 +1907,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "description": "str",  # Optional. Update description.
-                    "friendlyName": "str",  # Optional. Friendly update name.
                     "updateId": {
                         "name": "str",  # Update name. Required.
                         "provider": "str",  # Update provider. Required.
                         "version": "str"  # Update version. Required.
-                    }
+                    },
+                    "description": "str",  # Optional. Update description.
+                    "friendlyName": "str"  # Optional. Friendly update name.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1953,7 +1984,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         """Gets a list of devices connected to Device Update for IoT Hub.
 
         :keyword filter: Restricts the set of devices returned. You can filter on GroupId,
-         DeviceClassId, or GroupId and DeploymentStatus. Default value is None.
+         DeviceClassId, or GroupId and DeploymentStatus. Use DeploymentStatus eq null to query for
+         devices with no deployment status (that have never been deployed to). Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
@@ -1964,29 +1996,32 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
+                    "deviceClassId": "str",  # Device class identity. Required.
+                    "deviceId": "str",  # Device identity. Required.
+                    "onLatestUpdate": bool,  # Boolean flag indicating whether the latest update
+                      (the best compatible update for the device's device class and group) is installed
+                      on the device. Required.
                     "deploymentStatus": "str",  # Optional. State of the device in its last
                       deployment. Known values are: "Succeeded", "InProgress", "Canceled", and
                       "Failed".
-                    "deviceClassId": "str",  # Device class identity. Required.
-                    "deviceId": "str",  # Device identity. Required.
                     "groupId": "str",  # Optional. Device group identity.
                     "installedUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "lastAttemptedUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "lastDeploymentId": "str",  # Optional. The deployment identifier for the
                       last deployment to the device.
@@ -1997,17 +2032,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                           details about the install result.
                         "stepResults": [
                             {
-                                "description": "str",  # Optional. Step description.
                                 "extendedResultCode": 0,  # Install extended result
                                   code. Required.
                                 "resultCode": 0,  # Install result code. Required.
+                                "description": "str",  # Optional. Step description.
                                 "resultDetails": "str",  # Optional. A string
                                   containing further details about the install result.
                                 "update": {
-                                    "description": "str",  # Optional. Update
-                                      description.
-                                    "friendlyName": "str",  # Optional. Friendly
-                                      update name.
                                     "updateId": {
                                         "name": "str",  # Update name.
                                           Required.
@@ -2015,14 +2046,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                                           provider. Required.
                                         "version": "str"  # Update version.
                                           Required.
-                                    }
+                                    },
+                                    "description": "str",  # Optional. Update
+                                      description.
+                                    "friendlyName": "str"  # Optional. Friendly
+                                      update name.
                                 }
                             }
                         ]
                     },
-                    "moduleId": "str",  # Optional. Device module identity.
-                    "onLatestUpdate": bool  # Boolean flag indicating whether the latest update
-                      is installed on the device. Required.
+                    "moduleId": "str"  # Optional. Device module identity.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2211,29 +2244,32 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
+                    "deviceClassId": "str",  # Device class identity. Required.
+                    "deviceId": "str",  # Device identity. Required.
+                    "onLatestUpdate": bool,  # Boolean flag indicating whether the latest update
+                      (the best compatible update for the device's device class and group) is installed
+                      on the device. Required.
                     "deploymentStatus": "str",  # Optional. State of the device in its last
                       deployment. Known values are: "Succeeded", "InProgress", "Canceled", and
                       "Failed".
-                    "deviceClassId": "str",  # Device class identity. Required.
-                    "deviceId": "str",  # Device identity. Required.
                     "groupId": "str",  # Optional. Device group identity.
                     "installedUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "lastAttemptedUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "lastDeploymentId": "str",  # Optional. The deployment identifier for the
                       last deployment to the device.
@@ -2244,17 +2280,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                           details about the install result.
                         "stepResults": [
                             {
-                                "description": "str",  # Optional. Step description.
                                 "extendedResultCode": 0,  # Install extended result
                                   code. Required.
                                 "resultCode": 0,  # Install result code. Required.
+                                "description": "str",  # Optional. Step description.
                                 "resultDetails": "str",  # Optional. A string
                                   containing further details about the install result.
                                 "update": {
-                                    "description": "str",  # Optional. Update
-                                      description.
-                                    "friendlyName": "str",  # Optional. Friendly
-                                      update name.
                                     "updateId": {
                                         "name": "str",  # Update name.
                                           Required.
@@ -2262,14 +2294,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                                           provider. Required.
                                         "version": "str"  # Update version.
                                           Required.
-                                    }
+                                    },
+                                    "description": "str",  # Optional. Update
+                                      description.
+                                    "friendlyName": "str"  # Optional. Friendly
+                                      update name.
                                 }
                             }
                         ]
                     },
-                    "moduleId": "str",  # Optional. Device module identity.
-                    "onLatestUpdate": bool  # Boolean flag indicating whether the latest update
-                      is installed on the device. Required.
+                    "moduleId": "str"  # Optional. Device module identity.
                 }
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -2330,29 +2364,32 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
+                    "deviceClassId": "str",  # Device class identity. Required.
+                    "deviceId": "str",  # Device identity. Required.
+                    "onLatestUpdate": bool,  # Boolean flag indicating whether the latest update
+                      (the best compatible update for the device's device class and group) is installed
+                      on the device. Required.
                     "deploymentStatus": "str",  # Optional. State of the device in its last
                       deployment. Known values are: "Succeeded", "InProgress", "Canceled", and
                       "Failed".
-                    "deviceClassId": "str",  # Device class identity. Required.
-                    "deviceId": "str",  # Device identity. Required.
                     "groupId": "str",  # Optional. Device group identity.
                     "installedUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "lastAttemptedUpdate": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     },
                     "lastDeploymentId": "str",  # Optional. The deployment identifier for the
                       last deployment to the device.
@@ -2363,17 +2400,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                           details about the install result.
                         "stepResults": [
                             {
-                                "description": "str",  # Optional. Step description.
                                 "extendedResultCode": 0,  # Install extended result
                                   code. Required.
                                 "resultCode": 0,  # Install result code. Required.
+                                "description": "str",  # Optional. Step description.
                                 "resultDetails": "str",  # Optional. A string
                                   containing further details about the install result.
                                 "update": {
-                                    "description": "str",  # Optional. Update
-                                      description.
-                                    "friendlyName": "str",  # Optional. Friendly
-                                      update name.
                                     "updateId": {
                                         "name": "str",  # Update name.
                                           Required.
@@ -2381,14 +2414,16 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                                           provider. Required.
                                         "version": "str"  # Update version.
                                           Required.
-                                    }
+                                    },
+                                    "description": "str",  # Optional. Update
+                                      description.
+                                    "friendlyName": "str"  # Optional. Friendly
+                                      update name.
                                 }
                             }
                         ]
                     },
-                    "moduleId": "str",  # Optional. Device module identity.
-                    "onLatestUpdate": bool  # Boolean flag indicating whether the latest update
-                      is installed on the device. Required.
+                    "moduleId": "str"  # Optional. Device module identity.
                 }
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -2495,13 +2530,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_groups(self, *, orderby: Optional[str] = None, **kwargs: Any) -> AsyncIterable[JSON]:
+    def list_groups(self, *, order_by: Optional[str] = None, **kwargs: Any) -> AsyncIterable[JSON]:
         """Gets a list of all device groups.  The $default group will always be returned first.
 
-        :keyword orderby: Orders the set of groups returned. You can order by any combination of
-         groupId, device count, created date, subgroupsWithNewUpdatesAvailableCount,
-         subgroupsWithUpdatesInProgressCount, or subgroupsOnLatestUpdateCount. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Orders the set of groups returned. You can order by groupId, deviceCount,
+         createdDate, subgroupsWithNewUpdatesAvailableCount, subgroupsWithUpdatesInProgressCount, or
+         subgroupsOnLatestUpdateCount. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2513,13 +2548,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 response == {
                     "createdDateTime": "str",  # Date and time when the update was created.
                       Required.
+                    "groupId": "str",  # Group identity. This is created from the value of the
+                      ADUGroup tag in the Iot Hub's device/module twin or $default for devices with no
+                      tag. Required.
+                    "groupType": "str",  # Group type. Required. Known values are: "IoTHubTag"
+                      and "DefaultNoTag".
                     "deployments": [
                         "str"  # Optional. The active deployment Ids for the group.
                     ],
                     "deviceCount": 0,  # Optional. The number of devices in the group.
-                    "groupId": "str",  # Group identity. Required.
-                    "groupType": "str",  # Group type. Required. Known values are: "IoTHubTag"
-                      and "DefaultNoTag".
                     "subgroupsWithNewUpdatesAvailableCount": 0,  # Optional. The count of
                       subgroups with new updates available.
                     "subgroupsWithOnLatestUpdateCount": 0,  # Optional. The count of subgroups
@@ -2541,7 +2578,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 request = build_device_management_list_groups_request(
                     instance_id=self._config.instance_id,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2595,7 +2632,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     async def get_group(self, group_id: str, **kwargs: Any) -> JSON:
         """Gets the device group properties.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :return: JSON object
         :rtype: JSON
@@ -2608,13 +2645,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 response == {
                     "createdDateTime": "str",  # Date and time when the update was created.
                       Required.
+                    "groupId": "str",  # Group identity. This is created from the value of the
+                      ADUGroup tag in the Iot Hub's device/module twin or $default for devices with no
+                      tag. Required.
+                    "groupType": "str",  # Group type. Required. Known values are: "IoTHubTag"
+                      and "DefaultNoTag".
                     "deployments": [
                         "str"  # Optional. The active deployment Ids for the group.
                     ],
                     "deviceCount": 0,  # Optional. The number of devices in the group.
-                    "groupId": "str",  # Group identity. Required.
-                    "groupType": "str",  # Group type. Required. Known values are: "IoTHubTag"
-                      and "DefaultNoTag".
                     "subgroupsWithNewUpdatesAvailableCount": 0,  # Optional. The count of
                       subgroups with new updates available.
                     "subgroupsWithOnLatestUpdateCount": 0,  # Optional. The count of subgroups
@@ -2667,9 +2706,14 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     async def delete_group(  # pylint: disable=inconsistent-return-statements
         self, group_id: str, **kwargs: Any
     ) -> None:
-        """Deletes a device group.
+        """Deletes a device group. This group is automatically created when a Device Update-enabled device
+        is connected to the hub and reports its properties. Groups, subgroups, and deployments are not
+        automatically cleaned up but are retained for history purposes. Users can call this method to
+        delete a group if they do not need to retain any of the history of the group and no longer need
+        it. If a device is ever connected again for this group after the group was deleted it will be
+        automatically re-created but there will be no history.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :return: None
         :rtype: None
@@ -2709,11 +2753,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get_group_update_compliance(self, group_id: str, **kwargs: Any) -> JSON:
+    async def get_update_compliance_for_group(self, group_id: str, **kwargs: Any) -> JSON:
         """Get device group update compliance information such as how many devices are on their latest
         update, how many need new updates, and how many are in progress on receiving a new update.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :return: JSON object
         :rtype: JSON
@@ -2741,7 +2785,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_get_group_update_compliance_request(
+        request = build_device_management_get_update_compliance_for_group_request(
             group_id=group_id,
             instance_id=self._config.instance_id,
             api_version=self._config.api_version,
@@ -2774,17 +2818,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_best_updates_for_group(
-        self, group_id: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_best_updates_for_group(self, group_id: str, **kwargs: Any) -> AsyncIterable[JSON]:
         """Get the best available updates for a device group and a count of how many devices need each
         update.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
-        :keyword filter: Restricts the set of bestUpdates returned. You can filter on update Provider,
-         Name and Version property. Default value is None.
-        :paramtype filter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2800,13 +2839,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       applicable. Required.
                     "groupId": "str",  # The group Id. Required.
                     "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     }
                 }
         """
@@ -2824,7 +2863,6 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 request = build_device_management_list_best_updates_for_group_request(
                     group_id=group_id,
                     instance_id=self._config.instance_id,
-                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2876,15 +2914,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_deployments_for_group(
-        self, group_id: str, *, orderby: Optional[str] = None, **kwargs: Any
+        self, group_id: str, *, order_by: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets a list of deployments for a device group.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
-        :keyword orderby: Orders the set of deployments returned. You can order by start date. Default
+        :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
          value is None.
-        :paramtype orderby: str
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2894,11 +2932,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -2913,24 +2970,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -2949,7 +2995,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 request = build_device_management_list_deployments_for_group_request(
                     group_id=group_id,
                     instance_id=self._config.instance_id,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3003,7 +3049,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     async def get_deployment(self, group_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Gets the deployment properties.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
@@ -3016,11 +3062,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3035,24 +3100,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -3110,7 +3164,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     ) -> JSON:
         """Creates or updates a deployment.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
@@ -3128,11 +3182,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # JSON input template you can fill out and use as your body input.
                 deployment = {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3147,35 +3220,43 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3190,24 +3271,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -3225,7 +3295,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     ) -> JSON:
         """Creates or updates a deployment.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
@@ -3243,11 +3313,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3262,24 +3351,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -3291,7 +3369,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     ) -> JSON:
         """Creates or updates a deployment.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
@@ -3309,11 +3387,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3328,24 +3425,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -3409,7 +3495,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Deletes a deployment.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
@@ -3456,7 +3542,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
@@ -3472,26 +3558,6 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "deploymentState": "str",  # The state of the deployment. Required. Known
                       values are: "Active", "ActiveWithSubgroupFailures", "Failed", "Inactive", and
                       "Canceled".
-                    "error": {
-                        "code": "str",  # Server defined error code. Required.
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",  # A more specific error code than what was
-                              provided by the containing error. Required.
-                            "errorDetail": "str",  # Optional. The internal error or
-                              exception message.
-                            "innerError": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
-                        },
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
-                        "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
-                          in UTC when the error occurred.
-                        "target": "str"  # Optional. The target of the error.
-                    },
                     "groupId": "str",  # The group identity. Required.
                     "subgroupStatus": [
                         {
@@ -3500,6 +3566,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               and "Canceled".
                             "deviceClassId": "str",  # The device class subgroup
                               identity. Required.
+                            "groupId": "str",  # The group identity. Required.
                             "devicesCanceledCount": 0,  # Optional. The number of devices
                               which have had their deployment canceled.
                             "devicesCompletedFailedCount": 0,  # Optional. The number of
@@ -3511,6 +3578,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                             "error": {
                                 "code": "str",  # Server defined error code.
                                   Required.
+                                "message": "str",  # A human-readable representation
+                                  of the error. Required.
                                 "details": [
                                     ...
                                 ],
@@ -3523,17 +3592,34 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                                     "message": "str"  # Optional. A
                                       human-readable representation of the error.
                                 },
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
                                 "occurredDateTime": "2020-02-20 00:00:00",  #
                                   Optional. Date and time in UTC when the error occurred.
                                 "target": "str"  # Optional. The target of the error.
                             },
-                            "groupId": "str",  # The group identity. Required.
                             "totalDevices": 0  # Optional. The total number of devices in
                               the deployment.
                         }
-                    ]
+                    ],
+                    "error": {
+                        "code": "str",  # Server defined error code. Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # A more specific error code than what was
+                              provided by the containing error. Required.
+                            "errorDetail": "str",  # Optional. The internal error or
+                              exception message.
+                            "innerError": ...,
+                            "message": "str"  # Optional. A human-readable representation
+                              of the error.
+                        },
+                        "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
+                          in UTC when the error occurred.
+                        "target": "str"  # Optional. The target of the error.
+                    }
                 }
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -3577,19 +3663,22 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def list_device_class_subgroups_for_group(
+    @distributed_trace
+    def list_device_class_subgroups_for_group(
         self, group_id: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> JSON:
-        """Get the device class subgroups for the group.
+    ) -> AsyncIterable[JSON]:
+        """Get the device class subgroups for the group. A device class subgroup is the set of devices
+        within the group that share the same device class. All devices within the same device class are
+        compatible with the same updates.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :keyword filter: Restricts the set of device class subgroups returned. You can filter on compat
-         properties by name and value. Default value is None.
+         properties by name and value. (i.e. filter=compatProperties/propertyName1 eq 'value1' and
+         compatProperties/propertyName2 eq 'value2'). Default value is None.
         :paramtype filter: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3597,68 +3686,90 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
-                        {
-                            "createdDateTime": "str",  # Date and time when the
-                              deviceclass subgroup was created. Required.
-                            "deploymentId": "str",  # Optional. The active deployment Id
-                              for the deviceclass subgroup.
-                            "deviceClassId": "str",  # Device class subgroup identity.
-                              Required.
-                            "deviceCount": 0,  # Optional. The number of devices in the
-                              deviceclass subgroup.
-                            "groupId": "str"  # Group identity. Required.
-                        }
-                    ]
+                    "createdDateTime": "str",  # Date and time when the device class subgroup was
+                      created. Required.
+                    "deviceClassId": "str",  # Device class subgroup identity. This is generated
+                      from the model Id and the compat properties reported by the device update agent
+                      in the Device Update PnP interface in IoT Hub. It is a hex-encoded SHA1 hash.
+                      Required.
+                    "groupId": "str",  # Group identity. Required.
+                    "deploymentId": "str",  # Optional. The active deployment Id for the device
+                      class subgroup.
+                    "deviceCount": 0  # Optional. The number of devices in the device class
+                      subgroup.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_list_device_class_subgroups_for_group_request(
-            group_id=group_id,
-            instance_id=self._config.instance_id,
-            filter=filter,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        response = pipeline_response.http_response
+                request = build_device_management_list_device_class_subgroups_for_group_request(
+                    group_id=group_id,
+                    instance_id=self._config.instance_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+            return request
 
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        return cast(JSON, deserialized)
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_device_class_subgroup_details(self, group_id: str, device_class_id: str, **kwargs: Any) -> JSON:
-        """Gets device class subgroup details.
+    async def get_device_class_subgroup(self, group_id: str, device_class_id: str, **kwargs: Any) -> JSON:
+        """Gets device class subgroup details. A device class subgroup is the set of devices within the
+        group that share the same device class. All devices within the same device class are compatible
+        with the same updates.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -3671,14 +3782,17 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "createdDateTime": "str",  # Date and time when the deviceclass subgroup was
+                    "createdDateTime": "str",  # Date and time when the device class subgroup was
                       created. Required.
-                    "deploymentId": "str",  # Optional. The active deployment Id for the
-                      deviceclass subgroup.
-                    "deviceClassId": "str",  # Device class subgroup identity. Required.
-                    "deviceCount": 0,  # Optional. The number of devices in the deviceclass
+                    "deviceClassId": "str",  # Device class subgroup identity. This is generated
+                      from the model Id and the compat properties reported by the device update agent
+                      in the Device Update PnP interface in IoT Hub. It is a hex-encoded SHA1 hash.
+                      Required.
+                    "groupId": "str",  # Group identity. Required.
+                    "deploymentId": "str",  # Optional. The active deployment Id for the device
+                      class subgroup.
+                    "deviceCount": 0  # Optional. The number of devices in the device class
                       subgroup.
-                    "groupId": "str"  # Group identity. Required.
                 }
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -3689,7 +3803,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_get_device_class_subgroup_details_request(
+        request = build_device_management_get_device_class_subgroup_request(
             group_id=group_id,
             device_class_id=device_class_id,
             instance_id=self._config.instance_id,
@@ -3726,9 +3840,14 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     async def delete_device_class_subgroup(  # pylint: disable=inconsistent-return-statements
         self, group_id: str, device_class_id: str, **kwargs: Any
     ) -> None:
-        """Deletes a device class subgroup.
+        """Deletes a device class subgroup. This subgroup is automatically created when a Device
+        Update-enabled device is connected to the hub and reports its properties. Groups, subgroups,
+        and deployments are not automatically cleaned up but are retained for history purposes. Users
+        can call this method to delete a subgroup if they do not need to retain any of the history of
+        the subgroup and no longer need it. If a device is ever connected again for this subgroup after
+        the subgroup was deleted it will be automatically re-created but there will be no history.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -3778,7 +3897,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         latest update, how many need new updates, and how many are in progress on receiving a new
         update.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -3842,13 +3961,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def list_best_updates_for_device_class_subgroup(
+    async def get_best_updates_for_device_class_subgroup(
         self, group_id: str, device_class_id: str, **kwargs: Any
     ) -> JSON:
         """Get the best available update for a device class subgroup and a count of how many devices need
         this update.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -3867,13 +3986,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       applicable. Required.
                     "groupId": "str",  # The group Id. Required.
                     "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
                         "updateId": {
                             "name": "str",  # Update name. Required.
                             "provider": "str",  # Update provider. Required.
                             "version": "str"  # Update version. Required.
-                        }
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
                     }
                 }
         """
@@ -3885,7 +4004,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_list_best_updates_for_device_class_subgroup_request(
+        request = build_device_management_get_best_updates_for_device_class_subgroup_request(
             group_id=group_id,
             device_class_id=device_class_id,
             instance_id=self._config.instance_id,
@@ -3920,17 +4039,17 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_deployments_for_device_class_subgroup(
-        self, group_id: str, device_class_id: str, *, orderby: Optional[str] = None, **kwargs: Any
+        self, group_id: str, device_class_id: str, *, order_by: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets a list of deployments for a device class subgroup.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :keyword orderby: Orders the set of deployments returned. You can order by start date. Default
+        :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
          value is None.
-        :paramtype orderby: str
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3940,11 +4059,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -3959,24 +4097,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -3996,7 +4123,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     group_id=group_id,
                     device_class_id=device_class_id,
                     instance_id=self._config.instance_id,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4052,7 +4179,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     ) -> JSON:
         """Gets the deployment properties.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -4067,11 +4194,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -4086,24 +4232,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -4151,12 +4286,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def delete_device_class_subgroup_deployment(  # pylint: disable=inconsistent-return-statements
+    async def delete_deployment_for_device_class_subgroup(  # pylint: disable=inconsistent-return-statements
         self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
     ) -> None:
         """Deletes a device class subgroup deployment.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -4174,7 +4309,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_device_management_delete_device_class_subgroup_deployment_request(
+        request = build_device_management_delete_deployment_for_device_class_subgroup_request(
             group_id=group_id,
             device_class_id=device_class_id,
             deployment_id=deployment_id,
@@ -4205,7 +4340,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     async def stop_deployment(self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Stops a deployment.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -4220,11 +4355,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -4239,24 +4393,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -4307,7 +4450,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     async def retry_deployment(self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Retries a deployment with failed devices.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -4322,11 +4465,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "deploymentId": "str",  # The deployment identifier. Required.
+                    "deploymentId": "str",  # The caller-provided deployment identifier. This
+                      cannot be longer than 73 characters, must be all lower-case, and cannot contain
+                      '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash, backslash, or double
+                      quote. The Updates view in the Azure Portal IoT Hub resource generates a GUID for
+                      deploymentId when you create a deployment. Required.
+                    "groupId": "str",  # The group identity for the devices the deployment is
+                      intended to update. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
+                      Required.
+                    "update": {
+                        "updateId": {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        },
+                        "description": "str",  # Optional. Update description.
+                        "friendlyName": "str"  # Optional. Friendly update name.
+                    },
                     "deviceClassSubgroups": [
-                        "str"  # Optional. The device class subgroups for the deployment.
+                        "str"  # Optional. The device class subgroups the deployment is
+                          compatible with and subgroup deployments have been created for. This is not
+                          provided by the caller during CreateOrUpdateDeployment but is automatically
+                          determined by Device Update.
                     ],
-                    "groupId": "str",  # The group identity. Required.
                     "isCanceled": bool,  # Optional. Boolean flag indicating whether the
                       deployment was canceled.
                     "isCloudInitiatedRollback": bool,  # Optional. Boolean flag indicating
@@ -4341,24 +4503,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                               failed. Required.
                         },
                         "update": {
-                            "description": "str",  # Optional. Update description.
-                            "friendlyName": "str",  # Optional. Friendly update name.
                             "updateId": {
                                 "name": "str",  # Update name. Required.
                                 "provider": "str",  # Update provider. Required.
                                 "version": "str"  # Update version. Required.
-                            }
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # The deployment start datetime.
-                      Required.
-                    "update": {
-                        "description": "str",  # Optional. Update description.
-                        "friendlyName": "str",  # Optional. Friendly update name.
-                        "updateId": {
-                            "name": "str",  # Update name. Required.
-                            "provider": "str",  # Update provider. Required.
-                            "version": "str"  # Update version. Required.
+                            },
+                            "description": "str",  # Optional. Update description.
+                            "friendlyName": "str"  # Optional. Friendly update name.
                         }
                     }
                 }
@@ -4412,7 +4563,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -4430,6 +4581,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "deploymentState": "str",  # The state of the subgroup deployment. Required.
                       Known values are: "Active", "Failed", "Inactive", and "Canceled".
                     "deviceClassId": "str",  # The device class subgroup identity. Required.
+                    "groupId": "str",  # The group identity. Required.
                     "devicesCanceledCount": 0,  # Optional. The number of devices which have had
                       their deployment canceled.
                     "devicesCompletedFailedCount": 0,  # Optional. The number of devices that
@@ -4440,6 +4592,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                       currently in deployment.
                     "error": {
                         "code": "str",  # Server defined error code. Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "details": [
                             ...
                         ],
@@ -4452,13 +4606,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
-                    "groupId": "str",  # The group identity. Required.
                     "totalDevices": 0  # Optional. The total number of devices in the deployment.
                 }
         """
@@ -4505,13 +4656,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_devices_for_device_class_subgroup_deployment(
+    def list_device_states_for_device_class_subgroup_deployment(
         self, group_id: str, device_class_id: str, deployment_id: str, *, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Gets a list of devices in a deployment along with their state. Useful for getting a list of
         failed devices.
 
-        :param group_id: Group identity. Required.
+        :param group_id: Group identifier. Required.
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
@@ -4532,12 +4683,12 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "deviceId": "str",  # Device identity. Required.
                     "deviceState": "str",  # Deployment device state. Required. Known values are:
                       "Succeeded", "InProgress", "Canceled", and "Failed".
-                    "moduleId": "str",  # Optional. Device module identity.
                     "movedOnToNewDeployment": bool,  # Boolean flag indicating whether this
                       device is in a newer deployment and can no longer retry this deployment.
                       Required.
-                    "retryCount": 0  # The number of times this deployment has been retried on
+                    "retryCount": 0,  # The number of times this deployment has been retried on
                       this device. Required.
+                    "moduleId": "str"  # Optional. Device module identity.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4551,7 +4702,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_device_management_list_devices_for_device_class_subgroup_deployment_request(
+                request = build_device_management_list_device_states_for_device_class_subgroup_deployment_request(
                     group_id=group_id,
                     device_class_id=device_class_id,
                     deployment_id=deployment_id,
@@ -4628,8 +4779,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
                       operation was created. Required.
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "error": {
                         "code": "str",  # Server defined error code. Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "details": [
                             ...
                         ],
@@ -4642,18 +4800,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
                     "etag": "str",  # Optional. Operation ETag.
-                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
-                      operation status was last updated. Required.
-                    "operationId": "str",  # Operation Id. Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "traceId": "str"  # Optional. Operation correlation identity that can used by
                       Microsoft Support for troubleshooting.
                 }
@@ -4729,8 +4880,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
                       operation was created. Required.
+                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      operation status was last updated. Required.
+                    "operationId": "str",  # Operation Id. Required.
+                    "status": "str",  # Operation status. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "error": {
                         "code": "str",  # Server defined error code. Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
                         "details": [
                             ...
                         ],
@@ -4743,18 +4901,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                             "message": "str"  # Optional. A human-readable representation
                               of the error.
                         },
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
                         "occurredDateTime": "2020-02-20 00:00:00",  # Optional. Date and time
                           in UTC when the error occurred.
                         "target": "str"  # Optional. The target of the error.
                     },
                     "etag": "str",  # Optional. Operation ETag.
-                    "lastActionDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
-                      operation status was last updated. Required.
-                    "operationId": "str",  # Operation Id. Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", and "Failed".
                     "traceId": "str"  # Optional. Operation correlation identity that can used by
                       Microsoft Support for troubleshooting.
                 }
@@ -4824,15 +4975,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def collect_logs(
-        self, operation_id: str, log_collection_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+    async def start_log_collection(
+        self, log_collection_id: str, log_collection: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
-        """Start the device diagnostics log collection operation on specified devices.
+        """Start the device diagnostics log collection on specified devices.
 
-        :param operation_id: Operation identifier. Required.
-        :type operation_id: str
-        :param log_collection_request: The deployment properties. Required.
-        :type log_collection_request: JSON
+        :param log_collection_id: Log collection identifier. Required.
+        :type log_collection_id: str
+        :param log_collection: The log collection properties. Required.
+        :type log_collection: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4844,52 +4995,52 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                log_collection_request = {
-                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
-                      created.
-                    "description": "str",  # Optional. Description of the diagnostics operation.
+                log_collection = {
                     "deviceList": [
                         {
                             "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", and "Failed".
                 }
 
                 # response body for status code(s): 201
                 response == {
-                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
-                      created.
-                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
                             "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", and "Failed".
                 }
         """
 
     @overload
-    async def collect_logs(
-        self, operation_id: str, log_collection_request: IO, *, content_type: str = "application/json", **kwargs: Any
+    async def start_log_collection(
+        self, log_collection_id: str, log_collection: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
-        """Start the device diagnostics log collection operation on specified devices.
+        """Start the device diagnostics log collection on specified devices.
 
-        :param operation_id: Operation identifier. Required.
-        :type operation_id: str
-        :param log_collection_request: The deployment properties. Required.
-        :type log_collection_request: IO
+        :param log_collection_id: Log collection identifier. Required.
+        :type log_collection_id: str
+        :param log_collection: The log collection properties. Required.
+        :type log_collection: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4902,32 +5053,34 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 201
                 response == {
-                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
-                      created.
-                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
                             "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", and "Failed".
                 }
         """
 
     @distributed_trace_async
-    async def collect_logs(self, operation_id: str, log_collection_request: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Start the device diagnostics log collection operation on specified devices.
+    async def start_log_collection(
+        self, log_collection_id: str, log_collection: Union[JSON, IO], **kwargs: Any
+    ) -> JSON:
+        """Start the device diagnostics log collection on specified devices.
 
-        :param operation_id: Operation identifier. Required.
-        :type operation_id: str
-        :param log_collection_request: The deployment properties. Is either a model type or a IO type.
+        :param log_collection_id: Log collection identifier. Required.
+        :type log_collection_id: str
+        :param log_collection: The log collection properties. Is either a model type or a IO type.
          Required.
-        :type log_collection_request: JSON or IO
+        :type log_collection: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -4940,18 +5093,18 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 201
                 response == {
-                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
-                      created.
-                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
                             "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", and "Failed".
                 }
@@ -4968,13 +5121,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(log_collection_request, (IO, bytes)):
-            _content = log_collection_request
+        if isinstance(log_collection, (IO, bytes)):
+            _content = log_collection
         else:
-            _json = log_collection_request
+            _json = log_collection
 
-        request = build_device_management_collect_logs_request(
-            operation_id=operation_id,
+        request = build_device_management_start_log_collection_request(
+            log_collection_id=log_collection_id,
             instance_id=self._config.instance_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5009,11 +5162,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_log_collection_operation(self, operation_id: str, **kwargs: Any) -> JSON:
-        """Get the device diagnostics log collection operation.
+    async def get_log_collection(self, log_collection_id: str, **kwargs: Any) -> JSON:
+        """Get the device diagnostics log collection.
 
-        :param operation_id: Operation identifier. Required.
-        :type operation_id: str
+        :param log_collection_id: Log collection identifier. Required.
+        :type log_collection_id: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5023,18 +5176,18 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
-                      created.
-                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
                             "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", and "Failed".
                 }
@@ -5047,8 +5200,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_get_log_collection_operation_request(
-            operation_id=operation_id,
+        request = build_device_management_get_log_collection_request(
+            log_collection_id=log_collection_id,
             instance_id=self._config.instance_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5080,8 +5233,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_log_collection_operations(self, **kwargs: Any) -> AsyncIterable[JSON]:
-        """Get all device diagnostics log collection operations.
+    def list_log_collections(self, **kwargs: Any) -> AsyncIterable[JSON]:
+        """Get all device diagnostics log collections.
 
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
@@ -5092,18 +5245,18 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
-                      created.
-                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "deviceList": [
                         {
                             "deviceId": "str",  # Device Id. Required.
                             "moduleId": "str"  # Optional. Module Id.
                         }
                     ],
+                    "createdDateTime": "str",  # Optional. The timestamp when the operation was
+                      created.
+                    "description": "str",  # Optional. Description of the diagnostics operation.
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
                       state was entered.
-                    "operationId": "str",  # Optional. The diagnostics operation id.
+                    "operationId": "str",  # Optional. The log collection id.
                     "status": "str"  # Optional. Operation status. Known values are:
                       "NotStarted", "Running", "Succeeded", and "Failed".
                 }
@@ -5119,7 +5272,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_device_management_list_log_collection_operations_request(
+                request = build_device_management_list_log_collections_request(
                     instance_id=self._config.instance_id,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -5171,8 +5324,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_log_collection_operation_detailed_status(self, operation_id: str, **kwargs: Any) -> JSON:
-        """Get device diagnostics log collection operation with detailed status.
+    async def get_log_collection_detailed_status(self, operation_id: str, **kwargs: Any) -> JSON:
+        """Get log collection with detailed status.
 
         :param operation_id: Operation identifier. Required.
         :type operation_id: str
@@ -5191,13 +5344,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                     "deviceStatus": [
                         {
                             "deviceId": "str",  # Device id. Required.
+                            "status": "str",  # Log upload status. Required. Known values
+                              are: "NotStarted", "Running", "Succeeded", and "Failed".
                             "extendedResultCode": "str",  # Optional. Log upload extended
                               result code.
                             "logLocation": "str",  # Optional. Log upload location.
                             "moduleId": "str",  # Optional. Module id.
-                            "resultCode": "str",  # Optional. Log upload result code.
-                            "status": "str"  # Log upload status. Required. Known values
-                              are: "NotStarted", "Running", "Succeeded", and "Failed".
+                            "resultCode": "str"  # Optional. Log upload result code.
                         }
                     ],
                     "lastActionDateTime": "str",  # Optional. A timestamp for when the current
@@ -5215,7 +5368,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_get_log_collection_operation_detailed_status_request(
+        request = build_device_management_get_log_collection_detailed_status_request(
             operation_id=operation_id,
             instance_id=self._config.instance_id,
             api_version=self._config.api_version,
@@ -5247,14 +5400,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def list_device_health(self, *, filter: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def list_device_health(self, *, filter: str, **kwargs: Any) -> AsyncIterable[JSON]:
         """Get list of device health.
 
-        :keyword filter: Filter list by specified properties. Required.
+        :keyword filter: Restricts the set of devices for which device health is returned. You can
+         filter on status, device id and module id. Required.
         :paramtype filter: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5262,63 +5416,79 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
                 # response body for status code(s): 200
                 response == {
-                    "nextLink": "str",  # Optional. The link to the next page of items.
-                    "value": [
+                    "deviceId": "str",  # Device id. Required.
+                    "healthChecks": [
                         {
-                            "deviceId": "str",  # Device id. Required.
-                            "digitalTwinModelId": "str",  # Optional. Digital twin model
-                              Id.
-                            "healthChecks": [
-                                {
-                                    "name": "str",  # Optional. Health check
-                                      name.
-                                    "result": "str"  # Optional. Health check
-                                      result. Known values are: "success" and "userError".
-                                }
-                            ],
-                            "moduleId": "str",  # Optional. Module id.
-                            "state": "str"  # Aggregate device health state. Required.
-                              Known values are: "healthy" and "unhealthy".
+                            "name": "str",  # Optional. Health check name.
+                            "result": "str"  # Optional. Health check result. Known
+                              values are: "success" and "userError".
                         }
-                    ]
+                    ],
+                    "state": "str",  # Aggregate device health state. Required. Known values are:
+                      "healthy" and "unhealthy".
+                    "digitalTwinModelId": "str",  # Optional. Digital twin model Id.
+                    "moduleId": "str"  # Optional. Module id.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_list_device_health_request(
-            instance_id=self._config.instance_id,
-            filter=filter,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        response = pipeline_response.http_response
+                request = build_device_management_list_device_health_request(
+                    instance_id=self._config.instance_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+            return request
 
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        return cast(JSON, deserialized)
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

@@ -3,12 +3,11 @@
 ## 1.0.0b4 (Unreleased)
 
 ### Features Added
+- Added filter to DeviceManagementOperations.list_device_classes method
+- Updated description for some methods to be more descriptive and less ambiguous
 
 ### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Removed filter from DeviceManagementOperations.list_best_updates_for_group method
 
 ## 1.0.0b3 (2022-07-07)
 
