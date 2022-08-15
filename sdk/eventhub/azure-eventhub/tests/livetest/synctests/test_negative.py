@@ -15,7 +15,8 @@ from azure.eventhub import (
 from azure.eventhub.exceptions import (
     ConnectError,
     AuthenticationError,
-    EventDataSendError
+    EventDataSendError,
+    EventHubError
 )
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
@@ -129,6 +130,6 @@ def test_invalid_proxy_server(connection_str):
 
     client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY)
     with client:
-        with pytest.raises(ConnectError):
+        with pytest.raises(EventHubError):
             batch = client.create_batch()
 
