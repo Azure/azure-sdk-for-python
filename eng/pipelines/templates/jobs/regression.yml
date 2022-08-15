@@ -87,6 +87,7 @@ jobs:
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: false
+          targetVersion: 1.0.0-dev.20220810.2
 
       - template: ../steps/set-dev-build.yml
         parameters:

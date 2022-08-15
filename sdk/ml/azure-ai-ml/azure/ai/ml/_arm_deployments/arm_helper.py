@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 from os import path
-from typing import Dict, Any
+from typing import Any, Dict
+
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
 from azure.ai.ml._utils.utils import load_json
 from azure.ai.ml.constants import ArmConstants, AzureMLResourceType
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
 
 template_mapping = {
     ArmConstants.BASE_TYPE: "base_template.json",

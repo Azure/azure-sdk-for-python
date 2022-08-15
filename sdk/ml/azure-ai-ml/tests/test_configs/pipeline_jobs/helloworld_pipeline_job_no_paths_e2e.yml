@@ -45,30 +45,3 @@ jobs:
     compute: azureml:cpu-cluster
     inputs:
       component_in_number: ${{parent.inputs.job_in_other_number}}
-
-  # hello_world_component_3:
-  #   type: parallel
-  #   component:
-  #     compute: azureml:cpu-cluster
-  #     inputs:
-  #       job_data_path: ${{parent.inputs.job_data_path}}
-  #       score_model: ${{parent.inputs.score_model}}
-  #     outputs:
-  #       job_output_path:
-  #         type: mltable
-
-  #     mini_batch_size: "100kb"
-  #     mini_batch_error_threshold: 5
-  #     logging_level: "debug"
-  #     input_data: ${{inputs.job_data_path}}
-  #     max_concurrency_per_instance: 2
-
-  #     task:
-  #       type: function
-  #       code: "../python"
-  #       entry_script: tabular_run_with_model.py
-  #       environment:
-  #         conda_file: ../environment/environment_parallel.yml
-  #       args: >-
-  #         --job_output_path ${{outputs.job_output_path}}
-  #         --model ${{inputs.score_model}}

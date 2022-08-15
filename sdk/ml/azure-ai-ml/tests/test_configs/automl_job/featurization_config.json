@@ -9,14 +9,14 @@
     "transformer_params": {
         "imputer": [
             {
-                "fields": ["Quantity"], 
+                "fields": ["Quantity"],
                 "parameters": {
                     "strategy": "constant",
                     "fill_value": 0.0
                 }
             },
             {
-                "fields": ["Income", "Age"], 
+                "fields": ["Income", "Age"],
                 "parameters": {
                     "strategy": "median",
                     "fill_value": null
@@ -51,7 +51,7 @@
                 }
             },
             {
-                "fields": ["Hair Color", "Eye Color"], 
+                "fields": ["Hair Color", "Eye Color"],
                 "parameters": {
                     "number_of_bits": 1.0
                 }

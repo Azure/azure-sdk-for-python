@@ -80,7 +80,6 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/mixedreality/azure-mixedreality-authentication/**",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-opentelemetry-exporter/**",
     "sdk/monitor/azure-monitor-query/**",
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
@@ -163,6 +162,8 @@
     "docfx",
     "dotenv",
     "dpkg",
+    "dtlk",
+    "dtlksd",
     "DWORD",
     "eastus",
     "eckey",
@@ -185,6 +186,7 @@
     "hexlify",
     "himds",
     "hmac",
+    "hnstestscope",
     "howto",
     "illumos",
     "imds",
@@ -194,6 +196,7 @@
     "ipconfiguration",
     "ipconfigurations",
     "iqmp",
+    "isclass",
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
@@ -205,6 +208,7 @@
     "kubeconfigs",
     "Kubernetes",
     "Kusto",
+    "kvlt",
     "livekvtest",
     "livekvtestcertprg",
     "livekvtestcertrec",
@@ -254,6 +258,7 @@
     "pluggy",
     "popen",
     "prebuilts",
+    "premf",
     "pschema",
     "PSECRET",
     "pyfuncitem",
@@ -281,6 +286,7 @@
     "SECG",
     "SECP",
     "setfacl",
+    "sftdl",
     "signalr",
     "signup",
     "simplifiable",
@@ -454,6 +460,22 @@
       ]
     },
     {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
+      "words": [
+        "ikey",
+        "semconv"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
+      "words": [
+        "otel",
+        "OTLP",
+        "otlp",
+        "grpc"
+      ]
+    },
+    {
       "filename": "sdk/schemaregistry/**/tests/**/*.py",
       "words": [
         "favo",
@@ -559,7 +581,28 @@
         "Fdeployments",
         "isfolder",
         "mylist",
-        "unioned"
+        "unioned",
+        "adamw",
+        "yolov",
+        "xdist",
+        "adla",
+        "listxattr",
+        "copyxattr",
+        "curatedenv",
+        "cuda",
+        "mkdtemp",
+        "runit",
+        "delim",
+        "curr",
+        "vendored",
+        "wasb",
+        "cgitb",
+        "isclass",
+        "isfunction",
+        "errno",
+        "firstlineno",
+        "chdir",
+        "fset"
       ]
     },
     {

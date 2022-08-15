@@ -43,7 +43,7 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
 
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
@@ -65,7 +65,7 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "msrest>=0.6.21",
-        "azure-core<2.0.0,>=1.19.1"
+        "azure-core<2.0.0,>=1.23.0"
     ],
     extras_require={
         ":python_version<'3.8'": ["typing-extensions"]

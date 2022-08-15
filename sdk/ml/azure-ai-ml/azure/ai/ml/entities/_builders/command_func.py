@@ -1,21 +1,23 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
-from typing import Dict, Union, Callable, Tuple
 
-from azure.ai.ml.constants import AssetTypes, LegacyAssetTypes, ComponentSource
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
-from .command import Command
-from azure.ai.ml.entities import (
-    Environment,
-    CommandComponent,
-)
-from azure.ai.ml.entities._job.distribution import MpiDistribution, TensorFlowDistribution, PyTorchDistribution
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ManagedIdentity, AmlToken, UserIdentity
+# pylint: disable=protected-access
+
+import os
+from typing import Callable, Dict, Tuple, Union
+
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml.constants import AssetTypes, ComponentSource, LegacyAssetTypes
+from azure.ai.ml.entities._component.command_component import CommandComponent
+from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorTarget
+from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+
+from .command import Command
 
 SUPPORTED_INPUTS = [
     LegacyAssetTypes.PATH,
@@ -44,7 +46,7 @@ def _parse_input(input_value):
         component_input = Input(**input_value)
     elif isinstance(input_value, (SweepDistribution, str, bool, int, float)):
         # Input bindings are not supported
-        component_input = ComponentTranslatableMixin._to_component_input_builder_function(input_value)
+        component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
         job_input = input_value
     else:
         msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, bool, int and float are supported."
@@ -60,7 +62,7 @@ def _parse_output(output_value):
     elif not output_value:
         # output value can be None or empty dictionary
         # None output value will be packed into a JobOutput object with mode = ReadWriteMount & type = UriFolder
-        component_output = ComponentTranslatableMixin._to_component_output(output_value)
+        component_output = ComponentTranslatableMixin._to_output(output_value)
         job_output = output_value
     elif isinstance(output_value, dict):  # When output value is a non-empty dictionary
         job_output = Output(**output_value)
@@ -103,10 +105,11 @@ def command(
     timeout: int = None,
     code: Union[str, os.PathLike] = None,
     identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+    is_deterministic: bool = True,
     **kwargs,
 ) -> Command:
-    """Create a Command object which can be used inside dsl.pipeline as a function and
-     can also be created as a standalone command job.
+    """Create a Command object which can be used inside dsl.pipeline as a
+    function and can also be created as a standalone command job.
 
     :param name: Name of the command job or component created
     :type name: str
@@ -145,6 +148,8 @@ def command(
     :type code: Union[str, os.PathLike]
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[azure.ai.ml.ManagedIdentity, azure.ai.ml.AmlToken]
+    :param is_deterministic: Specify whether the command will return same output given same input. If a command (component) is deterministic, when use it as a node/step in a pipeline, it will reuse results from a previous submitted job in current workspace which has same inputs and settings. In this case, this step will not use any compute resource. Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
+    :type is_deterministic: bool
     """
     inputs = inputs or {}
     outputs = outputs or {}
@@ -169,6 +174,7 @@ def command(
             distribution=distribution,
             environment_variables=environment_variables,
             _source=ComponentSource.BUILDER,
+            is_deterministic=is_deterministic,
             **kwargs,
         )
 

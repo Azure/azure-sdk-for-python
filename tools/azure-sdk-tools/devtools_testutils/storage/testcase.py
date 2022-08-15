@@ -392,6 +392,10 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
         kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
         return client.from_connection_string(*args, **kwargs)
 
+    def get_datetime_variable(self, variables, name, dt):
+        dt_string = variables.setdefault(name, dt.isoformat())
+        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
+
 
 class LogCaptured(object):
     def __init__(self, test_case=None):

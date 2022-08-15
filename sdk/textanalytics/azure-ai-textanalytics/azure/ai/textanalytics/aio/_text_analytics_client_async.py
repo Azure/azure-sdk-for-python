@@ -4,11 +4,12 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 
-from typing import Union, Any, List, Dict, TYPE_CHECKING, cast
+from typing import Union, Any, List, Dict, cast
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import (
     _validate_input,
@@ -61,9 +62,6 @@ from ._lro_async import (
     AsyncTextAnalysisLROPoller,
 )
 
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
     AsyncItemPaged[
@@ -127,7 +125,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         super().__init__(
@@ -895,8 +893,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
-        .. versionadded:: 2022-04-01-preview
-            The *display_name* keyword arguments.
+        .. versionadded:: 2022-05-01
+            The *display_name* keyword argument.
 
         .. admonition:: Example:
 
@@ -1132,7 +1130,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
-        .. versionadded:: 2022-04-01-preview
+        .. versionadded:: 2022-05-01
             The *RecognizeCustomEntitiesAction*, *SingleLabelClassifyAction*,
             *MultiLabelClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,

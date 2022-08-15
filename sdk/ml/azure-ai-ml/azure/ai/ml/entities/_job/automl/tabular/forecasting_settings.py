@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from typing import List, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ForecastingSettings as RestForecastingSettings
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     AutoForecastHorizon,
     AutoSeasonality,
@@ -15,6 +16,9 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     CustomTargetLags,
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,
     TargetRollingWindowSizeMode,
@@ -23,7 +27,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class ForecastingSettings(RestTranslatableMixin):
-    """Forecasting settings for an AutoML Job
+    """Forecasting settings for an AutoML Job.
 
     :param country_or_region_for_holidays: The country/region used to generate holiday features. These should be ISO 3166 two-letter country/region code, for example 'US' or 'GB'.
     :type country_or_region_for_holidays: str

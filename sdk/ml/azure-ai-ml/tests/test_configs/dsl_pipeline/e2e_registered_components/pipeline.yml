@@ -10,7 +10,7 @@ inputs:
   pipeline_job_training_learning_rate: 1.8
   pipeline_job_learning_rate_schedule: 'time-based'
 
-outputs: 
+outputs:
   pipeline_job_trained_model:
     mode: upload
   pipeline_job_scored_data:
@@ -20,7 +20,7 @@ outputs:
 
 #settings:
 #  datastore: azureml:workspaceblobstore
-  
+
 compute: azureml:cpu-cluster
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
       learning_rate_schedule: ${{parent.inputs.pipeline_job_learning_rate_schedule}}
     outputs:
       model_output: ${{parent.outputs.pipeline_job_trained_model}}
-  
+
   score_job:
     type: command
     component: azureml:Score:31
@@ -42,7 +42,9 @@ jobs:
       model_input: ${{parent.jobs.train_job.outputs.model_output}}
       test_data: ${{parent.inputs.pipeline_job_test_input}}
     outputs:
-      score_output: ${{parent.outputs.pipeline_job_scored_data}}
+      score_output:
+        path: ${{parent.outputs.pipeline_job_scored_data}}
+        mode: upload
 
   evaluate_job:
     type: command

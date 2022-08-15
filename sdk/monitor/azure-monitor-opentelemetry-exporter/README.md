@@ -1,4 +1,4 @@
-# Microsoft Opentelemetry exporter for Azure Monitor
+# Microsoft OpenTelemetry exporter for Azure Monitor
 
 [![Gitter chat](https://img.shields.io/gitter/room/Microsoft/azure-monitor-python)](https://gitter.im/Azure/azure-sdk-for-python)
 
@@ -10,7 +10,7 @@ The exporter for Azure Monitor allows you to export data utilizing the OpenTelem
 
 ### Install the package
 
-Install the Microsoft Opentelemetry exporter for Azure Monitor with [pip][pip]:
+Install the Microsoft OpenTelemetry exporter for Azure Monitor with [pip][pip]:
 
 ```Bash
 pip install azure-monitor-opentelemetry-exporter --pre
@@ -22,7 +22,7 @@ To use this package, you must have:
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Monitor - [How to use application insights][application_insights_namespace]
-* Opentelemetry SDK - [Opentelemtry SDK for Python][ot_sdk_python]
+* OpenTelemetry SDK - [OpenTelemetry SDK for Python][ot_sdk_python]
 * Python 3.6 or later - [Install Python][python]
 
 ### Instantiate the client
@@ -30,7 +30,7 @@ To use this package, you must have:
 Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class for distributed tracing, `AzureMonitorLogExporter` for logging and `AzureMonitorMetricExporter` for metrics. You will need a **connection_string** to instantiate the object.
 Please find the samples linked below for demonstration as to how to construct the exporter using a connection string.
 
-#### Logging
+#### Logging (experimental)
 
 NOTE: The logging signal for the `AzureMonitorLogExporter` is currently in an EXPERIMENTAL state. Possible breaking changes may ensue in the future.
 
@@ -81,9 +81,9 @@ exporter = AzureMonitorTraceExporter()
 
 Some of the key concepts for the Azure monitor exporter include:
 
-* [Opentelemetry][opentelemtry_spec]: Opentelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
+* [OpenTelemetry][opentelemetry_spec]: OpenTelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
 
-* [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentation. A library that enables OpenTelemetry observability for another library is called an instrumentation Library.
+* [Instrumentation][instrumentation_library]: The ability to call the OpenTelemetry API directly by any application is facilitated by instrumentation. A library that enables OpenTelemetry observability for another library is called an instrumentation Library.
 
 * [Log][log_concept]: Log refers to capturing of logging, exception and events.
 
@@ -93,7 +93,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [LogEmitter Provider][log_emitter_provider]: Provides a `LogEmitter` for the given instrumentation library.
 
-* [LogProcessor][log_processor]: Inteface to hook the log record emitting action.
+* [LogProcessor][log_processor]: Interface to hook the log record emitting action.
 
 * [LoggingHandler][logging_handler]: A handler class which writes logging records in OpenTelemetry format from the standard Python `logging` library.
 
@@ -357,13 +357,13 @@ observable_counter = meter.create_observable_counter(
 )
 
 # UpDownCounter
-updown_counter = meter.create_up_down_counter("updown_counter")
-updown_counter.add(1)
-updown_counter.add(-5)
+up_down_counter = meter.create_up_down_counter("up_down_counter")
+up_down_counter.add(1)
+up_down_counter.add(-5)
 
 # Async UpDownCounter
-observable_updown_counter = meter.create_observable_up_down_counter(
-    "observable_updown_counter", [observable_up_down_counter_func]
+observable_up_down_counter = meter.create_observable_up_down_counter(
+    "observable_up_down_counter", [observable_up_down_counter_func]
 )
 
 # Histogram
@@ -454,7 +454,7 @@ Please find further examples in the [samples](https://github.com/Azure/azure-sdk
 
 For more extensive documentation on the Azure Monitor service, see the [Azure Monitor documentation][product_docs] on docs.microsoft.com.
 
-For detailed overview of Opentelemetry, visit their [overview](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md) page.
+For detailed overview of OpenTelemetry, visit their [overview](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md) page.
 
 ## Contributing
 
@@ -485,7 +485,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [virtualenv]: https://virtualenv.pypa.io
 [ot_sdk_python]: https://github.com/open-telemetry/opentelemetry-python
 [application_insights_namespace]: https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#how-do-i-use-application-insights
-[opentelemtry_spec]: https://opentelemetry.io/
+[opentelemetry_spec]: https://opentelemetry.io/
 [instrumentation_library]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#instrumentation-libraries
 [log_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#log-signal
 [log_record]: https://opentelemetry-python.readthedocs.io/en/stable/sdk/logs.html#opentelemetry.sdk._logs.LogRecord

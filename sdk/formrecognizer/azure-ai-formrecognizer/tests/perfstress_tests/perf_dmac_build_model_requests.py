@@ -32,10 +32,10 @@ class BuildModelRequestPreparation(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        poller = self.admin_client.begin_build_model(self.formrecognizer_storage_container_sas_url)
+        poller = self.admin_client.begin_build_model("template", blob_container_url=self.formrecognizer_storage_container_sas_url)
         assert poller
 
     async def run_async(self):
         """The asynchronous perf test."""
-        poller = await self.async_admin_client.begin_build_model(self.formrecognizer_storage_container_sas_url)
+        poller = await self.async_admin_client.begin_build_model("template", blob_container_url=self.formrecognizer_storage_container_sas_url)
         assert poller

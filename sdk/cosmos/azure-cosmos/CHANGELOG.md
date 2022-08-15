@@ -1,16 +1,13 @@
 ## Release History
 
-### 4.3.1 (Unreleased)
+### 4.3.1 (2022-08-12)
 
 #### Features Added
-- GA release of integrated cache functionality [See PR #25391](https://github.com/Azure/azure-sdk-for-python/pull/25391).
-
-#### Breaking Changes
+- GA release of integrated cache functionality. For more information on integrated cache please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache).
 
 #### Bugs Fixed
 - Fixed parsing of args for overloaded `container.read()` method.
-
-#### Other Changes
+- Fixed `validate_cache_staleness_value()` method to allow max_integrated_cache_staleness to be an integer greater than or equal to 0
 
 ### 4.3.0 (2022-05-23)
 #### Features Added

@@ -12,7 +12,6 @@ import os
 import logging
 from ci_tools.functions import process_requires
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Verify and update package requirements in setup.py"

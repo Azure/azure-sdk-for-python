@@ -112,7 +112,7 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_put(self):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
-            stor.put(test_input)
+            stor.put(test_input, 0)
             self.assertEqual(stor.get().get(), test_input)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
             self.assertEqual(stor.get().get(), test_input)
@@ -161,7 +161,7 @@ class TestLocalFileStorage(unittest.TestCase):
                     os_mock.return_value = True
                 self.assertTrue(stor._check_storage_size())
 
-    def test_maintanence_routine(self):
+    def test_maintenance_routine(self):
         with mock.patch("os.makedirs") as m:
             with LocalFileStorage(os.path.join(TEST_FOLDER, "baz")) as stor:
                 m.return_value = None

@@ -1,5 +1,16 @@
 # Release History
 
+## 8.1.0 (2022-08-02)
+
+**Features**
+
+  - Added operation VolumesOperations.begin_reestablish_replication
+  - Model CapacityPoolPatch has a new parameter cool_access
+  - Model Volume has a new parameter key_vault_private_endpoint_resource_id
+  - Model VolumeGroupVolumeProperties has a new parameter key_vault_private_endpoint_resource_id
+  - Model VolumePatch has a new parameter cool_access
+  - Model VolumePatch has a new parameter coolness_period
+
 ## 8.0.0 (2022-06-13)
 
 **Features**

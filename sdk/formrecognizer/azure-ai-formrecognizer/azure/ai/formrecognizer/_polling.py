@@ -50,10 +50,14 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
-    def details(self) -> Mapping[str, Any]: # pylint: disable=no-self-use, unused-argument
+    def details(  # pylint: disable=no-self-use, unused-argument
+        self,
+    ) -> Mapping[str, Any]:
         ...
 
-    def polling_method(self) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
+    def polling_method(  # pylint: disable=no-self-use
+        self,
+    ) -> PollingMethod[PollingReturnType]:
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
@@ -62,7 +66,9 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    def result(  # pylint: disable=no-self-use, unused-argument
+        self, timeout: Optional[int] = None
+    ) -> PollingReturnType:
         ...
 
     def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
@@ -104,8 +110,8 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
             last_updated_on = datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
         return {
             "operation_id": parse_operation_id(
-                    self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
-                ),
+                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+            ),
             "operation_kind": self._current_body.get("kind", None),
             "percent_completed": self._current_body.get("percentCompleted", 0),
             "resource_location_url": self._current_body.get("resourceLocation", None),
@@ -161,9 +167,7 @@ class FormTrainingPolling(LocationPolling):
                 if train_result:
                     errors = train_result.get("errors")
                     if errors:
-                        message = "\nInvalid model created with ID={}".format(
-                            body["modelInfo"]["modelId"]
-                        )
+                        message = "\nInvalid model created with ID={}".format(body["modelInfo"]["modelId"])
                         raise_error(response, errors, message)
                 return "Failed"
             if status.lower() != "creating":
@@ -187,9 +191,7 @@ class AnalyzePolling(OperationResourcePolling):
         """
         response = pipeline_response.http_response
         if _is_empty(response):
-            raise BadResponse(
-                "The response from long running operation does not contain a body."
-            )
+            raise BadResponse("The response from long running operation does not contain a body.")
 
         body = _as_json(response)
         status = body.get("status")
@@ -217,9 +219,7 @@ class CopyPolling(OperationResourcePolling):
         """
         response = pipeline_response.http_response
         if _is_empty(response):
-            raise BadResponse(
-                "The response from long running operation does not contain a body."
-            )
+            raise BadResponse("The response from long running operation does not contain a body.")
 
         body = _as_json(response)
         status = body.get("status")

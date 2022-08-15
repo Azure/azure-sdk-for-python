@@ -14,18 +14,16 @@ inputs:
   job_in_folder:
     path: ../../data
     type: uri_folder
-    mode: ro_mount
   job_in_file:
     path: ../../data/sample1.csv
     type: uri_file
-    mode: ro_mount
   target_compute: "cpu-cluster"
   output_file_name: "sample1.csv"
 
 jobs:
   job_input_binding:
     type: command
-    component: file:./component.yml
+    component: file:./distribution_component.yml
     inputs:
       component_in_string: ${{parent.inputs.job_in_string}}
       component_in_number: ${{parent.inputs.job_in_number}}
@@ -39,4 +37,3 @@ jobs:
     component: file:./component.yml
     inputs:
       component_in_folder: ${{parent.jobs.job_input_binding.outputs.component_out_folder}}
-
