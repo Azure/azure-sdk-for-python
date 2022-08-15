@@ -397,14 +397,19 @@
       ]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
+        "PBOF"
+      ]
+    },
+    {
+      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "words": [
         "Njgw",
         "FNNHHJT",
         "Zwiz",
         "nypg",
-        "PBOF",
         "tzutc",
         "gettz"
       ]
