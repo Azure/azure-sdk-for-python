@@ -117,12 +117,13 @@ def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag=""):
     return result.state == 'inProgress'
 
 
-def record_release(package_name: str, issue_info: Any, file: str) -> None:
+def record_release(package_name: str, issue_info: Any, file: str, version: str) -> None:
     created_at = issue_info.created_at.strftime('%Y-%m-%d')
     closed_at = issue_info.closed_at.strftime('%Y-%m-%d')
     assignee = issue_info.assignee.login
     link = issue_info.html_url
-    closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link}\n'
+    is_stable = True if 'b' not in version else ''
+    closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link},{version},{is_stable}\n'
     with open(file, 'r') as file_read:
         lines = file_read.readlines()
     with open(file, 'w') as file_write:

@@ -49,6 +49,6 @@ jobs:
 
     component:
       environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
-      code: ../data
+      code: ../python
       command: >-
         echo Hello World Inline 4

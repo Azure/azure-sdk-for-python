@@ -1,4 +1,4 @@
-name: Remove needs-triage label if it is assigned
+name: Remove needs-triage and needs-team-triage labels if it is assigned
 
 on:
   issues:
@@ -10,4 +10,6 @@ jobs:
     steps:
       - uses: actions-ecosystem/action-remove-labels@v1
         with:
-          labels: needs-triage
+          labels: |
+            needs-triage
+            needs-team-triage

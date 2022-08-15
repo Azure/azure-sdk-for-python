@@ -2,27 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Dict, Tuple, Union, List
+from typing import Dict, List, Tuple, Union
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2021_10_01.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2021_10_01.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2021_10_01.models import Mpi, PyTorch, TensorFlow
 from azure.ai.ml.constants import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    Mpi,
-    TensorFlow,
-    PyTorch,
-    JobInput as RestJobInput,
-    JobOutput as RestJobOutput,
+from azure.ai.ml.entities._job._input_output_helpers import (
+    INPUT_MOUNT_MAPPING_TO_REST,
+    OUTPUT_MOUNT_MAPPING_TO_REST,
+    INPUT_MOUNT_MAPPING_FROM_REST,
+    OUTPUT_MOUNT_MAPPING_FROM_REST,
 )
-
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake
 
 
 def process_sdk_component_job_io(
     io: Dict[str, Union[str, float, bool, Input]],
     io_binding_regex_list: List[str],
 ) -> Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]:
-    """Separates SDK ComponentJob inputs that are data bindings (i.e. string inputs prefixed with 'inputs.' or 'outputs.') and dataset and literal inputs/outputs
+    """Separates SDK ComponentJob inputs that are data bindings (i.e. string
+    inputs prefixed with 'inputs.' or 'outputs.') and dataset and literal
+    inputs/outputs.
 
     :param io: Input or output dictionary of an SDK ComponentJob
     :type io:  Dict[str, Union[str, float, bool, Input]]
@@ -37,9 +39,7 @@ def process_sdk_component_job_io(
         ComponentJobConstants.LEGACY_OUTPUT_PATTERN,
     ]
     for io_name, io_value in io.items():
-        if (isinstance(io_value, Input) and isinstance(io_value.path, str)) or (
-            isinstance(io_value, Output) and isinstance(io_value.path, str)
-        ):
+        if isinstance(io_value, (Input, Output)) and isinstance(io_value.path, str):
             mode = io_value.mode
             path = io_value.path
             if any([re.match(item, path) for item in io_binding_regex_list]):
@@ -48,7 +48,10 @@ def process_sdk_component_job_io(
                 io_bindings.update({io_name: {"value": path}})
                 # add mode to literal value for binding input
                 if mode:
-                    io_bindings[io_name].update({"mode": _snake_to_camel(mode)})
+                    if isinstance(io_value, Input):
+                        io_bindings[io_name].update({"mode": INPUT_MOUNT_MAPPING_TO_REST[mode]})
+                    else:
+                        io_bindings[io_name].update({"mode": OUTPUT_MOUNT_MAPPING_TO_REST[mode]})
             elif any([re.match(item, path) for item in legacy_io_binding_regex_list]):
                 new_format = path.replace("{{", "{{parent.")
                 msg = "{} has changed to {}, please change to use new format."
@@ -88,7 +91,10 @@ def from_dict_to_rest_io(
                 if io_mode:
                     # add mode to literal value for binding input
                     io_bindings.update({key: {"path": io_value}})
-                    io_bindings[key].update({"mode": camel_to_snake(io_mode)})
+                    if io_mode in OUTPUT_MOUNT_MAPPING_FROM_REST:
+                        io_bindings[key].update({"mode": OUTPUT_MOUNT_MAPPING_FROM_REST[io_mode]})
+                    else:
+                        io_bindings[key].update({"mode": INPUT_MOUNT_MAPPING_FROM_REST[io_mode]})
                 else:
                     io_bindings[key] = io_value
             else:

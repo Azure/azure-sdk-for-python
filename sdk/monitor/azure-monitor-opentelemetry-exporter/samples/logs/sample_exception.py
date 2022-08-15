@@ -28,8 +28,16 @@ logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 logger.setLevel(logging.NOTSET)
 
+# The following code will generate two pieces of exception telemetry
+# that are identical in nature
 try:
     val = 1 / 0
     print(val)
 except ZeroDivisionError:
     logger.exception("Error: Division by zero")
+
+try:
+    val = 1 / 0
+    print(val)
+except ZeroDivisionError:
+    logger.error("Error: Division by zero", stack_info=True, exc_info=True)

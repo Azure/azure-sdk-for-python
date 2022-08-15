@@ -34,7 +34,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b5 - Latest beta release | 2.0, 2.1, 2022-06-30-preview
+|3.2.0b6 - Latest beta release | 2.0, 2.1, 2022-06-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -166,7 +166,7 @@ More information about analyzing documents, including supported features, locale
 ### DocumentModelAdministrationClient
 `DocumentModelAdministrationClient` provides operations for:
 
-- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModelInfo` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
+- Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModelDetails` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Listing document model operations or getting a specific model operation created within the last 24 hours.
@@ -423,7 +423,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
     # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
-    source=container_sas_url, build_mode="template", model_id="my-first-model"
+    build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
 )
 model = poller.result()
 
@@ -518,7 +518,7 @@ credential = AzureKeyCredential("<api_key>")
 
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
-account_info = document_model_admin_client.get_resource_info()
+account_info = document_model_admin_client.get_resource_details()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
     account_info.document_model_count, account_info.document_model_limit
 ))

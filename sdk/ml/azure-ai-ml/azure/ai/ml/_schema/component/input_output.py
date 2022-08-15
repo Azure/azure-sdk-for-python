@@ -1,25 +1,28 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from marshmallow import fields, validate, pre_load
 
-from azure.ai.ml._schema import PatchedSchemaMeta, UnionField
-from azure.ai.ml.constants import AssetTypes, LegacyAssetTypes
+# pylint: disable=unused-argument,no-self-use
+
+from marshmallow import fields, pre_load, validate
+
+from azure.ai.ml._schema.core.fields import UnionField
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml.constants import AssetTypes, ComponentParameterTypes, LegacyAssetTypes
+
+# Here we use an adhoc way to collect all class constant attributes by checking if it's upper letter
+# because making those constants enum will fail in string serialization in marshmallow
+asset_type_obj = AssetTypes()
+SUPPORTED_PORT_TYPES = [LegacyAssetTypes.PATH] + [
+    getattr(asset_type_obj, k) for k in dir(asset_type_obj) if k.isupper()
+]
+param_obj = ComponentParameterTypes()
+SUPPORTED_PARAM_TYPES = [getattr(param_obj, k) for k in dir(param_obj) if k.isupper()]
 
 
 class InputPortSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str(
-        validate=validate.OneOf(
-            [
-                LegacyAssetTypes.PATH,
-                AssetTypes.URI_FILE,
-                AssetTypes.URI_FOLDER,
-                AssetTypes.CUSTOM_MODEL,
-                AssetTypes.MLFLOW_MODEL,
-                AssetTypes.MLTABLE,
-                AssetTypes.TRITON_MODEL,
-            ]
-        ),
+        validate=validate.OneOf(SUPPORTED_PORT_TYPES),
         required=True,
         data_key="type",
     )
@@ -37,17 +40,7 @@ class InputPortSchema(metaclass=PatchedSchemaMeta):
 
 class OutputPortSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str(
-        validate=validate.OneOf(
-            [
-                LegacyAssetTypes.PATH,
-                AssetTypes.URI_FILE,
-                AssetTypes.URI_FOLDER,
-                AssetTypes.CUSTOM_MODEL,
-                AssetTypes.MLFLOW_MODEL,
-                AssetTypes.MLTABLE,
-                AssetTypes.TRITON_MODEL,
-            ]
-        ),
+        validate=validate.OneOf(SUPPORTED_PORT_TYPES),
         required=True,
         data_key="type",
     )
@@ -63,7 +56,7 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
 
 class ParameterSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str(
-        validate=validate.OneOf(["number", "integer", "boolean", "string", "object"]),
+        validate=validate.OneOf(SUPPORTED_PARAM_TYPES),
         required=True,
         data_key="type",
     )

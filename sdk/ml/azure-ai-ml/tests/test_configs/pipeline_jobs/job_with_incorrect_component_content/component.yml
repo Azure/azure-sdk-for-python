@@ -8,7 +8,7 @@ version: 1
 code:
   local_path: ./src
 
-environment: 
+environment:
   image: python
 
 command: >-

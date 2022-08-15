@@ -9,6 +9,7 @@ OTLP Span exporter.
 import os
 from opentelemetry import trace 
 
+# spell-check:ignore grpc
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider

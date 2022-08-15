@@ -1,14 +1,14 @@
 $schema: http://azureml/sdk-2-0/CommandComponent.json
 type: command
 
-name: command_component_basic_registry_3
-display_name: CommandComponentBasic
+name: command_component_hdsds_registry_734_5459
+display_name: CommandComponentBasic_454
 description: This is the basic command component
 tags:
   tag: tagvalue
   owner: sdkteam
 
-version: 3
+version: 10
 
 inputs:
   component_in_number:
@@ -27,4 +27,4 @@ outputs:
 # Write some output to work around a bug when pipeline node failed to run with empty dataset as input
 command: "echo Hello World"
 code: azureml://registries/testFeed/codes/f5f51a11-1c9e-4cb9-89b1-48ff67a2b2f3/versions/1
-environment: azureml://registries/CuratedRegistry/environments/AzureML-minimal-ubuntu18.04-py37-cpu-inference/versions/34
+environment: azureml:AzureML-minimal-ubuntu18.04-py37-cpu-inference:34

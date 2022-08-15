@@ -9,8 +9,8 @@ import json
 from urllib.parse import urlencode
 from typing import Any, Mapping, Optional, Callable, TypeVar, cast
 from typing_extensions import Protocol, runtime_checkable
-from azure.core.polling import PollingMethod
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -26,43 +26,84 @@ _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"]
 
 
 PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class TextAnalysisLROPoller(Protocol[PollingReturnType]):
+class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
     """Implements a protocol which returned poller objects are consistent with.
     """
 
     @property
     def details(self) -> Mapping[str, Any]:
-        ...
+        """Long-running operation metadata.
 
-    def polling_method(self) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
-        ...
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
-        ...
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
 
     def status(self) -> str:  # pylint: disable=no-self-use
-        ...
+        """Returns the current status string.
+
+        :returns: The current status string
+        :rtype: str
+        """
 
     def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
-        ...
+        """Return the result of the long running operation, or
+        the result available after the specified timeout.
+
+        :returns: The deserialized resource of the long running operation,
+         if one is available.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
 
     def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
-        ...
+        """Wait on the long running operation for a specified length
+        of time. You can check if this call as ended with timeout with the
+        "done()" method.
+
+        :param float timeout: Period of time to wait for the long running
+         operation to complete (in seconds).
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
 
     def done(self) -> bool:  # pylint: disable=no-self-use
-        ...
+        """Check status of the long running operation.
+
+        :returns: 'True' if the process has completed, else 'False'.
+        :rtype: bool
+        """
 
     def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
-        ...
+        """Add callback function to be run once the long running operation
+        has completed - regardless of the status of the operation.
+
+        :param callable func: Callback function that takes at least one
+         argument, a completed LongRunningOperation.
+        """
 
     def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
-        ...
+        """Remove a callback from the long running operation.
+
+        :param callable func: The function to be removed from the callbacks.
+        :raises ValueError: if the long running operation has already completed.
+        """
 
     def cancel(self) -> None:  # pylint: disable=no-self-use
-        ...
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
@@ -215,11 +256,20 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
 class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeHealthcareEntitiesLROPollingMethod:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AnalyzeHealthcareEntitiesLROPollingMethod
+        :rtype: AnalyzeHealthcareEntitiesLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -247,7 +297,14 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AnalyzeHealthcareEntitiesLROPoller":  # type: ignore
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AnalyzeHealthcareEntitiesLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AnalyzeHealthcareEntitiesLROPoller
+        :rtype: AnalyzeHealthcareEntitiesLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
@@ -265,6 +322,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self, **kwargs: Any) -> LROPoller[None]:  # type: ignore
         """Cancel the operation currently being polled.
 
@@ -388,11 +446,20 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
 class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
     def polling_method(self) -> AnalyzeActionsLROPollingMethod:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: AnalyzeActionsLROPollingMethod
+        :rtype: AnalyzeActionsLROPollingMethod
+        """
         return self._polling_method  # type: ignore
 
     @property
     def details(self) -> Mapping[str, Any]:
+        """Long-running operation metadata.
+
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         return {
             "id": self.polling_method().id,
             "created_on": self.polling_method().created_on,
@@ -428,7 +495,14 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
         continuation_token: str,
         **kwargs: Any
     ) -> "AnalyzeActionsLROPoller":  # type: ignore
-        """
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AnalyzeActionsLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AnalyzeActionsLROPoller
+        :rtype: AnalyzeActionsLROPoller
+
         :meta private:
         """
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
@@ -446,6 +520,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self) -> None:
         """Cancel the operation currently being polled.
 

@@ -18,7 +18,7 @@ from azure.mgmt.storage import StorageManagementClient
 
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -1996,6 +1996,19 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(self.container_name, container_properties.name)
 
     @BlobPreparer()
+    def test_azure_named_key_credential_access(self, storage_account_name, storage_account_key):
+        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), named_key)
+        container_name = self._get_container_reference()
+
+        # Act
+        container = bsc.get_container_client(container_name)
+        created = container.create_container()
+
+        # Assert
+        self.assertTrue(created)
+
+    @BlobPreparer()
     def test_get_user_delegation_key(self, storage_account_name, storage_account_key):
         # Act
         self._setup(storage_account_name, storage_account_key)
@@ -2822,4 +2835,17 @@ class StorageCommonBlobTest(StorageTestCase):
             blob.delete_blob()
             mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
+    @BlobPreparer()
+    def test_validate_empty_blob(self, storage_account_name, storage_account_key):
+        """Test that we can upload an empty blob with validate=True."""
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        container_client = self.bsc.get_container_client(self.container_name)
+        container_client.upload_blob(blob_name, b"", validate_content=True)
+
+        blob_client = container_client.get_blob_client(blob_name)
+
+        assert blob_client.exists()
+        assert blob_client.get_blob_properties().size == 0
 # ------------------------------------------------------------------------------

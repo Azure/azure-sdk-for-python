@@ -7,7 +7,8 @@ import os
 import subprocess
 import sys
 import time
-from azure.ai.ml._ml_exceptions import MlException, ErrorCategory, ErrorTarget
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 def _print_command_results(test_passed, time_taken, output):
@@ -43,7 +44,11 @@ def run_cli_command(
         # We also pass the environment variables, because for some tests we modify
         # the environment variables.
 
-        subprocess_args = {"shell": True, "stderr": subprocess.STDOUT, "env": custom_environment}
+        subprocess_args = {
+            "shell": True,
+            "stderr": subprocess.STDOUT,
+            "env": custom_environment,
+        }
 
         if not stderr_to_stdout:
             subprocess_args = {"shell": True, "env": custom_environment}
