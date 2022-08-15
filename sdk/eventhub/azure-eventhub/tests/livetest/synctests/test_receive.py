@@ -130,7 +130,6 @@ def test_receive_owner_level(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders):
-    pytest.skip("websocket not supported")
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"
     message_id_base = "mess_id_sample_"
