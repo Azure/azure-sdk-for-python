@@ -21,8 +21,6 @@ from typing import (
 )
 from typing_extensions import TypedDict
 
-import six
-
 from ._utils import (
     trace_message,
     utc_from_timestamp,
@@ -389,7 +387,7 @@ class EventData(object):
                 return self._decode_non_data_body_as_str(encoding=encoding)
             return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
         except TypeError:
-            return six.text_type(data)
+            return str(data)
         except:  # pylint: disable=bare-except
             pass
         try:
@@ -512,7 +510,7 @@ class EventDataBatch(object):
 
 
         if partition_key and not isinstance(
-            partition_key, (six.text_type, six.binary_type)
+            partition_key, (str, bytes)
         ):
             _LOGGER.info(
                 "WARNING: Setting partition_key of non-string value on the events to be sent is discouraged "
@@ -524,7 +522,7 @@ class EventDataBatch(object):
         self.max_size_in_bytes = (
             max_size_in_bytes or self._amqp_transport.MAX_FRAME_SIZE_BYTES
         )
-        self._message = self._amqp_transport.BATCH_MESSAGE(data=[])
+        self._message = self._amqp_transport.build_batch_message(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
 

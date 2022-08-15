@@ -9,10 +9,8 @@ class AmqpTransport(ABC):
     Abstract class that defines a set of common methods needed by producer and consumer.
     """
     # define constants
-    BATCH_MESSAGE = None
     MAX_FRAME_SIZE_BYTES = None
     IDLE_TIMEOUT_FACTOR = None
-    MESSAGE = None
     CONNECTION_CLOSING_STATES = None
 
     # define symbols
@@ -23,12 +21,21 @@ class AmqpTransport(ABC):
     USER_AGENT_SYMBOL = None
     PROP_PARTITION_KEY_AMQP_SYMBOL = None
 
-    # errors
-    AMQP_LINK_ERROR = None
-    LINK_STOLEN_CONDITION = None
-    MGMT_AUTH_EXCEPTION = None
-    CONNECTION_ERROR = None
-    AMQP_CONNECTION_ERROR = None
+    @staticmethod
+    @abstractmethod
+    def build_message(**kwargs):
+        """
+        Creates a uamqp.Message or pyamqp.Message with given arguments.
+        :rtype: uamqp.Message or pyamqp.Message
+        """
+
+    @staticmethod
+    @abstractmethod
+    def build_batch_message(**kwargs):
+        """
+        Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
+        :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
+        """
 
     @staticmethod
     @abstractmethod
@@ -204,6 +211,15 @@ class AmqpTransport(ABC):
 
     @staticmethod
     @abstractmethod
+    def check_link_stolen(consumer, exception):
+        """
+        Checks if link stolen and handles exception.
+        :param consumer: The EventHubConsumer.
+        :param exception: Exception to check.
+        """
+
+    @staticmethod
+    @abstractmethod
     def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
         """
         Creates the JWTTokenAuth.
@@ -250,10 +266,18 @@ class AmqpTransport(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_error(error, message, *, condition=None):
+    def get_error(status_code, description):
         """
-        Gets error and passes in error message, and, if applicable, condition.
-        :param error: The error to raise.
-        :param str message: Error message.
-        :param condition: Optional error condition. Will not be used by uamqp.
+        Gets error corresponding to status code.
+        :param status_code: Status code.
+        :param str description: Description of error.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def check_timeout_exception(base, exception):
+        """
+        Checks if timeout exception.
+        :param base: ClientBase.
+        :param exception: Exception to check.
         """

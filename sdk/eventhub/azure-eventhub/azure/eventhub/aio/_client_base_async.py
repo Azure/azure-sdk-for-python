@@ -316,7 +316,10 @@ class ClientBaseAsync(ClientBase):
                 self._address, mgmt_auth=mgmt_auth, config=self._config
             )
             try:
-                await mgmt_client.open_async()
+                conn = await self._conn_manager_async.get_connection(
+                    host=self._address.hostname, auth=mgmt_auth
+                )
+                await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
                     await asyncio.sleep(0.05)
                 mgmt_msg.application_properties[
@@ -338,20 +341,7 @@ class ClientBaseAsync(ClientBase):
                     description = description.decode("utf-8")
                 if status_code < 400:
                     return response
-                if status_code in [401]:
-                    raise self._amqp_transport.get_error(
-                        self._amqp_transport.AUTH_EXCEPTION,
-                        f"Management authentication failed. Status code: {status_code}, Description: {description!r}"
-                    )
-                if status_code in [404]:
-                    return self._amqp_transport.get_error(
-                        self._amqp_transport.CONNECTION_ERROR,
-                        f"Management connection failed. Status code: {status_code}, Description: {description!r}"
-                    )
-                return self._amqp_transport.get_error(
-                    self._amqp_transport.AMQP_CONNECTION_ERROR,
-                    f"Management request error. Status code: {status_code}, Description: {description!r}"
-                )
+                raise self._amqp_transport.get_error(status_code, description)
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
@@ -369,7 +359,7 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.close_async()
 
     async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
-        mgmt_msg = mgmt_msg = self._amqp_transport.MESSAGE(
+        mgmt_msg = mgmt_msg = self._amqp_transport.build_message(
             application_properties={"name": self.eventhub_name}
         )
         response = await self._management_request_async(
@@ -393,7 +383,7 @@ class ClientBaseAsync(ClientBase):
     async def _get_partition_properties_async(
         self, partition_id: str
     ) -> Dict[str, Any]:
-        mgmt_msg = self._amqp_transport.MESSAGE(
+        mgmt_msg = self._amqp_transport.build_message(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
@@ -454,7 +444,10 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                 await self._handler.close_async()
             auth = await self._client._create_auth_async()
             self._create_handler(auth)
-            await self._handler.open_async()
+            conn = await self._conn_manager_async.get_connection(
+                host=self._address.hostname, auth=auth
+            )
+            await self._handler.open_async(connection=conn)
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05, **self._internal_kwargs)
             self._max_message_size_on_link = (
@@ -474,11 +467,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
     async def _handle_exception(self, exception: Exception) -> Exception:
-        if not self.running and isinstance(exception, self._amqp_transport.TIMEOUT_EXCEPTION):
-            exception = self._amqp_transport.get_error(
-                self._amqp_transport.AUTH_EXCEPTION,
-                "Authorization timeout."
-            )
+        exception = self._amqp_transport.check_timeout_exception(self, exception)
         return await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
             exception, self
         )

@@ -131,6 +131,7 @@ class EventHubConsumer(
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
             link_properties=self._link_properties,
+            timeout=self._timeout,
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
@@ -166,7 +167,10 @@ class EventHubConsumer(
                 self._handler.close()
             auth = self._client._create_auth()
             self._create_handler(auth)
-            self._handler.open()
+            conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
+                host=self._client._address.hostname, auth=auth
+            )
+            self._handler.open(connection=conn)
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self.handler_ready = True
@@ -190,11 +194,7 @@ class EventHubConsumer(
                         self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
-                    if (
-                        isinstance(exception, self._amqp_transport.AMQP_LINK_ERROR)
-                        and exception.condition == self._amqp_transport.LINK_STOLEN_CONDITION  # pylint: disable=no-member
-                    ):
-                        raise self._handle_exception(exception)
+                    self._amqp_transport.check_link_stolen(self, exception)
                     if not self.running:  # exit by close
                         return
                     if self._last_received_event:

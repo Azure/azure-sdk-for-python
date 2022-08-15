@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from threading import Lock
 from enum import Enum
 
@@ -57,7 +57,9 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         )
         self._amqp_transport = kwargs.get("amqp_transport", UamqpTransport)
 
-    def get_connection(self, *, host: str, auth: JWTTokenAuth, endpoint: str) -> Connection:
+    def get_connection(
+        self, *, host: Optional[str] = None, auth: Optional[JWTTokenAuth] = None, endpoint: Optional[str] = None
+    ) -> Connection:
         with self._lock:
             if self._conn is None:
                 self._conn = self._amqp_transport.create_connection(

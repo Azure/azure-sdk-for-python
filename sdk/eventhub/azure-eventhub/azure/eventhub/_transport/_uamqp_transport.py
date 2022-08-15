@@ -82,10 +82,8 @@ if uamqp_installed:
         Class which defines uamqp-based methods used by the producer and consumer.
         """
         # define constants
-        BATCH_MESSAGE = BatchMessage
         MAX_FRAME_SIZE_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         IDLE_TIMEOUT_FACTOR = 1000
-        MESSAGE = Message
         CONNECTION_CLOSING_STATES = (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
@@ -101,13 +99,21 @@ if uamqp_installed:
         USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
         PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 
-        # define errors and conditions
-        AMQP_LINK_ERROR = errors.LinkDetach
-        LINK_STOLEN_CONDITION = constants.ErrorCodes.LinkStolen
-        AUTH_EXCEPTION = errors.AuthenticationException
-        CONNECTION_ERROR = ConnectError
-        AMQP_CONNECTION_ERROR = errors.AMQPConnectionError
-        TIMEOUT_EXCEPTION = compat.TimeoutException
+        @staticmethod
+        def build_message(**kwargs):
+            """
+            Creates a uamqp.Message or pyamqp.Message with given arguments.
+            :rtype: uamqp.Message or pyamqp.Message
+            """
+            return Message(**kwargs)
+
+        @staticmethod
+        def build_batch_message(**kwargs):
+            """
+            Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
+            :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
+            """
+            return BatchMessage(**kwargs)
 
         @staticmethod
         def to_outgoing_amqp_message(annotated_message):
@@ -435,6 +441,19 @@ if uamqp_installed:
             ))
 
         @staticmethod
+        def check_link_stolen(consumer, exception):
+            """
+            Checks if link stolen and handles exception.
+            :param consumer: The EventHubConsumer.
+            :param exception: Exception to check.
+            """
+            if (
+                isinstance(exception, errors.LinkDetach)
+                and exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+            ):
+                raise consumer._handle_exception(exception)  # pylint: disable=protected-access
+
+        @staticmethod
         def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
             """
             Creates the JWTTokenAuth.
@@ -514,14 +533,39 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def get_error(error, message, *, condition=None): # pylint: disable=unused-argument
+        def get_error(status_code, description):
             """
-            Gets error and passes in error message, and, if applicable, condition.
-            :param error: The error to raise.
-            :param str message: Error message.
-            :param condition: Optional error condition. Will not be used by uamqp.
+            Gets error corresponding to status code.
+            :param status_code: Status code.
+            :param str description: Description of error.
             """
-            return error(message)
+            if status_code in [401]:
+                return errors.AuthenticationException(
+                    f"Management authentication failed. Status code: {status_code}, Description: {description!r}"
+                )
+            if status_code in [404]:
+                return ConnectError(
+                    f"Management connection failed. Status code: {status_code}, Description: {description!r}"
+                )
+            return errors.AMQPConnectionError(
+                f"Management request error. Status code: {status_code}, Description: {description!r}"
+            )
+
+        @staticmethod
+        def check_timeout_exception(base, exception):
+            """
+            Checks if timeout exception.
+            :param base: ClientBase.
+            :param exception: Exception to check.
+            """
+            if not base.running and isinstance(
+                exception, compat.TimeoutException
+            ):
+                exception = UamqpTransport.get_error(
+                    errors.AuthenticationException,
+                    "Authorization timeout."
+                )
+            return exception
 
         @staticmethod
         def _create_eventhub_exception(exception):

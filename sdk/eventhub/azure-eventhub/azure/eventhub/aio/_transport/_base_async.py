@@ -9,10 +9,8 @@ class AmqpTransportAsync(ABC):
     Abstract class that defines a set of common methods needed by producer and consumer.
     """
     # define constants
-    BATCH_MESSAGE = None
     MAX_FRAME_SIZE_BYTES = None
     IDLE_TIMEOUT_FACTOR = None
-    MESSAGE = None
 
     # define symbols
     PRODUCT_SYMBOL = None
@@ -22,12 +20,21 @@ class AmqpTransportAsync(ABC):
     USER_AGENT_SYMBOL = None
     PROP_PARTITION_KEY_AMQP_SYMBOL = None
 
-    # errors
-    AMQP_LINK_ERROR = None
-    LINK_STOLEN_CONDITION = None
-    MGMT_AUTH_EXCEPTION = None
-    CONNECTION_ERROR = None
-    AMQP_CONNECTION_ERROR = None
+    @staticmethod
+    @abstractmethod
+    def build_message(**kwargs):
+        """
+        Creates a uamqp.Message or pyamqp.Message with given arguments.
+        :rtype: uamqp.Message or pyamqp.Message
+        """
+
+    @staticmethod
+    @abstractmethod
+    def build_batch_message(**kwargs):
+        """
+        Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
+        :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
+        """
 
     @staticmethod
     @abstractmethod
@@ -183,10 +190,10 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    async def receive_messages(handler, batch, max_batch_size, max_wait_time):
+    async def receive_messages(consumer, batch, max_batch_size, max_wait_time):
         """
         Receives messages, creates events, and returns them by calling the on received callback.
-        :param ReceiveClient handler: The receive client.
+        :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
         :param bool batch: If receive batch or single event.
         :param int max_batch_size: Max batch size.
         :param int or None max_wait_time: Max wait time.
@@ -240,10 +247,18 @@ class AmqpTransportAsync(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_error(error, message, *, condition=None):
+    def get_error(status_code, description):
         """
-        Gets error and passes in error message, and, if applicable, condition.
-        :param error: The error to raise.
-        :param str message: Error message.
-        :param condition: Optional error condition. Will not be used by uamqp.
+        Gets error corresponding to status code.
+        :param status_code: Status code.
+        :param str description: Description of error.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def check_timeout_exception(base, exception):
+        """
+        Checks if timeout exception.
+        :param base: ClientBase.
+        :param exception: Exception to check.
         """

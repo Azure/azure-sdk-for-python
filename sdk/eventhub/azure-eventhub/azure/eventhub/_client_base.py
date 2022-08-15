@@ -395,7 +395,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 self._address, mgmt_auth=mgmt_auth, config=self._config
             )
             try:
-                mgmt_client.open()
+                conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
+                    host=self._address.hostname, auth=mgmt_auth
+                )
+                mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
                 mgmt_msg.application_properties[
@@ -417,22 +420,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     description = description.decode("utf-8")
                 if status_code < 400:
                     return response
-                if status_code in [401]:
-                    raise self._amqp_transport.get_error(
-                        self._amqp_transport.AUTH_EXCEPTION,
-                        f"Management authentication failed. Status code: {status_code}, Description: {description!r}"
-                    )
-                if status_code in [
-                    404
-                ]:
-                    return self._amqp_transport.get_error(
-                        self._amqp_transport.CONNECTION_ERROR,
-                        f"Management connection failed. Status code: {status_code}, Description: {description!r}"
-                    )
-                return self._amqp_transport.get_error(
-                    self._amqp_transport.AMQP_CONNECTION_ERROR,
-                    f"Management request error. Status code: {status_code}, Description: {description!r}"
-                )
+                raise self._amqp_transport.get_error(status_code, description)
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = self._amqp_transport._handle_exception(  # pylint: disable=protected-access
                     exception, self
@@ -456,7 +444,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         span.add_attribute("peer.address", self._address.hostname)
 
     def _get_eventhub_properties(self) -> Dict[str, Any]:
-        mgmt_msg = self._amqp_transport.MESSAGE(
+        mgmt_msg = self._amqp_transport.build_message(
             application_properties={"name": self.eventhub_name}
         )
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
@@ -478,7 +466,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
-        mgmt_msg = self._amqp_transport.MESSAGE(
+        mgmt_msg = self._amqp_transport.build_message(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
@@ -534,7 +522,10 @@ class ConsumerProducerMixin(object):
                 self._handler.close()
             auth = self._client._create_auth()
             self._create_handler(auth)
-            self._handler.open()
+            conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
+                host=self._client._address.hostname, auth=auth
+            )
+            self._handler.open(connection=conn)
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = (
@@ -553,13 +544,7 @@ class ConsumerProducerMixin(object):
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception):
-        if not self.running and isinstance(
-            exception, self._amqp_transport.TIMEOUT_EXCEPTION
-        ):
-            exception = self._amqp_transport.get_error(
-                self._amqp_transport.AUTH_EXCEPTION,
-                "Authorization timeout."
-            )
+        exception = self._amqp_transport.check_timeout_exception(self, exception)
         return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
             exception, self
         )

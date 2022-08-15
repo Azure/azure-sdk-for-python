@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from asyncio import Lock
 
 from ._transport._uamqp_transport_async import UamqpTransportAsync
@@ -54,12 +54,15 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         )
         self._amqp_transport = kwargs.get("amqp_transport", UamqpTransportAsync)
 
-    async def get_connection(self, host: str, auth: JWTTokenAsync) -> ConnectionAsync:
+    async def get_connection(
+        self, *, host: Optional[str] = None, auth: Optional[JWTTokenAsync] = None, endpoint: Optional[str] = None
+    ) -> ConnectionAsync:
         async with self._lock:
             if self._conn is None:
                 self._conn = self._amqp_transport.create_connection_async(
-                    host,
-                    auth,
+                    host=host,
+                    auth=auth,
+                    endpoint=endpoint,
                     container_id=self._container_id,
                     max_frame_size=self._max_frame_size,
                     channel_max=self._channel_max,
