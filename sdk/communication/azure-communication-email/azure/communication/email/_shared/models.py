@@ -70,6 +70,9 @@ class CommunicationUserIdentifier(object):
         self.raw_id = kwargs.get('raw_id')
         self.properties = CommunicationUserProperties(id=id)
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 
 PhoneNumberProperties = TypedDict(
     'PhoneNumberProperties',
@@ -115,6 +118,9 @@ class UnknownIdentifier(object):
         # type: (str) -> None
         self.raw_id = identifier
         self.properties = {}
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
 
 MicrosoftTeamsUserProperties = TypedDict(
