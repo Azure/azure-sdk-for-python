@@ -34,8 +34,7 @@ class BufferedProducer:
         max_message_size_on_link: int,
         *,
         max_wait_time: float = 1,
-        max_buffer_length: int,
-        amqp_transport: AmqpTransportAsync
+        max_buffer_length: int
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length
@@ -50,12 +49,11 @@ class BufferedProducer:
         self._cur_batch: Optional[EventDataBatch] = None
         self._max_message_size_on_link = max_message_size_on_link
         self._check_max_wait_time_future = None
-        self._amqp_transport = amqp_transport
         self.partition_id = partition_id
 
     async def start(self):
         async with self._lock:
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
@@ -117,11 +115,11 @@ class BufferedProducer:
                 self._buffered_queue.put(self._cur_batch)
             self._buffered_queue.put(events)
             # create a new batch for incoming events
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
         except ValueError:
             # add single event exceeds the cur batch size, create new batch
             self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             self._cur_batch.add(events)
         self._cur_buffered_len += new_events_len
 
@@ -149,7 +147,7 @@ class BufferedProducer:
         _LOGGER.info("Partition: %r started flushing.", self.partition_id)
         if self._cur_batch:  # if there is batch, enqueue it to the buffer first
             self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
         while self._cur_buffered_len:
             remaining_time = timeout_time - time.time() if timeout_time else None
             if (remaining_time and remaining_time > 0) or remaining_time is None:
@@ -191,7 +189,7 @@ class BufferedProducer:
                 break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
-        self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+        self._cur_batch = EventDataBatch(self._max_message_size_on_link)
         _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     async def check_max_wait_time_worker(self):

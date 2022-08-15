@@ -21,7 +21,7 @@ from typing_extensions import Literal
 
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
-from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
+from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
 from ._buffered_producer import BufferedProducerDispatcher
 from ._utils import set_event_partition_key
@@ -247,8 +247,7 @@ class EventHubProducerClient(
                 self._max_message_size_on_link,
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
-                executor=self._executor,
-                amqp_transport=self._amqp_transport
+                executor=self._executor
             )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
@@ -324,7 +323,7 @@ class EventHubProducerClient(
                     self._amqp_transport.get_remote_max_message_size(
                         self._producers[ALL_PARTITIONS]._handler  # type: ignore
                     )
-                    or MAX_MESSAGE_LENGTH_BYTES
+                    or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
                 )
 
     def _start_producer(self, partition_id, send_timeout):
@@ -728,8 +727,7 @@ class EventHubProducerClient(
         event_data_batch = EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
-            partition_key=partition_key,
-            amqp_transport=self._amqp_transport,
+            partition_key=partition_key
         )
 
         return event_data_batch

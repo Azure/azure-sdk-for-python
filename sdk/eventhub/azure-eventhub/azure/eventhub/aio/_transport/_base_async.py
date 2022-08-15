@@ -10,6 +10,7 @@ class AmqpTransportAsync(ABC):
     """
     # define constants
     MAX_FRAME_SIZE_BYTES = None
+    MAX_MESSAGE_LENGTH_BYTES = None
     IDLE_TIMEOUT_FACTOR = None
 
     # define symbols

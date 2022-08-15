@@ -53,7 +53,6 @@ from .amqp import (
     AmqpMessageProperties,
 )
 from ._transport._uamqp_transport import UamqpTransport
-from uamqp import types
 
 if TYPE_CHECKING:
     from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
@@ -500,14 +499,9 @@ class EventDataBatch(object):
         self,
         max_size_in_bytes: Optional[int] = None,
         partition_id: Optional[str] = None,
-        partition_key: Optional[Union[str, bytes]] = None,
-        **kwargs,
+        partition_key: Optional[Union[str, bytes]] = None
     ) -> None:
-        # TODO: this changes API, check with Anna if valid -
-        # Might need move out message creation to right before sending.
-        # Might take more time to loop through events and add them all to batch in `send` than in `add` here
-        self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport)
-
+        self._amqp_transport = UamqpTransport
 
         if partition_key and not isinstance(
             partition_key, (str, bytes)
@@ -520,7 +514,7 @@ class EventDataBatch(object):
             )
 
         self.max_size_in_bytes = (
-            max_size_in_bytes or self._amqp_transport.MAX_FRAME_SIZE_BYTES
+            max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
         )
         self._message = self._amqp_transport.build_batch_message(data=[])
         self._partition_id = partition_id
@@ -558,9 +552,7 @@ class EventDataBatch(object):
             )
             for m in batch_data
         ]
-        batch_data_instance = cls(
-            partition_key=partition_key, amqp_transport=amqp_transport
-        )
+        batch_data_instance = cls(partition_key=partition_key)
 
         for event_data in outgoing_batch_data:
             batch_data_instance.add(event_data)

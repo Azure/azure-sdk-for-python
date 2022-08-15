@@ -34,7 +34,7 @@ def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport):
     client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
     with client:
         with pytest.raises(ConnectError):
-            batch = EventDataBatch(amqp_transport=amqp_transport)
+            batch = EventDataBatch()
             batch.add(EventData("test data"))
             client.send_batch(batch)
 
@@ -47,7 +47,7 @@ def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport):
     on_error.err = None
     client = EventHubProducerClient.from_connection_string(invalid_hostname, on_error=on_error, uamqp_transport=uamqp_transport)
     with client:
-        batch = EventDataBatch(amqp_transport=amqp_transport)
+        batch = EventDataBatch()
         batch.add(EventData("test data"))
         client.send_batch(batch)
     assert isinstance(on_error.err, ConnectError)
@@ -82,7 +82,7 @@ def test_send_batch_with_invalid_key(invalid_key, uamqp_transport):
     amqp_transport = UamqpTransport if uamqp_transport else None
     try:
         with pytest.raises(ConnectError):
-            batch = EventDataBatch(amqp_transport=amqp_transport)
+            batch = EventDataBatch()
             batch.add(EventData("test data"))
             client.send_batch(batch)
     finally:

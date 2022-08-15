@@ -34,8 +34,7 @@ class BufferedProducerDispatcher:
         max_message_size_on_link: int,
         *,
         max_buffer_length: int = 1500,
-        max_wait_time: float = 1,
-        amqp_transport: AmqpTransportAsync,
+        max_wait_time: float = 1
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
@@ -48,7 +47,6 @@ class BufferedProducerDispatcher:
         self._partition_resolver = PartitionResolver(self._partition_ids)
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
-        self._amqp_transport = amqp_transport
 
     async def _get_partition_id(self, partition_id, partition_key):
         if partition_id:
@@ -81,7 +79,6 @@ class BufferedProducerDispatcher:
                     self._max_message_size_on_link,
                     max_wait_time=self._max_wait_time,
                     max_buffer_length=self._max_buffer_length,
-                    amqp_transport=self._amqp_transport,
                 )
                 await buffered_producer.start()
                 self._buffered_producers[pid] = buffered_producer

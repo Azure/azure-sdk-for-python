@@ -32,7 +32,6 @@ class BufferedProducer:
         max_message_size_on_link: int,
         executor: ThreadPoolExecutor,
         *,
-        amqp_transport: AmqpTransport,
         max_buffer_length: int,
         max_wait_time: float = 1
     ):
@@ -50,12 +49,11 @@ class BufferedProducer:
         self._cur_batch: Optional[EventDataBatch] = None
         self._max_message_size_on_link = max_message_size_on_link
         self._check_max_wait_time_future = None
-        self._amqp_transport = amqp_transport
         self.partition_id = partition_id
 
     def start(self):
         with self._lock:
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
@@ -115,11 +113,11 @@ class BufferedProducer:
                 self._buffered_queue.put(self._cur_batch)
             self._buffered_queue.put(events)
             # create a new batch for incoming events
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
         except ValueError:
             # add single event exceeds the cur batch size, create new batch
             self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             self._cur_batch.add(events)
         self._cur_buffered_len += new_events_len
 
@@ -186,7 +184,7 @@ class BufferedProducer:
                     break
             # after finishing flushing, reset cur batch and put it into the buffer
             self._last_send_time = time.time()
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     def check_max_wait_time_worker(self):

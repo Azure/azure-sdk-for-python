@@ -231,7 +231,6 @@ class EventHubProducerClient(
                 self._max_message_size_on_link,
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
-                amqp_transport=self._amqp_transport,
             )
             await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
@@ -306,7 +305,7 @@ class EventHubProducerClient(
                         EventHubProducer, self._producers[ALL_PARTITIONS]
                         )._handler
                     )
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
                 )
 
     async def _start_producer(
@@ -721,8 +720,7 @@ class EventHubProducerClient(
         event_data_batch = EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
-            partition_key=partition_key,
-            amqp_transport=self._amqp_transport,
+            partition_key=partition_key
         )
 
         return event_data_batch

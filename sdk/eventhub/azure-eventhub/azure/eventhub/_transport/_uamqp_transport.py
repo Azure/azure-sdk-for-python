@@ -82,7 +82,8 @@ if uamqp_installed:
         Class which defines uamqp-based methods used by the producer and consumer.
         """
         # define constants
-        MAX_FRAME_SIZE_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
+        MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
+        MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         IDLE_TIMEOUT_FACTOR = 1000
         CONNECTION_CLOSING_STATES = (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member

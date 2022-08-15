@@ -478,7 +478,7 @@ def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key, uamqp_
     # Use invalid_hostname because this is not a live test.
     amqp_transport = UamqpTransport if uamqp_transport else None
     client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
-    batch = EventDataBatch(partition_id=partition_id, partition_key=partition_key, amqp_transport=amqp_transport)
+    batch = EventDataBatch(partition_id=partition_id, partition_key=partition_key)
     with client:
         with pytest.raises(TypeError):
             client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)

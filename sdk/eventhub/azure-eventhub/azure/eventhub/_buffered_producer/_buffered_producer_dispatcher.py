@@ -31,7 +31,6 @@ class BufferedProducerDispatcher:
         eventhub_name: str,
         max_message_size_on_link: int,
         *,
-        amqp_transport: AmqpTransport,
         max_buffer_length: int = 1500,
         max_wait_time: float = 1,
         executor: Optional[Union[ThreadPoolExecutor, int]] = None
@@ -48,7 +47,6 @@ class BufferedProducerDispatcher:
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
         self._existing_executor = False
-        self._amqp_transport = amqp_transport
 
         if not executor:
             self._executor = ThreadPoolExecutor()
@@ -90,7 +88,6 @@ class BufferedProducerDispatcher:
                     executor=self._executor,
                     max_wait_time=self._max_wait_time,
                     max_buffer_length=self._max_buffer_length,
-                    amqp_transport=self._amqp_transport
                 )
                 buffered_producer.start()
                 self._buffered_producers[pid] = buffered_producer

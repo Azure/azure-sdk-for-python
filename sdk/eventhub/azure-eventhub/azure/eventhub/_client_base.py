@@ -530,7 +530,7 @@ class ConsumerProducerMixin(object):
                 time.sleep(0.05)
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler)
-                or self._amqp_transport.MAX_FRAME_SIZE_BYTES
+                or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
             )
             self.running = True
 
