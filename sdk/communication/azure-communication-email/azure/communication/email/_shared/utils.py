@@ -13,8 +13,7 @@ from typing import (cast,
                     )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
-from azure.core.credentials import AccessToken
-
+from azure.core.credentials import AccessToken, AzureKeyCredential
 
 def _convert_datetime_to_utc_int(input_datetime):
     """
@@ -96,14 +95,13 @@ def create_access_token(token):
     except ValueError as val_error:
         raise ValueError(token_parse_err_msg) from val_error
 
-
 def get_authentication_policy(
         endpoint,  # type: str
-        credential,  # type: Union[TokenCredential, str]
+        credential,  # type: TokenCredential or AzureKeyCredential
         decode_url=False,  # type: bool
         is_async=False,  # type: bool
 ):
-    # type: (...) -> Union[BearerTokenCredentialPolicy, HMACCredentialsPolicy]
+    # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
     """Returns the correct authentication policy based
     on which credential is being passed.
     :param endpoint: The endpoint to which we are authenticating to.
@@ -114,6 +112,11 @@ def get_authentication_policy(
     :type bool: isAsync or str
     :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
     ~azure.communication.chat.shared.policy.HMACCredentialsPolicy
+    :type credential: TokenCredential or str
+    :param isAsync: For async clients there is a need to decode the url
+    :type bool: isAsync or str
+    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
+    ~HMACCredentialsPolicy
     """
 
     if credential is None:
@@ -126,7 +129,7 @@ def get_authentication_policy(
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
-    if isinstance(credential, str):
+    if isinstance(credential, AzureKeyCredential):
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
