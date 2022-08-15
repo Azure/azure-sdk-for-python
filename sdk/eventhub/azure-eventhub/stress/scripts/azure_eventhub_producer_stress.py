@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from email.policy import default
 import os
 import logging
 import threading
@@ -14,7 +15,7 @@ from dotenv import load_dotenv
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
 
 from logger import get_logger
@@ -32,6 +33,19 @@ def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_me
         return 0
     raise error
 
+def stress_java(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
+    send_list = []
+    for _ in range(100):
+        send_list.append(EventData(body=b"D"))
+    try:
+        producer.send_batch(send_list)
+        print("start sleep")
+        time.sleep(600)
+        print("end sleep")
+        producer.send_batch(send_list)
+    except EventHubError as e:
+        return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
+    return len(send_list)
 
 def stress_send_sync(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
     try:
@@ -113,6 +127,7 @@ class StressTestRunner(object):
         )
         self.argument_parser.add_argument("--conn_str", help="EventHub connection string",
                                           default=os.environ.get('EVENT_HUB_CONN_STR'))
+        self.argument_parser.add_argument("--azure_identity", help="Run tests with Identity Auth, need to set hostname", type=bool, default=False)
         parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
         self.argument_parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
         self.argument_parser.add_argument(
@@ -138,7 +153,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
-        self.argument_parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
+        self.argument_parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
         self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
         self.argument_parser.add_argument("--retry_total", type=int, default=3)
@@ -153,7 +168,7 @@ class StressTestRunner(object):
         self.running = False
 
     def create_client(self, client_class, is_async=False):
-
+        print('Creating Client')
         transport_type = TransportType.Amqp if self.args.transport_type == 0 else TransportType.AmqpOverWebsocket
         http_proxy = None
         retry_options = {
@@ -168,7 +183,6 @@ class StressTestRunner(object):
                 "username": self.args.proxy_username,
                 "password": self.args.proxy_password,
             }
-
         if self.args.conn_str:
             client = client_class.from_connection_string(
                 self.args.conn_str,
@@ -176,20 +190,34 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable,
+                logging_enable=self.args.pyamqp_logging_enable,
                 **retry_options
             )
-        elif self.args.hostname:
-            client = client_class(
-                fully_qualified_namespace=self.args.hostname,
-                eventhub_name=self.args.eventhub,
-                credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
-                auth_timeout=self.args.auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable,
-                **retry_options
-            )
+        if self.args.hostname:
+            if self.args.azure_identity:
+                print('Using Azure Identity')
+                credential = DefaultAzureCredential()
+                client = client_class(
+                    fully_qualified_namespace=self.args.hostname,
+                    eventhub_name=self.args.eventhub,
+                    credential=credential,
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    **retry_options
+                )
+            else:
+                client = client_class(
+                    fully_qualified_namespace=self.args.hostname,
+                    eventhub_name=self.args.eventhub,
+                    credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    **retry_options
+                )
         elif self.args.aad_client_id:
             if is_async:
                 credential = ClientSecretCredentialAsync(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)
@@ -202,12 +230,13 @@ class StressTestRunner(object):
                 credential=credential,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable,
+                logging_enable=self.args.pyamqp_logging_enable,
                 **retry_options
             )
         else:
             raise ValueError("Argument error. Must have one of connection string, sas and aad credentials")
 
+        print('Client Created')
         return client
 
     def run(self):
