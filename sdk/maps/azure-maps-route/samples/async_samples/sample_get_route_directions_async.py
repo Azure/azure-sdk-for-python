@@ -18,15 +18,6 @@ USAGE:
 """
 import asyncio
 import os
-import json
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -35,20 +26,16 @@ async def get_route_directions():
     # [START get_route_directions_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route.aio import MapsRouteClient
-    from azure.maps.route.models import LatLon
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_route_client:
         result = await maps_route_client.get_route_directions(
-            route_points=[LatLon(52.50931,13.42936), LatLon(52.50274,13.43872)]
+            route_points=[(52.50931,13.42936), (52.50274,13.43872)]
         )
 
     print("Get Route Directions with list of coordinates:")
     print(result)
-    print("------------------------------")
-    print("Get Route Directions with list of coordinates result in Json format:")
-    print(to_json(result))
     # [END get_route_directions_async]
 
 if __name__ == '__main__':

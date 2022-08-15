@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-maps-route"
-PACKAGE_PPRINT_NAME = "Azure Maps Route"
+PACKAGE_PPRINT_NAME = "Maps Route"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -82,8 +82,5 @@ setup(
         'msrest>=0.6.21',
         'azure-common~=1.1',
         'azure-mgmt-core>=1.3.0,<2.0.0',
-    ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-maps-nspkg~=3.0.2'],
-    }
+    ]
 )

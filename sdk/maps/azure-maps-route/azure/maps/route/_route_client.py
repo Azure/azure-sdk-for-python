@@ -22,12 +22,8 @@ from ._generated.models import (
     TextFormat
 )
 
-from .models import (
-    LatLon
-)
-
 if TYPE_CHECKING:
-    from typing import Union, Any, List, Optional
+    from typing import Union, Any, List, Tuple
     from azure.core.credentials import TokenCredential
     from azure.core.polling import LROPoller
 
@@ -37,6 +33,10 @@ class MapsRouteClient(MapsRouteClientBase):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :keyword str base_url: Supported Maps Services or Language resource base_url
+     (protocol and hostname, for example: 'https://<resource-name>.mapsservices.azure.com').
+    :keyword str client_id: Specifies which account is intended for usage with the Azure AD security model.
+     It represents a unique ID for the Azure Maps account.
     :keyword api_version:
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
@@ -58,7 +58,7 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def get_route_directions(
         self,
-        route_points,  # type: List[LatLon]
+        route_points,  # type: List[Tuple]
         **kwargs  # type: Any
     ):
          # type: (...) -> "RouteDirectionsResponse"
@@ -71,8 +71,26 @@ class MapsRouteClient(MapsRouteClientBase):
         route geometry. Additional routing information such as optimized waypoint order or turn by turn
         instructions is also available, depending on the options selected.
 
-        :param route_points: The Coordinate from which the range calculation should start.
-        :type route_points: List[~azure.maps.route._models.LatLon]
+        :param route_points: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
+        :type route_points: List[Tuple]
+        :keyword supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
+         used as input for route reconstruction and for calculating zero or more alternative routes to
+         this reference route.
+        :paramtype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
+        :keyword avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
+         countries in which all toll roads with vignettes are to be avoided, e.g. "AUS,CHE". Toll roads
+         with vignettes in countries not in the list are unaffected.
+        :paramtype avoid_vignette: list[str]
+        :keyword allow_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
+         countries in which toll roads with vignettes are allowed, e.g. "AUS,CHE". Specifying
+         **allowVignette** with some countries X is equivalent to specifying **avoidVignette** with all
+         countries but X. Specifying **allowVignette** with an empty list is the same as avoiding all
+         toll roads with vignettes.
+        :paramtype allow_vignette: list[str]
+        :keyword avoid_areas: A GeoJSON MultiPolygon representing list of areas to avoid. Only rectangle
+         polygons are supported. The maximum size of a rectangle is about 160x160 km. Maximum number of
+         avoided areas is **10**.
+        :paramtype avoid_areas: ~azure.maps.route.models.GeoJsonMultiPolygon
         :keyword max_alternatives: Number of desired alternative routes to be calculated.
         :paramtype max_alternatives: int
         :keyword alternative_type: Controls the optimality, with respect to the given planning criteria,
@@ -186,9 +204,34 @@ class MapsRouteClient(MapsRouteClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         query_items=""
+        route_directions_body={}
         if route_points:
-            query_items = ":".join([(str(route_point.lat)+","+str(route_point.lon)) for route_point in route_points])
+            query_items = ":".join([(str(route_point[0])+","+str(route_point[1])) for route_point in route_points])
 
+        supporting_points = kwargs.pop('supporting_points', None)
+        avoid_vignette = kwargs.pop('avoid_vignette', None)
+        allow_vignette = kwargs.pop('allow_vignette', None)
+        avoid_areas = kwargs.pop('avoid_areas', None)
+        if supporting_points or avoid_vignette or allow_vignette or avoid_areas is not None:
+            route_directions_body['supporting_points'] = supporting_points
+            route_directions_body['avoid_vignette'] = avoid_vignette
+            route_directions_body['allow_vignette'] = allow_vignette
+            route_directions_body['avoid_areas'] = avoid_areas
+
+        if route_directions_body:
+            return self._route_client.post_route_directions(
+                format=TextFormat.JSON,
+                query=query_items,
+                post_route_directions_request_body=route_directions_body,
+                constant_speed_consumption_in_liters_per_hundredkm=kwargs.get(
+                    'constant_speed_consumption_in_liters_per_hundred_km', None
+                ),
+                constant_speed_consumption_ink_wh_per_hundredkm=kwargs.get(
+                    'constant_speed_consumption_in_kwh_per_hundred_km', None
+                ),
+                auxiliary_power_ink_w=kwargs.get('auxiliary_power_in_kw', None),
+                **kwargs
+            )
         return self._route_client.get_route_directions(
             format=TextFormat.JSON,
             query=query_items,
@@ -202,12 +245,11 @@ class MapsRouteClient(MapsRouteClientBase):
             **kwargs
         )
 
-
     # cSpell:disable
     @distributed_trace
     def get_route_range(
         self,
-        coordinates,  # type: LatLon
+        coordinates,  # type: Tuple
         **kwargs  # type: Any
     ):
          # type: (...) -> "GetRouteRangeResponse"
@@ -218,8 +260,8 @@ class MapsRouteClient(MapsRouteClientBase):
         is returned in a counterclockwise  orientation as well as the precise polygon center which was
         the result of the origin point.
 
-        :param coordinates: The Coordinate from which the range calculation should start.
-        :type coordinates: ~azure.maps.route._models.LatLon
+        :param coordinates: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
+        :type coordinates: Tuple
         :param fuel_budget_in_liters: Fuel budget in liters that determines maximal range which can be
          travelled using the specified Combustion Consumption Model.
          Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec, or
@@ -317,8 +359,7 @@ class MapsRouteClient(MapsRouteClientBase):
         :rtype: ~azure.maps.route.models.GetRouteRangeResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        coordinates = LatLon() if not coordinates else coordinates
-        query = str(coordinates.lat)+","+str(coordinates.lon)
+        query = str(coordinates[0])+","+str(coordinates[1])
 
         return self._route_client.get_route_range(
             format=TextFormat.JSON,
@@ -612,10 +653,6 @@ class MapsRouteClient(MapsRouteClientBase):
             requests=route_points_batch,
             **kwargs
         )
-        result_properties = poller.result().additional_properties
-        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
-            raise HttpResponseError(message=result_properties['error']['message'])
-
         return poller
 
 
@@ -645,10 +682,6 @@ class MapsRouteClient(MapsRouteClientBase):
             format=batch_id,
             **kwargs
         )
-        result_properties = poller.result().additional_properties
-        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
-            raise HttpResponseError(message=result_properties['error']['message'])
-
         return poller
 
 
@@ -808,10 +841,6 @@ class MapsRouteClient(MapsRouteClientBase):
             post_route_matrix_request_body=route_matrix_query,
             **kwargs
         )
-        result_properties = poller.result().additional_properties
-        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
-            raise HttpResponseError(message=result_properties['error']['message'])
-
         return poller
 
 
@@ -844,8 +873,5 @@ class MapsRouteClient(MapsRouteClientBase):
             format=matrix_id,
             **kwargs
         )
-        result_properties = poller.result().additional_properties
-        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
-            raise HttpResponseError(message=result_properties['error']['message'])
 
         return poller

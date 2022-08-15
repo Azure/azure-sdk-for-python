@@ -214,7 +214,7 @@ class AzureMapsRouteClientUnitTest(AzureTestCase):
             ]
         }'''
         client = create_mock_client(status_code=200, body=body)
-        result = client.get_route_directions(route_points=[LatLon(52.50931,13.42936), LatLon(52.50274,13.43872)])
+        result = client.get_route_directions(route_points=[(52.50931,13.42936), (52.50274,13.43872)])
         assert len(result.routes) == 1
         top_answer = result.routes[0]
         assert len(top_answer.legs[0].points) == 29
@@ -273,7 +273,7 @@ class AzureMapsRouteClientUnitTest(AzureTestCase):
                 }
             }'''
         client = create_mock_client(status_code=200, body=body)
-        result = client.get_route_range(coordinates=LatLon(50.97452,5.86605), time_budget_in_sec=6000)
+        result = client.get_route_range(coordinates=(50.97452,5.86605), time_budget_in_sec=6000)
         top_answer = result.reachable_range
         assert top_answer.center.latitude == 50.97452
         assert top_answer.center.longitude == 5.86605

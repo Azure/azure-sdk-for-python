@@ -17,34 +17,20 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import os
-import json
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
-
 
 def get_route_range():
     # [START get_route_range]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route import MapsRouteClient
-    from azure.maps.route.models import LatLon
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_route_client.get_route_range(coordinates=LatLon(52.50931,13.42936), time_budget_in_sec=6000)
+    result = maps_route_client.get_route_range(coordinates=(52.50931,13.42936), time_budget_in_sec=6000)
 
     print("Get Route Range with coordinates and time budget:")
     print(result)
-    print("------------------------------")
-    print("Get Route Range with coordinates and time budget result in Json format:")
-    print(to_json(result))
     # [END get_route_range]
 
 if __name__ == '__main__':

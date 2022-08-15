@@ -17,15 +17,6 @@ USAGE:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import os
-import json
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -70,9 +61,6 @@ def request_route_matrix():
 
     print("Get Route Matrix with given request object:")
     print(result)
-    print("------------------------------")
-    print("Get Route Matrix with given request object result in Json format:")
-    print(to_json(result))
     # [END request_route_matrix]
 
 if __name__ == '__main__':

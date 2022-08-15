@@ -45,7 +45,7 @@ class AzureMapsRouteClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_get_route_directions(self):
-        result = self.client.get_route_directions(route_points=[LatLon(52.50931,13.42936), LatLon(52.50274,13.43872)])
+        result = self.client.get_route_directions(route_points=[(52.50931,13.42936), (52.50274,13.43872)])
         assert len(result.routes) > 0
         top_answer = result.routes[0]
         assert top_answer.summary.length_in_meters == 1147
@@ -54,7 +54,7 @@ class AzureMapsRouteClientE2ETest(AzureTestCase):
 
     @pytest.mark.live_test_only
     def test_get_route_range(self):
-        result = self.client.get_route_range(coordinates=LatLon(50.97452,5.86605), time_budget_in_sec=6000)
+        result = self.client.get_route_range(coordinates=(50.97452,5.86605), time_budget_in_sec=6000)
         top_answer = result.reachable_range
         assert top_answer.center.latitude == 50.97452
         assert top_answer.center.longitude == 5.86605

@@ -40,6 +40,7 @@ from ._models import (
     GeoJsonPoint,
     GeoJsonPolygon,
     GeoJsonObjectType,
+    GeoJsonGeometryCollection
 )
 
 
@@ -80,5 +81,6 @@ __all__ = [
     'GeoJsonMultiPoint',
     'GeoJsonMultiPolygon',
     'GeoJsonPoint',
-    'GeoJsonPolygon'
+    'GeoJsonPolygon',
+    'GeoJsonGeometryCollection'
 ]
