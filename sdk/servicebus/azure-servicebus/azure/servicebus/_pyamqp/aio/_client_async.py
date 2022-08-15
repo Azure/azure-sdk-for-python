@@ -10,7 +10,8 @@
 import asyncio
 import collections.abc
 import logging
-from typing import Any, Dict, Literal, Optional, Tuple, Union, overload
+from typing import Any, Dict, Optional, Tuple, Union, overload
+from typing_extensions import Literal
 import uuid
 import time
 import queue
@@ -370,7 +371,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         """
         try:
             await self._link.update_pending_deliveries()
-            await self._connection.listen(**kwargs)
+            await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing sender.")
             self._shutdown = True
