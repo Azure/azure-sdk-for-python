@@ -285,7 +285,7 @@ To authenticate in a [National Cloud](https://docs.microsoft.com/azure/active-di
 ```python
 # Create a SearchClient that will authenticate through AAD in the China national cloud.
 import os
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
 from azure.search.documents import SearchClient
 
 index_name = "hotels"
