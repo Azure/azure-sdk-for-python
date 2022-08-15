@@ -14,6 +14,7 @@ from ..models import SearchIndexerSkillset
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
+    get_authentication_policy,
 )
 from ..models import (
     SearchIndexerDataSourceConnection,
@@ -21,7 +22,6 @@ from ..models import (
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
-from ...aio._utils_async import get_async_authentication_policy
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -65,7 +65,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             )  # type: _SearchServiceClient
         else:
             self._aad = True
-            authentication_policy = get_async_authentication_policy(credential, audience=audience, is_async=True)
+            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,

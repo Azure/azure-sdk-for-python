@@ -12,10 +12,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchClient as _SearchServiceClient
 from ...aio._search_client_async import SearchClient
-from ...aio._utils_async import get_async_authentication_policy
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
+    get_authentication_policy,
 )
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
@@ -69,7 +69,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
             )  # type: _SearchServiceClient
         else:
             self._aad = True
-            authentication_policy = get_async_authentication_policy(credential, audience=audience, is_async=True)
+            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
