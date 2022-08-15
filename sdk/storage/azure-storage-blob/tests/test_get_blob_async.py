@@ -14,6 +14,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobProperties, StorageErrorCode
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
+
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -152,13 +153,11 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # Assert
         assert self.byte_data == content
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_ranged_get_blob_to_bytes_with_single_byte(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -951,13 +950,11 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             self.config.max_single_get_size,
             progress)
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_get_blob_exact_chunk_size(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1056,13 +1053,11 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         assert downloader.size == 1024
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_get_blob_range_with_overall_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
 
         await self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
@@ -1079,13 +1074,11 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # Assert
         assert b'MDAwMDAwMDA=' == content.properties.content_settings.content_md5
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_get_blob_range_with_range_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
 
         await self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
