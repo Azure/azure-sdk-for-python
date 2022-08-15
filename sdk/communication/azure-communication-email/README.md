@@ -39,6 +39,17 @@ connection_string = "endpoint=https://<resource-name>.communication.azure.com/;a
 client = EmailClient.from_connection_string(connection_string);
 ```
 
+Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
+
+```python
+from azure.communication.email import Email
+from azure.identity import DefaultAzureCredential
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+endpoint = "https://<resource-name>.communication.azure.com"
+client = EmailClient(endpoint, DefaultAzureCredential())
+```
+
 Email clients can also be authenticated using an [AzureKeyCredential][azure-key-credential].
 
 ```python
