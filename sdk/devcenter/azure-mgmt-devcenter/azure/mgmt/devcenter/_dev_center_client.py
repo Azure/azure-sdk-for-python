@@ -9,20 +9,38 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import DevCenterClientConfiguration
-from .operations import AttachedNetworksOperations, CatalogsOperations, DevBoxDefinitionsOperations, DevCentersOperations, EnvironmentTypesOperations, GalleriesOperations, ImageVersionsOperations, ImagesOperations, NetworkConnectionsOperations, OperationStatusesOperations, Operations, PoolsOperations, ProjectEnvironmentTypesOperations, ProjectsOperations, SchedulesOperations, SkusOperations, UsagesOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    AttachedNetworksOperations,
+    CatalogsOperations,
+    DevBoxDefinitionsOperations,
+    DevCentersOperations,
+    EnvironmentTypesOperations,
+    GalleriesOperations,
+    ImageVersionsOperations,
+    ImagesOperations,
+    NetworkConnectionsOperations,
+    OperationStatusesOperations,
+    Operations,
+    PoolsOperations,
+    ProjectEnvironmentTypesOperations,
+    ProjectsOperations,
+    SchedulesOperations,
+    SkusOperations,
+    UsagesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class DevCenterClient:    # pylint: disable=too-many-instance-attributes
+
+class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """DevCenter Management API.
 
     :ivar dev_centers: DevCentersOperations operations
@@ -60,10 +78,10 @@ class DevCenterClient:    # pylint: disable=too-many-instance-attributes
     :vartype schedules: azure.mgmt.devcenter.operations.SchedulesOperations
     :ivar network_connections: NetworkConnectionsOperations operations
     :vartype network_connections: azure.mgmt.devcenter.operations.NetworkConnectionsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Unique identifier of the Azure subscription. This is a GUID-formatted
-     string (e.g. 00000000-0000-0000-0000-000000000000).
+     string (e.g. 00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -88,27 +106,15 @@ class DevCenterClient:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.dev_centers = DevCentersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.projects = ProjectsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.dev_centers = DevCentersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.attached_networks = AttachedNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.galleries = GalleriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.images = ImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.image_versions = ImageVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.catalogs = CatalogsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.image_versions = ImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.catalogs = CatalogsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.environment_types = EnvironmentTypesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -118,34 +124,19 @@ class DevCenterClient:    # pylint: disable=too-many-instance-attributes
         self.dev_box_definitions = DevBoxDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.operation_statuses = OperationStatusesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.usages = UsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.skus = SkusOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.pools = PoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.schedules = SchedulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.pools = PoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.network_connections = NetworkConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -154,7 +145,7 @@ class DevCenterClient:    # pylint: disable=too-many-instance-attributes
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
