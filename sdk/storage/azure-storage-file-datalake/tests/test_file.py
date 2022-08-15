@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 from datetime import datetime, timedelta
+from math import ceil
 import pytest
 
 from azure.core import MatchConditions
@@ -1083,6 +1084,33 @@ class FileTest(StorageTestCase):
 
         with self.assertRaises(HttpResponseError):
             f3.download_file().readall()
+
+    @DataLakePreparer()
+    def test_read_file_read(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        self.dsc._config.max_single_get_size = 1024
+        self.dsc._config.max_chunk_get_size = 1024
+
+        file_client = self._create_file_and_return_client()
+        data = b'12345' * 205 * 5  # 5125 bytes
+
+        file_client.append_data(data, 0, len(data), flush=True)
+        stream = file_client.download_file()
+
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

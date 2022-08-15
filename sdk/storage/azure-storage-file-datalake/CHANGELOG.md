@@ -9,6 +9,7 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 - Added support for `flush` to `append_data` API, allowing for append and flush in one operation.
 - Encryption Scope is now supported for both `create_file_system` APIs (`FileSystemClient`, `DataLakeServiceClient`).
 - Encryption Scope is now supported as a SAS permission.
+- Added standard `read` method to `StorageStreamDownloader`.
 
 ## 12.8.0 (2022-07-07)
 
