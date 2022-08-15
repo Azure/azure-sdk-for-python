@@ -103,8 +103,7 @@ class PhoneNumberIdentifier(object):
 _PHONE_NUMBER_PREFIX = re.compile(r'^\+')
 
 
-def _phone_number_raw_id(identifier):
-    # type (PhoneNumberIdentifier) -> str
+def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
     value = identifier.properties['value']
     # strip the leading +. We just assume correct E.164 format here because
     # validation should only happen server-side, not client-side.
@@ -172,8 +171,7 @@ class MicrosoftTeamsUserIdentifier(object):
             self.raw_id = _microsoft_teams_user_raw_id(self)
 
 
-def _microsoft_teams_user_raw_id(identifier):
-    # type (MicrosoftTeamsUserIdentifier) -> str
+def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
     user_id = identifier.properties['user_id']
     if identifier.properties['is_anonymous']:
         return '8:teamsvisitor:{}'.format(user_id)
@@ -187,15 +185,14 @@ def _microsoft_teams_user_raw_id(identifier):
     return '8:orgid:{}'.format(user_id)
 
 
-def identifier_from_raw_id(raw_id):
+def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
     Creates a CommunicationIdentifier from a given raw ID.
 
     When storing raw IDs use this function to restore the identifier that was encoded in the raw ID.
 
-    :param raw ID to construct the CommunicationIdentifier from.
+    :param str raw_id: A raw ID to construct the CommunicationIdentifier from.
     """
-    # type (str) -> CommunicationIdentifier
     if raw_id.startswith('4:'):
         return PhoneNumberIdentifier(
             value='+{}'.format(raw_id[len('4:'):])
