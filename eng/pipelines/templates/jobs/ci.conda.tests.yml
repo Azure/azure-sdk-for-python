@@ -76,6 +76,8 @@ jobs:
 
     - ${{if eq(parameters.TestProxy, true) }}:
       - template: /eng/common/testproxy/test-proxy-tool.yml
+        parameters:
+          targetVersion: 1.0.0-dev.20220810.2
 
     - task: UsePythonVersion@0
       displayName: 'Use Python $(PythonVersion)'
