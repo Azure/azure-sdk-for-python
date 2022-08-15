@@ -61,12 +61,13 @@ if __name__ == "__main__":
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(root_dir, service_dir)
     else:
+        service_dir = "sdk"
         target_dir = root_dir
 
     targeted_packages = [
         os.path.basename(path_name) for path_name in discover_targeted_packages(args.glob_string, target_dir, "", "Regression")
     ]
-    deps = find_package_dependency(AZURE_GLOB_STRING, root_dir)
+    deps = find_package_dependency(AZURE_GLOB_STRING, root_dir, service_dir)
     package_set = []
 
     for key in list(deps.keys()):
