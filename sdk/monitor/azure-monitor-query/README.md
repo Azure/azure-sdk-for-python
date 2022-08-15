@@ -273,7 +273,7 @@ response = client.query_workspace(
     os.environ['LOG_WORKSPACE_ID'],
     "range x from 1 to 10000000000 step 1 | count",
     timespan=timedelta(days=1),
-    server_timeout=600, # sets the timeout to 10 minutes
+    server_timeout=600 # sets the timeout to 10 minutes
     )
 ```
 
