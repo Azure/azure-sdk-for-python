@@ -481,7 +481,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_set_blob_tags_using_blob_sas(self, **kwargs):
+    def test_filter_blob_tags_using_blob_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -505,19 +505,20 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             permission=BlobSasPermissions(delete_previous_version=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob_client=BlobClient.from_blob_url(blob_client.url, token1)
+        blob_client = BlobClient.from_blob_url(blob_client.url, token1)
         blob_client.set_blob_tags(tags=tags)
         tags_on_blob = blob_client.get_blob_tags()
         assert len(tags_on_blob) == len(tags)
 
         if self.is_live:
-            sleep(15)
+            sleep(10)
 
         # To filter in a specific container use:
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
         where = "\"year\"='2000' and tag2 = 'tagtwo' and tag3='tagthree'"
 
-        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=3).by_page()
+        container_client = self.bsc.get_container_client(self.container_name)
+        blob_list = container_client.find_blobs_by_tags(filter_expression=where, results_per_page=3).by_page()
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)

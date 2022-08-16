@@ -1504,7 +1504,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container = await self._create_container(bsc)
+        container = await self._create_container(bsc, 'testfind')
 
         data = b'hello world'
         tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "tagthree"}
