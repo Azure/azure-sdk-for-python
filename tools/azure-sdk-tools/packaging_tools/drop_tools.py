@@ -58,7 +58,7 @@ def get_package_names(sdk_pr):
 
 
 def build_package_from_pr_number(gh_token, sdk_id, pr_number, output_folder, *, with_comment=False):
-    """Will clone the given PR branch and vuild the package with the given name."""
+    """Will clone the given PR branch and build the package with the given name."""
 
     con = Github(gh_token)
     repo = con.get_repo(sdk_id)

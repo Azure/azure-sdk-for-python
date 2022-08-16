@@ -344,7 +344,10 @@
     "rgname",
     "mtype",
     "venvtools",
-    "ispkg"
+    "ispkg",
+    "openpyxl",
+    "deps",
+    "prnumber"
   ],
   "overrides": [
     {
