@@ -1,6 +1,31 @@
 {
   "Entries": [
     {
+      "RequestUri": "https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger-certificate/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 16 Aug 2022 20:17:02 GMT",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "6b8abd60-c762-4134-beb3-a2050630ab39",
+        "x-ms-image-digest": "sha256:9b8d3952372e585a3b21995d9be0c8702fb7ba2ef54ca65392b2562dd2adcc73",
+        "x-ms-image-tag": "1.0.02031.28-b60f6adbe3f21e46216336ba378cc34dd0ab86ca",
+        "x-ms-machineName": "identityservice-6f96b84df8-wbxmj"
+      },
+      "ResponseBody": {
+        "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQcTrTRLjb9eOoGTXSvOEgxjAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MjcxNjA3MjNaFw0yMjA5MjUxNjA3\nMjJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEyn3oh7/D\u002Bm/yuzdWNSEh3ZOupuUiO6U7MIcwiM6RBZ3nsWQHGeVyT0Ai\n\u002B7cYDtPGo/8VRio\u002BBrknl7VALE3q9aNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUh1gNHgpIlTONmFbFX7HeG1rcT6gwHwYDVR0jBBgwFoAUh1gNHgpIlTONmFbF\nX7HeG1rcT6gwCgYIKoZIzj0EAwIDRwAwRAIgdd7rQszgGJ\u002BjtjuiECigiFxoAvDk\nOPPBwTvMsE8TzsYCIDgYQ1mGHyZ52NXgoxPfqVVFTive8JIsjeQuczMZFq\u002B9\n-----END CERTIFICATE-----\n",
+        "ledgerId": "fake"
+      }
+    },
+    {
       "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
       "RequestMethod": "POST",
       "RequestHeaders": {
@@ -16,12 +41,12 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "92",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 12 Aug 2022 20:52:04 GMT",
+        "Date": "Tue, 16 Aug 2022 20:17:03 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AlNzCYyDpZBAiWVI76_IYPab7eLaAQAAAHS0iNoOAAAA; expires=Sun, 11-Sep-2022 20:52:04 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Av7pS8_417BFrOxAVSEr2ISb7eLaAQAAAD_yjdoOAAAA; expires=Thu, 15-Sep-2022 20:17:03 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
@@ -54,7 +79,7 @@
       "ResponseHeaders": {
         "Content-Length": "78",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28540"
+        "x-ms-ccf-transaction-id": "8.29385"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -74,7 +99,7 @@
       "ResponseHeaders": {
         "Content-Length": "78",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28541"
+        "x-ms-ccf-transaction-id": "8.29386"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -98,7 +123,7 @@
       "ResponseHeaders": {
         "Content-Length": "73",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28542"
+        "x-ms-ccf-transaction-id": "8.29387"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -118,7 +143,7 @@
       "ResponseHeaders": {
         "Content-Length": "73",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28543"
+        "x-ms-ccf-transaction-id": "8.29388"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -138,7 +163,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "x-ms-ccf-transaction-id": "8.28544"
+        "x-ms-ccf-transaction-id": "8.29389"
       },
       "ResponseBody": null
     },
@@ -159,7 +184,7 @@
       "ResponseHeaders": {
         "Content-Length": "137",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28545"
+        "x-ms-ccf-transaction-id": "8.29390"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -179,7 +204,7 @@
       "ResponseHeaders": {
         "Content-Length": "137",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28546"
+        "x-ms-ccf-transaction-id": "8.29391"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -203,7 +228,7 @@
       "ResponseHeaders": {
         "Content-Length": "132",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28547"
+        "x-ms-ccf-transaction-id": "8.29392"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -223,7 +248,7 @@
       "ResponseHeaders": {
         "Content-Length": "132",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28548"
+        "x-ms-ccf-transaction-id": "8.29393"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -243,7 +268,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "x-ms-ccf-transaction-id": "8.28549"
+        "x-ms-ccf-transaction-id": "8.29394"
       },
       "ResponseBody": null
     }

@@ -10,6 +10,9 @@ from devtools_testutils import (
 from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
 )
+from azure.confidentialledger.certificate.aio import (
+    ConfidentialLedgerCertificateClient as ConfidentialLedgerCertificateClientAsync
+)
 
 from .constants import USER_CERTIFICATE
 
@@ -74,3 +77,33 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
             outfile.write(network_identity["ledgerTlsCertificate"])
 
         return network_identity["ledgerTlsCertificate"]
+
+    async def set_ledger_identity_async(self, confidentialledger_id: str) -> str:
+        """Retrieves the Confidential Ledger's TLS certificate, saving it to the object's network
+        certificate path as well as returning it directly.
+
+        An async version of this method is needed so that this request is recorded by async tests.
+
+        :param confidentialledger_id: Id of the Confidential Ledger.
+        :type confidentialledger_id: str
+        :return: The Confidential Ledger's TLS certificate.
+        :rtype: str
+        """
+        client = self.create_client_from_credential(
+            ConfidentialLedgerCertificateClientAsync,
+            credential=None,
+        )
+
+        try:
+            network_identity = (
+                await client.get_ledger_identity(
+                    ledger_id=confidentialledger_id
+                )
+            )
+
+            with open(self.network_certificate_path, "w", encoding="utf-8") as outfile:
+                outfile.write(network_identity["ledgerTlsCertificate"])
+
+            return network_identity["ledgerTlsCertificate"]
+        finally:
+            await client.close()

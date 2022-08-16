@@ -13,10 +13,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 12 Aug 2022 20:50:17 GMT",
+        "Date": "Tue, 16 Aug 2022 20:15:08 GMT",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "3f44c9bf-051b-453a-b9cd-a9c9710153a8",
+        "x-ms-correlation-request-id": "a751c83d-7013-44b0-8322-30c956cef5a6",
         "x-ms-image-digest": "sha256:9b8d3952372e585a3b21995d9be0c8702fb7ba2ef54ca65392b2562dd2adcc73",
         "x-ms-image-tag": "1.0.02031.28-b60f6adbe3f21e46216336ba378cc34dd0ab86ca",
         "x-ms-machineName": "identityservice-6f96b84df8-wbxmj"
@@ -43,17 +43,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 12 Aug 2022 20:50:18 GMT",
+        "Date": "Tue, 16 Aug 2022 20:15:08 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AoQfJK5MoNtKpEAcXfXIqUE; expires=Sun, 11-Sep-2022 20:50:19 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrHRfTu1zhLv8ctfAiII_HXmDd2vCfCdUV2VpOG005zQX9iaNNepWPzEuE0x4AeBoGz-dWnh_ZiB5KgsheTpHcUMM3YgFHpagnazZnoiqax2v7NGVcpVEcNLMt6VnXnJQ_aM5Yi7DmVYo9QvfJzLmma_9QevJx8GjwAWHr7VVL4G4gAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqRpHGIL4XFNgpWjUPcUu64; expires=Thu, 15-Sep-2022 20:15:08 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr5FU2etR3zu5pgYimjiQvtHIplRnml2jL9n7flUtR2h7UIkJp3oebUkAjUxaRBBcX7rfOTpJaueNNwXCZ_nMJHhGa63pEhLEi7TRGixrFQNLBN5B9AKaumBz9GteuublaLG-_yBvefZttZGB7wAFHVp-7O2OyT3sW2UxaX_5FGecgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.9 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13481.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -131,7 +131,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AoQfJK5MoNtKpEAcXfXIqUE; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqRpHGIL4XFNgpWjUPcUu64; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
       },
       "RequestBody": null,
@@ -142,16 +142,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 12 Aug 2022 20:50:18 GMT",
+        "Date": "Tue, 16 Aug 2022 20:15:08 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AoQfJK5MoNtKpEAcXfXIqUE; expires=Sun, 11-Sep-2022 20:50:19 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqRpHGIL4XFNgpWjUPcUu64; expires=Thu, 15-Sep-2022 20:15:08 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13481.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -207,11 +207,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "aa64db07-42c5-410f-8b20-3369640cbabd",
+        "client-request-id": "6efd9840-c206-4f7e-8ac6-75afced00754",
         "Connection": "keep-alive",
         "Content-Length": "301",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AoQfJK5MoNtKpEAcXfXIqUE; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqRpHGIL4XFNgpWjUPcUu64; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -225,22 +225,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "aa64db07-42c5-410f-8b20-3369640cbabd",
+        "client-request-id": "6efd9840-c206-4f7e-8ac6-75afced00754",
         "Content-Length": "111",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 12 Aug 2022 20:50:19 GMT",
+        "Date": "Tue, 16 Aug 2022 20:15:08 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AoQfJK5MoNtKpEAcXfXIqUGb7eLaAQAAAAq0iNoOAAAA; expires=Sun, 11-Sep-2022 20:50:19 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqRpHGIL4XFNgpWjUPcUu66b7eLaAQAAAMzxjdoOAAAA; expires=Thu, 15-Sep-2022 20:15:09 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13481.9 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13481.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -269,7 +269,7 @@
       "ResponseHeaders": {
         "Content-Length": "139",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28433"
+        "x-ms-ccf-transaction-id": "8.29275"
       },
       "ResponseBody": {
         "assignedRole": "Administrator",
@@ -294,14 +294,14 @@
       "ResponseHeaders": {
         "Content-Length": "22",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28435"
+        "x-ms-ccf-transaction-id": "8.29277"
       },
       "ResponseBody": {
         "collectionId": "132"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28435/status?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29277/status?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -314,15 +314,36 @@
       "ResponseHeaders": {
         "Content-Length": "45",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28436"
+        "x-ms-ccf-transaction-id": "8.29277"
       },
       "ResponseBody": {
         "state": "Pending",
-        "transactionId": "8.28435"
+        "transactionId": "8.29277"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28435/status?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29277/status?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-confidentialledger/1.0.1 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "45",
+        "Content-Type": "application/json",
+        "x-ms-ccf-transaction-id": "8.29277"
+      },
+      "ResponseBody": {
+        "state": "Pending",
+        "transactionId": "8.29277"
+      }
+    },
+    {
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29277/status?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -335,15 +356,15 @@
       "ResponseHeaders": {
         "Content-Length": "47",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28436"
+        "x-ms-ccf-transaction-id": "8.29278"
       },
       "ResponseBody": {
         "state": "Committed",
-        "transactionId": "8.28435"
+        "transactionId": "8.29277"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28435/status?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29277/status?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -356,15 +377,15 @@
       "ResponseHeaders": {
         "Content-Length": "47",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28436"
+        "x-ms-ccf-transaction-id": "8.29278"
       },
       "ResponseBody": {
         "state": "Committed",
-        "transactionId": "8.28435"
+        "transactionId": "8.29277"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28435/receipt?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29277/receipt?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -377,7 +398,7 @@
       "ResponseHeaders": {
         "Content-Length": "66",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28436"
+        "x-ms-ccf-transaction-id": "8.29278"
       },
       "ResponseBody": {
         "receipt": null,
@@ -386,7 +407,7 @@
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28435/receipt?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29277/receipt?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -399,7 +420,7 @@
       "ResponseHeaders": {
         "Content-Length": "2291",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28436"
+        "x-ms-ccf-transaction-id": "8.29278"
       },
       "ResponseBody": {
         "receipt": {
@@ -407,31 +428,31 @@
           "is_signature_transaction": false,
           "leaf_components": {
             "claims_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-            "commit_evidence": "ce:8.28435:b11857e24fe3e229f122ffbc859c95f4aee669f1e33ff875a366186651a05401",
-            "write_set_digest": "e8312e264cee9768e0cf5bd1983d6994f4dd29f1f37080f64b32fcd6ee190596"
+            "commit_evidence": "ce:8.29277:f177390deb2bc41d71a6c2894a0ad0b90f4b9f5f457b26ee900f75c912805fc1",
+            "write_set_digest": "301064b6f07e67afc67aa94ea6d175dffab885157e9636744e8884e838002e99"
           },
           "node_id": "8b9273cc406cc8df4021f9ce5149248df6f182c9368a283e9b876c116ea2a2f3",
           "proof": [
             {
-              "left": "7a3d5cc8f9f3367233d2404f714c34872cb35ff8efe405037da4de463e06a2c2"
+              "left": "9062e0f6e820b05b668d02d36ba3f5c1f7b73da72c013483c305cb7b609c6982"
             },
             {
-              "left": "bdb738aaf3a9e66b5122ec601466fe87a29d3d37df408d9905277d2c2e6fe7b6"
+              "left": "26b25dcd65e39fb39987af2bc0d910d98aaae76b615c70d8db67bf74d32ff4dd"
             },
             {
-              "left": "cc90f65042496380f5a4e11939aa09d9a241beea6cdef5ad30c12734af52fd4f"
+              "left": "68148738d5923b3b34df5dcfe21153d0e6a74d83afdef1cd4e50f4174a601587"
             },
             {
-              "left": "0820fec60341e88ed8bee54582d965d57e7a4d117b4971eb890945d54cd845e4"
+              "left": "3592b94ee99b7600063cba550e27433d9a2027d318be42fbfc1d6896a0fe7ff0"
             },
             {
-              "left": "7d3bd8b7df99c444d99d8aeb93af3f372aeb9176ca36a54c538f31aecf3749ac"
+              "left": "3af165c2496160ec7c8edfd0106e922970948117512eb4edfb20eeb305da2e3e"
             },
             {
-              "left": "0c7e59abddd19e4cbd431354d24a8459ee95d1c2cabb786bd72122638d20e51f"
+              "left": "c59a7696a2b56402fecb333b3bdb48cd650e7072e88bdd3dbc565ebf6ccd725f"
             },
             {
-              "left": "d6791ef93cfc7b84b9622afb19acb8cde5764f1f973545221e900a4d82c16562"
+              "left": "dca6f043905cc8fd95ee638c00f7a90cb102071cce6c245bc93d6d7e3f677a15"
             },
             {
               "left": "4ef60c7454994acc00e1ed8d6e97062bf44350e9e1c5478f22abaaf307829d1b"
@@ -441,10 +462,10 @@
             }
           ],
           "service_endorsements": [],
-          "signature": "MEUCIGbf0KUq/6sBbJlpokrVfpAL5cdCV/T\u002BF8GJ1WOqtOSfAiEA24oQk/Ajot\u002BOh3yprumYu66J2UoZL2b78puBpKh85bQ="
+          "signature": "MEYCIQC\u002BnhyrNC1y8xQIq3kSScq6lLN/9m6RnL5vM4fVHADO4gIhAMj2UgbPOn4vsGm0eV8HgdAHc6ZEqiegfLJ9\u002BnHOrNk\u002B"
         },
         "state": "Ready",
-        "transactionId": "8.28435"
+        "transactionId": "8.29277"
       }
     },
     {
@@ -461,12 +482,12 @@
       "ResponseHeaders": {
         "Content-Length": "105",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28436"
+        "x-ms-ccf-transaction-id": "8.29278"
       },
       "ResponseBody": {
         "collectionId": "132",
         "contents": "Test entry from Python SDK. Collection: 132",
-        "transactionId": "8.28436"
+        "transactionId": "8.29278"
       }
     },
     {
@@ -487,14 +508,14 @@
       "ResponseHeaders": {
         "Content-Length": "22",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28437"
+        "x-ms-ccf-transaction-id": "8.29279"
       },
       "ResponseBody": {
         "collectionId": "132"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28437/status?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29279/status?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -507,15 +528,15 @@
       "ResponseHeaders": {
         "Content-Length": "45",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28437"
+        "x-ms-ccf-transaction-id": "8.29279"
       },
       "ResponseBody": {
         "state": "Pending",
-        "transactionId": "8.28437"
+        "transactionId": "8.29279"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28437/status?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29279/status?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -528,15 +549,15 @@
       "ResponseHeaders": {
         "Content-Length": "45",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28437"
+        "x-ms-ccf-transaction-id": "8.29279"
       },
       "ResponseBody": {
         "state": "Pending",
-        "transactionId": "8.28437"
+        "transactionId": "8.29279"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28437/status?api-version=2022-05-13",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29279/status?api-version=2022-05-13",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -549,11 +570,11 @@
       "ResponseHeaders": {
         "Content-Length": "47",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28438"
+        "x-ms-ccf-transaction-id": "8.29280"
       },
       "ResponseBody": {
         "state": "Committed",
-        "transactionId": "8.28437"
+        "transactionId": "8.29279"
       }
     },
     {
@@ -570,16 +591,16 @@
       "ResponseHeaders": {
         "Content-Length": "107",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28438"
+        "x-ms-ccf-transaction-id": "8.29280"
       },
       "ResponseBody": {
         "collectionId": "132",
         "contents": "Test entry 2 from Python SDK. Collection: 132",
-        "transactionId": "8.28438"
+        "transactionId": "8.29280"
       }
     },
     {
-      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.28435?api-version=2022-05-13\u0026collectionId=132",
+      "RequestUri": "https://fake.confidential-ledger.azure.com/app/transactions/8.29277?api-version=2022-05-13\u0026collectionId=132",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -592,13 +613,13 @@
       "ResponseHeaders": {
         "Content-Length": "161",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28438"
+        "x-ms-ccf-transaction-id": "8.29280"
       },
       "ResponseBody": {
         "entry": {
           "collectionId": "132",
           "contents": "Test entry from Python SDK. Collection: 132",
-          "transactionId": "8.28435"
+          "transactionId": "8.29277"
         },
         "state": "Ready"
       }
@@ -617,7 +638,7 @@
       "ResponseHeaders": {
         "Content-Length": "263",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28438"
+        "x-ms-ccf-transaction-id": "8.29280"
       },
       "ResponseBody": {
         "collections": [

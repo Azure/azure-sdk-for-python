@@ -30,7 +30,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         self, endpoint, ledger_id, is_aad, fetch_tls_cert=True
     ):
         # Always explicitly fetch the TLS certificate.
-        network_cert = self.set_ledger_identity(ledger_id)
+        network_cert = await self.set_ledger_identity_async(ledger_id)
         if not fetch_tls_cert:
             # For some test scenarios, remove the file so the client sees it doesn't exist and
             # creates it auto-magically.

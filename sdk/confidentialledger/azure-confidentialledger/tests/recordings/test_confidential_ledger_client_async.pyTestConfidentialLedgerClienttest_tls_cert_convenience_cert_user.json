@@ -1,6 +1,31 @@
 {
   "Entries": [
     {
+      "RequestUri": "https://identity.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2022-05-13",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-confidentialledger-certificate/1.0.0 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 16 Aug 2022 20:17:44 GMT",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "33fb32ee-24b4-4533-bbe8-746fbb1d2a99",
+        "x-ms-image-digest": "sha256:9b8d3952372e585a3b21995d9be0c8702fb7ba2ef54ca65392b2562dd2adcc73",
+        "x-ms-image-tag": "1.0.02031.28-b60f6adbe3f21e46216336ba378cc34dd0ab86ca",
+        "x-ms-machineName": "identityservice-6f96b84df8-wbxmj"
+      },
+      "ResponseBody": {
+        "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIBeTCCASCgAwIBAgIQcTrTRLjb9eOoGTXSvOEgxjAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjA2MjcxNjA3MjNaFw0yMjA5MjUxNjA3\nMjJaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMFkwEwYHKoZIzj0CAQYIKoZIzj0D\nAQcDQgAEyn3oh7/D\u002Bm/yuzdWNSEh3ZOupuUiO6U7MIcwiM6RBZ3nsWQHGeVyT0Ai\n\u002B7cYDtPGo/8VRio\u002BBrknl7VALE3q9aNQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4E\nFgQUh1gNHgpIlTONmFbFX7HeG1rcT6gwHwYDVR0jBBgwFoAUh1gNHgpIlTONmFbF\nX7HeG1rcT6gwCgYIKoZIzj0EAwIDRwAwRAIgdd7rQszgGJ\u002BjtjuiECigiFxoAvDk\nOPPBwTvMsE8TzsYCIDgYQ1mGHyZ52NXgoxPfqVVFTive8JIsjeQuczMZFq\u002B9\n-----END CERTIFICATE-----\n",
+        "ledgerId": "fake"
+      }
+    },
+    {
       "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
       "RequestMethod": "POST",
       "RequestHeaders": {
@@ -16,18 +41,18 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "92",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 12 Aug 2022 20:52:45 GMT",
+        "Date": "Tue, 16 Aug 2022 20:17:45 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AoOSnpk_qzhBt9GmkFpo1Mab7eLaAQAAAJ20iNoOAAAA; expires=Sun, 11-Sep-2022 20:52:46 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AomFqMTvutpLky9RbRxeeHCb7eLaAQAAAGnyjdoOAAAA; expires=Thu, 15-Sep-2022 20:17:45 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.9 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13481.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -54,7 +79,7 @@
       "ResponseHeaders": {
         "Content-Length": "139",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28566"
+        "x-ms-ccf-transaction-id": "8.29411"
       },
       "ResponseBody": {
         "assignedRole": "Administrator",
@@ -74,7 +99,7 @@
       "ResponseHeaders": {
         "Content-Length": "45692",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.28567"
+        "x-ms-ccf-transaction-id": "8.29412"
       },
       "ResponseBody": {
         "digest": "c71e1e9cb9e2c0cb26a4e0ff04bdd3913cff868b241808869a81dd0de29ab703",
