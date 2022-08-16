@@ -8,6 +8,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils import (
     PemCertificate,
     create_combined_bundle,
+    is_live,
     is_live_and_not_recording,
     set_function_recording_options,
 )
@@ -70,7 +71,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             "tls_certificate": network_cert,
             "tls_certificate_host": urlparse(endpoint).netloc,
         }
-        set_function_recording_options(**function_recording_options)
+        if is_live():
+            set_function_recording_options(**function_recording_options)
 
         if not is_live_and_not_recording():
             # For live, non-recorded tests, we want to test normal client behavior so the only
@@ -104,7 +106,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             function_recording_options["certificates"] = [
                 PemCertificate(key=USER_CERTIFICATE_PRIVATE_KEY, data=USER_CERTIFICATE_PUBLIC_KEY)
             ]
-            set_function_recording_options(**function_recording_options)
+            if is_live():
+                set_function_recording_options(**function_recording_options)
 
             client = certificate_based_client
         else:
