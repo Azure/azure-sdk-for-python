@@ -5,6 +5,7 @@
 # pylint: skip-file
 
 from enum import Enum, EnumMeta
+import re
 from six import with_metaclass
 from typing import Mapping, Optional, Union, Any
 try:
@@ -67,7 +68,7 @@ class CommunicationUserIdentifier(object):
 
     def __init__(self, id, **kwargs):
         # type: (str, Any) -> None
-        self.raw_id = kwargs.get('raw_id')
+        self.raw_id = kwargs.get('raw_id', id)
         self.properties = CommunicationUserProperties(id=id)
 
     def __eq__(self, other):
@@ -98,6 +99,18 @@ class PhoneNumberIdentifier(object):
         # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id')
         self.properties = PhoneNumberProperties(value=value)
+        if self.raw_id is None:
+            self.raw_id = _phone_number_raw_id(self)
+
+
+_PHONE_NUMBER_PREFIX = re.compile(r'^\+')
+
+
+def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
+    value = identifier.properties['value']
+    # strip the leading +. We just assume correct E.164 format here because
+    # validation should only happen server-side, not client-side.
+    return '4:{}'.format(_PHONE_NUMBER_PREFIX.sub('', value))
 
 
 class UnknownIdentifier(object):
@@ -160,3 +173,70 @@ class MicrosoftTeamsUserIdentifier(object):
             is_anonymous=kwargs.get('is_anonymous', False),
             cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
         )
+        if self.raw_id is None:
+            self.raw_id = _microsoft_teams_user_raw_id(self)
+
+
+def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
+    user_id = identifier.properties['user_id']
+    if identifier.properties['is_anonymous']:
+        return '8:teamsvisitor:{}'.format(user_id)
+    cloud = identifier.properties['cloud']
+    if cloud == CommunicationCloudEnvironment.DOD:
+        return '8:dod:{}'.format(user_id)
+    elif cloud == CommunicationCloudEnvironment.GCCH:
+        return '8:gcch:{}'.format(user_id)
+    elif cloud == CommunicationCloudEnvironment.PUBLIC:
+        return '8:orgid:{}'.format(user_id)
+    return '8:orgid:{}'.format(user_id)
+
+
+def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
+    """
+    Creates a CommunicationIdentifier from a given raw ID.
+
+    When storing raw IDs use this function to restore the identifier that was encoded in the raw ID.
+
+    :param str raw_id: A raw ID to construct the CommunicationIdentifier from.
+    """
+    if raw_id.startswith('4:'):
+        return PhoneNumberIdentifier(
+            value='+{}'.format(raw_id[len('4:'):])
+        )
+
+    segments = raw_id.split(':', maxsplit=2)
+    if len(segments) < 3:
+        return UnknownIdentifier(identifier=raw_id)
+
+    prefix = '{}:{}:'.format(segments[0], segments[1])
+    suffix = raw_id[len(prefix):]
+    if prefix == '8:teamsvisitor:':
+        return MicrosoftTeamsUserIdentifier(
+            user_id=suffix,
+            is_anonymous=True
+        )
+    elif prefix == '8:orgid:':
+        return MicrosoftTeamsUserIdentifier(
+            user_id=suffix,
+            is_anonymous=False,
+            cloud='PUBLIC'
+        )
+    elif prefix == '8:dod:':
+        return MicrosoftTeamsUserIdentifier(
+            user_id=suffix,
+            is_anonymous=False,
+            cloud='DOD'
+        )
+    elif prefix == '8:gcch:':
+        return MicrosoftTeamsUserIdentifier(
+            user_id=suffix,
+            is_anonymous=False,
+            cloud='GCCH'
+        )
+    elif prefix in ['8:acs:', '8:spool:', '8:dod-acs:', '8:gcch-acs:']:
+        return CommunicationUserIdentifier(
+            id=raw_id
+        )
+    return UnknownIdentifier(
+        identifier=raw_id
+    )
