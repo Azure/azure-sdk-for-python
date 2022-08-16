@@ -31,6 +31,12 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             credential: Union[AsyncTokenCredential, AzureKeyCredential],
             **kwargs
         ) -> None:
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+        
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
 
