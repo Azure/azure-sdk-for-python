@@ -1,5 +1,23 @@
 # Release History
 
+## 2.0.0b1 (2022-08-16)
+
+### Features Added
+
+  - Added operation group AlertProcessingRulesOperations
+  - Model Condition has a new parameter field
+  - Model Essentials has a new parameter action_status
+  - Model Essentials has a new parameter description
+  - Model Operation has a new parameter origin
+  - Model PatchObject has a new parameter enabled
+
+### Breaking Changes
+
+  - Model PatchObject no longer has parameter status
+  - Operation AlertsOperations.change_state has a new parameter comment
+  - Removed operation group ActionRulesOperations
+  - Removed operation group SmartDetectorAlertRulesOperations
+
 ## 1.0.0 (2021-03-16)
 
 - GA release

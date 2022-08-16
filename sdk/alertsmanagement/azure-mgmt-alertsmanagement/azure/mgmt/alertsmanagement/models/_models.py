@@ -43,42 +43,37 @@ class ActionRuleProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
+        "created_at": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "scope": {"key": "scope", "type": "Scope"},
+        "conditions": {"key": "conditions", "type": "Conditions"},
+        "description": {"key": "description", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'ActionGroup': 'ActionGroup', 'Diagnostics': 'Diagnostics', 'Suppression': 'Suppression'}
-    }
+    _subtype_map = {"type": {"ActionGroup": "ActionGroup", "Diagnostics": "Diagnostics", "Suppression": "Suppression"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ActionRuleProperties, self).__init__(**kwargs)
-        self.scope = kwargs.get('scope', None)
-        self.conditions = kwargs.get('conditions', None)
-        self.description = kwargs.get('description', None)
+        self.scope = kwargs.get("scope", None)
+        self.conditions = kwargs.get("conditions", None)
+        self.description = kwargs.get("description", None)
         self.created_at = None
         self.last_modified_at = None
         self.created_by = None
         self.last_modified_by = None
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get("status", None)
         self.type = None  # type: Optional[str]
 
 
@@ -114,34 +109,31 @@ class ActionGroup(ActionRuleProperties):
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
-        'action_group_id': {'required': True},
+        "created_at": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "type": {"required": True},
+        "action_group_id": {"required": True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
+        "scope": {"key": "scope", "type": "Scope"},
+        "conditions": {"key": "conditions", "type": "Conditions"},
+        "description": {"key": "description", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "action_group_id": {"key": "actionGroupId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ActionGroup, self).__init__(**kwargs)
-        self.type = 'ActionGroup'  # type: str
-        self.action_group_id = kwargs['action_group_id']
+        self.type = "ActionGroup"  # type: str
+        self.action_group_id = kwargs["action_group_id"]
 
 
 class ActionGroupsInformation(msrest.serialization.Model):
@@ -159,23 +151,20 @@ class ActionGroupsInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'group_ids': {'required': True},
+        "group_ids": {"required": True},
     }
 
     _attribute_map = {
-        'custom_email_subject': {'key': 'customEmailSubject', 'type': 'str'},
-        'custom_webhook_payload': {'key': 'customWebhookPayload', 'type': 'str'},
-        'group_ids': {'key': 'groupIds', 'type': '[str]'},
+        "custom_email_subject": {"key": "customEmailSubject", "type": "str"},
+        "custom_webhook_payload": {"key": "customWebhookPayload", "type": "str"},
+        "group_ids": {"key": "groupIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ActionGroupsInformation, self).__init__(**kwargs)
-        self.custom_email_subject = kwargs.get('custom_email_subject', None)
-        self.custom_webhook_payload = kwargs.get('custom_webhook_payload', None)
-        self.group_ids = kwargs['group_ids']
+        self.custom_email_subject = kwargs.get("custom_email_subject", None)
+        self.custom_webhook_payload = kwargs.get("custom_webhook_payload", None)
+        self.group_ids = kwargs["group_ids"]
 
 
 class Resource(msrest.serialization.Model):
@@ -192,21 +181,18 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.type = None
@@ -233,27 +219,24 @@ class ManagedResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ManagedResource, self).__init__(**kwargs)
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
+        self.location = kwargs["location"]
+        self.tags = kwargs.get("tags", None)
 
 
 class ActionRule(ManagedResource):
@@ -278,27 +261,24 @@ class ActionRule(ManagedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ActionRuleProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "ActionRuleProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ActionRule, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class ActionRulesList(msrest.serialization.Model):
@@ -311,17 +291,14 @@ class ActionRulesList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ActionRule]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ActionRule]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ActionRulesList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class Alert(Resource):
@@ -340,24 +317,21 @@ class Alert(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AlertProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "AlertProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Alert, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class AlertModification(Resource):
@@ -376,24 +350,21 @@ class AlertModification(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AlertModificationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "AlertModificationProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertModification, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class AlertModificationItem(msrest.serialization.Model):
@@ -419,27 +390,24 @@ class AlertModificationItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'modification_event': {'key': 'modificationEvent', 'type': 'str'},
-        'old_value': {'key': 'oldValue', 'type': 'str'},
-        'new_value': {'key': 'newValue', 'type': 'str'},
-        'modified_at': {'key': 'modifiedAt', 'type': 'str'},
-        'modified_by': {'key': 'modifiedBy', 'type': 'str'},
-        'comments': {'key': 'comments', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "modification_event": {"key": "modificationEvent", "type": "str"},
+        "old_value": {"key": "oldValue", "type": "str"},
+        "new_value": {"key": "newValue", "type": "str"},
+        "modified_at": {"key": "modifiedAt", "type": "str"},
+        "modified_by": {"key": "modifiedBy", "type": "str"},
+        "comments": {"key": "comments", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertModificationItem, self).__init__(**kwargs)
-        self.modification_event = kwargs.get('modification_event', None)
-        self.old_value = kwargs.get('old_value', None)
-        self.new_value = kwargs.get('new_value', None)
-        self.modified_at = kwargs.get('modified_at', None)
-        self.modified_by = kwargs.get('modified_by', None)
-        self.comments = kwargs.get('comments', None)
-        self.description = kwargs.get('description', None)
+        self.modification_event = kwargs.get("modification_event", None)
+        self.old_value = kwargs.get("old_value", None)
+        self.new_value = kwargs.get("new_value", None)
+        self.modified_at = kwargs.get("modified_at", None)
+        self.modified_by = kwargs.get("modified_by", None)
+        self.comments = kwargs.get("comments", None)
+        self.description = kwargs.get("description", None)
 
 
 class AlertModificationProperties(msrest.serialization.Model):
@@ -454,21 +422,18 @@ class AlertModificationProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'alert_id': {'readonly': True},
+        "alert_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'alert_id': {'key': 'alertId', 'type': 'str'},
-        'modifications': {'key': 'modifications', 'type': '[AlertModificationItem]'},
+        "alert_id": {"key": "alertId", "type": "str"},
+        "modifications": {"key": "modifications", "type": "[AlertModificationItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertModificationProperties, self).__init__(**kwargs)
         self.alert_id = None
-        self.modifications = kwargs.get('modifications', None)
+        self.modifications = kwargs.get("modifications", None)
 
 
 class AlertProperties(msrest.serialization.Model):
@@ -485,22 +450,19 @@ class AlertProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'context': {'readonly': True},
-        'egress_config': {'readonly': True},
+        "context": {"readonly": True},
+        "egress_config": {"readonly": True},
     }
 
     _attribute_map = {
-        'essentials': {'key': 'essentials', 'type': 'Essentials'},
-        'context': {'key': 'context', 'type': 'object'},
-        'egress_config': {'key': 'egressConfig', 'type': 'object'},
+        "essentials": {"key": "essentials", "type": "Essentials"},
+        "context": {"key": "context", "type": "object"},
+        "egress_config": {"key": "egressConfig", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertProperties, self).__init__(**kwargs)
-        self.essentials = kwargs.get('essentials', None)
+        self.essentials = kwargs.get("essentials", None)
         self.context = None
         self.egress_config = None
 
@@ -523,29 +485,26 @@ class AzureResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AzureResource, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.location = kwargs.get('location', "global")
-        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get("location", "global")
+        self.tags = kwargs.get("tags", None)
 
 
 class AlertRule(AzureResource):
@@ -584,40 +543,37 @@ class AlertRule(AzureResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'duration'},
-        'detector': {'key': 'properties.detector', 'type': 'Detector'},
-        'scope': {'key': 'properties.scope', 'type': '[str]'},
-        'action_groups': {'key': 'properties.actionGroups', 'type': 'ActionGroupsInformation'},
-        'throttling': {'key': 'properties.throttling', 'type': 'ThrottlingInformation'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "str"},
+        "frequency": {"key": "properties.frequency", "type": "duration"},
+        "detector": {"key": "properties.detector", "type": "Detector"},
+        "scope": {"key": "properties.scope", "type": "[str]"},
+        "action_groups": {"key": "properties.actionGroups", "type": "ActionGroupsInformation"},
+        "throttling": {"key": "properties.throttling", "type": "ThrottlingInformation"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertRule, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.state = kwargs.get('state', None)
-        self.severity = kwargs.get('severity', None)
-        self.frequency = kwargs.get('frequency', None)
-        self.detector = kwargs.get('detector', None)
-        self.scope = kwargs.get('scope', None)
-        self.action_groups = kwargs.get('action_groups', None)
-        self.throttling = kwargs.get('throttling', None)
+        self.description = kwargs.get("description", None)
+        self.state = kwargs.get("state", None)
+        self.severity = kwargs.get("severity", None)
+        self.frequency = kwargs.get("frequency", None)
+        self.detector = kwargs.get("detector", None)
+        self.scope = kwargs.get("scope", None)
+        self.action_groups = kwargs.get("action_groups", None)
+        self.throttling = kwargs.get("throttling", None)
 
 
 class AlertRulePatchObject(msrest.serialization.Model):
@@ -650,39 +606,36 @@ class AlertRulePatchObject(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'frequency': {'key': 'properties.frequency', 'type': 'duration'},
-        'action_groups': {'key': 'properties.actionGroups', 'type': 'ActionGroupsInformation'},
-        'throttling': {'key': 'properties.throttling', 'type': 'ThrottlingInformation'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "str"},
+        "frequency": {"key": "properties.frequency", "type": "duration"},
+        "action_groups": {"key": "properties.actionGroups", "type": "ActionGroupsInformation"},
+        "throttling": {"key": "properties.throttling", "type": "ThrottlingInformation"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertRulePatchObject, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.tags = kwargs.get('tags', None)
-        self.description = kwargs.get('description', None)
-        self.state = kwargs.get('state', None)
-        self.severity = kwargs.get('severity', None)
-        self.frequency = kwargs.get('frequency', None)
-        self.action_groups = kwargs.get('action_groups', None)
-        self.throttling = kwargs.get('throttling', None)
+        self.tags = kwargs.get("tags", None)
+        self.description = kwargs.get("description", None)
+        self.state = kwargs.get("state", None)
+        self.severity = kwargs.get("severity", None)
+        self.frequency = kwargs.get("frequency", None)
+        self.action_groups = kwargs.get("action_groups", None)
+        self.throttling = kwargs.get("throttling", None)
 
 
 class AlertRulesList(msrest.serialization.Model):
@@ -695,17 +648,14 @@ class AlertRulesList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AlertRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AlertRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertRulesList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class AlertsList(msrest.serialization.Model):
@@ -718,17 +668,14 @@ class AlertsList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Alert]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Alert]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertsList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class AlertsMetaData(msrest.serialization.Model):
@@ -739,15 +686,12 @@ class AlertsMetaData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AlertsMetaDataProperties'},
+        "properties": {"key": "properties", "type": "AlertsMetaDataProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertsMetaData, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class AlertsMetaDataProperties(msrest.serialization.Model):
@@ -764,21 +708,16 @@ class AlertsMetaDataProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'metadata_identifier': {'required': True},
+        "metadata_identifier": {"required": True},
     }
 
     _attribute_map = {
-        'metadata_identifier': {'key': 'metadataIdentifier', 'type': 'str'},
+        "metadata_identifier": {"key": "metadataIdentifier", "type": "str"},
     }
 
-    _subtype_map = {
-        'metadata_identifier': {'MonitorServiceList': 'MonitorServiceList'}
-    }
+    _subtype_map = {"metadata_identifier": {"MonitorServiceList": "MonitorServiceList"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertsMetaDataProperties, self).__init__(**kwargs)
         self.metadata_identifier = None  # type: Optional[str]
 
@@ -799,24 +738,21 @@ class AlertsSummary(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AlertsSummaryGroup'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "AlertsSummaryGroup"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertsSummary, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class AlertsSummaryGroup(msrest.serialization.Model):
@@ -833,21 +769,18 @@ class AlertsSummaryGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'total': {'key': 'total', 'type': 'int'},
-        'smart_groups_count': {'key': 'smartGroupsCount', 'type': 'int'},
-        'groupedby': {'key': 'groupedby', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[AlertsSummaryGroupItem]'},
+        "total": {"key": "total", "type": "int"},
+        "smart_groups_count": {"key": "smartGroupsCount", "type": "int"},
+        "groupedby": {"key": "groupedby", "type": "str"},
+        "values": {"key": "values", "type": "[AlertsSummaryGroupItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertsSummaryGroup, self).__init__(**kwargs)
-        self.total = kwargs.get('total', None)
-        self.smart_groups_count = kwargs.get('smart_groups_count', None)
-        self.groupedby = kwargs.get('groupedby', None)
-        self.values = kwargs.get('values', None)
+        self.total = kwargs.get("total", None)
+        self.smart_groups_count = kwargs.get("smart_groups_count", None)
+        self.groupedby = kwargs.get("groupedby", None)
+        self.values = kwargs.get("values", None)
 
 
 class AlertsSummaryGroupItem(msrest.serialization.Model):
@@ -864,21 +797,18 @@ class AlertsSummaryGroupItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'groupedby': {'key': 'groupedby', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[AlertsSummaryGroupItem]'},
+        "name": {"key": "name", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "groupedby": {"key": "groupedby", "type": "str"},
+        "values": {"key": "values", "type": "[AlertsSummaryGroupItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AlertsSummaryGroupItem, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.count = kwargs.get('count', None)
-        self.groupedby = kwargs.get('groupedby', None)
-        self.values = kwargs.get('values', None)
+        self.name = kwargs.get("name", None)
+        self.count = kwargs.get("count", None)
+        self.groupedby = kwargs.get("groupedby", None)
+        self.values = kwargs.get("values", None)
 
 
 class Condition(msrest.serialization.Model):
@@ -892,17 +822,14 @@ class Condition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'operator': {'key': 'operator', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
+        "operator": {"key": "operator", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Condition, self).__init__(**kwargs)
-        self.operator = kwargs.get('operator', None)
-        self.values = kwargs.get('values', None)
+        self.operator = kwargs.get("operator", None)
+        self.values = kwargs.get("values", None)
 
 
 class Conditions(msrest.serialization.Model):
@@ -925,27 +852,24 @@ class Conditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'severity': {'key': 'severity', 'type': 'Condition'},
-        'monitor_service': {'key': 'monitorService', 'type': 'Condition'},
-        'monitor_condition': {'key': 'monitorCondition', 'type': 'Condition'},
-        'target_resource_type': {'key': 'targetResourceType', 'type': 'Condition'},
-        'alert_rule_id': {'key': 'alertRuleId', 'type': 'Condition'},
-        'description': {'key': 'description', 'type': 'Condition'},
-        'alert_context': {'key': 'alertContext', 'type': 'Condition'},
+        "severity": {"key": "severity", "type": "Condition"},
+        "monitor_service": {"key": "monitorService", "type": "Condition"},
+        "monitor_condition": {"key": "monitorCondition", "type": "Condition"},
+        "target_resource_type": {"key": "targetResourceType", "type": "Condition"},
+        "alert_rule_id": {"key": "alertRuleId", "type": "Condition"},
+        "description": {"key": "description", "type": "Condition"},
+        "alert_context": {"key": "alertContext", "type": "Condition"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Conditions, self).__init__(**kwargs)
-        self.severity = kwargs.get('severity', None)
-        self.monitor_service = kwargs.get('monitor_service', None)
-        self.monitor_condition = kwargs.get('monitor_condition', None)
-        self.target_resource_type = kwargs.get('target_resource_type', None)
-        self.alert_rule_id = kwargs.get('alert_rule_id', None)
-        self.description = kwargs.get('description', None)
-        self.alert_context = kwargs.get('alert_context', None)
+        self.severity = kwargs.get("severity", None)
+        self.monitor_service = kwargs.get("monitor_service", None)
+        self.monitor_condition = kwargs.get("monitor_condition", None)
+        self.target_resource_type = kwargs.get("target_resource_type", None)
+        self.alert_rule_id = kwargs.get("alert_rule_id", None)
+        self.description = kwargs.get("description", None)
+        self.alert_context = kwargs.get("alert_context", None)
 
 
 class Detector(msrest.serialization.Model):
@@ -972,29 +896,26 @@ class Detector(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '{object}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'supported_resource_types': {'key': 'supportedResourceTypes', 'type': '[str]'},
-        'image_paths': {'key': 'imagePaths', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{object}"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "supported_resource_types": {"key": "supportedResourceTypes", "type": "[str]"},
+        "image_paths": {"key": "imagePaths", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Detector, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.parameters = kwargs.get('parameters', None)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.supported_resource_types = kwargs.get('supported_resource_types', None)
-        self.image_paths = kwargs.get('image_paths', None)
+        self.id = kwargs["id"]
+        self.parameters = kwargs.get("parameters", None)
+        self.name = kwargs.get("name", None)
+        self.description = kwargs.get("description", None)
+        self.supported_resource_types = kwargs.get("supported_resource_types", None)
+        self.image_paths = kwargs.get("image_paths", None)
 
 
 class Diagnostics(ActionRuleProperties):
@@ -1027,31 +948,28 @@ class Diagnostics(ActionRuleProperties):
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
+        "created_at": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "scope": {"key": "scope", "type": "Scope"},
+        "conditions": {"key": "conditions", "type": "Conditions"},
+        "description": {"key": "description", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Diagnostics, self).__init__(**kwargs)
-        self.type = 'Diagnostics'  # type: str
+        self.type = "Diagnostics"  # type: str
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -1062,15 +980,12 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+        "error": {"key": "error", "type": "ErrorResponseBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ErrorResponseAutoGenerated(msrest.serialization.Model):
@@ -1081,15 +996,12 @@ class ErrorResponseAutoGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBodyAutoGenerated'},
+        "error": {"key": "error", "type": "ErrorResponseBodyAutoGenerated"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponseAutoGenerated, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ErrorResponseAutoGenerated2(msrest.serialization.Model):
@@ -1100,15 +1012,12 @@ class ErrorResponseAutoGenerated2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBodyAutoGenerated2'},
+        "error": {"key": "error", "type": "ErrorResponseBodyAutoGenerated2"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponseAutoGenerated2, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ErrorResponseBody(msrest.serialization.Model):
@@ -1125,21 +1034,18 @@ class ErrorResponseBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponseBody]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponseBody, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
 
 
 class ErrorResponseBodyAutoGenerated(msrest.serialization.Model):
@@ -1156,21 +1062,18 @@ class ErrorResponseBodyAutoGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseBodyAutoGenerated]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponseBodyAutoGenerated]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponseBodyAutoGenerated, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
 
 
 class ErrorResponseBodyAutoGenerated2(msrest.serialization.Model):
@@ -1187,21 +1090,18 @@ class ErrorResponseBodyAutoGenerated2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseBodyAutoGenerated2]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponseBodyAutoGenerated2]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponseBodyAutoGenerated2, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)
 
 
 class Essentials(msrest.serialization.Model):
@@ -1261,54 +1161,51 @@ class Essentials(msrest.serialization.Model):
     """
 
     _validation = {
-        'severity': {'readonly': True},
-        'signal_type': {'readonly': True},
-        'alert_state': {'readonly': True},
-        'monitor_condition': {'readonly': True},
-        'monitor_service': {'readonly': True},
-        'alert_rule': {'readonly': True},
-        'source_created_id': {'readonly': True},
-        'smart_group_id': {'readonly': True},
-        'smart_grouping_reason': {'readonly': True},
-        'start_date_time': {'readonly': True},
-        'last_modified_date_time': {'readonly': True},
-        'monitor_condition_resolved_date_time': {'readonly': True},
-        'last_modified_user_name': {'readonly': True},
+        "severity": {"readonly": True},
+        "signal_type": {"readonly": True},
+        "alert_state": {"readonly": True},
+        "monitor_condition": {"readonly": True},
+        "monitor_service": {"readonly": True},
+        "alert_rule": {"readonly": True},
+        "source_created_id": {"readonly": True},
+        "smart_group_id": {"readonly": True},
+        "smart_grouping_reason": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "last_modified_date_time": {"readonly": True},
+        "monitor_condition_resolved_date_time": {"readonly": True},
+        "last_modified_user_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'severity': {'key': 'severity', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-        'alert_state': {'key': 'alertState', 'type': 'str'},
-        'monitor_condition': {'key': 'monitorCondition', 'type': 'str'},
-        'target_resource': {'key': 'targetResource', 'type': 'str'},
-        'target_resource_name': {'key': 'targetResourceName', 'type': 'str'},
-        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
-        'target_resource_type': {'key': 'targetResourceType', 'type': 'str'},
-        'monitor_service': {'key': 'monitorService', 'type': 'str'},
-        'alert_rule': {'key': 'alertRule', 'type': 'str'},
-        'source_created_id': {'key': 'sourceCreatedId', 'type': 'str'},
-        'smart_group_id': {'key': 'smartGroupId', 'type': 'str'},
-        'smart_grouping_reason': {'key': 'smartGroupingReason', 'type': 'str'},
-        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
-        'last_modified_date_time': {'key': 'lastModifiedDateTime', 'type': 'iso-8601'},
-        'monitor_condition_resolved_date_time': {'key': 'monitorConditionResolvedDateTime', 'type': 'iso-8601'},
-        'last_modified_user_name': {'key': 'lastModifiedUserName', 'type': 'str'},
+        "severity": {"key": "severity", "type": "str"},
+        "signal_type": {"key": "signalType", "type": "str"},
+        "alert_state": {"key": "alertState", "type": "str"},
+        "monitor_condition": {"key": "monitorCondition", "type": "str"},
+        "target_resource": {"key": "targetResource", "type": "str"},
+        "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group": {"key": "targetResourceGroup", "type": "str"},
+        "target_resource_type": {"key": "targetResourceType", "type": "str"},
+        "monitor_service": {"key": "monitorService", "type": "str"},
+        "alert_rule": {"key": "alertRule", "type": "str"},
+        "source_created_id": {"key": "sourceCreatedId", "type": "str"},
+        "smart_group_id": {"key": "smartGroupId", "type": "str"},
+        "smart_grouping_reason": {"key": "smartGroupingReason", "type": "str"},
+        "start_date_time": {"key": "startDateTime", "type": "iso-8601"},
+        "last_modified_date_time": {"key": "lastModifiedDateTime", "type": "iso-8601"},
+        "monitor_condition_resolved_date_time": {"key": "monitorConditionResolvedDateTime", "type": "iso-8601"},
+        "last_modified_user_name": {"key": "lastModifiedUserName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Essentials, self).__init__(**kwargs)
         self.severity = None
         self.signal_type = None
         self.alert_state = None
         self.monitor_condition = None
-        self.target_resource = kwargs.get('target_resource', None)
-        self.target_resource_name = kwargs.get('target_resource_name', None)
-        self.target_resource_group = kwargs.get('target_resource_group', None)
-        self.target_resource_type = kwargs.get('target_resource_type', None)
+        self.target_resource = kwargs.get("target_resource", None)
+        self.target_resource_name = kwargs.get("target_resource_name", None)
+        self.target_resource_group = kwargs.get("target_resource_group", None)
+        self.target_resource_type = kwargs.get("target_resource_type", None)
         self.monitor_service = None
         self.alert_rule = None
         self.source_created_id = None
@@ -1330,17 +1227,14 @@ class MonitorServiceDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MonitorServiceDetails, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
+        self.name = kwargs.get("name", None)
+        self.display_name = kwargs.get("display_name", None)
 
 
 class MonitorServiceList(AlertsMetaDataProperties):
@@ -1356,22 +1250,19 @@ class MonitorServiceList(AlertsMetaDataProperties):
     """
 
     _validation = {
-        'metadata_identifier': {'required': True},
-        'data': {'required': True},
+        "metadata_identifier": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'metadata_identifier': {'key': 'metadataIdentifier', 'type': 'str'},
-        'data': {'key': 'data', 'type': '[MonitorServiceDetails]'},
+        "metadata_identifier": {"key": "metadataIdentifier", "type": "str"},
+        "data": {"key": "data", "type": "[MonitorServiceDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MonitorServiceList, self).__init__(**kwargs)
-        self.metadata_identifier = 'MonitorServiceList'  # type: str
-        self.data = kwargs['data']
+        self.metadata_identifier = "MonitorServiceList"  # type: str
+        self.data = kwargs["data"]
 
 
 class Operation(msrest.serialization.Model):
@@ -1384,17 +1275,14 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        self.name = kwargs.get("name", None)
+        self.display = kwargs.get("display", None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -1411,21 +1299,18 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = kwargs.get("provider", None)
+        self.resource = kwargs.get("resource", None)
+        self.operation = kwargs.get("operation", None)
+        self.description = kwargs.get("description", None)
 
 
 class OperationsList(msrest.serialization.Model):
@@ -1440,21 +1325,18 @@ class OperationsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationsList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs['value']
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs["value"]
 
 
 class PatchObject(msrest.serialization.Model):
@@ -1468,17 +1350,14 @@ class PatchObject(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'object'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "tags": {"key": "tags", "type": "object"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PatchObject, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.status = kwargs.get('status', None)
+        self.tags = kwargs.get("tags", None)
+        self.status = kwargs.get("status", None)
 
 
 class Scope(msrest.serialization.Model):
@@ -1493,17 +1372,14 @@ class Scope(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scope_type': {'key': 'scopeType', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
+        "scope_type": {"key": "scopeType", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Scope, self).__init__(**kwargs)
-        self.scope_type = kwargs.get('scope_type', None)
-        self.values = kwargs.get('values', None)
+        self.scope_type = kwargs.get("scope_type", None)
+        self.values = kwargs.get("values", None)
 
 
 class SmartDetectorErrorResponse(msrest.serialization.Model):
@@ -1516,17 +1392,14 @@ class SmartDetectorErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmartDetectorErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
 
 
 class SmartGroup(Resource):
@@ -1575,55 +1448,52 @@ class SmartGroup(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'smart_group_state': {'readonly': True},
-        'severity': {'readonly': True},
-        'start_date_time': {'readonly': True},
-        'last_modified_date_time': {'readonly': True},
-        'last_modified_user_name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "smart_group_state": {"readonly": True},
+        "severity": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "last_modified_date_time": {"readonly": True},
+        "last_modified_user_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'alerts_count': {'key': 'properties.alertsCount', 'type': 'int'},
-        'smart_group_state': {'key': 'properties.smartGroupState', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'start_date_time': {'key': 'properties.startDateTime', 'type': 'iso-8601'},
-        'last_modified_date_time': {'key': 'properties.lastModifiedDateTime', 'type': 'iso-8601'},
-        'last_modified_user_name': {'key': 'properties.lastModifiedUserName', 'type': 'str'},
-        'resources': {'key': 'properties.resources', 'type': '[SmartGroupAggregatedProperty]'},
-        'resource_types': {'key': 'properties.resourceTypes', 'type': '[SmartGroupAggregatedProperty]'},
-        'resource_groups': {'key': 'properties.resourceGroups', 'type': '[SmartGroupAggregatedProperty]'},
-        'monitor_services': {'key': 'properties.monitorServices', 'type': '[SmartGroupAggregatedProperty]'},
-        'monitor_conditions': {'key': 'properties.monitorConditions', 'type': '[SmartGroupAggregatedProperty]'},
-        'alert_states': {'key': 'properties.alertStates', 'type': '[SmartGroupAggregatedProperty]'},
-        'alert_severities': {'key': 'properties.alertSeverities', 'type': '[SmartGroupAggregatedProperty]'},
-        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "alerts_count": {"key": "properties.alertsCount", "type": "int"},
+        "smart_group_state": {"key": "properties.smartGroupState", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "str"},
+        "start_date_time": {"key": "properties.startDateTime", "type": "iso-8601"},
+        "last_modified_date_time": {"key": "properties.lastModifiedDateTime", "type": "iso-8601"},
+        "last_modified_user_name": {"key": "properties.lastModifiedUserName", "type": "str"},
+        "resources": {"key": "properties.resources", "type": "[SmartGroupAggregatedProperty]"},
+        "resource_types": {"key": "properties.resourceTypes", "type": "[SmartGroupAggregatedProperty]"},
+        "resource_groups": {"key": "properties.resourceGroups", "type": "[SmartGroupAggregatedProperty]"},
+        "monitor_services": {"key": "properties.monitorServices", "type": "[SmartGroupAggregatedProperty]"},
+        "monitor_conditions": {"key": "properties.monitorConditions", "type": "[SmartGroupAggregatedProperty]"},
+        "alert_states": {"key": "properties.alertStates", "type": "[SmartGroupAggregatedProperty]"},
+        "alert_severities": {"key": "properties.alertSeverities", "type": "[SmartGroupAggregatedProperty]"},
+        "next_link": {"key": "properties.nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmartGroup, self).__init__(**kwargs)
-        self.alerts_count = kwargs.get('alerts_count', None)
+        self.alerts_count = kwargs.get("alerts_count", None)
         self.smart_group_state = None
         self.severity = None
         self.start_date_time = None
         self.last_modified_date_time = None
         self.last_modified_user_name = None
-        self.resources = kwargs.get('resources', None)
-        self.resource_types = kwargs.get('resource_types', None)
-        self.resource_groups = kwargs.get('resource_groups', None)
-        self.monitor_services = kwargs.get('monitor_services', None)
-        self.monitor_conditions = kwargs.get('monitor_conditions', None)
-        self.alert_states = kwargs.get('alert_states', None)
-        self.alert_severities = kwargs.get('alert_severities', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.resources = kwargs.get("resources", None)
+        self.resource_types = kwargs.get("resource_types", None)
+        self.resource_groups = kwargs.get("resource_groups", None)
+        self.monitor_services = kwargs.get("monitor_services", None)
+        self.monitor_conditions = kwargs.get("monitor_conditions", None)
+        self.alert_states = kwargs.get("alert_states", None)
+        self.alert_severities = kwargs.get("alert_severities", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class SmartGroupAggregatedProperty(msrest.serialization.Model):
@@ -1636,17 +1506,14 @@ class SmartGroupAggregatedProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmartGroupAggregatedProperty, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.count = kwargs.get('count', None)
+        self.name = kwargs.get("name", None)
+        self.count = kwargs.get("count", None)
 
 
 class SmartGroupModification(Resource):
@@ -1665,24 +1532,21 @@ class SmartGroupModification(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'SmartGroupModificationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "SmartGroupModificationProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmartGroupModification, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class SmartGroupModificationItem(msrest.serialization.Model):
@@ -1707,27 +1571,24 @@ class SmartGroupModificationItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'modification_event': {'key': 'modificationEvent', 'type': 'str'},
-        'old_value': {'key': 'oldValue', 'type': 'str'},
-        'new_value': {'key': 'newValue', 'type': 'str'},
-        'modified_at': {'key': 'modifiedAt', 'type': 'str'},
-        'modified_by': {'key': 'modifiedBy', 'type': 'str'},
-        'comments': {'key': 'comments', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "modification_event": {"key": "modificationEvent", "type": "str"},
+        "old_value": {"key": "oldValue", "type": "str"},
+        "new_value": {"key": "newValue", "type": "str"},
+        "modified_at": {"key": "modifiedAt", "type": "str"},
+        "modified_by": {"key": "modifiedBy", "type": "str"},
+        "comments": {"key": "comments", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmartGroupModificationItem, self).__init__(**kwargs)
-        self.modification_event = kwargs.get('modification_event', None)
-        self.old_value = kwargs.get('old_value', None)
-        self.new_value = kwargs.get('new_value', None)
-        self.modified_at = kwargs.get('modified_at', None)
-        self.modified_by = kwargs.get('modified_by', None)
-        self.comments = kwargs.get('comments', None)
-        self.description = kwargs.get('description', None)
+        self.modification_event = kwargs.get("modification_event", None)
+        self.old_value = kwargs.get("old_value", None)
+        self.new_value = kwargs.get("new_value", None)
+        self.modified_at = kwargs.get("modified_at", None)
+        self.modified_by = kwargs.get("modified_by", None)
+        self.comments = kwargs.get("comments", None)
+        self.description = kwargs.get("description", None)
 
 
 class SmartGroupModificationProperties(msrest.serialization.Model):
@@ -1744,23 +1605,20 @@ class SmartGroupModificationProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'smart_group_id': {'readonly': True},
+        "smart_group_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'smart_group_id': {'key': 'smartGroupId', 'type': 'str'},
-        'modifications': {'key': 'modifications', 'type': '[SmartGroupModificationItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "smart_group_id": {"key": "smartGroupId", "type": "str"},
+        "modifications": {"key": "modifications", "type": "[SmartGroupModificationItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmartGroupModificationProperties, self).__init__(**kwargs)
         self.smart_group_id = None
-        self.modifications = kwargs.get('modifications', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.modifications = kwargs.get("modifications", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class SmartGroupsList(msrest.serialization.Model):
@@ -1773,17 +1631,14 @@ class SmartGroupsList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[SmartGroup]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[SmartGroup]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmartGroupsList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get("next_link", None)
+        self.value = kwargs.get("value", None)
 
 
 class Suppression(ActionRuleProperties):
@@ -1818,34 +1673,31 @@ class Suppression(ActionRuleProperties):
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'type': {'required': True},
-        'suppression_config': {'required': True},
+        "created_at": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "type": {"required": True},
+        "suppression_config": {"required": True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'Scope'},
-        'conditions': {'key': 'conditions', 'type': 'Conditions'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'suppression_config': {'key': 'suppressionConfig', 'type': 'SuppressionConfig'},
+        "scope": {"key": "scope", "type": "Scope"},
+        "conditions": {"key": "conditions", "type": "Conditions"},
+        "description": {"key": "description", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "suppression_config": {"key": "suppressionConfig", "type": "SuppressionConfig"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Suppression, self).__init__(**kwargs)
-        self.type = 'Suppression'  # type: str
-        self.suppression_config = kwargs['suppression_config']
+        self.type = "Suppression"  # type: str
+        self.suppression_config = kwargs["suppression_config"]
 
 
 class SuppressionConfig(msrest.serialization.Model):
@@ -1861,21 +1713,18 @@ class SuppressionConfig(msrest.serialization.Model):
     """
 
     _validation = {
-        'recurrence_type': {'required': True},
+        "recurrence_type": {"required": True},
     }
 
     _attribute_map = {
-        'recurrence_type': {'key': 'recurrenceType', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': 'SuppressionSchedule'},
+        "recurrence_type": {"key": "recurrenceType", "type": "str"},
+        "schedule": {"key": "schedule", "type": "SuppressionSchedule"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SuppressionConfig, self).__init__(**kwargs)
-        self.recurrence_type = kwargs['recurrence_type']
-        self.schedule = kwargs.get('schedule', None)
+        self.recurrence_type = kwargs["recurrence_type"]
+        self.schedule = kwargs.get("schedule", None)
 
 
 class SuppressionSchedule(msrest.serialization.Model):
@@ -1894,23 +1743,20 @@ class SuppressionSchedule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start_date': {'key': 'startDate', 'type': 'str'},
-        'end_date': {'key': 'endDate', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'recurrence_values': {'key': 'recurrenceValues', 'type': '[int]'},
+        "start_date": {"key": "startDate", "type": "str"},
+        "end_date": {"key": "endDate", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "recurrence_values": {"key": "recurrenceValues", "type": "[int]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SuppressionSchedule, self).__init__(**kwargs)
-        self.start_date = kwargs.get('start_date', None)
-        self.end_date = kwargs.get('end_date', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.recurrence_values = kwargs.get('recurrence_values', None)
+        self.start_date = kwargs.get("start_date", None)
+        self.end_date = kwargs.get("end_date", None)
+        self.start_time = kwargs.get("start_time", None)
+        self.end_time = kwargs.get("end_time", None)
+        self.recurrence_values = kwargs.get("recurrence_values", None)
 
 
 class ThrottlingInformation(msrest.serialization.Model):
@@ -1922,12 +1768,9 @@ class ThrottlingInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'duration'},
+        "duration": {"key": "duration", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ThrottlingInformation, self).__init__(**kwargs)
-        self.duration = kwargs.get('duration', None)
+        self.duration = kwargs.get("duration", None)
