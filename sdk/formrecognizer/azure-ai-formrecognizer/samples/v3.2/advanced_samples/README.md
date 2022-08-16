@@ -1,12 +1,12 @@
 # Advanced usage samples for Azure Form Recognizer client library for Python
 
-> Note: The samples included in this folder are aimed at providing additional context for processing information for the Form Recognizer library clients. These samples currently show usage with a preview version of the library and may be subject to change during later releases.
+> Note: The samples included in this folder are aimed at providing additional context for processing information for the Form Recognizer library clients.
 
 These code samples show more advanced scenario operations with the Azure Form Recognizer client library.
 
 All of these samples need the endpoint to your Form Recognizer resource ([instructions on how to get endpoint][get-endpoint-instructions]), and your Form Recognizer API key ([instructions on how to get key][get-key-instructions]).
 
-## Advanced samples for client library versions 3.2.0b1 and later
+## Advanced samples for client library versions 3.2.0 and later
 
 |**File Name**|**Description**|
 |----------------|-------------|
