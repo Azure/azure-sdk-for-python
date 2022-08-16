@@ -6,59 +6,71 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, IO, Union
-from ._email_operations import EmailOperations as EmailOperationsGenerated
-from ... import models as _models
+import sys
+from typing import Any, IO, List, Union
+from ._operations import EmailOperations as EmailOperationsGenerated
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 class EmailOperations(EmailOperationsGenerated):
 
     def __return_message_id(self, pipeline_response, _, response_headers):
         return response_headers['x-ms-request-id']
 
-    async def send(
+    async def send(  # pylint: disable=inconsistent-return-statements
         self,
+        email_message: Union[JSON, IO],
+        *,
         repeatability_request_id: str,
         repeatability_first_sent: str,
-        email_message: Union[_models.EmailMessage, IO],
+        content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SendEmailResult:
+    ) -> JSON:
         """Queues an email message to be sent to one or more recipients.
 
         Queues an email message to be sent to one or more recipients.
 
-        :param repeatability_request_id: If specified, the client directs that the request is
+        :param email_message: Message payload for sending an email. Is either a model type or a IO
+         type. Required.
+        :type email_message: JSON or IO
+        :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
          request multiple times. The value of the Repeatability-Request-Id is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. It
          is recommended to use version 4 (random) UUIDs. Required.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: Must be sent by clients to specify that a request is
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: Must be sent by clients to specify that a request is
          repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
          was first created in the IMF-fix date form of HTTP-date as defined in RFC7231. eg- Tue, 26 Mar
          2019 16:06:51 GMT. Required.
-        :type repeatability_first_sent: str
-        :param email_message: Message payload for sending an email. Required.
-        :type email_message: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
         :paramtype content_type: str
-        :return: SendEmailResult or the result of cls(response)
-        :rtype: ~azure.communication.email.models.SendEmailResult
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         message_id = await super().send(
-            repeatability_request_id,
-            repeatability_first_sent,
             email_message,
-            **dict(kwargs, cls=self.__return_message_id)
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
+            content_type=content_type,
+            cls=self.__return_message_id,
+            **kwargs
         )
 
-        return _models.SendEmailResult(message_id=message_id)
-    
+        return { "message_id": message_id }
+
     send.metadata = {'url': "/emails:send"} # type: ignore
 
-__all__ = ["EmailOperations"]  # type: List[str]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["EmailOperations"]  # Add all objects you want publicly available to users at this package level
 
 def patch_sdk():
     """Do not remove from this file.
