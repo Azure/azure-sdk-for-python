@@ -27,7 +27,7 @@ class MsalCredential(object):
     def __init__(self, client_id, client_credential=None, **kwargs):
         # type: (str, Optional[Union[str, Dict]], **Any) -> None
         authority = kwargs.pop("authority", None)
-        self._validate_authority = kwargs.pop("validate_authority", True)
+        self._known_authority_hosts = kwargs.pop("known_authority_hosts", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
@@ -65,6 +65,8 @@ class MsalCredential(object):
             # CP1 = can handle claims challenges (CAE)
             capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
             cls = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
+            if self._known_authority_hosts:
+                cls.set_known_authority_hosts(self._known_authority_hosts)
             self._client_applications[tenant_id] = cls(
                 client_id=self._client_id,
                 client_credential=self._client_credential,
@@ -73,7 +75,6 @@ class MsalCredential(object):
                 azure_region=self._regional_authority,
                 token_cache=self._cache,
                 http_client=self._client,
-                validate_authority=self._validate_authority
             )
 
         return self._client_applications[tenant_id]

@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Replaced `validate_authority` with `known_authority_hosts`. Now instead of setting validate_authority=False to disable authority validation, you need to explicitly specify your custom authority host as known_authority_hosts.
+
 ### Bugs Fixed
 
 ### Other Changes
