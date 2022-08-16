@@ -111,7 +111,9 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore"
+    ".gitignore",
+    "tools/azure-sdk-tools/packaging_tools/**",
+    "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
     "pyyaml",
