@@ -1491,9 +1491,9 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         data = b'hello world'
-        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "tagthree"}
         other_tags = {'tag1' : 'other'}
-        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+        filter_expression = "tag1='tagone' and tag2='tagtwo'"
 
         container.get_blob_client('blob1').upload_blob(data, tags=tags)
         container.get_blob_client('blob2').upload_blob(data, tags=tags)
@@ -1514,8 +1514,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert 2 == len(items_on_page1)
         assert 1 == len(items_on_page2)
         assert len(items_on_page2[0]['tags']) == 2
-        assert items_on_page2[0]['tags']['tag1'] == 'firsttag'
-        assert items_on_page2[0]['tags']['tag2'] == 'secondtag'
+        assert items_on_page2[0]['tags']['tag1'] == 'tagone'
+        assert items_on_page2[0]['tags']['tag2'] == 'tagtwo'
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1527,8 +1527,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         data = b'hello world'
-        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+        tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "thirdtag"}
+        filter_expression = "tag1='tagone' and tag2='tagtwo'"
 
         container.get_blob_client('blob1').upload_blob(data, tags=tags)
         container.get_blob_client('blob2').upload_blob(data, tags=tags)

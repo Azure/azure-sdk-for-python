@@ -8,16 +8,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 15 Aug 2022 20:46:11 GMT",
+        "x-ms-date": "Tue, 16 Aug 2022 19:27:45 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 15 Aug 2022 20:46:12 GMT",
-        "ETag": "\u00220x8DA7EFF3128A6BA\u0022",
-        "Last-Modified": "Mon, 15 Aug 2022 20:46:13 GMT",
+        "Date": "Tue, 16 Aug 2022 19:27:44 GMT",
+        "ETag": "\u00220x8DA7FBD653F84F9\u0022",
+        "Last-Modified": "Tue, 16 Aug 2022 19:27:45 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -37,8 +37,8 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 15 Aug 2022 20:46:13 GMT",
-        "x-ms-tags": "tag1=firsttag\u0026tag2=secondtag\u0026tag3=thirdtag",
+        "x-ms-date": "Tue, 16 Aug 2022 19:27:45 GMT",
+        "x-ms-tags": "tag1=tagone\u0026tag2=tagtwo\u0026tag3=tagthree",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "aGVsbG8gd29ybGQ=",
@@ -46,9 +46,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Mon, 15 Aug 2022 20:46:12 GMT",
-        "ETag": "\u00220x8DA7EFF313E9291\u0022",
-        "Last-Modified": "Mon, 15 Aug 2022 20:46:13 GMT",
+        "Date": "Tue, 16 Aug 2022 19:27:44 GMT",
+        "ETag": "\u00220x8DA7FBD654D72C8\u0022",
+        "Last-Modified": "Tue, 16 Aug 2022 19:27:45 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -70,8 +70,8 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 15 Aug 2022 20:46:13 GMT",
-        "x-ms-tags": "tag1=firsttag\u0026tag2=secondtag\u0026tag3=thirdtag",
+        "x-ms-date": "Tue, 16 Aug 2022 19:27:45 GMT",
+        "x-ms-tags": "tag1=tagone\u0026tag2=tagtwo\u0026tag3=tagthree",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "aGVsbG8gd29ybGQ=",
@@ -79,9 +79,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Mon, 15 Aug 2022 20:46:13 GMT",
-        "ETag": "\u00220x8DA7EFF314E96CA\u0022",
-        "Last-Modified": "Mon, 15 Aug 2022 20:46:13 GMT",
+        "Date": "Tue, 16 Aug 2022 19:27:44 GMT",
+        "ETag": "\u00220x8DA7FBD6557D187\u0022",
+        "Last-Modified": "Tue, 16 Aug 2022 19:27:45 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -103,8 +103,8 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 15 Aug 2022 20:46:13 GMT",
-        "x-ms-tags": "tag1=firsttag\u0026tag2=secondtag\u0026tag3=thirdtag",
+        "x-ms-date": "Tue, 16 Aug 2022 19:27:45 GMT",
+        "x-ms-tags": "tag1=tagone\u0026tag2=tagtwo\u0026tag3=tagthree",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": "aGVsbG8gd29ybGQ=",
@@ -112,9 +112,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Mon, 15 Aug 2022 20:46:13 GMT",
-        "ETag": "\u00220x8DA7EFF315E9B08\u0022",
-        "Last-Modified": "Mon, 15 Aug 2022 20:46:13 GMT",
+        "Date": "Tue, 16 Aug 2022 19:27:44 GMT",
+        "ETag": "\u00220x8DA7FBD6562575B\u0022",
+        "Last-Modified": "Tue, 16 Aug 2022 19:27:45 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -136,7 +136,7 @@
         "If-None-Match": "*",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 15 Aug 2022 20:46:13 GMT",
+        "x-ms-date": "Tue, 16 Aug 2022 19:27:45 GMT",
         "x-ms-tags": "tag1=other",
         "x-ms-version": "2021-08-06"
       },
@@ -145,9 +145,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "XrY7u\u002BAe7tCTyyK7j1rNww==",
-        "Date": "Mon, 15 Aug 2022 20:46:13 GMT",
-        "ETag": "\u00220x8DA7EFF316CCAA6\u0022",
-        "Last-Modified": "Mon, 15 Aug 2022 20:46:13 GMT",
+        "Date": "Tue, 16 Aug 2022 19:27:44 GMT",
+        "ETag": "\u00220x8DA7FBD656F9BD6\u0022",
+        "Last-Modified": "Tue, 16 Aug 2022 19:27:45 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -159,59 +159,57 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/acontainerecc82e36?restype=container\u0026comp=blobs\u0026where=tag1%3D\u0027firsttag\u0027%20and%20tag2%3D\u0027secondtag\u0027\u0026maxresults=2",
+      "RequestUri": "https://storagename.blob.core.windows.net/acontainerecc82e36?restype=container\u0026comp=blobs\u0026where=tag1%3D\u0027tagone\u0027%20and%20tag2%3D\u0027tagtwo\u0027\u0026maxresults=2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 15 Aug 2022 20:46:28 GMT",
+        "x-ms-date": "Tue, 16 Aug 2022 19:28:01 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Mon, 15 Aug 2022 20:46:28 GMT",
+        "Date": "Tue, 16 Aug 2022 19:27:59 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "Vary": "Origin",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\n",
-        "\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022\u003E\u003CWhere\u003Etag1=\u0026apos;firsttag\u0026apos; and tag2=\u0026apos;secondtag\u0026apos;\u003C/Where\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Eblob1\u003C/Name\u003E\u003CContainerName\u003Eacontainerecc82e36\u003C/ContainerName\u003E\u003CTags\u003E\u003CTagSet\u003E\u003CTag\u003E\u003CKey\u003Etag1\u003C/Key\u003E\u003CValue\u003Efirsttag\u003C/Value\u003E\u003C/Tag\u003E\u003CTag\u003E\u003CKey\u003Etag2\u003C/Key\u003E\u003CValue\u003Esecondtag\u003C/Value\u003E\u003C/Tag\u003E\u003C/TagSet\u003E\u003C/Tags\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eblob2\u003C/Name\u003E\u003CContainerName\u003Eacontainerecc82e36\u003C/ContainerName\u003E\u003CTags\u003E\u003CTagSet\u003E\u003CTag\u003E\u003CKey\u003Etag1\u003C/Key\u003E\u003CValue\u003Efirsttag\u003C/Value\u003E\u003C/Tag\u003E\u003CTag\u003E\u003CKey\u003Etag2\u003C/Key\u003E\u003CValue\u003Esecondtag\u003C/Value\u003E\u003C/Tag\u003E\u003C/TagSet\u003E\u003C/Tags\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker\u003E2!244!MDAwMDM1IWFjb250YWluZXJlY2M4MmUzNgEwMUQ4QjBFODBFQjI3OTlDITAwMDAwNSFibG9iMyEwMDAwMTchCAAAAAkAAABzZWNvbmR0YWchMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWUwNzkyM2IxLTlmZGUtNDllNS04MGJjLWUzYWM0NTY0OWExNiEwMDAwMDQhdGFnMiE-\u003C/NextMarker\u003E\u003C/EnumerationResults\u003E"
+        "\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022\u003E\u003CWhere\u003Etag1=\u0026apos;tagone\u0026apos; and tag2=\u0026apos;tagtwo\u0026apos;\u003C/Where\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Eblob1\u003C/Name\u003E\u003CContainerName\u003Eacontainerecc82e36\u003C/ContainerName\u003E\u003CTags\u003E\u003CTagSet\u003E\u003CTag\u003E\u003CKey\u003Etag1\u003C/Key\u003E\u003CValue\u003Etagone\u003C/Value\u003E\u003C/Tag\u003E\u003CTag\u003E\u003CKey\u003Etag2\u003C/Key\u003E\u003CValue\u003Etagtwo\u003C/Value\u003E\u003C/Tag\u003E\u003C/TagSet\u003E\u003C/Tags\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eblob2\u003C/Name\u003E\u003CContainerName\u003Eacontainerecc82e36\u003C/ContainerName\u003E\u003CTags\u003E\u003CTagSet\u003E\u003CTag\u003E\u003CKey\u003Etag1\u003C/Key\u003E\u003CValue\u003Etagone\u003C/Value\u003E\u003C/Tag\u003E\u003CTag\u003E\u003CKey\u003Etag2\u003C/Key\u003E\u003CValue\u003Etagtwo\u003C/Value\u003E\u003C/Tag\u003E\u003C/TagSet\u003E\u003C/Tags\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker\u003E2!240!MDAwMDM1IWFjb250YWluZXJlY2M4MmUzNgEwMUQ4QjFBNjQyQzhENEY2ITAwMDAwNSFibG9iMyEwMDAwMTQhCAAAAAYAAAB0YWdvbmUhMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWExZjU1YWJiLTdkYWYtNDhhZC04YTc2LWQ1YzNmMjQ5ODNmZiEwMDAwMDQhdGFnMSE-\u003C/NextMarker\u003E\u003C/EnumerationResults\u003E"
       ]
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/acontainerecc82e36?restype=container\u0026comp=blobs\u0026where=tag1%3D\u0027firsttag\u0027%20and%20tag2%3D\u0027secondtag\u0027\u0026marker=2!244!MDAwMDM1IWFjb250YWluZXJlY2M4MmUzNgEwMUQ4QjBFODBFQjI3OTlDITAwMDAwNSFibG9iMyEwMDAwMTchCAAAAAkAAABzZWNvbmR0YWchMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWUwNzkyM2IxLTlmZGUtNDllNS04MGJjLWUzYWM0NTY0OWExNiEwMDAwMDQhdGFnMiE-\u0026maxresults=2",
+      "RequestUri": "https://storagename.blob.core.windows.net/acontainerecc82e36?restype=container\u0026comp=blobs\u0026where=tag1%3D\u0027tagone\u0027%20and%20tag2%3D\u0027tagtwo\u0027\u0026marker=2!240!MDAwMDM1IWFjb250YWluZXJlY2M4MmUzNgEwMUQ4QjFBNjQyQzhENEY2ITAwMDAwNSFibG9iMyEwMDAwMTQhCAAAAAYAAAB0YWdvbmUhMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWExZjU1YWJiLTdkYWYtNDhhZC04YTc2LWQ1YzNmMjQ5ODNmZiEwMDAwMDQhdGFnMSE-\u0026maxresults=2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 15 Aug 2022 20:46:29 GMT",
+        "x-ms-date": "Tue, 16 Aug 2022 19:28:01 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Mon, 15 Aug 2022 20:46:28 GMT",
+        "Date": "Tue, 16 Aug 2022 19:27:59 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "Vary": "Origin",
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\n",
-        "\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022\u003E\u003CMarker\u003E2!244!MDAwMDM1IWFjb250YWluZXJlY2M4MmUzNgEwMUQ4QjBFODBFQjI3OTlDITAwMDAwNSFibG9iMyEwMDAwMTchCAAAAAkAAABzZWNvbmR0YWchMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWUwNzkyM2IxLTlmZGUtNDllNS04MGJjLWUzYWM0NTY0OWExNiEwMDAwMDQhdGFnMiE-\u003C/Marker\u003E\u003CWhere\u003Etag1=\u0026apos;firsttag\u0026apos; and tag2=\u0026apos;secondtag\u0026apos;\u003C/Where\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Eblob3\u003C/Name\u003E\u003CContainerName\u003Eacontainerecc82e36\u003C/ContainerName\u003E\u003CTags\u003E\u003CTagSet\u003E\u003CTag\u003E\u003CKey\u003Etag1\u003C/Key\u003E\u003CValue\u003Efirsttag\u003C/Value\u003E\u003C/Tag\u003E\u003CTag\u003E\u003CKey\u003Etag2\u003C/Key\u003E\u003CValue\u003Esecondtag\u003C/Value\u003E\u003C/Tag\u003E\u003C/TagSet\u003E\u003C/Tags\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker/\u003E\u003C/EnumerationResults\u003E"
+        "\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022\u003E\u003CMarker\u003E2!240!MDAwMDM1IWFjb250YWluZXJlY2M4MmUzNgEwMUQ4QjFBNjQyQzhENEY2ITAwMDAwNSFibG9iMyEwMDAwMTQhCAAAAAYAAAB0YWdvbmUhMDAwMDAxITAhMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVohMDAwMDM2IWExZjU1YWJiLTdkYWYtNDhhZC04YTc2LWQ1YzNmMjQ5ODNmZiEwMDAwMDQhdGFnMSE-\u003C/Marker\u003E\u003CWhere\u003Etag1=\u0026apos;tagone\u0026apos; and tag2=\u0026apos;tagtwo\u0026apos;\u003C/Where\u003E\u003CMaxResults\u003E2\u003C/MaxResults\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Eblob3\u003C/Name\u003E\u003CContainerName\u003Eacontainerecc82e36\u003C/ContainerName\u003E\u003CTags\u003E\u003CTagSet\u003E\u003CTag\u003E\u003CKey\u003Etag1\u003C/Key\u003E\u003CValue\u003Etagone\u003C/Value\u003E\u003C/Tag\u003E\u003CTag\u003E\u003CKey\u003Etag2\u003C/Key\u003E\u003CValue\u003Etagtwo\u003C/Value\u003E\u003C/Tag\u003E\u003C/TagSet\u003E\u003C/Tags\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker/\u003E\u003C/EnumerationResults\u003E"
       ]
     }
   ],

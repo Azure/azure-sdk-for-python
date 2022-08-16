@@ -495,7 +495,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         )
         self._setup(storage_account_name, token)
 
-        tags = {"year": '1000', "tag2": "secondtag", "tag3": "thirdtag", "habitat_type": 'Shallow Lowland Billabongs'}
+        tags = {"year": '2000', "tag2": "tagtwo", "tag3": "tagthree", "habitat_type": 'Shallow Lowland Billabongs'}
         blob_client, _ = self._create_block_blob(tags=tags, container_name=self.container_name)
         token1 = generate_blob_sas(
             storage_account_name,
@@ -515,9 +515,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         # To filter in a specific container use:
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
-        where = "\"year\"='1000' and tag2 = 'secondtag' and tag3='thirdtag'"
+        where = "\"year\"='2000' and tag2 = 'tagtwo' and tag3='tagthree'"
 
-        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
+        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=3).by_page()
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)
