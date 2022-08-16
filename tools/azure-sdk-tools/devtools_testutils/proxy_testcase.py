@@ -80,7 +80,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
     return (recording_id, variables)
 
 
-def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Dict[str, str]") -> None:
+def stop_record_or_playback(test_id: str, recording_id: str, test_output: "Dict[str, str]") -> None:
     if is_live():
         response = requests.post(
             RECORDING_STOP_URL,
