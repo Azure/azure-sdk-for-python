@@ -38,7 +38,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.hostname = kwargs.pop("hostname")
         uamqp_transport = kwargs.pop("uamqp_transport")
 
-        if self.http_proxy or self.transport_type == TransportType.AmqpOverWebsocket:
+        if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket
             self.connection_port = DEFAULT_AMQP_WSS_PORT
             if not uamqp_transport:

@@ -343,7 +343,7 @@ async def test_send_multiple_partition_with_app_prop_async(connstr_receivers):
 async def test_send_over_websocket_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str,
-                                                           transport_type=TransportType.AmqpOverWebsocket)
+                                                           transport_type=uamqp.constants.TransportType.AmqpOverWebsocket)
 
     async with client:
         batch = await client.create_batch(partition_id="0")

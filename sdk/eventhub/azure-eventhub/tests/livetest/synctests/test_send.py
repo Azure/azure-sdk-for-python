@@ -389,7 +389,7 @@ def test_send_over_websocket_sync(connstr_receivers, uamqp_transport, timeout_fa
     timeout = 10 * timeout_factor
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(
-        connection_str, transport_type=TransportType.AmqpOverWebsocket, uamqp_transport=uamqp_transport
+        connection_str, transport_type=uamqp.constants.TransportType.AmqpOverWebsocket, uamqp_transport=uamqp_transport
     )
 
     with client:
