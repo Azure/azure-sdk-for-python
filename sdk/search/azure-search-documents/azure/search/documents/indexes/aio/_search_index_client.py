@@ -12,13 +12,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchClient as _SearchServiceClient
 from ...aio._search_client_async import SearchClient
-from ...aio._utils_async import get_async_authentication_policy
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
 )
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
+from ..._utils import get_authentication_policy
 from ..._version import SDK_MONIKER
 from ..models import (
     SearchIndex,
@@ -42,7 +42,9 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
-
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -56,6 +58,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -66,7 +69,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
             )  # type: _SearchServiceClient
         else:
             self._aad = True
-            authentication_policy = get_async_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
