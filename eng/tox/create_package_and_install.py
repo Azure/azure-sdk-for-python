@@ -234,7 +234,7 @@ if __name__ == "__main__":
                                 addition_necessary = False
 
                             # ...do we need to install the new version? if the existing specifier matches, we're fine
-                            if installed_pkgs[req_name] in req_specifier:
+                            if req_specifier is not None and installed_pkgs[req_name] in req_specifier:
                                 addition_necessary = False
 
                         if addition_necessary:
