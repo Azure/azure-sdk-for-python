@@ -14,14 +14,14 @@ from ..models import SearchIndexerSkillset
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
-)
+    )
 from ..models import (
     SearchIndexerDataSourceConnection,
 )
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
+from ..._utils import get_authentication_policy
 from ..._version import SDK_MONIKER
-from ...aio._utils_async import get_async_authentication_policy
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -38,7 +38,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
-
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -52,6 +54,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -62,7 +65,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             )  # type: _SearchServiceClient
         else:
             self._aad = True
-            authentication_policy = get_async_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
