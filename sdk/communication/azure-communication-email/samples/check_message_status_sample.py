@@ -22,13 +22,7 @@ USAGE:
 import os
 import sys
 from azure.core.exceptions import HttpResponseError
-from azure.communication.email import (
-    EmailClient,
-    EmailContent,
-    EmailRecipients,
-    EmailAddress,
-    EmailMessage
-)
+from azure.communication.email import EmailClient
 
 sys.path.append("..")
 
@@ -43,30 +37,32 @@ class EmailCheckMessageStatusSample(object):
         email_client = EmailClient.from_connection_string(self.connection_string)
 
         # creating the email message
-        content = EmailContent(
-            subject="This is the subject",
-            plain_text="This is the body",
-            html= "<html><h1>This is the body</h1></html>",
-        )
+        message = {
+            "content": {
+                "subject": "This is the subject",
+                "plainText": "This is the body",
+                "html": "html><h1>This is the body</h1></html>"
+            },
+            "recipients": {
+                "to": [
+                    {
+                        "email": self.recipient_address,
+                        "displayName": "Customer Name"
+                    }
+                ]
+            },
+            "sender": self.sender_address
+        }
 
-        recipients = EmailRecipients(
-            to=[EmailAddress(email=self.recipient_address, display_name="Customer Name")]
-        )
-
-        message = EmailMessage(
-            sender=self.sender_address,
-            content=content,
-            recipients=recipients
-        )
         try:
             # sending the email message
             response = email_client.send(message)
 
             # using the message id to get the status of the email
-            message_id = response.message_id
+            message_id = response['message_id']
             message_status = email_client.get_send_status(message_id)
 
-            print("Message Status: " + message_status.status)
+            print("Message Status: " + message_status['status'])
         except HttpResponseError as ex:
             print(ex)
             pass

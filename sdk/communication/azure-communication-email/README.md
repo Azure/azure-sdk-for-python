@@ -66,19 +66,22 @@ client = EmailClient(endpoint, credential);
 To send an email message, call the `send` function from the `EmailClient`.
 
 ```python
-content = EmailContent(
-    subject="This is the subject",
-    plain_text="This is the body",
-    html= "<html><h1>This is the body</h1></html>",
-)
-
-address = EmailAddress(email="customer@domain.com", display_name="Customer Name")
-
-message = EmailMessage(
-            sender="sender@contoso.com",
-            content=content,
-            recipients=EmailRecipients(to=[address])
-        )
+message = {
+    "content": {
+        "subject": "This is the subject",
+        "plainText": "This is the body",
+        "html": "html><h1>This is the body</h1></html>"
+    },
+    "recipients": {
+        "to": [
+            {
+                "email": "customer@domain.com",
+                "displayName": "Customer Name"
+            }
+        ]
+    },
+    "sender": "sender@contoso.com"
+}
 
 response = client.send(message)
 ```
@@ -88,28 +91,29 @@ response = client.send(message)
 To send an email message to multiple recipients, add a object for each recipient type and an object for each recipient.
 
 ```python
-content = EmailContent(
-    subject="This is the subject",
-    plain_text="This is the body",
-    html= "<html><h1>This is the body</h1></html>",
-)
-
-recipients = EmailRecipients(
-        to=[
-            EmailAddress(email="customer@domain.com", display_name="Customer Name"),
-            EmailAddress(email="customer2@domain.com", display_name="Customer Name 2"),
+message = {
+    "content": {
+        "subject": "This is the subject",
+        "plainText": "This is the body",
+        "html": "html><h1>This is the body</h1></html>"
+    },
+    "recipients": {
+        "to": [
+            {"email": "customer@domain.com", "displayName": "Customer Name"},
+            {"email": "customer2@domain.com", "displayName": "Customer Name 2"}
         ],
-        cc=[
-            EmailAddress(email="ccCustomer@domain.com", display_name="CC Customer Name"),
-            EmailAddress(email="ccCustomer2@domain.com", display_name="CC Customer Name 2"),
+        "cc": [
+            {"email": "ccCustomer@domain.com", "displayName": "CC Customer Name"},
+            {"email": "ccCustomer2@domain.com", "displayName": "CC Customer Name 2"}
         ],
-        bcc=[
-            EmailAddress(email="bccCustomer@domain.com", display_name="BCC Customer Name"),
-            EmailAddress(email="bccCustomer2@domain.com", display_name="BCC Customer Name 2"),
+        "bcc": [
+            {"email": "bccCustomer@domain.com", "displayName": "BCC Customer Name"},
+            {"email": "bccCustomer2@domain.com", "displayName": "BCC Customer Name 2"}
         ]
-    )
+    },
+    "sender": "sender@contoso.com"
+}
 
-message = EmailMessage(sender="sender@contoso.com", content=content, recipients=recipients)
 response = client.send(message)
 ```
 
@@ -120,31 +124,34 @@ Azure Communication Services support sending email with attachments.
 ```python
 import base64
 
-content = EmailContent(
-    subject="This is the subject",
-    plain_text="This is the body",
-    html= "<html><h1>This is the body</h1></html>",
-)
-
-address = EmailAddress(email="customer@domain.com", display_name="Customer Name")
-
 with open("C://readme.txt", "r") as file:
     file_contents = file.read()
 
 file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
 
-attachment = EmailAttachment(
-    name="attachment.txt",
-    attachment_type="txt",
-    content_bytes_base64=file_bytes_b64.decode()
-)
-
-message = EmailMessage(
-            sender="sender@contoso.com",
-            content=content,
-            recipients=EmailRecipients(to=[address]),
-            attachments=[attachment]
-        )
+message = {
+    "content": {
+        "subject": "This is the subject",
+        "plainText": "This is the body",
+        "html": "html><h1>This is the body</h1></html>"
+    },
+    "recipients": {
+        "to": [
+            {
+                "email": "customer@domain.com",
+                "displayName": "Customer Name"
+            }
+        ]
+    },
+    "sender": "sender@contoso.com",
+    "attachments": [
+        {
+            "name": "attachment.txt",
+            "attachmentType": "txt",
+            "contentBytesBase64": file_bytes_b64.decode()
+        }
+    ]
+}
 
 response = client.send(message)
 ```
@@ -155,7 +162,7 @@ The result from the `send` call contains a `message_id` which can be used to que
 
 ```python
 response = client.send(message)
-status = client.get_sent_status(response.message_id)
+status = client.get_sent_status(response['message_id'])
 ```
 
 ## Troubleshooting

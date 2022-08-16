@@ -7,23 +7,21 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
 from ._configuration import AzureCommunicationEmailServiceConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import EmailOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Dict
 
-    from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureCommunicationEmailService(object):  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationEmailService:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication Email Service.
 
     :ivar email: EmailOperations operations
@@ -36,40 +34,28 @@ class AzureCommunicationEmailService(object):  # pylint: disable=client-accepts-
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        _endpoint = '{endpoint}'
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs: Any
+    ) -> None:
+        _endpoint = "{endpoint}"
         self._config = AzureCommunicationEmailServiceConfiguration(endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.email = EmailOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.email = EmailOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
+        >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -80,7 +66,7 @@ class AzureCommunicationEmailService(object):  # pylint: disable=client-accepts-
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
