@@ -133,8 +133,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelBuildOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         description = kwargs.pop("description", None)
@@ -201,8 +201,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelComposeOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         model_id = kwargs.pop("model_id", None)
@@ -220,7 +220,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 description=description,
                 tags=tags,
                 component_models=[
-                    self._generated_models.ComponentModelInfo(model_id=model_id) for model_id in component_model_ids
+                    self._generated_models.ComponentDocumentModelDetails(model_id=model_id) for model_id in component_model_ids
                 ]
                 if component_model_ids
                 else [],
@@ -300,8 +300,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelCopyToOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         if not model_id:

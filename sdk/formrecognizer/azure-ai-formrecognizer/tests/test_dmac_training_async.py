@@ -11,7 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2022_08_31.models import GetOperationsResponse, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer import DocumentModelDetails
 from preparers import FormRecognizerPreparer
@@ -145,7 +145,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         raw_response = []
 
         def callback(response, _, headers):
-            op_response = client._deserialize(GetOperationsResponse, response)
+            op_response = client._deserialize(DocumentModelBuildOperationDetails, response)
             model_info = client._deserialize(ModelDetails, op_response.result)
             document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
@@ -173,7 +173,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         raw_response = []
 
         def callback(response, _, headers):
-            op_response = client._deserialize(GetOperationsResponse, response)
+            op_response = client._deserialize(DocumentModelBuildOperationDetails, response)
             model_info = client._deserialize(ModelDetails, op_response.result)
             document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
@@ -196,7 +196,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         raw_response = []
 
         def callback(response, _, headers):
-            op_response = client._deserialize(GetOperationsResponse, response)
+            op_response = client._deserialize(DocumentModelBuildOperationDetails, response)
             model_info = client._deserialize(ModelDetails, op_response.result)
             document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
