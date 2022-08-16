@@ -71,6 +71,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         email_message: JSON,
         **kwargs
     ) -> JSON:
+        # cSpell:disable
         """Queues an email message to be sent to one or more recipients.
 
         :param email_message: The message payload for sending an email. Required.
@@ -146,6 +147,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
                     "messageId": "str",  # System generated id of an email message sent. Required.
                 }
         """
+        # cSpell:enable
 
         return self._generated_client.email.send(
             repeatability_request_id=uuid4(),
