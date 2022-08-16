@@ -16,3 +16,4 @@ steps:
       pip install "tools/azure-sdk-tools[build]"
       sdk_set_dev_version "$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"
     displayName: "Update package versions for dev build"
+    condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'))
