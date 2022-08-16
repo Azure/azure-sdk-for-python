@@ -233,8 +233,13 @@ if __name__ == "__main__":
                             if req_specifier is None:
                                 addition_necessary = False
 
+                            # if the package we're installing doesn't require a specific version (indicated by req_specifier) for the requiremeent (req_name)
+                            # then its presence is enough. No reason to add it to necessary installations.
+                            if req_specifier is None:
+                                addition_necessary = False
+
                             # ...do we need to install the new version? if the existing specifier matches, we're fine
-                            if installed_pkgs[req_name] in req_specifier:
+                            if req_specifier is not None and installed_pkgs[req_name] in req_specifier:
                                 addition_necessary = False
 
                         if addition_necessary:
