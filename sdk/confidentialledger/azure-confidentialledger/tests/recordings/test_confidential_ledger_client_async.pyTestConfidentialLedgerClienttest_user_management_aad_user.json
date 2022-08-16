@@ -12,10 +12,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 16 Aug 2022 20:17:02 GMT",
+        "Date": "Tue, 16 Aug 2022 20:45:34 GMT",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "6b8abd60-c762-4134-beb3-a2050630ab39",
+        "x-ms-correlation-request-id": "b71d1ca5-db5e-4545-84ea-11c69df56e30",
         "x-ms-image-digest": "sha256:9b8d3952372e585a3b21995d9be0c8702fb7ba2ef54ca65392b2562dd2adcc73",
         "x-ms-image-tag": "1.0.02031.28-b60f6adbe3f21e46216336ba378cc34dd0ab86ca",
         "x-ms-machineName": "identityservice-6f96b84df8-wbxmj"
@@ -41,18 +41,18 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "92",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 16 Aug 2022 20:17:03 GMT",
+        "Date": "Tue, 16 Aug 2022 20:45:35 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=Av7pS8_417BFrOxAVSEr2ISb7eLaAQAAAD_yjdoOAAAA; expires=Thu, 15-Sep-2022 20:17:03 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AmJ4i7uFxkBNgrSR_7G88Syb7eLaAQAAAO_4jdoOAAAA; expires=Thu, 15-Sep-2022 20:45:35 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13481.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -79,7 +79,7 @@
       "ResponseHeaders": {
         "Content-Length": "78",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29385"
+        "x-ms-ccf-transaction-id": "8.29685"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -99,7 +99,7 @@
       "ResponseHeaders": {
         "Content-Length": "78",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29386"
+        "x-ms-ccf-transaction-id": "8.29686"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -123,7 +123,7 @@
       "ResponseHeaders": {
         "Content-Length": "73",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29387"
+        "x-ms-ccf-transaction-id": "8.29687"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -143,7 +143,7 @@
       "ResponseHeaders": {
         "Content-Length": "73",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29388"
+        "x-ms-ccf-transaction-id": "8.29688"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -163,7 +163,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "x-ms-ccf-transaction-id": "8.29389"
+        "x-ms-ccf-transaction-id": "8.29689"
       },
       "ResponseBody": null
     },
@@ -184,7 +184,7 @@
       "ResponseHeaders": {
         "Content-Length": "137",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29390"
+        "x-ms-ccf-transaction-id": "8.29690"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -204,7 +204,7 @@
       "ResponseHeaders": {
         "Content-Length": "137",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29391"
+        "x-ms-ccf-transaction-id": "8.29691"
       },
       "ResponseBody": {
         "assignedRole": "Contributor",
@@ -228,7 +228,7 @@
       "ResponseHeaders": {
         "Content-Length": "132",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29392"
+        "x-ms-ccf-transaction-id": "8.29692"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -248,7 +248,7 @@
       "ResponseHeaders": {
         "Content-Length": "132",
         "Content-Type": "application/json",
-        "x-ms-ccf-transaction-id": "8.29393"
+        "x-ms-ccf-transaction-id": "8.29693"
       },
       "ResponseBody": {
         "assignedRole": "Reader",
@@ -268,7 +268,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "x-ms-ccf-transaction-id": "8.29394"
+        "x-ms-ccf-transaction-id": "8.29694"
       },
       "ResponseBody": null
     }

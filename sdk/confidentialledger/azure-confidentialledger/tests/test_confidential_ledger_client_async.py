@@ -10,6 +10,7 @@ from devtools_testutils import (
     create_combined_bundle,
     is_live,
     is_live_and_not_recording,
+    recorded_by_proxy,
     set_function_recording_options,
 )
 
@@ -27,14 +28,10 @@ from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestC
 
 class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def create_confidentialledger_client(
-        self, endpoint, ledger_id, is_aad, fetch_tls_cert=True
+        self, endpoint, ledger_id, is_aad,
     ):
         # Always explicitly fetch the TLS certificate.
         network_cert = await self.set_ledger_identity_async(ledger_id)
-        if not fetch_tls_cert:
-            # For some test scenarios, remove the file so the client sees it doesn't exist and
-            # creates it auto-magically.
-            os.remove(self.network_certificate_path)
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
@@ -45,15 +42,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
-
-        if not is_aad and not fetch_tls_cert:
-            # Delete the network certificate again since we want to make sure a cert-based client
-            # fetches it too.
-            #
-            # Since we create the cert-based client immediately, the certificate will still be
-            # available for the above aad_based_client when we use it to add the cert-based user
-            # to the ledger.
-            os.remove(self.network_certificate_path)
 
         certificate_credential = ConfidentialLedgerCertificateCredential(
             certificate_path=self.user_certificate_path
@@ -496,32 +484,52 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             assert quote["quoteVersion"]
 
     @ConfidentialLedgerPreparer()
-    @recorded_by_proxy_async
-    async def test_tls_cert_convenience_aad_user(self, **kwargs):
+    @recorded_by_proxy
+    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
+    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
+    # used, non-async calls are not recorded.
+    def test_tls_cert_convenience_aad_user(self, **kwargs):
+        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True, fetch_tls_cert=False,
+
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
-        try:
-            await self.tls_cert_convenience_actions(client)
-        finally:
-            await client.close()
+        self.tls_cert_convenience_actions(client)
 
     @ConfidentialLedgerPreparer()
-    @recorded_by_proxy_async
-    async def test_tls_cert_convenience_cert_user(self, **kwargs):
-        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False, fetch_tls_cert=False,
-        )
-        try:
-            await self.tls_cert_convenience_actions(client)
-        finally:
-            await client.close()
+    @recorded_by_proxy
+    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
+    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
+    # used, non-async calls are not recorded.
+    def test_tls_cert_convenience_cert_user(self, **kwargs):
+        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
-    async def tls_cert_convenience_actions(self, client):
-        # It's sufficient to use any arbitrary endpoint to test the TLS connection.
-        constitution = await client.get_constitution()
-        assert constitution["script"]
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=certificate_credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        )
+        self.tls_cert_convenience_actions(client)
+
+    def tls_cert_convenience_actions(self, _):
+        # Simply check that the certificate file is present and populated.
+        with open(self.network_certificate_path) as infile:
+            certificate = infile.read()
+
+        assert certificate

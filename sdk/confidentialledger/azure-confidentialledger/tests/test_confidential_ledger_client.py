@@ -28,13 +28,9 @@ from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestC
 
 
 class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
-    def create_confidentialledger_client(self, endpoint, ledger_id, is_aad, fetch_tls_cert=True):
+    def create_confidentialledger_client(self, endpoint, ledger_id, is_aad):
         # Always explicitly fetch the TLS certificate.
         network_cert = self.set_ledger_identity(ledger_id)
-        if not fetch_tls_cert:
-            # For some test scenarios, remove the file so the client sees it doesn't exist and
-            # creates it auto-magically.
-            os.remove(self.network_certificate_path)
 
         # The ACL instance should already have the potential AAD user added as an Administrator.
         credential = self.get_credential(ConfidentialLedgerClient)
@@ -45,15 +41,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
-
-        if not is_aad and not fetch_tls_cert:
-            # Delete the network certificate again since we want to make sure a cert-based client
-            # fetches it too.
-            #
-            # Since we create the cert-based client immediately, the certificate will still be
-            # available for the above aad_based_client when we use it to add the cert-based user
-            # to the ledger.
-            os.remove(self.network_certificate_path)
 
         certificate_credential = ConfidentialLedgerCertificateCredential(
             certificate_path=self.user_certificate_path
@@ -448,24 +435,44 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_tls_cert_convenience_aad_user(self, **kwargs):
+        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True, fetch_tls_cert=False,
+
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
         self.tls_cert_convenience_actions(client)
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_tls_cert_convenience_cert_user(self, **kwargs):
+        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False, fetch_tls_cert=False,
+
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=certificate_credential,
+            endpoint=confidentialledger_endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
         self.tls_cert_convenience_actions(client)
 
-    def tls_cert_convenience_actions(self, client):
-        # It's sufficient to use any arbitrary endpoint to test the TLS connection.
-        constitution = client.get_constitution()
-        assert constitution["script"]
+    def tls_cert_convenience_actions(self, _):
+        # Simply check that the certificate file is present and populated.
+        with open(self.network_certificate_path) as infile:
+            certificate = infile.read()
+
+        assert certificate
