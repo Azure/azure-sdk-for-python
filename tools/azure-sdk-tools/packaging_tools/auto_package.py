@@ -21,8 +21,8 @@ def main(generate_input, generate_output):
         package_name = package["packageName"]
         # Changelog
         last_version = ["first release"]
-        if 'azure-mgmt-' in package_name:
-            md_output = change_log_generate(package_name, last_version, package["tagIsStable"])
+        if "azure-mgmt-" in package_name:
+            md_output = change_log_generate(package_name, last_version)
         else:
             md_output = "data-plan skip changelog generation temporarily"
         package["changelog"] = {
@@ -40,11 +40,11 @@ def main(generate_input, generate_output):
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         # Installation package
         package["installInstructions"] = {
-            "full": "You can install the use using pip install of the artificats.",
+            "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
         # to distinguish with track1
-        if 'azure-mgmt-' in package_name:
+        if "azure-mgmt-" in package_name:
             package["packageName"] = "track2_" + package["packageName"]
         for artifact in package["artifacts"]:
             if ".whl" in artifact:
@@ -61,13 +61,26 @@ def generate_main():
     """Main method"""
 
     parser = argparse.ArgumentParser(
-        description="Build SDK using Autorest, offline version.", formatter_class=argparse.RawTextHelpFormatter
+        description="Build SDK using Autorest, offline version.",
+        formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument("generate_input", help="Generate input file path")
     parser.add_argument("generate_output", help="Generate output file path")
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Verbosity in INFO mode",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
-    parser.add_argument("-c", "--codegen", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
+    parser.add_argument(
+        "-c",
+        "--codegen",
+        dest="debug",
+        action="store_true",
+        help="Verbosity in DEBUG mode",
+    )
 
     args = parser.parse_args()
     main_logger = logging.getLogger()
