@@ -15,10 +15,10 @@ from ...aio._search_client_async import SearchClient
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
-    get_authentication_policy,
 )
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
+from ..._utils import get_authentication_policy
 from ..._version import SDK_MONIKER
 from ..models import (
     SearchIndex,
