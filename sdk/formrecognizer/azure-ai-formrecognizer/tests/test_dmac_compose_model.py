@@ -9,7 +9,7 @@ import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelDetails, DocumentModelAdministrationLROPoller
-from azure.ai.formrecognizer._generated.v2022_08_31.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_08_31.models import GetOperationsResponse, DocumentModelDetails as ModelDetails
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -64,8 +64,8 @@ class TestTraining(FormRecognizerTest):
         raw_response = []
 
         def callback(response, _, headers):
-            op_response = client._deserialize(GetOperationResponse, response)
-            model_info = client._deserialize(ModelInfo, op_response.result)
+            op_response = client._deserialize(GetOperationsResponse, response)
+            model_info = client._deserialize(ModelDetails, op_response.result)
             document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)

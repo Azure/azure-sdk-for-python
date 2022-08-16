@@ -11,7 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer import DocumentModelDetails
-from azure.ai.formrecognizer._generated.v2022_08_31.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_08_31.models import GetOperationsResponse, DocumentModelDetails as ModelDetails
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -60,8 +60,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         raw_response = []
 
         def callback(response, _, headers):
-            op_response = client._deserialize(GetOperationResponse, response)
-            model_info = client._deserialize(ModelInfo, op_response.result)
+            op_response = client._deserialize(GetOperationsResponse, response)
+            model_info = client._deserialize(ModelDetails, op_response.result)
             document_model = DocumentModelDetails._from_generated(model_info)
             raw_response.append(model_info)
             raw_response.append(document_model)
