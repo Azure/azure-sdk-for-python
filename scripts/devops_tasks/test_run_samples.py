@@ -16,6 +16,7 @@ try:
     from subprocess import TimeoutExpired, check_call, CalledProcessError
 except ImportError:
     from subprocess32 import TimeoutExpired, check_call, CalledProcessError
+from common_tasks import run_check_call
 from ci_tools.functions import compare_python_version
 
 logging.getLogger().setLevel(logging.INFO)
