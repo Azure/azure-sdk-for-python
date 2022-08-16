@@ -187,8 +187,7 @@ class ODataV4Format(object):
         return self
 
     def __str__(self):
-        return "({}) {}\n{}".format(
-            self.code,
+        return "{}\n{}".format(
             self.message,
             self.message_details()
         )
@@ -198,7 +197,6 @@ class ODataV4Format(object):
         """
         # () -> str
         error_str = "Code: {}".format(self.code)
-        error_str += "\nMessage: {}".format(self.message)
         if self.target:
             error_str += "\nTarget: {}".format(self.target)
 
