@@ -9,7 +9,8 @@ spec:
   containers:
     - name: python-eh-stress
       image: {{ .Values.image }}
-      command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py & python3 azure_eventhub_consumer_stress_sync.py']
+      # command: ['bash', 'script_commands.sh']
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py & python azure_eventhub_consumer_stress_sync.py']
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
       # async test command
       # command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py -m stress_send_list_async & python3 azure_eventhub_consumer_stress_async.py']
