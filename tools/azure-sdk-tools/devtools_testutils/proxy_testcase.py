@@ -71,7 +71,8 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
                 variables = result.json()
             except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
                 six.raise_from(
-                    ValueError("The response body returned from starting playback did not contain valid JSON"), ex
+                    ValueError("The response body returned from starting playback did not contain valid JSON"),
+                    ex,
                 )
 
     # set recording ID in a module-level variable so that sanitizers can access it
@@ -89,7 +90,7 @@ def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Di
                 "x-recording-save": "true",
                 "Content-Type": "application/json",
             },
-            json=test_variables or {},  # tests don't record successfully unless test_variables is a dictionary
+            json=test_output or {},  # tests don't record successfully unless test_output is a dictionary
         )
     else:
         response = requests.post(
@@ -158,7 +159,10 @@ def recorded_by_proxy(test_func: "Callable") -> None:
             # without this, things like LROPollers can get broken by polling the wrong endpoint
             parsed_result = url_parse.urlparse(result.request.url)
             upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
-            upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
             original_target = parsed_result._replace(**upstream_uri_dict).geturl()
 
             result.request.url = original_target

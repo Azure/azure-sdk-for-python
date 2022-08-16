@@ -20,10 +20,11 @@ import os
 import textwrap
 import io
 from tox_helper_tasks import (
-    get_package_details,
     unzip_sdist_to_directory,
     move_and_rename
 )
+
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -138,17 +139,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     package_path = os.path.abspath(args.target_package)
-    package_name, namespace, package_version, _, _ = get_package_details(
-        os.path.join(package_path, "setup.py")
-    )
+    pkg_details = ParsedSetup.from_path(package_path)
 
-    if should_build_docs(package_name):
+    if should_build_docs(pkg_details.name):
         source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
         doc_folder = os.path.join(source_location, "docgen")
 
-        create_index(doc_folder, source_location, namespace)
+        create_index(doc_folder, source_location, pkg_details.namespace)
 
         site_folder = os.path.join(args.dist_dir, "site")
-        write_version(site_folder, package_version)
+        write_version(site_folder, pkg_details.version)
     else:
-        logging.info("Skipping sphinx prep for {}".format(package_name))
+        logging.info("Skipping sphinx prep for {}".format(pkg_details.name))

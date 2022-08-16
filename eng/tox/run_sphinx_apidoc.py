@@ -13,16 +13,17 @@ import argparse
 import os
 import logging
 from prep_sphinx_env import should_build_docs
-from tox_helper_tasks import get_package_details
 import sys
 import shutil
+
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 generate_mgmt_script = os.path.join(root_dir, "doc/sphinx/generate_doc.py")
 
-def is_mgmt_package(package_dir):
+def is_mgmt_package(pkg_name):
     return "mgmt"  in pkg_name or "cognitiveservices" in pkg_name
 
 def copy_existing_docs(source, target):
@@ -117,12 +118,12 @@ if __name__ == "__main__":
     package_dir = os.path.abspath(args.package_root)
     output_directory = os.path.join(target_dir, "unzipped/docgen")
 
-    pkg_name, namespace, pkg_version, _, _ = get_package_details(os.path.join(package_dir, 'setup.py'))
+    pkg_details = ParsedSetup.from_path(package_dir)
 
-    if should_build_docs(pkg_name):
-        if is_mgmt_package(pkg_name):
-            mgmt_apidoc(output_directory, namespace)
+    if should_build_docs(pkg_details.name):
+        if is_mgmt_package(pkg_details.name):
+            mgmt_apidoc(output_directory, pkg_details.namespace)
         else:
             sphinx_apidoc(args.working_directory)
     else:
-        logging.info("Skipping sphinx source generation for {}".format(pkg_name))
+        logging.info("Skipping sphinx source generation for {}".format(pkg_details.name))

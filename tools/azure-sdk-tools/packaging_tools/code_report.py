@@ -43,7 +43,7 @@ def create_empty_report():
 
 def create_report(module_name: str) -> Dict[str, Any]:
     module_to_generate = importlib.import_module(module_name)
-    client_name = getattr(module_to_generate, '__all__')
+    client_name = getattr(module_to_generate, "__all__")
 
     report = create_empty_report()
 
@@ -51,7 +51,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
         report["client"] = client_name
     except:
         report["client"] = []
-        
+
     # Look for models first
     model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
     for model_name in model_names:
@@ -127,7 +127,7 @@ def create_report_from_func(function_attr):
             {
                 "name": parameter.name,
                 "type": str(parameter.kind),
-                "has_default_value": not (parameter.default is parameter.empty)
+                "has_default_value": not (parameter.default is parameter.empty),
             }
         )
     return func_content
@@ -174,7 +174,7 @@ def select_versions(versions: List[str], last_pypi_stable: bool) -> List[str]:
     versions.reverse()
     if last_pypi_stable:
         for version in versions:
-            if not re.search('[a-zA-Z]', version):
+            if not re.search("[a-zA-Z]", version):
                 return [version]
         _LOGGER.info(f"Do not find stable version during {versions}")
         return [versions[0]]
@@ -189,7 +189,7 @@ def main(
     last_pypi: bool = False,
     output: Optional[str] = None,
     metadata_path: Optional[str] = None,
-    last_pypi_stable: bool = False
+    last_pypi_stable: bool = False,
 ):
 
     output_msg = output if output else "default folder"
@@ -297,7 +297,12 @@ def find_autorest_generated_folder(module_prefix="azure"):
     _LOGGER.info(f"Looking for Autorest generated package in {module_prefix}")
 
     # Manually skip some namespaces for now
-    if module_prefix in ["azure.cli", "azure.storage", "azure.servicemanagement", "azure.servicebus"]:
+    if module_prefix in [
+        "azure.cli",
+        "azure.storage",
+        "azure.servicemanagement",
+        "azure.servicebus",
+    ]:
         _LOGGER.info(f"Skip {module_prefix}")
         return []
 
@@ -371,11 +376,20 @@ if __name__ == "__main__":
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
     parser.add_argument("--output", dest="output", help="Override output path.")
     parser.add_argument(
-        "--metadata-path", dest="metadata", help="Write a metadata file about what happen. Mostly used for automation."
+        "--metadata-path",
+        dest="metadata",
+        help="Write a metadata file about what happen. Mostly used for automation.",
     )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
-    main(args.package_name, args.version, args.no_venv, args.pypi, args.last_pypi, args.output, args.metadata,
-         args.last_pypi_stable)
+    main(
+        args.package_name,
+        args.version,
+        args.no_venv,
+        args.pypi,
+        args.last_pypi,
+        args.output,
+        args.metadata,
+    )

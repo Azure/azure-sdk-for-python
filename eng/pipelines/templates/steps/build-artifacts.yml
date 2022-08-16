@@ -62,11 +62,9 @@ steps:
     displayName: Update package properties with dev version
     condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
 
-  - task: PythonScript@0
+  - pwsh: |
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}}
     displayName: 'Generate Packages'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl

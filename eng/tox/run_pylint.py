@@ -15,10 +15,7 @@ import logging
 import sys
 
 from allowed_pylint_failures import PYLINT_ACCEPTABLE_FAILURES
-
-from tox_helper_tasks import (
-    get_package_details
-)
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -41,13 +38,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-
     pkg_dir = os.path.abspath(args.target_package)
-    package_name, namespace, ver, _, _ = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    pkg_details = ParsedSetup.from_path(pkg_dir)
 
-    top_level_module = namespace.split('.')[0]
+    top_level_module = pkg_details.namespace.split('.')[0]
 
-    if package_name not in PYLINT_ACCEPTABLE_FAILURES:
+    if pkg_details.name not in PYLINT_ACCEPTABLE_FAILURES:
         try:
             check_call(
                 [
@@ -61,6 +57,6 @@ if __name__ == "__main__":
             )
         except CalledProcessError as e:
             logging.error(
-                "{} exited with linting error {}".format(package_name, e.returncode)
+                "{} exited with linting error {}".format(pkg_details.name, e.returncode)
             )
             exit(1)
