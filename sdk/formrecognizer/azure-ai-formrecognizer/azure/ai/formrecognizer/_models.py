@@ -3561,7 +3561,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     """Document analysis result.
 
     :ivar api_version: API version used to produce this result. Possible values include:
-     "2022-06-30-preview".
+     "2022-08-31".
     :vartype api_version: str
     :ivar model_id: Model ID used to produce this result.
     :vartype model_id: str

@@ -918,7 +918,7 @@ class TestToDict(FormRecognizerTest):
             last_updated_on="1994-11-05T13:20:30Z",
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
         )
 
@@ -932,7 +932,7 @@ class TestToDict(FormRecognizerTest):
             "last_updated_on": "1994-11-05T13:20:30Z",
             "kind": "documentModelBuild",
             "resource_location": "https://contoso.com/resource",
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {"test": "value"},
         }
 
@@ -1504,7 +1504,7 @@ class TestToDict(FormRecognizerTest):
 
     def test_model_operation_to_dict(self):
         model = _models.DocumentModelOperationDetails(
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={},
             operation_id="id123",
             status="succeeded",
@@ -1514,7 +1514,7 @@ class TestToDict(FormRecognizerTest):
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
             result=_models.DocumentModelDetails(
-                api_version="2022-06-30-preview",
+                api_version="2022-08-31",
                 tags={},
                 description="my description",
                 created_on="1994-11-05T13:15:30Z",
@@ -1596,7 +1596,7 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {},
             "operation_id": "id123",
             "status": "succeeded",
@@ -1606,7 +1606,7 @@ class TestToDict(FormRecognizerTest):
             "kind": "documentModelBuild",
             "resource_location": "https://contoso.com/resource",
             "result": {
-                "api_version": "2022-06-30-preview",
+                "api_version": "2022-08-31",
                 "tags": {},
                 "description": "my description",
                 "created_on": "1994-11-05T13:15:30Z",
@@ -1806,7 +1806,7 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
             doc_types={
                 "prebuilt-invoice": _models.DocumentTypeDetails(
@@ -1869,7 +1869,7 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {"test": "value"},
             "doc_types": {
                 "prebuilt-invoice": {
@@ -1933,7 +1933,7 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
         )
 
@@ -1943,7 +1943,7 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {"test": "value"},
         }
 

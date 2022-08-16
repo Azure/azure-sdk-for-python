@@ -80,7 +80,7 @@ class TestMultiapi(FormRecognizerTest):
     def test_document_api_version_form_recognizer_client(self):
         with pytest.raises(ValueError) as excinfo:
             client = FormRecognizerClient("url", "key", api_version=DocumentAnalysisApiVersion.V2022_08_31)
-        assert "Unsupported API version '2022-06-30-preview'. Please select from: {}\nAPI version '2022-06-30-preview' is " \
+        assert "Unsupported API version '2022-08-31'. Please select from: {}\nAPI version '2022-08-31' is " \
                "only available for DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
             ", ".join(v.value for v in FormRecognizerApiVersion)) == str(excinfo.value)
 
@@ -88,7 +88,7 @@ class TestMultiapi(FormRecognizerTest):
     def test_document_api_version_form_training_client(self):
         with pytest.raises(ValueError) as excinfo:
             client = FormTrainingClient("url", "key", api_version=DocumentAnalysisApiVersion.V2022_08_31)
-        assert "Unsupported API version '2022-06-30-preview'. Please select from: {}\nAPI version '2022-06-30-preview' is " \
+        assert "Unsupported API version '2022-08-31'. Please select from: {}\nAPI version '2022-08-31' is " \
                "only available for DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
             ", ".join(v.value for v in FormRecognizerApiVersion)) == str(excinfo.value)
 
@@ -96,7 +96,7 @@ class TestMultiapi(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     def test_default_api_version_document_analysis_client(self, **kwargs):
         client = kwargs.pop("client")
-        assert "2022-06-30-preview" == client._api_version
+        assert "2022-08-31" == client._api_version
 
     @FormRecognizerPreparer()
     def test_bad_api_version_document_analysis_client(self):
@@ -117,7 +117,7 @@ class TestMultiapi(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     def test_default_api_version_document_model_admin_client(self, **kwargs):
         client = kwargs.pop("client")
-        assert "2022-06-30-preview" == client._api_version
+        assert "2022-08-31" == client._api_version
 
     @FormRecognizerPreparer()
     def test_bad_api_version_document_model_admin_client(self):
