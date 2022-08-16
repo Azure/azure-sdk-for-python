@@ -19,8 +19,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def generate(
-    config_path, sdk_folder, project_pattern, readme, restapi_git_folder, autorest_bin=None, force_generation=False,
-    python_tag=None
+    config_path,
+    sdk_folder,
+    project_pattern,
+    readme,
+    restapi_git_folder,
+    autorest_bin=None,
+    force_generation=False,
 ):
 
     sdk_folder = Path(sdk_folder).expanduser()
@@ -32,7 +37,7 @@ def generate(
     global_conf["envs"] = solve_relative_path(global_conf.get("envs", {}), sdk_folder)
     global_conf["advanced_options"] = solve_relative_path(global_conf.get("advanced_options", {}), sdk_folder)
     if python_tag:
-        global_conf["autorest_options"]['tag'] = python_tag
+        global_conf["autorest_options"]["tag"] = python_tag
     if restapi_git_folder:
         restapi_git_folder = Path(restapi_git_folder).expanduser()
 
@@ -45,7 +50,11 @@ def generate(
         swagger_files_in_pr = list(restapi_git_folder.glob("specification/**/readme.md"))
     _LOGGER.info(f"Readme files: {swagger_files_in_pr}")
     extract_conf_from_readmes(
-        swagger_files_in_pr, restapi_git_folder, repotag, config, force_generation=force_generation
+        swagger_files_in_pr,
+        restapi_git_folder,
+        repotag,
+        config,
+        force_generation=force_generation,
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -78,7 +87,15 @@ def generate(
                         Path(restapi_git_folder or "", input_path).resolve() for input_path in optional_relative_paths
                     ]
 
-            build_project(temp_dir, project, absolute_markdown_path, sdk_folder, global_conf, local_conf, autorest_bin)
+            build_project(
+                temp_dir,
+                project,
+                absolute_markdown_path,
+                sdk_folder,
+                global_conf,
+                local_conf,
+                autorest_bin,
+            )
     return config
 
 
@@ -86,7 +103,8 @@ def generate_main():
     """Main method"""
 
     parser = argparse.ArgumentParser(
-        description="Build SDK using Autorest, offline version.", formatter_class=argparse.RawTextHelpFormatter
+        description="Build SDK using Autorest, offline version.",
+        formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(
         "--rest-folder",
@@ -111,7 +129,9 @@ def generate_main():
         help="The JSON configuration format path [default: %(default)s]",
     )
     parser.add_argument(
-        "--autorest", dest="autorest_bin", help="Force the Autorest to be executed. Must be a executable command."
+        "--autorest",
+        dest="autorest_bin",
+        help="Force the Autorest to be executed. Must be a executable command.",
     )
     parser.add_argument(
         "-f",
@@ -120,11 +140,21 @@ def generate_main():
         action="store_true",
         help="Should I force generation if SwaggerToSdk tag is not found",
     )
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Verbosity in INFO mode",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
 
     parser.add_argument(
-        "--sdk-folder", "-s", dest="sdk_folder", default=".", help="A Python SDK folder. [default: %(default)s]"
+        "--sdk-folder",
+        "-s",
+        dest="sdk_folder",
+        default=".",
+        help="A Python SDK folder. [default: %(default)s]",
     )
 
     args = parser.parse_args()

@@ -6,7 +6,7 @@ virtualenv==20.0.23
 wheel==0.34.2
 Jinja2==2.11.2
 packaging==20.4
-tox==3.15.0
+tox==3.25.1
 tox-monorepo==0.1.2
 twine==1.15.0; python_version == '2.7' or python_version == '3.5'
 twine==3.1.1; python_version >= '3.6'

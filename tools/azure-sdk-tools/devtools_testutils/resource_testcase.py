@@ -63,7 +63,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         self.delete_after_tag_timedelta = delete_after_tag_timedelta
 
     def _prefix_name(self, name):
-        name = u"rgpy-" + name
+        name = "rgpy-" + name
         if len(name) > 90:
             name = name[:90]
         return name

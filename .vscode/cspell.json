@@ -110,7 +110,9 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore"
+    ".gitignore",
+    "tools/azure-sdk-tools/packaging_tools/**",
+    "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
     "pyyaml",
@@ -333,7 +335,20 @@
     "westcentralus",
     "westus",
     "wfile",
-    "westus"
+    "westus",
+    "BUILDID",
+    "documentdb",
+    "chdir",
+    "reqs",
+    "rgpy",
+    "swaggertosdk",
+    "rgname",
+    "mtype",
+    "venvtools",
+    "ispkg",
+    "openpyxl",
+    "deps",
+    "prnumber"
   ],
   "overrides": [
     {

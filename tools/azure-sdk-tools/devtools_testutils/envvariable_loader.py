@@ -76,7 +76,10 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                         # test proxy tests have no scrubber, and instead register sanitizers using fake values
                         else:
                             try:
-                                add_general_regex_sanitizer(value=scrubbed_value, regex=self.real_values[key.lower()])
+                                add_general_regex_sanitizer(
+                                    value=scrubbed_value,
+                                    regex=self.real_values[key.lower()],
+                                )
                             except:
                                 logger = logging.getLogger()
                                 logger.info(

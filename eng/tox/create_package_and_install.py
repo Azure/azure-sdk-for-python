@@ -16,16 +16,16 @@ import logging
 import sys
 import glob
 import shutil
+import pdb
 from pkg_resources import parse_version
 
-from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_list_output, parse_req
+from tox_helper_tasks import find_whl, find_sdist, get_pip_list_output
+from ci_tools.parsing import ParsedSetup, parse_require
+from ci_tools.build import create_package
 
 logging.getLogger().setLevel(logging.INFO)
 
-setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
-sys.path.append(setup_parser_path)
-from setup_parser import get_install_requires
-
+from ci_tools.parsing import ParsedSetup
 
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
@@ -57,16 +57,16 @@ def discover_packages(setuppy_path, args):
 
 def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
     packages = []
-    pkg_name, _, version, _, _ = get_package_details(setuppy_path)
+    pkg = ParsedSetup.from_path(setuppy_path)
     if package_type == "wheel":
-        prebuilt_package = find_whl(dist_directory, pkg_name, version)
+        prebuilt_package = find_whl(dist_directory, pkg.name, pkg.version)
     else:
-        prebuilt_package = find_sdist(dist_directory, pkg_name, version)
+        prebuilt_package = find_sdist(dist_directory, pkg.name, pkg.version)
 
     if prebuilt_package is None:
         logging.error(
             "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
-                dist_directory, pkg_name, version
+                dist_directory, pkg.name, pkg.version
             )
         )
         exit(1)
@@ -80,29 +80,9 @@ def in_ci():
 
 def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_type):
     if package_type == "wheel":
-        check_call(
-            [
-                sys.executable,
-                setuppy_path,
-                "bdist_wheel",
-                "-d",
-                dist_dir,
-            ],
-            cwd = os.path.dirname(setuppy_path)
-        )
+        create_package(setuppy_path, dist_dir, enable_sdist=False)
     else:
-        check_call(
-            [
-                sys.executable,
-                setuppy_path,
-                "sdist",
-                "--format",
-                "zip",
-                "-d",
-                dist_dir,
-            ],
-            cwd = os.path.dirname(setuppy_path)
-        )
+        create_package(setuppy_path, dist_dir, enable_wheel=False)
 
     prebuilt_packages = [
         f for f in os.listdir(args.distribution_directory) if f.endswith(".whl" if package_type == "wheel" else ".zip")
@@ -217,7 +197,7 @@ if __name__ == "__main__":
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
             if not args.pre_download_disabled:
-                requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
+                requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(args.target_setup), "setup.py")).requires
                 azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure")]
 
                 if azure_requirements:
@@ -245,10 +225,14 @@ if __name__ == "__main__":
                         installed_pkgs = get_pip_list_output()
 
                         # parse the specifier
-                        req_name, req_specifier = parse_req(req)
+                        req_name, req_specifier = parse_require(req)
 
                         # if we have the package already present...
                         if req_name in installed_pkgs:
+                            # if there is no specifier for the requirement, we can ignore it
+                            if req_specifier is None:
+                                addition_necessary = False
+
                             # ...do we need to install the new version? if the existing specifier matches, we're fine
                             if installed_pkgs[req_name] in req_specifier:
                                 addition_necessary = False

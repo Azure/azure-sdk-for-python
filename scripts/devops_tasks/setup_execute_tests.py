@@ -19,15 +19,14 @@ import glob
 import logging
 import pdb
 from common_tasks import (
-    process_glob_string,
     run_check_call,
     cleanup_folder,
     clean_coverage,
     is_error_code_5_allowed,
-    create_code_coverage_params,
-    filter_packages_by_compatibility_override
+    create_code_coverage_params
 )
 from tox_harness import prep_and_run_tox
+from ci_tools.functions import discover_targeted_packages, filter_packages_by_compatibility_override
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -302,7 +301,7 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
+    targeted_packages = discover_targeted_packages(args.glob_string, target_dir, "", args.filter_type)
     compatible_targeted_packages = filter_packages_by_compatibility_override(targeted_packages)
 
     if targeted_packages != compatible_targeted_packages:
