@@ -78,7 +78,7 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     def test_document_api_version_form_recognizer_client(self):
         with pytest.raises(ValueError) as excinfo:
-            client = FormRecognizerClient("url", "key", api_version=DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
+            client = FormRecognizerClient("url", "key", api_version=DocumentAnalysisApiVersion.V2022_08_31)
         assert "Unsupported API version '2022-06-30-preview'. Please select from: {}\nAPI version '2022-06-30-preview' is " \
                "only available for DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
             ", ".join(v.value for v in FormRecognizerApiVersion)) == str(excinfo.value)
@@ -86,7 +86,7 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     def test_document_api_version_form_training_client(self):
         with pytest.raises(ValueError) as excinfo:
-            client = FormTrainingClient("url", "key", api_version=DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
+            client = FormTrainingClient("url", "key", api_version=DocumentAnalysisApiVersion.V2022_08_31)
         assert "Unsupported API version '2022-06-30-preview'. Please select from: {}\nAPI version '2022-06-30-preview' is " \
                "only available for DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
             ", ".join(v.value for v in FormRecognizerApiVersion)) == str(excinfo.value)

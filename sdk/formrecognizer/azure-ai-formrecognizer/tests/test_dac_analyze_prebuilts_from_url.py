@@ -11,7 +11,7 @@ from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -176,11 +176,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         except HttpResponseError as e:
             assert "https://fakeuri.com/blank%20space" in  e.response.request.body
 
-    @pytest.mark.skip("TODO check if the error changed")
     @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_receipt_url_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
-        with pytest.raises(ServiceRequestError):
+    def test_receipt_url_bad_endpoint(self, formrecognizer_test_api_key):
+        with pytest.raises(HttpResponseError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
@@ -198,11 +196,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy
-    def test_receipt_url_pass_stream(self, client, **kwargs):
+    def test_receipt_url_pass_stream(self, client):
         with open(self.receipt_png, "rb") as receipt:
             with pytest.raises(HttpResponseError):
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)

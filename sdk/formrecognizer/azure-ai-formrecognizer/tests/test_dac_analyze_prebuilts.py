@@ -13,7 +13,7 @@ from io import BytesIO
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.serialization import AzureJSONEncoder
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType, AddressValue
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -280,13 +280,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
                 content_type=FormContentType.IMAGE_PNG
             )
 
-    @pytest.mark.skip("TODO check if the error type changed")
     @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_receipt_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_receipt_bad_endpoint(self, formrecognizer_test_api_key):
         with open(self.receipt_jpg, "rb") as fd:
             my_file = fd.read()
-        with pytest.raises(ServiceRequestError):
+        with pytest.raises(HttpResponseError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document("prebuilt-receipt", my_file)
 
