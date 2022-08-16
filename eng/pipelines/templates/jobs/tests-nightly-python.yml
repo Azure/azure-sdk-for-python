@@ -7,7 +7,7 @@ jobs:
     displayName: Validate Release Candidate Python - Windows
     variables:
       skipComponentGovernanceDetection: true
-      PythonVersion: '3.10.0-rc.2'
+      PythonVersion: '3.11.0-rc.1'
 
     timeoutInMinutes: 90
 
@@ -43,7 +43,7 @@ jobs:
     displayName: Validate Release Candidate Python - Linux
     variables:
       skipComponentGovernanceDetection: true
-      PythonVersion: '3.10.0-rc.2'
+      PythonVersion: '3.11.0-rc.1'
 
     timeoutInMinutes: 90
 
