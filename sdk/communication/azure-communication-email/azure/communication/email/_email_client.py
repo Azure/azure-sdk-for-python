@@ -36,7 +36,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
                 endpoint = "https://" + endpoint
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        
+
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
 
