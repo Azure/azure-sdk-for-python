@@ -481,7 +481,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_filter_blob_tags_using_blob_sas(self, **kwargs):
+    def test_set_blob_tags_using_blob_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -511,7 +511,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         assert len(tags_on_blob) == len(tags)
 
         if self.is_live:
-            sleep(20)
+            sleep(15)
 
         # To filter in a specific container use:
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
