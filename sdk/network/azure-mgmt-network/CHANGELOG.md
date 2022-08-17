@@ -2,7 +2,7 @@
 
 ## 21.0.1 (2022-08-17)
 
-### Bugfixes
+### Bugs Fixed
 
   - Add `__version__` to `__init__.py` for package
 
