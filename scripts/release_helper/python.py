@@ -9,8 +9,8 @@ from common import IssueProcess, Common, get_origin_link_and_tag, IssuePackage
 from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_python_release_pipeline, run_pipeline
 
 # assignee dict which will be assigned to handle issues
-_PYTHON_OWNER = {'azure-sdk', 'Wzb123456789', 'BigCat20196'}
-_PYTHON_ASSIGNEE = {'msyyc'}
+_PYTHON_OWNER = {'azure-sdk', 'msyyc'}
+_PYTHON_ASSIGNEE = {'BigCat20196', 'Wzb123456789'}
 
 # labels
 _CONFIGURED = 'Configured'
