@@ -28,6 +28,7 @@ _LOGGER = logging.getLogger()
 
 CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
+# MAC_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/test-proxy"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
 CONTAINER_STARTUP_TIMEOUT = 6000
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
@@ -72,8 +73,26 @@ def get_container_info() -> "Optional[dict]":
 
     output, stderr = proc.communicate()
     try:
-        # This will succeed if we found a container with CONTAINER_NAME
-        return json.loads(output)
+        container_spec = json.loads(output)
+        if sys.platform.startswith("win") and os.environ.get("TF_BUILD"):
+            image_prefix = WINDOWS_IMAGE_SOURCE_PREFIX
+        # elif sys.platform.startswith("darwin"):
+        #     image_prefix = MAC_IMAGE_SOURCE_PREFIX
+        else:
+            image_prefix = LINUX_IMAGE_SOURCE_PREFIX
+
+        if container_spec['Image'] == image_prefix + ':' + get_image_tag():
+            # This will succeed if we found a container with CONTAINER_NAME
+            return container_spec
+        else:
+            remove_proc = subprocess.Popen(
+                shlex.split("docker rm -f " + CONTAINER_NAME),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdin=subprocess.DEVNULL
+            )
+            remove_output, remove_stderr = remove_proc.communicate()
+            return None
     # We'll get a JSONDecodeError on Py3 (ValueError on Py2) if output is empty (i.e. there's no proxy container)
     except ValueError:
         # Didn't find a container with CONTAINER_NAME
@@ -113,6 +132,11 @@ def create_container() -> None:
         image_prefix = WINDOWS_IMAGE_SOURCE_PREFIX
         path_prefix = "C:"
         linux_container_args = ""
+    # This is for the Silicon Mac and shows better performance in the Docker container(Using arm image).
+    # elif sys.platform.startswith("darwin"):
+    #     image_prefix = MAC_IMAGE_SOURCE_PREFIX
+    #     path_prefix = ""
+    #     linux_container_args = "--add-host=host.docker.internal:host-gateway"
     else:
         image_prefix = LINUX_IMAGE_SOURCE_PREFIX
         path_prefix = ""
