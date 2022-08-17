@@ -26,6 +26,7 @@ def generate(
     restapi_git_folder,
     autorest_bin=None,
     force_generation=False,
+    python_tag=None,
 ):
 
     sdk_folder = Path(sdk_folder).expanduser()
