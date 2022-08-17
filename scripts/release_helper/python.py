@@ -34,6 +34,7 @@ class IssueProcessPython(IssueProcess):
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
         self.is_specified_tag = False
+        self.rest_repo_hash = ''
 
     def get_delay_time(self):
         q = [comment.updated_at
@@ -46,7 +47,11 @@ class IssueProcessPython(IssueProcess):
 
         # Get the origin link and readme tag in issue body
         origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
-        self.is_specified_tag = any('->Readme Tag:' in line for line in issue_body_list)
+        self.is_specified_tag = any('->Readme Tag:' in line for line in issue_body_list[:5])
+
+        # # Get the rest repo hash in issue body
+        rest_repo_hash = [line.split(":", 1)[-1].strip() for line in issue_body_list[:5] if 'hash:' in line]
+        self.rest_repo_hash = rest_repo_hash[0] if rest_repo_hash else ''
 
         # get readme_link
         self.get_readme_link(origin_link)
@@ -97,7 +102,8 @@ class IssueProcessPython(IssueProcess):
                 res_run = run_pipeline(issue_link=issue_link,
                                        pipeline_url=release_pipeline_url,
                                        spec_readme=self.readme_link + '/readme.md',
-                                       python_tag=python_tag
+                                       python_tag=python_tag,
+                                       rest_repo_hash=self.rest_repo_hash
                                        )
                 if res_run:
                     self.log(f'{issue_number} run pipeline successfully')
