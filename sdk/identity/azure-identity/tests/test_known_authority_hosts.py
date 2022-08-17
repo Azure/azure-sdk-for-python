@@ -14,3 +14,16 @@ def test_set_known_authority_host():
     app = credential._get_app()
     expected = frozenset(known_authority_hosts)
     assert app._known_authority_hosts == expected
+
+def test_set_known_authority_host_twice():
+    known_authority_hosts = ["private.cloud"]
+    credential = MsalCredential(
+        client_id="CLIENT_ID",
+        known_authority_hosts=known_authority_hosts,
+    )
+    app = credential._get_app()
+    expected = frozenset(known_authority_hosts)
+    assert app._known_authority_hosts == expected
+    app = credential._get_app()
+    expected = frozenset(known_authority_hosts)
+    assert app._known_authority_hosts == expected
