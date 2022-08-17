@@ -13,7 +13,6 @@ from azure.ai.ml.operations import (
 )
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.ai.ml.operations._dataset_operations import DatasetOperations
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml.constants import (
     AZUREML_RESOURCE_PROVIDER,
@@ -24,7 +23,7 @@ from azure.ai.ml.constants import (
 from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 from pytest_mock import MockFixture
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._assets import Model, Code, Data, Environment, Dataset
+from azure.ai.ml.entities._assets import Model, Code, Data, Environment
 
 
 @pytest.fixture
@@ -45,11 +44,6 @@ def model_operations(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def code_operations(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml.operations._code_operations.CodeOperations")
-
-
-@pytest.fixture
-def dataset_operations(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml.operations._dataset_operations.DatasetOperations")
 
 
 @pytest.fixture
@@ -86,11 +80,6 @@ def mock_code_assets_operations(
 
 
 @pytest.fixture
-def mock_dataset_operations() -> Mock:
-    yield Mock()
-
-
-@pytest.fixture
 def mock_model_operations(
     mock_workspace_scope: OperationScope,
     mock_aml_services_2022_05_01: Mock,
@@ -121,14 +110,12 @@ def mock_endpoint_operations(
     mock_aml_services_2022_02_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_code_assets_operations: Mock,
-    mock_dataset_operations: Mock,
     mock_data_operations: Mock,
     mock_local_endpoint_helper: Mock,
 ) -> OnlineEndpointOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.CODE, mock_code_assets_operations)
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.MODEL, mock_code_assets_operations)
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.ENVIRONMENT, mock_code_assets_operations)
-    mock_machinelearning_client._operation_container.add(AzureMLResourceType.DATASET, mock_dataset_operations)
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.DATA, mock_data_operations)
 
     yield OnlineEndpointOperations(
@@ -146,7 +133,6 @@ def operation_container(
     datastore_operations: DatastoreOperations,
     model_operations: ModelOperations,
     data_operations: DataOperations,
-    dataset_operations: DatasetOperations,
     component_operations: ComponentOperations,
 ) -> OperationsContainer:
     container = OperationsContainer()
@@ -154,7 +140,6 @@ def operation_container(
     container.add(AzureMLResourceType.MODEL, model_operations)
     container.add(AzureMLResourceType.CODE, code_operations)
     container.add(AzureMLResourceType.ENVIRONMENT, environment_operations)
-    container.add(AzureMLResourceType.DATASET, dataset_operations)
     container.add(AzureMLResourceType.DATA, data_operations)
     container.add(AzureMLResourceType.COMPONENT, component_operations)
     yield container
@@ -233,19 +218,6 @@ class TestOperationOrchestration:
         result = operation_orchestrator.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
         assert environment == result
 
-    def test_dataset_arm_id(self, operation_orchestrator: OperationOrchestrator) -> None:
-        data = VERSIONED_RESOURCE_ID_FORMAT.format(
-            Test_Subscription,
-            Test_Resource_Group,
-            AZUREML_RESOURCE_PROVIDER,
-            Test_Workspace_Name,
-            AzureMLResourceType.DATASET,
-            "testdata",
-            "1",
-        )
-        result = operation_orchestrator.get_asset_arm_id(data, azureml_type=AzureMLResourceType.DATASET)
-        assert data == result
-
     def test_data_arm_id(self, operation_orchestrator: OperationOrchestrator) -> None:
         data = VERSIONED_RESOURCE_ID_FORMAT.format(
             Test_Subscription,
@@ -299,19 +271,6 @@ class TestOperationOrchestration:
         assert expected == operation_orchestrator.get_asset_arm_id(
             environment, azureml_type=AzureMLResourceType.ENVIRONMENT
         )
-
-    def test_dataset_arm_id_short_name(self, operation_orchestrator: OperationOrchestrator) -> None:
-        expected = VERSIONED_RESOURCE_ID_FORMAT.format(
-            Test_Subscription,
-            Test_Resource_Group,
-            AZUREML_RESOURCE_PROVIDER,
-            Test_Workspace_Name,
-            AzureMLResourceType.DATASET,
-            "testdata",
-            "1",
-        )
-        data = "testdata:1"
-        assert expected == operation_orchestrator.get_asset_arm_id(data, azureml_type=AzureMLResourceType.DATASET)
 
     def test_data_arm_id_short_name(self, operation_orchestrator: OperationOrchestrator) -> None:
         expected = VERSIONED_RESOURCE_ID_FORMAT.format(
@@ -452,29 +411,6 @@ class TestOperationOrchestration:
             )
         ),
     )
-    def test_dataset_arm_id_entity_no_call(
-        self,
-        operation_orchestrator: OperationOrchestrator,
-        mocker: MockFixture,
-    ) -> None:
-        data = Dataset(name="name", version="1", local_path="test_path")
-        result = operation_orchestrator._get_dataset_arm_id(data_asset=data, register_asset=False)
-        assert result.name == "name"
-        assert result.version == "1"
-        assert result.paths[0].folder == "azureml://datastores/datastore_id/paths/path/"
-
-    @patch(
-        "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
-        Mock(
-            return_value=ArtifactStorageInfo(
-                "name",
-                "1",
-                "path",
-                "/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
-                "azureml-blobstore-test",
-            )
-        ),
-    )
     def test_data_arm_id_entity_no_call(
         self,
         operation_orchestrator: OperationOrchestrator,
@@ -516,7 +452,7 @@ class TestOperationOrchestration:
         arm_id = arm_id[1:]
         # test when arm id didn't start with slash like subscriptions/xxx, proper error message is shown
         with pytest.raises(Exception) as error_info:
-            operation_orchestrator.get_asset_arm_id(arm_id, azureml_type=AzureMLResourceType.DATASET)
+            operation_orchestrator.get_asset_arm_id(arm_id, azureml_type=AzureMLResourceType.DATA)
         assert str(error_info.value) == f"Could not parse {arm_id}. If providing an ARM id, it should start with a '/'."
 
     def test_client_side_label_resolution(self, operation_orchestrator: OperationOrchestrator):
@@ -525,7 +461,7 @@ class TestOperationOrchestration:
         name = "foo"
         label = "latest"
         resolved_version = str(2)
-        assettype = AzureMLResourceType.DATASET
+        assettype = AzureMLResourceType.DATA
         expected = VERSIONED_RESOURCE_ID_FORMAT.format(
             Test_Subscription,
             Test_Resource_Group,
@@ -539,7 +475,7 @@ class TestOperationOrchestration:
         with patch.object(
             operation_orchestrator._operation_container.all_operations[assettype],
             "_managed_label_resolver",
-            {label: lambda _: Dataset(name=name, version=resolved_version)},
+            {label: lambda _: Data(name=name, version=resolved_version)},
         ):
             result = operation_orchestrator.get_asset_arm_id(f"{name}@{label}", assettype)
             assert expected == result

@@ -3,19 +3,20 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Union, Dict
+from typing import Dict, Union
 
 from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
-from .retry_settings import RetrySettings
-from .parallel_task import ParallelTask
-from ..resource_configuration import ResourceConfiguration
 
+from ..resource_configuration import ResourceConfiguration
+from .parallel_task import ParallelTask
+from .retry_settings import RetrySettings
 
 module_logger = logging.getLogger(__name__)
 
 
 class ParameterizedParallel(LoadableMixin):
-    """Parallel component that contains the traning parallel and supporting parameters for the parallel.
+    """Parallel component that contains the traning parallel and supporting
+    parameters for the parallel.
 
     :param retry_settings: parallel component run failed retry
     :type retry_settings: BatchRetrySettings

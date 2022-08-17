@@ -2,16 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from typing import Dict
-from azure.ai.ml.constants import TYPE
-from azure.ai.ml.entities import Compute
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml.constants import TYPE
+from azure.ai.ml.entities._compute.compute import Compute
 
 
 class UnsupportedCompute(Compute):
     """Unsupported compute resource.
 
-    Only for use displaying compute properties for resources not fully supported in the SDK.
+    Only for use displaying compute properties for resources not fully
+    supported in the SDK.
     """
 
     def __init__(

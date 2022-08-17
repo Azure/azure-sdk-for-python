@@ -4,7 +4,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from .azure_storage import *
 from .adls_gen1 import *
+from .azure_storage import *
 
 # nopycln: file

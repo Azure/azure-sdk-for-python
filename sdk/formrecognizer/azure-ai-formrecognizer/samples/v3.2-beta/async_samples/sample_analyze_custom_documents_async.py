@@ -126,7 +126,7 @@ async def main():
         )
         async with document_model_admin_client:
             poller = await document_model_admin_client.begin_build_model(
-                ModelBuildMode.TEMPLATE, os.getenv("CONTAINER_SAS_URL")
+                ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")
             )
             model = await poller.result()
             model_id = model.model_id

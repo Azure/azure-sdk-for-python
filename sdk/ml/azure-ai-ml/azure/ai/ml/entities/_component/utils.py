@@ -1,6 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Dict
 
 from azure.ai.ml.entities._inputs_outputs import Input, Output

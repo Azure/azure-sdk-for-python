@@ -43,6 +43,7 @@ steps:
     - template: /eng/common/testproxy/test-proxy-tool.yml
       parameters:
         runProxy: false
+        targetVersion: 1.0.0-dev.20220810.2
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml

@@ -100,7 +100,7 @@ class TestManagement(FormRecognizerTest):
     @recorded_by_proxy
     def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model("template", formrecognizer_storage_container_sas_url, description="mgmt model")
+        poller = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
         model = poller.result()
 
         model_from_get = client.get_model(model.model_id)

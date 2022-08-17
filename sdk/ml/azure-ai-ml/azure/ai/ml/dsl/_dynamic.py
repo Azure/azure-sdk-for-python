@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import types
-from typing import Sequence, Callable
-from inspect import Parameter, Signature
 import logging
+import types
+from inspect import Parameter, Signature
+from typing import Callable, Sequence
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError, UserErrorException
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
@@ -104,7 +104,8 @@ def _assert_arg_valid(kwargs, keys, func_name):
 
 
 def _update_dct_if_not_exist(dst, src):
-    """Update the dst dict with the source dict if the key is not in the dst dict."""
+    """Update the dst dict with the source dict if the key is not in the dst
+    dict."""
     for k, v in src.items():
         if k not in dst:
             dst[k] = v

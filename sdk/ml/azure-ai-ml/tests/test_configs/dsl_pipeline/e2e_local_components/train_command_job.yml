@@ -1,12 +1,12 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
-# this command job does not work. 
+# this command job does not work.
 # It is to illustrate literal inputs and named output support required in command job for parity with command component job.
 type: command
 name: awesome_job_24234
 display_name: awesome_job
 inputs:
-  training_input: 
-    data: 
+  training_input:
+    data:
       path: azureml:iris-data
   max_epocs: 20
   learning_rate: 1.8
@@ -15,18 +15,17 @@ outputs:
     data:
       path: /irs-model-folder
   reports:
-    data: 
+    data:
       path: /iris-training-reports
 code: ./train_src
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
 compute:
   target: azureml:cpu-cluster
 command: >-
-  python train.py 
-  --training_data {inputs.training_data} 
-  --max_epocs {inputs.max_epocs}  
+  python train.py
+  --training_data {inputs.training_data}
+  --max_epocs {inputs.max_epocs}
   --learning_rate {inputs.learning_rate}
-  --learning_rate_schedule 'time-based' 
+  --learning_rate_schedule 'time-based'
   --model_output {outputs.trained_model}
   --reports {outputs.reports}
-

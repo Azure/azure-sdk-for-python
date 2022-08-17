@@ -26,9 +26,9 @@ max_concurrency_per_instance: 1
 
 
 task:
-  type: function
+  type: run_function
   code: ./src
   entry_script: file_batch_inference.py
-  args: >-
+  program_arguments: >-
     --job_output_path ${{outputs.job_output_path}}
   environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

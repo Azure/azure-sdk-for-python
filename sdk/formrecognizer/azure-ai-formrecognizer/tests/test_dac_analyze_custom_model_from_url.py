@@ -41,7 +41,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model("template", formrecognizer_selection_mark_storage_container_sas_url)
+        poller = client.begin_build_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
 
         responses = []
@@ -83,7 +83,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model("template", formrecognizer_table_variable_rows_container_sas_url)
+        build_poller = client.begin_build_model("template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url)
         model = build_poller.result()
 
         responses = []
@@ -124,7 +124,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model("template", formrecognizer_table_fixed_rows_container_sas_url)
+        build_poller = client.begin_build_model("template", blob_container_url=formrecognizer_table_fixed_rows_container_sas_url)
         model = build_poller.result()
 
         responses = []

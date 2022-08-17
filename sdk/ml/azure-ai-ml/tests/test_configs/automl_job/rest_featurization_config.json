@@ -45,18 +45,18 @@
         ],
         "hash_one_hot_encoder": [
             {
-                "fields": ["Name"], 
+                "fields": ["Name"],
                 "parameters": {
                     "number_of_bits": 3
                 }
             },
             {
-                "fields": ["Hair Color", "Eye Color"], 
+                "fields": ["Hair Color", "Eye Color"],
                 "parameters": {
                     "number_of_bits": 1
                 }
             }
         ]
     },
-    "dataset_language": "English",
+    "dataset_language": "English"
 }

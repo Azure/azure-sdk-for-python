@@ -632,12 +632,12 @@ for doc in model.training_documents:
 ```
 
 Train a custom model with `3.2.x`:
-Use `begin_build_model()` to build a custom model. Please note that this method has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes.
+Use `begin_build_model()` to build a custom model. Please note that this method has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes. Additionally, `blob_container_url` is a required keyword-only parameter.
 
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
-    "template", container_sas_url, model_id="my-model-id", description="my model description"
+    "template", blob_container_url=container_sas_url, model_id="my-model-id", description="my model description"
 )
 model = poller.result()
 

@@ -20,10 +20,14 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
-    def details(self) -> Mapping[str, Any]: # pylint: disable=no-self-use, unused-argument
+    def details(  # pylint: disable=no-self-use, unused-argument
+        self,
+    ) -> Mapping[str, Any]:
         ...
 
-    def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
+    def polling_method(  # pylint: disable=no-self-use
+        self,
+    ) -> AsyncPollingMethod[PollingReturnType]:
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
@@ -32,7 +36,9 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
     def status(self) -> str:  # pylint: disable=no-self-use
         ...
 
-    async def result(self) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    async def result(  # pylint: disable=no-self-use, unused-argument
+        self,
+    ) -> PollingReturnType:
         ...
 
     async def wait(self) -> None:  # pylint: disable=no-self-use, unused-argument
@@ -68,8 +74,8 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
             last_updated_on = datetime.datetime.strptime(last_updated_on, "%Y-%m-%dT%H:%M:%SZ")
         return {
             "operation_id": parse_operation_id(
-                    self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
-                ),
+                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+            ),
             "operation_kind": self._current_body.get("kind", None),
             "percent_completed": self._current_body.get("percentCompleted", 0),
             "resource_location_url": self._current_body.get("resourceLocation", None),
@@ -79,10 +85,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
 
     @classmethod
     def from_continuation_token(
-        cls,
-        polling_method: AsyncPollingMethod[PollingReturnType],
-        continuation_token: str,
-        **kwargs: Any
+        cls, polling_method: AsyncPollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
     ) -> "AsyncDocumentModelAdministrationClientLROPoller":
         (
             client,
