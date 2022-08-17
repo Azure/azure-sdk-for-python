@@ -49,6 +49,7 @@ jobs:
 
           if [ "$(PYTHON_COMMIT)" ]; then
             git reset --hard $(PYTHON_COMMIT)
+            echo $(PYTHON_COMMIT)
           fi
 
           # install autorest
