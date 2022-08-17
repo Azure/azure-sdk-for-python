@@ -2,31 +2,33 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
 
 import concurrent.futures
+import logging
+import time
 from concurrent.futures import Future
+from typing import Any, Callable, Union
+
+import requests
+
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.entities import BatchDeployment
+from azure.ai.ml.entities._assets._artifacts.code import Code
+from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
-    HttpResponseError,
     ClientAuthenticationError,
+    HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     map_error,
 )
-from azure.mgmt.core.exceptions import ARMErrorFormat
-import logging
-from azure.ai.ml.entities._deployment.deployment import Deployment
-import requests
-import time
 from azure.core.polling import LROPoller
-from typing import Callable, Any, Union
-from .utils import show_debug_info, initialize_logger_info
+from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import BatchDeployment
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
-from azure.ai.ml.entities._assets._artifacts.code import Code
-
-from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from .utils import initialize_logger_info, show_debug_info
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -49,8 +51,9 @@ def polling_wait(
     """
     module_logger.warning(f"{message}")
     if is_local:
-        """We removed timeout on local endpoints in case
-        it takes a long time to pull image or install conda env.
+        """We removed timeout on local endpoints in case it takes a long time
+        to pull image or install conda env.
+
         We want user to be able to see that.
         """
         while not poller.done():
@@ -113,7 +116,11 @@ def post_and_validate_response(url, data=None, json=None, headers=None, **kwargs
                 # exception is not in the json format
                 raise Exception(response.content.decode("utf-8"))
         failure_msg = r_json.get("error", {}).get("message", response)
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         map_error(status_code=response.status_code, response=response, error_map=error_map)
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
 
@@ -121,8 +128,9 @@ def post_and_validate_response(url, data=None, json=None, headers=None, **kwargs
 
 
 def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
-    """Upload code, dependency, model dependencies.
-    For BatchDeployment only register compute.
+    """Upload code, dependency, model dependencies. For BatchDeployment only
+    register compute.
+
     :param Deployment deployment: Endpoint deployment object.
     :param OperationOrchestrator orchestrators: Operation Orchestrator.
     """

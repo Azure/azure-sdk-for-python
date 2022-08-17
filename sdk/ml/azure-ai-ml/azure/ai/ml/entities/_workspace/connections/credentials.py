@@ -3,12 +3,12 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ManagedIdentity,
-    UsernamePassword,
-    PersonalAccessToken,
-    SharedAccessSignature,
     ConnectionAuthType,
+    ManagedIdentity,
+    PersonalAccessToken,
     ServicePrincipal,
+    SharedAccessSignature,
+    UsernamePassword,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -19,8 +19,8 @@ class WorkspaceConnectionCredentials(RestTranslatableMixin):
 
 
 class PatTokenCredentials(WorkspaceConnectionCredentials):
-    """
-    Personal access token credentials
+    """Personal access token credentials.
+
     :param pat: personal access token
     :type pat: str
     """
@@ -47,8 +47,8 @@ class PatTokenCredentials(WorkspaceConnectionCredentials):
 
 
 class SasTokenCredentials(WorkspaceConnectionCredentials):
-    """
-    Shared Access Signatures Token Credentials
+    """Shared Access Signatures Token Credentials.
+
     :param sas: sas token
     :type sas: str
     """
@@ -75,8 +75,8 @@ class SasTokenCredentials(WorkspaceConnectionCredentials):
 
 
 class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
-    """
-    Username Password Credentials
+    """Username Password Credentials.
+
     :param username: username
     :type username: str
     :param password: password
@@ -100,7 +100,10 @@ class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
 
     @classmethod
     def _from_rest_object(cls, obj: UsernamePassword) -> "UsernamePasswordCredentials":
-        return cls(username=obj.username if obj.username else None, password=obj.password if obj.password else None)
+        return cls(
+            username=obj.username if obj.username else None,
+            password=obj.password if obj.password else None,
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UsernamePasswordCredentials):
@@ -112,8 +115,8 @@ class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
 
 
 class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
-    """
-    Managed Identity Credentials
+    """Managed Identity Credentials.
+
     :param client_id: client id, should be guid
     :type client_id: str
     :param resource_id: resource id
@@ -133,7 +136,8 @@ class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     @classmethod
     def _from_rest_object(cls, obj: ManagedIdentity) -> "ManagedIdentityCredentials":
         return cls(
-            username=obj.client_id if obj.client_id else None, password=obj.resource_id if obj.resource_id else None
+            username=obj.client_id if obj.client_id else None,
+            password=obj.resource_id if obj.resource_id else None,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -146,8 +150,8 @@ class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
 
 
 class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
-    """
-    Service Principal Credentials
+    """Service Principal Credentials.
+
     :param client_id: client id, should be guid
     :type client_id: str
     :param client_secret: client secret
@@ -171,7 +175,11 @@ class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
         self.tenant_id = tenant_id
 
     def _to_rest_object(self) -> ServicePrincipal:
-        return ServicePrincipal(client_id=self.client_id, client_secret=self.client_secret, tenant_id=self.tenant_id)
+        return ServicePrincipal(
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            tenant_id=self.tenant_id,
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: ServicePrincipal) -> "ServicePrincipalCredentials":

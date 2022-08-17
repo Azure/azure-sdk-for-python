@@ -2,15 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import uuid
-import random
 import logging
+import random
+import uuid
 
+from azure.ai.ml._azure_environments import _get_base_url_from_metadata
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
 from azure.ai.ml.constants import ArmConstants
 from azure.identity import ChainedTokenCredential
-from azure.ai.ml._azure_environments import _get_base_url_from_metadata
-
 
 module_logger = logging.getLogger(__name__)
 
@@ -44,7 +43,10 @@ def get_resource_group_location(
 
 
 def delete_resource_by_arm_id(
-    credentials: ChainedTokenCredential, subscription_id: str, arm_id: str, api_version: str
+    credentials: ChainedTokenCredential,
+    subscription_id: str,
+    arm_id: str,
+    api_version: str,
 ) -> None:
     if arm_id:
         client = ResourceManagementClient(

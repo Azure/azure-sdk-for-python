@@ -6,15 +6,19 @@
 import json
 import shutil
 from pathlib import Path
-from azure.ai.ml.entities import OnlineEndpoint
 from typing import Iterable
+
+from azure.ai.ml.entities import OnlineEndpoint
 from azure.ai.ml.entities._load_functions import load_online_endpoint
 
 
 class EndpointStub:
-    """EndpointStub is a class for representing local endpoints which do not have deployments created under them yet.
-    To maintain a catalog of local endpoints, it writes a yaml file with the endpoint specification to the user's machine
-    in an idempotent, well-known location.
+    """EndpointStub is a class for representing local endpoints which do not
+    have deployments created under them yet.
+
+    To maintain a catalog of local endpoints, it writes a yaml file with
+    the endpoint specification to the user's machine in an idempotent,
+    well-known location.
     """
 
     def create_or_update(self, endpoint: OnlineEndpoint):
@@ -52,7 +56,11 @@ class EndpointStub:
         shutil.rmtree(build_directory)
 
     def invoke(self):
-        """Invoke a local endpoint. For an EndpointStub, it cannot invoke, so we return a helper message."""
+        """Invoke a local endpoint.
+
+        For an EndpointStub, it cannot invoke, so we return a helper
+        message.
+        """
         return "This local endpoint does not have any deployments, so it cannot be invoked. Please use 'az ml online-deployment create --local' before invoking."
 
     def _create_endpoint_cache(self, endpoint: OnlineEndpoint):
