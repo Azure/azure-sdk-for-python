@@ -30,7 +30,7 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
     _, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     async with client:
-        with pytest.raises(ConnectError):
+        with pytest.raises(EventHubError):
             batch = EventDataBatch()
             batch.add(EventData("test data"))
             await client.send_batch(batch)

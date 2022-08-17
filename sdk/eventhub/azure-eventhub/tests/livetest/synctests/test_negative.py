@@ -15,7 +15,8 @@ from azure.eventhub import (
 from azure.eventhub.exceptions import (
     ConnectError,
     AuthenticationError,
-    EventDataSendError
+    EventDataSendError,
+    EventHubError
 )
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
@@ -28,7 +29,7 @@ def test_send_batch_with_invalid_hostname(invalid_hostname):
                     "and blocking other tests")
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     with client:
-        with pytest.raises(ConnectError):
+        with pytest.raises(EventHubError):
             batch = EventDataBatch()
             batch.add(EventData("test data"))
             client.send_batch(batch)
