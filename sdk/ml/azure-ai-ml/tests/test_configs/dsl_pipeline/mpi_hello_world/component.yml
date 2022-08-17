@@ -7,7 +7,7 @@ version: 1
 compute: azureml:gpu-cluster
 environment: azureml:AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu:15
 command: >-
-  printenv 
+  printenv
 resources:
   instance_count: 2
 distribution:

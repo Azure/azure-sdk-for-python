@@ -6,62 +6,34 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CheckNameAvailability
-    from ._models_py3 import CheckNameAvailabilityResult
-    from ._models_py3 import MessageCountDetails
-    from ._models_py3 import NamespaceCreateOrUpdateParameters
-    from ._models_py3 import NamespaceListResult
-    from ._models_py3 import NamespaceResource
-    from ._models_py3 import NamespaceUpdateParameters
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import QueueCreateOrUpdateParameters
-    from ._models_py3 import QueueListResult
-    from ._models_py3 import QueueResource
-    from ._models_py3 import RegenerateKeysParameters
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceListKeys
-    from ._models_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-    from ._models_py3 import SharedAccessAuthorizationRuleListResult
-    from ._models_py3 import SharedAccessAuthorizationRuleResource
-    from ._models_py3 import Sku
-    from ._models_py3 import SubscriptionCreateOrUpdateParameters
-    from ._models_py3 import SubscriptionListResult
-    from ._models_py3 import SubscriptionResource
-    from ._models_py3 import TopicCreateOrUpdateParameters
-    from ._models_py3 import TopicListResult
-    from ._models_py3 import TopicResource
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import CheckNameAvailability  # type: ignore
-    from ._models import CheckNameAvailabilityResult  # type: ignore
-    from ._models import MessageCountDetails  # type: ignore
-    from ._models import NamespaceCreateOrUpdateParameters  # type: ignore
-    from ._models import NamespaceListResult  # type: ignore
-    from ._models import NamespaceResource  # type: ignore
-    from ._models import NamespaceUpdateParameters  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import QueueCreateOrUpdateParameters  # type: ignore
-    from ._models import QueueListResult  # type: ignore
-    from ._models import QueueResource  # type: ignore
-    from ._models import RegenerateKeysParameters  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceListKeys  # type: ignore
-    from ._models import SharedAccessAuthorizationRuleCreateOrUpdateParameters  # type: ignore
-    from ._models import SharedAccessAuthorizationRuleListResult  # type: ignore
-    from ._models import SharedAccessAuthorizationRuleResource  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SubscriptionCreateOrUpdateParameters  # type: ignore
-    from ._models import SubscriptionListResult  # type: ignore
-    from ._models import SubscriptionResource  # type: ignore
-    from ._models import TopicCreateOrUpdateParameters  # type: ignore
-    from ._models import TopicListResult  # type: ignore
-    from ._models import TopicResource  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import CheckNameAvailability
+from ._models_py3 import CheckNameAvailabilityResult
+from ._models_py3 import MessageCountDetails
+from ._models_py3 import NamespaceCreateOrUpdateParameters
+from ._models_py3 import NamespaceListResult
+from ._models_py3 import NamespaceResource
+from ._models_py3 import NamespaceUpdateParameters
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import QueueCreateOrUpdateParameters
+from ._models_py3 import QueueListResult
+from ._models_py3 import QueueResource
+from ._models_py3 import RegenerateKeysParameters
+from ._models_py3 import Resource
+from ._models_py3 import ResourceListKeys
+from ._models_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+from ._models_py3 import SharedAccessAuthorizationRuleListResult
+from ._models_py3 import SharedAccessAuthorizationRuleResource
+from ._models_py3 import Sku
+from ._models_py3 import SubscriptionCreateOrUpdateParameters
+from ._models_py3 import SubscriptionListResult
+from ._models_py3 import SubscriptionResource
+from ._models_py3 import TopicCreateOrUpdateParameters
+from ._models_py3 import TopicListResult
+from ._models_py3 import TopicResource
+from ._models_py3 import TrackedResource
+
 
 from ._service_bus_management_client_enums import (
     AccessRights,
@@ -73,7 +45,9 @@ from ._service_bus_management_client_enums import (
     SkuTier,
     UnavailableReason,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'CheckNameAvailability',
     'CheckNameAvailabilityResult',
@@ -111,3 +85,5 @@ __all__ = [
     'SkuTier',
     'UnavailableReason',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

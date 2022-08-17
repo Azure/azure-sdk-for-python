@@ -7,11 +7,17 @@
 
 
 from typing import Union
-from azure.ai.ml._ml_exceptions import MlException, ErrorCategory, ErrorTarget
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 class LocalEndpointNotFoundError(MlException):
-    def __init__(self, endpoint_name: str, deployment_name: str = None, error_category=ErrorCategory.USER_ERROR):
+    def __init__(
+        self,
+        endpoint_name: str,
+        deployment_name: str = None,
+        error_category=ErrorCategory.USER_ERROR,
+    ):
         resource_name = (
             f"Local deployment ({endpoint_name} / {deployment_name})"
             if deployment_name
@@ -48,7 +54,10 @@ class DockerEngineNotAvailableError(MlException):
     def __init__(self, error_category=ErrorCategory.UNKNOWN):
         msg = "Please make sure Docker Engine is installed and running. https://docs.docker.com/engine/install/"
         super().__init__(
-            message=msg, no_personal_data_message=msg, target=ErrorTarget.LOCAL_ENDPOINT, error_category=error_category
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.LOCAL_ENDPOINT,
+            error_category=error_category,
         )
 
 
@@ -63,7 +72,12 @@ class MultipleLocalDeploymentsFoundError(MlException):
 
 
 class InvalidLocalEndpointError(MlException):
-    def __init__(self, message: str, no_personal_data_message: str, error_category=ErrorCategory.USER_ERROR):
+    def __init__(
+        self,
+        message: str,
+        no_personal_data_message: str,
+        error_category=ErrorCategory.USER_ERROR,
+    ):
         super().__init__(
             message=message,
             target=ErrorTarget.LOCAL_ENDPOINT,
@@ -86,7 +100,12 @@ class LocalEndpointImageBuildError(MlException):
 
 
 class LocalEndpointImageBuildCondaError(LocalEndpointImageBuildError):
-    def __init__(self, error: Union[str, Exception], conda_file_path: str, conda_yaml_contents: str):
+    def __init__(
+        self,
+        error: Union[str, Exception],
+        conda_file_path: str,
+        conda_yaml_contents: str,
+    ):
         err = f"Issue creating conda environment:\n{error}"
         if conda_file_path:
             err += f"\nPlease check configuration of the conda yaml source: {conda_file_path}"
@@ -145,7 +164,10 @@ class RequiredLocalArtifactsNotFoundError(MlException):
 class InvalidVSCodeRequestError(MlException):
     def __init__(self, error_category=ErrorCategory.USER_ERROR, msg=None):
         super().__init__(
-            message=msg, target=ErrorTarget.LOCAL_ENDPOINT, no_personal_data_message=msg, error_category=error_category
+            message=msg,
+            target=ErrorTarget.LOCAL_ENDPOINT,
+            no_personal_data_message=msg,
+            error_category=error_category,
         )
 
 

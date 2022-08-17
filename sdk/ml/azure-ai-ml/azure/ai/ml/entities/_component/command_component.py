@@ -3,26 +3,23 @@
 # ---------------------------------------------------------
 import os
 from pathlib import Path
-from marshmallow import INCLUDE, Schema
 from typing import Dict, Union
 
+from marshmallow import Schema
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
-from azure.ai.ml.entities._job.distribution import (
-    MpiDistribution,
-    TensorFlowDistribution,
-    PyTorchDistribution,
-)
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
-from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
+from azure.ai.ml.constants import COMPONENT_TYPE, NodeType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.constants import COMPONENT_TYPE
-from azure.ai.ml.constants import NodeType
-from .component import Component
-from .._util import validate_attribute_type, convert_ordered_dict_to_dict
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-from .._validation import ValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
+from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._validation import ValidationResult
+from .component import Component
 
 
 class CommandComponent(Component, ParameterizedCommand):
@@ -54,6 +51,8 @@ class CommandComponent(Component, ParameterizedCommand):
     :type outputs: dict
     :param instance_count: promoted property from resources.instance_count
     :type instance_count: int
+    :param is_deterministic: Whether the command component is deterministic.
+    :type is_deterministic: bool
     """
 
     def __init__(
@@ -72,6 +71,7 @@ class CommandComponent(Component, ParameterizedCommand):
         inputs: Dict = None,
         outputs: Dict = None,
         instance_count: int = None,  # promoted property from resources.instance_count
+        is_deterministic: bool = True,
         **kwargs,
     ):
         # validate init params are valid type
@@ -94,6 +94,7 @@ class CommandComponent(Component, ParameterizedCommand):
             display_name=display_name,
             inputs=inputs,
             outputs=outputs,
+            is_deterministic=is_deterministic,
             **kwargs,
         )
 
@@ -119,8 +120,7 @@ class CommandComponent(Component, ParameterizedCommand):
 
     @property
     def instance_count(self) -> int:
-        """
-        Return value of promoted property resources.instance_count.
+        """Return value of promoted property resources.instance_count.
 
         :return: Value of resources.instance_count.
         :rtype: Optional[int]
@@ -198,6 +198,6 @@ class CommandComponent(Component, ParameterizedCommand):
 
     def __str__(self):
         try:
-            return self._ordered_yaml()
+            return self._to_yaml()
         except BaseException:
             return super(CommandComponent, self).__str__()

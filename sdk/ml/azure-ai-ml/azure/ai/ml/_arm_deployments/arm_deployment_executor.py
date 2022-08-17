@@ -2,29 +2,27 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Any, Optional
-from azure.ai.ml._azure_environments import (
-    _get_cloud_details,
-    _get_base_url_from_metadata,
-    _resource_to_scopes,
-    _get_azure_portal_id_from_metadata,
-)
-from azure.core.polling import LROPoller
-from azure.ai.ml._arm_deployments.arm_helper import deployment_message_mapping
-from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
-from azure.identity import ChainedTokenCredential
+# pylint: disable=protected-access
+
 import logging
-from azure.ai.ml._vendor.azure_resources.models import DeploymentProperties, Deployment
 import time
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec, initialize_logger_info
-from azure.ai.ml.constants import (
-    ArmConstants,
-    ENDPOINT_DEPLOYMENT_START_MSG,
-    OperationStatus,
-    LROConfigurations,
+from typing import Any, Dict, Optional
+
+from azure.ai.ml._arm_deployments.arm_helper import deployment_message_mapping
+from azure.ai.ml._azure_environments import (
+    _get_azure_portal_id_from_metadata,
+    _get_base_url_from_metadata,
+    _get_cloud_details,
+    _resource_to_scopes,
 )
-from azure.ai.ml._ml_exceptions import ErrorTarget, ErrorCategory, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
+from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec, initialize_logger_info
+from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
+from azure.ai.ml._vendor.azure_resources.models import Deployment, DeploymentProperties
+from azure.ai.ml.constants import ENDPOINT_DEPLOYMENT_START_MSG, ArmConstants, LROConfigurations, OperationStatus
+from azure.core.polling import LROPoller
+from azure.identity import ChainedTokenCredential
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -140,7 +138,8 @@ class ArmDeploymentExecutor(object):
 
     def _check_deployment_status(self, resources_deployed: Dict[str, Any]) -> None:
         deployment_operations = self._deployment_operations_client.list(
-            resource_group_name=self._resource_group_name, deployment_name=self._deployment_name
+            resource_group_name=self._resource_group_name,
+            deployment_name=self._deployment_name,
         )
 
         for deployment_operation in deployment_operations:
@@ -162,7 +161,10 @@ class ArmDeploymentExecutor(object):
             )
             deployment_message = deployment_message_mapping[arm_id_obj.asset_type].format(f"{resource_name} ")
             if target_resource.resource_name not in self._resources_being_deployed.keys():
-                self._resources_being_deployed[target_resource.resource_name] = (deployment_message, None)
+                self._resources_being_deployed[target_resource.resource_name] = (
+                    deployment_message,
+                    None,
+                )
 
             if (
                 properties.provisioning_state
@@ -193,7 +195,10 @@ class ArmDeploymentExecutor(object):
                 except Exception:
                     duration_in_min_sec = ""
 
-                self._resources_being_deployed[resource_name] = (resource_type, provisioning_state)
+                self._resources_being_deployed[resource_name] = (
+                    resource_type,
+                    provisioning_state,
+                )
 
                 if provisioning_state == OperationStatus.FAILED and previous_state != OperationStatus.FAILED:
                     status_code = properties.status_code

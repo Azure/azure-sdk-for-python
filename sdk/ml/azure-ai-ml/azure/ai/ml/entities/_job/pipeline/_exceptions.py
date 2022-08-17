@@ -1,13 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml._ml_exceptions import MlException, ErrorCategory, ErrorTarget
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 class UserErrorException(MlException):
     """Exception raised when invalid or unsupported inputs are provided."""
 
-    def __init__(self, message, no_personal_data_message=None, error_category=ErrorCategory.USER_ERROR):
+    def __init__(
+        self,
+        message,
+        no_personal_data_message=None,
+        error_category=ErrorCategory.USER_ERROR,
+    ):
         super().__init__(
             message=message,
             target=ErrorTarget.PIPELINE,
@@ -17,17 +22,20 @@ class UserErrorException(MlException):
 
 
 class CannotSetAttributeError(UserErrorException):
-    """Exception raised when a user try setting attributes of inputs/outputs."""
+    """Exception raised when a user try setting attributes of
+    inputs/outputs."""
 
     def __init__(self, object_name):
         msg = "It is not allowed to set attribute of %r." % object_name
         super(CannotSetAttributeError, self).__init__(
-            message=msg, no_personal_data_message="It is not allowed to set attribute of object."
+            message=msg,
+            no_personal_data_message="It is not allowed to set attribute of object.",
         )
 
 
 class UnsupportedParameterKindError(UserErrorException):
-    """Exception raised when a user try setting attributes of inputs/outputs."""
+    """Exception raised when a user try setting attributes of
+    inputs/outputs."""
 
     def __init__(self, func_name):
         msg = "%r: dsl pipeline does not accept *args or **kwargs as parameters." % func_name
@@ -42,7 +50,8 @@ class KeywordError(UserErrorException):
 
 
 class UnexpectedKeywordError(KeywordError):
-    """Exception raised when an unexpected keyword parameter is provided in dynamic functions."""
+    """Exception raised when an unexpected keyword parameter is provided in
+    dynamic functions."""
 
     def __init__(self, func_name, keyword, keywords=None):
         message = "%s() got an unexpected keyword argument %r" % (func_name, keyword)
@@ -51,7 +60,8 @@ class UnexpectedKeywordError(KeywordError):
 
 
 class UnexpectedAttributeError(KeywordError, AttributeError):
-    """Exception raised when an unexpected keyword is invoked by attribute, e.g. inputs.invalid_key"""
+    """Exception raised when an unexpected keyword is invoked by attribute,
+    e.g. inputs.invalid_key."""
 
     def __init__(self, keyword, keywords=None):
         message = "Got an unexpected attribute %r" % keyword
@@ -60,7 +70,8 @@ class UnexpectedAttributeError(KeywordError, AttributeError):
 
 
 class MissingPositionalArgsError(KeywordError):
-    """Exception raised when missing positional keyword parameter in dynamic functions."""
+    """Exception raised when missing positional keyword parameter in dynamic
+    functions."""
 
     def __init__(self, func_name, missing_args):
         message = "%s() missing %d required positional argument(s): %s." % (
@@ -72,7 +83,8 @@ class MissingPositionalArgsError(KeywordError):
 
 
 class TooManyPositionalArgsError(KeywordError):
-    """Exception raised when too many positional arguments is provided in dynamic functions."""
+    """Exception raised when too many positional arguments is provided in
+    dynamic functions."""
 
     def __init__(self, func_name, min_number, max_number, given_number):
         message = "%s() takes %s positional argument but %d were given." % (
@@ -84,7 +96,8 @@ class TooManyPositionalArgsError(KeywordError):
 
 
 class MultipleValueError(KeywordError):
-    """Exception raised when giving multiple value of a keyword parameter in dynamic functions."""
+    """Exception raised when giving multiple value of a keyword parameter in
+    dynamic functions."""
 
     def __init__(self, func_name, keyword):
         message = "%s() got multiple values for argument %r." % (func_name, keyword)
@@ -97,12 +110,3 @@ class UnsupportedOperationError(UserErrorException):
     def __init__(self, operation_name):
         message = "Operation %s is not supported." % operation_name
         super().__init__(message=message, no_personal_data_message=message)
-
-
-class MldesignerComponentDefiningError(UserErrorException):
-    """This error indicates that the user define a mldesigner.command_component in an incorrect way."""
-
-    def __init__(self, cause):
-        """Init the error with the cause which causes the wrong mldesigner.command_component."""
-        msg = "Defining the component failed due to {}."
-        super().__init__(message=msg.format(cause), no_personal_data_message=msg.format("[cause]"))

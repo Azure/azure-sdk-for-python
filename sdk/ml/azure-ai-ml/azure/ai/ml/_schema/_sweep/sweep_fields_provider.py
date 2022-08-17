@@ -1,26 +1,26 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields
 
-from azure.ai.ml._schema import NestedField, UnionField, StringTransformedEnum
-from azure.ai.ml._schema._sweep.sweep_sampling_algorithm import (
-    RandomSamplingAlgorithmSchema,
-    GridSamplingAlgorithmSchema,
-    BayesianSamplingAlgorithmSchema,
-)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
-
-
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema._sweep.search_space import (
-    UniformSchema,
     ChoiceSchema,
     NormalSchema,
-    QUniformSchema,
     QNormalSchema,
+    QUniformSchema,
     RandintSchema,
+    UniformSchema,
 )
-
+from azure.ai.ml._schema._sweep.sweep_sampling_algorithm import (
+    BayesianSamplingAlgorithmSchema,
+    GridSamplingAlgorithmSchema,
+    RandomSamplingAlgorithmSchema,
+)
 from azure.ai.ml._schema._sweep.sweep_termination import (
     BanditPolicySchema,
     MedianStoppingPolicySchema,
@@ -42,7 +42,11 @@ def SamplingAlgorithmField():
 def SamplingAlgorithmTypeField():
     return StringTransformedEnum(
         required=True,
-        allowed_values=[SamplingAlgorithmType.BAYESIAN, SamplingAlgorithmType.GRID, SamplingAlgorithmType.RANDOM],
+        allowed_values=[
+            SamplingAlgorithmType.BAYESIAN,
+            SamplingAlgorithmType.GRID,
+            SamplingAlgorithmType.RANDOM,
+        ],
         metadata={"description": "The sampling algorithm to use for the hyperparameter sweep."},
     )
 
