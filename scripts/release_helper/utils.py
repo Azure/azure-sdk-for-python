@@ -109,6 +109,7 @@ def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo
             }
         }
     }
+    print(f"***rest_repo_hash: {rest_repo_hash}")
     # Fill in with your personal access token and org URL
     personal_access_token = os.getenv('PIPELINE_TOKEN')
     organization_url = 'https://dev.azure.com/azure-sdk'
