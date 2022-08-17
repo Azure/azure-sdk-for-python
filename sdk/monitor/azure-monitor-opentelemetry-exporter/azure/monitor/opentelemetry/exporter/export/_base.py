@@ -14,7 +14,12 @@ from azure.monitor.opentelemetry.exporter._generated._configuration import Azure
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_LOCK,
+    _REQUESTS_MAP,
+    get_statsbeat_shutdown,
+    is_statsbeat_enabled,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +49,7 @@ class BaseExporter:
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._enable_local_storage = kwargs.get('enable_local_storage', True)
+        self._endpoint = parsed_connection_string.endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._storage_maintenance_period = kwargs.get('storage_maintenance_period', 60)  # Maintenance interval in seconds.
         self._storage_max_size = kwargs.get('storage_max_size', 50 * 1024 * 1024)  # Maximum size in bytes (default 50MiB)
@@ -56,8 +62,7 @@ class BaseExporter:
         self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
-        config = AzureMonitorClientConfiguration(
-            parsed_connection_string.endpoint, **kwargs)
+        config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
             RequestIdPolicy(**kwargs),
             config.headers_policy,
@@ -86,6 +91,11 @@ class BaseExporter:
                 name="{} Storage".format(self.__class__.__name__),
                 lease_period=self._storage_min_retry_interval,
             )
+        # statsbeat initialization
+        if not self.__class__.__name__ == "_StatsBeatExporter":
+            # Import here to avoid circular dependencies
+            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+            collect_statsbeat_metrics(self)
 
     def _transmit_from_storage(self) -> None:
         for blob in self.storage.gets():
@@ -121,13 +131,15 @@ class BaseExporter:
         if len(envelopes) > 0:
             try:
                 track_response = self.client.track(envelopes)
-                if not track_response.errors:
+                if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
+                    if self._check_stats_collection():
+                        _update_requests_map('success')
                     logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
                                 track_response.items_received, track_response.items_accepted)
                     return ExportResult.SUCCESS
                 resend_envelopes = []
-                for error in track_response.errors:
+                for error in track_response.errors:  # 206
                     if _is_retryable_code(error.status_code):
                         resend_envelopes.append(
                             envelopes[error.index]
@@ -145,8 +157,10 @@ class BaseExporter:
                     self.storage.put(envelopes_to_store, 0)
                     self._consecutive_redirects = 0
                     return ExportResult.FAILED_RETRYABLE
-
+                else:
+                    return ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
+                # HttpResponseError is raised when a response is received
                 if _is_retryable_code(response_error.status_code):
                     return ExportResult.FAILED_RETRYABLE
                 if _is_redirect_code(response_error.status_code):
@@ -174,6 +188,7 @@ class BaseExporter:
             except ServiceRequestError as request_error:
                 # Errors when we're fairly sure that the server did not receive the
                 # request, so it should be safe to retry.
+                # ServiceRequestError is raised by azure.core for these cases
                 logger.warning(
                     "Retrying due to server request error: %s.", request_error
                 )
@@ -183,10 +198,16 @@ class BaseExporter:
                     "Envelopes could not be exported and are not retryable: %s.", ex
                 )
                 return ExportResult.FAILED_NOT_RETRYABLE
-            return ExportResult.FAILED_NOT_RETRYABLE
+
         # No spans to export
         self._consecutive_redirects = 0
         return ExportResult.SUCCESS
+
+    # check to see if collecting requests information related to statsbeats
+    def _check_stats_collection(self):
+        return is_statsbeat_enabled() and \
+            not get_statsbeat_shutdown() and \
+            not self.__class__.__name__ == "_StatsBeatExporter"
 
 
 def _is_redirect_code(response_code: int) -> bool:
@@ -213,3 +234,8 @@ def _is_retryable_code(response_code: int) -> bool:
         503,  # Service Unavailable
         504,  # Gateway timeout
     ))
+
+
+def _update_requests_map(type):
+    with _REQUESTS_LOCK:
+        _REQUESTS_MAP[type] = _REQUESTS_MAP.get(type, 0) + 1
