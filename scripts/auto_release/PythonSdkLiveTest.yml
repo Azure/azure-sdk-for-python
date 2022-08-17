@@ -47,6 +47,9 @@ jobs:
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
+          if [ "$(PYTHON_COMMIT)" ]; then
+            git reset --hard $(PYTHON_COMMIT)
+          fi
 
           # install autorest
           sudo npm install -g n
