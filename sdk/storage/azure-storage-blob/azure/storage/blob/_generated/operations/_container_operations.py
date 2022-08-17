@@ -2413,6 +2413,7 @@ class ContainerOperations:
         include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+        deserialize: Optional[bool] = True,
         **kwargs: Any
     ) -> _models.ListBlobsFlatSegmentResponse:
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
@@ -2505,7 +2506,9 @@ class ContainerOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("ListBlobsFlatSegmentResponse", pipeline_response)
+        deserialized = None
+        if deserialize:
+            deserialized = self._deserialize("ListBlobsFlatSegmentResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)

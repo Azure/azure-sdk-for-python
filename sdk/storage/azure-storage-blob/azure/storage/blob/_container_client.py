@@ -34,7 +34,7 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._lease import BlobLeaseClient
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
+from ._list_blobs_helper import BlobNamesPaged, BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
 from ._models import (
     ContainerProperties,
     BlobProperties,
@@ -784,6 +784,32 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return ItemPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page,
             page_iterator_class=BlobPropertiesPaged)
+
+    @distributed_trace
+    def list_blob_names(self, **kwargs):
+        """Returns a generator to list the names of blobs under the specified container.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+        :keyword str name_starts_with:
+            Filters the results to return only blobs whose names
+            begin with the specified prefix.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of blob names as strings.
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        """
+        name_starts_with = kwargs.pop('name_starts_with', None)
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.container.list_blob_flat_segment,
+            timeout=timeout,
+            **kwargs)
+        return ItemPaged(
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            page_iterator_class=BlobNamesPaged)
 
     @distributed_trace
     def walk_blobs(

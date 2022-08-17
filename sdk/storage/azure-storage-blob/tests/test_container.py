@@ -1115,6 +1115,32 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         assert blobs, ['blob1' == 'blob2']
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_list_blob_names(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        container.get_blob_client('blob1').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('test1').upload_blob(data, overwrite=True)
+
+        # Act
+        all_blobs = list(container.list_blob_names())
+        test_blobs = list(container.list_blob_names(name_starts_with="test"))
+
+        # Assert
+        assert len(all_blobs) == 3
+        assert all_blobs[0] == 'blob1'
+        assert all_blobs[1] == 'blob2'
+        assert all_blobs[2] == 'test1'
+        assert len(test_blobs) == 1
+        assert test_blobs[0] == 'test1'
+
     @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
