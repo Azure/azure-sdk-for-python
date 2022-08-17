@@ -17,7 +17,10 @@ from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordErro
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._builders import Command, Sweep
 
+from .._util import _COMPONENT_TIMEOUT_SECOND
 
+
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestCommandComponentEntity:
     def test_component_load(self):
@@ -70,14 +73,55 @@ class TestCommandComponentEntity:
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
         )
         component_dict = component._to_rest_object().as_dict()
-        component_dict = pydash.omit(component_dict, "properties.component_spec.$schema")
+        omits = ["properties.component_spec.$schema", "properties.component_spec._source"]
+        component_dict = pydash.omit(component_dict, *omits)
 
         yaml_path = "./tests/test_configs/components/basic_component_code_arm_id.yml"
         yaml_component = load_component(path=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
-        yaml_component_dict = pydash.omit(yaml_component_dict, "properties.component_spec.$schema")
+        yaml_component_dict = pydash.omit(yaml_component_dict, *omits)
 
         assert component_dict == yaml_component_dict
+
+    def test_command_component_entity_with_io_class(self):
+        component = CommandComponent(
+            name="sample_command_component_entity_with_io_class",
+            display_name="Preprocess data for training",
+            description="reads raw price data, normalize and split the data",
+            inputs={
+                "data_0": Input(type="uri_folder", mode="ro_mount"),
+                "data_1": Input(type="uri_file", optional=True),
+                "param_float0": Input(type="number", default=1.1, min=0, max=5),
+                "param_float1": Input(type="number"),
+                "param_integer": Input(type="integer", default=2, min=-1, max=4, optional=True),
+                "param_string": Input(type="string", default="default_str"),
+                "param_boolean": Input(type="boolean", default=False),
+            },
+            outputs={
+                "train_data_x": Output(type="uri_file"),
+                "test_data_x": Output(type="uri_folder"),
+            },
+            # TODO: reorganize code to minimize the code context
+            code=".",
+            command="""echo Hello World""",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+        )
+        component_dict = component._to_rest_object().as_dict()
+        inputs = component_dict["properties"]["component_spec"]["inputs"]
+        outputs = component_dict["properties"]["component_spec"]["outputs"]
+        source = component_dict["properties"]["component_spec"]["_source"]
+
+        assert inputs == {
+            "data_0": {"type": "uri_folder"},
+            "data_1": {"type": "uri_file", "optional": True},
+            "param_float0": {"type": "number", "default": "1.1", "max": "5.0", "min": "0.0"},
+            "param_float1": {"type": "number"},
+            "param_integer": {"type": "integer", "optional": True, "default": "2", "max": "4", "min": "-1"},
+            "param_string": {"type": "string", "default": "default_str"},
+            "param_boolean": {"type": "boolean", "default": "False"},
+        }
+        assert outputs == {"train_data_x": {"type": "uri_file"}, "test_data_x": {"type": "uri_folder"}}
+        assert source == "CLASS"
 
     def test_command_component_instance_count(self):
         component = CommandComponent(
@@ -112,12 +156,14 @@ class TestCommandComponentEntity:
             "properties.component_spec.$schema",
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
+            "properties.component_spec._source",
         )
         yaml_component_dict = pydash.omit(
             yaml_component_dict,
             "properties.component_spec.$schema",
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
+            "properties.component_spec._source",
         )
         assert component_dict == yaml_component_dict
 
@@ -151,6 +197,7 @@ class TestCommandComponentEntity:
             "outputs": {},
             "resources": None,
             "tags": {},
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
         }
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
@@ -190,6 +237,7 @@ class TestCommandComponentEntity:
             "outputs": {},
             "resources": None,
             "tags": {},
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
         }
 
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"

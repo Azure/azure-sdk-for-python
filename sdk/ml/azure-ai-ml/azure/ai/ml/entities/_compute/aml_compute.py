@@ -1,28 +1,39 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Dict
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComputeType, ComputeDefaults, TYPE
-from .compute import Compute, NetworkSettings
-from ._identity import IdentityConfiguration
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._schema._utils.utils import get_subnet_str
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import AmlCompute as AmlComputeRest
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ComputeResource,
     AmlComputeProperties,
-    AmlCompute as AmlComputeRest,
+    ComputeResource,
     ResourceId,
     ScaleSettings,
     UserAccountCredentials,
 )
+from azure.ai.ml._schema._utils.utils import get_subnet_str
+from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, ComputeDefaults, ComputeType
+from azure.ai.ml.entities._util import load_from_dict
+
+from ._identity import IdentityConfiguration
+from .compute import Compute, NetworkSettings
 
 
 class AmlComputeSshSettings:
-    """SSH settings to access a AML compute target"""
+    """SSH settings to access a AML compute target."""
 
-    def __init__(self, *, admin_username: str, admin_password: str = None, ssh_key_value: str = None):
+    def __init__(
+        self,
+        *,
+        admin_username: str,
+        admin_password: str = None,
+        ssh_key_value: str = None,
+    ):
         """[summary]
 
         :param admin_username: SSH user name
@@ -54,7 +65,7 @@ class AmlComputeSshSettings:
 
 
 class AmlCompute(Compute):
-    """Aml Compute resource
+    """Aml Compute resource.
 
     :param name: Name of the compute
     :type name: str
@@ -102,7 +113,12 @@ class AmlCompute(Compute):
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
-        super().__init__(name=name, description=description, location=kwargs.pop("location", None), **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            location=kwargs.pop("location", None),
+            **kwargs,
+        )
         self.size = size
         self.min_instances = min_instances or 0
         self.max_instances = max_instances or 1
@@ -156,7 +172,10 @@ class AmlCompute(Compute):
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
         if self.network_settings:
             self.subnet = get_subnet_str(
-                self.network_settings.vnet_name, self.network_settings.subnet, subscription_id, rg
+                self.network_settings.vnet_name,
+                self.network_settings.subnet,
+                subscription_id,
+                rg,
             )
 
     def _to_dict(self) -> Dict:

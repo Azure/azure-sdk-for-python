@@ -1,0 +1,129 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 27 Jul 2022 00:26:57 GMT
+      x-ms-default-encryption-scope:
+      - hnstestscope1
+      x-ms-deny-encryption-scope-override:
+      - 'false'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystema3c91f4a?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 27 Jul 2022 00:26:57 GMT
+      etag: '"0x8DA6F66B793C0D6"'
+      last-modified: Wed, 27 Jul 2022 00:26:58 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttranhnscanary.blob.core.windows.net/filesystema3c91f4a?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 27 Jul 2022 00:26:57 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystema3c91f4a/testdir?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 27 Jul 2022 00:26:58 GMT
+      etag: '"0x8DA6F66B7E07D37"'
+      last-modified: Wed, 27 Jul 2022 00:26:58 GMT
+      server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-encryption-scope: hnstestscope1
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttranhnscanary.dfs.core.windows.net/filesystema3c91f4a/testdir?resource=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 27 Jul 2022 00:26:58 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystema3c91f4a/testdir
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '0'
+      content-type: application/octet-stream
+      date: Wed, 27 Jul 2022 00:26:58 GMT
+      etag: '"0x8DA6F66B7E07D37"'
+      last-modified: Wed, 27 Jul 2022 00:26:58 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Wed, 27 Jul 2022 00:26:58 GMT
+      x-ms-encryption-scope: hnstestscope1
+      x-ms-group: $superuser
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-hdi_isfolder: 'true'
+      x-ms-owner: $superuser
+      x-ms-permissions: rwxr-x---
+      x-ms-resource-type: directory
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttranhnscanary.blob.core.windows.net/filesystema3c91f4a/testdir
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 27 Jul 2022 00:26:58 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/filesystema3c91f4a?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 27 Jul 2022 00:26:58 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-08-06'
+    status:
+      code: 202
+      message: Accepted
+    url: https://vincenttranhnscanary.blob.core.windows.net/filesystema3c91f4a?restype=container
+version: 1

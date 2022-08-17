@@ -2,17 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import logging
 import copy
+import logging
 from typing import Any
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    CommandJobLimits as RestCommandJobLimits,
-    SweepJobLimits as RestSweepJobLimits,
-)
+from azure.ai.ml._restclient.v2021_10_01.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2021_10_01.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
 
 module_logger = logging.getLogger(__name__)
 

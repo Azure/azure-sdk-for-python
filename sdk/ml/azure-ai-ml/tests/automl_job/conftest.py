@@ -3,7 +3,7 @@ import pytest
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
-from ._utiil import download_dataset
+from test_utilities.utils import download_dataset
 
 from typing import Tuple
 import os
@@ -170,11 +170,3 @@ def conll() -> Tuple[Input, Input]:
     validation_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, CONLL_VALID_DATASET_PATH))
 
     return training_data, validation_data
-
-
-@pytest.fixture(scope="session")
-def check_completed_run(pytestconfig):
-    # For pytests marked with pytest.mark.e2etest, only test up to creating the job
-    if "e2etest" in pytestconfig.getoption("-m"):
-        return False
-    return True

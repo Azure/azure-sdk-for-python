@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import MySQLManagementClientConfiguration
-from .operations import BackupsOperations, CheckNameAvailabilityOperations, CheckVirtualNetworkSubnetUsageOperations, ConfigurationsOperations, DatabasesOperations, FirewallRulesOperations, GetPrivateDnsZoneSuffixOperations, LocationBasedCapabilitiesOperations, LogFilesOperations, Operations, ReplicasOperations, ServersOperations
+from .operations import AzureADAdministratorsOperations, BackupsOperations, CheckNameAvailabilityOperations, CheckNameAvailabilityWithoutLocationOperations, CheckVirtualNetworkSubnetUsageOperations, ConfigurationsOperations, DatabasesOperations, FirewallRulesOperations, GetPrivateDnsZoneSuffixOperations, LocationBasedCapabilitiesOperations, LogFilesOperations, Operations, ReplicasOperations, ServersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -52,11 +52,18 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
     :vartype check_name_availability:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckNameAvailabilityOperations
+    :ivar check_name_availability_without_location: CheckNameAvailabilityWithoutLocationOperations
+     operations
+    :vartype check_name_availability_without_location:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckNameAvailabilityWithoutLocationOperations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
     :vartype get_private_dns_zone_suffix:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.Operations
+    :ivar azure_ad_administrators: AzureADAdministratorsOperations operations
+    :vartype azure_ad_administrators:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.AzureADAdministratorsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -114,10 +121,16 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.check_name_availability_without_location = CheckNameAvailabilityWithoutLocationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.azure_ad_administrators = AzureADAdministratorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

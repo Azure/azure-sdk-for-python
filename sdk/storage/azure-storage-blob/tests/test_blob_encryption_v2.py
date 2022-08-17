@@ -6,7 +6,9 @@
 
 import base64
 import os
+from io import BytesIO
 from json import dumps, loads
+from math import ceil
 
 import pytest
 from azure.core import MatchConditions
@@ -780,6 +782,87 @@ class StorageBlobEncryptionV2Test(StorageTestCase):
 
         # Assert
         self.assertEqual(len(content), total)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_using_read(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = b'abcde' * 4 * MiB  # 20 MiB
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        stream = blob.download_blob(max_concurrency=2)
+
+        result = bytearray()
+        read_size = 5 * MiB
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = b'abcde' * 4 * MiB  # 20 MiB
+        blob.upload_blob(data, overwrite=True)
+
+        offset, length = 1 * MiB, 5 * MiB
+
+        # Act / Assert
+        read_size = 150000
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(read_size)  # Read in first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+
+        read_size = 4 * MiB + 100000
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(read_size)  # Read past first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(read_size)  # Read past first chunk
+        second_stream = BytesIO()
+        read_length = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+        assert read_length == len(second)
 
     @pytest.mark.skip(reason="Intended for manual testing due to blob size.")
     @pytest.mark.live_test_only

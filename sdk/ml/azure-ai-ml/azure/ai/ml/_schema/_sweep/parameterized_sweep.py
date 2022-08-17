@@ -1,10 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml._schema import NestedField, PathAwareSchema
-from .sweep_fields_provider import SamplingAlgorithmField, SearchSpaceField, EarlyTerminationField
-from .sweep_objective import SweepObjectiveSchema
+
+# pylint: disable=unused-argument,no-self-use
+
+from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema
+
 from ..job.job_limits import SweepJobLimitsSchema
+from .sweep_fields_provider import EarlyTerminationField, SamplingAlgorithmField, SearchSpaceField
+from .sweep_objective import SweepObjectiveSchema
 
 
 class ParameterizedSweepSchema(PathAwareSchema):

@@ -12,11 +12,12 @@ import os
 import glob
 import shutil
 from tox_helper_tasks import (
-    get_package_details,
     unzip_sdist_to_directory,
     move_and_rename,
     unzip_file_to_directory,
 )
+
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -107,16 +108,16 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, namespace, ver, _, _ = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    
+    pkg_details = ParsedSetup.from_path(pkg_dir)
+    top_level_module = pkg_details.namespace.split('.')[0]
 
-    top_level_module = namespace.split('.')[0]
-
-    if should_verify_package(pkg_name):
-        logging.info("Verifying root directory in whl for package: [%s]", pkg_name)
-        if verify_whl_root_directory(args.dist_dir, top_level_module, ver):
-            logging.info("Verified root directory in whl for package: [%s]", pkg_name)
+    if should_verify_package(pkg_details.name):
+        logging.info("Verifying root directory in whl for package: [%s]", pkg_details.name)
+        if verify_whl_root_directory(args.dist_dir, top_level_module, pkg_details.version):
+            logging.info("Verified root directory in whl for package: [%s]", pkg_details.name)
         else:
             logging.info(
-                "Failed to verify root directory in whl for package: [%s]", pkg_name
+                "Failed to verify root directory in whl for package: [%s]", pkg_details.name
             )
             exit(1)

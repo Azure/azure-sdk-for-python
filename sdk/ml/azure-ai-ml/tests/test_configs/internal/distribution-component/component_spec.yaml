@@ -1,0 +1,25 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/DistributedComponent.json
+name: microsoft.com.azureml.samples.mpi_example
+version: 0.0.1
+display_name: MPI Example
+type: DistributedComponent
+inputs:
+  input_path:
+    type: path
+    description: The directory contains input data.
+    optional: false
+  string_parameter:
+    type: String
+    description: A parameter accepts a string value.
+    optional: true
+outputs:
+  output_path:
+    type: path
+    description: The directory contains output data.
+launcher:
+  type: mpi
+  additional_arguments: >-
+    python train.py --input-path {inputs.input_path} [--string-parameter {inputs.string_parameter}]
+    --output-path {outputs.output_path}
+environment:
+  name: AzureML-Minimal

@@ -55,12 +55,6 @@ async def sample_export_import_project_async():
         export_result = await export_poller.result()
         export_url = export_result["resultUrl"]
 
-        # delete old project
-        delete_poller = await client.begin_delete_project(
-            project_name=project_name
-        )
-        await delete_poller.result()
-
         # import project
         project = {
             "Metadata": {

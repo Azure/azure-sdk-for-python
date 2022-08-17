@@ -1,12 +1,22 @@
 # Release History
 
+## 3.2.0b7 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 3.2.0b6 (2022-08-09)
 
 ### Features Added
 - Added `TargetAuthorization` of type `dict[str, str]`.
 
 ### Breaking Changes
-- Renamed `source` argument to `blob_container_url` on `begin_build_model()`.
+- Renamed `source` argument to `blob_container_url` on `begin_build_model()` and made it a required keyword-only argument.
 - Changed argument order on `begin_build_model()`. `build_mode` is the first expected argument, followed by `blob_container_url`.
 - Renamed `begin_create_composed_model()` on `DocumentModelAdministrationClient` to `begin_compose_model()`.
 - Renamed `get_account_info()` on `DocumentModelAdministrationClient` to `get_resource_details()`.

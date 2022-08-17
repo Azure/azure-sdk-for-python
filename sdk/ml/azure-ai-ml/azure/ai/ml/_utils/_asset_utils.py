@@ -2,66 +2,60 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
+import hashlib
 import logging
 import os
 import uuid
-from typing import TYPE_CHECKING, Tuple, Union, Optional, List, Iterable, Dict, Any, cast
-from pathlib import Path
-import hashlib
-from contextlib import suppress
-from colorama import Fore
-import pathspec
-from tqdm import tqdm, TqdmWarning
 import warnings
-from platform import system
-from multiprocessing import cpu_count
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import suppress
+from multiprocessing import cpu_count
+from pathlib import Path
+from platform import system
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
+
+import pathspec
+from colorama import Fore
+from tqdm import TqdmWarning, tqdm
 
 from azure.ai.ml._artifacts._constants import (
-    CHUNK_SIZE,
-    ARTIFACT_ORIGIN,
-    UPLOAD_CONFIRMATION,
     AML_IGNORE_FILE_NAME,
-    GIT_IGNORE_FILE_NAME,
-    EMPTY_DIRECTORY_ERROR,
-    PROCESSES_PER_CORE,
-    MAX_CONCURRENCY,
+    ARTIFACT_ORIGIN,
     BLOB_STORAGE_CLIENT_NAME,
+    CHUNK_SIZE,
+    EMPTY_DIRECTORY_ERROR,
     GEN2_STORAGE_CLIENT_NAME,
+    GIT_IGNORE_FILE_NAME,
+    MAX_CONCURRENCY,
+    PROCESSES_PER_CORE,
+    UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml._ml_exceptions import AssetException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatasetVersionData,
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.operations import (
-    DataVersionsOperations,
-    DataContainersOperations,
-    ModelVersionsOperations,
-    ModelContainersOperations,
-    EnvironmentVersionsOperations,
-    EnvironmentContainersOperations,
-    ComponentVersionsOperations,
     ComponentContainersOperations,
+    ComponentVersionsOperations,
+    DataContainersOperations,
+    DataVersionsOperations,
+    EnvironmentContainersOperations,
+    EnvironmentVersionsOperations,
+    ModelContainersOperations,
+    ModelVersionsOperations,
 )
-from azure.ai.ml.constants import (
-    OrderString,
-    MAX_AUTOINCREMENT_ATTEMPTS,
-)
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.ai.ml._utils.utils import retry, convert_windows_path_to_unix
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
+from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
+from azure.ai.ml.constants import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
+from azure.ai.ml.entities._assets.asset import Asset
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import (
-        DatasetOperations,
-        DataOperations,
-        ComponentOperations,
-        EnvironmentOperations,
-        ModelOperations,
-    )
+    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
 hash_type = type(hashlib.md5())
 
@@ -74,8 +68,7 @@ class AssetNotChangedError(Exception):
 
 class IgnoreFile(object):
     def __init__(self, file_path: Optional[Union[str, Path]] = None):
-        """
-        Base class for handling .gitignore and .amlignore files
+        """Base class for handling .gitignore and .amlignore files.
 
         :param file_path: Relative path, or absolute path to the ignore file.
         """
@@ -84,23 +77,18 @@ class IgnoreFile(object):
         self._path_spec = None
 
     def _create_pathspec(self) -> Optional[pathspec.PathSpec]:
-        """
-        Creates path specification based on ignore file contents
-        """
+        """Creates path specification based on ignore file contents."""
         if not self.exists():
             return None
         with open(self._path, "r") as fh:
             return pathspec.PathSpec.from_lines("gitwildmatch", fh)
 
     def exists(self) -> bool:
-        """
-        Checks if ignore file exists
-        """
+        """Checks if ignore file exists."""
         return self._path and self._path.exists()
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
-        """
-        Checks if given file_path is excluded.
+        """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
         """
@@ -115,7 +103,7 @@ class IgnoreFile(object):
                 return True
             file_path = os.path.relpath(file_path, ignore_dirname)
 
-        return self._path_spec.match_file(file_path)
+        return self._path_spec.match_file(str(file_path))
 
     @property
     def path(self) -> Union[Path, str]:
@@ -135,8 +123,9 @@ class GitIgnoreFile(IgnoreFile):
 
 
 def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
-    """
-    Finds and returns IgnoreFile object based on ignore file found in directory_path
+    """Finds and returns IgnoreFile object based on ignore file found in
+    directory_path.
+
     .amlignore takes precedence over .gitignore and if no file is found, an empty
     IgnoreFile object will be returned.
 
@@ -160,7 +149,9 @@ def _validate_path(path: Union[str, os.PathLike]) -> None:
     if not path.is_file() and not path.is_dir():
         msg = "{} not found, local path must point to a file or directory. Path must follow proper formatting for datastore, job or run uri's."
         raise ValidationException(
-            message=msg.format(path), no_personal_data_message=msg.format("[path]"), target=ErrorTarget.ASSET
+            message=msg.format(path),
+            no_personal_data_message=msg.format("[path]"),
+            target=ErrorTarget.ASSET,
         )
 
 
@@ -204,18 +195,21 @@ def _get_dir_hash(directory: Union[str, Path], hash: hash_type, ignore_file: Ign
 
 
 def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
-    """
-    Build metadata dictionary to attach to uploaded data.
+    """Build metadata dictionary to attach to uploaded data.
 
-    Metadata includes an upload confirmation field, and for code uploads only,
-    the name and version of the code asset being created for that data.
+    Metadata includes an upload confirmation field, and for code uploads
+    only, the name and version of the code asset being created for that
+    data.
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
     else:
         msg = "'name' cannot be NoneType for asset artifact upload."
         raise ValidationException(
-            message=msg, no_personal_data_message=msg, target=ErrorTarget.ASSET, error_category=ErrorCategory.USER_ERROR
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
         )
 
     metadata_dict = {**UPLOAD_CONFIRMATION, **linked_asset_arm_id}
@@ -234,11 +228,17 @@ def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile
 
 
 def traverse_directory(
-    root: str, files: List[str], source: str, prefix: str, ignore_file: IgnoreFile = IgnoreFile()
+    root: str,
+    files: List[str],
+    source: str,
+    prefix: str,
+    ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """
-    Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
-    e.g. [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+    """Enumerate all files in the given directory and compose paths for them to
+    be uploaded to in the remote storage. e.g.
+    [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
+    /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+
         [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
         (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
 
@@ -322,7 +322,8 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
 
 
 def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
-    """Returns total size of a directory and a dictionary itemizing each sub-path and its size."""
+    """Returns total size of a directory and a dictionary itemizing each sub-
+    path and its size."""
     total_size = 0
     size_list = {}
     for dirpath, _, filenames in os.walk(root, followlinks=True):
@@ -349,8 +350,7 @@ def upload_file(
     in_directory: bool = False,
     callback: Any = None,
 ) -> None:
-    """
-    Upload a single file to remote storage.
+    """Upload a single file to remote storage.
 
     :param storage_client: Storage client object
     :type storage_client: Union[azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient, azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
@@ -423,8 +423,7 @@ def upload_directory(
     show_progress: bool,
     ignore_file: IgnoreFile,
 ) -> None:
-    """
-    Upload directory to remote storage.
+    """Upload directory to remote storage.
 
     :param storage_client: Storage client object
     :type storage_client: Union[azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient, azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
@@ -510,6 +509,7 @@ def upload_directory(
             ascii = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
             with tqdm(total=total_size, desc=msg, ascii=ascii) as pbar:
                 for future in as_completed(futures_dict):
+                    future.result()  # access result to propagate any exceptions
                     file_path_name = futures_dict[future][0]
                     pbar.update(size_dict.get(file_path_name) or 0)
 
@@ -556,23 +556,37 @@ def _get_latest(
     asset_name: str,
     version_operation: Any,
     resource_group_name: str,
-    workspace_name: str,
+    workspace_name: str = None,
+    registry_name: str = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DatasetVersionData]:
     """Returns the latest version of the asset with the given name.
 
-    Latest is defined as the most recently created, not the most recently updated.
+    Latest is defined as the most recently created, not the most
+    recently updated.
     """
-    try:
-        latest = version_operation.list(
+    result = (
+        version_operation.list(
+            name=asset_name,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            order_by=order_by,
+            top=1,
+            **kwargs,
+        )
+        if registry_name
+        else version_operation.list(
             name=asset_name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             order_by=order_by,
             top=1,
             **kwargs,
-        ).next()
+        )
+    )
+    try:
+        latest = result.next()
     except StopIteration:
         latest = None
 
@@ -580,13 +594,24 @@ def _get_latest(
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:
-        raise ResourceNotFoundError(f"Asset {asset_name} does not exist in workspace {workspace_name}.")
-
+        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
+        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        raise AssetException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+        )
     return latest
 
 
 def _archive_or_restore(
-    asset_operations: Union["DataOperations", "EnvironmentOperations", "ModelOperations", "ComponentOperations"],
+    asset_operations: Union[
+        "DataOperations",
+        "EnvironmentOperations",
+        "ModelOperations",
+        "ComponentOperations",
+    ],
     version_operation: Union[
         "DataVersionsOperations",
         "EnvironmentVersionsOperations",
@@ -604,13 +629,15 @@ def _archive_or_restore(
     version: str = None,
     label: str = None,
 ) -> None:
-
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
-            message=msg, no_personal_data_message=msg, target=ErrorTarget.ASSET, error_category=ErrorCategory.USER_ERROR
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
         )
     if label:
         version = _resolve_label_to_asset(asset_operations, name, label).version
@@ -647,7 +674,10 @@ def _archive_or_restore(
 
 def _resolve_label_to_asset(
     assetOperations: Union[
-        "DatasetOperations", "DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations"
+        "DataOperations",
+        "ComponentOperations",
+        "EnvironmentOperations",
+        "ModelOperations",
     ],
     name: str,
     label: str,

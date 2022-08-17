@@ -83,6 +83,7 @@ class TestConnectionStringParser(unittest.TestCase):
         self.assertRaises(
             ValueError,
             lambda: ConnectionStringParser(
+                # spell-checker:ignore cabc
                 connection_string="InstrumentationKey=1234abcd-6789-4ef-8cabc-1234567890ab"
             ),
         )

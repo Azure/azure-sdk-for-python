@@ -7,18 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
     """
 
     HOT = "Hot"
     COOL = "Cool"
 
-class AccountStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status indicating whether the primary location of the storage account is available or
     unavailable.
     """
@@ -26,21 +25,21 @@ class AccountStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
-class KeyPermission(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Permissions for the key -- read-only or full permissions.
     """
 
     READ = "READ"
     FULL = "FULL"
 
-class Kind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Required. Indicates the type of storage account.
     """
 
     STORAGE = "Storage"
     BLOB_STORAGE = "BlobStorage"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the storage account at the time the operation was called.
     """
 
@@ -48,7 +47,7 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
 
-class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a storage account name could not be used. The Reason element is only
     returned if NameAvailable is false.
     """
@@ -56,7 +55,7 @@ class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the sku name. Required for account creation; optional for update. Note that in
     older versions, sku name was called accountType.
     """
@@ -67,14 +66,14 @@ class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the sku tier. This is based on the SKU name.
     """
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the unit of measurement.
     """
 
