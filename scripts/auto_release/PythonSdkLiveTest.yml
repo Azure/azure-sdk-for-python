@@ -48,8 +48,9 @@ jobs:
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
           if [ "$(PYTHON_COMMIT)" ]; then
+            cd azure-rest-api-specs
             git reset --hard $(PYTHON_COMMIT)
-            echo $(PYTHON_COMMIT)
+            cd ../
           fi
 
           # install autorest
