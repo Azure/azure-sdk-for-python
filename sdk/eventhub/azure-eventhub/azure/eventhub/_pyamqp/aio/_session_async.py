@@ -162,7 +162,8 @@ class Session(object):
             _LOGGER.info("<- %r", EndFrame(*frame), extra=self.network_trace_params)
         if self.state not in [SessionState.END_RCVD, SessionState.END_SENT, SessionState.DISCARDING]:
             await self._set_state(SessionState.END_RCVD)
-            # TODO: Clean up all links
+            for _, link in self.links.items():
+                await link.detach()
             await self._outgoing_end()
         await self._set_state(SessionState.UNMAPPED)
 
@@ -184,7 +185,8 @@ class Session(object):
             self._output_handles[outgoing_handle] = new_link
             self._input_handles[frame[1]] = new_link
         except ValueError:
-            pass  # TODO: Reject link
+            # Reject Link
+            await self._input_handles[frame[1]].detach()
     
     async def _outgoing_flow(self, frame=None):
         link_flow = frame or {}
@@ -343,7 +345,8 @@ class Session(object):
         try:
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 await self._outgoing_end(error=error)
-            # TODO: destroy all links
+            for _, link in self.links.items():
+                await link.detach()
             new_state = SessionState.DISCARDING if error else SessionState.END_SENT
             await self._set_state(new_state)
             await self._wait_for_response(wait, SessionState.UNMAPPED)
