@@ -12,6 +12,7 @@
 ### Other Changes
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 * Bumped minimum dependency on `azure-core` to `>=1.23.0`
+* Bumped minimum dependency on `msrest` to `>=0.7.1`
 
 ## 12.4.0 (2022-05-10)
 
