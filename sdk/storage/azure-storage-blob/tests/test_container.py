@@ -1501,7 +1501,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob4').upload_blob(data, tags=other_tags)
 
         if self.is_live:
-            sleep(10)
+            sleep(15)
 
         # Act
         blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
@@ -1534,7 +1534,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob2').upload_blob(data, tags=tags)
 
         if self.is_live:
-            sleep(10)
+            sleep(15)
 
         # Act
         sas_token = self.generate_sas(
