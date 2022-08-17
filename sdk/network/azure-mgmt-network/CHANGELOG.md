@@ -4,7 +4,7 @@
 
 ### Bugfixes
 
-  - - Add `__version__` to `__init__.py` for package
+  - Add `__version__` to `__init__.py` for package
 
 ## 21.0.0 (2022-08-05)
 
