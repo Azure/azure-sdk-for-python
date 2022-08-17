@@ -214,6 +214,7 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
             package_name,
             version=version if version not in ["pypi", "latest"] else None,
             last_pypi=version == "pypi",
+            last_pypi_stable=tag_is_stable,
         )
         if not result:
             raise ValueError("Was not able to build a report")
