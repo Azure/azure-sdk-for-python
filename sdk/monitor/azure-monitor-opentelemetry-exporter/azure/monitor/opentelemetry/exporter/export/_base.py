@@ -145,8 +145,7 @@ class BaseExporter:
                     self.storage.put(envelopes_to_store, 0)
                     self._consecutive_redirects = 0
                     return ExportResult.FAILED_RETRYABLE
-                else:
-                    return ExportResult.FAILED_NOT_RETRYABLE
+                return ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
                 if _is_retryable_code(response_error.status_code):
                     return ExportResult.FAILED_RETRYABLE

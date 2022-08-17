@@ -89,8 +89,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_path, "test/path")
 
-
-    def test_transmit_from_storage_failed(self):
+    def test_transmit_from_storage_success(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
@@ -109,7 +108,7 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_called_once()
 
-    def test_transmit_from_storage_failed_retryable(self):
+    def test_transmit_from_storage_store_again(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
