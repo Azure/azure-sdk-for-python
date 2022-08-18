@@ -157,6 +157,11 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
+        if not isinstance(document_url, str):
+            raise ValueError(
+                "'document_url' needs to be of type 'str'."
+                "Please see `begin_analyze_document()` to pass a byte stream.")
+
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
