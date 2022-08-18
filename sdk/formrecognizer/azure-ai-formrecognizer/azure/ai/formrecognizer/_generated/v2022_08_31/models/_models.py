@@ -1095,98 +1095,12 @@ class DocumentLine(msrest.serialization.Model):
         self.spans = kwargs['spans']
 
 
-class OperationSummary(msrest.serialization.Model):
-    """Operation info.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar operation_id: Required. Operation ID.
-    :vartype operation_id: str
-    :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
-     "succeeded", "canceled".
-    :vartype status: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationStatus
-    :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
-    :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar kind: Required. Type of operation. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
-    :ivar resource_location: Required. URL of the resource targeted by this operation.
-    :vartype resource_location: str
-    :ivar api_version: API version used to create this operation.
-    :vartype api_version: str
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'operation_id': {'required': True},
-        'status': {'required': True},
-        'percent_completed': {'maximum': 100, 'minimum': 0},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
-        'kind': {'required': True},
-        'resource_location': {'required': True},
-    }
-
-    _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword operation_id: Required. Operation ID.
-        :paramtype operation_id: str
-        :keyword status: Required. Operation status. Known values are: "notStarted", "running",
-         "failed", "succeeded", "canceled".
-        :paramtype status: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationStatus
-        :keyword percent_completed: Operation progress (0-100).
-        :paramtype percent_completed: int
-        :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
-        :paramtype created_date_time: ~datetime.datetime
-        :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
-         updated.
-        :paramtype last_updated_date_time: ~datetime.datetime
-        :keyword kind: Required. Type of operation. Known values are: "documentModelBuild",
-         "documentModelCompose", "documentModelCopyTo".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
-        :keyword resource_location: Required. URL of the resource targeted by this operation.
-        :paramtype resource_location: str
-        :keyword api_version: API version used to create this operation.
-        :paramtype api_version: str
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
-         model.
-        :paramtype tags: dict[str, str]
-        """
-        super(OperationSummary, self).__init__(**kwargs)
-        self.operation_id = kwargs['operation_id']
-        self.status = kwargs['status']
-        self.percent_completed = kwargs.get('percent_completed', None)
-        self.created_date_time = kwargs['created_date_time']
-        self.last_updated_date_time = kwargs['last_updated_date_time']
-        self.kind = kwargs['kind']
-        self.resource_location = kwargs['resource_location']
-        self.api_version = kwargs.get('api_version', None)
-        self.tags = kwargs.get('tags', None)
-
-
-class OperationDetails(OperationSummary):
+class OperationDetails(msrest.serialization.Model):
     """Get Operation response object.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DocumentModelBuildOperationDetails, DocumentModelComposeOperationDetails, DocumentModelCopyToOperationDetails.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar operation_id: Required. Operation ID.
@@ -1200,9 +1114,8 @@ class OperationDetails(OperationSummary):
     :vartype created_date_time: ~datetime.datetime
     :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :vartype last_updated_date_time: ~datetime.datetime
-    :ivar kind: Required. Type of operation. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
+    :ivar kind: Required. Type of operation.Constant filled by server.
+    :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
@@ -1236,6 +1149,10 @@ class OperationDetails(OperationSummary):
         'error': {'key': 'error', 'type': 'Error'},
     }
 
+    _subtype_map = {
+        'kind': {'documentModelBuild': 'DocumentModelBuildOperationDetails', 'documentModelCompose': 'DocumentModelComposeOperationDetails', 'documentModelCopyTo': 'DocumentModelCopyToOperationDetails'}
+    }
+
     def __init__(
         self,
         **kwargs
@@ -1253,9 +1170,6 @@ class OperationDetails(OperationSummary):
         :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
          updated.
         :paramtype last_updated_date_time: ~datetime.datetime
-        :keyword kind: Required. Type of operation. Known values are: "documentModelBuild",
-         "documentModelCompose", "documentModelCopyTo".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
         :keyword api_version: API version used to create this operation.
@@ -1267,6 +1181,15 @@ class OperationDetails(OperationSummary):
         :paramtype error: ~azure.ai.formrecognizer.v2022_08_31.models.Error
         """
         super(OperationDetails, self).__init__(**kwargs)
+        self.operation_id = kwargs['operation_id']
+        self.status = kwargs['status']
+        self.percent_completed = kwargs.get('percent_completed', None)
+        self.created_date_time = kwargs['created_date_time']
+        self.last_updated_date_time = kwargs['last_updated_date_time']
+        self.kind = None  # type: Optional[str]
+        self.resource_location = kwargs['resource_location']
+        self.api_version = kwargs.get('api_version', None)
+        self.tags = kwargs.get('tags', None)
         self.error = kwargs.get('error', None)
 
 
@@ -1286,9 +1209,8 @@ class DocumentModelBuildOperationDetails(OperationDetails):
     :vartype created_date_time: ~datetime.datetime
     :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :vartype last_updated_date_time: ~datetime.datetime
-    :ivar kind: Required. Type of operation. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
+    :ivar kind: Required. Type of operation.Constant filled by server.
+    :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
@@ -1342,9 +1264,6 @@ class DocumentModelBuildOperationDetails(OperationDetails):
         :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
          updated.
         :paramtype last_updated_date_time: ~datetime.datetime
-        :keyword kind: Required. Type of operation. Known values are: "documentModelBuild",
-         "documentModelCompose", "documentModelCopyTo".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
         :keyword api_version: API version used to create this operation.
@@ -1358,6 +1277,7 @@ class DocumentModelBuildOperationDetails(OperationDetails):
         :paramtype result: ~azure.ai.formrecognizer.v2022_08_31.models.DocumentModelDetails
         """
         super(DocumentModelBuildOperationDetails, self).__init__(**kwargs)
+        self.kind = 'documentModelBuild'  # type: str
         self.result = kwargs.get('result', None)
 
 
@@ -1377,9 +1297,8 @@ class DocumentModelComposeOperationDetails(OperationDetails):
     :vartype created_date_time: ~datetime.datetime
     :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :vartype last_updated_date_time: ~datetime.datetime
-    :ivar kind: Required. Type of operation. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
+    :ivar kind: Required. Type of operation.Constant filled by server.
+    :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
@@ -1433,9 +1352,6 @@ class DocumentModelComposeOperationDetails(OperationDetails):
         :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
          updated.
         :paramtype last_updated_date_time: ~datetime.datetime
-        :keyword kind: Required. Type of operation. Known values are: "documentModelBuild",
-         "documentModelCompose", "documentModelCopyTo".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
         :keyword api_version: API version used to create this operation.
@@ -1449,6 +1365,7 @@ class DocumentModelComposeOperationDetails(OperationDetails):
         :paramtype result: ~azure.ai.formrecognizer.v2022_08_31.models.DocumentModelDetails
         """
         super(DocumentModelComposeOperationDetails, self).__init__(**kwargs)
+        self.kind = 'documentModelCompose'  # type: str
         self.result = kwargs.get('result', None)
 
 
@@ -1468,9 +1385,8 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
     :vartype created_date_time: ~datetime.datetime
     :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :vartype last_updated_date_time: ~datetime.datetime
-    :ivar kind: Required. Type of operation. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
+    :ivar kind: Required. Type of operation.Constant filled by server.
+    :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
@@ -1524,9 +1440,6 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
         :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
          updated.
         :paramtype last_updated_date_time: ~datetime.datetime
-        :keyword kind: Required. Type of operation. Known values are: "documentModelBuild",
-         "documentModelCompose", "documentModelCopyTo".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
         :keyword api_version: API version used to create this operation.
@@ -1540,7 +1453,71 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
         :paramtype result: ~azure.ai.formrecognizer.v2022_08_31.models.DocumentModelDetails
         """
         super(DocumentModelCopyToOperationDetails, self).__init__(**kwargs)
+        self.kind = 'documentModelCopyTo'  # type: str
         self.result = kwargs.get('result', None)
+
+
+class DocumentModelDetails(msrest.serialization.Model):
+    """Document model info.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model_id: Required. Unique document model name.
+    :vartype model_id: str
+    :ivar description: Document model description.
+    :vartype description: str
+    :ivar created_date_time: Required. Date and time (UTC) when the document model was created.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar api_version: API version used to create this document model.
+    :vartype api_version: str
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
+    :vartype tags: dict[str, str]
+    :ivar doc_types: Supported document types.
+    :vartype doc_types: dict[str, ~azure.ai.formrecognizer.v2022_08_31.models.DocumentTypeDetails]
+    """
+
+    _validation = {
+        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
+        'description': {'max_length': 4096, 'min_length': 0},
+        'created_date_time': {'required': True},
+    }
+
+    _attribute_map = {
+        'model_id': {'key': 'modelId', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'doc_types': {'key': 'docTypes', 'type': '{DocumentTypeDetails}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model_id: Required. Unique document model name.
+        :paramtype model_id: str
+        :keyword description: Document model description.
+        :paramtype description: str
+        :keyword created_date_time: Required. Date and time (UTC) when the document model was created.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword api_version: API version used to create this document model.
+        :paramtype api_version: str
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
+        :paramtype tags: dict[str, str]
+        :keyword doc_types: Supported document types.
+        :paramtype doc_types: dict[str,
+         ~azure.ai.formrecognizer.v2022_08_31.models.DocumentTypeDetails]
+        """
+        super(DocumentModelDetails, self).__init__(**kwargs)
+        self.model_id = kwargs['model_id']
+        self.description = kwargs.get('description', None)
+        self.created_date_time = kwargs['created_date_time']
+        self.api_version = kwargs.get('api_version', None)
+        self.tags = kwargs.get('tags', None)
+        self.doc_types = kwargs.get('doc_types', None)
 
 
 class DocumentModelSummary(msrest.serialization.Model):
@@ -1597,64 +1574,6 @@ class DocumentModelSummary(msrest.serialization.Model):
         self.created_date_time = kwargs['created_date_time']
         self.api_version = kwargs.get('api_version', None)
         self.tags = kwargs.get('tags', None)
-
-
-class DocumentModelDetails(DocumentModelSummary):
-    """Document model info.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_id: Required. Unique document model name.
-    :vartype model_id: str
-    :ivar description: Document model description.
-    :vartype description: str
-    :ivar created_date_time: Required. Date and time (UTC) when the document model was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this document model.
-    :vartype api_version: str
-    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
-    :vartype tags: dict[str, str]
-    :ivar doc_types: Supported document types.
-    :vartype doc_types: dict[str, ~azure.ai.formrecognizer.v2022_08_31.models.DocumentTypeDetails]
-    """
-
-    _validation = {
-        'model_id': {'required': True, 'pattern': r'[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'created_date_time': {'required': True},
-    }
-
-    _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'doc_types': {'key': 'docTypes', 'type': '{DocumentTypeDetails}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword model_id: Required. Unique document model name.
-        :paramtype model_id: str
-        :keyword description: Document model description.
-        :paramtype description: str
-        :keyword created_date_time: Required. Date and time (UTC) when the document model was created.
-        :paramtype created_date_time: ~datetime.datetime
-        :keyword api_version: API version used to create this document model.
-        :paramtype api_version: str
-        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
-         model.
-        :paramtype tags: dict[str, str]
-        :keyword doc_types: Supported document types.
-        :paramtype doc_types: dict[str,
-         ~azure.ai.formrecognizer.v2022_08_31.models.DocumentTypeDetails]
-        """
-        super(DocumentModelDetails, self).__init__(**kwargs)
-        self.doc_types = kwargs.get('doc_types', None)
 
 
 class DocumentPage(msrest.serialization.Model):
@@ -2246,7 +2165,7 @@ class ErrorResponse(msrest.serialization.Model):
 
 
 class GetDocumentModelsResponse(msrest.serialization.Model):
-    """List Document models response object.
+    """List document models response object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2354,6 +2273,95 @@ class InnerError(msrest.serialization.Model):
         self.code = kwargs['code']
         self.message = kwargs.get('message', None)
         self.innererror = kwargs.get('innererror', None)
+
+
+class OperationSummary(msrest.serialization.Model):
+    """Operation info.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operation_id: Required. Operation ID.
+    :vartype operation_id: str
+    :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
+     "succeeded", "canceled".
+    :vartype status: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationStatus
+    :ivar percent_completed: Operation progress (0-100).
+    :vartype percent_completed: int
+    :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar kind: Required. Type of operation. Known values are: "documentModelBuild",
+     "documentModelCompose", "documentModelCopyTo".
+    :vartype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
+    :ivar resource_location: Required. URL of the resource targeted by this operation.
+    :vartype resource_location: str
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'operation_id': {'required': True},
+        'status': {'required': True},
+        'percent_completed': {'maximum': 100, 'minimum': 0},
+        'created_date_time': {'required': True},
+        'last_updated_date_time': {'required': True},
+        'kind': {'required': True},
+        'resource_location': {'required': True},
+    }
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword operation_id: Required. Operation ID.
+        :paramtype operation_id: str
+        :keyword status: Required. Operation status. Known values are: "notStarted", "running",
+         "failed", "succeeded", "canceled".
+        :paramtype status: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationStatus
+        :keyword percent_completed: Operation progress (0-100).
+        :paramtype percent_completed: int
+        :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
+         updated.
+        :paramtype last_updated_date_time: ~datetime.datetime
+        :keyword kind: Required. Type of operation. Known values are: "documentModelBuild",
+         "documentModelCompose", "documentModelCopyTo".
+        :paramtype kind: str or ~azure.ai.formrecognizer.v2022_08_31.models.OperationKind
+        :keyword resource_location: Required. URL of the resource targeted by this operation.
+        :paramtype resource_location: str
+        :keyword api_version: API version used to create this operation.
+        :paramtype api_version: str
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the document
+         model.
+        :paramtype tags: dict[str, str]
+        """
+        super(OperationSummary, self).__init__(**kwargs)
+        self.operation_id = kwargs['operation_id']
+        self.status = kwargs['status']
+        self.percent_completed = kwargs.get('percent_completed', None)
+        self.created_date_time = kwargs['created_date_time']
+        self.last_updated_date_time = kwargs['last_updated_date_time']
+        self.kind = kwargs['kind']
+        self.resource_location = kwargs['resource_location']
+        self.api_version = kwargs.get('api_version', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class ResourceDetails(msrest.serialization.Model):
