@@ -2,23 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from abc import abstractclassmethod, abstractmethod
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Union
-from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, load_yaml
+
+from azure.ai.ml._ml_exceptions import DatastoreException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
+from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    CommonYamlFields,
-    PARAMS_OVERRIDE_KEY,
-)
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreType, DatastoreData
-
-from azure.ai.ml._ml_exceptions import DatastoreException, ErrorCategory, ErrorTarget, ValidationException
 
 
 class Datastore(Resource, RestTranslatableMixin):
@@ -49,7 +47,13 @@ class Datastore(Resource, RestTranslatableMixin):
         **kwargs,
     ):
         self._type = kwargs.pop("type", None)
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
+        )
 
         self.credentials = NoneCredentials() if credentials is None else credentials
 
@@ -88,10 +92,10 @@ class Datastore(Resource, RestTranslatableMixin):
         }
 
         from azure.ai.ml.entities import (
+            AzureBlobDatastore,
             AzureDataLakeGen1Datastore,
             AzureDataLakeGen2Datastore,
             AzureFileDatastore,
-            AzureBlobDatastore,
         )
 
         # from azure.ai.ml.entities._datastore._on_prem import (
@@ -136,10 +140,10 @@ class Datastore(Resource, RestTranslatableMixin):
     def _from_rest_object(cls, datastore_resource: DatastoreData) -> "Datastore":
 
         from azure.ai.ml.entities import (
+            AzureBlobDatastore,
             AzureDataLakeGen1Datastore,
             AzureDataLakeGen2Datastore,
             AzureFileDatastore,
-            AzureBlobDatastore,
         )
 
         # from azure.ai.ml.entities._datastore._on_prem import (

@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 from pathlib import Path
+import re
 from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE
@@ -17,7 +18,7 @@ def main(generate_input, generate_output):
         data = json.load(reader)
         _LOGGER.info(f"auto_package input: {data}")
 
-    spec_folder = data["specFolder"]
+    spec_folder = re.sub('specification', '', data["specFolder"])
     sdk_folder = "."
     result = {}
     python_tag = data.get('python_tag')

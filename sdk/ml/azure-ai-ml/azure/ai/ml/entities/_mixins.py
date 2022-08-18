@@ -1,11 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import yaml
+from azure.ai.ml._utils.utils import dump_yaml
 
 from abc import abstractmethod
 from typing import Any, Dict
-from collections import OrderedDict
 
 
 class RestTranslatableMixin:
@@ -93,17 +92,6 @@ class YamlTranslatableMixin:
         """Dump the object into a dictionary."""
 
     def _to_yaml(self) -> str:
-        """Dump the object content into a yaml string."""
-        # Default behavior: dump the object to dict, then dump to yaml string.
-
-        # Support dump OrderedDict
-        class OrderedDumper(yaml.Dumper):
-            pass
-
-        OrderedDumper.add_representer(OrderedDict, yaml.representer.SafeRepresenter.represent_dict)
-        return yaml.dump(self._to_dict(), Dumper=OrderedDumper)
-
-    def _ordered_yaml(self) -> str:
         """Dump the object content into a sorted yaml string."""
         order_keys = [
             "$schema",
@@ -120,6 +108,7 @@ class YamlTranslatableMixin:
             "resources",
             "limits",
             "schedule",
+            "jobs",
         ]
         nested_keys = ["component", "trial"]
 
@@ -132,13 +121,13 @@ class YamlTranslatableMixin:
                     dict_value["jobs"][node_name] = _sort_dict_according_to_list(order_keys, node)
             difference = list(set(dict_value.keys()).difference(set(order_keys)))
             order_keys.extend(difference)
-            return dict(sorted(dict_value.items(), key=lambda dict_value_: order_keys.index(dict_value_[0])))
+            return dict(
+                sorted(
+                    dict_value.items(),
+                    key=lambda dict_value_: order_keys.index(dict_value_[0]),
+                )
+            )
 
         sorted_dict_value = _sort_dict_according_to_list(order_keys, self._to_dict())
 
-        # Support dump OrderedDict
-        class OrderedDumper(yaml.Dumper):
-            pass
-
-        OrderedDumper.add_representer(OrderedDict, yaml.representer.SafeRepresenter.represent_dict)
-        return yaml.dump(sorted_dict_value, Dumper=OrderedDumper, sort_keys=False)
+        return dump_yaml(sorted_dict_value, sort_keys=False)

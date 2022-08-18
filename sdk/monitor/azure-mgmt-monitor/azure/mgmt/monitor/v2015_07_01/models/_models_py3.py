@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Resource(msrest.serialization.Model):
@@ -140,12 +142,12 @@ class AlertRuleResource(Resource):
         location: str,
         name_properties_name: str,
         is_enabled: bool,
-        condition: "RuleCondition",
+        condition: "_models.RuleCondition",
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         provisioning_state: Optional[str] = None,
-        action: Optional["RuleAction"] = None,
-        actions: Optional[List["RuleAction"]] = None,
+        action: Optional["_models.RuleAction"] = None,
+        actions: Optional[List["_models.RuleAction"]] = None,
         **kwargs
     ):
         """
@@ -196,7 +198,7 @@ class AlertRuleResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["AlertRuleResource"]] = None,
+        value: Optional[List["_models.AlertRuleResource"]] = None,
         **kwargs
     ):
         """
@@ -258,9 +260,9 @@ class AlertRuleResourcePatch(msrest.serialization.Model):
         description: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         is_enabled: Optional[bool] = None,
-        condition: Optional["RuleCondition"] = None,
-        action: Optional["RuleAction"] = None,
-        actions: Optional[List["RuleAction"]] = None,
+        condition: Optional["_models.RuleCondition"] = None,
+        action: Optional["_models.RuleAction"] = None,
+        actions: Optional[List["_models.RuleAction"]] = None,
         **kwargs
     ):
         """
@@ -367,7 +369,7 @@ class ErrorContract(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         **kwargs
     ):
         """
@@ -482,7 +484,7 @@ class RuleCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        data_source: Optional["RuleDataSource"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
         **kwargs
     ):
         """
@@ -533,7 +535,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         self,
         *,
         failed_location_count: int,
-        data_source: Optional["RuleDataSource"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
         **kwargs
     ):
@@ -585,7 +587,7 @@ class LogSettings(msrest.serialization.Model):
         *,
         enabled: bool,
         category: Optional[str] = None,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
         """
@@ -646,8 +648,8 @@ class LogSpecification(msrest.serialization.Model):
 class ManagementEventAggregationCondition(msrest.serialization.Model):
     """How the data that is collected should be combined over time.
 
-    :ivar operator: the condition operator. Possible values include: "GreaterThan",
-     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :ivar operator: the condition operator. Known values are: "GreaterThan", "GreaterThanOrEqual",
+     "LessThan", "LessThanOrEqual".
     :vartype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
     :ivar threshold: The threshold value that activates the alert.
     :vartype threshold: float
@@ -666,13 +668,13 @@ class ManagementEventAggregationCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        operator: Optional[Union[str, "ConditionOperator"]] = None,
+        operator: Optional[Union[str, "_models.ConditionOperator"]] = None,
         threshold: Optional[float] = None,
         window_size: Optional[datetime.timedelta] = None,
         **kwargs
     ):
         """
-        :keyword operator: the condition operator. Possible values include: "GreaterThan",
+        :keyword operator: the condition operator. Known values are: "GreaterThan",
          "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
         :paramtype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
         :keyword threshold: The threshold value that activates the alert.
@@ -721,8 +723,8 @@ class ManagementEventRuleCondition(RuleCondition):
     def __init__(
         self,
         *,
-        data_source: Optional["RuleDataSource"] = None,
-        aggregation: Optional["ManagementEventAggregationCondition"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
+        aggregation: Optional["_models.ManagementEventAggregationCondition"] = None,
         **kwargs
     ):
         """
@@ -764,7 +766,7 @@ class MetricAvailability(msrest.serialization.Model):
         *,
         time_grain: Optional[datetime.timedelta] = None,
         retention: Optional[datetime.timedelta] = None,
-        location: Optional["MetricAvailabilityLocation"] = None,
+        location: Optional["_models.MetricAvailabilityLocation"] = None,
         **kwargs
     ):
         """
@@ -804,7 +806,7 @@ class MetricAvailabilityLocation(msrest.serialization.Model):
         self,
         *,
         table_endpoint: Optional[str] = None,
-        table_info: Optional[List["TableInfoEntry"]] = None,
+        table_info: Optional[List["_models.TableInfoEntry"]] = None,
         partition_key: Optional[str] = None,
         **kwargs
     ):
@@ -834,7 +836,7 @@ class MetricDefinition(msrest.serialization.Model):
     :vartype name: ~$(python-base-namespace).v2015_07_01.models.LocalizableString
     :ivar category: The category of this metric.
     :vartype category: str
-    :ivar unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+    :ivar unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
     :vartype unit: str or ~$(python-base-namespace).v2015_07_01.models.Unit
     :ivar start_time: Start time of the metadata request timespan.
@@ -842,7 +844,7 @@ class MetricDefinition(msrest.serialization.Model):
     :ivar end_time: End time of the metadata request timespan.
     :vartype end_time: ~datetime.datetime
     :ivar primary_aggregation_type: the primary aggregation type value defining how to use the
-     values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+     values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
     :vartype primary_aggregation_type: str or
      ~$(python-base-namespace).v2015_07_01.models.AggregationType
@@ -877,14 +879,14 @@ class MetricDefinition(msrest.serialization.Model):
         *,
         resource_id: Optional[str] = None,
         resource_uri: Optional[str] = None,
-        name: Optional["LocalizableString"] = None,
+        name: Optional["_models.LocalizableString"] = None,
         category: Optional[str] = None,
-        unit: Optional[Union[str, "Unit"]] = None,
+        unit: Optional[Union[str, "_models.Unit"]] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        primary_aggregation_type: Optional[Union[str, "AggregationType"]] = None,
-        supported_aggregation_types: Optional[List[Union[str, "AggregationType"]]] = None,
-        metric_availabilities: Optional[List["MetricAvailability"]] = None,
+        primary_aggregation_type: Optional[Union[str, "_models.AggregationType"]] = None,
+        supported_aggregation_types: Optional[List[Union[str, "_models.AggregationType"]]] = None,
+        metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
         id: Optional[str] = None,
         **kwargs
     ):
@@ -897,7 +899,7 @@ class MetricDefinition(msrest.serialization.Model):
         :paramtype name: ~$(python-base-namespace).v2015_07_01.models.LocalizableString
         :keyword category: The category of this metric.
         :paramtype category: str
-        :keyword unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+        :keyword unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
         :paramtype unit: str or ~$(python-base-namespace).v2015_07_01.models.Unit
         :keyword start_time: Start time of the metadata request timespan.
@@ -905,7 +907,7 @@ class MetricDefinition(msrest.serialization.Model):
         :keyword end_time: End time of the metadata request timespan.
         :paramtype end_time: ~datetime.datetime
         :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
-         values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
+         values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum",
          "Total".
         :paramtype primary_aggregation_type: str or
          ~$(python-base-namespace).v2015_07_01.models.AggregationType
@@ -957,7 +959,7 @@ class MetricDefinitionCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["MetricDefinition"],
+        value: List["_models.MetricDefinition"],
         id: Optional[str] = None,
         **kwargs
     ):
@@ -1001,7 +1003,7 @@ class MetricSettings(msrest.serialization.Model):
         *,
         time_grain: datetime.timedelta,
         enabled: bool,
-        retention_policy: Optional["RetentionPolicy"] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs
     ):
         """
@@ -1080,7 +1082,7 @@ class MetricSpecification(msrest.serialization.Model):
         availabilities: Optional[List[str]] = None,
         lock_aggregation_type: Optional[str] = None,
         category: Optional[str] = None,
-        dimensions: Optional[List["DimensionProperties"]] = None,
+        dimensions: Optional[List["_models.DimensionProperties"]] = None,
         fill_gap_with_zero: Optional[bool] = None,
         internal_metric_name: Optional[str] = None,
         **kwargs
@@ -1157,8 +1159,8 @@ class Operation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["OperationDisplay"] = None,
-        service_specification: Optional["ServiceSpecification"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -1249,7 +1251,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1557,7 +1559,7 @@ class RuleManagementEventDataSource(RuleDataSource):
         resource_provider_name: Optional[str] = None,
         status: Optional[str] = None,
         sub_status: Optional[str] = None,
-        claims: Optional["RuleManagementEventClaimsDataSource"] = None,
+        claims: Optional["_models.RuleManagementEventClaimsDataSource"] = None,
         **kwargs
     ):
         """
@@ -1778,8 +1780,8 @@ class ServiceDiagnosticSettingsResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
-        metrics: Optional[List["MetricSettings"]] = None,
-        logs: Optional[List["LogSettings"]] = None,
+        metrics: Optional[List["_models.MetricSettings"]] = None,
+        logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
         **kwargs
     ):
@@ -1835,8 +1837,8 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["LogSpecification"]] = None,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         legacy_metric_specifications: Optional[Any] = None,
         **kwargs
     ):
@@ -1923,8 +1925,8 @@ class ThresholdRuleCondition(RuleCondition):
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
     :vartype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
-    :ivar operator: Required. the operator used to compare the data and the threshold. Possible
-     values include: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :ivar operator: Required. the operator used to compare the data and the threshold. Known values
+     are: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :vartype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
     :ivar threshold: Required. the threshold value that activates the alert.
     :vartype threshold: float
@@ -1933,8 +1935,8 @@ class ThresholdRuleCondition(RuleCondition):
      day.
     :vartype window_size: ~datetime.timedelta
     :ivar time_aggregation: the time aggregation operator. How the data that are collected should
-     be combined over time. The default value is the PrimaryAggregationType of the Metric. Possible
-     values include: "Average", "Minimum", "Maximum", "Total", "Last".
+     be combined over time. The default value is the PrimaryAggregationType of the Metric. Known
+     values are: "Average", "Minimum", "Maximum", "Total", "Last".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2015_07_01.models.TimeAggregationOperator
     """
@@ -1957,19 +1959,19 @@ class ThresholdRuleCondition(RuleCondition):
     def __init__(
         self,
         *,
-        operator: Union[str, "ConditionOperator"],
+        operator: Union[str, "_models.ConditionOperator"],
         threshold: float,
-        data_source: Optional["RuleDataSource"] = None,
+        data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
-        time_aggregation: Optional[Union[str, "TimeAggregationOperator"]] = None,
+        time_aggregation: Optional[Union[str, "_models.TimeAggregationOperator"]] = None,
         **kwargs
     ):
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
         :paramtype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
-        :keyword operator: Required. the operator used to compare the data and the threshold. Possible
-         values include: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+        :keyword operator: Required. the operator used to compare the data and the threshold. Known
+         values are: "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
         :paramtype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
         :keyword threshold: Required. the threshold value that activates the alert.
         :paramtype threshold: float
@@ -1979,7 +1981,7 @@ class ThresholdRuleCondition(RuleCondition):
         :paramtype window_size: ~datetime.timedelta
         :keyword time_aggregation: the time aggregation operator. How the data that are collected
          should be combined over time. The default value is the PrimaryAggregationType of the Metric.
-         Possible values include: "Average", "Minimum", "Maximum", "Total", "Last".
+         Known values are: "Average", "Minimum", "Maximum", "Total", "Last".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2015_07_01.models.TimeAggregationOperator
         """

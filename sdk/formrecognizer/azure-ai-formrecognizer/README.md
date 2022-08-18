@@ -34,7 +34,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b5 - Latest beta release | 2.0, 2.1, 2022-06-30-preview
+|3.2.0b6 - Latest beta release | 2.0, 2.1, 2022-06-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -423,7 +423,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
     # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
-    source=container_sas_url, build_mode="template", model_id="my-first-model"
+    build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
 )
 model = poller.result()
 

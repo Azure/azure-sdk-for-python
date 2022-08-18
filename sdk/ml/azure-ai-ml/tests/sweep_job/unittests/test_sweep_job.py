@@ -235,6 +235,9 @@ class TestSweepJob:
             search_space={"lr2": LogUniform(min_value=1, max_value=100)},
         )
 
+        # Check that the command property in the original node is kept unchanged.
+        assert node.command == "echo ${{inputs.uri}} ${{inputs.lr}} ${{inputs.lr2}}"
+
         # job name is set in job_operations.py
         assert sweep_node.name is None
         sweep_node.name = "builder-sweep-job"

@@ -1,0 +1,39 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/StarliteComponent.json
+name: microsoft_com_azureml_samples_starlite__search_gold_get_files
+version: 0.0.1
+display_name: Starlite SearchGold Get Files
+type: StarliteComponent
+description: Allows to download files from SearchGold to cosmos and get their revision information. 'FileList' input is a file with source depot paths, one per line.
+tags: {category: Component Tutorial, contact: amldesigner@microsoft.com}
+inputs:
+  UploadToCosmos:
+    type: enum
+    enum:
+    - true
+    - false
+    default: false
+    optional: false
+  FileList:
+    type: AnyFile
+    optional: false
+  RunId:
+    type: string
+    description: a parameter value
+    optional: true
+  FileListFileName:
+    type: string
+    default: \\output.tsv
+    optional: false
+outputs:
+  Files:
+    type: AnyDirectory
+  CosmosPath:
+    type: AnyFile
+  ResultInfo:
+    type: AnyFile
+command: >-
+  Starlite.Cloud.SourceDepotGet.exe /UploadToCosmos:{inputs.UploadToCosmos}
+  /FileList:{inputs.FileList}{inputs.FileListFileName}
+  /Files:{outputs.Files} /CosmosPath:{outputs.CosmosPath} /ResultInfo:{outputs.ResultInfo} ""
+starlite:
+  ref_id: bd140f4d-7775-4246-a75c-1c86df9536fb

@@ -66,9 +66,9 @@ def sample_update_knowledge_sources():
             project_name=project_name
         )
         for item in sources:
-            print("source name: {}".format(item["displayName"]))
+            print("source name: {}".format(item.get("displayName", "N/A")))
             print("\tsource: {}".format(item["source"]))
-            print("\tsource uri: {}".format(item["sourceUri"]))
+            print("\tsource uri: {}".format(item.get("sourceUri", "N/A")))
             print("\tsource kind: {}".format(item["sourceKind"]))
 
         # qnas

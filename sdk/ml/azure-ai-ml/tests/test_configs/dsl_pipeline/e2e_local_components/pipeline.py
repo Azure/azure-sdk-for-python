@@ -1,5 +1,4 @@
-from azure.ai.ml import dsl, Input
-from azure.ai.ml.entities import load_component
+from azure.ai.ml import dsl, Input, load_component
 from azure.ai.ml.entities import PipelineJob
 from pathlib import Path
 
@@ -8,13 +7,9 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    train_func = load_component(
-        yaml_file=parent_dir + "/train.yml"
-    )
-    score_func = load_component(
-        yaml_file=parent_dir + "/score.yml"
-    )
-    eval_func = load_component(yaml_file=parent_dir + "/eval.yml")
+    train_func = load_component(path=parent_dir + "/train.yml")
+    score_func = load_component(path=parent_dir + "/score.yml")
+    eval_func = load_component(path=parent_dir + "/eval.yml")
 
     # 2. Construct pipeline
     @dsl.pipeline(
@@ -22,10 +17,10 @@ def generate_dsl_pipeline() -> PipelineJob:
         description="Dummy train-score-eval pipeline with local components",
     )
     def e2e_local_components(
-            pipeline_job_training_input,
-            pipeline_job_training_max_epocs,
-            pipeline_job_training_learning_rate,
-            pipeline_job_learning_rate_schedule,
+        pipeline_job_training_input,
+        pipeline_job_training_max_epocs,
+        pipeline_job_training_learning_rate,
+        pipeline_job_learning_rate_schedule,
     ):
         train_job = train_func(
             training_data=pipeline_job_training_input,

@@ -48,7 +48,9 @@ from ._storage_management_enums import (
     SkuTier,
     UsageUnit,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AccountSasParameters',
     'CheckNameAvailabilityResult',
@@ -89,3 +91,5 @@ __all__ = [
     'SkuTier',
     'UsageUnit',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -128,11 +128,18 @@ class StorageRetryTest(StorageTestCase):
     def test_retry_on_socket_timeout(self, storage_account_name, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
-        retry = LinearRetry(backoff=1)
+        blob_name = self.get_resource_name('blob')
+        # Upload a blob that can be downloaded to test read timeout
+        service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
+        container = service.create_container(container_name)
+        container.upload_blob(blob_name, b'a' * 5 * 1025, overwrite=True)
+
+        retry = LinearRetry(backoff=1, random_jitter_range=1)
         retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, transport=retry_transport)
+        blob = service.get_blob_client(container_name, blob_name)
 
         assert service._client._client._pipeline._transport.connection_config.timeout == 11
         assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
@@ -140,7 +147,7 @@ class StorageRetryTest(StorageTestCase):
         # Act
         try:
             with self.assertRaises(AzureError) as error:
-                service.create_container(container_name)
+                blob.download_blob()
             # Assert
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4

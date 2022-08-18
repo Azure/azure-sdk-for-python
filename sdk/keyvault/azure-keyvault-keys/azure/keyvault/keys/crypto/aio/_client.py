@@ -162,14 +162,18 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
         the key and encryption algorithm.
 
-        :param algorithm: encryption algorithm to use
+        :param algorithm: Encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
-        :param bytes plaintext: bytes to encrypt
-        :keyword bytes iv: initialization vector. Required for only AES-CBC(PAD) encryption.
-        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+        :param bytes plaintext: Bytes to encrypt
+        :keyword bytes iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
+            make sure you use a cryptographically random, non-repeating IV. If omitted for remote cryptography, Key
+            Vault will generate an IV.
+        :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
-        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
+        :raises:
+            ValueError if parameters that are incompatible with the specified algorithm are provided,
+            RuntimeError if an IV cannot be generated
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START encrypt]
@@ -228,16 +232,18 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
         the key and encryption algorithm.
 
-        :param algorithm: encryption algorithm to use
+        :param algorithm: Encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
-        :param bytes ciphertext: encrypted bytes to decrypt
-        :keyword bytes iv: the initialization vector used during encryption. Required for AES decryption.
-        :keyword bytes authentication_tag: the authentication tag generated during encryption. Required for only AES-GCM
+        :param bytes ciphertext: Encrypted bytes to decrypt. Microsoft recommends you not use CBC without first ensuring
+            the integrity of the ciphertext using, for example, an HMAC. See
+            https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
+        :keyword bytes iv: The initialization vector used during encryption. Required for AES decryption.
+        :keyword bytes authentication_tag: The authentication tag generated during encryption. Required for only AES-GCM
             decryption.
-        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+        :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM decryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
-        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
+        :raises ValueError: If parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START decrypt]

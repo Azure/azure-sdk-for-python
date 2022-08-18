@@ -7,9 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class PrivateLinkScopesResource(msrest.serialization.Model):
@@ -154,7 +158,7 @@ class AzureMonitorPrivateLinkScopeListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["AzureMonitorPrivateLinkScope"],
+        value: List["_models.AzureMonitorPrivateLinkScope"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -315,7 +319,7 @@ class OperationStatus(msrest.serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
-        error: Optional["ErrorResponseCommon"] = None,
+        error: Optional["_models.ErrorResponseCommon"] = None,
         **kwargs
     ):
         """
@@ -418,8 +422,8 @@ class PrivateEndpointConnection(ProxyResource):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
         """

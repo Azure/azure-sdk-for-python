@@ -4,8 +4,8 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from .settings import PipelineJobSettingsSchema
 from .component_job import CommandSchema, ParallelSchema
 from .pipeline_job import PipelineJobSchema
+from .settings import PipelineJobSettingsSchema
 
 # nopycln: file

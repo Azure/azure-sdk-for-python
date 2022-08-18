@@ -4,8 +4,8 @@
 
 import re
 
-from azure.ai.ml.constants import OnlineEndpointConfigurations
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.constants import OnlineEndpointConfigurations
 
 
 def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False) -> None:
@@ -21,12 +21,18 @@ def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False)
     ):
         msg = f"The name for {type_str} must be at least 3 and at most 32 characters long (inclusive of both limits)."
         raise ValidationException(
-            message=msg, target=target, no_personal_data_message=msg, error_category=ErrorCategory.USER_ERROR
+            message=msg,
+            target=target,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
         )
     if not re.match(OnlineEndpointConfigurations.NAME_REGEX_PATTERN, name):
         msg = f"The name for {type_str} must start with an upper- or lowercase letter and only consist of '-'s and alphanumeric characters."
         raise ValidationException(
-            message=msg, target=target, no_personal_data_message=msg, error_category=ErrorCategory.USER_ERROR
+            message=msg,
+            target=target,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
         )
 
 

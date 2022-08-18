@@ -52,7 +52,7 @@ def mock__commands():
 
 @pytest.fixture
 def mock_time(request):
-    p = patch("azure.ai.ml.operations.job_ops_helper.time")
+    p = patch("azure.ai.ml.operations._job_ops_helper.time")
     yield p.start()
     p.stop()
 

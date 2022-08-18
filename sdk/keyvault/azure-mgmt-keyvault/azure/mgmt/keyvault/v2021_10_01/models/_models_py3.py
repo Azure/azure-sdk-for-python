@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._key_vault_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccessPolicyEntry(msrest.serialization.Model):
@@ -51,7 +53,7 @@ class AccessPolicyEntry(msrest.serialization.Model):
         *,
         tenant_id: str,
         object_id: str,
-        permissions: "Permissions",
+        permissions: "_models.Permissions",
         application_id: Optional[str] = None,
         **kwargs
     ):
@@ -140,8 +142,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a vault name could not be used. The Reason element is only
-     returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
-     "AlreadyExists".
+     returned if NameAvailable is false. Known values are: "AccountNameInvalid", "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.keyvault.v2021_10_01.models.Reason
     :ivar message: An error message explaining the Reason value in more detail.
     :vartype message: str
@@ -236,7 +237,7 @@ class DeletedManagedHsm(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["DeletedManagedHsmProperties"] = None,
+        properties: Optional["_models.DeletedManagedHsmProperties"] = None,
         **kwargs
     ):
         """
@@ -267,7 +268,7 @@ class DeletedManagedHsmListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DeletedManagedHsm"]] = None,
+        value: Optional[List["_models.DeletedManagedHsm"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -365,7 +366,7 @@ class DeletedVault(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["DeletedVaultProperties"] = None,
+        properties: Optional["_models.DeletedVaultProperties"] = None,
         **kwargs
     ):
         """
@@ -396,7 +397,7 @@ class DeletedVaultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DeletedVault"]] = None,
+        value: Optional[List["_models.DeletedVault"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -638,15 +639,15 @@ class Key(Resource):
     :vartype tags: dict[str, str]
     :ivar attributes: The attributes of the key.
     :vartype attributes: ~azure.mgmt.keyvault.v2021_10_01.models.KeyAttributes
-    :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Possible values include:
-     "EC", "EC-HSM", "RSA", "RSA-HSM".
+    :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Known values are: "EC",
+     "EC-HSM", "RSA", "RSA-HSM".
     :vartype kty: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyType
     :ivar key_ops:
     :vartype key_ops: list[str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyOperation]
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
-    :ivar curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible
-     values include: "P-256", "P-384", "P-521", "P-256K".
+    :ivar curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName. Known
+     values are: "P-256", "P-384", "P-521", "P-256K".
     :vartype curve_name: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyCurveName
     :ivar key_uri: The URI to retrieve the current version of the key.
     :vartype key_uri: str
@@ -682,25 +683,25 @@ class Key(Resource):
     def __init__(
         self,
         *,
-        attributes: Optional["KeyAttributes"] = None,
-        kty: Optional[Union[str, "JsonWebKeyType"]] = None,
-        key_ops: Optional[List[Union[str, "JsonWebKeyOperation"]]] = None,
+        attributes: Optional["_models.KeyAttributes"] = None,
+        kty: Optional[Union[str, "_models.JsonWebKeyType"]] = None,
+        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_size: Optional[int] = None,
-        curve_name: Optional[Union[str, "JsonWebKeyCurveName"]] = None,
+        curve_name: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         **kwargs
     ):
         """
         :keyword attributes: The attributes of the key.
         :paramtype attributes: ~azure.mgmt.keyvault.v2021_10_01.models.KeyAttributes
-        :keyword kty: The type of the key. For valid values, see JsonWebKeyType. Possible values
-         include: "EC", "EC-HSM", "RSA", "RSA-HSM".
+        :keyword kty: The type of the key. For valid values, see JsonWebKeyType. Known values are:
+         "EC", "EC-HSM", "RSA", "RSA-HSM".
         :paramtype kty: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyType
         :keyword key_ops:
         :paramtype key_ops: list[str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyOperation]
         :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :paramtype key_size: int
-        :keyword curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName.
-         Possible values include: "P-256", "P-384", "P-521", "P-256K".
+        :keyword curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName. Known
+         values are: "P-256", "P-384", "P-521", "P-256K".
         :paramtype curve_name: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyCurveName
         """
         super(Key, self).__init__(**kwargs)
@@ -730,8 +731,8 @@ class KeyAttributes(msrest.serialization.Model):
     :vartype updated: long
     :ivar recovery_level: The deletion recovery level currently in effect for the object. If it
      contains 'Purgeable', then the object can be permanently deleted by a privileged user;
-     otherwise, only the system can purge the object at the end of the retention interval. Possible
-     values include: "Purgeable", "Recoverable+Purgeable", "Recoverable",
+     otherwise, only the system can purge the object at the end of the retention interval. Known
+     values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription".
     :vartype recovery_level: str or ~azure.mgmt.keyvault.v2021_10_01.models.DeletionRecoveryLevel
     :ivar exportable: Indicates if the private key can be exported.
@@ -806,7 +807,7 @@ class KeyCreateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "KeyProperties",
+        properties: "_models.KeyProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -838,7 +839,7 @@ class KeyListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Key"]] = None,
+        value: Optional[List["_models.Key"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -860,15 +861,15 @@ class KeyProperties(msrest.serialization.Model):
 
     :ivar attributes: The attributes of the key.
     :vartype attributes: ~azure.mgmt.keyvault.v2021_10_01.models.KeyAttributes
-    :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Possible values include:
-     "EC", "EC-HSM", "RSA", "RSA-HSM".
+    :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Known values are: "EC",
+     "EC-HSM", "RSA", "RSA-HSM".
     :vartype kty: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyType
     :ivar key_ops:
     :vartype key_ops: list[str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyOperation]
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
-    :ivar curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible
-     values include: "P-256", "P-384", "P-521", "P-256K".
+    :ivar curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName. Known
+     values are: "P-256", "P-384", "P-521", "P-256K".
     :vartype curve_name: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyCurveName
     :ivar key_uri: The URI to retrieve the current version of the key.
     :vartype key_uri: str
@@ -894,25 +895,25 @@ class KeyProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        attributes: Optional["KeyAttributes"] = None,
-        kty: Optional[Union[str, "JsonWebKeyType"]] = None,
-        key_ops: Optional[List[Union[str, "JsonWebKeyOperation"]]] = None,
+        attributes: Optional["_models.KeyAttributes"] = None,
+        kty: Optional[Union[str, "_models.JsonWebKeyType"]] = None,
+        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_size: Optional[int] = None,
-        curve_name: Optional[Union[str, "JsonWebKeyCurveName"]] = None,
+        curve_name: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         **kwargs
     ):
         """
         :keyword attributes: The attributes of the key.
         :paramtype attributes: ~azure.mgmt.keyvault.v2021_10_01.models.KeyAttributes
-        :keyword kty: The type of the key. For valid values, see JsonWebKeyType. Possible values
-         include: "EC", "EC-HSM", "RSA", "RSA-HSM".
+        :keyword kty: The type of the key. For valid values, see JsonWebKeyType. Known values are:
+         "EC", "EC-HSM", "RSA", "RSA-HSM".
         :paramtype kty: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyType
         :keyword key_ops:
         :paramtype key_ops: list[str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyOperation]
         :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :paramtype key_size: int
-        :keyword curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName.
-         Possible values include: "P-256", "P-384", "P-521", "P-256K".
+        :keyword curve_name: The elliptic curve name. For valid values, see JsonWebKeyCurveName. Known
+         values are: "P-256", "P-384", "P-521", "P-256K".
         :paramtype curve_name: str or ~azure.mgmt.keyvault.v2021_10_01.models.JsonWebKeyCurveName
         """
         super(KeyProperties, self).__init__(**kwargs)
@@ -1007,7 +1008,7 @@ class ManagedHsmResource(msrest.serialization.Model):
         self,
         *,
         location: Optional[str] = None,
-        sku: Optional["ManagedHsmSku"] = None,
+        sku: Optional["_models.ManagedHsmSku"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -1075,9 +1076,9 @@ class ManagedHsm(ManagedHsmResource):
         self,
         *,
         location: Optional[str] = None,
-        sku: Optional["ManagedHsmSku"] = None,
+        sku: Optional["_models.ManagedHsmSku"] = None,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["ManagedHsmProperties"] = None,
+        properties: Optional["_models.ManagedHsmProperties"] = None,
         **kwargs
     ):
         """
@@ -1138,7 +1139,7 @@ class ManagedHsmListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ManagedHsm"]] = None,
+        value: Optional[List["_models.ManagedHsm"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1180,13 +1181,12 @@ class ManagedHsmProperties(msrest.serialization.Model):
      this functionality is irreversible.
     :vartype enable_purge_protection: bool
     :ivar create_mode: The create mode to indicate whether the resource is being created or is
-     being recovered from a deleted resource. Possible values include: "recover", "default".
+     being recovered from a deleted resource. Known values are: "recover", "default".
     :vartype create_mode: str or ~azure.mgmt.keyvault.v2021_10_01.models.CreateMode
     :ivar status_message: Resource Status Message.
     :vartype status_message: str
-    :ivar provisioning_state: Provisioning state. Possible values include: "Succeeded",
-     "Provisioning", "Failed", "Updating", "Deleting", "Activated", "SecurityDomainRestore",
-     "Restoring".
+    :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Provisioning",
+     "Failed", "Updating", "Deleting", "Activated", "SecurityDomainRestore", "Restoring".
     :vartype provisioning_state: str or ~azure.mgmt.keyvault.v2021_10_01.models.ProvisioningState
     :ivar network_acls: Rules governing the accessibility of the key vault from specific network
      locations.
@@ -1196,7 +1196,7 @@ class ManagedHsmProperties(msrest.serialization.Model):
     :vartype private_endpoint_connections:
      list[~azure.mgmt.keyvault.v2021_10_01.models.MHSMPrivateEndpointConnectionItem]
     :ivar public_network_access: Control permission for data plane traffic coming from public
-     networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
+     networks while private endpoint is enabled. Known values are: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.PublicNetworkAccess
     :ivar scheduled_purge_date: The scheduled purge date in UTC.
@@ -1235,9 +1235,9 @@ class ManagedHsmProperties(msrest.serialization.Model):
         enable_soft_delete: Optional[bool] = True,
         soft_delete_retention_in_days: Optional[int] = 90,
         enable_purge_protection: Optional[bool] = True,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
-        network_acls: Optional["MHSMNetworkRuleSet"] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
+        network_acls: Optional["_models.MHSMNetworkRuleSet"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs
     ):
         """
@@ -1262,13 +1262,13 @@ class ManagedHsmProperties(msrest.serialization.Model):
          Enabling this functionality is irreversible.
         :paramtype enable_purge_protection: bool
         :keyword create_mode: The create mode to indicate whether the resource is being created or is
-         being recovered from a deleted resource. Possible values include: "recover", "default".
+         being recovered from a deleted resource. Known values are: "recover", "default".
         :paramtype create_mode: str or ~azure.mgmt.keyvault.v2021_10_01.models.CreateMode
         :keyword network_acls: Rules governing the accessibility of the key vault from specific network
          locations.
         :paramtype network_acls: ~azure.mgmt.keyvault.v2021_10_01.models.MHSMNetworkRuleSet
         :keyword public_network_access: Control permission for data plane traffic coming from public
-         networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
+         networks while private endpoint is enabled. Known values are: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.PublicNetworkAccess
         """
@@ -1293,9 +1293,9 @@ class ManagedHsmSku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: Required. SKU Family of the managed HSM Pool. Possible values include: "B".
+    :ivar family: Required. SKU Family of the managed HSM Pool. Known values are: "B".
     :vartype family: str or ~azure.mgmt.keyvault.v2021_10_01.models.ManagedHsmSkuFamily
-    :ivar name: Required. SKU of the managed HSM Pool. Possible values include: "Standard_B1",
+    :ivar name: Required. SKU of the managed HSM Pool. Known values are: "Standard_B1",
      "Custom_B32".
     :vartype name: str or ~azure.mgmt.keyvault.v2021_10_01.models.ManagedHsmSkuName
     """
@@ -1313,14 +1313,14 @@ class ManagedHsmSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        family: Union[str, "ManagedHsmSkuFamily"] = "B",
-        name: Union[str, "ManagedHsmSkuName"],
+        family: Union[str, "_models.ManagedHsmSkuFamily"] = "B",
+        name: Union[str, "_models.ManagedHsmSkuName"],
         **kwargs
     ):
         """
-        :keyword family: Required. SKU Family of the managed HSM Pool. Possible values include: "B".
+        :keyword family: Required. SKU Family of the managed HSM Pool. Known values are: "B".
         :paramtype family: str or ~azure.mgmt.keyvault.v2021_10_01.models.ManagedHsmSkuFamily
-        :keyword name: Required. SKU of the managed HSM Pool. Possible values include: "Standard_B1",
+        :keyword name: Required. SKU of the managed HSM Pool. Known values are: "Standard_B1",
          "Custom_B32".
         :paramtype name: str or ~azure.mgmt.keyvault.v2021_10_01.models.ManagedHsmSkuName
         """
@@ -1382,7 +1382,7 @@ class MetricSpecification(msrest.serialization.Model):
         supported_aggregation_types: Optional[List[str]] = None,
         supported_time_grain_types: Optional[List[str]] = None,
         lock_aggregation_type: Optional[str] = None,
-        dimensions: Optional[List["DimensionProperties"]] = None,
+        dimensions: Optional[List["_models.DimensionProperties"]] = None,
         fill_gap_with_zero: Optional[bool] = None,
         internal_metric_name: Optional[str] = None,
         **kwargs
@@ -1463,11 +1463,11 @@ class MHSMNetworkRuleSet(msrest.serialization.Model):
     """A set of rules governing the network accessibility of a managed hsm pool.
 
     :ivar bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
-     'None'.  If not specified the default is 'AzureServices'. Possible values include:
-     "AzureServices", "None".
+     'None'.  If not specified the default is 'AzureServices'. Known values are: "AzureServices",
+     "None".
     :vartype bypass: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleBypassOptions
     :ivar default_action: The default action when no rule from ipRules and from virtualNetworkRules
-     match. This is only used after the bypass property has been evaluated. Possible values include:
+     match. This is only used after the bypass property has been evaluated. Known values are:
      "Allow", "Deny".
     :vartype default_action: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleAction
     :ivar ip_rules: The list of IP address rules.
@@ -1487,20 +1487,20 @@ class MHSMNetworkRuleSet(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        bypass: Optional[Union[str, "NetworkRuleBypassOptions"]] = None,
-        default_action: Optional[Union[str, "NetworkRuleAction"]] = None,
-        ip_rules: Optional[List["MHSMIPRule"]] = None,
-        virtual_network_rules: Optional[List["MHSMVirtualNetworkRule"]] = None,
+        bypass: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
+        default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
+        ip_rules: Optional[List["_models.MHSMIPRule"]] = None,
+        virtual_network_rules: Optional[List["_models.MHSMVirtualNetworkRule"]] = None,
         **kwargs
     ):
         """
         :keyword bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
-         'None'.  If not specified the default is 'AzureServices'. Possible values include:
-         "AzureServices", "None".
+         'None'.  If not specified the default is 'AzureServices'. Known values are: "AzureServices",
+         "None".
         :paramtype bypass: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleBypassOptions
         :keyword default_action: The default action when no rule from ipRules and from
          virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-         Possible values include: "Allow", "Deny".
+         Known values are: "Allow", "Deny".
         :paramtype default_action: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleAction
         :keyword ip_rules: The list of IP address rules.
         :paramtype ip_rules: list[~azure.mgmt.keyvault.v2021_10_01.models.MHSMIPRule]
@@ -1569,8 +1569,8 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
     :ivar private_link_service_connection_state: Approval state of the private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_10_01.models.MHSMPrivateLinkServiceConnectionState
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -1600,12 +1600,12 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
         self,
         *,
         location: Optional[str] = None,
-        sku: Optional["ManagedHsmSku"] = None,
+        sku: Optional["_models.ManagedHsmSku"] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        private_endpoint: Optional["MHSMPrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["MHSMPrivateLinkServiceConnectionState"] = None,
-        provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
+        private_endpoint: Optional["_models.MHSMPrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.MHSMPrivateLinkServiceConnectionState"] = None,
+        provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -1622,8 +1622,8 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
         :keyword private_link_service_connection_state: Approval state of the private link connection.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.keyvault.v2021_10_01.models.MHSMPrivateLinkServiceConnectionState
-        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
-         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Known
+         values are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
         :paramtype provisioning_state: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
         """
@@ -1637,18 +1637,24 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
 class MHSMPrivateEndpointConnectionItem(msrest.serialization.Model):
     """Private endpoint connection item.
 
+    :ivar id: Id of private endpoint connection.
+    :vartype id: str
+    :ivar etag: Modified whenever there is a change in the state of private endpoint connection.
+    :vartype etag: str
     :ivar private_endpoint: Properties of the private endpoint object.
     :vartype private_endpoint: ~azure.mgmt.keyvault.v2021_10_01.models.MHSMPrivateEndpoint
     :ivar private_link_service_connection_state: Approval state of the private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_10_01.models.MHSMPrivateLinkServiceConnectionState
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
     """
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'MHSMPrivateEndpoint'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'MHSMPrivateLinkServiceConnectionState'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -1657,23 +1663,31 @@ class MHSMPrivateEndpointConnectionItem(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["MHSMPrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["MHSMPrivateLinkServiceConnectionState"] = None,
-        provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
+        id: Optional[str] = None,
+        etag: Optional[str] = None,
+        private_endpoint: Optional["_models.MHSMPrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.MHSMPrivateLinkServiceConnectionState"] = None,
+        provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
         """
+        :keyword id: Id of private endpoint connection.
+        :paramtype id: str
+        :keyword etag: Modified whenever there is a change in the state of private endpoint connection.
+        :paramtype etag: str
         :keyword private_endpoint: Properties of the private endpoint object.
         :paramtype private_endpoint: ~azure.mgmt.keyvault.v2021_10_01.models.MHSMPrivateEndpoint
         :keyword private_link_service_connection_state: Approval state of the private link connection.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.keyvault.v2021_10_01.models.MHSMPrivateLinkServiceConnectionState
-        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
-         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Known
+         values are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
         :paramtype provisioning_state: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
         """
         super(MHSMPrivateEndpointConnectionItem, self).__init__(**kwargs)
+        self.id = id
+        self.etag = etag
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = provisioning_state
@@ -1696,7 +1710,7 @@ class MHSMPrivateEndpointConnectionsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["MHSMPrivateEndpointConnection"]] = None,
+        value: Optional[List["_models.MHSMPrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1765,7 +1779,7 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
         self,
         *,
         location: Optional[str] = None,
-        sku: Optional["ManagedHsmSku"] = None,
+        sku: Optional["_models.ManagedHsmSku"] = None,
         tags: Optional[Dict[str, str]] = None,
         required_zone_names: Optional[List[str]] = None,
         **kwargs
@@ -1800,7 +1814,7 @@ class MHSMPrivateLinkResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["MHSMPrivateLinkResource"]] = None,
+        value: Optional[List["_models.MHSMPrivateLinkResource"]] = None,
         **kwargs
     ):
         """
@@ -1815,13 +1829,13 @@ class MHSMPrivateLinkServiceConnectionState(msrest.serialization.Model):
     """An object that represents the approval state of the private link connection.
 
     :ivar status: Indicates whether the connection has been approved, rejected or removed by the
-     key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+     key vault owner. Known values are: "Pending", "Approved", "Rejected", "Disconnected".
     :vartype status: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointServiceConnectionStatus
     :ivar description: The reason for approval or rejection.
     :vartype description: str
     :ivar actions_required: A message indicating if changes on the service provider require any
-     updates on the consumer. Possible values include: "None".
+     updates on the consumer. Known values are: "None".
     :vartype actions_required: str or ~azure.mgmt.keyvault.v2021_10_01.models.ActionsRequired
     """
 
@@ -1834,20 +1848,20 @@ class MHSMPrivateLinkServiceConnectionState(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
-        actions_required: Optional[Union[str, "ActionsRequired"]] = None,
+        actions_required: Optional[Union[str, "_models.ActionsRequired"]] = None,
         **kwargs
     ):
         """
         :keyword status: Indicates whether the connection has been approved, rejected or removed by the
-         key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+         key vault owner. Known values are: "Pending", "Approved", "Rejected", "Disconnected".
         :paramtype status: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointServiceConnectionStatus
         :keyword description: The reason for approval or rejection.
         :paramtype description: str
         :keyword actions_required: A message indicating if changes on the service provider require any
-         updates on the consumer. Possible values include: "None".
+         updates on the consumer. Known values are: "None".
         :paramtype actions_required: str or ~azure.mgmt.keyvault.v2021_10_01.models.ActionsRequired
         """
         super(MHSMPrivateLinkServiceConnectionState, self).__init__(**kwargs)
@@ -1893,11 +1907,11 @@ class NetworkRuleSet(msrest.serialization.Model):
     """A set of rules governing the network accessibility of a vault.
 
     :ivar bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
-     'None'.  If not specified the default is 'AzureServices'. Possible values include:
-     "AzureServices", "None".
+     'None'.  If not specified the default is 'AzureServices'. Known values are: "AzureServices",
+     "None".
     :vartype bypass: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleBypassOptions
     :ivar default_action: The default action when no rule from ipRules and from virtualNetworkRules
-     match. This is only used after the bypass property has been evaluated. Possible values include:
+     match. This is only used after the bypass property has been evaluated. Known values are:
      "Allow", "Deny".
     :vartype default_action: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleAction
     :ivar ip_rules: The list of IP address rules.
@@ -1917,20 +1931,20 @@ class NetworkRuleSet(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        bypass: Optional[Union[str, "NetworkRuleBypassOptions"]] = None,
-        default_action: Optional[Union[str, "NetworkRuleAction"]] = None,
-        ip_rules: Optional[List["IPRule"]] = None,
-        virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
+        bypass: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
+        default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
+        ip_rules: Optional[List["_models.IPRule"]] = None,
+        virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
         **kwargs
     ):
         """
         :keyword bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
-         'None'.  If not specified the default is 'AzureServices'. Possible values include:
-         "AzureServices", "None".
+         'None'.  If not specified the default is 'AzureServices'. Known values are: "AzureServices",
+         "None".
         :paramtype bypass: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleBypassOptions
         :keyword default_action: The default action when no rule from ipRules and from
          virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-         Possible values include: "Allow", "Deny".
+         Known values are: "Allow", "Deny".
         :paramtype default_action: str or ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleAction
         :keyword ip_rules: The list of IP address rules.
         :paramtype ip_rules: list[~azure.mgmt.keyvault.v2021_10_01.models.IPRule]
@@ -1972,10 +1986,10 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        service_specification: Optional["ServiceSpecification"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -2061,7 +2075,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2100,10 +2114,10 @@ class Permissions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        keys: Optional[List[Union[str, "KeyPermissions"]]] = None,
-        secrets: Optional[List[Union[str, "SecretPermissions"]]] = None,
-        certificates: Optional[List[Union[str, "CertificatePermissions"]]] = None,
-        storage: Optional[List[Union[str, "StoragePermissions"]]] = None,
+        keys: Optional[List[Union[str, "_models.KeyPermissions"]]] = None,
+        secrets: Optional[List[Union[str, "_models.SecretPermissions"]]] = None,
+        certificates: Optional[List[Union[str, "_models.CertificatePermissions"]]] = None,
+        storage: Optional[List[Union[str, "_models.StoragePermissions"]]] = None,
         **kwargs
     ):
         """
@@ -2173,8 +2187,8 @@ class PrivateEndpointConnection(Resource):
     :ivar private_link_service_connection_state: Approval state of the private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateLinkServiceConnectionState
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -2203,9 +2217,9 @@ class PrivateEndpointConnection(Resource):
         self,
         *,
         etag: Optional[str] = None,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
-        provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -2216,8 +2230,8 @@ class PrivateEndpointConnection(Resource):
         :keyword private_link_service_connection_state: Approval state of the private link connection.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateLinkServiceConnectionState
-        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
-         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Known
+         values are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
         :paramtype provisioning_state: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
         """
@@ -2240,8 +2254,8 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
     :ivar private_link_service_connection_state: Approval state of the private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateLinkServiceConnectionState
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
     """
@@ -2259,9 +2273,9 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
         *,
         id: Optional[str] = None,
         etag: Optional[str] = None,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
-        provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -2274,8 +2288,8 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
         :keyword private_link_service_connection_state: Approval state of the private link connection.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateLinkServiceConnectionState
-        :keyword provisioning_state: Provisioning state of the private endpoint connection. Possible
-         values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+        :keyword provisioning_state: Provisioning state of the private endpoint connection. Known
+         values are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
         :paramtype provisioning_state: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointConnectionProvisioningState
         """
@@ -2304,7 +2318,7 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
+        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2393,7 +2407,7 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkResource"]] = None,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
         **kwargs
     ):
         """
@@ -2408,13 +2422,13 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """An object that represents the approval state of the private link connection.
 
     :ivar status: Indicates whether the connection has been approved, rejected or removed by the
-     key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+     key vault owner. Known values are: "Pending", "Approved", "Rejected", "Disconnected".
     :vartype status: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointServiceConnectionStatus
     :ivar description: The reason for approval or rejection.
     :vartype description: str
     :ivar actions_required: A message indicating if changes on the service provider require any
-     updates on the consumer. Possible values include: "None".
+     updates on the consumer. Known values are: "None".
     :vartype actions_required: str or ~azure.mgmt.keyvault.v2021_10_01.models.ActionsRequired
     """
 
@@ -2427,20 +2441,20 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
-        actions_required: Optional[Union[str, "ActionsRequired"]] = None,
+        actions_required: Optional[Union[str, "_models.ActionsRequired"]] = None,
         **kwargs
     ):
         """
         :keyword status: Indicates whether the connection has been approved, rejected or removed by the
-         key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+         key vault owner. Known values are: "Pending", "Approved", "Rejected", "Disconnected".
         :paramtype status: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.PrivateEndpointServiceConnectionStatus
         :keyword description: The reason for approval or rejection.
         :paramtype description: str
         :keyword actions_required: A message indicating if changes on the service provider require any
-         updates on the consumer. Possible values include: "None".
+         updates on the consumer. Known values are: "None".
         :paramtype actions_required: str or ~azure.mgmt.keyvault.v2021_10_01.models.ActionsRequired
         """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
@@ -2466,7 +2480,7 @@ class ResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Resource"]] = None,
+        value: Optional[List["_models.Resource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2523,7 +2537,7 @@ class Secret(Resource):
     def __init__(
         self,
         *,
-        properties: "SecretProperties",
+        properties: "_models.SecretProperties",
         **kwargs
     ):
         """
@@ -2606,7 +2620,7 @@ class SecretCreateOrUpdateParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "SecretProperties",
+        properties: "_models.SecretProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -2638,7 +2652,7 @@ class SecretListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Secret"]] = None,
+        value: Optional[List["_models.Secret"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2671,7 +2685,7 @@ class SecretPatchParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["SecretPatchProperties"] = None,
+        properties: Optional["_models.SecretPatchProperties"] = None,
         **kwargs
     ):
         """
@@ -2707,7 +2721,7 @@ class SecretPatchProperties(msrest.serialization.Model):
         *,
         value: Optional[str] = None,
         content_type: Optional[str] = None,
-        attributes: Optional["SecretAttributes"] = None,
+        attributes: Optional["_models.SecretAttributes"] = None,
         **kwargs
     ):
         """
@@ -2761,7 +2775,7 @@ class SecretProperties(msrest.serialization.Model):
         *,
         value: Optional[str] = None,
         content_type: Optional[str] = None,
-        attributes: Optional["SecretAttributes"] = None,
+        attributes: Optional["_models.SecretAttributes"] = None,
         **kwargs
     ):
         """
@@ -2800,8 +2814,8 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["LogSpecification"]] = None,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         **kwargs
     ):
         """
@@ -2821,10 +2835,10 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: Required. SKU family name. Possible values include: "A".
+    :ivar family: Required. SKU family name. Known values are: "A".
     :vartype family: str or ~azure.mgmt.keyvault.v2021_10_01.models.SkuFamily
     :ivar name: Required. SKU name to specify whether the key vault is a standard vault or a
-     premium vault. Possible values include: "standard", "premium".
+     premium vault. Known values are: "standard", "premium".
     :vartype name: str or ~azure.mgmt.keyvault.v2021_10_01.models.SkuName
     """
 
@@ -2841,15 +2855,15 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        family: Union[str, "SkuFamily"] = "A",
-        name: Union[str, "SkuName"],
+        family: Union[str, "_models.SkuFamily"] = "A",
+        name: Union[str, "_models.SkuName"],
         **kwargs
     ):
         """
-        :keyword family: Required. SKU family name. Possible values include: "A".
+        :keyword family: Required. SKU family name. Known values are: "A".
         :paramtype family: str or ~azure.mgmt.keyvault.v2021_10_01.models.SkuFamily
         :keyword name: Required. SKU name to specify whether the key vault is a standard vault or a
-         premium vault. Possible values include: "standard", "premium".
+         premium vault. Known values are: "standard", "premium".
         :paramtype name: str or ~azure.mgmt.keyvault.v2021_10_01.models.SkuName
         """
         super(Sku, self).__init__(**kwargs)
@@ -2862,15 +2876,15 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the key vault resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the key vault resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the key vault resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or ~azure.mgmt.keyvault.v2021_10_01.models.IdentityType
     :ivar created_at: The timestamp of the key vault resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the key vault resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the key vault resource.
-     Possible values include: "User", "Application", "ManagedIdentity", "Key".
+     Known values are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.keyvault.v2021_10_01.models.IdentityType
     :ivar last_modified_at: The timestamp of the key vault resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
@@ -2889,25 +2903,25 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "IdentityType"]] = None,
+        created_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "IdentityType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the key vault resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the key vault resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the key vault resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or ~azure.mgmt.keyvault.v2021_10_01.models.IdentityType
         :keyword created_at: The timestamp of the key vault resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the key vault resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the key vault resource.
-         Possible values include: "User", "Application", "ManagedIdentity", "Key".
+         Known values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.keyvault.v2021_10_01.models.IdentityType
         :keyword last_modified_at: The timestamp of the key vault resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
@@ -2965,7 +2979,7 @@ class Vault(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "VaultProperties",
+        properties: "_models.VaultProperties",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -3026,7 +3040,7 @@ class VaultAccessPolicyParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "VaultAccessPolicyProperties",
+        properties: "_models.VaultAccessPolicyProperties",
         **kwargs
     ):
         """
@@ -3062,7 +3076,7 @@ class VaultAccessPolicyProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        access_policies: List["AccessPolicyEntry"],
+        access_policies: List["_models.AccessPolicyEntry"],
         **kwargs
     ):
         """
@@ -3142,7 +3156,7 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
         self,
         *,
         location: str,
-        properties: "VaultProperties",
+        properties: "_models.VaultProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -3178,7 +3192,7 @@ class VaultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Vault"]] = None,
+        value: Optional[List["_models.Vault"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3211,7 +3225,7 @@ class VaultPatchParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["VaultPatchProperties"] = None,
+        properties: Optional["_models.VaultPatchProperties"] = None,
         **kwargs
     ):
         """
@@ -3258,7 +3272,7 @@ class VaultPatchProperties(msrest.serialization.Model):
     :ivar soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
     :vartype soft_delete_retention_in_days: int
     :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: "recover", "default".
+     or not. Known values are: "recover", "default".
     :vartype create_mode: str or ~azure.mgmt.keyvault.v2021_10_01.models.CreateMode
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -3296,17 +3310,17 @@ class VaultPatchProperties(msrest.serialization.Model):
         self,
         *,
         tenant_id: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        access_policies: Optional[List["AccessPolicyEntry"]] = None,
+        sku: Optional["_models.Sku"] = None,
+        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
         enabled_for_deployment: Optional[bool] = None,
         enabled_for_disk_encryption: Optional[bool] = None,
         enabled_for_template_deployment: Optional[bool] = None,
         enable_soft_delete: Optional[bool] = None,
         enable_rbac_authorization: Optional[bool] = None,
         soft_delete_retention_in_days: Optional[int] = None,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         enable_purge_protection: Optional[bool] = None,
-        network_acls: Optional["NetworkRuleSet"] = None,
+        network_acls: Optional["_models.NetworkRuleSet"] = None,
         public_network_access: Optional[str] = None,
         **kwargs
     ):
@@ -3342,7 +3356,7 @@ class VaultPatchProperties(msrest.serialization.Model):
          <=90.
         :paramtype soft_delete_retention_in_days: int
         :keyword create_mode: The vault's create mode to indicate whether the vault need to be
-         recovered or not. Possible values include: "recover", "default".
+         recovered or not. Known values are: "recover", "default".
         :paramtype create_mode: str or ~azure.mgmt.keyvault.v2021_10_01.models.CreateMode
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this vault. Setting this property to true activates protection against purge for
@@ -3419,7 +3433,7 @@ class VaultProperties(msrest.serialization.Model):
      the default value of false. Note that management actions are always authorized with RBAC.
     :vartype enable_rbac_authorization: bool
     :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: "recover", "default".
+     or not. Known values are: "recover", "default".
     :vartype create_mode: str or ~azure.mgmt.keyvault.v2021_10_01.models.CreateMode
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -3430,8 +3444,8 @@ class VaultProperties(msrest.serialization.Model):
     :ivar network_acls: Rules governing the accessibility of the key vault from specific network
      locations.
     :vartype network_acls: ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleSet
-    :ivar provisioning_state: Provisioning state of the vault. Possible values include:
-     "Succeeded", "RegisteringDns".
+    :ivar provisioning_state: Provisioning state of the vault. Known values are: "Succeeded",
+     "RegisteringDns".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2021_10_01.models.VaultProvisioningState
     :ivar private_endpoint_connections: List of private endpoint connections associated with the
@@ -3476,8 +3490,8 @@ class VaultProperties(msrest.serialization.Model):
         self,
         *,
         tenant_id: str,
-        sku: "Sku",
-        access_policies: Optional[List["AccessPolicyEntry"]] = None,
+        sku: "_models.Sku",
+        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
         vault_uri: Optional[str] = None,
         enabled_for_deployment: Optional[bool] = None,
         enabled_for_disk_encryption: Optional[bool] = None,
@@ -3485,10 +3499,10 @@ class VaultProperties(msrest.serialization.Model):
         enable_soft_delete: Optional[bool] = True,
         soft_delete_retention_in_days: Optional[int] = 90,
         enable_rbac_authorization: Optional[bool] = False,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         enable_purge_protection: Optional[bool] = None,
-        network_acls: Optional["NetworkRuleSet"] = None,
-        provisioning_state: Optional[Union[str, "VaultProvisioningState"]] = None,
+        network_acls: Optional["_models.NetworkRuleSet"] = None,
+        provisioning_state: Optional[Union[str, "_models.VaultProvisioningState"]] = None,
         public_network_access: Optional[str] = "enabled",
         **kwargs
     ):
@@ -3529,7 +3543,7 @@ class VaultProperties(msrest.serialization.Model):
          the default value of false. Note that management actions are always authorized with RBAC.
         :paramtype enable_rbac_authorization: bool
         :keyword create_mode: The vault's create mode to indicate whether the vault need to be
-         recovered or not. Possible values include: "recover", "default".
+         recovered or not. Known values are: "recover", "default".
         :paramtype create_mode: str or ~azure.mgmt.keyvault.v2021_10_01.models.CreateMode
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this vault. Setting this property to true activates protection against purge for
@@ -3540,8 +3554,8 @@ class VaultProperties(msrest.serialization.Model):
         :keyword network_acls: Rules governing the accessibility of the key vault from specific network
          locations.
         :paramtype network_acls: ~azure.mgmt.keyvault.v2021_10_01.models.NetworkRuleSet
-        :keyword provisioning_state: Provisioning state of the vault. Possible values include:
-         "Succeeded", "RegisteringDns".
+        :keyword provisioning_state: Provisioning state of the vault. Known values are: "Succeeded",
+         "RegisteringDns".
         :paramtype provisioning_state: str or
          ~azure.mgmt.keyvault.v2021_10_01.models.VaultProvisioningState
         :keyword public_network_access: Property to specify whether the vault will accept traffic from

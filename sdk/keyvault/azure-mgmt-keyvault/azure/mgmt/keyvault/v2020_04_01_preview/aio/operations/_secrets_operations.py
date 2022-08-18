@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,26 +25,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class SecretsOperations:
-    """SecretsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.keyvault.v2020_04_01_preview.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.keyvault.v2020_04_01_preview.aio.KeyVaultManagementClient`'s
+        :attr:`secrets` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create_or_update(
@@ -51,9 +50,9 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: "_models.SecretCreateOrUpdateParameters",
+        parameters: _models.SecretCreateOrUpdateParameters,
         **kwargs: Any
-    ) -> "_models.Secret":
+    ) -> _models.Secret:
         """Create or update a secret in a key vault in the specified subscription.  NOTE: This API is
         intended for internal use in ARM deployments. Users should use the data-plane REST service for
         interaction with vault secrets.
@@ -72,14 +71,17 @@ class SecretsOperations:
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Secret
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2020-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-04-01-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Secret]
 
         _json = self._serialize.body(parameters, 'SecretCreateOrUpdateParameters')
 
@@ -92,11 +94,13 @@ class SecretsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -127,9 +131,9 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: "_models.SecretPatchParameters",
+        parameters: _models.SecretPatchParameters,
         **kwargs: Any
-    ) -> "_models.Secret":
+    ) -> _models.Secret:
         """Update a secret in the specified subscription.  NOTE: This API is intended for internal use in
         ARM deployments.  Users should use the data-plane REST service for interaction with vault
         secrets.
@@ -147,14 +151,17 @@ class SecretsOperations:
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Secret
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2020-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-04-01-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Secret]
 
         _json = self._serialize.body(parameters, 'SecretPatchParameters')
 
@@ -167,11 +174,13 @@ class SecretsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -203,7 +212,7 @@ class SecretsOperations:
         vault_name: str,
         secret_name: str,
         **kwargs: Any
-    ) -> "_models.Secret":
+    ) -> _models.Secret:
         """Gets the specified secret.  NOTE: This API is intended for internal use in ARM deployments.
         Users should use the data-plane REST service for interaction with vault secrets.
 
@@ -218,13 +227,16 @@ class SecretsOperations:
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Secret
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2020-04-01-preview")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-04-01-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Secret]
 
         
         request = build_get_request(
@@ -234,11 +246,13 @@ class SecretsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -266,7 +280,7 @@ class SecretsOperations:
         vault_name: str,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecretListResult"]:
+    ) -> AsyncIterable[_models.SecretListResult]:
         """The List operation gets information about the secrets in a vault.  NOTE: This API is intended
         for internal use in ARM deployments. Users should use the data-plane REST service for
         interaction with vault secrets.
@@ -283,13 +297,16 @@ class SecretsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2020-04-01-preview")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-04-01-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SecretListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -300,9 +317,11 @@ class SecretsOperations:
                     api_version=api_version,
                     top=top,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -313,9 +332,11 @@ class SecretsOperations:
                     api_version=api_version,
                     top=top,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

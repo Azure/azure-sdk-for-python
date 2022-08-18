@@ -3,16 +3,18 @@
 # ---------------------------------------------------------
 
 from typing import List, Optional
+
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentity
-from ._user_assigned_identity import UserAssignedIdentity
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
+
+from ._user_assigned_identity import UserAssignedIdentity
 
 
 class IdentityConfiguration(RestIdentity):
-    """Managed identity specification"""
+    """Managed identity specification."""
 
     def __init__(self, **kwargs):
-        """Managed identity specification
+        """Managed identity specification.
 
         :param type: Managed identity type, defaults to None
         :type type: str, optional

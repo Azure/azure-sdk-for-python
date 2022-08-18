@@ -26,7 +26,7 @@ USAGE:
 import os
 
 
-def sample_detect_language():
+def sample_detect_language() -> None:
     print(
         "In this sample we own a hotel with customers from all around the globe. We want to eventually "
         "translate these reviews into English so our manager can read them. However, we first need to know which language "
@@ -60,8 +60,6 @@ def sample_detect_language():
         print("Review #{} is in '{}', which has ISO639-1 name '{}'\n".format(
             idx, doc.primary_language.name, doc.primary_language.iso6391_name
         ))
-        if doc.is_error:
-            print(doc.id, doc.error)
     # [END detect_language]
     print(
         "When actually storing the reviews, we want to map the review to their ISO639-1 name "

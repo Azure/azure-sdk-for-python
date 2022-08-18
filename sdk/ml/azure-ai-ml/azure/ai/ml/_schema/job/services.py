@@ -3,9 +3,12 @@
 # ---------------------------------------------------------
 
 import logging
+
 from marshmallow import fields, post_load
-from ..core.schema import PathAwareSchema
+
 from azure.ai.ml._restclient.v2021_10_01.models import JobService
+
+from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
 

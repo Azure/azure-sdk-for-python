@@ -1,7 +1,7 @@
 # Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Dev Test Labs Management Client Library.
-This package has been tested with Python 3.6+.
+This package has been tested with Python 3.7+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## _Disclaimer_

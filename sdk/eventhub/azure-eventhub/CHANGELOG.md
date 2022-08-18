@@ -1,5 +1,17 @@
 # Release History
 
+## 5.10.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- Fixed a bug in `BufferedProducer` that would block when flushing the queue causing the client to freeze up (issue #23510).
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 5.10.0 (2022-06-08)
 
 ### Features Added

@@ -27,7 +27,7 @@ def main(generate_input, generate_output):
             md_output = "data-plan skip changelog generation temporarily"
         package["changelog"] = {
             "content": md_output,
-            "hasBreakingChange": "Breaking changes" in md_output,
+            "hasBreakingChange": "Breaking Changes" in md_output,
             "breakingChangeItems": extract_breaking_change(md_output),
         }
         package["version"] = last_version[-1]

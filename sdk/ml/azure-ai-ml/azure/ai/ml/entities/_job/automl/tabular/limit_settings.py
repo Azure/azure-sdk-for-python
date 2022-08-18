@@ -2,15 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    TableVerticalLimitSettings as RestTabularLimitSettings,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import TableVerticalLimitSettings as RestTabularLimitSettings
+from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
-from azure.ai.ml._utils.utils import (
-    to_iso_duration_format_mins,
-    from_iso_duration_format_mins,
-)
 
 
 class TabularLimitSettings(RestTranslatableMixin):

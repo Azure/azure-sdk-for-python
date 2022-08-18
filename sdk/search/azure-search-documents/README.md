@@ -56,7 +56,7 @@ pip install azure-search-documents
 
 ### Prerequisites
 
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a
 [Azure Cognitive Search service][search_resource] to use this package.
 

@@ -24,11 +24,17 @@ jobs:
     compute: azureml:gpu-cluster
 
     limits:
-      max_total_trials: 3
+      max_total_trials: 20
+      max_concurrent_trials: 10
+      timeout: 7200
     sampling_algorithm: random
     objective:
       goal: maximize
       primary_metric: accuracy
+    early_termination:
+      type: median_stopping
+      evaluation_interval: 100
+      delay_evaluation: 200
 
     trial:
       command: >-

@@ -7,7 +7,10 @@
 # --------------------------------------------------------------------------
 import base64
 import pytest
+import random
 import uuid
+from os import path, remove
+from math import ceil
 from io import BytesIO
 from os import path, remove
 from azure.core.exceptions import HttpResponseError
@@ -1019,4 +1022,362 @@ class StorageGetBlobTest(StorageTestCase):
         progress.assert_complete()
         self.assertEqual(len(data), read)
 
-# ------------------------------------------------------------------------------
+    @BlobPreparer()
+    def test_get_blob_read_empty(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b''
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        content = blob.download_blob().read()
+        content2 = blob.download_blob().read(512)
+
+        # Assert
+        assert data == content
+        assert data == content2
+
+    @BlobPreparer()
+    def test_get_blob_read_all(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        content = blob.download_blob().read()
+
+        # Assert
+        assert data == content
+
+    @BlobPreparer()
+    def test_get_blob_read_single(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_get_size = 10 * 1024
+        self.bsc._config.max_chunk_get_size = 10 * 1024
+
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_small_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_large_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 1536
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_chunk_equal_download_chunk(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        read_size = 1024
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read_random_chunks(self, storage_account_name, storage_account_key):
+        # Random chunk sizes, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        result = bytearray()
+        total = 0
+        while total < len(data):
+            read_size = random.randint(500, 2500)
+            content = stream.read(read_size)
+            result.extend(content)
+            total += len(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob(max_concurrency=3)
+
+        # Act
+        result = bytearray()
+        read_size = 4096
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_into_upload(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        data = b'12345' * 205 * 15  # 15375 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act
+        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + '-copy')
+        blob2.upload_blob(stream, overwrite=True)
+        result = blob2.download_blob().readall()
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_past(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'Hello World'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        stream = blob.download_blob()
+        result = stream.read(25)
+
+        # Assert
+        assert result == data
+        for _ in range(3):
+            result = stream.read(100)
+            assert result == b''
+
+    @BlobPreparer()
+    def test_get_blob_read_ranged(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        offset, length = 1024, 2048
+        stream = blob.download_blob(offset=offset, length=length)
+
+        read_size = 1024
+        data1 = stream.read(read_size)
+        data2 = stream.read(read_size)
+
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
+
+        offset, length = 501, 3000
+        stream = blob.download_blob(offset=offset, length=length)
+
+        read_size = 1536
+        data1 = stream.read(read_size)
+        data2 = stream.read(read_size)
+
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
+
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_single(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'Hello World'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        stream = blob.download_blob()
+        first = stream.read(5)
+        second = stream.readall()
+
+        assert first == data[:5]
+        assert second == data[5:]
+
+        stream = blob.download_blob()
+        first = stream.read(5)
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[:5]
+        assert second == data[5:]
+        assert read_size == len(second)
+
+        # Test another read operation after reading all data
+        stream = blob.download_blob()
+        first = stream.read(25)
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data
+        assert second == b''
+        assert read_size == 0
+
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act / Assert
+        stream = blob.download_blob()
+        first = stream.read(100)  # Read in first chunk
+        second = stream.readall()
+
+        assert first == data[:100]
+        assert second == data[100:]
+
+        stream = blob.download_blob()
+        first = stream.read(3000)  # Read past first chunk
+        second = stream.readall()
+
+        assert first == data[:3000]
+        assert second == data[3000:]
+
+        stream = blob.download_blob()
+        first = stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[:3000]
+        assert second == data[3000:]
+        assert read_size == len(second)
+
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        offset, length = 1024, 2048
+
+        # Act / Assert
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(100)  # Read in first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + 100]
+        assert second == data[offset + 100:offset + length]
+
+        offset, length = 501, 5000
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(3000)  # Read past first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+        assert read_size == len(second)
+
+    @BlobPreparer()
+    def test_get_blob_read_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Custom progress tracker for 4 read calls then readall
+        class CustomProgressTracker:
+            def __init__(self):
+                self.num_read = 0
+                self.totals = [5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125]
+                self.currents = [500, 1000, 1024, 1500, 2000, 3024, 4048, 5072, 5125]
+
+            def assert_progress(self, current, total):
+                assert total == self.totals[self.num_read]
+                assert current == self.currents[self.num_read]
+                self.num_read += 1
+
+        progress = CustomProgressTracker()
+        stream = blob.download_blob(progress_hook=progress.assert_progress)
+
+        # Act / Assert
+        for _ in range(4):
+            stream.read(500)
+        stream.readall()
+
+    # ------------------------------------------------------------------------------

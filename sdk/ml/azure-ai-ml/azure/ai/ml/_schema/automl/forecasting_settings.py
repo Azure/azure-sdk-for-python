@@ -2,18 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields, post_load
-from azure.ai.ml._schema import PatchedSchemaMeta, UnionField, StringTransformedEnum
+
+from azure.ai.ml._restclient.v2022_02_01_preview.models import FeatureLags as FeatureLagsMode
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    FeatureLags as FeatureLagsMode,
-    TargetLagsMode,
-    TargetRollingWindowSizeMode,
     ForecastHorizonMode,
+    SeasonalityMode,
     ShortSeriesHandlingConfiguration,
     TargetAggregationFunction,
-    SeasonalityMode,
-    UseStl as STLMode,
+    TargetLagsMode,
+    TargetRollingWindowSizeMode,
 )
+from azure.ai.ml._restclient.v2022_02_01_preview.models import UseStl as STLMode
+from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
 class ForecastingSettingsSchema(metaclass=PatchedSchemaMeta):

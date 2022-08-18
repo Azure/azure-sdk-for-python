@@ -105,7 +105,7 @@ if __name__ == "__main__":
     if os.getenv("CONTAINER_SAS_URL"):
 
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
+        from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 
         endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
         key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
@@ -117,7 +117,7 @@ if __name__ == "__main__":
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         model = document_model_admin_client.begin_build_model(
-            os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE
+            ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")
         ).result()
         model_id = model.model_id
 

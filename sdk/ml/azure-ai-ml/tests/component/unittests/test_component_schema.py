@@ -7,26 +7,24 @@ import pydash
 import yaml
 from pathlib import Path
 import pytest
+
+from azure.ai.ml.entities._component.component_factory import component_factory
+from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER, COMPONENT_CODE_PLACEHOLDER
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from marshmallow import ValidationError
 
 from azure.ai.ml import MLClient, load_component
-from azure.ai.ml.operations._component_operations import (
-    COMPONENT_PLACEHOLDER,
-    COMPONENT_CODE_PLACEHOLDER,
-)
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml._schema.component.command_component import CommandComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     AssetTypes,
-    InputOutputModes,
     LegacyAssetTypes,
 )
-from azure.ai.ml.entities import CommandComponent, Environment
+from azure.ai.ml.entities import CommandComponent, Environment, Component
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._ml_exceptions import ValidationException
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -40,20 +38,25 @@ def load_component_entity_from_yaml(
     context={},
     is_anonymous=False,
     fields_to_override=None,
+    _type="command",
 ) -> CommandComponent:
     """Component yaml -> component entity -> rest component object -> component entity"""
     with open(path, "r") as f:
-        cfg = yaml.safe_load(f)
+        data = yaml.safe_load(f)
     context.update({BASE_PATH_CONTEXT_KEY: Path(path).parent})
-    schema = CommandComponentSchema(context=context)
-    data = dict(schema.load(cfg))
+    create_instance_func, create_schema_func = component_factory.get_create_funcs(_type)
+    data = dict(create_schema_func(context).load(data))
     if fields_to_override is None:
         fields_to_override = {}
     data.update(fields_to_override)
     if is_anonymous is True:
         data["name"] = None
         data["version"] = None
-    internal_representation: CommandComponent = CommandComponent(**data)
+
+    internal_representation = create_instance_func()
+    internal_representation.__init__(
+        **data,
+    )
 
     def mock_get_asset_arm_id(*args, **kwargs):
         if len(args) > 0:
@@ -73,7 +76,7 @@ def load_component_entity_from_yaml(
         "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
         side_effect=mock_get_asset_arm_id,
     ):
-        mock_machinelearning_client.components._upload_dependencies(internal_representation)
+        mock_machinelearning_client.components._resolve_arm_id_or_upload_dependencies(internal_representation)
     rest_component = internal_representation._to_rest_object()
     # set arm id before deserialize
     mock_workspace_scope = mock_machinelearning_client._operation_scope
@@ -89,12 +92,12 @@ def load_component_entity_from_yaml(
     return internal_component
 
 
-def load_component_entity_from_rest_json(path) -> CommandComponent:
+def load_component_entity_from_rest_json(path) -> Component:
     """Rest component json -> rest component object -> component entity"""
     with open(path, "r") as f:
         target = yaml.safe_load(f)
     rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(target)))
-    internal_component = CommandComponent._from_rest_object(rest_obj)
+    internal_component = Component._from_rest_object(rest_obj)
     return internal_component
 
 
@@ -171,12 +174,12 @@ class TestCommandComponent:
             "component_in_path": {
                 "type": "uri_folder",
                 "description": "override component_in_path",
-                "mode": "ro_mount",
             },
         }
 
         override_inputs = {
-            "component_in_path": {"type": "uri_folder", "mode": "ro_mount"},
+            # according to InputPortSchema, mode in component input will not take effect
+            "component_in_path": {"type": "uri_folder"},
             "component_in_number": {"max": 1.0, "min": 0.0, "type": "number"},
             "override_param3": {"optional": True, "type": "integer"},
             "override_param4": {"default": False, "type": "boolean"},
@@ -432,3 +435,30 @@ class TestCommandComponent:
             ],
             "result": "Failed",
         }
+
+
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
+@pytest.mark.unittest
+class TestPipelineComponent:
+
+    # TODO: add rest schema test after backend ready.
+    def test_inline_helloworld_pipeline_component(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
+        component: PipelineComponent = load_component(path=component_path)
+
+        validation_result = component._validate()
+        assert validation_result.passed is True
+
+    def test_helloworld_pipeline_component(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
+        component: PipelineComponent = load_component(path=component_path)
+
+        validation_result = component._validate()
+        assert validation_result.passed is True
+
+    def test_helloworld_nested_pipeline_component(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
+        component: PipelineComponent = load_component(path=component_path)
+
+        validation_result = component._validate()
+        assert validation_result.passed is True
