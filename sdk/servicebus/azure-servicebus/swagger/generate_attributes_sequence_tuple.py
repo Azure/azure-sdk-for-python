@@ -4,10 +4,10 @@
 # --------------------------------------------------------------------------------------------
 
 
-# This is a tool, not a part of the SDK code. Run it with Python 3.7+.
+# This is a tool, not a part of the SDK code. Run it with Python 3.6+.
 #
 # It iterates the _attribute_map of model classes and print the attributes of each class into a tuple.
-# `dict` in Python 3.7+ guarantees order when iterating over the dict so the attributes tuple
+# `dict` in Python 3.6+ guarantees order when iterating over the dict so the attributes tuple
 # has the correct order of model class attributes.
 # Copy the output to file azure.servicebus.management._model_workaround.py, which will convert
 # _attribute_map of each model class from dict to OrderedDict.
