@@ -50,7 +50,7 @@ class IssueProcessPython(IssueProcess):
         self.is_specified_tag = any('->Readme Tag:' in line for line in issue_body_list[:5])
 
         # # Get the rest repo hash in issue body
-        rest_repo_hash = [line.split(":", 1)[-1].strip() for line in issue_body_list[:5] if 'hash:' in line]
+        rest_repo_hash = [line.split(":", 1)[-1].strip() for line in issue_body_list[:5] if '->hash:' in line]
         self.rest_repo_hash = rest_repo_hash[0] if rest_repo_hash else ''
 
         # get readme_link
