@@ -9,9 +9,10 @@ from azure.eventhub._pyamqp.error import AMQPConnectionError
 
 def test_client_creation_exceptions():
     with pytest.raises(TypeError):
-        sender = SendClient()
-        # assert sender._remote_address == "fake.host.com"
-        # We can't test this now b/c the assert would have to be against source and would pass -- maybe remove this test
+        sender = SendClient(
+            "fake.host.com",
+        )
+        assert sender._hostname == "fake.host.com"
 
 def test_connection_endpoint_exceptions():
     with pytest.raises(AMQPConnectionError):
@@ -33,7 +34,7 @@ def test_connection_sas_authentication_exception():
         password=""
     )
     with pytest.raises(AttributeError):
-        sender = SendClient(target, auth=sas_auth)
+        sender = SendClient("fake.host.com", target, auth=sas_auth)
         sender.client_ready()
     
 def test_connection_sasl_annon_authentication_exception():
@@ -44,5 +45,5 @@ def test_connection_sasl_annon_authentication_exception():
 
     sas_auth = authentication.SASLAnonymousCredential()
     with pytest.raises(AttributeError):
-        sender = SendClient(target, auth=sas_auth)
+        sender = SendClient("fake.host.com", target, auth=sas_auth)
         sender.client_ready()

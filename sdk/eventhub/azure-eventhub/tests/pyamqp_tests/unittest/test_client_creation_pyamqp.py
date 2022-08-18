@@ -9,6 +9,7 @@ from azure.eventhub._pyamqp import SendClient, ReceiveClient
 def test_send_client_creation():
 
     sender = SendClient(
+        "fake.host.com",
         "fake_eh",
         "my_fake_auth"
     )
@@ -19,6 +20,7 @@ def test_send_client_creation():
 def test_receive_client_creation():
 
     receiver = ReceiveClient(
+        "fake.host.com",
         "fake_eh",
         "my_fake_auth"
     )
