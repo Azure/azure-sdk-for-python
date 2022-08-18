@@ -5,56 +5,34 @@
 # license information.
 # --------------------------------------------------------------------------
 
-try:
-    from urllib.parse import unquote
-except ImportError:
-    from urllib import unquote
+from urllib.parse import unquote
+
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.exceptions import HttpResponseError
-from ._deserialize import get_blob_properties_from_generated_code, parse_tags
+
+from ._deserialize import (
+    get_blob_properties_from_generated_code,
+    load_many_xml_nodes,
+    load_xml_int,
+    load_xml_string,
+    parse_tags,
+)
 from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
+from ._generated._serialization import Deserializer
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
-from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
-
-import xml.etree.ElementTree as ET
-
-
-def return_deserialized_response(pipeline_response, *_):
-    response = pipeline_response.http_response
-    deserialized = pipeline_response.context["deserialized_data"]
-    return response.location_mode, deserialized
+from ._shared.response_handlers import (
+    return_context_and_deserialized,
+    return_raw_deserialized,
+    process_storage_error,
+)
 
 
-def load_xml_string(element, name):
-    node = element.find(name)
-    if node is None or not node.text:
-        return None
-    return node.text
-
-
-def load_xml_int(element, name):
-    node = element.find(name)
-    if node is None or not node.text:
-        return None
-    return int(node.text)
-
-
-def load_xml_bool(element, name):
-    node = load_xml_string(element, name)
-    if node and node.lower() == 'true':
-        return True
-    return False
-
-
-def load_single_node(element, name):
-    return element.find(name)
-
-
-def load_many_nodes(element, name, wrapper=None):
-    if wrapper:
-        element = load_single_node(element, wrapper)
-    return list(element.findall(name))
+class IgnoreListBlobsDeserializer(Deserializer):
+    def __call__(self, target_obj, response_data, content_type=None):
+        if target_obj == "ListBlobsFlatSegmentResponse":
+            return None
+        super().__call__(target_obj, response_data, content_type)
 
 
 class BlobPropertiesPaged(PageIterator):
@@ -153,7 +131,7 @@ class BlobNamesPaged(PageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
+    :vartype current_page: list(str)
     :ivar str container: The container that the blobs are listed from.
     :ivar str delimiter: A delimiting character used for hierarchy listing.
 
@@ -164,10 +142,6 @@ class BlobNamesPaged(PageIterator):
     :param int results_per_page: The maximum number of blobs to retrieve per
         call.
     :param str continuation_token: An opaque continuation token.
-    :param str delimiter:
-        Used to capture blobs whose names begin with the same substring up to
-        the appearance of the delimiter character. The delimiter may be a single
-        character or a string.
     :param location_mode: Specifies the location the request should be sent to.
         This mode only applies for RA-GRS accounts which allow secondary read access.
         Options include 'primary' or 'secondary'.
@@ -178,7 +152,6 @@ class BlobNamesPaged(PageIterator):
             prefix=None,
             results_per_page=None,
             continuation_token=None,
-            delimiter=None,
             location_mode=None):
         super(BlobNamesPaged, self).__init__(
             get_next=self._get_next_cb,
@@ -191,7 +164,6 @@ class BlobNamesPaged(PageIterator):
         self.marker = None
         self.results_per_page = results_per_page
         self.container = container
-        self.delimiter = delimiter
         self.current_page = None
         self.location_mode = location_mode
 
@@ -201,8 +173,7 @@ class BlobNamesPaged(PageIterator):
                 prefix=self.prefix,
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
-                deserialize=False,
-                cls=return_deserialized_response,
+                cls=return_raw_deserialized,
                 use_location=self.location_mode)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -215,7 +186,7 @@ class BlobNamesPaged(PageIterator):
         self.results_per_page = load_xml_int(self._response, 'MaxResults')
         self.container = self._response.get('ContainerName')
 
-        blobs = load_many_nodes(self._response, 'Blob', wrapper='Blobs')
+        blobs = load_many_xml_nodes(self._response, 'Blob', wrapper='Blobs')
         self.current_page = [load_xml_string(blob, 'Name') for blob in blobs]
 
         next_marker = load_xml_string(self._response, 'NextMarker')
