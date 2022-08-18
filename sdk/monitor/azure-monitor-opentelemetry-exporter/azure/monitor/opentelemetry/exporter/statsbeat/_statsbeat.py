@@ -49,6 +49,7 @@ def collect_statsbeat_metrics(exporter) -> None:
                 exporter._instrumentation_key,
                 exporter._endpoint,
             )
+            return statsbeat_metrics
             # Export some initial stats on program start
             # TODO: initial stats
             # TODO: set context
@@ -61,22 +62,22 @@ def collect_statsbeat_metrics(exporter) -> None:
         #     _STATSBEAT_STATE["INITIAL_SUCCESS"] = 0
         #     _STATSBEAT_STATE["SHUTDOWN"] = False
 
-
-def shutdown_statsbeat_metrics() -> None:
-    global _STATSBEAT_METER_PROVIDER
-    shutdown_success = False
-    if _STATSBEAT_METER_PROVIDER is not None:
-        with _STATSBEAT_LOCK:
-            try:
-                _STATSBEAT_METER_PROVIDER.shutdown()
-                _STATSBEAT_METER_PROVIDER = None
-                shutdown_success = True
-            except:
-                pass
-        if shutdown_success:
-            # with _STATSBEAT_STATE_LOCK:
-            #     _STATSBEAT_STATE["SHUTDOWN"] = True
-            pass
+# TODO
+# def shutdown_statsbeat_metrics() -> None:
+#     global _STATSBEAT_METER_PROVIDER
+#     shutdown_success = False
+#     if _STATSBEAT_METER_PROVIDER is not None:
+#         with _STATSBEAT_LOCK:
+#             try:
+#                 _STATSBEAT_METER_PROVIDER.shutdown()
+#                 _STATSBEAT_METER_PROVIDER = None
+#                 shutdown_success = True
+#             except:
+#                 pass
+#         if shutdown_success:
+#             # with _STATSBEAT_STATE_LOCK:
+#             #     _STATSBEAT_STATE["SHUTDOWN"] = True
+#             pass
 
 
 def _get_stats_connection_string(endpoint: str) -> str:

@@ -42,8 +42,8 @@ class _StatsbeatMetrics:
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
         with _REQUESTS_LOCK:
-            interval_count = _REQUESTS_MAP.get('success', 0)
-            _REQUESTS_MAP['success'] = 0
+            interval_count = _REQUESTS_MAP.get("success", 0)
+            _REQUESTS_MAP["success"] = 0
             # only observe if value is not 0
             if interval_count != 0:
                 observations.append(
@@ -68,7 +68,7 @@ class _StatsbeatMetrics:
         meter = meter_provider.get_meter(__name__)
 
         # Network metrics - metrics related to request calls to ingestion service
-        gauge = meter.create_observable_gauge(
+        self._success_count = meter.create_observable_gauge(
             _REQ_SUCCESS_NAME[0],
             callbacks=[self._get_success_count],
             unit="count",
