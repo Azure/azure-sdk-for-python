@@ -797,7 +797,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             page_iterator_class=BlobPropertiesPaged)
 
     @distributed_trace
-    def list_blob_names(self, **kwargs):
+    def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
         """Returns a generator to list the names of blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -817,7 +817,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         # For listing only names we need to create a one-off generated client and
         # override its deserializer to prevent deserialization of the full response.
         client = self._build_generated_client()
-        client.container._deserialize = IgnoreListBlobsDeserializer()
+        client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
 
         command = functools.partial(
             client.container.list_blob_flat_segment,

@@ -1141,6 +1141,35 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert len(test_blobs) == 1
         assert test_blobs[0] == 'test1'
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_list_blob_names_pagination(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container: ContainerClient = self._create_container(bsc)
+        data = b'hello world'
+
+        container.get_blob_client('blob1').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
+
+        # Act
+        blob_iterator = container.list_blob_names(results_per_page=2)
+        blob_pages = blob_iterator.by_page()
+        first_page = next(blob_pages)
+        items_on_page1 = list(first_page)
+        second_page = next(blob_pages)
+        items_on_page2 = list(second_page)
+
+        # Assert
+        assert len(items_on_page1) == 2
+        assert items_on_page1[0] == 'blob1'
+        assert items_on_page1[1] == 'blob2'
+        assert len(items_on_page2) == 1
+        assert items_on_page2[0] == 'blob3'
+
     @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
