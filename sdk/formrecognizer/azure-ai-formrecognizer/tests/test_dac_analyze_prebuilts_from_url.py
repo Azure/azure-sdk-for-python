@@ -191,9 +191,9 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
             assert "https://fakeuri.com/blank%20space" in  e.response.request.body
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_receipt_url_bad_endpoint(self, formrecognizer_test_api_key):
-        with pytest.raises(HttpResponseError):
+    def test_receipt_url_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
@@ -213,10 +213,12 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_receipt_url_pass_stream(self, client):
+    def test_receipt_url_pass_stream(self, **kwargs):
+        client = kwargs.get("client", None)
         with open(self.receipt_png, "rb") as receipt:
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError) as e:
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
+                assert str(e) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a stream."
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

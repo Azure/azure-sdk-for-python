@@ -202,9 +202,9 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         assert "https://fakeuri.com/blank%20space" in  e.value.response.request.body
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy_async
-    async def test_receipt_url_bad_endpoint(self, formrecognizer_test_api_key):
-        with pytest.raises(HttpResponseError):
+    async def test_receipt_url_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_analyze_document_from_url(

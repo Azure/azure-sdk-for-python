@@ -297,11 +297,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_receipt_bad_endpoint(self, formrecognizer_test_api_key):
+    def test_receipt_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         with open(self.receipt_jpg, "rb") as fd:
             my_file = fd.read()
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_analyze_document("prebuilt-receipt", my_file)
 
