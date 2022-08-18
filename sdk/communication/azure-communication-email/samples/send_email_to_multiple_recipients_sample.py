@@ -65,7 +65,7 @@ class EmailMultipleRecipientSample(object):
         try:
             # sending the email message
             response = email_client.send(message)
-            print("Message ID: " + response['message_id'])
+            print("Message ID: " + response['messageId'])
         except HttpResponseError as ex:
             print(ex)
             pass

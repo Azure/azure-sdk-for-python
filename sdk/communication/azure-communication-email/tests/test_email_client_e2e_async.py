@@ -29,7 +29,7 @@ class TestEmailClient(AzureRecordedTestCase):
 
         async with email_client:
             response = await email_client.send(message)
-            assert response['message_id'] is not None
+            assert response['messageId'] is not None
 
     @email_decorator_async
     @recorded_by_proxy_async
@@ -58,7 +58,7 @@ class TestEmailClient(AzureRecordedTestCase):
 
         async with email_client:
             response = await email_client.send(message)
-            assert response['message_id'] is not None
+            assert response['messageId'] is not None
 
     @email_decorator_async
     @recorded_by_proxy_async
@@ -90,7 +90,7 @@ class TestEmailClient(AzureRecordedTestCase):
 
         async with email_client:
             response = await email_client.send(message)
-            assert response['message_id'] is not None
+            assert response['messageId'] is not None
 
     @email_decorator_async
     @recorded_by_proxy_async
@@ -115,7 +115,7 @@ class TestEmailClient(AzureRecordedTestCase):
 
         async with email_client:
             response = await email_client.send(message)
-            message_id = response['message_id']
+            message_id = response['messageId']
             if message_id is not None:
                 message_status_response = await email_client.get_send_status(message_id)
                 assert message_status_response['status'] is not None

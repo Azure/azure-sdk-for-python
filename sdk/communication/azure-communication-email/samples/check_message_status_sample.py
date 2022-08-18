@@ -59,7 +59,7 @@ class EmailCheckMessageStatusSample(object):
             response = email_client.send(message)
 
             # using the message id to get the status of the email
-            message_id = response['message_id']
+            message_id = response['messageId']
             message_status = email_client.get_send_status(message_id)
 
             print("Message Status: " + message_status['status'])
