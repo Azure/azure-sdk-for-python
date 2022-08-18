@@ -192,6 +192,9 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
     def test_delete_with_key_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
+        self.add_for_test(client, to_delete_kv)
+        deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
+        assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(to_delete_kv.key)
 
@@ -199,6 +202,9 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
     def test_delete_with_key_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting()
+        self.add_for_test(client, to_delete_kv)
+        deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
+        assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
 
