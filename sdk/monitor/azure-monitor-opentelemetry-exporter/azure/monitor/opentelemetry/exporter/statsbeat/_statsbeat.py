@@ -9,9 +9,9 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
 
-
-_DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"  # noqa: E501
-_DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"  # noqa: E501
+# pylint: disable=line-too-long
+_DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+_DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
 _DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 900  # 15 minutes
 _DEFAULT_STATS_LONG_EXPORT_INTERVAL = 86400  # 24 hours
 _EU_ENDPOINTS = [
@@ -30,7 +30,8 @@ _EU_ENDPOINTS = [
 _STATSBEAT_METER_PROVIDER = None
 _STATSBEAT_LOCK = threading.Lock()
 
-
+# pylint: disable=global-statement
+# pylint: disable=protected-access
 def collect_statsbeat_metrics(exporter) -> None:
     global _STATSBEAT_METER_PROVIDER
     # Only start statsbeat if did not exist before
@@ -40,7 +41,7 @@ def collect_statsbeat_metrics(exporter) -> None:
                 connection_string=_get_stats_connection_string(exporter._endpoint),
             )
             reader = PeriodicExportingMetricReader(
-                statsbeat_exporter, 
+                statsbeat_exporter,
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
             _STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[reader])
@@ -97,8 +98,7 @@ def _get_stats_short_export_interval() -> float:
     ei_env = os.environ.get("APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL")
     if ei_env:
         return int(ei_env)
-    else:
-        return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+    return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
 
 
 # seconds
@@ -106,5 +106,4 @@ def _get_stats_long_export_interval() -> float:
     ei_env = os.environ.get("APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL")
     if ei_env:
         return int(ei_env)
-    else:
-        return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
+    return _DEFAULT_STATS_LONG_EXPORT_INTERVAL

@@ -14,6 +14,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
+    _get_success_count,
     _StatsbeatMetrics,
     _RP_NAMES,
 )
@@ -147,7 +148,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
         _REQUESTS_MAP["success"] = 3
-        obs = self._metric._get_success_count(options=None)
+        obs = _get_success_count(options=None)
         self.assertEqual(len(obs), 1)
         self.assertEqual(obs[0].value, 3)
         self.assertEqual(obs[0].attributes, attributes)
@@ -158,7 +159,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
         _REQUESTS_MAP["success"] = 0
-        obs = self._metric._get_success_count(options=None)
+        obs = _get_success_count(options=None)
         self.assertEqual(len(obs), 0)
 
 # cSpell:enable

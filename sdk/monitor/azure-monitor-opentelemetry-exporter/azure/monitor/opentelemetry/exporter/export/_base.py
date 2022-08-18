@@ -92,7 +92,7 @@ class BaseExporter:
                 lease_period=self._storage_min_retry_interval,
             )
         # statsbeat initialization
-        if not self.__class__.__name__ == "_StatsBeatExporter":
+        if self._check_stats_collection():
             # Import here to avoid circular dependencies
             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
             collect_statsbeat_metrics(self)
@@ -201,11 +201,11 @@ class BaseExporter:
         self._consecutive_redirects = 0
         return ExportResult.SUCCESS
 
-    # check to see if collecting requests information related to statsbeats
+    # check to see whether its the case of stats collection
     def _check_stats_collection(self):
         return is_statsbeat_enabled() and \
             not get_statsbeat_shutdown() and \
-            not self.__class__.__name__ == "_StatsBeatExporter"
+            self.__class__.__name__ != "_StatsBeatExporter"
 
 
 def _is_redirect_code(response_code: int) -> bool:
@@ -234,6 +234,6 @@ def _is_retryable_code(response_code: int) -> bool:
     ))
 
 
-def _update_requests_map(type):
+def _update_requests_map(request_type):
     with _REQUESTS_LOCK:
-        _REQUESTS_MAP[type] = _REQUESTS_MAP.get(type, 0) + 1
+        _REQUESTS_MAP[request_type] = _REQUESTS_MAP.get(request_type, 0) + 1

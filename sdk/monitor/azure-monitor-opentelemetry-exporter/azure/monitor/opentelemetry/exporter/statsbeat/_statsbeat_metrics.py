@@ -21,6 +21,26 @@ _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
 
 # cSpell:disable
 
+# pylint: disable=unused-argument
+def _get_success_count(options: CallbackOptions) -> Iterable[Observation]:
+    observations = []
+    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+    attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+    attributes["statusCode"] = 200
+    with _REQUESTS_LOCK:
+        interval_count = _REQUESTS_MAP.get("success", 0)
+        _REQUESTS_MAP["success"] = 0
+        # only observe if value is not 0
+        if interval_count != 0:
+            observations.append(
+                Observation(
+                    int(interval_count),
+                    attributes,
+                )
+            )
+    return observations
+
+
 class _StatsbeatMetrics:
 
     _COMMON_ATTRIBUTES = {
@@ -36,24 +56,6 @@ class _StatsbeatMetrics:
         "endpoint": _ENDPOINT_TYPES[0],  # breeze
         "host": None,
     }
-
-    def _get_success_count(self, options: CallbackOptions) -> Iterable[Observation]:
-        observations = []
-        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-        attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-        attributes["statusCode"] = 200
-        with _REQUESTS_LOCK:
-            interval_count = _REQUESTS_MAP.get("success", 0)
-            _REQUESTS_MAP["success"] = 0
-            # only observe if value is not 0
-            if interval_count != 0:
-                observations.append(
-                    Observation(
-                        int(interval_count), 
-                        attributes,
-                    )
-                )
-        return observations
 
     def __init__(
         self,
@@ -71,7 +73,7 @@ class _StatsbeatMetrics:
         # Network metrics - metrics related to request calls to ingestion service
         self._success_count = meter.create_observable_gauge(
             _REQ_SUCCESS_NAME[0],
-            callbacks=[self._get_success_count],
+            callbacks=[_get_success_count],
             unit="count",
             description="Statsbeat metric tracking request success count"
         )

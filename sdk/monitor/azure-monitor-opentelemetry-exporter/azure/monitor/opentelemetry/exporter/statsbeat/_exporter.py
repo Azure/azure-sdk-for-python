@@ -16,9 +16,6 @@ _logger = logging.getLogger(__name__)
 
 class _StatsBeatExporter(AzureMonitorMetricExporter):
 
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-
     # pylint: disable=protected-access
     def _point_to_envelope(
         self,
