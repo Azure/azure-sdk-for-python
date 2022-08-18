@@ -512,7 +512,6 @@ class TestToDict(FormRecognizerTest):
 
     def test_document_page_to_dict(self):
         model = _models.DocumentPage(
-            kind="document",
             page_number=1,
             angle=180.0,
             width=8.5,
@@ -578,7 +577,6 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
-            "kind": "document",
             "page_number": 1,
             "angle": 180.0,
             "width": 8.5,
@@ -1008,7 +1006,6 @@ class TestToDict(FormRecognizerTest):
             ],
             pages=[
                 _models.DocumentPage(
-                    kind="document",
                     page_number=1,
                     angle=180.0,
                     width=8.5,
@@ -1219,7 +1216,6 @@ class TestToDict(FormRecognizerTest):
             ],
             "pages": [
                 {
-                    "kind": "document",
                     "page_number": 1,
                     "angle": 180.0,
                     "width": 8.5,

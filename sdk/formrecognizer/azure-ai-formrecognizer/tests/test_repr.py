@@ -295,7 +295,6 @@ def document_selection_mark(bounding_box, document_span):
 @pytest.fixture
 def document_page(document_span, document_word, document_selection_mark, document_line):
     model = _models.DocumentPage(
-        kind="document",
         page_number=1,
         angle=120.0,
         width=8.0,
@@ -306,8 +305,7 @@ def document_page(document_span, document_word, document_selection_mark, documen
         selection_marks=[document_selection_mark[0]],
         lines=[document_line[0]],
     )
-    model_repr = "DocumentPage(kind={}, page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}])".format(
-                "document",
+    model_repr = "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}])".format(
                 1,
                 120.0,
                 8.0,

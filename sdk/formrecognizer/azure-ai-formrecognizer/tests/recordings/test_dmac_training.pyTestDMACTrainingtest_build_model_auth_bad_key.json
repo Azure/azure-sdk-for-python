@@ -9,11 +9,10 @@
         "Connection": "keep-alive",
         "Content-Length": "119",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "1960c9e5-1dbc-11ed-bfd3-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "modelId": "f540865f-318a-4a96-8ed4-ca35385849fc",
+        "modelId": "84aab28a-a96b-4114-b842-05d98d48547b",
         "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "xx"
@@ -21,10 +20,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "c81a9677-fe17-44dd-bae4-d0f2af32784d",
+        "apim-request-id": "7f81430d-db23-4844-b8e1-114c74efbdc1",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Tue, 16 Aug 2022 23:35:23 GMT"
+        "Date": "Thu, 18 Aug 2022 22:28:13 GMT"
       },
       "ResponseBody": {
         "error": {
