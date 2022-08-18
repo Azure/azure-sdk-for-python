@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from multiprocessing import Event
 import os
 import logging
 import threading
@@ -116,8 +115,6 @@ class StressTestRunner(object):
                                           default=os.environ.get('EVENT_HUB_CONN_STR'))
         self.argument_parser.add_argument("--azure_identity", help="Use identity", type=bool,
                                           default=False)
-        # self.argument_parser.add_argument("--hostname_fake", help="The fully qualified host name for the Event Hubs namespace.", default=os.environ.get("EVENT_HUB_HOSTNAME"))
-        # self.argument_parser.add_argument("--eventhub_fake", help="The fully qualified host name for the Event Hubs namespace.", default=os.environ.get("EVENT_HUB_NAME2"))
         parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
         self.argument_parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
         self.argument_parser.add_argument(
@@ -143,7 +140,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
-        self.argument_parser.add_argument("--pyamqp_logging_enable", help="uamqp logging enable", action="store_true")
+        self.argument_parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
         self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
         self.argument_parser.add_argument("--retry_total", type=int, default=3)
