@@ -1,18 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import logging
 from abc import ABC
-from typing import TypeVar, Generic
-
-from azure.ai.ml.entities._job.pipeline._exceptions import UnsupportedOperationError
+from typing import Generic, TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
 
 
 class _AttrDict(Generic[K, V], dict, ABC):
-    """This class is used for accessing values with instance.some_key. It supports the following scenarios:
+    """This class is used for accessing values with instance.some_key. It
+    supports the following scenarios:
 
     1. Setting arbitrary attribute, eg: obj.resource_layout.node_count = 2
       1.1 Setting same nested filed twice will return same object, eg:
@@ -53,7 +55,8 @@ class _AttrDict(Generic[K, V], dict, ABC):
         return False
 
     def _get_attrs(self) -> dict:
-        """Get all arbitrary attributes which has been set, empty values are excluded.
+        """Get all arbitrary attributes which has been set, empty values are
+        excluded.
 
         :return: A dict which contains all arbitrary attributes set by user.
         :rtype: dict
@@ -67,7 +70,8 @@ class _AttrDict(Generic[K, V], dict, ABC):
         return remove_empty_values(self)
 
     def _is_arbitrary_attr(self, attr_name: str) -> bool:
-        """Checks if a given attribute name should be treat as arbitrary attribute.
+        """Checks if a given attribute name should be treat as arbitrary
+        attribute.
 
         Attributes inside _AttrDict can be non-arbitrary attribute or arbitrary attribute.
         Non-arbitrary attributes are normal attributes like other object which stores in self.__dict__.
@@ -130,9 +134,10 @@ class _AttrDict(Generic[K, V], dict, ABC):
 
 
 def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
-    """
-    Try to get non-arbitrary attribute for potential attribute dict. Will not create target attribute if
-    it is an arbitrary attribute in _AttrDict.
+    """Try to get non-arbitrary attribute for potential attribute dict.
+
+    Will not create target attribute if it is an arbitrary attribute in
+    _AttrDict.
     """
     if isinstance(obj, _AttrDict):
         has_attr = not obj._is_arbitrary_attr(attr)

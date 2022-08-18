@@ -2,20 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials,
     AccountKeyDatastoreSecrets,
+    CertificateDatastoreCredentials,
+    CertificateDatastoreSecrets,
+    CredentialsType,
+    NoneDatastoreCredentials,
     SasDatastoreCredentials,
     SasDatastoreSecrets,
     ServicePrincipalDatastoreCredentials,
     ServicePrincipalDatastoreSecrets,
-    CertificateDatastoreCredentials,
-    CertificateDatastoreSecrets,
-    NoneDatastoreCredentials,
-    CredentialsType,
 )
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class DatastoreCredentials(RestTranslatableMixin):

@@ -1,44 +1,42 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
-from email.policy import default
+
+# pylint: disable=unused-argument,no-self-use,protected-access
+
 import logging
 from pathlib import Path
 
-from marshmallow import fields, post_load, INCLUDE, Schema, pre_dump, pre_load, post_dump, ValidationError
+from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump
 
-from azure.ai.ml.constants import AzureMLResourceType
-from azure.ai.ml.constants import NodeType
-from azure.ai.ml._schema import (
+from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
+from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     NestedField,
-    UnionField,
-    AnonymousEnvironmentSchema,
     RegistryStr,
-    PathAwareSchema,
+    UnionField,
 )
-
-from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.component import (
     AnonymousCommandComponentSchema,
     AnonymousParallelComponentSchema,
     ComponentFileRefField,
     ParallelComponentFileRefField,
 )
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
+from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
-from .._sweep.parameterized_sweep import ParameterizedSweepSchema
-from .._utils.data_binding_expression import support_data_binding_expression_for_fields
+from azure.ai.ml._utils.utils import is_data_binding_expression
+from azure.ai.ml.constants import AzureMLResourceType, NodeType
+from azure.ai.ml.entities._inputs_outputs import Input
 
-from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
-from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema
-from ..job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
-from ..job.job_limits import CommandJobLimitsSchema
 from ..._ml_exceptions import ValidationException
 from ...entities._job.pipeline._attr_dict import _AttrDict
+from .._sweep.parameterized_sweep import ParameterizedSweepSchema
+from .._utils.data_binding_expression import support_data_binding_expression_for_fields
+from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
+from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema
+from ..job.job_limits import CommandJobLimitsSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -47,7 +45,6 @@ module_logger = logging.getLogger(__name__)
 class BaseNodeSchema(PathAwareSchema):
     unknown = INCLUDE
 
-    compute = ComputeField()
     inputs = InputsField()
     outputs = fields.Dict(
         keys=fields.Str(),
@@ -107,6 +104,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         required=True,
     )
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
+    compute = ComputeField()
     # do not promote it as CommandComponent has no field named 'limits'
     limits = NestedField(CommandJobLimitsSchema)
     # Change required fields to optional
@@ -127,7 +125,6 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     def make(self, data, **kwargs) -> "Command":
         from azure.ai.ml.entities._builders import parse_inputs_outputs
         from azure.ai.ml.entities._builders.command_func import command
-        from azure.ai.ml.constants import ComponentSource
 
         # parse inputs/outputs
         data = parse_inputs_outputs(data)
@@ -156,8 +153,10 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             try:
                 code_path = Path(original_data.component.base_path) / original_data.component.code
                 if code_path.exists():
-                    rebased_code_path = str(os.path.relpath(code_path, original_data._base_path))
-                    data["code"], data["component"]["code"] = rebased_code_path, rebased_code_path
+                    # relative path can't be calculated if component.base_path & pipeline.base_path are in different
+                    # drive, so just use absolute path
+                    rebased_path = code_path.resolve().absolute().as_posix()
+                    data["code"], data["component"]["code"] = rebased_path, rebased_path
             except OSError:
                 # OSError will be raised when _base_path or code is an arm_str or an invalid path,
                 # then just return the origin value to avoid blocking serialization
@@ -167,6 +166,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.SWEEP])
+    compute = ComputeField()
     trial = TypeSensitiveUnionField(
         {
             NodeType.SWEEP: [
@@ -185,10 +185,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
 
     @post_load
     def make(self, data, **kwargs) -> "Sweep":
-        from azure.ai.ml.entities._builders import (
-            Sweep,
-            parse_inputs_outputs,
-        )
+        from azure.ai.ml.entities._builders import Sweep, parse_inputs_outputs
 
         # parse inputs/outputs
         data = parse_inputs_outputs(data)
@@ -200,6 +197,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
 
 
 class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
+    compute = ComputeField()
     component = TypeSensitiveUnionField(
         {
             NodeType.PARALLEL: [
@@ -222,10 +220,10 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
     @post_load
     def make(self, data, **kwargs) -> "Parallel":
         from azure.ai.ml.entities._builders import parse_inputs_outputs
-        from azure.ai.ml.entities._builders.parallel_func import parallel
+        from azure.ai.ml.entities._builders.parallel_func import parallel_run_function
 
         data = parse_inputs_outputs(data)
-        parallel_node = parallel(**data)
+        parallel_node = parallel_run_function(**data)
         return parallel_node
 
     @pre_dump

@@ -17,7 +17,10 @@ def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
 
     absdirpath = os.path.abspath(absdirs[0])
     check_call(["python", "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
-    check_call(["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder], cwd=absdirpath)
+    check_call(
+        ["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder],
+        cwd=absdirpath,
+    )
 
 
 def change_log_generate(package_name, last_version, tag_is_stable: bool = False):
@@ -36,7 +39,7 @@ def extract_breaking_change(changelog):
     log = changelog.split("\n")
     breaking_change = []
     for i in range(0, len(log)):
-        if log[i].find("Breaking changes") > -1:
+        if log[i].find("Breaking Changes") > -1:
             breaking_change = log[min(i + 2, len(log) - 1) :]
             break
     return sorted([x.replace("  - ", "") for x in breaking_change])

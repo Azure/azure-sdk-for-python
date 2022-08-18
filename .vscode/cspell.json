@@ -59,6 +59,7 @@
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opencensus/**",
+    "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-core/**",
     "sdk/cosmos/azure-cosmos/**",
     "sdk/core/azure-servicemanagement-legacy/**",
@@ -79,7 +80,6 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/mixedreality/azure-mixedreality-authentication/**",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-opentelemetry-exporter/**",
     "sdk/monitor/azure-monitor-query/**",
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
@@ -111,7 +111,9 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore"
+    ".gitignore",
+    "tools/azure-sdk-tools/packaging_tools/**",
+    "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
     "pyyaml",
@@ -334,7 +336,20 @@
     "westcentralus",
     "westus",
     "wfile",
-    "westus"
+    "westus",
+    "BUILDID",
+    "documentdb",
+    "chdir",
+    "reqs",
+    "rgpy",
+    "swaggertosdk",
+    "rgname",
+    "mtype",
+    "venvtools",
+    "ispkg",
+    "openpyxl",
+    "deps",
+    "prnumber"
   ],
   "overrides": [
     {
@@ -450,6 +465,22 @@
       ]
     },
     {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
+      "words": [
+        "ikey",
+        "semconv"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
+      "words": [
+        "otel",
+        "OTLP",
+        "otlp",
+        "grpc"
+      ]
+    },
+    {
       "filename": "sdk/schemaregistry/**/tests/**/*.py",
       "words": [
         "favo",
@@ -555,7 +586,28 @@
         "Fdeployments",
         "isfolder",
         "mylist",
-        "unioned"
+        "unioned",
+        "adamw",
+        "yolov",
+        "xdist",
+        "adla",
+        "listxattr",
+        "copyxattr",
+        "curatedenv",
+        "cuda",
+        "mkdtemp",
+        "runit",
+        "delim",
+        "curr",
+        "vendored",
+        "wasb",
+        "cgitb",
+        "isclass",
+        "isfunction",
+        "errno",
+        "firstlineno",
+        "chdir",
+        "fset"
       ]
     },
     {

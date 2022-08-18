@@ -2,29 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 import random
 import time
 from typing import Dict, Optional
 
-from azure.identity import ChainedTokenCredential
-from azure.core.paging import ItemPaged
-
+from azure.ai.ml._local_endpoints import LocalEndpointMode
+from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._local_endpoints import LocalEndpointMode
-from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
+from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
 from azure.ai.ml.constants import AzureMLResourceType, EndpointDeploymentLogContainerType, LROConfigurations
 from azure.ai.ml.entities import OnlineDeployment
+from azure.core.paging import ItemPaged
+from azure.identity import ChainedTokenCredential
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
-
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -32,10 +32,11 @@ module_logger = logging.getLogger(__name__)
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
-    """
-    OnlineDeploymentOperations
+    """OnlineDeploymentOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
@@ -66,7 +67,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         vscode_debug: bool = False,
         no_wait: bool = False,
     ) -> None:
-        """Create or update a deployment
+        """Create or update a deployment.
 
         :param deployment: the deployment entity
         :type deployment: OnlineDeployment
@@ -85,7 +86,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             )
         if local:
             return self._local_deployment_helper.create_or_update(
-                deployment=deployment, local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug)
+                deployment=deployment,
+                local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
             )
 
         start_time = time.time()
@@ -103,7 +105,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             endpoint_name=deployment.endpoint_name,
         )
         orchestrators = OperationOrchestrator(
-            operation_container=self._all_operations, operation_scope=self._operation_scope
+            operation_container=self._all_operations,
+            operation_scope=self._operation_scope,
         )
 
         upload_dependencies(deployment, orchestrators)
@@ -141,7 +144,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, local: bool = False) -> OnlineDeployment:
-        """Get a deployment resource
+        """Get a deployment resource.
 
         :param name: The name of the deployment
         :type name: str
@@ -170,7 +173,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str, endpoint_name: str, local: bool = False) -> None:
-        """Delete a deployment
+        """Delete a deployment.
 
         :param name: The name of the deployment
         :type name: str
@@ -191,7 +194,12 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
-        self, name: str, endpoint_name: str, lines: int, container_type: Optional[str] = None, local: bool = False
+        self,
+        name: str,
+        endpoint_name: str,
+        lines: int,
+        container_type: Optional[str] = None,
+        local: bool = False,
     ) -> str:
         """Retrive the logs from online deployment.
 
@@ -227,7 +235,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, local: bool = False) -> ItemPaged[OnlineDeployment]:
-        """List a deployment resource
+        """List a deployment resource.
 
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
@@ -266,9 +274,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location
-        TODO[TASK 1260265]: can we cache this information and only refresh when the operation_scope is changed?
-        """
+        """Get the workspace location TODO[TASK 1260265]: can we cache this
+        information and only refresh when the operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_local_endpoint_mode(self, vscode_debug):

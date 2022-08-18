@@ -2,9 +2,13 @@
 
 ## 5.10.1 (Unreleased)
 
+This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
+
 ### Features Added
 
 ### Breaking Changes
+
+- Fixed a bug in `BufferedProducer` that would block when flushing the queue causing the client to freeze up (issue #23510).
 
 ### Bugs Fixed
 

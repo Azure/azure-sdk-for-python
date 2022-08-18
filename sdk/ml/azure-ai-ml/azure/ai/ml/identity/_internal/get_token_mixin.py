@@ -6,8 +6,10 @@ import abc
 import logging
 import time
 from typing import TYPE_CHECKING
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 try:
     ABC = abc.ABC
@@ -32,12 +34,13 @@ class GetTokenMixin(ABC):
     @abc.abstractmethod
     def _acquire_token_silently(self, *scopes, **kwargs):
         # type: (*str, **Any) -> Optional[AccessToken]
-        """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
+        """Attempt to acquire an access token from a cache or by redeeming a
+        refresh token."""
 
     @abc.abstractmethod
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        """Request an access token from the STS"""
+        """Request an access token from the STS."""
 
     def _should_refresh(self, token):
         # type: (AccessToken) -> bool

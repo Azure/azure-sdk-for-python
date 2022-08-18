@@ -31,7 +31,7 @@ class TestAutoMLRegression:
             name="regression_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity = identity,
+            identity=identity,
         )  # type: RegressionJob
         regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4)
         regression_job.set_training(

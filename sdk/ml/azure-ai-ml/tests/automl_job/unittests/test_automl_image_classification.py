@@ -9,6 +9,9 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     ClassificationPrimaryMetrics,
     SamplingAlgorithmType,
     UserIdentity,
+    StochasticOptimizer,
+    LearningRateScheduler,
+    ImageModelSettingsClassification,
 )
 from azure.ai.ml.automl import image_classification
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -26,7 +29,8 @@ from azure.ai.ml.entities._job.automl.image import (
 
 @pytest.mark.unittest
 class TestAutoMLImageClassification:
-    def test_image_classification_task(self):
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
+    def test_image_classification_task(self, run_type):
         identity = UserIdentity()
         # Create AutoML Image Classification task
         image_classification_job = image_classification(
@@ -39,25 +43,15 @@ class TestAutoMLImageClassification:
             name="image_classifier_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity = identity,
+            identity=identity,
         )  # type: ImageClassificationJob
 
-        # image_classification_job.limits = {"timeout": 60, "max_trials": 1, "max_concurrent_trials": 1}
-        image_classification_job.set_limits(timeout_minutes=60)
-
-        early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
-        # image_classification_job.sweep = {
-        #     "max_concurrent_trials": 4,
-        #     "max_trials": 20,
-        #     "sampling_algorithm": SamplingAlgorithmType.GRID,
-        #     "early_termination": early_termination_policy,
-        # }
-        image_classification_job.set_sweep(
-            sampling_algorithm=SamplingAlgorithmType.GRID,
-            max_concurrent_trials=4,
-            max_trials=20,
-            early_termination=early_termination_policy,
-        )
+        if (run_type == "single") or (run_type == "sweep"):
+            # image_classification_job.limits = {"timeout": 60, "max_trials": 1, "max_concurrent_trials": 1}
+            image_classification_job.set_limits(timeout_minutes=60)
+        elif run_type == "automode":
+            # image_classification_job.limits = {"timeout": 60, "max_trials": 2, "max_concurrent_trials": 1}
+            image_classification_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
         # image_classification_job.image_model = {
         #     "checkpoint_frequency": 1,
@@ -74,35 +68,51 @@ class TestAutoMLImageClassification:
             evaluation_frequency=1,
         )
 
-        """
-        image_classification_job.search_space = [
-            {
-                "model_name": Choice(['vitb16r224', 'vits16r224']),
-                "learning_rate": Uniform(0.001, 0.01),
-                "number_of_epochs": Choice([15, 30]),
-            },
-            {
-                "model_name": Choice(['seresnext', 'resnest50']),
-                "learning_rate": Uniform(0.001, 0.01),
-                "layers_to_freeze": Choice([0, 2]),
-            },
-        ]
-        """
-        search_sub_space_1 = ImageClassificationSearchSpace(
-            model_name=Choice(["vitb16r224", "vits16r224"]),
-            learning_rate=Uniform(0.001, 0.01),
-            number_of_epochs=Choice([15, 30]),
-        )
-        search_sub_space_2 = ImageClassificationSearchSpace(
-            model_name=Choice(["seresnext", "resnest50"]),
-            learning_rate=Uniform(0.001, 0.01),
-            layers_to_freeze=Choice([0, 2]),
-        )
-        image_classification_job.extend_search_space([search_sub_space_1, search_sub_space_2])
+        if run_type == "sweep":
+            """
+            image_classification_job.search_space = [
+                {
+                    "model_name": Choice(['vitb16r224', 'vits16r224']),
+                    "learning_rate": Uniform(0.001, 0.01),
+                    "number_of_epochs": Choice([15, 30]),
+                },
+                {
+                    "model_name": Choice(['seresnext', 'resnest50']),
+                    "learning_rate": Uniform(0.001, 0.01),
+                    "layers_to_freeze": Choice([0, 2]),
+                },
+            ]
+            """
+            search_sub_space_1 = ImageClassificationSearchSpace(
+                model_name=Choice(["vitb16r224", "vits16r224"]),
+                learning_rate=Uniform(0.001, 0.01),
+                number_of_epochs=Choice([15, 30]),
+            )
+            search_sub_space_2 = ImageClassificationSearchSpace(
+                model_name=Choice(["seresnext", "resnest50"]),
+                learning_rate=Uniform(0.001, 0.01),
+                layers_to_freeze=Choice([0, 2]),
+            )
+            image_classification_job.extend_search_space([search_sub_space_1, search_sub_space_2])
+
+            early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
+            # image_classification_job.sweep = {
+            #     "max_concurrent_trials": 4,
+            #     "max_trials": 20,
+            #     "sampling_algorithm": SamplingAlgorithmType.GRID,
+            #     "early_termination": early_termination_policy,
+            # }
+            image_classification_job.set_sweep(
+                sampling_algorithm=SamplingAlgorithmType.GRID,
+                max_concurrent_trials=4,
+                max_trials=20,
+                early_termination=early_termination_policy,
+            )
 
         # check the rest object
         rest_obj = image_classification_job._to_rest_object()
         assert rest_obj.properties.identity == identity
+
         def _check_data_type(data, expected_type, expected_path, msg):
             if expected_type == MLTableJobInput:
                 assert isinstance(data, MLTableJobInput), "{} data is not MLTableJobInput".format(msg)
@@ -128,3 +138,66 @@ class TestAutoMLImageClassification:
         # check if the original job inputs were restored
         _check_data_type(original_obj._data.training_data.data, Input, "https://foo/bar/train.csv", "Training")
         _check_data_type(original_obj._data.validation_data.data, Input, "https://foo/bar/valid.csv", "Validation")
+
+    @pytest.mark.parametrize(
+        "settings, expected",
+        [
+            (("adam", "warmup_cosine"), (StochasticOptimizer.ADAM, LearningRateScheduler.WARMUP_COSINE)),
+            (("Adam", "WarmupCosine"), (StochasticOptimizer.ADAM, LearningRateScheduler.WARMUP_COSINE)),
+            ((None, None), (None, None)),
+        ],
+        ids=["snake case", "camel case", "none values"],
+    )
+    def test_set_image_model_with_valid_values(self, settings, expected):
+        image_classification_job = image_classification(
+            training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
+            target_column_name="label",
+        )  # type: ImageClassificationJob
+        image_classification_job.set_image_model(
+            optimizer=settings[0],
+            learning_rate_scheduler=settings[1],
+        )
+        assert image_classification_job.image_model.optimizer == expected[0]
+        assert image_classification_job.image_model.learning_rate_scheduler == expected[1]
+
+    @pytest.mark.parametrize(
+        "settings, expected",
+        [(("adamW", None), pytest.raises(KeyError)), ((None, "Warmup_Cosine"), pytest.raises(KeyError))],
+        ids=["optimizer_invalid", "learning_rate_scheduler_invalid"],
+    )
+    def test_set_image_model_with_invalid_values(self, settings, expected):
+        with expected:
+            image_classification_job = image_classification(
+                training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
+                target_column_name="label",
+            )  # type: ImageClassificationJob
+            image_classification_job.set_image_model(optimizer=settings[0], learning_rate_scheduler=settings[1])
+
+    @pytest.mark.parametrize(
+        "settings, expected",
+        [
+            (("adam", "warmup_cosine"), (StochasticOptimizer.ADAM, LearningRateScheduler.WARMUP_COSINE)),
+            (
+                ("Adam", "WarmupCosine"),
+                (StochasticOptimizer.ADAM, LearningRateScheduler.WARMUP_COSINE),
+            ),
+            (
+                (None, None),
+                (None, None),
+            ),
+        ],
+        ids=["snake case", "camel case", "none values"],
+    )
+    def test_set_image_model_with_settings_object(self, settings, expected):
+        image_model_settings = ImageModelSettingsClassification(
+            optimizer=settings[0], learning_rate_scheduler=settings[1]
+        )
+
+        image_classification_job = image_classification(
+            training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
+            target_column_name="label",
+            image_model=image_model_settings,
+        )  # type: ImageClassificationJob
+
+        assert image_classification_job.image_model.optimizer == expected[0]
+        assert image_classification_job.image_model.learning_rate_scheduler == expected[1]

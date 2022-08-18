@@ -4,21 +4,15 @@
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Union
-from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 
-from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
-from azure.ai.ml._utils._workspace_utils import get_endpoint_parts
-from .customer_managed_key import CustomerManagedKey
-from .private_endpoint import PrivateEndpoint, EndpointConnection
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    WorkspaceResourceConstants,
-    PublicNetworkAccess,
-)
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+
+from .customer_managed_key import CustomerManagedKey
 
 
 class Workspace(Resource):

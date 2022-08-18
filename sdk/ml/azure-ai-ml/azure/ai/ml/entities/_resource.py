@@ -6,11 +6,13 @@
 import os
 from abc import ABC, abstractmethod
 from os import PathLike
+from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2021_10_01.models import SystemData
-from azure.ai.ml._restclient.v2021_10_01 import models
 from msrest import Serializer
+
+from azure.ai.ml._restclient.v2021_10_01 import models
+from azure.ai.ml._restclient.v2021_10_01.models import SystemData
 
 
 class Resource(ABC):
@@ -48,15 +50,23 @@ class Resource(ABC):
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
-        # source path is added to display file location for validation error messages
-        # usually, base_path = Path(source_path).parent if source_path else os.getcwd()
-        self._source_path: Optional[str] = kwargs.pop("source_path", None)
+        self.__source_path: Optional[str] = kwargs.pop("source_path", None)
         self._base_path = kwargs.pop("base_path", os.getcwd())
         self._creation_context = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         super().__init__(**kwargs)
+
+    @property
+    def _source_path(self) -> Optional[str]:
+        # source path is added to display file location for validation error messages
+        # usually, base_path = Path(source_path).parent if source_path else os.getcwd()
+        return self.__source_path
+
+    @_source_path.setter
+    def _source_path(self, value: Union[str, PathLike]):
+        self.__source_path = Path(value).as_posix()
 
     @property
     def id(self) -> Optional[str]:
@@ -69,7 +79,7 @@ class Resource(ABC):
 
     @property
     def creation_context(self) -> Optional[SystemData]:
-        """Creation context
+        """Creation context.
 
         :return: Creation metadata of the resource.
         :rtype: Optional[SystemData]
@@ -78,7 +88,7 @@ class Resource(ABC):
 
     @property
     def base_path(self) -> str:
-        """Base path of the resource
+        """Base path of the resource.
 
         :return: Base path of the resource
         :rtype: str
@@ -117,7 +127,7 @@ class Resource(ABC):
         pass
 
     def _get_arm_resource(self, **kwargs):
-        """Get arm resource
+        """Get arm resource.
 
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
@@ -132,7 +142,7 @@ class Resource(ABC):
         return template
 
     def _get_arm_resource_and_params(self, **kwargs):
-        """Get arm resource and parameters
+        """Get arm resource and parameters.
 
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
@@ -143,9 +153,6 @@ class Resource(ABC):
         resource = self._get_arm_resource(**kwargs)
         param = self._to_arm_resource_param(**kwargs)
         return [(resource, param)]
-
-    def _set_source_path(self, value):
-        self._source_path = value
 
     def __repr__(self) -> str:
         var_dict = {k.strip("_"): v for (k, v) in vars(self).items()}

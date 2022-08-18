@@ -2,28 +2,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from abc import abstractmethod
+# pylint: disable=protected-access
+
 import logging
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    OnlineScaleSettings as RestOnlineScaleSettings,
-    DefaultScaleSettings as RestDefaultScaleSettings,
-    TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
-    ScaleType,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._utils.utils import (
-    to_iso_duration_format,
-    from_iso_duration_format,
-    camel_to_snake,
-)
+from abc import abstractmethod
 
 from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget
+from azure.ai.ml._restclient.v2022_02_01_preview.models import DefaultScaleSettings as RestDefaultScaleSettings
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineScaleSettings as RestOnlineScaleSettings
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ScaleType
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
+)
+from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format, to_iso_duration_format
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 
 
 class OnlineScaleSettings(RestTranslatableMixin):
-    """Scale settings for online deployment
+    """Scale settings for online deployment.
 
     :param scale_type: Type of the scale settings, allowed values are "default" and "target_utilization".
     :type scale_type: str
@@ -57,7 +55,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
 
 
 class DefaultScaleSettings(OnlineScaleSettings):
-    """Default scale settings"""
+    """Default scale settings."""
 
     def __init__(self, **kwargs):
         super(DefaultScaleSettings, self).__init__(
@@ -84,7 +82,7 @@ class DefaultScaleSettings(OnlineScaleSettings):
 
 
 class TargetUtilizationScaleSettings(OnlineScaleSettings):
-    """Auto scale settings
+    """Auto scale settings.
 
     :param min_instances: Minimum number of the instances
     :type min_instances: int, optional

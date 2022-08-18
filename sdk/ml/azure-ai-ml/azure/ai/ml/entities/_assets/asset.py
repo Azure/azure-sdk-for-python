@@ -4,13 +4,12 @@
 
 import uuid
 from abc import abstractmethod
-from typing import Dict, Optional, Union
 from os import PathLike
+from typing import Dict, Optional, Union
 
-from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-
-from azure.ai.ml._ml_exceptions import ErrorCategory, ValidationException, ErrorTarget
+from azure.ai.ml.entities._resource import Resource
 
 
 class Asset(Resource):
@@ -56,7 +55,13 @@ class Asset(Resource):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
+        )
 
         self.version = version
         self.latest_version = None

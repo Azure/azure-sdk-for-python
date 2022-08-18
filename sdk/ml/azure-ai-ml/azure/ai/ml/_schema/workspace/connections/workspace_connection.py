@@ -1,26 +1,24 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml.constants import AzureMLResourceType
+
+# pylint: disable=unused-argument,no-self-use
+
+from marshmallow import fields, post_load
+
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
-from azure.ai.ml._schema import (
-    PatchedSchemaMeta,
-    StringTransformedEnum,
-    ArmStr,
-    NestedField,
-    UnionField,
-    PathAwareSchema,
-)
+from azure.ai.ml._schema.core.fields import ArmStr, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.workspace.connections.credentials import (
-    PatTokenCredentialsSchema,
-    UsernamePasswordCredentialsSchema,
     ManagedIdentityCredentialsSchema,
+    PatTokenCredentialsSchema,
     SasTokenCredentialsSchema,
     ServicePrincipalCredentialsSchema,
+    UsernamePasswordCredentialsSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from marshmallow import fields, post_load
+from azure.ai.ml.constants import AzureMLResourceType
 
 
 class WorkspaceConnectionSchema(PathAwareSchema):
