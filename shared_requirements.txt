@@ -258,7 +258,6 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-web msrest>=0.6.21
 #override azure-mgmt-subscription msrest>=0.6.21
 #override azure-mgmt-trafficmanager msrest>=0.6.21
-#override azure-mgmt-containerregistry msrest>=0.6.21
 #override azure-mgmt-iothubprovisioningservices msrest>=0.6.21
 #override azure-mgmt-iothub msrest>=0.6.21
 #override azure-mgmt-resource msrest>=0.6.21
