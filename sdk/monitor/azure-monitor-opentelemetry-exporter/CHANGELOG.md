@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b8 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b7 (2022-08-12)
 
 ### Features Added
 
@@ -18,8 +28,6 @@
 
 - Opentelemetry span events have wrong ParentId in Azure Monitor logs
     ([#25369](https://github.com/Azure/azure-sdk-for-python/pull/25369))
-
-### Other Changes
 
 ## 1.0.0b6 (2022-06-10)
 

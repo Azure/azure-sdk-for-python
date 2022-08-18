@@ -1,8 +1,6 @@
 from packaging.version import parse as Version
 import sys
 
-import requests
-
 
 def get_pypi_xmlrpc_client():
     """This is actually deprecated client."""
@@ -13,6 +11,7 @@ def get_pypi_xmlrpc_client():
 
 class PyPIClient:
     def __init__(self, host="https://pypi.org"):
+        import requests
         self._host = host
         self._session = requests.Session()
 
