@@ -30,7 +30,7 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
     _, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     async with client:
-        with pytest.raises(EventHubError):
+        with pytest.raises(ConnectError):
             batch = EventDataBatch()
             batch.add(EventData("test data"))
             await client.send_batch(batch)
@@ -174,5 +174,5 @@ async def test_invalid_proxy_server(connection_str):
 
     client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY)
     async with client:
-        with pytest.raises(ConnectError):
+        with pytest.raises(EventHubError):
             batch = await client.create_batch()

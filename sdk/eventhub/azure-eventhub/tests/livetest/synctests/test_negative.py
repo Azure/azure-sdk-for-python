@@ -29,7 +29,7 @@ def test_send_batch_with_invalid_hostname(invalid_hostname):
                     "and blocking other tests")
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     with client:
-        with pytest.raises(EventHubError):
+        with pytest.raises(ConnectError):
             batch = EventDataBatch()
             batch.add(EventData("test data"))
             client.send_batch(batch)
@@ -130,6 +130,6 @@ def test_invalid_proxy_server(connection_str):
 
     client = EventHubProducerClient.from_connection_string(connection_str, http_proxy=HTTP_PROXY)
     with client:
-        with pytest.raises(ConnectError):
+        with pytest.raises(EventHubError):
             batch = client.create_batch()
 
