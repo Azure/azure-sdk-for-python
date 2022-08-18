@@ -47,7 +47,7 @@ class IssueProcessPython(IssueProcess):
             if '->Readme Tag:' in line:
                 self.is_specified_tag = True
             if '->hash:' in line:
-                self.rest_repo_hash = line.split(":", 1)[-1].strip()[0]
+                self.rest_repo_hash = line.split(":", 1)[-1].strip()
 
     def init_readme_link(self) -> None:
         issue_body_list = self.get_issue_body()
