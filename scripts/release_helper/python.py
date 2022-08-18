@@ -33,7 +33,7 @@ class IssueProcessPython(IssueProcess):
         self.is_multiapi = False
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
-        self.is_specified_tag = False
+        self.specified_tag = ''
         self.rest_repo_hash = ''
 
     def get_delay_time(self):
@@ -45,7 +45,7 @@ class IssueProcessPython(IssueProcess):
     def get_tag_and_hash(self, issue_body_list: List):
         for line in issue_body_list:
             if '->Readme Tag:' in line:
-                self.is_specified_tag = True
+                self.specified_tag = line.split(":", 1)[-1].strip()
             if '->hash:' in line:
                 self.rest_repo_hash = line.split(":", 1)[-1].strip()
 
@@ -103,11 +103,10 @@ class IssueProcessPython(IssueProcess):
             if not self.readme_comparison:
                 issue_link = self.issue_package.issue.html_url
                 release_pipeline_url = get_python_release_pipeline(self.output_folder)
-                python_tag = self.target_readme_tag if self.is_specified_tag else ""
                 res_run = run_pipeline(issue_link=issue_link,
                                        pipeline_url=release_pipeline_url,
                                        spec_readme=self.readme_link + '/readme.md',
-                                       python_tag=python_tag,
+                                       python_tag=self.specified_tag,
                                        rest_repo_hash=self.rest_repo_hash
                                        )
                 if res_run:
