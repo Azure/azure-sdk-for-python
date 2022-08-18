@@ -101,7 +101,10 @@ class FileTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     @DataLakePreparer()
-    async def test_create_file_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         directory_name = self._get_directory_reference()
@@ -114,10 +117,13 @@ class FileTest(StorageTestCase):
         response = await file_client.create_file()
 
         # Assert
-        self.assertIsNotNone(response)
+        assert response is not None
     
     @DataLakePreparer()
-    async def test_create_file_owner_group_acl_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_owner_group_acl(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_string_acl = 'user::rwx,group::r-x,other::rwx'
@@ -133,13 +139,16 @@ class FileTest(StorageTestCase):
 
         # Assert
         acl_properties = await file_client.get_access_control()
-        self.assertIsNotNone(acl_properties)
-        self.assertEqual(acl_properties['owner'], test_string)
-        self.assertEqual(acl_properties['group'], test_string)
-        self.assertEqual(acl_properties['acl'], test_string_acl)
+        assert acl_properties is not None
+        assert acl_properties['owner'] == test_string
+        assert acl_properties['group'] == test_string
+        assert acl_properties['acl'] == test_string_acl
 
     @DataLakePreparer()
-    async def test_create_file_proposed_lease_id_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_proposed_lease_id(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_duration = 15
@@ -155,13 +164,16 @@ class FileTest(StorageTestCase):
 
         # Assert
         properties = await file_client.get_file_properties()
-        self.assertIsNotNone(properties)
-        self.assertEqual(properties.lease['status'], 'locked')
-        self.assertEqual(properties.lease['state'], 'leased')
-        self.assertEqual(properties.lease['duration'], 'fixed')
+        assert properties is not None
+        assert properties.lease['status'] == 'locked'
+        assert properties.lease['state'] == 'leased'
+        assert properties.lease['duration'] == 'fixed'
 
     @DataLakePreparer()
-    async def test_create_file_relative_expiry_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_relative_expiry(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_expiry_time = 86400000  # 1 day in milliseconds
         # Arrange
@@ -180,11 +192,14 @@ class FileTest(StorageTestCase):
         expiry_time = expiry_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
         creation_time = file_properties['creation_time']
         creation_time = creation_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
-        self.assertIsNotNone(file_properties)
+        assert file_properties is not None
         self.assertAlmostEqual(expiry_time, creation_time + timedelta(days=1), delta=timedelta(seconds=60))
 
     @DataLakePreparer()
-    async def test_create_file_absolute_expiry_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_absolute_expiry(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_expiry_time = datetime(2075, 4, 4)
         # Arrange
@@ -201,11 +216,14 @@ class FileTest(StorageTestCase):
         file_properties = await file_client.get_file_properties()
         expiry_time = file_properties['expiry_time']
         expiry_time = expiry_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
-        self.assertIsNotNone(file_properties)
+        assert file_properties is not None
         self.assertAlmostEqual(expiry_time, test_expiry_time, delta=timedelta(seconds=1))
 
     @DataLakePreparer()
-    async def test_create_file_extra_backslashes_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_extra_backslashes(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_client = await self._create_file_and_return_client()
@@ -217,10 +235,13 @@ class FileTest(StorageTestCase):
         response = await new_file_client.create_file()
 
         # Assert
-        self.assertIsNotNone(response)
+        assert response is not None
 
     @DataLakePreparer()
-    async def test_file_exists(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_file_exists(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         directory_name = self._get_directory_reference()
@@ -232,11 +253,14 @@ class FileTest(StorageTestCase):
         file_client2 = directory_client.get_file_client('nonexistentfile')
         await file_client1.create_file()
 
-        self.assertTrue(await file_client1.exists())
-        self.assertFalse(await file_client2.exists())
+        assert await file_client1.exists()
+        assert not await file_client2.exists()
 
     @DataLakePreparer()
-    async def test_create_file_using_oauth_token_credential_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_using_oauth_token_credential(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_name = self._get_file_reference()
@@ -249,21 +273,27 @@ class FileTest(StorageTestCase):
         response = await file_client.create_file()
 
         # Assert
-        self.assertIsNotNone(response)
+        assert response is not None
 
     @DataLakePreparer()
-    async def test_create_file_with_existing_name_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_with_existing_name(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_client = await self._create_file_and_return_client()
 
-        with self.assertRaises(ResourceExistsError):
+        with pytest.raises(ResourceExistsError):
             # if the file exists then throw error
             # if_none_match='*' is to make sure no existing file
             await file_client.create_file(match_condition=MatchConditions.IfMissing)
 
     @DataLakePreparer()
-    async def test_create_file_with_lease_id_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_with_lease_id(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         directory_name = self._get_directory_reference()
@@ -278,12 +308,15 @@ class FileTest(StorageTestCase):
 
         # Assert
         file_properties = await file_client.get_file_properties()
-        self.assertIsNotNone(file_properties)
-        self.assertEqual(file_properties.etag, create_resp.get('etag'))
-        self.assertEqual(file_properties.last_modified, create_resp.get('last_modified'))
+        assert file_properties is not None
+        assert file_properties.etag == create_resp.get('etag')
+        assert file_properties.last_modified == create_resp.get('last_modified')
 
     @DataLakePreparer()
-    async def test_create_file_under_root_directory_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_create_file_under_root_directory(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # get a file client to interact with the file under root directory
@@ -292,10 +325,13 @@ class FileTest(StorageTestCase):
         response = await file_client.create_file()
 
         # Assert
-        self.assertIsNotNone(response)
+        assert response is not None
 
     @DataLakePreparer()
-    async def test_append_data_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_append_data(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
 
@@ -309,10 +345,13 @@ class FileTest(StorageTestCase):
         # Act
         response = await file_client.append_data(b'abc', 0, 3)
 
-        self.assertIsNotNone(response)
+        assert response is not None
 
     @DataLakePreparer()
-    async def test_append_empty_data_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_append_empty_data(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
 
@@ -320,10 +359,13 @@ class FileTest(StorageTestCase):
         await file_client.flush_data(0)
         file_props = await file_client.get_file_properties()
 
-        self.assertIsNotNone(file_props['size'], 0)
+        assert file_props['size'], 0 is not None
 
     @DataLakePreparer()
-    async def test_flush_data_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_flush_data(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
 
@@ -340,11 +382,14 @@ class FileTest(StorageTestCase):
 
         # Assert
         prop = await file_client.get_file_properties()
-        self.assertIsNotNone(response)
-        self.assertEqual(prop['size'], 3)
+        assert response is not None
+        assert prop['size'] == 3
 
     @DataLakePreparer()
-    async def test_flush_data_with_bool_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_flush_data_with_bool(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
 
@@ -360,11 +405,14 @@ class FileTest(StorageTestCase):
 
         # Assert
         prop = await file_client.get_file_properties()
-        self.assertIsNotNone(response)
-        self.assertEqual(prop['size'], 3)
+        assert response is not None
+        assert prop['size'] == 3
 
     @DataLakePreparer()
-    async def test_flush_data_with_match_condition_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_flush_data_with_match_condition(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
 
@@ -382,13 +430,16 @@ class FileTest(StorageTestCase):
         response = await file_client.flush_data(3, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
 
         await file_client.append_data(b'abc', 3, 3)
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             # flush is unsuccessful because extra data were appended.
             await file_client.flush_data(6, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_upload_data_in_substreams(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_upload_data_in_substreams(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
         # parallel upload cannot be recorded
@@ -406,17 +457,20 @@ class FileTest(StorageTestCase):
         await file_client.upload_data(raw_data, chunk_size=8 * 1024 * 1024, overwrite=True, max_concurrency=3)
         data = await file_client.download_file()
         downloaded_data = await data.readall()
-        self.assertEqual(raw_data, downloaded_data)
+        assert raw_data == downloaded_data
 
         # Run on single thread
         await file_client.upload_data(raw_data, chunk_size=8 * 1024 * 1024, overwrite=True)
         data = await file_client.download_file()
         downloaded_data = await data.readall()
-        self.assertEqual(raw_data, downloaded_data)
+        assert raw_data == downloaded_data
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_upload_data_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_upload_data(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # parallel upload cannot be recorded
         directory_name = self._get_directory_reference()
@@ -430,11 +484,14 @@ class FileTest(StorageTestCase):
         await file_client.upload_data(data, overwrite=True, max_concurrency=5)
 
         downloaded_data = await (await file_client.download_file()).readall()
-        self.assertEqual(data, downloaded_data)
+        assert data == downloaded_data
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_upload_data_to_existing_file_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_upload_data_to_existing_file(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
 
@@ -450,16 +507,19 @@ class FileTest(StorageTestCase):
 
         # to override the existing file
         data = self.get_random_bytes(100)
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             await file_client.upload_data(data, max_concurrency=5)
         await file_client.upload_data(data, overwrite=True, max_concurrency=5)
 
         downloaded_data = await (await file_client.download_file()).readall()
-        self.assertEqual(data, downloaded_data)
+        assert data == downloaded_data
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_upload_data_to_existing_file_with_content_settings_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_upload_data_to_existing_file_with_content_settings(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # etag in async recording file cannot be parsed properly
         directory_name = self._get_directory_reference()
@@ -486,12 +546,15 @@ class FileTest(StorageTestCase):
         downloaded_data = await (await file_client.download_file()).readall()
         properties = await file_client.get_file_properties()
 
-        self.assertEqual(data, downloaded_data)
-        self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        assert data == downloaded_data
+        assert properties.content_settings.content_language == content_settings.content_language
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_upload_data_to_existing_file_with_permissions_and_umask_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_upload_data_to_existing_file_with_permissions_and_umask(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # etag in async recording file cannot be parsed properly
         directory_name = self._get_directory_reference()
@@ -517,11 +580,14 @@ class FileTest(StorageTestCase):
         downloaded_data = await (await file_client.download_file()).readall()
         prop = await file_client.get_access_control()
 
-        self.assertEqual(data, downloaded_data)
-        self.assertEqual(prop['permissions'], 'rwxrwxrwx')
+        assert data == downloaded_data
+        assert prop['permissions'] == 'rwxrwxrwx'
 
     @DataLakePreparer()
-    async def test_read_file_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_read_file(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
         data = self.get_random_bytes(1024)
@@ -532,11 +598,14 @@ class FileTest(StorageTestCase):
 
         # doanload the data and make sure it is the same as uploaded data
         downloaded_data = await (await file_client.download_file()).readall()
-        self.assertEqual(data, downloaded_data)
+        assert data == downloaded_data
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_read_file_with_user_delegation_key_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_read_file_with_user_delegation_key(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -568,10 +637,13 @@ class FileTest(StorageTestCase):
                                              file_client.path_name,
                                              credential=sas_token)
         downloaded_data = await (await new_file_client.download_file()).readall()
-        self.assertEqual(data, downloaded_data)
+        assert data == downloaded_data
 
     @DataLakePreparer()
-    async def test_read_file_into_file_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_read_file_into_file(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
         data = self.get_random_bytes(1024)
@@ -588,10 +660,13 @@ class FileTest(StorageTestCase):
         # Assert
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(data, actual)
+            assert data == actual
 
     @DataLakePreparer()
-    async def test_read_file_to_text_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_read_file_to_text(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
         data = self.get_random_text_data(1024)
@@ -604,11 +679,14 @@ class FileTest(StorageTestCase):
         downloaded_data = await (await file_client.download_file(max_concurrency=2, encoding="utf-8")).readall()
 
         # Assert
-        self.assertEqual(data, downloaded_data)
+        assert data == downloaded_data
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_account_sas_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_account_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -631,22 +709,28 @@ class FileTest(StorageTestCase):
             properties = await file_client.get_file_properties()
 
             # make sure we can read the file properties
-            self.assertIsNotNone(properties)
+            assert properties is not None
 
             # try to write to the created file with the token
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 await file_client.append_data(b"abcd", 0, 4)
 
     @DataLakePreparer()
-    async def test_account_sas_raises_if_sas_already_in_uri(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_account_sas_raises_if_sas_already_in_uri(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_file_sas_only_applies_to_file_level_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_file_sas_only_applies_to_file_level(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -671,36 +755,42 @@ class FileTest(StorageTestCase):
         properties = await file_client.get_file_properties()
 
         # make sure we can read the file properties
-        self.assertIsNotNone(properties)
+        assert properties is not None
 
         # try to write to the created file with the token
         response = await file_client.append_data(b"abcd", 0, 4, validate_content=True)
-        self.assertIsNotNone(response)
+        assert response is not None
 
         # the token is for file level, so users are not supposed to have access to file system level operations
         file_system_client = FileSystemClient(self.dsc.url, self.file_system_name, credential=token)
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             await file_system_client.get_file_system_properties()
 
         # the token is for file level, so users are not supposed to have access to directory level operations
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
                                                    credential=token)
-        with self.assertRaises(ClientAuthenticationError):
+        with pytest.raises(ClientAuthenticationError):
             await directory_client.get_directory_properties()
 
     @DataLakePreparer()
-    async def test_delete_file_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_delete_file(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_client = await self._create_file_and_return_client()
 
         await file_client.delete_file()
 
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             await file_client.get_file_properties()
 
     @DataLakePreparer()
-    async def test_delete_file_with_if_unmodified_since_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_delete_file_with_if_unmodified_since(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_client = await self._create_file_and_return_client()
@@ -709,29 +799,38 @@ class FileTest(StorageTestCase):
         await file_client.delete_file(if_unmodified_since=prop['last_modified'])
 
         # Make sure the file was deleted
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             await file_client.get_file_properties()
 
     @DataLakePreparer()
-    async def test_set_access_control_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_set_access_control(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
 
         response = await file_client.set_access_control(permissions='0777')
 
         # Assert
-        self.assertIsNotNone(response)
+        assert response is not None
 
     @DataLakePreparer()
-    async def test_set_access_control_with_match_conditions_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_set_access_control_with_match_conditions(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
 
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             await file_client.set_access_control(permissions='0777', match_condition=MatchConditions.IfMissing)
 
     @DataLakePreparer()
-    async def test_get_access_control_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_get_access_control(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
         await file_client.set_access_control(permissions='0777')
@@ -740,10 +839,13 @@ class FileTest(StorageTestCase):
         response = await file_client.get_access_control()
 
         # Assert
-        self.assertIsNotNone(response)
+        assert response is not None
 
     @DataLakePreparer()
-    async def test_get_access_control_with_if_modified_since_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_get_access_control_with_if_modified_since(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
         await file_client.set_access_control(permissions='0777')
@@ -754,10 +856,13 @@ class FileTest(StorageTestCase):
         response = await file_client.get_access_control(if_modified_since=prop['last_modified'] - timedelta(minutes=15))
 
         # Assert
-        self.assertIsNotNone(response)
+        assert response is not None
 
     @DataLakePreparer()
-    async def test_get_properties_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_get_properties(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         directory_client = await self._create_directory_and_return_client()
@@ -773,13 +878,16 @@ class FileTest(StorageTestCase):
         properties = await file_client.get_file_properties()
 
         # Assert
-        self.assertTrue(properties)
-        self.assertEqual(properties.size, 3)
-        self.assertEqual(properties.metadata['hello'], metadata['hello'])
-        self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        assert properties
+        assert properties.size == 3
+        assert properties.metadata['hello'] == metadata['hello']
+        assert properties.content_settings.content_language == content_settings.content_language
 
     @DataLakePreparer()
-    async def test_set_access_control_recursive_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_set_access_control_recursive(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         acl = 'user::rwx,group::r-x,other::rwx'
         file_client = await self._create_file_and_return_client()
@@ -787,15 +895,18 @@ class FileTest(StorageTestCase):
         summary = await file_client.set_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, 0)
-        self.assertEqual(summary.counters.files_successful, 1)
-        self.assertEqual(summary.counters.failure_count, 0)
+        assert summary.counters.directories_successful == 0
+        assert summary.counters.files_successful == 1
+        assert summary.counters.failure_count == 0
         access_control = await file_client.get_access_control()
-        self.assertIsNotNone(access_control)
-        self.assertEqual(acl, access_control['acl'])
+        assert access_control is not None
+        assert acl == access_control['acl']
 
     @DataLakePreparer()
-    async def test_update_access_control_recursive_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_update_access_control_recursive(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         acl = 'user::rwx,group::r-x,other::rwx'
         file_client = await self._create_file_and_return_client()
@@ -803,15 +914,18 @@ class FileTest(StorageTestCase):
         summary = await file_client.update_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, 0)
-        self.assertEqual(summary.counters.files_successful, 1)
-        self.assertEqual(summary.counters.failure_count, 0)
+        assert summary.counters.directories_successful == 0
+        assert summary.counters.files_successful == 1
+        assert summary.counters.failure_count == 0
         access_control = await file_client.get_access_control()
-        self.assertIsNotNone(access_control)
-        self.assertEqual(acl, access_control['acl'])
+        assert access_control is not None
+        assert acl == access_control['acl']
 
     @DataLakePreparer()
-    async def test_remove_access_control_recursive_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_remove_access_control_recursive(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         acl = "mask," + "default:user,default:group," + \
               "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
@@ -820,12 +934,15 @@ class FileTest(StorageTestCase):
         summary = await file_client.remove_access_control_recursive(acl=acl)
 
         # Assert
-        self.assertEqual(summary.counters.directories_successful, 0)
-        self.assertEqual(summary.counters.files_successful, 1)
-        self.assertEqual(summary.counters.failure_count, 0)
+        assert summary.counters.directories_successful == 0
+        assert summary.counters.files_successful == 1
+        assert summary.counters.failure_count == 0
 
     @DataLakePreparer()
-    async def test_set_expiry_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_set_expiry(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         directory_client = await self._create_directory_and_return_client()
@@ -840,11 +957,14 @@ class FileTest(StorageTestCase):
         properties = await file_client.get_file_properties()
 
         # Assert
-        self.assertTrue(properties)
-        self.assertIsNotNone(properties.expiry_time)
+        assert properties
+        assert properties.expiry_time is not None
 
     @DataLakePreparer()
-    async def test_rename_file_with_non_used_name_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_rename_file_with_non_used_name(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
         data_bytes = b"abc"
@@ -853,11 +973,14 @@ class FileTest(StorageTestCase):
         new_client = await file_client.rename_file(file_client.file_system_name + '/' + 'newname')
 
         data = await (await new_client.download_file()).readall()
-        self.assertEqual(data, data_bytes)
-        self.assertEqual(new_client.path_name, "newname")
+        assert data == data_bytes
+        assert new_client.path_name == "newname"
 
     @DataLakePreparer()
-    async def test_rename_file_to_existing_file_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_rename_file_to_existing_file(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # create the existing file
         existing_file_client = await self._create_file_and_return_client(file="existingfile")
@@ -875,7 +998,7 @@ class FileTest(StorageTestCase):
 
         data = await (await new_client.download_file()).readall()
         # the existing file was overridden
-        self.assertEqual(data, data_bytes)
+        assert data == data_bytes
 
     @DataLakePreparer()
     async def test_file_encryption_scope_from_file_system_async(self, datalake_storage_account_name,
@@ -894,13 +1017,16 @@ class FileTest(StorageTestCase):
         props = await file_client.get_file_properties()
 
         # Assert
-        self.assertTrue(props)
-        self.assertIsNotNone(props['encryption_scope'])
-        self.assertEqual(props['encryption_scope'], encryption_scope.default_encryption_scope)
+        assert props
+        assert props['encryption_scope'] is not None
+        assert props['encryption_scope'] == encryption_scope.default_encryption_scope
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_rename_file_with_file_sas_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_rename_file_with_file_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # SAS URL is calculated from storage key, so this test runs live only
         token = generate_file_sas(self.dsc.account_name,
@@ -930,12 +1056,15 @@ class FileTest(StorageTestCase):
         new_client = await file_client.rename_file(file_client.file_system_name+'/'+'newname'+'?'+new_token)
 
         data = await (await new_client.download_file()).readall()
-        self.assertEqual(data, data_bytes)
-        self.assertEqual(new_client.path_name, "newname")
+        assert data == data_bytes
+        assert new_client.path_name == "newname"
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_rename_file_will_not_change_existing_directory_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_rename_file_will_not_change_existing_directory(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # create none empty directory(with 2 files)
         dir1 = await self._create_directory_and_return_client(directory="dir1")
@@ -957,20 +1086,23 @@ class FileTest(StorageTestCase):
 
         new_client = await f3.rename_file(f1.file_system_name + '/' + f1.path_name)
 
-        self.assertEqual(await (await new_client.download_file()).readall(), b"file3")
+        assert await (await new_client.download_file()).readall() == b"file3"
 
         # make sure the data in file2 and file4 weren't touched
         f2_data = await (await f2.download_file()).readall()
-        self.assertEqual(f2_data, b"file2")
+        assert f2_data == b"file2"
 
         f4_data = await (await f4.download_file()).readall()
-        self.assertEqual(f4_data, b"file4")
+        assert f4_data == b"file4"
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             await (await f3.download_file()).readall()
 
     @DataLakePreparer()
-    async def test_read_file_read(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_read_file_read(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         self.dsc._config.max_single_get_size = 1024
         self.dsc._config.max_chunk_get_size = 1024
