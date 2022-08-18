@@ -6,11 +6,13 @@
 # --------------------------------------------------------------------------
 from testcase import PurviewCatalogTest, PurviewCatalogPowerShellPreparer
 from testcase_async import PurviewCatalogTestAsync
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
-class PurviewCatalogSmokeTestAsync(PurviewCatalogTestAsync):
+class TestPurviewCatalogSmokeAsync(PurviewCatalogTestAsync):
 
     @PurviewCatalogPowerShellPreparer()
+    @recorded_by_proxy_async
     async def test_basic_smoke_test(self, purviewcatalog_endpoint):
         client = self.create_async_client(endpoint=purviewcatalog_endpoint)
         response = await client.types.get_all_type_definitions()
