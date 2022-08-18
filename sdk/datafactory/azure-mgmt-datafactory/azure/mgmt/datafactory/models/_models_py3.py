@@ -52429,6 +52429,7 @@ class SnowflakeSource(CopySource):
 
     _validation = {
         'type': {'required': True},
+        'export_settings': {'required': True},
     }
 
     _attribute_map = {
