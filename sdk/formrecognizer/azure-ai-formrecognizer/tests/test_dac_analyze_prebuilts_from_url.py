@@ -76,7 +76,14 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert business_card.fields.get("Faxes").value[0].content == "+44 (0) 20 6789 2345"
 
         assert len(business_card.fields.get("Addresses").value) == 1
-        assert business_card.fields.get("Addresses").value[0].value == "2 Kingdom Street\nPaddington, London, W2 6BD"
+        assert business_card.fields.get("Addresses").value[0].value.house_number == "2"
+        assert business_card.fields.get("Addresses").value[0].value.po_box == None
+        assert business_card.fields.get("Addresses").value[0].value.road == "Kingdom Street"
+        assert business_card.fields.get("Addresses").value[0].value.city == "London"
+        assert business_card.fields.get("Addresses").value[0].value.state == None
+        assert business_card.fields.get("Addresses").value[0].value.postal_code == "W2 6BD"
+        assert business_card.fields.get("Addresses").value[0].value.country_region == None
+        assert business_card.fields.get("Addresses").value[0].value.street_address == "2 Kingdom Street"
 
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
@@ -119,7 +126,14 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
         assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
         assert id_document.fields.get("Sex").value == "M"
-        assert id_document.fields.get("Address").value == "123 STREET ADDRESS\nYOUR CITY WA 99999-1234"
+        assert id_document.fields.get("Address").value.house_number == None
+        assert id_document.fields.get("Address").value.po_box == None
+        assert id_document.fields.get("Address").value.road == "123 STREET ADDRESS"
+        assert id_document.fields.get("Address").value.city == "YOUR CITY"
+        assert id_document.fields.get("Address").value.state == "WA"
+        assert id_document.fields.get("Address").value.postal_code == "99999-1234"
+        assert id_document.fields.get("Address").value.country_region == None
+        assert id_document.fields.get("Address").value.street_address == "123 STREET ADDRESS"
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
@@ -177,6 +191,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
             assert "https://fakeuri.com/blank%20space" in  e.response.request.body
 
     @FormRecognizerPreparer()
+    @recorded_by_proxy
     def test_receipt_url_bad_endpoint(self, formrecognizer_test_api_key):
         with pytest.raises(HttpResponseError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
