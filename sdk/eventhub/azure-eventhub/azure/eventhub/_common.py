@@ -126,6 +126,7 @@ class EventData(object):
         )
         # amqp message to be reset right before sending
         self._message = UamqpTransport.to_outgoing_amqp_message(self._raw_amqp_message)
+        self.message = self._message
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -241,14 +242,6 @@ class EventData(object):
 
         seq_list = [d for seq_section in body for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
-
-    @property
-    def message(self) -> uamqp_Message:
-        return self._message
-
-    @message.setter
-    def message(self, value: uamqp_Message) -> None:
-        self._message = value
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
@@ -523,6 +516,7 @@ class EventDataBatch(object):
         self._message = self._amqp_transport.set_message_partition_key(
             self._message, self._partition_key
         )
+        self.message: uamqp_BatchMessage = self._message
         self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
         self._count = 0
         self._internal_events: List[
@@ -576,14 +570,6 @@ class EventDataBatch(object):
         :rtype: int
         """
         return self._size
-
-    @property
-    def message(self) -> uamqp_BatchMessage:
-        return self._message
-
-    @message.setter
-    def message(self, value: uamqp_BatchMessage) -> None:
-        self._message = value
 
     def add(self, event_data: Union[EventData, AmqpAnnotatedMessage]) -> None:
         """Try to add an EventData to the batch.
