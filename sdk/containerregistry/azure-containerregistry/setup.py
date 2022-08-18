@@ -55,7 +55,7 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "azure-core>=1.23.0,<2.0.0",
-        "msrest>=0.6.21",
+        "msrest>=0.7.1",
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
