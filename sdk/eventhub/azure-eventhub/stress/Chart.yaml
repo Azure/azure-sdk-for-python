@@ -1,5 +1,5 @@
 apiVersion: v2
-name: python-eventhubs-stress-test
+name: stress-py-eventhubs
 description: python event hubs stress test.
 version: 0.1.2
 appVersion: v0.2

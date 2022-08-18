@@ -9,9 +9,35 @@ spec:
   containers:
     - name: python-eh-stress
       image: {{ .Values.image }}
-      # command: ['bash', 'script_commands.sh']
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py & python azure_eventhub_consumer_stress_sync.py']
+     
+      {{ if eq .Stress.Scenario "identity" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --azure_identity True --pyamqp_logging_enable --print_console --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendsync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendlistsync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendasync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendlistasync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendconsumeasync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_async --duration 7200 & python azure_eventhub_consumer_stress_async.py --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendconsumesync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200 & python azure_eventhub_consumer_stress_sync.py --duration 7200']
+      {{- end -}}
+
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
-      # async test command
-      # command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py -m stress_send_list_async & python3 azure_eventhub_consumer_stress_async.py']
 {{- end -}}
+
