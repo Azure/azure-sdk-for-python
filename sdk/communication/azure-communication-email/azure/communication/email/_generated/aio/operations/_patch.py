@@ -66,7 +66,7 @@ class EmailOperations(EmailOperationsGenerated):
             **kwargs
         )
 
-        return { "message_id": message_id }
+        return { "messageId": message_id }
 
     send.metadata = {'url': "/emails:send"} # type: ignore
 
