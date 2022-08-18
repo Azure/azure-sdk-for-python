@@ -534,7 +534,6 @@ def test_long_wait_small_buffer(connection_str):
     with producer:
         for i in range(100):
             producer.send_event(EventData("test"))
-            time.sleep(.1)
 
     time.sleep(60)
 
