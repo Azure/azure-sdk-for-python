@@ -9,7 +9,7 @@ from typing import Dict, Iterable, List, NewType
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2022_08_31.models import DocumentModelDetails, Error
+from ._generated.v2022_08_31.models import DocumentModelDetails as ModelDetails, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -3472,7 +3472,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelDetails._from_generated(deserialize(DocumentModelDetails, op.result))
+            result=DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result))
             if op.result else None,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
