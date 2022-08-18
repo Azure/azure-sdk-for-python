@@ -43,8 +43,6 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :mod:`azure.identity.aio`
     :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion
-    :keyword transport: transport to use. Defaults to :class:`~azure.core.pipeline.transport.AioHttpTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
 
     .. literalinclude:: ../tests/test_examples_crypto_async.py
         :start-after: [START create_client]
