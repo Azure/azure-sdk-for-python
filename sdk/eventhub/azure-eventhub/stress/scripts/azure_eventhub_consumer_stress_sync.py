@@ -50,6 +50,7 @@ parser.add_argument("--starting_offset", help="Starting offset", type=str, defau
 parser.add_argument("--starting_sequence_number", help="Starting sequence number", type=int)
 parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss")
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
+parser.add_argument("--owner_level", help="The owner level, or epoch, of the consumer", type=int, default=None)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
 parser.add_argument("--max_batch_size", type=int, default=int(os.environ.get("MAX_BATCH_SIZE", 0)),
                     help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
@@ -80,7 +81,7 @@ parser.add_argument("--aad_secret", help="AAD secret")
 parser.add_argument("--aad_tenant_id", help="AAD tenant id")
 parser.add_argument("--storage_conn_str", help="conn str of storage blob to store ownership and checkpoint data")
 parser.add_argument("--storage_container_name", help="storage container name to store ownership and checkpoint data")
-parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
+parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", action="store_true")
 parser.add_argument("--print_console", help="print to console", action="store_true")
 parser.add_argument("--log_filename", help="log file name", type=str)
 
@@ -113,6 +114,7 @@ class EventHubConsumerClientTest(EventHubConsumerClient):
 
 
 def on_event_received(process_monitor, partition_context, event):
+    print(f"Event received")
     recv_cnt_map[partition_context.partition_id] += 1 if event else 0
     if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
         total_time_elapsed = time.perf_counter() - start_time
@@ -135,6 +137,7 @@ def on_event_received(process_monitor, partition_context, event):
 
 
 def on_event_batch_received(process_monitor, partition_context, event_batch):
+    print("Event batch")
     recv_cnt_map[partition_context.partition_id] += len(event_batch)
     recv_cnt_iteration_map[partition_context.partition_id] += len(event_batch)
     if recv_cnt_iteration_map[partition_context.partition_id] > LOG_PER_COUNT:
@@ -159,6 +162,7 @@ def on_event_batch_received(process_monitor, partition_context, event_batch):
 
 
 def on_error(partition_context, exception):
+    print("error")
     azure_metric_monitor.record_error(exception, extra="partition: {}".format(partition_context.partition_id))
 
 
@@ -188,7 +192,7 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable
+            logging_enable=args.pyamqp_logging_enable
         )
     elif args.hostname:
         client = EventHubConsumerClientTest(
@@ -201,7 +205,7 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable
+            logging_enable=args.pyamqp_logging_enable
         )
     elif args.aad_client_id:
         credential = ClientSecretCredential(args.tenant_id, args.aad_client_id, args.aad_secret)
@@ -215,7 +219,7 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable
+            logging_enable=args.pyamqp_logging_enable
         )
 
     return client
@@ -233,6 +237,7 @@ def run(args):
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
             "starting_position": starting_position,
+            "owner_level": args.owner_level,
             "on_error": on_error
         }
         if args.max_batch_size:
