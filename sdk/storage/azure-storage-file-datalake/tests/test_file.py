@@ -506,8 +506,8 @@ class TestFile(StorageRecordedTestCase):
         downloaded_data = file_client.download_file().readall()
         assert data == downloaded_data
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_upload_data_to_existing_file(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -534,8 +534,8 @@ class TestFile(StorageRecordedTestCase):
         downloaded_data = file_client.download_file().readall()
         assert data == downloaded_data
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_upload_data_to_existing_file_with_content_settings(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -567,8 +567,8 @@ class TestFile(StorageRecordedTestCase):
         assert data == downloaded_data
         assert properties.content_settings.content_language == content_settings.content_language
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_upload_data_to_existing_file_with_permission_and_umask(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
