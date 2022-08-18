@@ -114,7 +114,6 @@ class EventHubConsumerClientTest(EventHubConsumerClient):
 
 
 def on_event_received(process_monitor, partition_context, event):
-    print(f"Event received")
     recv_cnt_map[partition_context.partition_id] += 1 if event else 0
     if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
         total_time_elapsed = time.perf_counter() - start_time
@@ -137,7 +136,6 @@ def on_event_received(process_monitor, partition_context, event):
 
 
 def on_event_batch_received(process_monitor, partition_context, event_batch):
-    print("Event batch")
     recv_cnt_map[partition_context.partition_id] += len(event_batch)
     recv_cnt_iteration_map[partition_context.partition_id] += len(event_batch)
     if recv_cnt_iteration_map[partition_context.partition_id] > LOG_PER_COUNT:
@@ -162,7 +160,6 @@ def on_event_batch_received(process_monitor, partition_context, event_batch):
 
 
 def on_error(partition_context, exception):
-    print("error")
     azure_metric_monitor.record_error(exception, extra="partition: {}".format(partition_context.partition_id))
 
 

@@ -33,24 +33,6 @@ def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_me
         return 0
     raise error
 
-def stress_identity_run(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
-    # Spin up on another EH until authorization passes, then run other stress tests
-    
-    try:
-        batch = producer.create_batch(partition_id=args.send_partition_id, partition_key=args.send_partition_key)
-        while True:
-            event_data = EventData(body=b"D" * args.payload)
-            batch.add(event_data)
-    except ValueError:
-        try:
-            producer.send_batch(batch)
-        except EventHubError as e:
-            return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
-    except EventHubError as e:
-        return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
-    return len(batch)
-   
-
 
 def stress_send_sync(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
     try:
@@ -202,7 +184,8 @@ class StressTestRunner(object):
                 http_proxy=http_proxy,
                 transport_type=transport_type,
                 logging_enable=self.args.pyamqp_logging_enable,
-                **retry_options )
+                **retry_options 
+            )
         elif self.args.conn_str:
             client = client_class.from_connection_string(
                 self.args.conn_str,

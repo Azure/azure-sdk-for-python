@@ -52,6 +52,7 @@ parser.add_argument("--starting_offset", help="Starting offset", type=str, defau
 parser.add_argument("--starting_sequence_number", help="Starting sequence number", type=int)
 parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss")
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
+parser.add_argument("--owner_level", help="The owner level, or epoch, of the consumer", type=int, default=None)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
 parser.add_argument("--max_batch_size", type=int, default=int(os.environ.get("MAX_BATCH_SIZE", 0)),
                     help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
@@ -227,6 +228,7 @@ async def run(args):
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
             "starting_position": starting_position,
+            "owner_level": args.owner_level,
             "on_error": on_error
         }
         if args.max_batch_size:
