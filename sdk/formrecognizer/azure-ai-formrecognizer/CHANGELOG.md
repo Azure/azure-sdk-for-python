@@ -1,10 +1,11 @@
 # Release History
 
-## 3.2.0b7 (Unreleased)
+## 3.2.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+- Removed `kind` property on `DocumentPage`.
 
 ### Bugs Fixed
 

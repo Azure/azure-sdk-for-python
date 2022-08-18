@@ -2810,9 +2810,6 @@ class DocumentParagraph:
 class DocumentPage:
     """Content and layout elements extracted from a page of the input.
 
-    :ivar kind: Kind of document page. Known values are: "document", "sheet", "slide",
-     "image".
-    :vartype kind: str
     :ivar page_number: 1-based page number in the input document.
     :vartype page_number: int
     :ivar angle: The general orientation of the content in clockwise direction, measured
@@ -2839,7 +2836,6 @@ class DocumentPage:
     """
 
     def __init__(self, **kwargs):
-        self.kind = kwargs.get("kind", None)
         self.page_number = kwargs.get("page_number", None)
         self.angle = kwargs.get("angle", None)
         self.width = kwargs.get("width", None)
@@ -2853,7 +2849,6 @@ class DocumentPage:
     @classmethod
     def _from_generated(cls, page):
         return cls(
-            kind=page.kind,
             page_number=page.page_number,
             angle=adjust_text_angle(page.angle)
             if page.angle else None,
@@ -2877,7 +2872,7 @@ class DocumentPage:
 
     def __repr__(self):
         return (
-            f"DocumentPage(kind={self.kind}, page_number={self.page_number}, angle={self.angle}, "
+            f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
             f"spans={repr(self.spans)})"
@@ -2890,7 +2885,6 @@ class DocumentPage:
         :rtype: dict
         """
         return {
-            "kind": self.kind,
             "page_number": self.page_number,
             "angle": self.angle,
             "width": self.width,
@@ -2919,7 +2913,6 @@ class DocumentPage:
         :rtype: DocumentPage
         """
         return cls(
-            kind=data.get("kind", None),
             page_number=data.get("page_number", None),
             angle=data.get("angle", None),
             width=data.get("width", None),
