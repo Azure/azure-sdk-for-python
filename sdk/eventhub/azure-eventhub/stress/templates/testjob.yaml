@@ -19,7 +19,7 @@ spec:
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendlistsync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 7200']
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendasync" }}
@@ -27,15 +27,23 @@ spec:
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendlistasync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 7200']
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendconsumeasync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_async --duration 7200 & python azure_eventhub_consumer_stress_async.py --duration 7200']
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_async --duration 7200 & python azure_eventhub_consumer_stress_async.py --duration 7200']
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendconsumesync" }}
       command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200 & python azure_eventhub_consumer_stress_sync.py --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendlistconsumeasync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_async --duration 7200 & python azure_eventhub_consumer_stress_async.py --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "sendlistconsumesync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 7200 & python azure_eventhub_consumer_stress_sync.py --duration 7200']
       {{- end -}}
 
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
