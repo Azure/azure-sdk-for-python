@@ -66,8 +66,20 @@ class AdditionalWorkspaceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     SENTINEL = "Sentinel"
 
-class AlertNotifications(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether to send security alerts notifications to the security contact
+class MinimalSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines the minimal alert severity which will be sent as email notifications. Learn more:
+    https://docs.microsoft.com/en-us/rest/api/securitycenter/security-contacts/list?tabs=HTTP#minimalseverity.
+    """
+
+    #: Low.
+    LOW = "Low"
+    #: Medium.
+    MEDIUM = "Medium"
+    #: High.
+    HIGH = "High"
+
+class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines if email notifications will be sent about new security alerts
     """
 
     #: Get notifications on new alerts.

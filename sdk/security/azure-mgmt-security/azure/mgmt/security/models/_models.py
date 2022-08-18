@@ -8065,7 +8065,6 @@ class SecurityAssessmentPartnerData(msrest.serialization.Model):
         self.partner_name = kwargs['partner_name']
         self.secret = kwargs['secret']
 
-
 class SecurityContact(Resource):
     """Contact details for security issues.
 
@@ -8081,12 +8080,12 @@ class SecurityContact(Resource):
     :type email: str
     :param phone: The phone number of this security contact.
     :type phone: str
-    :param alert_notifications: Whether to send security alerts notifications to the security
-     contact. Possible values include: "On", "Off".
-    :type alert_notifications: str or ~azure.mgmt.security.models.AlertNotifications
+    :param alertNotifications: Defines whether to send email notifications about new security alerts
+     Possible values include: "minimalSeverity", "state".
+    :type alert_notifications: ~azure.mgmt.security.models.AlertNotifications
     :param alerts_to_admins: Whether to send security alerts notifications to subscription admins.
      Possible values include: "On", "Off".
-    :type alerts_to_admins: str or ~azure.mgmt.security.models.AlertsToAdmins
+    :type notificationsByRole: ~azure.mgmt.security.models.AlertsToAdmins
     """
 
     _validation = {
@@ -8101,8 +8100,8 @@ class SecurityContact(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'email': {'key': 'properties.email', 'type': 'str'},
         'phone': {'key': 'properties.phone', 'type': 'str'},
-        'alert_notifications': {'key': 'properties.alertNotifications', 'type': 'str'},
-        'alerts_to_admins': {'key': 'properties.alertsToAdmins', 'type': 'str'},
+        'alertNotifications': {'key': 'value', 'type': 'AlertNotifications'},
+        'notificationsByRole': {'key': 'value', 'type': 'NotificationsByRole'},
     }
 
     def __init__(
@@ -8112,8 +8111,62 @@ class SecurityContact(Resource):
         super(SecurityContact, self).__init__(**kwargs)
         self.email = kwargs.get('email', None)
         self.phone = kwargs.get('phone', None)
-        self.alert_notifications = kwargs.get('alert_notifications', None)
-        self.alerts_to_admins = kwargs.get('alerts_to_admins', None)
+        self.alertNotifications = kwargs.get('alertNotifications', None)
+        self.notificationsByRole = kwargs.get('notificationsByRole', None)
+
+class AlertNotifications(Resource):
+    """Defines whether to send email notifications about new security alerts.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param minimalSeverity: Defines the minimal alert severity which will be sent as email
+     notifications. Possible values include: "High", "Medium", "Low".
+    :type state: str
+    :param state: Defines if email notifications will be sent about new security alerts.
+     Possible values include: "On", "Off".
+    :type state: str
+    """
+
+    _attribute_map = {
+        'minimalSeverity': {'key': 'id', 'type': 'str'},
+        'state': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityContact, self).__init__(**kwargs)
+        self.minimalSeverity = kwargs.get('minimalSeverity', None)
+        self.state = kwargs.get('state', None)
+
+class NotificationsByRole(Resource):
+    """Defines whether to send email notifications from Microsoft Defender for Cloud to
+       persons with specific RBAC roles on the subscription.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param roles: Defines which RBAC roles will get email notifications from Microsoft Defender for Cloud.
+    List of allowed RBAC roles:. Possible values include: "High", "Medium", "Low".
+    :type state: str[]
+    :param state: Defines whether to send email notifications from AMicrosoft Defender for
+    Cloud to persons with specific RBAC roles on the subscription..
+     Possible values include: "On", "Off".
+    :type state: str:param roles: Defines which RBAC roles will get email notifications from Microsoft Defender for Cloud.
+    """
+
+    _attribute_map = {
+        'roles': {'key': 'id', 'type': '[str]'},
+        'state': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SecurityContact, self).__init__(**kwargs)
+        self.roles = kwargs.get('roles', None)
+        self.state = kwargs.get('state', None)
 
 
 class SecurityContactList(msrest.serialization.Model):
