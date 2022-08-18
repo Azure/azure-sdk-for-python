@@ -152,12 +152,15 @@ class CBSAuthenticator(object):
 
     def _update_status(self):
         if self.auth_state == CbsAuthState.OK or self.auth_state == CbsAuthState.REFRESH_REQUIRED:
+            _LOGGER.debug('update_status In refresh required or OK.')
             is_expired, is_refresh_required = check_expiration_and_refresh_status(self._expires_on, self._refresh_window)
+            _LOGGER.debug('is expired == %r, is refresh required == %r', is_expired, is_refresh_required)
             if is_expired:
                 self.auth_state = CbsAuthState.EXPIRED
             elif is_refresh_required:
                 self.auth_state = CbsAuthState.REFRESH_REQUIRED
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
+            _LOGGER.debug('In update status, in progress. token put time: %r', self._token_put_time)
             put_timeout = check_put_timeout_status(self._auth_timeout, self._token_put_time)
             if put_timeout:
                 self.auth_state = CbsAuthState.TIMEOUT
@@ -186,6 +189,10 @@ class CBSAuthenticator(object):
     def update_token(self):
         self.auth_state = CbsAuthState.IN_PROGRESS
         access_token = self._auth.get_token()
+        if not access_token:
+            _LOGGER.debug("Update_token received an empty token object")
+        elif not access_token.token:
+            _LOGGER.debug("Update_token received an empty token")
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)

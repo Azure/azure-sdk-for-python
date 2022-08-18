@@ -92,13 +92,12 @@ class AsyncTransportMixin():
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
-            # TODO: Catch decode error and return amqp:decode-error
-            #_LOGGER.info("ICH%d <- %r", channel, decoded)
+            _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
         except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
             return None, None
 
-    async def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
+    async def read(self, verify_frame_type=0, **kwargs):
         async with self.socket_lock:
             read_frame_buffer = BytesIO()
             try:
@@ -483,11 +482,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
     def close(self):
         """Do any preliminary work in shutting down the connection."""
-        # TODO: async close doesn't:
-        # 1) shutdown socket and close. --> self.sock.shutdown(socket.SHUT_RDWR) and self.sock.close()
-        # 2) set self.connected = False
-        # I think we need to do this, like in sync
         self.ws.close()
+        self.connected = False
 
     async def write(self, s):
         """Completely write a string to the peer.

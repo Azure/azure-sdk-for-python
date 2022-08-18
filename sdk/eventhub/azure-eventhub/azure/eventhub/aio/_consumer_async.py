@@ -213,7 +213,7 @@ class EventHubConsumer(
         while retried_times <= max_retries:
             try:
                 await self._open()
-                await cast(ReceiveClientAsync, self._handler).do_work_async()
+                await cast(ReceiveClientAsync, self._handler).do_work_async(batch=self._prefetch)
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint: disable=broad-except

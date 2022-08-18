@@ -162,11 +162,9 @@ class AMQPClientAsync(AMQPClientSync):
                     await asyncio.sleep(self._retry_policy.get_backoff_time(retry_settings, exc))
                     if exc.condition == ErrorCondition.LinkDetachForced:
                         await self._close_link_async()  # if link level error, close and open a new link
-                        # TODO: check if there's any other code that we want to close link?
                     if exc.condition in (ErrorCondition.ConnectionCloseForced, ErrorCondition.SocketError):
                         # if connection detach or socket error, close and open a new connection
                         await self.close_async()
-                        # TODO: check if there's any other code we want to close connection
             except Exception:
                 raise
             finally:
@@ -383,8 +381,6 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
             raise RuntimeError("Message is not sent.")
 
     async def _on_send_complete_async(self, message_delivery, reason, state):
-        # TODO: check whether the callback would be called in case of message expiry or link going down
-        #  and if so handle the state in the callback
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
@@ -581,7 +577,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            await self._connection.listen(wait=self._socket_timeout, batch=self._link_credit, **kwargs)
+            await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.")
             self._shutdown = True

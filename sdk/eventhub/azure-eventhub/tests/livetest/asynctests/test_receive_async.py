@@ -137,7 +137,6 @@ async def test_receive_owner_level_async(connstr_senders):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_over_websocket_async(connstr_senders):
-    pytest.skip("websocket not supported")
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"
     message_id_base = "mess_id_sample_"

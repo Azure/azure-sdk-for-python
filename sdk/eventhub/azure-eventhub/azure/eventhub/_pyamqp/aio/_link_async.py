@@ -146,7 +146,7 @@ class Link(object):
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
 
-    async def _remove_pending_deliveries(self):  # TODO: move to sender
+    async def _remove_pending_deliveries(self):
         futures = []
         for delivery in self._pending_deliveries.values():
             futures.append(asyncio.ensure_future(delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)))
@@ -189,10 +189,10 @@ class Link(object):
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
             raise ValueError("Invalid link")
-        elif not frame[5] or not frame[6]:  # TODO: not sure if we should check here
+        elif not frame[5] or not frame[6]:
             _LOGGER.info("Cannot get source or target. Detaching link")
             await self._remove_pending_deliveries()
-            await self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
+            await self._set_state(LinkState.DETACHED)
             raise ValueError("Invalid link")
         self.remote_handle = frame[1]
         self.remote_max_message_size = frame[10]
@@ -264,7 +264,7 @@ class Link(object):
             return
         try:
             await self._check_if_closed()
-            await self._remove_pending_deliveries()  # TODO: Keep?
+            await self._remove_pending_deliveries()
             if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
                 await self._outgoing_detach(close=close, error=error)
                 await self._set_state(LinkState.DETACHED)
