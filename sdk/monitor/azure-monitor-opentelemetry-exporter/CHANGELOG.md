@@ -5,7 +5,7 @@
 ### Features Added
 
 - Implement success count network statsbeat
-    ([#25633](https://github.com/Azure/azure-sdk-for-python/pull/25633))
+    ([#25752](https://github.com/Azure/azure-sdk-for-python/pull/25752))
 
 ### Breaking Changes
 

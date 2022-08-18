@@ -25,6 +25,7 @@ _StatsbeatMetrics_METWORK_ATTRS = dict(
     _StatsbeatMetrics._NETWORK_ATTRIBUTES
 )
 
+# cSpell:disable
 
 # pylint: disable=protected-access
 class TestStatsbeat(unittest.TestCase):
@@ -159,3 +160,5 @@ class TestStatsbeatMetrics(unittest.TestCase):
         _REQUESTS_MAP["success"] = 0
         obs = self._metric._get_success_count(options=None)
         self.assertEqual(len(obs), 0)
+
+# cSpell:enable

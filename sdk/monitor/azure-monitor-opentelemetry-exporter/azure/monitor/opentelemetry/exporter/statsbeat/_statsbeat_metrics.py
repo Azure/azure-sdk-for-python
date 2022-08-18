@@ -19,6 +19,7 @@ _RP_NAMES = ["appsvc", "functions", "vm", "unknown"]
 
 _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
 
+# cSpell:disable
 
 class _StatsbeatMetrics:
 
@@ -32,8 +33,8 @@ class _StatsbeatMetrics:
     }
 
     _NETWORK_ATTRIBUTES = {
-            "endpoint": _ENDPOINT_TYPES[0],  # breeze
-            "host": None,
+        "endpoint": _ENDPOINT_TYPES[0],  # breeze
+        "host": None,
     }
 
     def _get_success_count(self, options: CallbackOptions) -> Iterable[Observation]:
@@ -75,6 +76,7 @@ class _StatsbeatMetrics:
             description="Statsbeat metric tracking request success count"
         )
 
+# cSpell:enable
 
 def _shorten_host(host):
     if not host:
