@@ -1,6 +1,6 @@
 # Release History
 
-## 5.10.1 (Unreleased)
+## 5.10.1 (2022-08-18)
 
 This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
 
@@ -12,6 +12,7 @@ This version and all future versions will require Python 3.7+, Python 3.6 is no 
 ### Other Changes
 
 - Internal refactoring to support upcoming Pure Python AMQP-based release.
+- Updated uAMQP dependency to 1.6.0.
 
 ## 5.10.0 (2022-06-08)
 

@@ -9,7 +9,11 @@ import uuid
 import time
 import functools
 import collections
-from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, TypeAlias, cast, Union
+from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 from datetime import timedelta
 from urllib.parse import urlparse
 
