@@ -85,12 +85,11 @@ def _get_stats_connection_string(endpoint: str) -> str:
     cs_env = os.environ.get("APPLICATION_INSIGHTS_STATS_CONNECTION_STRING")
     if cs_env:
         return cs_env
-    else:
-        for ep in _EU_ENDPOINTS:
-            if ep in endpoint:
-                # Use statsbeat EU endpoint if user is in EU region
-                return _DEFAULT_EU_STATS_CONNECTION_STRING
-        return _DEFAULT_NON_EU_STATS_CONNECTION_STRING
+    for ep in _EU_ENDPOINTS:
+        if ep in endpoint:
+            # Use statsbeat EU endpoint if user is in EU region
+            return _DEFAULT_EU_STATS_CONNECTION_STRING
+    return _DEFAULT_NON_EU_STATS_CONNECTION_STRING
 
 
 # seconds

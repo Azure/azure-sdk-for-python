@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Optional, Any
+from typing import Optional
 from opentelemetry.sdk.metrics.export import DataPointT
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope

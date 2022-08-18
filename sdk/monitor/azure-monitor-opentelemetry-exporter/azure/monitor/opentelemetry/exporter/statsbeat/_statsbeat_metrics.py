@@ -22,6 +22,7 @@ _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
 # cSpell:disable
 
 # pylint: disable=unused-argument
+# pylint: disable=protected-access
 def _get_success_count(options: CallbackOptions) -> Iterable[Observation]:
     observations = []
     attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
