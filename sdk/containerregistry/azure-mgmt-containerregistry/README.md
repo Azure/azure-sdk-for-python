@@ -1,7 +1,7 @@
 # Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Container Registry Client Library.
-This package has been tested with Python 3.6+.
+This package has been tested with Python 3.7+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## _Disclaimer_
@@ -28,4 +28,3 @@ section of the project.
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-containerregistry%2FREADME.png)
- 
