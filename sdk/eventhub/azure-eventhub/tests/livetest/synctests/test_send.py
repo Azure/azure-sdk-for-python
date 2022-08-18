@@ -287,7 +287,7 @@ def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport
 @pytest.mark.liveTest
 def test_send_partition(connstr_receivers, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
-    timeout = 5 * timeout_factor
+    timeout = 10 * timeout_factor
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
 
     with client:
