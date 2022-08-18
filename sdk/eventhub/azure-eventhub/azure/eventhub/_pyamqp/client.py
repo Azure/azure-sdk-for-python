@@ -707,7 +707,7 @@ class ReceiveClient(AMQPClient):
     :paramtype encoding: str
     """
 
-    def __init__(self, source, auth=None, **kwargs):
+    def __init__(self, hostname, source, auth=None, **kwargs):
         self.source = source
         self._streaming_receive = kwargs.pop("streaming_receive", False)  # TODO: whether public?
         self._received_messages = queue.Queue()
@@ -717,7 +717,7 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', 300)
-        super(ReceiveClient, self).__init__(source, auth=auth, **kwargs)
+        super(ReceiveClient, self).__init__(hostname, auth=auth, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
