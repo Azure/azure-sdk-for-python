@@ -42,16 +42,21 @@ class IssueProcessPython(IssueProcess):
         q.sort()
         return (datetime.now() - (self.created_time if not q else q[-1])).days
 
+    def get_tag_and_hash(self, issue_body_list: List):
+        for line in issue_body_list:
+            if '->Readme Tag:' in line:
+                self.is_specified_tag = True
+            if '->hash:' in line:
+                self.rest_repo_hash = line.split(":", 1)[-1].strip()[0]
+
     def init_readme_link(self) -> None:
         issue_body_list = self.get_issue_body()
 
         # Get the origin link and readme tag in issue body
         origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
-        self.is_specified_tag = any('->Readme Tag:' in line for line in issue_body_list[:5])
 
-        # # Get the rest repo hash in issue body
-        rest_repo_hash = [line.split(":", 1)[-1].strip() for line in issue_body_list[:5] if '->hash:' in line]
-        self.rest_repo_hash = rest_repo_hash[0] if rest_repo_hash else ''
+        # Get the specified tag and rest repo hash in issue body
+        self.get_tag_and_hash(issue_body_list[:5])
 
         # get readme_link
         self.get_readme_link(origin_link)
