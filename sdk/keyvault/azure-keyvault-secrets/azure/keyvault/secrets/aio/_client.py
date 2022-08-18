@@ -23,9 +23,6 @@ class SecretClient(AsyncKeyVaultClientBase):
         :mod:`azure.identity.aio`
     :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.secrets.ApiVersion
-    :keyword transport: transport to use. Defaults to
-     :class:`~azure.core.pipeline.transport.AioHttpTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
 
     Example:
         .. literalinclude:: ../tests/test_samples_secrets_async.py
