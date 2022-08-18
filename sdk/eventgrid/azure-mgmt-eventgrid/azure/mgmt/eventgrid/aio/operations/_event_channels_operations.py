@@ -29,27 +29,25 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._channels_operations import (
+from ...operations._event_channels_operations import (
     build_create_or_update_request,
     build_delete_request,
-    build_get_full_url_request,
     build_get_request,
     build_list_by_partner_namespace_request,
-    build_update_request,
 )
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ChannelsOperations:
+class EventChannelsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.eventgrid.aio.EventGridManagementClient`'s
-        :attr:`channels` attribute.
+        :attr:`event_channels` attribute.
     """
 
     models = _models
@@ -63,22 +61,22 @@ class ChannelsOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, partner_namespace_name: str, channel_name: str, **kwargs: Any
-    ) -> _models.Channel:
-        """Get a channel.
+        self, resource_group_name: str, partner_namespace_name: str, event_channel_name: str, **kwargs: Any
+    ) -> _models.EventChannel:
+        """Get an event channel.
 
-        Get properties of a channel.
+        Get properties of an event channel.
 
-        :param resource_group_name: The name of the resource group within the partners subscription.
+        :param resource_group_name: The name of the resource group within the user's subscription.
          Required.
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
+        :param event_channel_name: Name of the event channel. Required.
+        :type event_channel_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Channel or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.Channel
+        :return: EventChannel or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.EventChannel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -88,12 +86,12 @@ class ChannelsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Channel]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventChannel]
 
         request = build_get_request(
             resource_group_name=resource_group_name,
             partner_namespace_name=partner_namespace_name,
-            channel_name=channel_name,
+            event_channel_name=event_channel_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -113,45 +111,45 @@ class ChannelsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Channel", pipeline_response)
+        deserialized = self._deserialize("EventChannel", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels/{eventChannelName}"}  # type: ignore
 
     @overload
     async def create_or_update(
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        channel_name: str,
-        channel_info: _models.Channel,
+        event_channel_name: str,
+        event_channel_info: _models.EventChannel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Channel:
-        """Create or update a channel.
+    ) -> _models.EventChannel:
+        """Create an event channel.
 
-        Synchronously creates or updates a new channel with the specified parameters.
+        Asynchronously creates a new event channel with the specified parameters.
 
-        :param resource_group_name: The name of the resource group within the partners subscription.
+        :param resource_group_name: The name of the resource group within the user's subscription.
          Required.
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
-        :param channel_info: Channel information. Required.
-        :type channel_info: ~azure.mgmt.eventgrid.models.Channel
+        :param event_channel_name: Name of the event channel. Required.
+        :type event_channel_name: str
+        :param event_channel_info: EventChannel information. Required.
+        :type event_channel_info: ~azure.mgmt.eventgrid.models.EventChannel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Channel or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.Channel
+        :return: EventChannel or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.EventChannel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -160,31 +158,31 @@ class ChannelsOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        channel_name: str,
-        channel_info: IO,
+        event_channel_name: str,
+        event_channel_info: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Channel:
-        """Create or update a channel.
+    ) -> _models.EventChannel:
+        """Create an event channel.
 
-        Synchronously creates or updates a new channel with the specified parameters.
+        Asynchronously creates a new event channel with the specified parameters.
 
-        :param resource_group_name: The name of the resource group within the partners subscription.
+        :param resource_group_name: The name of the resource group within the user's subscription.
          Required.
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
-        :param channel_info: Channel information. Required.
-        :type channel_info: IO
+        :param event_channel_name: Name of the event channel. Required.
+        :type event_channel_name: str
+        :param event_channel_info: EventChannel information. Required.
+        :type event_channel_info: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Channel or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.Channel
+        :return: EventChannel or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.EventChannel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -193,29 +191,30 @@ class ChannelsOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        channel_name: str,
-        channel_info: Union[_models.Channel, IO],
+        event_channel_name: str,
+        event_channel_info: Union[_models.EventChannel, IO],
         **kwargs: Any
-    ) -> _models.Channel:
-        """Create or update a channel.
+    ) -> _models.EventChannel:
+        """Create an event channel.
 
-        Synchronously creates or updates a new channel with the specified parameters.
+        Asynchronously creates a new event channel with the specified parameters.
 
-        :param resource_group_name: The name of the resource group within the partners subscription.
+        :param resource_group_name: The name of the resource group within the user's subscription.
          Required.
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
-        :param channel_info: Channel information. Is either a model type or a IO type. Required.
-        :type channel_info: ~azure.mgmt.eventgrid.models.Channel or IO
+        :param event_channel_name: Name of the event channel. Required.
+        :type event_channel_name: str
+        :param event_channel_info: EventChannel information. Is either a model type or a IO type.
+         Required.
+        :type event_channel_info: ~azure.mgmt.eventgrid.models.EventChannel or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Channel or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.Channel
+        :return: EventChannel or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.EventChannel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -226,20 +225,20 @@ class ChannelsOperations:
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Channel]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventChannel]
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(channel_info, (IO, bytes)):
-            _content = channel_info
+        if isinstance(event_channel_info, (IO, bytes)):
+            _content = event_channel_info
         else:
-            _json = self._serialize.body(channel_info, "Channel")
+            _json = self._serialize.body(event_channel_info, "EventChannel")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             partner_namespace_name=partner_namespace_name,
-            channel_name=channel_name,
+            event_channel_name=event_channel_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -258,25 +257,21 @@ class ChannelsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Channel", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("Channel", pipeline_response)
+        deserialized = self._deserialize("EventChannel", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}"}  # type: ignore
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels/{eventChannelName}"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, partner_namespace_name: str, channel_name: str, **kwargs: Any
+        self, resource_group_name: str, partner_namespace_name: str, event_channel_name: str, **kwargs: Any
     ) -> None:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -290,7 +285,7 @@ class ChannelsOperations:
         request = build_delete_request(
             resource_group_name=resource_group_name,
             partner_namespace_name=partner_namespace_name,
-            channel_name=channel_name,
+            event_channel_name=event_channel_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self._delete_initial.metadata["url"],
@@ -313,23 +308,23 @@ class ChannelsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}"}  # type: ignore
+    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels/{eventChannelName}"}  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, partner_namespace_name: str, channel_name: str, **kwargs: Any
+        self, resource_group_name: str, partner_namespace_name: str, event_channel_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a channel.
+        """Delete an event channel.
 
-        Delete an existing channel.
+        Delete existing event channel.
 
-        :param resource_group_name: The name of the resource group within the partners subscription.
+        :param resource_group_name: The name of the resource group within the user's subscription.
          Required.
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
+        :param event_channel_name: Name of the event channel. Required.
+        :type event_channel_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -354,7 +349,7 @@ class ChannelsOperations:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 partner_namespace_name=partner_namespace_name,
-                channel_name=channel_name,
+                event_channel_name=event_channel_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -382,153 +377,7 @@ class ChannelsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}"}  # type: ignore
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        partner_namespace_name: str,
-        channel_name: str,
-        channel_update_parameters: _models.ChannelUpdateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Update a Channel.
-
-        Synchronously updates a channel with the specified parameters.
-
-        :param resource_group_name: The name of the resource group within the partners subscription.
-         Required.
-        :type resource_group_name: str
-        :param partner_namespace_name: Name of the partner namespace. Required.
-        :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
-        :param channel_update_parameters: Channel update information. Required.
-        :type channel_update_parameters: ~azure.mgmt.eventgrid.models.ChannelUpdateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        partner_namespace_name: str,
-        channel_name: str,
-        channel_update_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Update a Channel.
-
-        Synchronously updates a channel with the specified parameters.
-
-        :param resource_group_name: The name of the resource group within the partners subscription.
-         Required.
-        :type resource_group_name: str
-        :param partner_namespace_name: Name of the partner namespace. Required.
-        :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
-        :param channel_update_parameters: Channel update information. Required.
-        :type channel_update_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        partner_namespace_name: str,
-        channel_name: str,
-        channel_update_parameters: Union[_models.ChannelUpdateParameters, IO],
-        **kwargs: Any
-    ) -> None:
-        """Update a Channel.
-
-        Synchronously updates a channel with the specified parameters.
-
-        :param resource_group_name: The name of the resource group within the partners subscription.
-         Required.
-        :type resource_group_name: str
-        :param partner_namespace_name: Name of the partner namespace. Required.
-        :type partner_namespace_name: str
-        :param channel_name: Name of the channel. Required.
-        :type channel_name: str
-        :param channel_update_parameters: Channel update information. Is either a model type or a IO
-         type. Required.
-        :type channel_update_parameters: ~azure.mgmt.eventgrid.models.ChannelUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(channel_update_parameters, (IO, bytes)):
-            _content = channel_update_parameters
-        else:
-            _json = self._serialize.body(channel_update_parameters, "ChannelUpdateParameters")
-
-        request = build_update_request(
-            resource_group_name=resource_group_name,
-            partner_namespace_name=partner_namespace_name,
-            channel_name=channel_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self.update.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}"}  # type: ignore
+    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels/{eventChannelName}"}  # type: ignore
 
     @distributed_trace
     def list_by_partner_namespace(
@@ -538,12 +387,12 @@ class ChannelsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Channel"]:
-        """List channels.
+    ) -> AsyncIterable["_models.EventChannel"]:
+        """List event channels.
 
-        List all the channels in a partner namespace.
+        List all the event channels in a partner namespace.
 
-        :param resource_group_name: The name of the resource group within the partners subscription.
+        :param resource_group_name: The name of the resource group within the user's subscription.
          Required.
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
@@ -561,15 +410,15 @@ class ChannelsOperations:
          items per page. Default value is None.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Channel or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.Channel]
+        :return: An iterator like instance of either EventChannel or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventChannel]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ChannelsListResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventChannelsListResult]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -603,7 +452,7 @@ class ChannelsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ChannelsListResult", pipeline_response)
+            deserialized = self._deserialize("EventChannelsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -625,65 +474,4 @@ class ChannelsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_partner_namespace.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels"}  # type: ignore
-
-    @distributed_trace_async
-    async def get_full_url(
-        self, resource_group_name: str, partner_namespace_name: str, channel_name: str, **kwargs: Any
-    ) -> _models.EventSubscriptionFullUrl:
-        """Get full URL of partner destination channel.
-
-        Get the full endpoint URL of a partner destination channel.
-
-        :param resource_group_name: The name of the resource group within the partners subscription.
-         Required.
-        :type resource_group_name: str
-        :param partner_namespace_name: Name of the partner namespace. Required.
-        :type partner_namespace_name: str
-        :param channel_name: Name of the Channel. Required.
-        :type channel_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EventSubscriptionFullUrl or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.EventSubscriptionFullUrl
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventSubscriptionFullUrl]
-
-        request = build_get_full_url_request(
-            resource_group_name=resource_group_name,
-            partner_namespace_name=partner_namespace_name,
-            channel_name=channel_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get_full_url.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("EventSubscriptionFullUrl", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_full_url.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}/getFullUrl"}  # type: ignore
+    list_by_partner_namespace.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels"}  # type: ignore

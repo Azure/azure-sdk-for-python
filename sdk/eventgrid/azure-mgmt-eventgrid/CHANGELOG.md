@@ -1,5 +1,43 @@
 # Release History
 
+## 11.0.0b1 (2022-08-18)
+
+### Features Added
+
+  - Added operation group EventChannelsOperations
+  - Added operation group PartnerDestinationsOperations
+  - Model Channel has a new parameter partner_destination_info
+  - Model ChannelUpdateParameters has a new parameter partner_destination_info
+  - Model Domain has a new parameter sku
+  - Model DomainUpdateParameters has a new parameter sku
+  - Model PartnerRegistration has a new parameter authorized_azure_subscription_ids
+  - Model PartnerRegistration has a new parameter customer_service_uri
+  - Model PartnerRegistration has a new parameter logo_uri
+  - Model PartnerRegistration has a new parameter long_description
+  - Model PartnerRegistration has a new parameter partner_customer_service_extension
+  - Model PartnerRegistration has a new parameter partner_customer_service_number
+  - Model PartnerRegistration has a new parameter partner_name
+  - Model PartnerRegistration has a new parameter partner_resource_type_description
+  - Model PartnerRegistration has a new parameter partner_resource_type_display_name
+  - Model PartnerRegistration has a new parameter partner_resource_type_name
+  - Model PartnerRegistration has a new parameter setup_uri
+  - Model PartnerRegistration has a new parameter visibility_state
+  - Model PartnerRegistrationUpdateParameters has a new parameter authorized_azure_subscription_ids
+  - Model PartnerRegistrationUpdateParameters has a new parameter logo_uri
+  - Model PartnerRegistrationUpdateParameters has a new parameter partner_topic_type_description
+  - Model PartnerRegistrationUpdateParameters has a new parameter partner_topic_type_display_name
+  - Model PartnerRegistrationUpdateParameters has a new parameter partner_topic_type_name
+  - Model PartnerRegistrationUpdateParameters has a new parameter setup_uri
+  - Model Topic has a new parameter extended_location
+  - Model Topic has a new parameter kind
+  - Model Topic has a new parameter sku
+  - Model TopicUpdateParameters has a new parameter sku
+  - Model VerifiedPartner has a new parameter partner_destination_details
+
+### Breaking Changes
+
+  - Model InlineEventProperties no longer has parameter display_name
+
 ## 10.2.0 (2022-06-20)
 
 **Features**
