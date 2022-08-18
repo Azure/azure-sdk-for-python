@@ -54,7 +54,7 @@ setup(
     ),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core>=1.23.0,<2.0.0",
+        "azure-core>=1.24.0,<2.0.0",
         "msrest>=0.7.1",
     ],
     project_urls={
