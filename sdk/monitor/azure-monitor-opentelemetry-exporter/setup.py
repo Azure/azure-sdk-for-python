@@ -82,8 +82,19 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.10",
-        "opentelemetry-api<2.0.0,>=1.12.0rc1,!=1.10a0",
-        "opentelemetry-sdk<2.0.0,>=1.12.0rc1,!=1.10a0",
+        "opentelemetry-api<2.0.0,>=1.12.0",
+        "opentelemetry-sdk<2.0.0,>=1.12.0",
     ],
+    entry_points={
+        "opentelemetry_traces_exporter": [
+            "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorTraceExporter"
+        ],
+        "opentelemetry_logs_exporter": [
+            "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorLogExporter"
+        ],
+        "opentelemetry_metrics_exporter": [
+            "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorMetricExporter"
+        ]
+    }
 )
 

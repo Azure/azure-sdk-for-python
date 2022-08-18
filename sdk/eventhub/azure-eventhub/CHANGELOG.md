@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Fixed a bug in `BufferedProducer` that would block when flushing the queue causing the client to freeze up (issue #23510).
+
 ### Bugs Fixed
 
 ### Other Changes
