@@ -24,6 +24,7 @@ USAGE:
 
 
 from datetime import datetime
+from uuid import uuid4
 import os
 import json
 from azure.storage.blob import BlobClient, BlobServiceClient
