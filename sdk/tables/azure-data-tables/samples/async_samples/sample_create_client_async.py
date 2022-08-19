@@ -10,11 +10,7 @@
 FILE: sample_create_client_async.py
 
 DESCRIPTION:
-    These samples demonstrate authenticating a client via:
-        * connection string
-        * shared access key
-        * generating a sas token with which the returned signature can be used with
-    the credential parameter of any TableServiceClient or TableClient
+    These samples demonstrate creating a TableServiceClient and a TableClient
 
 USAGE:
     python sample_create_client_async.py
@@ -26,7 +22,6 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta
 import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv
@@ -54,10 +49,23 @@ class CreateClients(object):
             print("Table name: {}".format(table_client.table_name))
         # [END create_table_client]
 
+    async def create_table_service_client(self):
+        # Instantiate a TableServiceClient using a shared access key
+        # [START create_table_service_client]
+        from azure.data.tables.aio import TableServiceClient
+        from azure.core.credentials import AzureNamedKeyCredential
+
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
+            properties = await table_service.get_service_properties()
+            print("Properties: {}".format(properties))
+        # [END create_table_service_client]
+
 
 async def main():
     sample = CreateClients()
     await sample.create_table_client()
+    await sample.create_table_service_client()
 
 
 if __name__ == "__main__":

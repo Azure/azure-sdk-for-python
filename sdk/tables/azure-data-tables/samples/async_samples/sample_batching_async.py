@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_batching.py
+FILE: sample_batching_async.py
 
 DESCRIPTION:
     These samples demonstrate how to use the batch transaction API to perform multiple
     operations within a single request
 
 USAGE:
-    python sample_batching.py
+    python sample_batching_async.py
 
     Set the environment variables with your own values before running the sample:
     1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
@@ -23,7 +23,6 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta
 import os
 from time import sleep
 import asyncio
@@ -36,7 +35,6 @@ class CreateClients(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )

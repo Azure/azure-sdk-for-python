@@ -76,7 +76,7 @@ class InsertDeleteEntity(object):
 
     def delete_entity(self):
         from azure.data.tables import TableClient
-        from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+        from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
