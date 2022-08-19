@@ -1,9 +1,9 @@
 ## Python Form Recognizer
 
-To generate this file, simply type
+To generate this file, simply type:
 
 ```
-autorest swagger/README.md --python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>
+autorest --use=@autorest/python@5.16.0 swagger/README.md --python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>
 ```
 
 We automatically hardcode in that this is `python` and `multiapi`.
