@@ -570,11 +570,10 @@ class TestDirectory(StorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        if not self.is_playback():
-            return
+        # if not self.is_playback():
+        #     return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
-        # root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
-        root_directory_client.set_access_control(acl="user::---,group::---,other::---")
+        root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
         # Using an AAD identity, create a directory to put files under that
         directory_name = self._get_directory_reference()
@@ -620,8 +619,7 @@ class TestDirectory(StorageRecordedTestCase):
         if not self.is_playback():
             return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
-        # root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
-        root_directory_client.set_access_control(acl="user::---,group::---,other::---")
+        root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
         # Using an AAD identity, create a directory to put files under that
         directory_name = self._get_directory_reference()
@@ -668,8 +666,7 @@ class TestDirectory(StorageRecordedTestCase):
         if not self.is_playback():
             return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
-        # root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
-        root_directory_client.set_access_control(acl="user::---,group::---,other::---")
+        root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
         # Using an AAD identity, create a directory to put files under that
         directory_name = self._get_directory_reference()
@@ -865,8 +862,7 @@ class TestDirectory(StorageRecordedTestCase):
         if not self.is_playback():
             return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
-        # root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
-        root_directory_client.set_access_control(acl="user::---,group::---,other::---")
+        root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
         # Using an AAD identity, create a directory to put files under that
         directory_name = self._get_directory_reference()
@@ -992,8 +988,7 @@ class TestDirectory(StorageRecordedTestCase):
         if not self.is_playback():
             return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
-        # root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
-        root_directory_client.set_access_control(acl="user::---,group::---,other::---")
+        root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
         # Using an AAD identity, create a directory to put files under that
         directory_name = self._get_directory_reference()
