@@ -6,92 +6,49 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AddressValue
-    from ._models_py3 import AnalyzeDocumentRequest
-    from ._models_py3 import AnalyzeResult
-    from ._models_py3 import AnalyzeResultOperation
-    from ._models_py3 import AuthorizeCopyRequest
-    from ._models_py3 import AzureBlobContentSource
-    from ._models_py3 import BoundingRegion
-    from ._models_py3 import BuildDocumentModelRequest
-    from ._models_py3 import ComponentDocumentModelDetails
-    from ._models_py3 import ComposeDocumentModelRequest
-    from ._models_py3 import CopyAuthorization
-    from ._models_py3 import CurrencyValue
-    from ._models_py3 import CustomDocumentModelsDetails
-    from ._models_py3 import Document
-    from ._models_py3 import DocumentField
-    from ._models_py3 import DocumentFieldSchema
-    from ._models_py3 import DocumentKeyValueElement
-    from ._models_py3 import DocumentKeyValuePair
-    from ._models_py3 import DocumentLanguage
-    from ._models_py3 import DocumentLine
-    from ._models_py3 import DocumentModelBuildOperationDetails
-    from ._models_py3 import DocumentModelComposeOperationDetails
-    from ._models_py3 import DocumentModelCopyToOperationDetails
-    from ._models_py3 import DocumentModelDetails
-    from ._models_py3 import DocumentModelSummary
-    from ._models_py3 import DocumentPage
-    from ._models_py3 import DocumentParagraph
-    from ._models_py3 import DocumentSelectionMark
-    from ._models_py3 import DocumentSpan
-    from ._models_py3 import DocumentStyle
-    from ._models_py3 import DocumentTable
-    from ._models_py3 import DocumentTableCell
-    from ._models_py3 import DocumentTypeDetails
-    from ._models_py3 import DocumentWord
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import GetDocumentModelsResponse
-    from ._models_py3 import GetOperationsResponse
-    from ._models_py3 import InnerError
-    from ._models_py3 import OperationDetails
-    from ._models_py3 import OperationSummary
-    from ._models_py3 import ResourceDetails
-except (SyntaxError, ImportError):
-    from ._models import AddressValue  # type: ignore
-    from ._models import AnalyzeDocumentRequest  # type: ignore
-    from ._models import AnalyzeResult  # type: ignore
-    from ._models import AnalyzeResultOperation  # type: ignore
-    from ._models import AuthorizeCopyRequest  # type: ignore
-    from ._models import AzureBlobContentSource  # type: ignore
-    from ._models import BoundingRegion  # type: ignore
-    from ._models import BuildDocumentModelRequest  # type: ignore
-    from ._models import ComponentDocumentModelDetails  # type: ignore
-    from ._models import ComposeDocumentModelRequest  # type: ignore
-    from ._models import CopyAuthorization  # type: ignore
-    from ._models import CurrencyValue  # type: ignore
-    from ._models import CustomDocumentModelsDetails  # type: ignore
-    from ._models import Document  # type: ignore
-    from ._models import DocumentField  # type: ignore
-    from ._models import DocumentFieldSchema  # type: ignore
-    from ._models import DocumentKeyValueElement  # type: ignore
-    from ._models import DocumentKeyValuePair  # type: ignore
-    from ._models import DocumentLanguage  # type: ignore
-    from ._models import DocumentLine  # type: ignore
-    from ._models import DocumentModelBuildOperationDetails  # type: ignore
-    from ._models import DocumentModelComposeOperationDetails  # type: ignore
-    from ._models import DocumentModelCopyToOperationDetails  # type: ignore
-    from ._models import DocumentModelDetails  # type: ignore
-    from ._models import DocumentModelSummary  # type: ignore
-    from ._models import DocumentPage  # type: ignore
-    from ._models import DocumentParagraph  # type: ignore
-    from ._models import DocumentSelectionMark  # type: ignore
-    from ._models import DocumentSpan  # type: ignore
-    from ._models import DocumentStyle  # type: ignore
-    from ._models import DocumentTable  # type: ignore
-    from ._models import DocumentTableCell  # type: ignore
-    from ._models import DocumentTypeDetails  # type: ignore
-    from ._models import DocumentWord  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import GetDocumentModelsResponse  # type: ignore
-    from ._models import GetOperationsResponse  # type: ignore
-    from ._models import InnerError  # type: ignore
-    from ._models import OperationDetails  # type: ignore
-    from ._models import OperationSummary  # type: ignore
-    from ._models import ResourceDetails  # type: ignore
+from ._models_py3 import AddressValue
+from ._models_py3 import AnalyzeDocumentRequest
+from ._models_py3 import AnalyzeResult
+from ._models_py3 import AnalyzeResultOperation
+from ._models_py3 import AuthorizeCopyRequest
+from ._models_py3 import AzureBlobContentSource
+from ._models_py3 import BoundingRegion
+from ._models_py3 import BuildDocumentModelRequest
+from ._models_py3 import ComponentDocumentModelDetails
+from ._models_py3 import ComposeDocumentModelRequest
+from ._models_py3 import CopyAuthorization
+from ._models_py3 import CurrencyValue
+from ._models_py3 import CustomDocumentModelsDetails
+from ._models_py3 import Document
+from ._models_py3 import DocumentField
+from ._models_py3 import DocumentFieldSchema
+from ._models_py3 import DocumentKeyValueElement
+from ._models_py3 import DocumentKeyValuePair
+from ._models_py3 import DocumentLanguage
+from ._models_py3 import DocumentLine
+from ._models_py3 import DocumentModelBuildOperationDetails
+from ._models_py3 import DocumentModelComposeOperationDetails
+from ._models_py3 import DocumentModelCopyToOperationDetails
+from ._models_py3 import DocumentModelDetails
+from ._models_py3 import DocumentModelSummary
+from ._models_py3 import DocumentPage
+from ._models_py3 import DocumentParagraph
+from ._models_py3 import DocumentSelectionMark
+from ._models_py3 import DocumentSpan
+from ._models_py3 import DocumentStyle
+from ._models_py3 import DocumentTable
+from ._models_py3 import DocumentTableCell
+from ._models_py3 import DocumentTypeDetails
+from ._models_py3 import DocumentWord
+from ._models_py3 import Error
+from ._models_py3 import ErrorResponse
+from ._models_py3 import GetDocumentModelsResponse
+from ._models_py3 import GetOperationsResponse
+from ._models_py3 import InnerError
+from ._models_py3 import OperationDetails
+from ._models_py3 import OperationSummary
+from ._models_py3 import ResourceDetails
+
 
 from ._form_recognizer_client_enums import (
     AnalyzeResultOperationStatus,

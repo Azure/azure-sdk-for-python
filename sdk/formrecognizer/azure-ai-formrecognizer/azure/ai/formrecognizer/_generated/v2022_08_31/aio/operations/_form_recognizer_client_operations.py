@@ -23,10 +23,11 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._form_recognizer_client_operations import build_analyze_document_request_initial, build_authorize_copy_document_model_request, build_build_document_model_request_initial, build_compose_document_model_request_initial, build_copy_document_model_to_request_initial, build_delete_document_model_request, build_get_analyze_document_result_request, build_get_document_model_request, build_get_document_models_request, build_get_operation_request, build_get_operations_request, build_get_resource_details_request
+from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class FormRecognizerClientOperationsMixin:
+class FormRecognizerClientOperationsMixin(MixinABC):
 
     async def _analyze_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
