@@ -11,3 +11,5 @@ scenarios:
 - "sendconsumesync"
 - "sendlistconsumeasync"
 - "sendlistconsumesync"
+- "consumeasyncidentity"
+- "consumesyncidentity"

@@ -9,6 +9,7 @@ spec:
   containers:
     - name: python-eh-stress
       image: {{ .Values.image }}
+      imagePullPolicy: Always
      
       {{ if eq .Stress.Scenario "identity" }}
       command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --azure_identity True --pyamqp_logging_enable --print_console --duration 7200']
@@ -44,6 +45,14 @@ spec:
 
       {{ if eq .Stress.Scenario "sendlistconsumesync" }}
       command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 7200 & python azure_eventhub_consumer_stress_sync.py --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "consumeasyncidentity" }}
+      command: ['bash', '-c', 'python azure_eventhub_consumer_stress_async.py --azure_identity True --duration 7200']
+      {{- end -}}
+
+      {{ if eq .Stress.Scenario "consumesyncidentity" }}
+      command: ['bash', '-c', 'python azure_eventhub_consumer_stress_sync.py --azure_identity True --duration 7200']
       {{- end -}}
 
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
