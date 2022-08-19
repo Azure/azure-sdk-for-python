@@ -220,7 +220,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 description=description,
                 tags=tags,
                 component_models=[
-                    self._generated_models.ComponentDocumentModelDetails(model_id=model_id) for model_id in component_model_ids
+                    self._generated_models.ComponentDocumentModelDetails(model_id=model_id)
+                    for model_id in component_model_ids
                 ]
                 if component_model_ids
                 else [],
