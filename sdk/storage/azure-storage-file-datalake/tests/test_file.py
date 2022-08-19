@@ -3,14 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
-import pytest
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
-
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -31,11 +30,12 @@ from azure.storage.filedatalake import (
     generate_account_sas,
     generate_file_sas,
     generate_file_system_sas,
-    ResourceTypes,
+    ResourceTypes
 )
+
 from devtools_testutils import recorded_by_proxy
-from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 

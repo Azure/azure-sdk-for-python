@@ -3,19 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
+import pytest
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
-import asyncio
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.testcase import StorageRecordedTestCase
-
-import pytest
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
-
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -33,7 +28,9 @@ from azure.storage.filedatalake import (
     ResourceTypes
 )
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
-from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 # ------------------------------------------------------------------------------
 
@@ -44,7 +41,7 @@ FILE_PATH = 'file_output.temp.dat'
 # ------------------------------------------------------------------------------
 
 
-class TestFile(StorageRecordedTestCase):
+class TestFileAsync(AsyncStorageRecordedTestCase):
     async def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key)
