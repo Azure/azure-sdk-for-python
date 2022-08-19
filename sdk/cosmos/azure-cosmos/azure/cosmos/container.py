@@ -139,7 +139,7 @@ class ContainerProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -191,7 +191,7 @@ class ContainerProxy(object):
             responses are guaranteed to be no staler than this value.
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -246,7 +246,7 @@ class ContainerProxy(object):
             For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -332,7 +332,7 @@ class ContainerProxy(object):
         populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable[Dict[str, Any]]
+        # type: (...) -> ItemPaged[Dict[str, Any]]
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -440,7 +440,7 @@ class ContainerProxy(object):
         :returns: A dict representing the item after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
@@ -490,7 +490,7 @@ class ContainerProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the upserted item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -545,7 +545,7 @@ class ContainerProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the new item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -622,7 +622,7 @@ class ContainerProxy(object):
 
     @distributed_trace
     def read_offer(self, **kwargs):
-        # type: (Any) -> Offer
+        # type: (Any) -> ThroughputProperties
         """Get the ThroughputProperties object for this container.
         If no ThroughputProperties already exist for the container, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -712,7 +712,7 @@ class ContainerProxy(object):
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -748,7 +748,7 @@ class ContainerProxy(object):
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -779,7 +779,7 @@ class ContainerProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
