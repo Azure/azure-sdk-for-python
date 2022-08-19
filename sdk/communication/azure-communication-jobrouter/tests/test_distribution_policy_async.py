@@ -14,7 +14,7 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
-from azure.communication.jobrouter.aio import RouterClient
+from azure.communication.jobrouter.aio import RouterAdministrationClient
 from azure.communication.jobrouter import (
     BestWorkerMode,
     LongestIdleMode,
@@ -44,12 +44,12 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
     async def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterClient = self.create_client()
+            router_client: RouterAdministrationClient = self.create_admin_client()
             async with router_client:
                 if self._testMethodName in self.distribution_policy_ids \
                         and any(self.distribution_policy_ids[self._testMethodName]):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(identifier = policy_id)
+                        await router_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
     def setUp(self):
         super(TestDistributionPolicyAsync, self).setUp()
@@ -64,12 +64,12 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_distribution_policy(self):
         dp_identifier = "tst_create_dp_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    identifier = dp_identifier,
+                    distribution_policy_id = dp_identifier,
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
@@ -90,13 +90,13 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_distribution_policy(self):
         dp_identifier = "tst_update_dp_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
                 # Arrange
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    identifier = dp_identifier,
+                    distribution_policy_id = dp_identifier,
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
@@ -119,7 +119,7 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                 distribution_policy_response.mode = mode
 
                 updated_distribution_policy = await router_client.update_distribution_policy(
-                    identifier = dp_identifier,
+                    distribution_policy_id = dp_identifier,
                     distribution_policy = distribution_policy_response
                 )
 
@@ -135,12 +135,12 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_distribution_policy(self):
         dp_identifier = "tst_get_dp_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    identifier = dp_identifier,
+                    distribution_policy_id = dp_identifier,
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
@@ -157,7 +157,8 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                     mode = mode
                 )
 
-                queried_distribution_policy = await router_client.get_distribution_policy(identifier = dp_identifier)
+                queried_distribution_policy = await router_client\
+                    .get_distribution_policy(distribution_policy_id = dp_identifier)
                 DistributionPolicyValidator.validate_distribution_policy(
                     distribution_policy = queried_distribution_policy,
                     identifier = dp_identifier,
@@ -170,12 +171,12 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_distribution_policy(self):
         dp_identifier = "tst_delete_dp_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    identifier = dp_identifier,
+                    distribution_policy_id = dp_identifier,
                     name = dp_identifier,
                     offer_ttl_seconds = 10.0,
                     mode = mode
@@ -190,9 +191,9 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                     mode = mode
                 )
 
-                await router_client.delete_distribution_policy(identifier = dp_identifier)
+                await router_client.delete_distribution_policy(distribution_policy_id = dp_identifier)
                 with pytest.raises(ResourceNotFoundError) as nfe:
-                    await router_client.get_distribution_policy(identifier = dp_identifier)
+                    await router_client.get_distribution_policy(distribution_policy_id = dp_identifier)
                 assert nfe.value.reason == "Not Found"
                 assert nfe.value.status_code == 404
 
@@ -202,13 +203,13 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
         dp_identifiers = ["tst_list_dp_1_async", "tst_list_dp_2_async", "tst_list_dp_3_async"]
         created_dp_response = {}
         policy_count = len(dp_identifiers)
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
         self.distribution_policy_ids[self._testMethodName] = []
 
         async with router_client:
             for identifier in dp_identifiers:
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    identifier = identifier,
+                    distribution_policy_id = identifier,
                     name = identifier,
                     offer_ttl_seconds = 10.0,
                     mode = distribution_modes[0]
@@ -233,14 +234,14 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                 list_of_policies = [i async for i in policy_page]
                 assert len(list_of_policies) <= 2
 
-                for policy in list_of_policies:
-                    response_at_creation = created_dp_response.get(policy.id, None)
+                for policy_item in list_of_policies:
+                    response_at_creation = created_dp_response.get(policy_item.distribution_policy.id, None)
 
                     if not response_at_creation:
                         continue
 
                     DistributionPolicyValidator.validate_distribution_policy(
-                        distribution_policy = policy,
+                        distribution_policy = policy_item.distribution_policy,
                         identifier = response_at_creation.id,
                         name = response_at_creation.name,
                         offer_ttl_seconds = response_at_creation.offer_ttl_seconds,

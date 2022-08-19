@@ -17,20 +17,17 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterClient,
+    RouterAdministrationClient,
     RoundRobinMode,
-    LabelCollection
 )
 
-queue_labels = LabelCollection(
-    {
+queue_labels = {
         'key1': "QueueKey",
         'key2': 10,
         'key3': True,
         'key4': False,
         'key5': 10.1
     }
-)
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -45,16 +42,16 @@ class TestJobQueue(RouterTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterClient = self.create_client()
+            router_client: RouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.queue_ids \
                     and any(self.queue_ids[self._testMethodName]):
                 for _id in set(self.queue_ids[self._testMethodName]):
-                    router_client.delete_queue(identifier = _id)
+                    router_client.delete_queue(queue_id = _id)
 
             if self._testMethodName in self.distribution_policy_ids \
                     and any(self.distribution_policy_ids[self._testMethodName]):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_client.delete_distribution_policy(identifier = policy_id)
+                    router_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
     def setUp(self):
         super(TestJobQueue, self).setUp()
@@ -69,11 +66,11 @@ class TestJobQueue(RouterTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
         distribution_policy = client.create_distribution_policy(
-            identifier = distribution_policy_id,
+            distribution_policy_id = distribution_policy_id,
             name = distribution_policy_id,
             offer_ttl_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
@@ -90,10 +87,10 @@ class TestJobQueue(RouterTestCase):
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_create_queue(self):
         dp_identifier = "tst_create_q"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            identifier = dp_identifier,
+            queue_id = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
@@ -115,10 +112,10 @@ class TestJobQueue(RouterTestCase):
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_update_queue(self):
         dp_identifier = "tst_update_q"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            identifier = dp_identifier,
+            queue_id = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
@@ -138,13 +135,13 @@ class TestJobQueue(RouterTestCase):
 
         # Act
         job_queue = router_client.get_queue(identifier = dp_identifier)
-        updated_queue_labels = LabelCollection(queue_labels)
+        updated_queue_labels = dict(queue_labels)
         updated_queue_labels['key6'] = "Key6"
 
         job_queue.labels = updated_queue_labels
 
         update_job_queue = router_client.update_queue(
-            identifier = dp_identifier,
+            queue_id = dp_identifier,
             queue = job_queue
         )
 
@@ -160,10 +157,10 @@ class TestJobQueue(RouterTestCase):
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_get_queue(self):
         dp_identifier = "tst_get_q"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            identifier = dp_identifier,
+            queue_id = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
@@ -182,7 +179,7 @@ class TestJobQueue(RouterTestCase):
         )
 
         queried_job_queue = router_client.get_queue(
-            identifier = dp_identifier
+            queue_id = dp_identifier
         )
 
         JobQueueValidator.validate_queue(
@@ -196,10 +193,10 @@ class TestJobQueue(RouterTestCase):
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_delete_queue(self):
         dp_identifier = "tst_delete_q"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            identifier = dp_identifier,
+            queue_id = dp_identifier,
             name = dp_identifier,
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
@@ -214,15 +211,15 @@ class TestJobQueue(RouterTestCase):
             distribution_policy_id = self.get_distribution_policy_id()
         )
 
-        router_client.delete_queue(identifier = dp_identifier)
+        router_client.delete_queue(queue_id = dp_identifier)
         with pytest.raises(ResourceNotFoundError) as nfe:
-            router_client.get_queue(identifier = dp_identifier)
+            router_client.get_queue(queue_id = dp_identifier)
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
 
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_list_queues(self):
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
         dp_identifiers = ["tst_list_q_1", "tst_list_q_2", "tst_list_q_3"]
         created_q_response = {}
         q_count = len(dp_identifiers)
@@ -230,7 +227,7 @@ class TestJobQueue(RouterTestCase):
 
         for identifier in dp_identifiers:
             job_queue = router_client.create_queue(
-                identifier = identifier,
+                queue_id = identifier,
                 name = identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -255,14 +252,14 @@ class TestJobQueue(RouterTestCase):
             list_of_queues = list(job_queue_page)
             assert len(list_of_queues) <= 2
 
-            for q in list_of_queues:
-                response_at_creation = created_q_response.get(q.id, None)
+            for q_item in list_of_queues:
+                response_at_creation = created_q_response.get(q_item.job_queue.id, None)
 
                 if not response_at_creation:
                     continue
 
                 JobQueueValidator.validate_queue(
-                    q,
+                    q_item.job_queue,
                     identifier = response_at_creation.id,
                     name = response_at_creation.name,
                     labels = response_at_creation.labels,

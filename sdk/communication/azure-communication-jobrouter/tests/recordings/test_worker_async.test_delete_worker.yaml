@@ -10,30 +10,30 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 21:13:47 GMT
+      - Thu, 18 Aug 2022 22:45:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"test_delete_worker_tst_dp_async","name":"test_delete_worker_tst_dp_async","offerTTLSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
+      string: '{"id":"test_delete_worker_tst_dp_async","name":"test_delete_worker_tst_dp_async","offerTtlSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       content-type: application/json; charset=utf-8
-      date: Mon, 16 May 2022 21:13:48 GMT
+      date: Thu, 18 Aug 2022 22:44:54 GMT
       etag: REDACTED
-      last-modified: Mon, 16 May 2022 21:13:48 GMT
+      last-modified: Thu, 18 Aug 2022 22:44:55 GMT
       request-context: appId=
-      trace-id: e26d7639c38d1399c192c9d03e649a8a
+      trace-id: a44b4aeac4e06b96b019587caf5b23f6
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2022-07-18-preview
 - request:
     body: '{"name": "test_delete_worker_tst_q_async", "distributionPolicyId": "test_delete_worker_tst_dp_async",
       "labels": {"key1": "WorkerKey", "key2": 10, "key3": true}}'
@@ -45,174 +45,174 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 21:13:47 GMT
+      - Thu, 18 Aug 2022 22:45:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_delete_worker_tst_q_async","name":"test_delete_worker_tst_q_async","distributionPolicyId":"test_delete_worker_tst_dp_async","labels":{"key1":"WorkerKey","key2":10,"key3":true,"Id":"test_delete_worker_tst_q_async"}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       content-type: application/json; charset=utf-8
-      date: Mon, 16 May 2022 21:13:48 GMT
+      date: Thu, 18 Aug 2022 22:44:56 GMT
       etag: REDACTED
-      last-modified: Mon, 16 May 2022 21:13:48 GMT
+      last-modified: Thu, 18 Aug 2022 22:44:56 GMT
       request-context: appId=
-      trace-id: 806b01610e54393b667b6d4f4d83aae3
+      trace-id: 502ab76dedb341e9387e9af17ef03f40
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2022-07-18-preview
 - request:
     body: '{"queueAssignments": {"test_delete_worker_tst_q_async": {}}, "totalCapacity":
-      100, "labels": {"key1": "WorkerKey", "key2": 10, "key3": true}, "channelConfigurations":
-      {"fakeChannel1": {"capacityCostPerJob": 10}, "fakeChannel2": {"capacityCostPerJob":
-      90}}, "availableForOffers": false}'
+      100, "labels": {"key1": "WorkerKey", "key2": 10, "key3": true}, "tags": {"tag1":
+      "WorkerGenericInfo"}, "channelConfigurations": {"fakeChannel1": {"capacityCostPerJob":
+      10}, "fakeChannel2": {"capacityCostPerJob": 90}}, "availableForOffers": false}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '285'
+      - '324'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 21:13:48 GMT
+      - Thu, 18 Aug 2022 22:45:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_delete_w_async","state":"inactive","queueAssignments":{"test_delete_worker_tst_q_async":{}},"totalCapacity":100,"labels":{"key1":"WorkerKey","key2":10,"key3":true,"Id":"tst_delete_w_async"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":10},"fakeChannel2":{"capacityCostPerJob":90}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":false}'
+      string: '{"id":"tst_delete_w_async","state":"inactive","queueAssignments":{"test_delete_worker_tst_q_async":{}},"totalCapacity":100,"labels":{"key1":"WorkerKey","key2":10,"key3":true,"Id":"tst_delete_w_async"},"tags":{"tag1":"WorkerGenericInfo"},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":10},"fakeChannel2":{"capacityCostPerJob":90}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":false}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       content-type: application/json; charset=utf-8
-      date: Mon, 16 May 2022 21:13:48 GMT
+      date: Thu, 18 Aug 2022 22:44:58 GMT
       etag: REDACTED
-      last-modified: Mon, 16 May 2022 21:13:49 GMT
+      last-modified: Thu, 18 Aug 2022 22:44:58 GMT
       request-context: appId=
-      trace-id: c5f50db87765f197741f47ca5290fdb0
+      trace-id: c43ac9d7775a9c9b43687eb4bea3f0f4
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 21:13:48 GMT
+      - Thu, 18 Aug 2022 22:45:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      date: Mon, 16 May 2022 21:13:48 GMT
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      date: Thu, 18 Aug 2022 22:44:59 GMT
       request-context: appId=
-      trace-id: d73ee2d185a8892b30f99909a690a9d1
+      trace-id: c53efd1c4c3f27369d8845fb56137633
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 21:13:48 GMT
+      - Thu, 18 Aug 2022 22:45:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"communicationError":{"code":"NotFound","message":"The item was not
         found.","target":"/routing/workers/tst_delete_w_async"}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       content-type: application/json; charset=utf-8
-      date: Mon, 16 May 2022 21:13:48 GMT
+      date: Thu, 18 Aug 2022 22:45:01 GMT
       request-context: appId=
-      trace-id: 288f7f9cc449e49d3d8218c43f0ffbd7
+      trace-id: 5a3089bf700a5e682808994665a0b6ff
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 404
       message: Not Found
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/tst_delete_w_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 21:13:48 GMT
+      - Thu, 18 Aug 2022 22:45:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      date: Mon, 16 May 2022 21:13:49 GMT
+      date: Thu, 18 Aug 2022 22:45:03 GMT
       request-context: appId=
-      trace-id: c652b9717d49f46123d4258ebdbf14b6
+      trace-id: bb6a3ac8df8060f6ef1d94fff8e86ce0
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_delete_worker_tst_q_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Mon, 16 May 2022 21:13:48 GMT
+      - Thu, 18 Aug 2022 22:45:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      date: Mon, 16 May 2022 21:13:49 GMT
+      date: Thu, 18 Aug 2022 22:45:05 GMT
       request-context: appId=
-      trace-id: 8741683bd63f7866a121622bf19b5bef
+      trace-id: 1b177b3b03ea632ac0ff6d6c2d42ff1b
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2021-10-20-preview2
+    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_delete_worker_tst_dp_async?api-version=2022-07-18-preview
 version: 1

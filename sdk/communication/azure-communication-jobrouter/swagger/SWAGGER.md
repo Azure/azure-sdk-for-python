@@ -16,75 +16,21 @@ autorest SWAGGER.md
 ### Settings
 
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/communication/data-plane/JobRouter/preview/2021-10-20-preview2/communicationservicejobrouter.json
+tag: package-jobrouter-2022-07-18-preview
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/c350a26aa5bd64ccc7a768f2cb5464a1cbe825e5/specification/communication/data-plane/JobRouter/readme.md
 output-folder: ../azure/communication/jobrouter/_generated
+models-mode: msrest
 namespace: azure.communication.jobrouter
-no-namespace-folders: true
+package-name: azure-communication-jobrouter
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: true
 clear-output-folder: true
+no-namespace-folders: true
 python: true
 v3: true
 no-async: false
 add-credential: false
 title: Azure Communication Job Router Service
-disable-async-iterators: true
-```
-
-### Set reference to WorkerSelectorAttachment in ClassificationPolicy
-```yaml
-directive:
-  - from: swagger-document
-    where: "$.definitions.ClassificationPolicy.properties.workerSelectors.items"
-    transform: >
-      $["$ref"] = "#/definitions/WorkerSelectorAttachment";
-```
-
-### Set reference to QueueSelectorAttachment in ClassificationPolicy
-```yaml
-directive:
-  - from: swagger-document
-    where: "$.definitions.ClassificationPolicy.properties.queueSelectors.items"
-    transform: >
-      $["$ref"] = "#/definitions/QueueSelectorAttachment";
-```
-
-### Set reference to WorkerSelectorAttachment in PagedClassificationPolicy
-```yaml
-directive:
-  - from: swagger-document
-    where: "$.definitions.PagedClassificationPolicy.properties.workerSelectors.items"
-    transform: >
-      $["$ref"] = "#/definitions/WorkerSelectorAttachment";
-```
-
-### Set reference to QueueSelectorAttachment in PagedClassificationPolicy
-```yaml
-directive:
-  - from: swagger-document
-    where: "$.definitions.PagedClassificationPolicy.properties.queueSelectors.items"
-    transform: >
-      $["$ref"] = "#/definitions/QueueSelectorAttachment";
-```
-
-### Set reference to ExceptionAction in ExceptionRule
-```yaml
-directive:
-  - from: swagger-document
-    where: "$.definitions.ExceptionRule.properties.actions"
-    transform: >
-      $.type = "object";
-      $.additionalProperties["$ref"] = "#/definitions/ExceptionAction";
-```
-
-
-### Rename CommunicationError to JobRouterError
-```yaml
-directive:
-  from: swagger-document
-  where: '$.definitions.CommunicationError'
-  transform: >
-    $["x-ms-client-name"] = "JobRouterError";
 ```
 
 ### Rename JobQueue to JobQueueInternal
@@ -96,15 +42,14 @@ directive:
     $["x-ms-client-name"] = "JobQueueInternal";
 ```
 
-### Rename PagedQueue to PagedJobQueueInternal
+### Rename JobQueueItem to JobQueueItemInternal
 ```yaml
 directive:
   from: swagger-document
-  where: '$.definitions.PagedQueue'
+  where: '$.definitions.JobQueueItem'
   transform: >
-    $["x-ms-client-name"] = "PagedJobQueueInternal";
+    $["x-ms-client-name"] = "JobQueueItemInternal";
 ```
-
 
 ### Rename RouterWorker to RouterWorkerInternal
 ```yaml
@@ -115,13 +60,13 @@ directive:
     $["x-ms-client-name"] = "RouterWorkerInternal";
 ```
 
-### Rename PagedWorker to PagedRouterWorkerInternal
+### Rename RouterWorkerItem to RouterWorkerItemInternal
 ```yaml
 directive:
   from: swagger-document
-  where: '$.definitions.PagedWorker'
+  where: '$.definitions.RouterWorkerItem'
   transform: >
-    $["x-ms-client-name"] = "PagedRouterWorkerInternal";
+    $["x-ms-client-name"] = "RouterWorkerItemInternal";
 ```
 
 
@@ -134,20 +79,11 @@ directive:
     $["x-ms-client-name"] = "RouterJobInternal";
 ```
 
-### Rename PagedJob to PagedRouterJobInternal
+### Rename RouterJobItem to RouterJobItemInternal
 ```yaml
 directive:
   from: swagger-document
-  where: '$.definitions.PagedJob'
+  where: '$.definitions.RouterJobItem'
   transform: >
-    $["x-ms-client-name"] = "PagedRouterJobInternal";
-```
-
-### Rename AcceptJobOfferResponse to AcceptJobOfferResult
-```yaml
-directive:
-  from: swagger-document
-  where: '$.definitions.AcceptJobOfferResponse'
-  transform: >
-    $["x-ms-client-name"] = "AcceptJobOfferResult";
+    $["x-ms-client-name"] = "RouterJobItemInternal";
 ```

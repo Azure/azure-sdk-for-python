@@ -17,36 +17,34 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
-from azure.communication.jobrouter.aio import RouterClient
+from azure.communication.jobrouter.aio import (
+    RouterClient,
+    RouterAdministrationClient,
+)
 from azure.communication.jobrouter import (
     RoundRobinMode,
-    LabelCollection,
     RouterWorker,
     QueueAssignment,
     ChannelConfiguration,
     WorkerSelector,
     LabelOperator,
     QueueSelector,
-    StaticQueueSelector,
+    StaticQueueSelectorAttachment,
     StaticRule,
-    StaticWorkerSelector,
-    JobStatus,
+    StaticWorkerSelectorAttachment,
+    RouterJobStatus,
     JobStateSelector
 )
 
-job_labels = LabelCollection(
-    {
+job_labels = {
         'key1': "JobKey",
         'key2': 10,
         'key3': True
     }
-)
 
-job_tags = LabelCollection(
-    {
+job_tags = {
         'tag1': "WorkerGenericInfo",
     }
-)
 
 job_channel_references = ["fakeChannelRef1", "fakeChannelRef2"]
 
@@ -95,7 +93,7 @@ prioritization_rules = [
 ]
 
 cp_worker_selectors = [
-    StaticWorkerSelector(
+    StaticWorkerSelectorAttachment(
         label_selector = WorkerSelector(
             key = "FakeKeyFromCp",
             label_operator = LabelOperator.EQUAL,
@@ -132,31 +130,38 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         # delete in live mode
         if not self.is_playback():
             router_client: RouterClient = self.create_client()
-
+            router_admin_client: RouterAdministrationClient = self.create_admin_client()
             async with router_client:
-                if self._testMethodName in self.job_ids \
-                        and any(self.job_ids[self._testMethodName]):
-                    for _id in set(self.job_ids[self._testMethodName]):
-                        await router_client.cancel_job_action(
-                            identifier = _id,
-                            disposition_code = "JobCancelledAsPartOfTestCleanUp",
-                            note = f"Cancelling job after test cleanup after: {self._testMethodName}")
-                        await router_client.delete_job(identifier = _id)
+                async with router_admin_client:
+                    if self._testMethodName in self.job_ids \
+                            and any(self.job_ids[self._testMethodName]):
+                        for _id in set(self.job_ids[self._testMethodName]):
+                            await router_client.cancel_job(
+                                job_id = _id,
+                                disposition_code = "JobCancelledAsPartOfTestCleanUp",
+                                note = f"Cancelling job after test cleanup after: {self._testMethodName}")
 
-                if self._testMethodName in self.classification_policy_ids \
-                        and any(self.classification_policy_ids[self._testMethodName]):
-                    for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                        await router_client.delete_classification_policy(identifier = policy_id)
+                            await self._poll_until_no_exception(
+                                    self.validate_job_is_cancelled,
+                                    Exception,
+                                    _id)
 
-                if self._testMethodName in self.queue_ids \
-                        and any(self.queue_ids[self._testMethodName]):
-                    for _id in set(self.queue_ids[self._testMethodName]):
-                        await router_client.delete_queue(identifier = _id)
+                            await router_client.delete_job(job_id = _id)
 
-                if self._testMethodName in self.distribution_policy_ids \
-                        and any(self.distribution_policy_ids[self._testMethodName]):
-                    for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(identifier = policy_id)
+                    if self._testMethodName in self.classification_policy_ids \
+                            and any(self.classification_policy_ids[self._testMethodName]):
+                        for policy_id in set(self.classification_policy_ids[self._testMethodName]):
+                            await router_admin_client.delete_classification_policy(classification_policy_id = policy_id)
+
+                    if self._testMethodName in self.queue_ids \
+                            and any(self.queue_ids[self._testMethodName]):
+                        for _id in set(self.queue_ids[self._testMethodName]):
+                            await router_admin_client.delete_queue(queue_id = _id)
+
+                    if self._testMethodName in self.distribution_policy_ids \
+                            and any(self.distribution_policy_ids[self._testMethodName]):
+                        for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
+                            await router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
     def setUp(self):
         super(TestRouterJobAsync, self).setUp()
@@ -171,76 +176,76 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         return self._testMethodName + "_tst_dp_async"
 
     async def setup_distribution_policy(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
             distribution_policy = await client.create_distribution_policy(
-                identifier = distribution_policy_id,
+                distribution_policy_id = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
 
-        # add for cleanup later
-        if self._testMethodName in self.distribution_policy_ids:
-            self.distribution_policy_ids[self._testMethodName] = self.distribution_policy_ids[
-                self._testMethodName].append(distribution_policy_id)
-        else:
-            self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
+            # add for cleanup later
+            if self._testMethodName in self.distribution_policy_ids:
+                self.distribution_policy_ids[self._testMethodName] = self.distribution_policy_ids[
+                    self._testMethodName].append(distribution_policy_id)
+            else:
+                self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
     def get_job_queue_id(self):
         return self._testMethodName + "_tst_q_async"
 
     async def setup_job_queue(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             job_queue_id = self.get_job_queue_id()
             job_queue = await client.create_queue(
-                identifier = job_queue_id,
+                queue_id = job_queue_id,
                 name = job_queue_id,
                 labels = job_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-        # add for cleanup later
-        if self._testMethodName in self.queue_ids:
-            self.queue_ids[self._testMethodName].append(job_queue_id)
-        else:
-            self.queue_ids[self._testMethodName] = [job_queue_id]
+            # add for cleanup later
+            if self._testMethodName in self.queue_ids:
+                self.queue_ids[self._testMethodName].append(job_queue_id)
+            else:
+                self.queue_ids[self._testMethodName] = [job_queue_id]
 
     def get_fallback_queue_id(self):
         return self._testMethodName + "_tst_flbk_q_async"  # cspell:disable-line
 
     async def setup_fallback_queue(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             job_queue_id = self.get_fallback_queue_id()
             job_queue = await client.create_queue(
-                identifier = job_queue_id,
+                queue_id = job_queue_id,
                 name = job_queue_id,
                 labels = job_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-        # add for cleanup later
-        if self._testMethodName in self.queue_ids:
-            self.queue_ids[self._testMethodName].append(job_queue_id)
-        else:
-            self.queue_ids[self._testMethodName] = [job_queue_id]
+            # add for cleanup later
+            if self._testMethodName in self.queue_ids:
+                self.queue_ids[self._testMethodName].append(job_queue_id)
+            else:
+                self.queue_ids[self._testMethodName] = [job_queue_id]
 
     def get_classification_policy_id(self):
         return self._testMethodName + "_tst_cp"
 
     async def setup_classification_policy(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             cp_queue_selectors = [
-                StaticQueueSelector(
+                StaticQueueSelectorAttachment(
                     label_selector = QueueSelector(
                         key = "Id", label_operator = LabelOperator.EQUAL, value = self.get_job_queue_id()
                     )
@@ -249,7 +254,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
             cp_id = self.get_classification_policy_id()
             cp = await client.create_classification_policy(
-                identifier = cp_id,
+                classification_policy_id = cp_id,
                 name = cp_id,
                 fallback_queue_id = self.get_fallback_queue_id(),
                 queue_selectors = cp_queue_selectors,
@@ -257,11 +262,11 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 worker_selectors = cp_worker_selectors
             )
 
-        # add for cleanup later
-        if self._testMethodName in self.classification_policy_ids:
-            self.classification_policy_ids[self._testMethodName].append(cp_id)
-        else:
-            self.classification_policy_ids[self._testMethodName] = [cp_id]
+            # add for cleanup later
+            if self._testMethodName in self.classification_policy_ids:
+                self.classification_policy_ids[self._testMethodName].append(cp_id)
+            else:
+                self.classification_policy_ids[self._testMethodName] = [cp_id]
 
     async def validate_job_is_queued(
             self,
@@ -271,8 +276,19 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         router_client: RouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.get_job(identifier = identifier)
-            assert router_job.job_status == JobStatus.QUEUED
+            router_job = await router_client.get_job(job_id = identifier)
+            assert router_job.job_status == RouterJobStatus.QUEUED
+
+    async def validate_job_is_cancelled(
+            self,
+            identifier,
+            **kwargs
+    ):
+        router_client: RouterClient = self.create_client()
+
+        async with router_client:
+            router_job = await router_client.get_job(job_id = identifier)
+            assert router_job.job_status == RouterJobStatus.CANCELLED
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -284,7 +300,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_job = await router_client.create_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -312,7 +328,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert router_job.job_status == JobStatus.CREATED
+            assert router_job.job_status == RouterJobStatus.CREATED
 
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
@@ -329,7 +345,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_job = await router_client.create_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -357,8 +373,6 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert router_job.job_status == JobStatus.CREATED
-
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
                 Exception,
@@ -369,7 +383,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             updated_job_labels = router_job.labels
 
             update_router_job = await router_client.update_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 router_job = router_job
             )
 
@@ -388,7 +402,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             )
 
             # updating labels does not change job status
-            assert update_router_job.job_status == JobStatus.QUEUED
+            assert update_router_job.job_status == RouterJobStatus.QUEUED
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -400,7 +414,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_job = await router_client.create_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -428,7 +442,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert router_job.job_status == JobStatus.CREATED
+            assert router_job.job_status == RouterJobStatus.CREATED
 
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
@@ -436,7 +450,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 job_identifier)
 
             queried_router_job = await router_client.get_job(
-                identifier = job_identifier
+                job_id = job_identifier
             )
 
             RouterJobValidator.validate_job(
@@ -464,7 +478,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_job = await router_client.create_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 classification_policy_id = self.get_classification_policy_id(),
@@ -490,7 +504,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert router_job.job_status == JobStatus.PENDING_CLASSIFICATION
+            assert router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
 
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
@@ -509,7 +523,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_job = await router_client.create_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 classification_policy_id = self.get_classification_policy_id(),
@@ -535,7 +549,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert router_job.job_status == JobStatus.PENDING_CLASSIFICATION
+            assert router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
 
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
@@ -547,7 +561,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             updated_job_labels = router_job.labels
 
             update_router_job = await router_client.update_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 router_job = router_job
             )
 
@@ -565,7 +579,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             )
 
             # updating labels reverts job status to pending classification
-            assert update_router_job.job_status == JobStatus.PENDING_CLASSIFICATION
+            assert update_router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
 
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
@@ -584,7 +598,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_job = await router_client.create_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 classification_policy_id = self.get_classification_policy_id(),
@@ -610,7 +624,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert router_job.job_status == JobStatus.PENDING_CLASSIFICATION
+            assert router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
 
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
@@ -618,7 +632,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 job_identifier)
 
             queried_router_job = await router_client.get_job(
-                identifier = job_identifier
+                job_id = job_identifier
             )
 
             RouterJobValidator.validate_job(
@@ -635,7 +649,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert queried_router_job.job_status == JobStatus.QUEUED
+            assert queried_router_job.job_status == RouterJobStatus.QUEUED
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -647,7 +661,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_job = await router_client.create_job(
-                identifier = job_identifier,
+                job_id = job_identifier,
                 channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
                 queue_id = self.get_job_queue_id(),
@@ -672,7 +686,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 notes = job_notes
             )
 
-            assert router_job.job_status == JobStatus.CREATED
+            assert router_job.job_status == RouterJobStatus.QUEUED
 
             await self._poll_until_no_exception(
                 self.validate_job_is_queued,
@@ -680,10 +694,10 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 job_identifier)
 
             # job needs to be in a termination state before it can be deleted
-            await router_client.cancel_job_action(identifier = job_identifier)
-            await router_client.delete_job(identifier = job_identifier)
+            await router_client.cancel_job(job_id = job_identifier)
+            await router_client.delete_job(job_id = job_identifier)
             with pytest.raises(ResourceNotFoundError) as nfe:
-                await router_client.get_job(identifier = job_identifier)
+                await router_client.get_job(job_id = job_identifier)
                 self.job_ids.pop(self._testMethodName, None)
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
@@ -703,7 +717,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
         async with router_client:
             for identifier in job_identifiers:
                 router_job = await router_client.create_job(
-                    identifier = identifier,
+                    job_id = identifier,
                     channel_reference = job_channel_references[0],
                     channel_id = job_channel_ids[0],
                     queue_id = self.get_job_queue_id(),
@@ -732,8 +746,6 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                     notes = job_notes
                 )
 
-                assert router_job.job_status == JobStatus.CREATED
-
                 await self._poll_until_no_exception(
                     self.validate_job_is_queued,
                     Exception,
@@ -752,14 +764,14 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 list_of_jobs = [i async for i in router_job_page]
                 assert len(list_of_jobs) <= 2
 
-                for j in list_of_jobs:
-                    response_at_creation = created_job_response.get(j.id, None)
+                for j_item in list_of_jobs:
+                    response_at_creation = created_job_response.get(j_item.router_job.id, None)
 
                     if not response_at_creation:
                         continue
 
                     RouterJobValidator.validate_job(
-                        j,
+                        j_item.router_job,
                         identifier = response_at_creation.id,
                         channel_reference = response_at_creation.channel_reference,
                         channel_id = response_at_creation.channel_id,

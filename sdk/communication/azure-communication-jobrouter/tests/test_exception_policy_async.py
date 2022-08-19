@@ -14,7 +14,7 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str  # pylint:disable=protected-access
 from azure.core.exceptions import ResourceNotFoundError
 
-from azure.communication.jobrouter.aio import RouterClient
+from azure.communication.jobrouter.aio import RouterAdministrationClient
 from azure.communication.jobrouter import (
     ExceptionPolicy,
     ExceptionRule,
@@ -23,24 +23,21 @@ from azure.communication.jobrouter import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    LabelCollection,
     RoundRobinMode
 )
 
-queue_labels = LabelCollection(
-    {
+queue_labels = {
         'key1': "QueueKey",
         'key2': 10,
         'key3': True,
         'key4': False,
         'key5': 10.1
     }
-)
 
 
 exception_triggers = [
     QueueLengthExceptionTrigger(threshold = 1),
-    WaitTimeExceptionTrigger(threshold = "PT1H")
+    WaitTimeExceptionTrigger(threshold_seconds = 3600)
 ]
 
 exception_actions = [
@@ -64,38 +61,38 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
     async def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterClient = self.create_client()
+            router_client: RouterAdministrationClient = self.create_admin_client()
             async with router_client:
                 if self._testMethodName in self.classification_policy_ids \
                         and any(self.classification_policy_ids[self._testMethodName]):
                     for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                        await router_client.delete_classification_policy(identifier = policy_id)
+                        await router_client.delete_classification_policy(classification_policy_id = policy_id)
 
                 if self._testMethodName in self.queue_ids \
                         and any(self.queue_ids[self._testMethodName]):
                     for policy_id in set(self.queue_ids[self._testMethodName]):
-                        await router_client.delete_queue(identifier = policy_id)
+                        await router_client.delete_queue(queue_id = policy_id)
 
                 if self._testMethodName in self.distribution_policy_ids \
                         and any(self.distribution_policy_ids[self._testMethodName]):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(identifier = policy_id)
+                        await router_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
                 if self._testMethodName in self.exception_policy_ids \
                         and any(self.exception_policy_ids[self._testMethodName]):
                     for policy_id in set(self.exception_policy_ids[self._testMethodName]):
-                        await router_client.delete_exception_policy(identifier = policy_id)
+                        await router_client.delete_exception_policy(exception_policy_id = policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
 
     async def setup_distribution_policy(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
             distribution_policy = await client.create_distribution_policy(
-                identifier = distribution_policy_id,
+                distribution_policy_id = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
@@ -113,12 +110,12 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
         return self._testMethodName + "_tst_q_async"
 
     async def setup_job_queue(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             job_queue_id = self.get_job_queue_id()
             job_queue = await client.create_queue(
-                identifier = job_queue_id,
+                queue_id = job_queue_id,
                 name = job_queue_id,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -135,12 +132,12 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
         return self._testMethodName + "_tst_cp_async"
 
     async def setup_classification_policy(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             cp_id = self.get_classification_policy_id()
             classification_policy = await client.create_classification_policy(
-                identifier = cp_id,
+                classification_policy_id = cp_id,
                 name = cp_id,
                 fallback_queue_id = self.get_job_queue_id(),
             )
@@ -168,7 +165,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_exception_policy(self):
         ep_identifier = "tst_create_ep_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -198,7 +195,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     }
 
                     exception_policy = await router_client.create_exception_policy(
-                        identifier = ep_identifier,
+                        exception_policy_id = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
                     )
@@ -221,7 +218,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_exception_policy(self):
         ep_identifier = "tst_update_ep_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -250,7 +247,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     }
 
                     exception_policy = await router_client.create_exception_policy(
-                        identifier = ep_identifier,
+                        exception_policy_id = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
                     )
@@ -277,7 +274,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     }
 
                     exception_policy = await router_client.update_exception_policy(
-                        identifier = ep_identifier,
+                        exception_policy_id = ep_identifier,
                         name = ep_identifier,
                         exception_rules = updated_exception_rules
                     )
@@ -297,7 +294,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_exception_policy(self):
         ep_identifier = "tst_get_ep_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -326,7 +323,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     }
 
                     exception_policy = await router_client.create_exception_policy(
-                        identifier = ep_identifier,
+                        exception_policy_id = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
                     )
@@ -343,7 +340,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     )
 
                     queried_exception_policy = await router_client.get_exception_policy(
-                        identifier = ep_identifier
+                        exception_policy_id = ep_identifier
                     )
 
                     assert queried_exception_policy is not None
@@ -361,7 +358,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_exception_policy(self):
         ep_identifier = "tst_delete_ep_async"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -390,7 +387,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     }
 
                     exception_policy = await router_client.create_exception_policy(
-                        identifier = ep_identifier,
+                        exception_policy_id = ep_identifier,
                         name = ep_identifier,
                         exception_rules = exception_rules
                     )
@@ -406,9 +403,9 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         exception_rules = exception_rules
                     )
 
-                    await router_client.delete_exception_policy(identifier = ep_identifier)
+                    await router_client.delete_exception_policy(exception_policy_id = ep_identifier)
                     with pytest.raises(ResourceNotFoundError) as nfe:
-                        await router_client.get_exception_policy(identifier = ep_identifier)
+                        await router_client.get_exception_policy(exception_policy_id = ep_identifier)
                     assert nfe.value.reason == "Not Found"
                     assert nfe.value.status_code == 404
 
@@ -421,7 +418,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
         ep_identifiers = ["tst_list_ep_1_async", "tst_list_ep_2_async", "tst_list_ep_3_async"]
         created_ep_response = {}
         policy_count = 0
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
         self.exception_policy_ids[self._testMethodName] = []
 
         updated_exception_actions = []
@@ -452,7 +449,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         }
 
                         exception_policy = await router_client.create_exception_policy(
-                            identifier = identifier,
+                            exception_policy_id = identifier,
                             name = identifier,
                             exception_rules = exception_rules
                         )
@@ -477,14 +474,14 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         list_of_policies = [i async for i in  policy_page]
                         assert len(list_of_policies) <= 2
 
-                        for policy in list_of_policies:
-                            response_at_creation = created_ep_response.get(policy.id, None)
+                        for policy_item in list_of_policies:
+                            response_at_creation = created_ep_response.get(policy_item.exception_policy.id, None)
 
                             if not response_at_creation:
                                 continue
 
                             ExceptionPolicyValidator.validate_exception_policy(
-                                policy,
+                                policy_item.exception_policy,
                                 identifier = response_at_creation.id,
                                 name = response_at_creation.name,
                                 exception_rules = response_at_creation.exception_rules,

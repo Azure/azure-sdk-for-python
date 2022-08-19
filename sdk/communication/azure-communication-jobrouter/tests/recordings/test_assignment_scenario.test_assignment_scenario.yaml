@@ -1,0 +1,878 @@
+interactions:
+- request:
+    body: '{"name": "test", "offerTtlSeconds": 600.0, "mode": {"kind": "longest-idle",
+      "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '128'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:17:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"test_assignment_scenario_tst_dp","name":"test","offerTtlSeconds":600,"mode":{"kind":"longest-idle","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:17:49 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:17:41 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 01f81aa915db3192a0d49dc9110bdf43
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "test", "distributionPolicyId": "test_assignment_scenario_tst_dp"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '75'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:17:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_assignment_scenario_tst_q?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"test_assignment_scenario_tst_q","name":"test","distributionPolicyId":"test_assignment_scenario_tst_dp","labels":{"Id":"test_assignment_scenario_tst_q"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:17:49 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:17:43 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - f3418af374221f2bd909515cf6fbecb7
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"queueAssignments": {"test_assignment_scenario_tst_q": {}}, "totalCapacity":
+      1, "channelConfigurations": {"fakeChannel1": {"capacityCostPerJob": 1}}, "availableForOffers":
+      true}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:17:57 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":true}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:17:50 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:17:45 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 9066f2fc4b3aa419af88ef925490dd0f
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"channelId": "fakeChannel1", "queueId": "test_assignment_scenario_tst_q",
+      "priority": 1}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '89'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:17:58 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"assignment_scenario_job_id","jobStatus":"created","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q","priority":1,"requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{},"tags":{},"notes":{}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:17:55 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:17:52 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 7e9a6089b79f93304a3bdff149a4b2e2
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:08 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[{"id":"ea7a4192-66e1-425e-a076-03d422e15cff","jobId":"assignment_scenario_job_id","capacityCost":1,"offerTimeUtc":"2022-08-18T21:17:56.7604805+00:00","expiryTimeUtc":"2022-08-18T21:27:56.7604817+00:00"}],"assignedJobs":[],"loadRatio":1,"availableForOffers":true}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:01 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:17:56 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 9f4a1132fc43afd44ae40250e7ce139c
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:09 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[{"id":"ea7a4192-66e1-425e-a076-03d422e15cff","jobId":"assignment_scenario_job_id","capacityCost":1,"offerTimeUtc":"2022-08-18T21:17:56.7604805+00:00","expiryTimeUtc":"2022-08-18T21:27:56.7604817+00:00"}],"assignedJobs":[],"loadRatio":1,"availableForOffers":true}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:02 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:17:56 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 03ac870f9ecd563c96a2b388d7f84047
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:10 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:accept?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"assignmentId":"62bcdf03-b650-4e58-b7d9-00dc463c277a","jobId":"assignment_scenario_job_id","workerId":"test_assignment_scenario_tst_w"}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:04 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - cc426ee518bfd14907c66a581c99996b
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:12 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"communicationError":{"code":"InternalServerError","message":"An internal
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:05 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 36a249cb1ca77b763a89c7c81a961206
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:13 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"communicationError":{"code":"InternalServerError","message":"An internal
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:06 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 9b257223ca47102ffb67db8aad50ab7f
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:16 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"communicationError":{"code":"InternalServerError","message":"An internal
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:08 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - efd5f110d929029845f694cfaaf4a155
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:20 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"communicationError":{"code":"InternalServerError","message":"An internal
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/ea7a4192-66e1-425e-a076-03d422e15cff:decline"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:12 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 864cde3fca8b7d8ffcc0b4a4cef05af8
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: '{"assignmentId": "62bcdf03-b650-4e58-b7d9-00dc463c277a"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '56'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:21 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id:complete?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:14 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - b8ed2a51371cfbb40019baa729f07d3a
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"assignmentId": "62bcdf03-b650-4e58-b7d9-00dc463c277a"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '56'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:22 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id:close?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:16 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - bc995716f556f0f0b6f3ce50ff38d009
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:24 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"assignment_scenario_job_id","jobStatus":"closed","enqueueTimeUtc":"2022-08-18T21:17:56.2888914+00:00","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q","priority":1,"dispositionCode":"Closed","requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{"62bcdf03-b650-4e58-b7d9-00dc463c277a":{"id":"62bcdf03-b650-4e58-b7d9-00dc463c277a","workerId":"test_assignment_scenario_tst_w","assignTime":"2022-08-18T21:18:03.2750299+00:00","completeTime":"2022-08-18T21:18:13.8808366+00:00","closeTime":"2022-08-18T21:18:15.113373+00:00"}},"tags":{},"notes":{}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:17 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:18:15 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 174eec39217c6dec292aa40f4ef147d0
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:25 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"assignment_scenario_job_id","jobStatus":"closed","enqueueTimeUtc":"2022-08-18T21:17:56.2888914+00:00","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q","priority":1,"dispositionCode":"Closed","requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{"62bcdf03-b650-4e58-b7d9-00dc463c277a":{"id":"62bcdf03-b650-4e58-b7d9-00dc463c277a","workerId":"test_assignment_scenario_tst_w","assignTime":"2022-08-18T21:18:03.2750299+00:00","completeTime":"2022-08-18T21:18:13.8808366+00:00","closeTime":"2022-08-18T21:18:15.113373+00:00"}},"tags":{},"notes":{}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:19 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:18:15 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 5042d26d6e4b8d8d1a18f5de588f7619
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:27 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      date:
+      - Thu, 18 Aug 2022 21:18:20 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - b671d4e34af9bad924e006d6891324f8
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '{"availableForOffers": false}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '29'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:29 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"test_assignment_scenario_tst_w","state":"inactive","queueAssignments":{"test_assignment_scenario_tst_q":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":false}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:23 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:18:22 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 8ba7233ef1d2edd4c417a51a11a9a057
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:31 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"test_assignment_scenario_tst_w","state":"inactive","queueAssignments":{"test_assignment_scenario_tst_q":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":false}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Aug 2022 21:18:23 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Thu, 18 Aug 2022 21:18:22 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 8c1135a42f6b612e86d92fb7658113ac
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:32 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      date:
+      - Thu, 18 Aug 2022 21:18:26 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 006f87ca043cb445e8dec6ff727048d8
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:34 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/queues/test_assignment_scenario_tst_q?api-version=2022-07-18-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      date:
+      - Thu, 18 Aug 2022 21:18:29 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 27cdb77300c6dc45586693b67bc710f4
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 18 Aug 2022 21:18:37 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp?api-version=2022-07-18-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      date:
+      - Thu, 18 Aug 2022 21:18:30 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - b31a223505b5cbb61b9f2354ca98afba
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+version: 1
