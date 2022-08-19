@@ -17,7 +17,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
@@ -44,7 +44,6 @@ from ._models import (
 from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpResponse  # pylint: disable=ungrouped-imports
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
@@ -1445,7 +1444,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return query_parameters, header_parameters
 
     def _generate_set_tiers_options(
-            self, blob_tier: Optional[Union[str, StandardBlobTier]],
+            self, blob_tier: Optional[Union[str, 'StandardBlobTier', 'PremiumPageBlobTier']],
             *blobs: Union[str, Dict[str, Any], BlobProperties],
             **kwargs: Any
         ):
@@ -1492,7 +1491,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def set_standard_blob_tier_blobs(
-        self, standard_blob_tier: Optional[Union[str, StandardBlobTier]],
+        self, standard_blob_tier: Optional[Union[str, 'StandardBlobTier']],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
     ) -> Iterator[HttpResponse]:
@@ -1563,7 +1562,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
-        self, premium_page_blob_tier: Optional[Union[str, PremiumPageBlobTier]],
+        self, premium_page_blob_tier: Optional[Union[str, 'PremiumPageBlobTier']],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
     ) -> Iterator[HttpResponse]:
