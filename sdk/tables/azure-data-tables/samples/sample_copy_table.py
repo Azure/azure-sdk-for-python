@@ -27,7 +27,7 @@ from datetime import datetime
 from uuid import uuid4
 import os
 import json
-from azure.storage.blob import BlobClient, BlobServiceClient
+from azure.storage.blob import BlobServiceClient
 from azure.data.tables import TableClient
 from dotenv import find_dotenv, load_dotenv
 
@@ -38,14 +38,16 @@ class CopyTableSamples(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.table_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
+        self.table_client = TableClient.from_connection_string(conn_str=self.table_connection_string, table_name="mytable")
         self.blob_connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+        self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
+        self.container_name = "mycontainer"
+        self.blob_name = "myblob"
         self.entity = {
             "PartitionKey": "color",
-            "RowKey": "brand",
             "text": "Marker",
             "color": "Purple",
             "price": 4.99,
@@ -54,47 +56,53 @@ class CopyTableSamples(object):
             "inventory_count": 42,
             "barcode": b"135aefg8oj0ld58"
         }
-        self.table = TableClient.from_connection_string(conn_str=self.table_connection_string, table_name="mytable")
-        blob_service = BlobServiceClient.from_connection_string(self.blob_connection_string)
-        self.container = blob_service.get_container_client("mycontainer")
-        self.blob = BlobClient.from_connection_string(conn_str=self.blob_connection_string, container_name="mycontainer", blob_name="myblob")
 
     def copy_table_from_table_to_blob(self):
+        self._setup_table()
         try:
-            # Upload entities to a table
-            self.table.create_table()
-            self.table.create_entity(self.entity)
+            self.container = self.blob_service_client.create_container(self.container_name)
+            blob_client = self.blob_service_client.get_blob_client(self.container_name, self.blob_name)
             # Download entities from table to memory
-            entities = self.table.list_entities()
-
-            self.container.create_container()
+            entities = self.table_client.list_entities()
             # Upload in-memory table data to a blob that stays in a container
-            for e in entities:
-                self.blob.upload_blob(json.dumps(e))
+            for i in range(10):
+                entity = json.dumps(entities[i])
+                blob_client.upload_blob(name=self.blob_name+str(i), data=entity)
         finally:
             self._tear_down()
 
     def copy_table_from_blob_to_table(self):
+        self._setup_blob()
         try:
-            self.container.create_container()
-            # Upload entities to a blob that stays in a container
-            self.blob.upload_blob(json.dumps(self.entity))
             # Download entities from blob to memory
             # Note: when entities size is too big, may need to do copy by chunk
-            download_stream = self.blob.download_blob()
-            entities = json.load(download_stream.readall())
+            blob_content = self.blob_client.download_blob().readall()
+            entities = json.load(blob_content)
             # Upload entities to a table
-            self.table.create_table()
-            for e in entities:
-                self.table.upsert_entity(e)
+            self.table_client.create_table()
+            for entity in entities:
+                self.table_client.upsert_entity(entity)
         finally:
             self._tear_down()
+    
+    def _setup_table(self):
+        self.table_client.create_table()
+        for i in range(10):
+            self.entity["RowKey"] = str(i)
+            self.table_client.create_entity(self.entity)
+    
+    def _setup_blob(self):
+        self.blob_service_client.create_container(self.container_name)
+        self.blob_client = self.blob_service_client.get_blob_client(self.container_name, self.blob_name)
+        for i in range(10):
+            self.entity["RowKey"] = str(i)
+            entity = json.dumps(self.entity)
+            self.blob_client.upload_blob(name=self.blob_name+str(i), data=entity)
 
     def _tear_down(self):
-        self.table.delete_table()
-        self.blob.delete_blob()
+        self.table_client.delete_table()
+        self.blob_client.delete_blob()
         self.container.delete_container()
-
 
 if __name__ == "__main__":
     sample = CopyTableSamples()
