@@ -23,7 +23,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """API version.
     """
 
-    TWO_THOUSAND_TWENTY_TWO06_30_PREVIEW = "2022-06-30-preview"
+    TWO_THOUSAND_TWENTY_TWO08_31 = "2022-08-31"
 
 class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload
@@ -33,12 +33,6 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION_OCTET_STREAM = "application/octet-stream"
     #: Content Type 'application/pdf'.
     APPLICATION_PDF = "application/pdf"
-    #: Content Type 'application/vnd.openxmlformats-officedocument.presentationml.presentation'.
-    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_PRESENTATIONML_PRESENTATION = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-    #: Content Type 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'.
-    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    #: Content Type 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'.
-    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_WORDPROCESSINGML_DOCUMENT = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     #: Content Type 'image/bmp'.
     IMAGE_BMP = "image/bmp"
     #: Content Type 'image/heif'.
@@ -49,11 +43,11 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IMAGE_PNG = "image/png"
     #: Content Type 'image/tiff'.
     IMAGE_TIFF = "image/tiff"
-    #: Content Type 'text/html'.
-    TEXT_HTML = "text/html"
+    #: Content Type 'application/json'.
+    APPLICATION_JSON = "application/json"
 
 class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Custom model build mode.
+    """Custom document model build mode.
     """
 
     TEMPLATE = "template"
@@ -76,15 +70,6 @@ class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OBJECT = "object"
     CURRENCY = "currency"
     ADDRESS = "address"
-
-class DocumentPageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of document page.
-    """
-
-    DOCUMENT = "document"
-    SHEET = "sheet"
-    SLIDE = "slide"
-    IMAGE = "image"
 
 class DocumentSignatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Presence of signature.
