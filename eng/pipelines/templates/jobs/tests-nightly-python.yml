@@ -12,7 +12,7 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      vmImage: 'windows-2019'
+      name: 'azsdk-pool-mms-win-2019-general'
 
     steps:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
@@ -20,10 +20,15 @@ jobs:
           versionSpec: $(PythonVersion)
         
       - script: |
+          sudo apt-get update
           python -m pip freeze
           python -m pip --version
           pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0
         displayName: Install Dependencies
+
+      - template: /eng/common/testproxy/test-proxy-tools.yml
+        parameters:
+          runProxy: false
 
       - script: |
           python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
@@ -48,7 +53,7 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      vmImage: 'ubuntu-18.04'
+      name: 'azsdk-pool-mms-ubuntu-2004-general'
 
     steps:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
@@ -56,10 +61,16 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
+          sudo apt-get install build-essential -y
           python -m pip freeze
           python -m pip --version
           pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0
+          sudo apt-get install build-essential -y
         displayName: Install Dependencies
+
+      - template: /eng/common/testproxy/test-proxy-tools.yml
+        parameters:
+          runProxy: false
 
       - script: |
           find /usr/lib -name "libffi.so*"
@@ -86,7 +97,7 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      vmImage: 'ubuntu-20.04'
+      name: 'azsdk-pool-mms-ubuntu-2004-general'
 
     steps:
       - task: UsePythonVersion@0
