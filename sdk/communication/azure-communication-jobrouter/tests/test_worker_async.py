@@ -16,28 +16,26 @@ from _decorators_async import RouterPreparersAsync
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
-from azure.communication.jobrouter.aio import RouterClient
+from azure.communication.jobrouter.aio import (
+    RouterClient,
+    RouterAdministrationClient
+)
 from azure.communication.jobrouter import (
     RoundRobinMode,
-    LabelCollection,
     RouterWorker,
     QueueAssignment,
     ChannelConfiguration,
 )
 
-worker_labels = LabelCollection(
-    {
+worker_labels = {
         'key1': "WorkerKey",
         'key2': 10,
         'key3': True
     }
-)
 
-worker_tags = LabelCollection(
-    {
+worker_tags = {
         'tag1': "WorkerGenericInfo",
     }
-)
 
 worker_channel_configs = {
     'fakeChannel1': ChannelConfiguration(capacity_cost_per_job = 10),
@@ -60,21 +58,23 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
         # delete in live mode
         if not self.is_playback():
             router_client: RouterClient = self.create_client()
+            router_admin_client: RouterAdministrationClient = self.create_admin_client()
             async with router_client:
-                if self._testMethodName in self.worker_ids \
-                        and any(self.worker_ids[self._testMethodName]):
-                    for _id in set(self.worker_ids[self._testMethodName]):
-                        await router_client.delete_worker(identifier = _id)
+                async with router_admin_client:
+                    if self._testMethodName in self.worker_ids \
+                            and any(self.worker_ids[self._testMethodName]):
+                        for _id in set(self.worker_ids[self._testMethodName]):
+                            await router_client.delete_worker(worker_id = _id)
 
-                if self._testMethodName in self.queue_ids \
-                        and any(self.queue_ids[self._testMethodName]):
-                    for _id in set(self.queue_ids[self._testMethodName]):
-                        await router_client.delete_queue(identifier = _id)
+                    if self._testMethodName in self.queue_ids \
+                            and any(self.queue_ids[self._testMethodName]):
+                        for _id in set(self.queue_ids[self._testMethodName]):
+                            await router_admin_client.delete_queue(queue_id = _id)
 
-                if self._testMethodName in self.distribution_policy_ids \
-                        and any(self.distribution_policy_ids[self._testMethodName]):
-                    for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(identifier = policy_id)
+                    if self._testMethodName in self.distribution_policy_ids \
+                            and any(self.distribution_policy_ids[self._testMethodName]):
+                        for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
+                            await router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
     def setUp(self):
         super(TestRouterWorkerAsync, self).setUp()
@@ -89,46 +89,46 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
         return self._testMethodName + "_tst_dp_async"
 
     async def setup_distribution_policy(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
             distribution_policy = await client.create_distribution_policy(
-                identifier = distribution_policy_id,
+                distribution_policy_id = distribution_policy_id,
                 name = distribution_policy_id,
                 offer_ttl_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
 
-        # add for cleanup later
-        if self._testMethodName in self.distribution_policy_ids:
-            self.distribution_policy_ids[self._testMethodName] = self.distribution_policy_ids[
-                self._testMethodName].append(distribution_policy_id)
-        else:
-            self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
+            # add for cleanup later
+            if self._testMethodName in self.distribution_policy_ids:
+                self.distribution_policy_ids[self._testMethodName] = self.distribution_policy_ids[
+                    self._testMethodName].append(distribution_policy_id)
+            else:
+                self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
     def get_job_queue_id(self):
         return self._testMethodName + "_tst_q_async"
 
     async def setup_job_queue(self):
-        client: RouterClient = self.create_client()
+        client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
             job_queue_id = self.get_job_queue_id()
             job_queue = await client.create_queue(
-                identifier = job_queue_id,
+                queue_id = job_queue_id,
                 name = job_queue_id,
                 labels = worker_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-        # add for cleanup later
-        if self._testMethodName in self.queue_ids:
-            self.queue_ids[self._testMethodName] \
-                = self.queue_ids[self._testMethodName].append(job_queue_id)
-        else:
-            self.queue_ids[self._testMethodName] = [job_queue_id]
+            # add for cleanup later
+            if self._testMethodName in self.queue_ids:
+                self.queue_ids[self._testMethodName] \
+                    = self.queue_ids[self._testMethodName].append(job_queue_id)
+            else:
+                self.queue_ids[self._testMethodName] = [job_queue_id]
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -141,10 +141,10 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_worker = await router_client.create_worker(
-                identifier = w_identifier,
+                worker_id = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
@@ -159,7 +159,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
@@ -177,10 +177,10 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_worker = await router_client.create_worker(
-                identifier = w_identifier,
+                worker_id = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
@@ -195,7 +195,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
@@ -206,7 +206,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
             updated_worker_labels = router_worker.labels
 
             update_router_worker = await router_client.update_worker(
-                identifier = w_identifier,
+                worker_id = w_identifier,
                 router_worker = router_worker
             )
 
@@ -216,7 +216,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = updated_worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
@@ -233,10 +233,10 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_worker = await router_client.create_worker(
-                identifier = w_identifier,
+                worker_id = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
@@ -251,14 +251,14 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
             )
 
             queried_router_worker = await router_client.get_worker(
-                identifier = w_identifier
+                worker_id = w_identifier
             )
 
             RouterWorkerValidator.validate_worker(
@@ -266,7 +266,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                 identifier = w_identifier,
                 total_capacity = router_worker.total_capacity,
                 labels = router_worker.labels,
-                # tags = router_worker.tags,  # TODO: bugfix required
+                tags = router_worker.tags,
                 queue_assignments = router_worker.queue_assignments,
                 channel_configurations = router_worker.channel_configurations,
                 available_for_offers = router_worker.available_for_offers
@@ -283,10 +283,10 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
 
         async with router_client:
             router_worker = await router_client.create_worker(
-                identifier = w_identifier,
+                worker_id = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
@@ -298,15 +298,15 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                 identifier = w_identifier,
                 total_capacity = worker_total_capacity,
                 labels = worker_labels,
-                # tags = worker_tags,  # TODO: bugfix required
+                tags = worker_tags,
                 queue_assignments = worker_queue_assignments,
                 channel_configurations = worker_channel_configs,
                 available_for_offers = False
             )
 
-            await router_client.delete_worker(identifier = w_identifier)
+            await router_client.delete_worker(worker_id = w_identifier)
             with pytest.raises(ResourceNotFoundError) as nfe:
-                await router_client.get_worker(identifier = w_identifier)
+                await router_client.get_worker(worker_id = w_identifier)
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
 
@@ -325,10 +325,10 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
         async with router_client:
             for identifier in w_identifiers:
                 worker = await router_client.create_worker(
-                    identifier = identifier,
+                    worker_id = identifier,
                     total_capacity = worker_total_capacity,
                     labels = worker_labels,
-                    # tags = worker_tags,  # TODO: bugfix required
+                    tags = worker_tags,
                     queue_assignments = worker_queue_assignments,
                     channel_configurations = worker_channel_configs,
                     available_for_offers = False
@@ -344,7 +344,7 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                     identifier = identifier,
                     total_capacity = worker_total_capacity,
                     labels = worker_labels,
-                    # tags = worker_tags,  # TODO: bugfix required
+                    tags = worker_tags,
                     queue_assignments = worker_queue_assignments,
                     channel_configurations = worker_channel_configs,
                     available_for_offers = False
@@ -361,18 +361,18 @@ class TestRouterWorkerAsync(AsyncRouterTestCase):
                 list_of_workers = [i async for i in worker_page]
                 assert len(list_of_workers) <= 2
 
-                for w in list_of_workers:
-                    response_at_creation = created_w_response.get(w.id, None)
+                for w_item in list_of_workers:
+                    response_at_creation = created_w_response.get(w_item.router_worker.id, None)
 
                     if not response_at_creation:
                         continue
 
                     RouterWorkerValidator.validate_worker(
-                        w,
+                        w_item.router_worker,
                         identifier = response_at_creation.id,
                         total_capacity = response_at_creation.total_capacity,
                         labels = response_at_creation.labels,
-                        # tags = response_at_creation.tags,  # TODO: bugfix required
+                        tags = response_at_creation.tags,
                         queue_assignments = response_at_creation.queue_assignments,
                         channel_configurations = response_at_creation.channel_configurations,
                         available_for_offers = response_at_creation.available_for_offers

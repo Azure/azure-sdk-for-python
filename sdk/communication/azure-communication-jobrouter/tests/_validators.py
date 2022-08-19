@@ -16,7 +16,6 @@ from azure.communication.jobrouter import (
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode,
-    LabelCollection,
     ExceptionRule,
     ExceptionPolicy,
     QueueLengthExceptionTrigger,
@@ -28,7 +27,14 @@ from azure.communication.jobrouter import (
     ChannelConfiguration,
     RouterWorker,
     RouterWorkerState,
-    RouterJob
+    RouterJob,
+    StaticWorkerSelectorAttachment,
+    ConditionalWorkerSelectorAttachment,
+    RuleEngineWorkerSelectorAttachment,
+    PassThroughWorkerSelectorAttachment,
+    WorkerWeightedAllocation,
+    WeightedAllocationWorkerSelectorAttachment,
+    WorkerSelector,
 )
 
 
@@ -141,10 +147,10 @@ class JobQueueValidator(object):
     @staticmethod
     def validate_queue_labels(
             entity,
-            label_collection,  # type: LabelCollection
+            label_collection,  # type: Dict[str, Union[int, float, str, bool]]
             **kwargs
     ):
-        assert isinstance(entity.labels, LabelCollection) is True
+        assert isinstance(entity.labels, dict) is True
         assert 'Id' in entity.labels
         assert entity.labels['Id'] == entity.id
 
@@ -171,6 +177,20 @@ class JobQueueValidator(object):
 
         if 'labels' in kwargs:
             JobQueueValidator.validate_queue_labels(job_queue, kwargs.pop("labels"))
+
+
+class WorkerSelectorValidator(object):
+    @staticmethod
+    def validate_worker_selector(
+            actual,  # type: WorkerSelector
+            expected,  # type: WorkerSelector
+            **kwargs,  # type: Any
+    ):
+        assert actual.key == expected.key
+        assert actual.label_operator == expected.label_operator
+        assert actual.value == expected.value
+        assert actual.ttl_seconds == expected.ttl_seconds
+        assert actual.expedite == expected.expedite
 
 
 class ClassificationPolicyValidator(object):
@@ -225,11 +245,46 @@ class ClassificationPolicyValidator(object):
             worker_selectors,
             **kwargs
     ):
+        def validate_static_worker_selector_attachment(
+                actual,  # type: StaticWorkerSelectorAttachment
+                expected,  # type: StaticWorkerSelectorAttachment
+                **kwargs
+        ):
+            WorkerSelectorValidator.validate_worker_selector(actual.label_selector, expected.label_selector)
+
+        def validate_conditional_worker_selector_attachment(
+                actual,  # type: ConditionalWorkerSelectorAttachment
+                expected,  # type: ConditionalWorkerSelectorAttachment
+                **kwargs,  # type: Any
+        ):
+            assert actual.condition == expected.condition
+
+            for i,j in zip(actual.label_selectors, expected.label_selectors):
+                WorkerSelectorValidator.validate_worker_selector(i, j)
+
+        def validate_weighted_allocation_selector_attachment(
+                actual,  # type: WeightedAllocationWorkerSelectorAttachment
+                expected,  # type: WeightedAllocationWorkerSelectorAttachment
+                **kwargs,  # type: Any
+        ):
+            for i, j in zip(actual.allocations, expected.allocations):
+                assert i.weight == j.weight
+                for ac_ws, ex_ws in zip(i.label_selectors, j.label_selectors):
+                    WorkerSelectorValidator.validate_worker_selector(ac_ws, ex_ws)
+
         assert len(entity.worker_selectors) == len(worker_selectors)
 
         for actual, expected in zip(entity.worker_selectors, worker_selectors):
             assert type(actual) == type(expected)
-            assert actual == expected
+
+            if type(actual) == StaticWorkerSelectorAttachment:
+                validate_static_worker_selector_attachment(actual, expected)
+            elif type(actual) == ConditionalWorkerSelectorAttachment:
+                validate_conditional_worker_selector_attachment(actual, expected)
+            elif type(actual) == WeightedAllocationWorkerSelectorAttachment:
+                validate_weighted_allocation_selector_attachment(actual, expected)
+            else:
+                assert actual == expected
 
     @staticmethod
     def validate_classification_policy(
@@ -388,7 +443,7 @@ class RouterWorkerValidator(object):
             label_collection,
             **kwargs
     ):
-        assert isinstance(entity.labels, LabelCollection) is True
+        assert isinstance(entity.labels, dict) is True
         assert 'Id' in entity.labels
         assert entity.labels['Id'] == entity.id
 
@@ -402,7 +457,7 @@ class RouterWorkerValidator(object):
             tag_collection,
             **kwargs
     ):
-        assert isinstance(entity.tags, LabelCollection) is True
+        assert isinstance(entity.tags, dict) is True
         assert entity.tags == tag_collection
 
     @staticmethod

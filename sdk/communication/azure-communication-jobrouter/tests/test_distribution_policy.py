@@ -13,7 +13,7 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str  # 
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterClient,
+    RouterAdministrationClient,
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode
@@ -41,11 +41,11 @@ class TestDistributionPolicy(RouterTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterClient = self.create_client()
+            router_client: RouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.distribution_policy_ids \
                     and any(self.distribution_policy_ids[self._testMethodName]):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_client.delete_distribution_policy(identifier = policy_id)
+                    router_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
     def setUp(self):
         super(TestDistributionPolicy, self).setUp()
@@ -58,11 +58,11 @@ class TestDistributionPolicy(RouterTestCase):
 
     def test_create_distribution_policy(self):
         dp_identifier = "tst_create_dp"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                identifier = dp_identifier,
+                distribution_policy_id = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
                 mode = mode
@@ -85,12 +85,12 @@ class TestDistributionPolicy(RouterTestCase):
 
     def test_update_distribution_policy(self):
         dp_identifier = "tst_update_dp"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             # Arrange
             distribution_policy_response = router_client.create_distribution_policy(
-                identifier = dp_identifier,
+                distribution_policy_id = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
                 mode = mode
@@ -114,7 +114,7 @@ class TestDistributionPolicy(RouterTestCase):
             distribution_policy_response.mode = mode
 
             updated_distribution_policy = router_client.update_distribution_policy(
-                identifier = dp_identifier,
+                distribution_policy_id = dp_identifier,
                 distribution_policy = distribution_policy_response
             )
 
@@ -131,11 +131,11 @@ class TestDistributionPolicy(RouterTestCase):
 
     def test_get_distribution_policy(self):
         dp_identifier = "tst_get_dp"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                identifier = dp_identifier,
+                distribution_policy_id = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
                 mode = mode
@@ -153,7 +153,7 @@ class TestDistributionPolicy(RouterTestCase):
                 mode = mode
             )
 
-            queried_distribution_policy = router_client.get_distribution_policy(identifier = dp_identifier)
+            queried_distribution_policy = router_client.get_distribution_policy(distribution_policy_id = dp_identifier)
             DistributionPolicyValidator.validate_distribution_policy(
                 distribution_policy = queried_distribution_policy,
                 identifier = dp_identifier,
@@ -167,11 +167,11 @@ class TestDistributionPolicy(RouterTestCase):
 
     def test_delete_distribution_policy(self):
         dp_identifier = "tst_delete_dp"
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                identifier = dp_identifier,
+                distribution_policy_id = dp_identifier,
                 name = dp_identifier,
                 offer_ttl_seconds = 10.0,
                 mode = mode
@@ -186,9 +186,9 @@ class TestDistributionPolicy(RouterTestCase):
                 mode = mode
             )
 
-            router_client.delete_distribution_policy(identifier = dp_identifier)
+            router_client.delete_distribution_policy(distribution_policy_id = dp_identifier)
             with pytest.raises(ResourceNotFoundError) as nfe:
-                router_client.get_distribution_policy(identifier = dp_identifier)
+                router_client.get_distribution_policy(distribution_policy_id = dp_identifier)
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
 
@@ -196,12 +196,12 @@ class TestDistributionPolicy(RouterTestCase):
         dp_identifiers = ["tst_list_dp_1", "tst_list_dp_2", "tst_list_dp_3"]
         created_dp_response = {}
         policy_count = len(dp_identifiers)
-        router_client: RouterClient = self.create_client()
+        router_client: RouterAdministrationClient = self.create_admin_client()
         self.distribution_policy_ids[self._testMethodName] = []
 
         for identifier in dp_identifiers:
             distribution_policy_response = router_client.create_distribution_policy(
-                identifier = identifier,
+                distribution_policy_id = identifier,
                 name = identifier,
                 offer_ttl_seconds = 10.0,
                 mode = distribution_modes[0]
@@ -225,14 +225,14 @@ class TestDistributionPolicy(RouterTestCase):
             list_of_policies = list(policy_page)
             assert len(list_of_policies) <= 2
 
-            for policy in list_of_policies:
-                response_at_creation = created_dp_response.get(policy.id, None)
+            for policy_item in list_of_policies:
+                response_at_creation = created_dp_response.get(policy_item.distribution_policy.id, None)
 
                 if not response_at_creation:
                     continue
 
                 DistributionPolicyValidator.validate_distribution_policy(
-                    distribution_policy = policy,
+                    distribution_policy = policy_item.distribution_policy,
                     identifier = response_at_creation.id,
                     name = response_at_creation.name,
                     offer_ttl_seconds = response_at_creation.offer_ttl_seconds,

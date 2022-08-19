@@ -6,222 +6,146 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AcceptJobOfferResult
-    from ._models_py3 import AzureFunctionRule
-    from ._models_py3 import AzureFunctionRuleCredential
-    from ._models_py3 import BestWorkerMode
-    from ._models_py3 import CancelExceptionAction
-    from ._models_py3 import CancelJobRequest
-    from ._models_py3 import ChannelConfiguration
-    from ._models_py3 import ClassificationPolicy
-    from ._models_py3 import ClassificationPolicyCollection
-    from ._models_py3 import CloseJobRequest
-    from ._models_py3 import CommunicationErrorResponse
-    from ._models_py3 import CompleteJobRequest
-    from ._models_py3 import ConditionalQueueSelector
-    from ._models_py3 import ConditionalWorkerSelector
-    from ._models_py3 import DirectMapRule
-    from ._models_py3 import DistributionMode
-    from ._models_py3 import DistributionPolicy
-    from ._models_py3 import DistributionPolicyCollection
-    from ._models_py3 import ExceptionAction
-    from ._models_py3 import ExceptionPolicy
-    from ._models_py3 import ExceptionPolicyCollection
-    from ._models_py3 import ExceptionRule
-    from ._models_py3 import ExpressionRule
-    from ._models_py3 import JobAssignment
-    from ._models_py3 import JobCollection
-    from ._models_py3 import JobExceptionTrigger
-    from ._models_py3 import JobOffer
-    from ._models_py3 import JobPositionDetails
-    from ._models_py3 import JobQueueInternal
-    from ._models_py3 import JobRouterError
-    from ._models_py3 import LongestIdleMode
-    from ._models_py3 import ManualReclassifyExceptionAction
-    from ._models_py3 import PagedClassificationPolicy
-    from ._models_py3 import PagedDistributionPolicy
-    from ._models_py3 import PagedExceptionPolicy
-    from ._models_py3 import PagedJobQueueInternal
-    from ._models_py3 import PagedRouterJobInternal
-    from ._models_py3 import PagedRouterWorkerInternal
-    from ._models_py3 import PassThroughQueueSelector
-    from ._models_py3 import PassThroughWorkerSelector
-    from ._models_py3 import QueueCollection
-    from ._models_py3 import QueueLengthExceptionTrigger
-    from ._models_py3 import QueueSelector
-    from ._models_py3 import QueueSelectorAttachment
-    from ._models_py3 import QueueStatistics
-    from ._models_py3 import QueueWeightedAllocation
-    from ._models_py3 import ReclassifyExceptionAction
-    from ._models_py3 import RoundRobinMode
-    from ._models_py3 import RouterJobInternal
-    from ._models_py3 import RouterRule
-    from ._models_py3 import RouterWorkerInternal
-    from ._models_py3 import RuleEngineQueueSelector
-    from ._models_py3 import RuleEngineWorkerSelector
-    from ._models_py3 import ScoringRuleOptions
-    from ._models_py3 import StaticQueueSelector
-    from ._models_py3 import StaticRule
-    from ._models_py3 import StaticWorkerSelector
-    from ._models_py3 import WaitTimeExceptionTrigger
-    from ._models_py3 import WeightedAllocationQueueSelector
-    from ._models_py3 import WeightedAllocationWorkerSelector
-    from ._models_py3 import WorkerAssignment
-    from ._models_py3 import WorkerCollection
-    from ._models_py3 import WorkerSelector
-    from ._models_py3 import WorkerSelectorAttachment
-    from ._models_py3 import WorkerWeightedAllocation
-except (SyntaxError, ImportError):
-    from ._models import AcceptJobOfferResult  # type: ignore
-    from ._models import AzureFunctionRule  # type: ignore
-    from ._models import AzureFunctionRuleCredential  # type: ignore
-    from ._models import BestWorkerMode  # type: ignore
-    from ._models import CancelExceptionAction  # type: ignore
-    from ._models import CancelJobRequest  # type: ignore
-    from ._models import ChannelConfiguration  # type: ignore
-    from ._models import ClassificationPolicy  # type: ignore
-    from ._models import ClassificationPolicyCollection  # type: ignore
-    from ._models import CloseJobRequest  # type: ignore
-    from ._models import CommunicationErrorResponse  # type: ignore
-    from ._models import CompleteJobRequest  # type: ignore
-    from ._models import ConditionalQueueSelector  # type: ignore
-    from ._models import ConditionalWorkerSelector  # type: ignore
-    from ._models import DirectMapRule  # type: ignore
-    from ._models import DistributionMode  # type: ignore
-    from ._models import DistributionPolicy  # type: ignore
-    from ._models import DistributionPolicyCollection  # type: ignore
-    from ._models import ExceptionAction  # type: ignore
-    from ._models import ExceptionPolicy  # type: ignore
-    from ._models import ExceptionPolicyCollection  # type: ignore
-    from ._models import ExceptionRule  # type: ignore
-    from ._models import ExpressionRule  # type: ignore
-    from ._models import JobAssignment  # type: ignore
-    from ._models import JobCollection  # type: ignore
-    from ._models import JobExceptionTrigger  # type: ignore
-    from ._models import JobOffer  # type: ignore
-    from ._models import JobPositionDetails  # type: ignore
-    from ._models import JobQueueInternal  # type: ignore
-    from ._models import JobRouterError  # type: ignore
-    from ._models import LongestIdleMode  # type: ignore
-    from ._models import ManualReclassifyExceptionAction  # type: ignore
-    from ._models import PagedClassificationPolicy  # type: ignore
-    from ._models import PagedDistributionPolicy  # type: ignore
-    from ._models import PagedExceptionPolicy  # type: ignore
-    from ._models import PagedJobQueueInternal  # type: ignore
-    from ._models import PagedRouterJobInternal  # type: ignore
-    from ._models import PagedRouterWorkerInternal  # type: ignore
-    from ._models import PassThroughQueueSelector  # type: ignore
-    from ._models import PassThroughWorkerSelector  # type: ignore
-    from ._models import QueueCollection  # type: ignore
-    from ._models import QueueLengthExceptionTrigger  # type: ignore
-    from ._models import QueueSelector  # type: ignore
-    from ._models import QueueSelectorAttachment  # type: ignore
-    from ._models import QueueStatistics  # type: ignore
-    from ._models import QueueWeightedAllocation  # type: ignore
-    from ._models import ReclassifyExceptionAction  # type: ignore
-    from ._models import RoundRobinMode  # type: ignore
-    from ._models import RouterJobInternal  # type: ignore
-    from ._models import RouterRule  # type: ignore
-    from ._models import RouterWorkerInternal  # type: ignore
-    from ._models import RuleEngineQueueSelector  # type: ignore
-    from ._models import RuleEngineWorkerSelector  # type: ignore
-    from ._models import ScoringRuleOptions  # type: ignore
-    from ._models import StaticQueueSelector  # type: ignore
-    from ._models import StaticRule  # type: ignore
-    from ._models import StaticWorkerSelector  # type: ignore
-    from ._models import WaitTimeExceptionTrigger  # type: ignore
-    from ._models import WeightedAllocationQueueSelector  # type: ignore
-    from ._models import WeightedAllocationWorkerSelector  # type: ignore
-    from ._models import WorkerAssignment  # type: ignore
-    from ._models import WorkerCollection  # type: ignore
-    from ._models import WorkerSelector  # type: ignore
-    from ._models import WorkerSelectorAttachment  # type: ignore
-    from ._models import WorkerWeightedAllocation  # type: ignore
+from ._models import AcceptJobOfferResult
+from ._models import BestWorkerMode
+from ._models import CancelExceptionAction
+from ._models import CancelJobRequest
+from ._models import ChannelConfiguration
+from ._models import ClassificationPolicy
+from ._models import ClassificationPolicyItem
+from ._models import CloseJobRequest
+from ._models import CommunicationErrorResponse
+from ._models import CompleteJobRequest
+from ._models import ConditionalQueueSelectorAttachment
+from ._models import ConditionalWorkerSelectorAttachment
+from ._models import DirectMapRule
+from ._models import DistributionMode
+from ._models import DistributionPolicy
+from ._models import DistributionPolicyItem
+from ._models import ExceptionAction
+from ._models import ExceptionPolicy
+from ._models import ExceptionPolicyItem
+from ._models import ExceptionRule
+from ._models import ExpressionRule
+from ._models import FunctionRule
+from ._models import FunctionRuleCredential
+from ._models import JobAssignment
+from ._models import JobExceptionTrigger
+from ._models import JobOffer
+from ._models import JobPositionDetails
+from ._models import JobQueueInternal
+from ._models import JobQueueItemInternal
+from ._models import JobRouterError
+from ._models import LongestIdleMode
+from ._models import ManualReclassifyExceptionAction
+from ._models import PassThroughQueueSelectorAttachment
+from ._models import PassThroughWorkerSelectorAttachment
+from ._models import QueueLengthExceptionTrigger
+from ._models import QueueSelector
+from ._models import QueueSelectorAttachment
+from ._models import QueueStatistics
+from ._models import QueueWeightedAllocation
+from ._models import ReclassifyExceptionAction
+from ._models import RoundRobinMode
+from ._models import RouterJobInternal
+from ._models import RouterJobItemInternal
+from ._models import RouterRule
+from ._models import RouterWorkerInternal
+from ._models import RouterWorkerItemInternal
+from ._models import RuleEngineQueueSelectorAttachment
+from ._models import RuleEngineWorkerSelectorAttachment
+from ._models import ScoringRuleOptions
+from ._models import StaticQueueSelectorAttachment
+from ._models import StaticRule
+from ._models import StaticWorkerSelectorAttachment
+from ._models import UnassignJobResult
+from ._models import WaitTimeExceptionTrigger
+from ._models import WeightedAllocationQueueSelectorAttachment
+from ._models import WeightedAllocationWorkerSelectorAttachment
+from ._models import WorkerAssignment
+from ._models import WorkerSelector
+from ._models import WorkerSelectorAttachment
+from ._models import WorkerWeightedAllocation
 
-from ._azure_communication_job_router_service_enums import JobStateSelector
-from ._azure_communication_job_router_service_enums import JobStatus
-from ._azure_communication_job_router_service_enums import LabelOperator
-from ._azure_communication_job_router_service_enums import PagedWorkerState
-from ._azure_communication_job_router_service_enums import RouterWorkerState
-from ._azure_communication_job_router_service_enums import ScoringRuleParameterSelector
-from ._azure_communication_job_router_service_enums import WorkerStateSelector
+from ._enums import JobStateSelector
+from ._enums import LabelOperator
+from ._enums import RouterJobStatus
+from ._enums import RouterWorkerState
+from ._enums import ScoringRuleParameterSelector
+from ._enums import WorkerSelectorState
+from ._enums import WorkerStateSelector
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AcceptJobOfferResult',
-    'AzureFunctionRule',
-    'AzureFunctionRuleCredential',
-    'BestWorkerMode',
-    'CancelExceptionAction',
-    'CancelJobRequest',
-    'ChannelConfiguration',
-    'ClassificationPolicy',
-    'ClassificationPolicyCollection',
-    'CloseJobRequest',
-    'CommunicationErrorResponse',
-    'CompleteJobRequest',
-    'ConditionalQueueSelector',
-    'ConditionalWorkerSelector',
-    'DirectMapRule',
-    'DistributionMode',
-    'DistributionPolicy',
-    'DistributionPolicyCollection',
-    'ExceptionAction',
-    'ExceptionPolicy',
-    'ExceptionPolicyCollection',
-    'ExceptionRule',
-    'ExpressionRule',
-    'JobAssignment',
-    'JobCollection',
-    'JobExceptionTrigger',
-    'JobOffer',
-    'JobPositionDetails',
-    'JobQueueInternal',
-    'JobRouterError',
-    'LongestIdleMode',
-    'ManualReclassifyExceptionAction',
-    'PagedClassificationPolicy',
-    'PagedDistributionPolicy',
-    'PagedExceptionPolicy',
-    'PagedJobQueueInternal',
-    'PagedRouterJobInternal',
-    'PagedRouterWorkerInternal',
-    'PassThroughQueueSelector',
-    'PassThroughWorkerSelector',
-    'QueueCollection',
-    'QueueLengthExceptionTrigger',
-    'QueueSelector',
-    'QueueSelectorAttachment',
-    'QueueStatistics',
-    'QueueWeightedAllocation',
-    'ReclassifyExceptionAction',
-    'RoundRobinMode',
-    'RouterJobInternal',
-    'RouterRule',
-    'RouterWorkerInternal',
-    'RuleEngineQueueSelector',
-    'RuleEngineWorkerSelector',
-    'ScoringRuleOptions',
-    'StaticQueueSelector',
-    'StaticRule',
-    'StaticWorkerSelector',
-    'WaitTimeExceptionTrigger',
-    'WeightedAllocationQueueSelector',
-    'WeightedAllocationWorkerSelector',
-    'WorkerAssignment',
-    'WorkerCollection',
-    'WorkerSelector',
-    'WorkerSelectorAttachment',
-    'WorkerWeightedAllocation',
-    'JobStateSelector',
-    'JobStatus',
-    'LabelOperator',
-    'PagedWorkerState',
-    'RouterWorkerState',
-    'ScoringRuleParameterSelector',
-    'WorkerStateSelector',
+    "AcceptJobOfferResult",
+    "BestWorkerMode",
+    "CancelExceptionAction",
+    "CancelJobRequest",
+    "ChannelConfiguration",
+    "ClassificationPolicy",
+    "ClassificationPolicyItem",
+    "CloseJobRequest",
+    "CommunicationErrorResponse",
+    "CompleteJobRequest",
+    "ConditionalQueueSelectorAttachment",
+    "ConditionalWorkerSelectorAttachment",
+    "DirectMapRule",
+    "DistributionMode",
+    "DistributionPolicy",
+    "DistributionPolicyItem",
+    "ExceptionAction",
+    "ExceptionPolicy",
+    "ExceptionPolicyItem",
+    "ExceptionRule",
+    "ExpressionRule",
+    "FunctionRule",
+    "FunctionRuleCredential",
+    "JobAssignment",
+    "JobExceptionTrigger",
+    "JobOffer",
+    "JobPositionDetails",
+    "JobQueueInternal",
+    "JobQueueItemInternal",
+    "JobRouterError",
+    "LongestIdleMode",
+    "ManualReclassifyExceptionAction",
+    "PassThroughQueueSelectorAttachment",
+    "PassThroughWorkerSelectorAttachment",
+    "QueueLengthExceptionTrigger",
+    "QueueSelector",
+    "QueueSelectorAttachment",
+    "QueueStatistics",
+    "QueueWeightedAllocation",
+    "ReclassifyExceptionAction",
+    "RoundRobinMode",
+    "RouterJobInternal",
+    "RouterJobItemInternal",
+    "RouterRule",
+    "RouterWorkerInternal",
+    "RouterWorkerItemInternal",
+    "RuleEngineQueueSelectorAttachment",
+    "RuleEngineWorkerSelectorAttachment",
+    "ScoringRuleOptions",
+    "StaticQueueSelectorAttachment",
+    "StaticRule",
+    "StaticWorkerSelectorAttachment",
+    "UnassignJobResult",
+    "WaitTimeExceptionTrigger",
+    "WeightedAllocationQueueSelectorAttachment",
+    "WeightedAllocationWorkerSelectorAttachment",
+    "WorkerAssignment",
+    "WorkerSelector",
+    "WorkerSelectorAttachment",
+    "WorkerWeightedAllocation",
+    "JobStateSelector",
+    "LabelOperator",
+    "RouterJobStatus",
+    "RouterWorkerState",
+    "ScoringRuleParameterSelector",
+    "WorkerSelectorState",
+    "WorkerStateSelector",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
