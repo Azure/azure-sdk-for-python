@@ -85,7 +85,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
     INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
-    INCREMENTAL_COPY_OF_ERALIER_VERSION_SNAPSHOT_NOT_ALLOWED = INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED
+    #: Deprecated: Please use INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED instead.
+    INCREMENTAL_COPY_OF_ERALIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
     INCREMENTAL_COPY_SOURCE_MUST_BE_SNAPSHOT = "IncrementalCopySourceMustBeSnapshot"
     INFINITE_LEASE_DURATION_REQUIRED = "InfiniteLeaseDurationRequired"
     INVALID_BLOB_OR_BLOCK = "InvalidBlobOrBlock"
@@ -122,7 +123,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SEQUENCE_NUMBER_INCREMENT_TOO_LARGE = "SequenceNumberIncrementTooLarge"
     SNAPSHOT_COUNT_EXCEEDED = "SnapshotCountExceeded"
     SNAPSHOT_OPERATION_RATE_EXCEEDED = "SnapshotOperationRateExceeded"
-    SNAPHOT_OPERATION_RATE_EXCEEDED = SNAPSHOT_OPERATION_RATE_EXCEEDED
+    #: Deprecated: Please use SNAPSHOT_OPERATION_RATE_EXCEEDED instead.
+    SNAPHOT_OPERATION_RATE_EXCEEDED = "SnapshotOperationRateExceeded"
     SNAPSHOTS_PRESENT = "SnapshotsPresent"
     SOURCE_CONDITION_NOT_MET = "SourceConditionNotMet"
     SYSTEM_IN_USE = "SystemInUse"
