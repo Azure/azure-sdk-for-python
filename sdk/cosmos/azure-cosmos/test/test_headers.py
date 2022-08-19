@@ -39,7 +39,6 @@ class HeadersTest(unittest.TestCase):
 
     dedicated_gateway_max_age_thousand = 1000
     dedicated_gateway_max_age_million = 1000000
-    dedicated_gateway_max_age_zero = 0
     dedicated_gateway_max_age_negative = -1
 
     @classmethod
@@ -59,11 +58,6 @@ class HeadersTest(unittest.TestCase):
         assert args[2]["x-ms-dedicatedgateway-max-age"] == self.dedicated_gateway_max_age_million
         raise StopIteration
 
-    def side_effect_dedicated_gateway_max_age_zero(self, *args, **kwargs):
-        # Extract request headers from args
-        assert args[2]["x-ms-dedicatedgateway-max-age"] == self.dedicated_gateway_max_age_zero
-        raise StopIteration
-
     def test_max_integrated_cache_staleness(self):
         cosmos_client_connection = self.container.client_connection
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
@@ -79,16 +73,6 @@ class HeadersTest(unittest.TestCase):
         try:
             self.container.read_item(item="id-1", partition_key="pk-1",
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_million)
-        except StopIteration:
-            pass
-
-    def test_zero_max_integrated_cache_staleness(self):
-        cosmos_client_connection = self.container.client_connection
-        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
-            side_effect=self.side_effect_dedicated_gateway_max_age_zero)
-        try:
-            self.container.read_item(item="id-1", partition_key="pk-1",
-                                     max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_zero)
         except StopIteration:
             pass
 

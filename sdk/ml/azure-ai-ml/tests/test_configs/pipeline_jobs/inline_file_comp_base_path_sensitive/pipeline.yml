@@ -16,3 +16,15 @@ jobs:
       build:
         path: ../../environment/environment_files
         dockerfile_path: DockerfileNonDefault
+  command_node_file_ref:
+    type: command
+    component: ./component/component.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      iris:
+        type: uri_file
+        path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    environment:
+      build:
+        path: ../../environment/environment_files
+        dockerfile_path: DockerfileNonDefault

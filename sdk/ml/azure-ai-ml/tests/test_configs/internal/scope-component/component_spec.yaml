@@ -1,0 +1,38 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json
+
+name: convert2ss
+version: 0.0.1
+display_name: Convert Text to StructureStream
+
+type: ScopeComponent
+
+is_deterministic: True
+
+tags:
+  org: bing
+  project: relevance
+
+description: Convert adls test data to SS format
+
+inputs:
+  TextData:
+    type: string
+    description: text file on ADLS storage
+  ExtractionClause:
+    type: string
+    description: the extraction clause, something like "column1:string, column2:int"
+outputs:
+  SSPath:
+    type: CosmosStructuredStream
+    description: the converted structured stream
+
+code: ./
+
+scope:
+  script: convert2ss.script
+  # to reference the inputs/outputs in your script
+  # you must define the argument name of your intpus/outputs in args section
+  args: >-
+    Output_SSPath {outputs.SSPath}
+    Input_TextData {inputs.TextData}
+    ExtractionClause {inputs.ExtractionClause}

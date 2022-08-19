@@ -46,3 +46,5 @@ extends:
       safeName: azurecommunicationphonenumbers
     - name: azure-communication-networktraversal
       safeName: azurecommunicationnetworktraversal
+    - name: azure-communication-rooms
+      safeName: azurecommunicationrooms

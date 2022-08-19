@@ -1,6 +1,5 @@
 import os
 import logging
-import pickle
 import json
 import numpy
 from sklearn.externals import joblib

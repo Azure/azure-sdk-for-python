@@ -1,30 +1,32 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Union, Dict, Optional, Callable, NoReturn
+from typing import Callable, Dict, Optional, Union
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
+
 from ..job_limits import SweepJobLimits
 from .early_termination_policy import (
-    EarlyTerminationPolicy,
     BanditPolicy,
+    EarlyTerminationPolicy,
+    EarlyTerminationPolicyType,
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
-    EarlyTerminationPolicyType,
 )
 from .objective import Objective
-from .search_space import SweepDistribution
 from .sampling_algorithm import (
-    SamplingAlgorithm,
-    RandomSamplingAlgorithm,
-    GridSamplingAlgorithm,
     BayesianSamplingAlgorithm,
-    SamplingAlgorithmType,
-    RestSamplingAlgorithm,
-    RestRandomSamplingAlgorithm,
-    RestGridSamplingAlgorithm,
+    GridSamplingAlgorithm,
+    RandomSamplingAlgorithm,
     RestBayesianSamplingAlgorithm,
+    RestGridSamplingAlgorithm,
+    RestRandomSamplingAlgorithm,
+    RestSamplingAlgorithm,
+    SamplingAlgorithm,
+    SamplingAlgorithmType,
 )
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from .search_space import SweepDistribution
 
 SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Callable[[], RestSamplingAlgorithm]] = {
     SamplingAlgorithmType.RANDOM: lambda: RestRandomSamplingAlgorithm(),
@@ -83,8 +85,9 @@ class ParameterizedSweep(LoadableMixin):
         max_total_trials: int = None,
         timeout: int = None,
         trial_timeout: int = None,
-    ) -> NoReturn:
-        """Set limits for Sweep node. Leave parameters as None if you don't want to update corresponding values.
+    ) -> None:
+        """Set limits for Sweep node. Leave parameters as None if you don't
+        want to update corresponding values.
 
         :param max_concurrent_trials: maximum concurrent trial number.
         :type max_concurrent_trials: int
@@ -113,7 +116,7 @@ class ParameterizedSweep(LoadableMixin):
                 self.limits.trial_timeout = trial_timeout
 
     def set_objective(self, *, goal: str = None, primary_metric: str = None) -> None:
-        """Set the sweep object
+        """Set the sweep object.
 
         :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
         include: "minimize", "maximize".

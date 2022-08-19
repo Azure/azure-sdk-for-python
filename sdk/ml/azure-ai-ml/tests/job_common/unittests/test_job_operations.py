@@ -152,21 +152,6 @@ class TestJobOperations:
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
 
-    def test_job_operations_list_with_schedule_name(
-        self, mock_job_operation: JobOperations, randstr: Callable[[], str]
-    ):
-        scheduled_job_name = randstr()
-        mock_job_operation.list(scheduled_job_name=randstr())
-        assert mock_job_operation._operation_2022_02_preview.list.called_with(
-            schedule_id=scheduled_job_name, schedule_defined=None
-        )
-
-    def test_job_operations_list_schedule_defined_no_name(
-        self, mock_job_operation: JobOperations, randstr: Callable[[], str]
-    ):
-        mock_job_operation.list(schedule_defined=True)
-        assert mock_job_operation._operation_2022_02_preview.list.called_with(schedule_id=None, schedule_defined=True)
-
     @pytest.mark.skip(reason="Mock Job missing properties to complete full test in Feb API")
     @patch.object(Job, "_from_rest_object")
     def test_submit_command_job(self, mock_method, mock_job_operation: JobOperations) -> None:
@@ -218,3 +203,17 @@ class TestJobOperations:
         with pytest.raises(Exception, match="Unknown search space type"):
             # Convert from REST object
             Job._from_rest_object(resource)
+
+    @patch.object(Job, "_from_rest_object")
+    def test_job_create_skip_validation(
+        self, mock_method, mock_job_operation: JobOperations, randstr: Callable[[], str]
+    ) -> None:
+        mock_method.return_value = Command(component=None)
+        job = load_job(path="./tests/test_configs/command_job/simple_train_test.yml")
+        with patch.object(JobOperations, "_validate") as mock_thing, patch.object(
+            JobOperations, "_resolve_arm_id_or_upload_dependencies"
+        ):
+            mock_job_operation.create_or_update(job=job, skip_validation=True)
+            mock_thing.assert_not_called()
+            mock_job_operation.create_or_update(job=job)
+            mock_thing.assert_called_once()

@@ -48,7 +48,7 @@ async def sample_query_knowledgebase():
             project_name=knowledge_base_project,
             deployment_name="test"
         )
-        best_candidate = [a for a in output.answers if a.confidence > 0.9][0]
+        best_candidate = [a for a in output.answers if a.confidence > 0.7][0]
         print("Q: {}".format(question))
         print("A: {}".format(best_candidate.answer))
 
