@@ -1,13 +1,13 @@
 # Release History
 
-## 5.10.1 (2022-08-18)
+## 5.10.1 (2022-08-22)
 
 This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
 
 ### Bugs Fixed
 
-- Fixed a bug in `BufferedProducer` that would block when flushing the queue causing the client to freeze up (issue #23510).
-- Fixed a bug in the async `EventHubProducerClient` and `EventHubConsumerClient` that set the default value of the `transport_type` parameter in the constructors to `None` rather than `TransportType.Amqp`.
+- Fixed a bug in async `BufferedProducer` that would block when flushing the queue causing the client to freeze up (issue #23510).
+- Fixed a bug in the async `EventHubProducerClient` and `EventHubConsumerClient` that set the default value of the `transport_type` parameter in the `from_connection_string` methods to `None` rather than `TransportType.Amqp`.
 
 ### Other Changes
 
