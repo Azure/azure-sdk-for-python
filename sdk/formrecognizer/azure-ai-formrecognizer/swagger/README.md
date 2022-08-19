@@ -20,6 +20,8 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 multiapi: true
+version-tolerant: false
+python3-only: true
 ```
 
 ## Multiapi Batch Execution
