@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import json
+
 import os
 import logging
 import requests
@@ -11,7 +11,6 @@ import shlex
 import sys
 import time
 import signal
-from typing import TYPE_CHECKING
 
 import pytest
 import subprocess
@@ -20,15 +19,11 @@ from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
 from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
-if TYPE_CHECKING:
-    from typing import Optional
-
 
 _LOGGER = logging.getLogger()
 
 CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
-# MAC_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/test-proxy"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
 CONTAINER_STARTUP_TIMEOUT = 6000
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
@@ -62,41 +57,11 @@ def get_image_tag() -> str:
     return image_tag
 
 
-def get_container_info() -> "Optional[dict]":
-    """Returns a dictionary containing the test proxy container's information, or None if the container isn't present"""
-    proc = subprocess.Popen(
-        shlex.split("docker container ls -a --format '{{json .}}' --filter name=" + CONTAINER_NAME),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        stdin=subprocess.DEVNULL,
-    )
-
+def delete_container() -> None:
+    """Delete container if it remained"""
+    proc = subprocess.Popen(shlex.split(f"docker rm -f {CONTAINER_NAME}"))
     output, stderr = proc.communicate()
-    try:
-        container_spec = json.loads(output)
-        if sys.platform.startswith("win") and os.environ.get("TF_BUILD"):
-            image_prefix = WINDOWS_IMAGE_SOURCE_PREFIX
-        # elif sys.platform.startswith("darwin"):
-        #     image_prefix = MAC_IMAGE_SOURCE_PREFIX
-        else:
-            image_prefix = LINUX_IMAGE_SOURCE_PREFIX
-
-        if container_spec['Image'] == image_prefix + ':' + get_image_tag():
-            # This will succeed if we found a container with CONTAINER_NAME
-            return container_spec
-        else:
-            remove_proc = subprocess.Popen(
-                shlex.split("docker rm -f " + CONTAINER_NAME),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                stdin=subprocess.DEVNULL
-            )
-            remove_output, remove_stderr = remove_proc.communicate()
-            return None
-    # We'll get a JSONDecodeError on Py3 (ValueError on Py2) if output is empty (i.e. there's no proxy container)
-    except ValueError:
-        # Didn't find a container with CONTAINER_NAME
-        return None
+    return None
 
 
 def check_availability() -> None:
@@ -128,29 +93,24 @@ def create_container() -> None:
     # Most of the time, running this script on a Windows machine will work just fine, as Docker defaults to Linux
     # containers. However, in CI, Windows images default to _Windows_ containers. We cannot swap them. We can tell
     # if we're in a CI build by checking for the environment variable TF_BUILD.
+    delete_container()
+
     if sys.platform.startswith("win") and os.environ.get("TF_BUILD"):
         image_prefix = WINDOWS_IMAGE_SOURCE_PREFIX
         path_prefix = "C:"
         linux_container_args = ""
-    # This is for the Silicon Mac and shows better performance in the Docker container(Using arm image).
-    # elif sys.platform.startswith("darwin"):
-    #     image_prefix = MAC_IMAGE_SOURCE_PREFIX
-    #     path_prefix = ""
-    #     linux_container_args = "--add-host=host.docker.internal:host-gateway"
     else:
         image_prefix = LINUX_IMAGE_SOURCE_PREFIX
         path_prefix = ""
         linux_container_args = "--add-host=host.docker.internal:host-gateway"
 
     image_tag = get_image_tag()
-    proc = subprocess.Popen(
+    subprocess.Popen(
         shlex.split(
-            "docker container create -v '{}:{}/srv/testproxy' {} -p 5001:5001 -p 5000:5000 --name {} {}:{}".format(
-                REPO_ROOT, path_prefix, linux_container_args, CONTAINER_NAME, image_prefix, image_tag
-            )
+            f"docker run --rm --name {CONTAINER_NAME} -v '{REPO_ROOT}:{path_prefix}/srv/testproxy' "
+            f"{linux_container_args} -p 5001:5001 -p 5000:5000 {image_prefix}:{image_tag}"
         )
     )
-    proc.communicate()
 
 
 def start_test_proxy() -> None:
@@ -177,23 +137,7 @@ def start_test_proxy() -> None:
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
             _LOGGER.info("Starting the test proxy container...")
-
-            container_info = get_container_info()
-            if container_info:
-                _LOGGER.debug("Found an existing instance of the test proxy container.")
-
-                if container_info["State"] == "running":
-                    _LOGGER.debug("Proxy container is already running. Exiting...")
-                    return
-
-            else:
-                _LOGGER.debug("No instance of the test proxy container found. Attempting creation...")
-                create_container()
-
-            _LOGGER.debug("Attempting to start the test proxy container...")
-
-            proc = subprocess.Popen(shlex.split("docker container start " + CONTAINER_NAME))
-            proc.communicate()
+            create_container()
 
     # Wait for the proxy server to become available
     check_proxy_availability()
@@ -218,15 +162,7 @@ def stop_test_proxy() -> None:
 
         else:
             _LOGGER.info("Stopping the test proxy container...")
-            container_info = get_container_info()
-            if container_info:
-                if container_info["State"] == "running":
-                    _LOGGER.debug("Found a running instance of the test proxy container; shutting it down...")
-
-                    proc = subprocess.Popen(shlex.split("docker container stop " + CONTAINER_NAME))
-                    proc.communicate()
-            else:
-                _LOGGER.debug("No running instance of the test proxy container found. Exiting...")
+            subprocess.Popen(shlex.split("docker stop " + CONTAINER_NAME))
 
 
 @pytest.fixture(scope="session")
