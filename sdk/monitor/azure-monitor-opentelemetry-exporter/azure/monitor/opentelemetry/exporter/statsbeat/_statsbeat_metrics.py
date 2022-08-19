@@ -29,8 +29,8 @@ def _get_success_count(options: CallbackOptions) -> Iterable[Observation]:
     attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
     attributes["statusCode"] = 200
     with _REQUESTS_LOCK:
-        interval_count = _REQUESTS_MAP.get("success", 0)
-        _REQUESTS_MAP["success"] = 0
+        interval_count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0)
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
         # only observe if value is not 0
         if interval_count != 0:
             observations.append(

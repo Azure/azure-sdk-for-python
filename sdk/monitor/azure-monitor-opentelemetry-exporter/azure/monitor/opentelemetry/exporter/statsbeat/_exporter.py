@@ -9,7 +9,7 @@ from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_METRIC_NAMES
+from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_METRIC_NAME_MAPPINGS
 
 _logger = logging.getLogger(__name__)
 
@@ -25,10 +25,7 @@ class _StatsBeatExporter(AzureMonitorMetricExporter):
         scope: Optional[InstrumentationScope] = None
     ) -> TelemetryItem:
         # map statsbeat name from OpenTelemetry name
-        for ot_name, sb_name in _STATSBEAT_METRIC_NAMES:
-            if name == ot_name:
-                name = sb_name
-                continue
+        name = _STATSBEAT_METRIC_NAME_MAPPINGS.get(name, "")
         return super()._point_to_envelope(
             point,
             name,

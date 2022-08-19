@@ -23,8 +23,10 @@ _REQ_RETRY_NAME = "Retry Count"
 _REQ_THROTTLE_NAME = "Throttle Count"
 _REQ_EXCEPTION_NAME = "Exception Count"
 
-_STATSBEAT_METRIC_NAMES = (
-    _REQ_SUCCESS_NAME,
+_STATSBEAT_METRIC_NAME_MAPPINGS = dict(
+    [
+        _REQ_SUCCESS_NAME,
+    ]
 )
 
 

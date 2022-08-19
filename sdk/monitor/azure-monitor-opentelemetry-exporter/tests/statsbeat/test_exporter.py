@@ -8,7 +8,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.metrics.export import NumberDataPoint
 
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_METRIC_NAMES
+from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_METRIC_NAME_MAPPINGS
 
 # pylint: disable=protected-access
 class TestStatsbeatExporter(unittest.TestCase):
@@ -30,6 +30,6 @@ class TestStatsbeatExporter(unittest.TestCase):
             value=10,
             attributes={},
         )
-        for ot_name, sb_name in _STATSBEAT_METRIC_NAMES:
+        for ot_name, sb_name in _STATSBEAT_METRIC_NAME_MAPPINGS.items():
             envelope = exporter._point_to_envelope(point, ot_name, resource, scope)
             self.assertEqual(envelope.data.base_data.metrics[0].name, sb_name)

@@ -17,7 +17,10 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQ_SUCCESS_NAME,
+    _REQUESTS_MAP,
+)
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryErrorDetails,
@@ -209,7 +212,7 @@ class TestBaseExporter(unittest.TestCase):
             )
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(len(_REQUESTS_MAP), 1)
-        self.assertEqual(_REQUESTS_MAP['success'], 1)
+        self.assertEqual(_REQUESTS_MAP[_REQ_SUCCESS_NAME[1]], 1)
         self.assertEqual(result, ExportResult.SUCCESS)
 
     def test_transmission_206_retry(self):

@@ -44,7 +44,7 @@ class TestStatsbeat(unittest.TestCase):
         exporter._endpoint = "test endpoint"
         exporter._instrumentation_key = "test ikey"
         self.assertIsNone(_statsbeat._STATSBEAT_METER_PROVIDER)
-        metrics = _statsbeat.collect_statsbeat_metrics(exporter)
+        _statsbeat.collect_statsbeat_metrics(exporter)
         mp = _statsbeat._STATSBEAT_METER_PROVIDER
         self.assertTrue(isinstance(mp, MeterProvider))
         self.assertTrue(len(mp._sdk_config.metric_readers), 1)
@@ -52,9 +52,6 @@ class TestStatsbeat(unittest.TestCase):
         self.assertTrue(isinstance(mr, PeriodicExportingMetricReader))
         self.assertIsNotNone(mr._exporter)
         self.assertTrue(isinstance(mr._exporter, _StatsBeatExporter))
-        self.assertTrue(isinstance(metrics, _StatsbeatMetrics))
-        self.assertEqual(metrics._mp, mp)
-        self.assertTrue(metrics._ikey, "test ikey")
 
     def test_collect_statsbeat_metrics_exists(self):
         exporter = mock.Mock()
@@ -147,18 +144,18 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
-        _REQUESTS_MAP["success"] = 3
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 3
         obs = _get_success_count(options=None)
         self.assertEqual(len(obs), 1)
         self.assertEqual(obs[0].value, 3)
         self.assertEqual(obs[0].attributes, attributes)
-        self.assertEqual(_REQUESTS_MAP["success"], 0)
+        self.assertEqual(_REQUESTS_MAP[_REQ_SUCCESS_NAME[1]], 0)
 
     def test_get_success_zero_value(self):
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
-        _REQUESTS_MAP["success"] = 0
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
         obs = _get_success_count(options=None)
         self.assertEqual(len(obs), 0)
 

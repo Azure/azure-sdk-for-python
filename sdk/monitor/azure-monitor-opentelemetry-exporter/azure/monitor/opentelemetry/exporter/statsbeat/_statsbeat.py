@@ -45,12 +45,11 @@ def collect_statsbeat_metrics(exporter) -> None:
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
             _STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[reader])
-            statsbeat_metrics = _StatsbeatMetrics(
+            _StatsbeatMetrics(
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,
                 exporter._endpoint,
             )
-            return statsbeat_metrics
             # Export some initial stats on program start
             # TODO: initial stats
             # TODO: set context
@@ -85,8 +84,8 @@ def _get_stats_connection_string(endpoint: str) -> str:
     cs_env = os.environ.get("APPLICATION_INSIGHTS_STATS_CONNECTION_STRING")
     if cs_env:
         return cs_env
-    for ep in _EU_ENDPOINTS:
-        if ep in endpoint:
+    for endpoint_location in _EU_ENDPOINTS:
+        if endpoint_location in endpoint:
             # Use statsbeat EU endpoint if user is in EU region
             return _DEFAULT_EU_STATS_CONNECTION_STRING
     return _DEFAULT_NON_EU_STATS_CONNECTION_STRING

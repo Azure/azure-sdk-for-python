@@ -15,6 +15,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQ_SUCCESS_NAME,
     _REQUESTS_LOCK,
     _REQUESTS_MAP,
     get_statsbeat_shutdown,
@@ -92,7 +93,7 @@ class BaseExporter:
                 lease_period=self._storage_min_retry_interval,
             )
         # statsbeat initialization
-        if self._check_stats_collection():
+        if self._should_collect_stats():
             # Import here to avoid circular dependencies
             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
             collect_statsbeat_metrics(self)
@@ -133,8 +134,8 @@ class BaseExporter:
                 track_response = self.client.track(envelopes)
                 if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
-                    if self._check_stats_collection():
-                        _update_requests_map('success')
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_SUCCESS_NAME[1])
                     logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
                                 track_response.items_received, track_response.items_accepted)
                     return ExportResult.SUCCESS
@@ -202,7 +203,7 @@ class BaseExporter:
         return ExportResult.SUCCESS
 
     # check to see whether its the case of stats collection
-    def _check_stats_collection(self):
+    def _should_collect_stats(self):
         return is_statsbeat_enabled() and \
             not get_statsbeat_shutdown() and \
             self.__class__.__name__ != "_StatsBeatExporter"
@@ -234,6 +235,6 @@ def _is_retryable_code(response_code: int) -> bool:
     ))
 
 
-def _update_requests_map(request_type):
+def _update_requests_map(type_name):
     with _REQUESTS_LOCK:
-        _REQUESTS_MAP[request_type] = _REQUESTS_MAP.get(request_type, 0) + 1
+        _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + 1
