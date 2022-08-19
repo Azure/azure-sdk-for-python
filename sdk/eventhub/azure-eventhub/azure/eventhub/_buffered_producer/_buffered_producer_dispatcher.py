@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import logging
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
@@ -14,6 +15,7 @@ from ..exceptions import EventDataSendError, ConnectError, EventHubError
 
 if TYPE_CHECKING:
     from .._producer_client import SendEventTypes
+    from .._transport._base import AmqpTransport
 
 _LOGGER = logging.getLogger(__name__)
 
