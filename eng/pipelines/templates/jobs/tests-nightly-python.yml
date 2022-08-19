@@ -61,7 +61,6 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
-          sudo apt-get install build-essential -y
           python -m pip freeze
           python -m pip --version
           pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0
