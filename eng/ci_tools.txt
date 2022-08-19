@@ -6,7 +6,7 @@ virtualenv==20.13.2
 wheel==0.37.0
 Jinja2==2.11.2
 packaging==20.4
-tox==3.15.0
+tox==3.25.1
 tox-monorepo==0.1.2
 twine==3.1.1; python_version >= '3.6'
 pathlib2==2.3.5
@@ -38,4 +38,4 @@ pytest-cov==2.8.1
 
 # local dev packages
 ./tools/azure-devtools
-./tools/azure-sdk-tools
+./tools/azure-sdk-tools[build]

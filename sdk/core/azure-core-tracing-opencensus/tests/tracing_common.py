@@ -57,9 +57,9 @@ class MockExporter(Exporter):
         self._all_nodes = []
         self.parent_dict = defaultdict(list)
 
-    def export(self, span_datas):
+    def export(self, span_data):
         # type: (List[SpanData]) -> None
-        sp = span_datas[0]  # type: SpanData
+        sp = span_data[0]  # type: SpanData
         node = Node(sp)
         if not node.span_data.parent_span_id:
             self.root = node

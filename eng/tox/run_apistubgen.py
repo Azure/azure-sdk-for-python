@@ -9,20 +9,21 @@ import argparse
 import os
 import logging
 
-from tox_helper_tasks import find_whl, get_package_details
+from tox_helper_tasks import find_whl
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
-
 def get_package_wheel_path(pkg_root):
     # parse setup.py to get package name and version
-    pkg_name, _, version, _, _ = get_package_details(os.path.join(pkg_root, "setup.py"))
+    pkg_details = ParsedSetup.from_path(pkg_root)
+
     # Check if wheel is already built and available for current package
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:
-        prebuilt_package_path = find_whl(prebuilt_dir, pkg_name, version)
+        prebuilt_package_path = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
     else:
         return None
 
