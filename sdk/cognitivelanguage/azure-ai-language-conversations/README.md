@@ -12,13 +12,14 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 
 ## Getting started
 
 ### Prerequisites
 
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
 * An existing Azure Language Service Resource
 
