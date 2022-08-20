@@ -6,6 +6,7 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING
 
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
@@ -15,12 +16,11 @@ from ..._internal import within_credential_chain
 if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
-    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ChainedTokenCredential(AsyncContextManager):
+class ChainedTokenCredential(AsyncContextManager, AsyncTokenCredential):
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first

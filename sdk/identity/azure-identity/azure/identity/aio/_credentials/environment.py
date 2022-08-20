@@ -6,8 +6,9 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
-from .._internal.decorators import log_get_token_async
+from azure.core.credentials_async import AsyncTokenCredential
 
+from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(AsyncContextManager):
+class EnvironmentCredential(AsyncContextManager, AsyncTokenCredential):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as

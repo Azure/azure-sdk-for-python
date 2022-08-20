@@ -4,6 +4,8 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.core.credentials import TokenCredential
+
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
@@ -14,11 +16,10 @@ from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
-    from azure.core.credentials import TokenCredential
     from .._internal import AadClientBase
 
 
-class SharedTokenCacheCredential(object):
+class SharedTokenCacheCredential(TokenCredential):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username: Username (typically an email address) of the user to authenticate as. This is used when the

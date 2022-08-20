@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 
 import six
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
@@ -31,7 +31,7 @@ COMMAND_LINE = "az account get-access-token --output json --resource {}"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 
 
-class AzureCliCredential(object):
+class AzureCliCredential(TokenCredential):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.

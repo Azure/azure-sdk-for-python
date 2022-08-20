@@ -5,6 +5,8 @@
 import logging
 import os
 
+from azure.core.credentials import TokenCredential
+
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.decorators import log_get_token
@@ -17,12 +19,12 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagedIdentityCredential(object):
+class ManagedIdentityCredential(TokenCredential):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of

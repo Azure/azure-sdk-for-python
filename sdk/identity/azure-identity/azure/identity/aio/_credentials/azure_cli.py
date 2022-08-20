@@ -7,7 +7,9 @@ import sys
 import os
 from typing import TYPE_CHECKING
 
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ClientAuthenticationError
+
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
@@ -27,7 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class AzureCliCredential(AsyncContextManager):
+class AzureCliCredential(AsyncContextManager, AsyncTokenCredential):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.

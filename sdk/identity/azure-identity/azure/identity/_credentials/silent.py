@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from msal import PublicClientApplication
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from .. import AuthenticationRecord
 
 
-class SilentAuthenticationCredential(object):
+class SilentAuthenticationCredential(TokenCredential):
     """Internal class for authenticating from the default shared cache given an AuthenticationRecord"""
 
     def __init__(self, authentication_record, **kwargs):

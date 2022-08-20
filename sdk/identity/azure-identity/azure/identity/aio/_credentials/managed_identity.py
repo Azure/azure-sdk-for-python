@@ -6,6 +6,8 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
+from azure.core.credentials_async import AsyncTokenCredential
+
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
@@ -14,12 +16,11 @@ from ..._constants import EnvironmentVariables
 if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
-    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagedIdentityCredential(AsyncContextManager):
+class ManagedIdentityCredential(AsyncContextManager, AsyncTokenCredential):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of

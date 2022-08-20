@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import six
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
@@ -47,7 +47,7 @@ Write-Output "`nazsdk%$($token.Token)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
 """
 
 
-class AzurePowerShellCredential(object):
+class AzurePowerShellCredential(TokenCredential):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.

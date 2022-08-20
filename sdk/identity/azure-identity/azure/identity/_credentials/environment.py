@@ -5,6 +5,7 @@
 import logging
 import os
 
+from azure.core.credentials import TokenCredential
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(object):
+class EnvironmentCredential(TokenCredential):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as

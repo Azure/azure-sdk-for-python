@@ -6,6 +6,8 @@ import asyncio
 import sys
 from typing import cast, TYPE_CHECKING
 
+from azure.core.credentials_async import AsyncTokenCredential
+
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
@@ -24,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class AzurePowerShellCredential(AsyncContextManager):
+class AzurePowerShellCredential(AsyncContextManager, AsyncTokenCredential):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.

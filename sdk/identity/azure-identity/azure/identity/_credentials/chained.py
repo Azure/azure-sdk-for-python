@@ -4,6 +4,7 @@
 # ------------------------------------
 import logging
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
@@ -17,7 +18,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ Attempted credentials:\n\t{}""".format(
     )
 
 
-class ChainedTokenCredential(object):
+class ChainedTokenCredential(TokenCredential):
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
