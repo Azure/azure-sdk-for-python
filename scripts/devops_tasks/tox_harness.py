@@ -28,6 +28,7 @@ from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup
 from ci_tools.build import create_package
 
+from packaging.requirements import InvalidRequirement
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
@@ -210,7 +211,7 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             for line in f:
                 try:
                     parsed_req = [req for req in parse_requirements(line)]
-                except RequirementParseError as e:
+                except (RequirementParseError, InvalidRequirement) as e:
                     parsed_req = [None]
                 req_lines.append((line, parsed_req))
 
