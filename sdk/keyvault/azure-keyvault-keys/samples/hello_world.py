@@ -17,6 +17,7 @@ from azure.keyvault.keys import KeyClient
 #    
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # 5. Key create, get, update, and delete permissions for your service principal in your vault
 #
