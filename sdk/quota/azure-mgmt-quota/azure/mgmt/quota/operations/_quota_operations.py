@@ -70,6 +70,9 @@ class QuotaOperations(object):
          added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
          specific resource.
         :type scope: str
+        :keyword api_version: Api Version. Default value is "2020-10-25". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CurrentQuotaLimitBase, or the result of cls(response)
         :rtype: ~azure.mgmt.quota.models.CurrentQuotaLimitBase
@@ -80,7 +83,8 @@ class QuotaOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15-preview"
+
+        api_version = kwargs.pop('api_version', "2020-10-25")  # type: str
         accept = "application/json"
 
         # Construct URL
@@ -126,12 +130,13 @@ class QuotaOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.CurrentQuotaLimitBase"]
+        
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CurrentQuotaLimitBase"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15-preview"
+        api_version = kwargs.pop('api_version', "2020-10-25")  # type: str
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -276,7 +281,7 @@ class QuotaOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15-preview"
+        api_version = kwargs.pop('api_version', "2020-10-25")  # type: str
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -432,7 +437,7 @@ class QuotaOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15-preview"
+        api_version = kwargs.pop('api_version', "2020-10-25")  # type: str
         accept = "application/json"
 
         def prepare_request(next_link=None):
