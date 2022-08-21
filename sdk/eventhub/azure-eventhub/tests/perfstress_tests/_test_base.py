@@ -55,24 +55,25 @@ class _EventHubProcessorTest(EventPerfTest):
         data = get_random_bytes(self.args.event_size)
         async with self.async_producer as producer:
             partitions = await producer.get_partition_ids()
+            total_events = 0
             for partition in partitions:
                 properties = await producer.get_partition_properties(partition_id=partition)
-                event_count = properties["last_enqueued_sequence_number"] - properties["beginning_sequence_number"]
-                print(f"Detected {event_count} events in partition {partition}.")
-                if event_count < self.args.preload:
-                    events_to_add = self.args.preload - event_count
-                    batch = await producer.create_batch(partition_id=partition)
-                    for i in range(events_to_add):
-                        try:
-                            batch.add(EventData(data))
-                        except ValueError:
-                            # Batch full
-                            await producer.send_batch(batch)
-                            print(f"Loaded {i} of {events_to_add} events to partition {partition}.")
-                            batch = await producer.create_batch()
-                            batch.add(EventData(data))
-                    await producer.send_batch(batch)
-                    print(f"Finished loading {events_to_add} events to partition {partition}.")
+                total_events += properties["last_enqueued_sequence_number"] - properties["beginning_sequence_number"]
+            print(f"Detected {total_events} events across {len(partitions)} partitions.")
+            if total_events < self.args.preload:
+                events_to_add = self.args.preload - total_events
+                batch = await producer.create_batch()
+                for i in range(events_to_add):
+                    try:
+                        batch.add(EventData(data))
+                    except ValueError:
+                        # Batch full
+                        await producer.send_batch(batch)
+                        print(f"Loaded {i} of {events_to_add} events.")
+                        batch = await producer.create_batch()
+                        batch.add(EventData(data))
+                await producer.send_batch(batch)
+                print(f"Finished loading {events_to_add} events.")
 
     async def global_setup(self):
         await super().global_setup()
@@ -117,7 +118,7 @@ class _EventHubProcessorTest(EventPerfTest):
         parser.add_argument('--max-wait-time', nargs='?', type=float, help='Maximum time to wait for an event to be received.', default=None)
         parser.add_argument('--processing-delay', nargs='?', type=int, help='Delay when processing each event (in ms).', default=None)
         parser.add_argument('--processing-delay-strategy', nargs='?', type=str, help="Whether to 'sleep' or 'spin' during processing delay. Default is 'sleep'.", default='sleep')
-        parser.add_argument('--preload', nargs='?', type=int, help='Ensure the specified number of events are available in each partition. Default is 0.', default=0)
+        parser.add_argument('--preload', nargs='?', type=int, help='Ensure the specified number of events are available across all partitions. Default is 0.', default=0)
         parser.add_argument('--use-storage-checkpoint', action="store_true", help="Use Blob storage for checkpointing. Default is False (in-memory checkpointing).", default=False)
 
 
