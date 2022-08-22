@@ -1,18 +1,19 @@
-# Guide for migrating to azure-ai-language-question-answering from azure-cognitiveservices-knowledge-qnamaker
+# Guide for migrating to azure-ai-language-questionanswering from azure-cognitiveservices-knowledge-qnamaker
 
-This guide is intended to assist in the migration to `azure-ai-language-question-answering`. It will focus on side-by-side comparisons for similar operations between the two packages.
+This guide is intended to assist in the migration to `azure-ai-language-questionanswering`. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-Familiarity with the `azure-ai-language-question-answering` package is assumed. For those new to the Key Vault client library for Python, please refer to the [README for `azure-ai-language-question-answering`][qna_readme] rather than this guide.
+Familiarity with the `azure-cognitiveservices-knowledge-qnamaker` package is assumed. For those new to the Question Answering client library for Python, please refer to the [README for `azure-ai-language-questionanswering`][qna_readme] rather than this guide.
 
 ## Table of contents
-
-* [Migration benefits](#migration-benefits)
-* [Important changes](#important-changes)
-    - [Separate packages and clients](#separate-packages-and-clients)
-    - [Client constructors](#client-constructors)
-    - [Async operations](#async-operations)
-    - [Query a Knowledge Base](#query-a-knowledge-base)
-* [Additional samples](#additional-samples)
+  - [Migration benefits](#migration-benefits)
+    - [Cross Service SDK improvements](#cross-service-sdk-improvements)
+  - [Important changes](#important-changes)
+    - [Runtime Client](#runtime-client)
+      - [Authenticating runtime client](#authenticating-runtime-client)
+      - [Querying a question](#querying-a-question)
+      - [Chatting](#chatting)
+  - [Async operations](#async-operations)
+  - [Additional Samples](#additional-samples)
 
 ## Migration benefits
 
@@ -30,11 +31,11 @@ The modern Question Answering client library also provides the ability to share 
 
 ## Important changes
 
-### Client constructors
+### Runtime Client
 
 Across all modern Azure client libraries, clients consistently take an endpoint or connection string along with token credentials. This differs from `QnAMakerClient`, which took an authentication delegate.
 
-#### Authenticating
+#### Authenticating runtime client
 
 Previously in `azure-cognitiveservices-knowledge-qnamaker` you could create a `QnAMakerClient` by using `CognitiveServicesCredentials` from `msrest.authentication`:
 
@@ -60,36 +61,16 @@ client = QuestionAnsweringClient(
 )
 ```
 
-### Async operations
-
-The modern `azure-ai-language-question-answering` library includes a complete async API supported on Python 3.7+. To use it, you must first install an async transport, such as [aiohttp][aiohttp]. See [azure-core documentation][azure_core_transport] for more information.
-
-Async operations are available on async clients, which should be closed when they're no longer needed. Each async client is an async context manager and defines an async `close` method. For example:
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering import QuestionAnsweringClient
-
-endpoint = "https://<my-cognitiveservices-account>.cognitiveservices.azure.com"
-credential = AzureKeyCredential("API key")
-
-# call close when the client is no longer needed
-client = QuestionAnsweringClient(endpoint=endpoint, credential=credential)
-...
-await client.close()
-
-# alternatively, use the client as an async context manager
-async with QuestionAnsweringClient(endpoint=endpoint, credential=credential) as client:
-    ...
-```
-
-### Query a Knowledge Base
+#### Querying a question
 
 In `azure-cognitiveservices-knowledge-qnamaker`, you would have to import and create a model
 to query a knowledge base.
 
 ```python
 from azure.cognitiveservices.knowledge.qnamaker.models import QueryDTO
+from azure.cognitiveservices.knowledge.qnamaker import QnAMakerClient
+
+client = QnAMakerClient(endpoint, credentials)
 
 generate_answer_payload = QueryDTO(
     question="How long should my Surface battery last?",
@@ -112,13 +93,82 @@ You can either:
 In this sample, we will show how to pass in the arguments as keyword arguments.
 
 ```python
-response = client.query_knowledge_base(
+from azure.ai.language.questionanswering import QuestionAnsweringClient
+
+client = QuestionAnsweringClient(endpoint=endpoint, credential=credential)
+
+response = client.get_answers(
     question="How long should my Surface battery last?",
     project_name="<my-qna-project-name>",
     deployment_name="<my-qna-deployment-name>"
 )
 best_answers = [a for a in response.answers if a.confidence_score > 0.9]
 ```
+
+#### Chatting
+
+Previously in `azure-cognitiveservices-knowledge-qnamaker`, you could chat using `QueryDTO` along with setting the context to have `previous_qna_id`:
+
+```python
+from azure.cognitiveservices.knowledge.qnamaker.models import QueryDTO, QueryDTOContext
+from azure.cognitiveservices.knowledge.qnamaker import QnAMakerClient
+
+client = QnAMakerClient(endpoint, credentials)
+
+generate_answer_payload = QueryDTO(
+    question="How long should my Surface battery last?",
+    context=QueryDTOContext(previous_qna_id=1)
+)
+
+response = client.generate_answer(
+    kb_id="<my-knowledge-base-id>",
+    generate_answer_payload=generate_answer_payload,
+)
+```
+
+Now in `azure-ai-language-questionanswering`, you use `KnowledgeBaseAnswerContext` to set the context to have `previous_qna_id`:
+
+
+```python
+from azure.ai.language.questionanswering import QuestionAnsweringClient, KnowledgeBaseAnswerContext
+
+client = QuestionAnsweringClient(endpoint=endpoint, credential=credential)
+
+response = client.get_answers(
+    question="How long should my Surface battery last?",
+    project_name="<my-qna-project-name>",
+    deployment_name="<my-qna-deployment-name>",
+    answer_context=KnowledgeBaseAnswerContext(
+        previous_qna_id=1
+    )
+)
+
+best_answers = [a for a in response.answers if a.confidence_score > 0.9]
+```
+
+### Async operations
+
+The modern `azure-ai-language-questionanswering` library includes a complete async API. To use it, you must first install an async transport, such as [aiohttp][aiohttp]. See [azure-core documentation][azure_core_transport] for more information.
+
+Async operations are available on async clients, which should be closed when they're no longer needed. Each async client is an async context manager and defines an async `close` method. For example:
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
+
+endpoint = "https://<my-cognitiveservices-account>.cognitiveservices.azure.com"
+credential = AzureKeyCredential("API key")
+
+# call close when the client is no longer needed
+client = QuestionAnsweringClient(endpoint=endpoint, credential=credential)
+...
+await client.close()
+
+# alternatively, use the client as an async context manager
+async with QuestionAnsweringClient(endpoint=endpoint, credential=credential) as client:
+    ...
+```
+
 
 ## Additional Samples
 
