@@ -413,6 +413,11 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
 
                         policies = router_client.list_classification_policies(results_per_page = 2)
                         async for policy_page in policies.by_page():
+
+                            if policy_count == 0:
+                                # all created policies have been listed
+                                break
+
                             list_of_policies = [i async for i in policy_page]
                             assert len(list_of_policies) <= 2
 
@@ -431,9 +436,6 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                                     worker_selectors = response_at_creation.worker_selectors
                                 )
                                 policy_count -= 1
-
-                        # all policies created were listed
-                        assert policy_count == 0
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')

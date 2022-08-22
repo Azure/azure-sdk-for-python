@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from _router_test_case import RouterTestCase
 from _decorators import RouterPreparers
 from _validators import ClassificationPolicyValidator
@@ -400,7 +400,13 @@ class TestClassificationPolicy(RouterTestCase):
                         created_cp_response[classification_policy.id] = classification_policy
 
                     policies = router_client.list_classification_policies(results_per_page = 2)
+
                     for policy_page in policies.by_page():
+
+                        if policy_count == 0:
+                            # all created policies have been listed
+                            break
+
                         list_of_policies = list(policy_page)
                         assert len(list_of_policies) <= 2
 
@@ -419,9 +425,6 @@ class TestClassificationPolicy(RouterTestCase):
                                 worker_selectors = response_at_creation.worker_selectors
                             )
                             policy_count -= 1
-
-                    # all policies created were listed
-                    assert policy_count == 0
 
         self.clean_up()
 
