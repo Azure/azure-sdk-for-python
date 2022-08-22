@@ -5,7 +5,6 @@ import shutil
 import re
 import multiprocessing
 import glob
-import pdb
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -211,7 +210,8 @@ def inject_custom_reqs(file, injected_packages, package_dir):
                 logging.info("Attempting to parse {}".format(line))
                 try:
                     parsed_req = [req for req in parse_requirements(line)]
-                except RequirementParseError as e:
+                except Exception as e:
+                    logging.error(e)
                     parsed_req = [None]
                 req_lines.append((line, parsed_req))
 
@@ -226,6 +226,8 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             ]
         else:
             all_adjustments = injected_packages
+
+        logging.info("Generated Custom Reqs: {}".format(req_lines))
 
         with open(file, "w") as f:
             # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
