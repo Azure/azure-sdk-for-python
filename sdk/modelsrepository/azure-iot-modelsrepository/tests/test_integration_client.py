@@ -6,7 +6,7 @@
 import os
 import pytest
 import functools
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.modelsrepository import (
     ModelsRepositoryClient,
@@ -207,7 +207,6 @@ class TestGetModelsDependencyModeEnabled(AzureRecordedTestCase):
             model = model_map[dtmi]
             assert model["@id"] == dtmi
 
-    @recorded_by_proxy
     def test_duplicate_dtmi(self, client):
         dtmi1 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
         dtmi2 = "dtmi:azure:DeviceManagement:DeviceInformation;1"
