@@ -455,15 +455,13 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             # flush is unsuccessful because extra data were appended.
             await file_client.flush_data(6, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_upload_data_in_substreams(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-
-        # parallel upload cannot be recorded
 
         directory_name = self._get_directory_reference()
 
@@ -486,14 +484,14 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         downloaded_data = await data.readall()
         assert raw_data == downloaded_data
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_upload_data(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # parallel upload cannot be recorded
+
         directory_name = self._get_directory_reference()
 
         # Create a directory to put the file under that
@@ -507,8 +505,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         downloaded_data = await (await file_client.download_file()).readall()
         assert data == downloaded_data
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_upload_data_to_existing_file(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -529,20 +527,19 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         # to override the existing file
         data = self.get_random_bytes(100)
         with pytest.raises(HttpResponseError):
-            await file_client.upload_data(data, max_concurrency=5)
-        await file_client.upload_data(data, overwrite=True, max_concurrency=5)
+            await file_client.upload_data(data)
+        await file_client.upload_data(data, overwrite=True)
 
         downloaded_data = await (await file_client.download_file()).readall()
         assert data == downloaded_data
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_upload_data_to_existing_file_with_content_settings(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # etag in async recording file cannot be parsed properly
         directory_name = self._get_directory_reference()
 
         # Create a directory to put the file under that
@@ -560,9 +557,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
 
-        await file_client.upload_data(data, max_concurrency=5,
-                                      content_settings=content_settings, etag=etag,
-                                      match_condition=MatchConditions.IfNotModified)
+        await file_client.upload_data(data, content_settings=content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         downloaded_data = await (await file_client.download_file()).readall()
         properties = await file_client.get_file_properties()
@@ -570,14 +565,14 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         assert data == downloaded_data
         assert properties.content_settings.content_language == content_settings.content_language
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_upload_data_to_existing_file_with_permissions_and_umask(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # etag in async recording file cannot be parsed properly
+
         directory_name = self._get_directory_reference()
 
         # Create a directory to put the file under that
@@ -592,11 +587,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         # to override the existing file
         data = self.get_random_bytes(100)
 
-        await file_client.upload_data(data,
-                                      overwrite=True, max_concurrency=5,
-                                      permissions='0777', umask="0000",
-                                      etag=etag,
-                                      match_condition=MatchConditions.IfNotModified)
+        await file_client.upload_data(data, overwrite=True, permissions='0777', umask="0000", etag=etag, match_condition=MatchConditions.IfNotModified)
 
         downloaded_data = await (await file_client.download_file()).readall()
         prop = await file_client.get_access_control()
@@ -677,7 +668,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # download the data into a file and make sure it is the same as uploaded data
         with open(FILE_PATH, 'wb') as stream:
-            download = await file_client.download_file(max_concurrency=2)
+            download = await file_client.download_file()
             await download.readinto(stream)
 
         # Assert
@@ -700,7 +691,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await file_client.flush_data(len(data))
 
         # download the text data and make sure it is the same as uploaded data
-        downloaded_data = await (await file_client.download_file(max_concurrency=2, encoding="utf-8")).readall()
+        downloaded_data = await (await file_client.download_file(encoding="utf-8")).readall()
 
         # Assert
         assert data == downloaded_data
@@ -1103,8 +1094,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         assert data == data_bytes
         assert new_client.path_name == "newname"
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_will_not_change_existing_directory(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")

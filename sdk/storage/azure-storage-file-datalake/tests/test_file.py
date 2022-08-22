@@ -455,14 +455,13 @@ class TestFile(StorageRecordedTestCase):
             # flush is unsuccessful because extra data were appended.
             file_client.flush_data(6, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_upload_data_to_none_existing_file(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # parallel upload cannot be recorded
 
         directory_name = self._get_directory_reference()
 
@@ -477,14 +476,13 @@ class TestFile(StorageRecordedTestCase):
         downloaded_data = file_client.download_file().readall()
         assert data == downloaded_data
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_upload_data_in_substreams(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # parallel upload cannot be recorded
         directory_name = self._get_directory_reference()
 
         # Create a directory to put the file under that
@@ -526,8 +524,8 @@ class TestFile(StorageRecordedTestCase):
         # to override the existing file
         data = self.get_random_bytes(100)
         with pytest.raises(HttpResponseError):
-            file_client.upload_data(data, max_concurrency=5)
-        file_client.upload_data(data, overwrite=True, max_concurrency=5)
+            file_client.upload_data(data)
+        file_client.upload_data(data, overwrite=True)
 
         downloaded_data = file_client.download_file().readall()
         assert data == downloaded_data
@@ -555,9 +553,7 @@ class TestFile(StorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
 
-        file_client.upload_data(data, max_concurrency=5,
-                                content_settings=content_settings, etag=etag,
-                                match_condition=MatchConditions.IfNotModified)
+        file_client.upload_data(data, content_settings=content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         downloaded_data = file_client.download_file().readall()
         properties = file_client.get_file_properties()
@@ -585,10 +581,7 @@ class TestFile(StorageRecordedTestCase):
         # to override the existing file
         data = self.get_random_bytes(100)
 
-        file_client.upload_data(data, overwrite=True, max_concurrency=5,
-                                permissions='0777', umask="0000",
-                                etag=etag,
-                                match_condition=MatchConditions.IfNotModified)
+        file_client.upload_data(data, overwrite=True, permissions='0777', umask="0000", etag=etag, match_condition=MatchConditions.IfNotModified)
 
         downloaded_data = file_client.download_file().readall()
         prop = file_client.get_access_control()
@@ -742,7 +735,6 @@ class TestFile(StorageRecordedTestCase):
         acl = new_file_client.set_access_control(permissions='0777')
         assert acl is not None
 
-    # TODO: MAYBE LIVE ONLY BC CONCURRENCY 2
     @DataLakePreparer()
     @recorded_by_proxy
     def test_read_file_into_file(self, **kwargs):
@@ -759,7 +751,7 @@ class TestFile(StorageRecordedTestCase):
 
         # download the data into a file and make sure it is the same as uploaded data
         with open(FILE_PATH, 'wb') as stream:
-            download = file_client.download_file(max_concurrency=2)
+            download = file_client.download_file()
             download.readinto(stream)
 
         # Assert
@@ -782,7 +774,7 @@ class TestFile(StorageRecordedTestCase):
         file_client.flush_data(len(data))
 
         # download the text data and make sure it is the same as uploaded data
-        downloaded_data = file_client.download_file(max_concurrency=2, encoding="utf-8").readall()
+        downloaded_data = file_client.download_file(encoding="utf-8").readall()
 
         # Assert
         assert data == downloaded_data
