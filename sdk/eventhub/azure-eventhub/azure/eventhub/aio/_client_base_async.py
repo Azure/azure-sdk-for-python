@@ -271,17 +271,14 @@ class ClientBaseAsync(ClientBase):
                 if not access_token.token:
                     _LOGGER.debug("update_token received an empty token")
                 
-                response = await mgmt_client.mgmt_request_async(
+                status_code, description, response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
                     operation=READ_OPERATION.decode(),
                     operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(
-                    MGMT_STATUS_DESC
-                )  # type: Optional[Union[str, bytes]]
+                status_code = int(status_code)
                 if description and isinstance(description, six.binary_type):
                     description = description.decode("utf-8")
                 if status_code < 400:
