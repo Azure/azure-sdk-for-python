@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-import pytest
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
 
+import pytest
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -377,7 +377,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await file_client.flush_data(0)
         file_props = await file_client.get_file_properties()
 
-        assert file_props['size'] is not None
+        assert file_props['size'] == 0
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1043,8 +1043,10 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_file_encryption_scope_from_file_system_async(self, datalake_storage_account_name,
-                                                                datalake_storage_account_key):
+    async def test_file_encryption_scope_from_file_system_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)

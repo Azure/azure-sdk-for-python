@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
 
+import pytest
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -377,7 +377,7 @@ class TestFile(StorageRecordedTestCase):
         file_client.flush_data(0)
         file_props = file_client.get_file_properties()
 
-        assert file_props['size'] is not None
+        assert file_props['size'] == 0
 
     @DataLakePreparer()
     @recorded_by_proxy
