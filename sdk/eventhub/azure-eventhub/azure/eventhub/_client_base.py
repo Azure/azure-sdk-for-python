@@ -10,7 +10,7 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-from datetime import timedelta
+from datetime import timedelta, datetime
 from urllib.parse import urlparse
 import six
 
@@ -418,10 +418,20 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open()
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
-                # TODO: below might not be needed
+                    
+                access_token = self._amqp_transport.get_updated_token(mgmt_auth)
+                if not access_token:
+                    _LOGGER.debug("Management client received an empty access token object")
+                elif not access_token.token:
+                    _LOGGER.debug("Management client received an empty token")
+                else:
+                    _LOGGER.debug(f"Management client token expires on: {datetime.fromtimestamp(access_token.expires_on)}")
+                
+                # TODO: double check whether access_token or access_token.token
                 mgmt_msg.application_properties[
                     "security_token"
-                ] = self._amqp_transport.get_updated_token(mgmt_auth)
+                ] = access_token
+                
                 response = self._amqp_transport.mgmt_client_request(
                     mgmt_client,
                     mgmt_msg,

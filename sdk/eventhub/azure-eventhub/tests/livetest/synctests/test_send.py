@@ -237,8 +237,8 @@ def test_send_partition(connstr_receivers, uamqp_transport):
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
 
-    partition_0 = receivers[0].receive_message_batch(timeout=5)
-    partition_1 = receivers[1].receive_message_batch(timeout=5)
+    partition_0 = receivers[0].receive_message_batch(timeout=10)
+    partition_1 = receivers[1].receive_message_batch(timeout=10)
     assert len(partition_0) + len(partition_1) == 2
 
     with client:
@@ -251,8 +251,9 @@ def test_send_partition(connstr_receivers, uamqp_transport):
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
 
-    partition_0 = receivers[0].receive_message_batch(timeout=5)
-    partition_1 = receivers[1].receive_message_batch(timeout=5)
+    time.sleep(5)
+    partition_0 = receivers[0].receive_message_batch(timeout=10)
+    partition_1 = receivers[1].receive_message_batch(timeout=10)
     assert len(partition_0) + len(partition_1) == 2
 
 
