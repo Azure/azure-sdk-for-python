@@ -16,6 +16,8 @@ To learn how to use this package, see the [quickstart guide](https://aka.ms/azsd
 
 {% if not sample_link %}
 {% set sample_link="https://aka.ms/azsdk/python/mgmt/samples" %}
+{% else %}
+{% set sample_link="https://github.com/Azure-Samples/azure-samples-python-management/tree/main/samples/" + sample_link %}
 {% endif %}
 
 {% if is_arm %} 
