@@ -207,6 +207,7 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             "Adding custom packages to requirements for {}".format(package_dir)
         )
         with open(file, "r") as f:
+            logging.info("Attempting to parse {}".format(line))
             for line in f:
                 try:
                     parsed_req = [req for req in parse_requirements(line)]
