@@ -178,7 +178,7 @@ class TestAssignmentScenario(RouterTestCase):
         assigned_jobs = [assigned_job for assigned_job in router_worker.assigned_jobs if assigned_job.job_id == job_id]
         assert any(offer_for_jobs) or any(assigned_jobs)
 
-    def validate_worker_deregistration(
+    def validate_worker_deregistration(  # cSpell:disable-line
             self,
             worker_id,  # type: str
             **kwargs,  # type: Any

@@ -136,17 +136,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                     if self._testMethodName in self.job_ids \
                             and any(self.job_ids[self._testMethodName]):
                         for _id in set(self.job_ids[self._testMethodName]):
-                            await router_client.cancel_job(
-                                job_id = _id,
-                                disposition_code = "JobCancelledAsPartOfTestCleanUp",
-                                note = f"Cancelling job after test cleanup after: {self._testMethodName}")
-
-                            await self._poll_until_no_exception(
-                                    self.validate_job_is_cancelled,
-                                    Exception,
-                                    _id)
-
-                            await router_client.delete_job(job_id = _id)
+                            await self.clean_up_job(job_id = _id)
 
                     if self._testMethodName in self.classification_policy_ids \
                             and any(self.classification_policy_ids[self._testMethodName]):
