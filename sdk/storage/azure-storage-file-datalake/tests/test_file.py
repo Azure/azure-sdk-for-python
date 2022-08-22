@@ -1178,7 +1178,7 @@ class TestFile(StorageRecordedTestCase):
         assert data == data_bytes
         assert new_client.path_name == "newname"
 
-    @pytest.mark.skip(reason="Service bug, requires further investigation.")
+    @pytest.mark.live_test_only
     @DataLakePreparer()
     def test_rename_file_with_account_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
