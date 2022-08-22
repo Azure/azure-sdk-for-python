@@ -131,17 +131,7 @@ class TestRouterJob(RouterTestCase):
             if self._testMethodName in self.job_ids \
                     and any(self.job_ids[self._testMethodName]):
                 for _id in set(self.job_ids[self._testMethodName]):
-                    router_client.cancel_job(
-                        job_id = _id,
-                        disposition_code = "JobCancelledAsPartOfTestCleanUp",
-                        note = f"Cancelling job after test cleanup after: {self._testMethodName}")
-
-                    self._poll_until_no_exception(
-                        self.validate_job_is_cancelled,
-                        Exception,
-                        _id)
-
-                    router_client.delete_job(job_id = _id)
+                    self.clean_up_job(job_id = _id)
 
             if self._testMethodName in self.classification_policy_ids \
                     and any(self.classification_policy_ids[self._testMethodName]):
@@ -520,7 +510,7 @@ class TestRouterJob(RouterTestCase):
             notes = job_notes
         )
 
-        assert router_job.job_status == RouterJobStatus.QUEUED
+        assert router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
 
         self._poll_until_no_exception(
             self.validate_job_is_queued,
