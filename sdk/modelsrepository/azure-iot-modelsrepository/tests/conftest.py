@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from devtools_testutils import test_proxy
+from devtools_testutils import test_proxy, recorded_test
 
 # autouse=True will trigger this fixture on each pytest run, even if it's
 # not explicitly used by a test method. This is necessary for test recordings.
