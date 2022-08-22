@@ -1,5 +1,4 @@
-from azure.ai.ml import dsl
-from azure.ai.ml.entities import load_component
+from azure.ai.ml import dsl, load_component
 from azure.ai.ml import MpiDistribution
 from azure.ai.ml.entities import PipelineJob
 from pathlib import Path
@@ -11,7 +10,7 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    mpi_func = load_component(yaml_file=parent_dir + "/component.yml")
+    mpi_func = load_component(path=parent_dir + "/component.yml")
 
     # 2. Construct pipeline
     @dsl.pipeline(description="Show the MPI training environment")

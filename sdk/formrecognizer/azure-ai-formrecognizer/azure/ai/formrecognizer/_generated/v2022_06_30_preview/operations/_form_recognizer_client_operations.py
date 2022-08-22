@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, cast
 
 from msrest import Serializer
 
-from ...._polling import DocumentModelAdministrationLROPoller
+from ...._polling import DocumentModelAdministrationClientLROPoller
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
@@ -745,7 +745,7 @@ class FormRecognizerClientOperationsMixin(object):
         build_request,  # type: _models.BuildDocumentModelRequest
         **kwargs  # type: Any
     ):
-        # type: (...) -> DocumentModelAdministrationLROPoller[None]
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
         """Build model.
 
         Builds a custom document analysis model.
@@ -761,9 +761,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of DocumentModelAdministrationLROPoller that returns either None or the
-         result of cls(response)
-        :rtype: ~...._polling.DocumentModelAdministrationLROPoller[None]
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -809,13 +809,13 @@ class FormRecognizerClientOperationsMixin(object):
         elif polling is False: polling_method = cast(PollingMethod, NoPolling())
         else: polling_method = polling
         if cont_token:
-            return DocumentModelAdministrationLROPoller.from_continuation_token(
+            return DocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return DocumentModelAdministrationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_build_document_model.metadata = {'url': "/documentModels:build"}  # type: ignore
 
@@ -880,7 +880,7 @@ class FormRecognizerClientOperationsMixin(object):
         compose_request,  # type: _models.ComposeDocumentModelRequest
         **kwargs  # type: Any
     ):
-        # type: (...) -> DocumentModelAdministrationLROPoller[None]
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
         """Compose model.
 
         Creates a new model from document types of existing models.
@@ -896,9 +896,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of DocumentModelAdministrationLROPoller that returns either None or the
-         result of cls(response)
-        :rtype: ~...._polling.DocumentModelAdministrationLROPoller[None]
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -944,13 +944,13 @@ class FormRecognizerClientOperationsMixin(object):
         elif polling is False: polling_method = cast(PollingMethod, NoPolling())
         else: polling_method = polling
         if cont_token:
-            return DocumentModelAdministrationLROPoller.from_continuation_token(
+            return DocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return DocumentModelAdministrationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_compose_document_model.metadata = {'url': "/documentModels:compose"}  # type: ignore
 
@@ -1088,7 +1088,7 @@ class FormRecognizerClientOperationsMixin(object):
         copy_to_request,  # type: _models.CopyAuthorization
         **kwargs  # type: Any
     ):
-        # type: (...) -> DocumentModelAdministrationLROPoller[None]
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
         """Copy model.
 
         Copies model to the target resource, region, and modelId.
@@ -1105,9 +1105,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of DocumentModelAdministrationLROPoller that returns either None or the
-         result of cls(response)
-        :rtype: ~...._polling.DocumentModelAdministrationLROPoller[None]
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1154,13 +1154,13 @@ class FormRecognizerClientOperationsMixin(object):
         elif polling is False: polling_method = cast(PollingMethod, NoPolling())
         else: polling_method = polling
         if cont_token:
-            return DocumentModelAdministrationLROPoller.from_continuation_token(
+            return DocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return DocumentModelAdministrationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_copy_document_model_to.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
 

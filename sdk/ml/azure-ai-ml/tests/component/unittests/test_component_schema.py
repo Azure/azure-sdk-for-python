@@ -1,3 +1,4 @@
+import copy
 from typing import Union
 from unittest import mock
 
@@ -6,28 +7,29 @@ import pydash
 import yaml
 from pathlib import Path
 import pytest
+
+from azure.ai.ml.entities._component.component_factory import component_factory
+from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER, COMPONENT_CODE_PLACEHOLDER
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from marshmallow import ValidationError
 
 from azure.ai.ml import MLClient, load_component
-from azure.ai.ml.operations._component_operations import (
-    COMPONENT_PLACEHOLDER,
-    COMPONENT_CODE_PLACEHOLDER,
-)
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml._schema.component.command_component import CommandComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     AssetTypes,
-    InputOutputModes,
     LegacyAssetTypes,
 )
-from azure.ai.ml.entities import CommandComponent, Environment
+from azure.ai.ml.entities import CommandComponent, Environment, Component
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._ml_exceptions import ValidationException
 
-components_dir = Path("./tests/test_configs/components/")
+from .._util import _COMPONENT_TIMEOUT_SECOND
+
+tests_root_dir = Path(__file__).parent.parent.parent
+components_dir = tests_root_dir / "test_configs/components/"
 
 
 def load_component_entity_from_yaml(
@@ -36,20 +38,25 @@ def load_component_entity_from_yaml(
     context={},
     is_anonymous=False,
     fields_to_override=None,
+    _type="command",
 ) -> CommandComponent:
     """Component yaml -> component entity -> rest component object -> component entity"""
     with open(path, "r") as f:
-        cfg = yaml.safe_load(f)
+        data = yaml.safe_load(f)
     context.update({BASE_PATH_CONTEXT_KEY: Path(path).parent})
-    schema = CommandComponentSchema(context=context)
-    data = dict(schema.load(cfg))
+    create_instance_func, create_schema_func = component_factory.get_create_funcs(_type)
+    data = dict(create_schema_func(context).load(data))
     if fields_to_override is None:
         fields_to_override = {}
     data.update(fields_to_override)
     if is_anonymous is True:
         data["name"] = None
         data["version"] = None
-    internal_representation: CommandComponent = CommandComponent(**data)
+
+    internal_representation = create_instance_func()
+    internal_representation.__init__(
+        **data,
+    )
 
     def mock_get_asset_arm_id(*args, **kwargs):
         if len(args) > 0:
@@ -69,7 +76,7 @@ def load_component_entity_from_yaml(
         "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
         side_effect=mock_get_asset_arm_id,
     ):
-        mock_machinelearning_client.components._upload_dependencies(internal_representation)
+        mock_machinelearning_client.components._resolve_arm_id_or_upload_dependencies(internal_representation)
     rest_component = internal_representation._to_rest_object()
     # set arm id before deserialize
     mock_workspace_scope = mock_machinelearning_client._operation_scope
@@ -85,15 +92,16 @@ def load_component_entity_from_yaml(
     return internal_component
 
 
-def load_component_entity_from_rest_json(path) -> CommandComponent:
+def load_component_entity_from_rest_json(path) -> Component:
     """Rest component json -> rest component object -> component entity"""
     with open(path, "r") as f:
         target = yaml.safe_load(f)
     rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(target)))
-    internal_component = CommandComponent._from_rest_object(rest_obj)
+    internal_component = Component._from_rest_object(rest_obj)
     return internal_component
 
 
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestCommandComponent:
     def test_serialize_deserialize_basic(self, mock_machinelearning_client: MLClient):
@@ -102,12 +110,6 @@ class TestCommandComponent:
         rest_path = "./tests/test_configs/components/helloworld_component_rest.json"
         target_entity = load_component_entity_from_rest_json(rest_path)
 
-        # backend add optional=False and port name to inputs/outputs so we add it here manually
-        for name, input in component_entity.inputs.items():
-            input["optional"] = str(input.get("optional", False))
-            input["name"] = name
-        for name, output in component_entity.outputs.items():
-            output["name"] = name
         # skip check code and environment
         component_dict = component_entity._to_dict()
         assert component_dict["id"]
@@ -136,12 +138,6 @@ class TestCommandComponent:
         rest_path = "./tests/test_configs/components/input_types_component_rest.json"
         target_entity = load_component_entity_from_rest_json(rest_path)
 
-        # backend add optional=False and port name to inputs/outputs so we add it here manually
-        for name, input in component_entity.inputs.items():
-            input["optional"] = "False"
-            input["name"] = name
-        for name, output in component_entity.outputs.items():
-            output["name"] = name
         # skip check code and environment
         component_dict = pydash.omit(dict(component_entity._to_dict()), "command", "environment", "code", "id")
         expected_dict = pydash.omit(
@@ -167,10 +163,11 @@ class TestCommandComponent:
             ]
         }
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client, context)
-        assert component_entity.inputs == {
+        inputs_dict = {k: v._to_dict() for k, v in component_entity.inputs.items()}
+        assert inputs_dict == {
             "component_in_number": {
                 "type": "number",
-                "default": "10.99",
+                "default": 10.99,
                 "description": "A number",
                 "optional": True,
             },
@@ -181,17 +178,18 @@ class TestCommandComponent:
         }
 
         override_inputs = {
+            # according to InputPortSchema, mode in component input will not take effect
             "component_in_path": {"type": "uri_folder"},
-            "component_in_number": {"max": "1.0", "min": "0.0", "type": "number"},
+            "component_in_number": {"max": 1.0, "min": 0.0, "type": "number"},
             "override_param3": {"optional": True, "type": "integer"},
             "override_param4": {"default": False, "type": "boolean"},
             "override_param5": {"default": "str", "type": "string"},
             "override_param6": {"enum": ["enum1", "enum2", "enum3"], "type": "string"},
         }
-        context = {PARAMS_OVERRIDE_KEY: [{"inputs": override_inputs}]}
+        context = {PARAMS_OVERRIDE_KEY: [{"inputs": copy.deepcopy(override_inputs)}]}
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client, context)
-
-        assert component_entity.inputs == override_inputs
+        inputs_dict = {k: v._to_dict() for k, v in component_entity.inputs.items()}
+        assert inputs_dict == override_inputs
 
     def test_serialize_deserialize_with_code_path(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
@@ -250,18 +248,18 @@ class TestCommandComponent:
         # scenario 1: same component interface, same code
         test_path1 = "./tests/test_configs/components/basic_component_code_local_path.yml"
         component_entity1 = load_component_entity_from_yaml(test_path1, mock_machinelearning_client, is_anonymous=True)
-        component_name1 = component_entity1._get_anonymous_hash()
+        component_hash1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(test_path1, mock_machinelearning_client, is_anonymous=True)
-        component_name2 = component_entity2._get_anonymous_hash()
-        assert component_name1 == component_name2
+        component_hash2 = component_entity2._get_anonymous_hash()
+        assert component_hash1 == component_hash2
 
         # scenario 2: same component, no code
         test_path2 = "./tests/test_configs/components/helloworld_component.yml"
         component_entity1 = load_component_entity_from_yaml(test_path2, mock_machinelearning_client, is_anonymous=True)
-        component_name1 = component_entity1._get_anonymous_hash()
+        component_hash1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(test_path2, mock_machinelearning_client, is_anonymous=True)
-        component_name2 = component_entity2._get_anonymous_hash()
-        assert component_name1 == component_name2
+        component_hash2 = component_entity2._get_anonymous_hash()
+        assert component_hash1 == component_hash2
 
         # scenario 3: same component interface, different code
         code_path1 = "./tests/test_configs/components/basic_component_code_local_path.yml"
@@ -275,15 +273,15 @@ class TestCommandComponent:
             is_anonymous=True,
             fields_to_override=data1,
         )
-        component_name1 = component_entity1._get_anonymous_hash()
+        component_hash1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(
             test_path1,
             mock_machinelearning_client,
             is_anonymous=True,
             fields_to_override=data2,
         )
-        component_name2 = component_entity2._get_anonymous_hash()
-        assert component_name1 != component_name2
+        component_hash2 = component_entity2._get_anonymous_hash()
+        assert component_hash1 != component_hash2
 
         # scenario 4: different component interface, same code
         data1 = {"display_name": "CommandComponentBasic1"}
@@ -295,15 +293,15 @@ class TestCommandComponent:
             is_anonymous=True,
             fields_to_override=data1,
         )
-        component_name1 = component_entity1._get_anonymous_hash()
+        component_hash1 = component_entity1._get_anonymous_hash()
         component_entity2 = load_component_entity_from_yaml(
             test_path1,
             mock_machinelearning_client,
             is_anonymous=True,
             fields_to_override=data2,
         )
-        component_name2 = component_entity2._get_anonymous_hash()
-        assert component_name1 != component_name2
+        component_hash2 = component_entity2._get_anonymous_hash()
+        assert component_hash1 != component_hash2
 
     def test_component_name_validate(self):
         invalid_component_names = [
@@ -406,14 +404,61 @@ class TestCommandComponent:
             # existent path
             _check_validation_result("../python")
 
-    def test_component_validate_multiple_invalid_fields(self) -> None:
+    def test_component_validate_multiple_invalid_fields(self, mock_machinelearning_client: MLClient) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
+        location_str = str(Path(component_path))
         component: CommandComponent = load_component(path=component_path)
         component.name = None
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = component._validate()
+        validation_result = mock_machinelearning_client.components.validate(component)
         assert validation_result.passed is False
-        assert validation_result.messages == {
-            "name": "Missing data for required field.",
-            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
+        assert validation_result._to_dict() == {
+            "errors": [
+                {
+                    "location": f"{location_str}#line 3",
+                    "message": "Missing data for required field.",
+                    "path": "name",
+                    "value": None,
+                },
+                {
+                    "location": f"{location_str}#line 28",
+                    "message": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
+                    "path": "command",
+                    "value": "echo Hello World & echo "
+                    "[${{inputs.component_in_number}}] & echo "
+                    "${{inputs.component_in_path}} & echo "
+                    "${{outputs.component_out_path}} > "
+                    "${{outputs.component_out_path}}/component_in_number & "
+                    "echo ${{inputs.non_existent}} & echo "
+                    "${{outputs.non_existent}}",
+                },
+            ],
+            "result": "Failed",
         }
+
+
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
+@pytest.mark.unittest
+class TestPipelineComponent:
+
+    # TODO: add rest schema test after backend ready.
+    def test_inline_helloworld_pipeline_component(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
+        component: PipelineComponent = load_component(path=component_path)
+
+        validation_result = component._validate()
+        assert validation_result.passed is True
+
+    def test_helloworld_pipeline_component(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
+        component: PipelineComponent = load_component(path=component_path)
+
+        validation_result = component._validate()
+        assert validation_result.passed is True
+
+    def test_helloworld_nested_pipeline_component(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
+        component: PipelineComponent = load_component(path=component_path)
+
+        validation_result = component._validate()
+        assert validation_result.passed is True

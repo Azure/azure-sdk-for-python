@@ -30,8 +30,8 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         "2022-05-01":
         [
             "RecognizeCustomEntitiesAction",
-            "SingleCategoryClassifyAction",
-            "MultiCategoryClassifyAction",
+            "SingleLabelClassifyAction",
+            "MultiLabelClassifyAction",
             "AnalyzeHealthcareEntitiesAction"
         ]
     }

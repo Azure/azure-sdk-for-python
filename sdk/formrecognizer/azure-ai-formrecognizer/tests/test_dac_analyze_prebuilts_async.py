@@ -454,7 +454,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_analyze_document(
-                model="prebuilt-invoice",
+                model_id="prebuilt-invoice",
                 document=my_file,
                 cls=callback
             )

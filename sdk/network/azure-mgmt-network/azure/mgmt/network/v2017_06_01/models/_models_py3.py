@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._network_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AddressSpace(msrest.serialization.Model):
@@ -116,8 +118,8 @@ class ApplicationGateway(Resource):
     :vartype sku: ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySku
     :ivar ssl_policy: SSL policy of the application gateway resource.
     :vartype ssl_policy: ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicy
-    :ivar operational_state: Operational state of the application gateway resource. Possible values
-     include: "Stopped", "Starting", "Running", "Stopping".
+    :ivar operational_state: Operational state of the application gateway resource. Known values
+     are: "Stopped", "Starting", "Running", "Stopping".
     :vartype operational_state: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayOperationalState
     :ivar gateway_ip_configurations: Subnets of application the gateway resource.
@@ -207,21 +209,21 @@ class ApplicationGateway(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        sku: Optional["ApplicationGatewaySku"] = None,
-        ssl_policy: Optional["ApplicationGatewaySslPolicy"] = None,
-        gateway_ip_configurations: Optional[List["ApplicationGatewayIPConfiguration"]] = None,
-        authentication_certificates: Optional[List["ApplicationGatewayAuthenticationCertificate"]] = None,
-        ssl_certificates: Optional[List["ApplicationGatewaySslCertificate"]] = None,
-        frontend_ip_configurations: Optional[List["ApplicationGatewayFrontendIPConfiguration"]] = None,
-        frontend_ports: Optional[List["ApplicationGatewayFrontendPort"]] = None,
-        probes: Optional[List["ApplicationGatewayProbe"]] = None,
-        backend_address_pools: Optional[List["ApplicationGatewayBackendAddressPool"]] = None,
-        backend_http_settings_collection: Optional[List["ApplicationGatewayBackendHttpSettings"]] = None,
-        http_listeners: Optional[List["ApplicationGatewayHttpListener"]] = None,
-        url_path_maps: Optional[List["ApplicationGatewayUrlPathMap"]] = None,
-        request_routing_rules: Optional[List["ApplicationGatewayRequestRoutingRule"]] = None,
-        redirect_configurations: Optional[List["ApplicationGatewayRedirectConfiguration"]] = None,
-        web_application_firewall_configuration: Optional["ApplicationGatewayWebApplicationFirewallConfiguration"] = None,
+        sku: Optional["_models.ApplicationGatewaySku"] = None,
+        ssl_policy: Optional["_models.ApplicationGatewaySslPolicy"] = None,
+        gateway_ip_configurations: Optional[List["_models.ApplicationGatewayIPConfiguration"]] = None,
+        authentication_certificates: Optional[List["_models.ApplicationGatewayAuthenticationCertificate"]] = None,
+        ssl_certificates: Optional[List["_models.ApplicationGatewaySslCertificate"]] = None,
+        frontend_ip_configurations: Optional[List["_models.ApplicationGatewayFrontendIPConfiguration"]] = None,
+        frontend_ports: Optional[List["_models.ApplicationGatewayFrontendPort"]] = None,
+        probes: Optional[List["_models.ApplicationGatewayProbe"]] = None,
+        backend_address_pools: Optional[List["_models.ApplicationGatewayBackendAddressPool"]] = None,
+        backend_http_settings_collection: Optional[List["_models.ApplicationGatewayBackendHttpSettings"]] = None,
+        http_listeners: Optional[List["_models.ApplicationGatewayHttpListener"]] = None,
+        url_path_maps: Optional[List["_models.ApplicationGatewayUrlPathMap"]] = None,
+        request_routing_rules: Optional[List["_models.ApplicationGatewayRequestRoutingRule"]] = None,
+        redirect_configurations: Optional[List["_models.ApplicationGatewayRedirectConfiguration"]] = None,
+        web_application_firewall_configuration: Optional["_models.ApplicationGatewayWebApplicationFirewallConfiguration"] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -413,7 +415,7 @@ class ApplicationGatewayAvailableSslOptions(Resource):
     :ivar predefined_policies: List of available Ssl predefined policy.
     :vartype predefined_policies: list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :ivar default_policy: Name of the Ssl predefined policy applied by default to application
-     gateway. Possible values include: "AppGwSslPolicy20150501", "AppGwSslPolicy20170401",
+     gateway. Known values are: "AppGwSslPolicy20150501", "AppGwSslPolicy20170401",
      "AppGwSslPolicy20170401S".
     :vartype default_policy: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicyName
@@ -448,10 +450,10 @@ class ApplicationGatewayAvailableSslOptions(Resource):
         id: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        predefined_policies: Optional[List["SubResource"]] = None,
-        default_policy: Optional[Union[str, "ApplicationGatewaySslPolicyName"]] = None,
-        available_cipher_suites: Optional[List[Union[str, "ApplicationGatewaySslCipherSuite"]]] = None,
-        available_protocols: Optional[List[Union[str, "ApplicationGatewaySslProtocol"]]] = None,
+        predefined_policies: Optional[List["_models.SubResource"]] = None,
+        default_policy: Optional[Union[str, "_models.ApplicationGatewaySslPolicyName"]] = None,
+        available_cipher_suites: Optional[List[Union[str, "_models.ApplicationGatewaySslCipherSuite"]]] = None,
+        available_protocols: Optional[List[Union[str, "_models.ApplicationGatewaySslProtocol"]]] = None,
         **kwargs
     ):
         """
@@ -464,7 +466,7 @@ class ApplicationGatewayAvailableSslOptions(Resource):
         :keyword predefined_policies: List of available Ssl predefined policy.
         :paramtype predefined_policies: list[~azure.mgmt.network.v2017_06_01.models.SubResource]
         :keyword default_policy: Name of the Ssl predefined policy applied by default to application
-         gateway. Possible values include: "AppGwSslPolicy20150501", "AppGwSslPolicy20170401",
+         gateway. Known values are: "AppGwSslPolicy20150501", "AppGwSslPolicy20170401",
          "AppGwSslPolicy20170401S".
         :paramtype default_policy: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicyName
@@ -500,7 +502,7 @@ class ApplicationGatewayAvailableSslPredefinedPolicies(msrest.serialization.Mode
     def __init__(
         self,
         *,
-        value: Optional[List["ApplicationGatewaySslPredefinedPolicy"]] = None,
+        value: Optional[List["_models.ApplicationGatewaySslPredefinedPolicy"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -530,7 +532,7 @@ class ApplicationGatewayAvailableWafRuleSetsResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ApplicationGatewayFirewallRuleSet"]] = None,
+        value: Optional[List["_models.ApplicationGatewayFirewallRuleSet"]] = None,
         **kwargs
     ):
         """
@@ -614,8 +616,8 @@ class ApplicationGatewayBackendAddressPool(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         type: Optional[str] = None,
-        backend_ip_configurations: Optional[List["NetworkInterfaceIPConfiguration"]] = None,
-        backend_addresses: Optional[List["ApplicationGatewayBackendAddress"]] = None,
+        backend_ip_configurations: Optional[List["_models.NetworkInterfaceIPConfiguration"]] = None,
+        backend_addresses: Optional[List["_models.ApplicationGatewayBackendAddress"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -664,7 +666,7 @@ class ApplicationGatewayBackendHealth(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        backend_address_pools: Optional[List["ApplicationGatewayBackendHealthPool"]] = None,
+        backend_address_pools: Optional[List["_models.ApplicationGatewayBackendHealthPool"]] = None,
         **kwargs
     ):
         """
@@ -695,8 +697,8 @@ class ApplicationGatewayBackendHealthHttpSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        backend_http_settings: Optional["ApplicationGatewayBackendHttpSettings"] = None,
-        servers: Optional[List["ApplicationGatewayBackendHealthServer"]] = None,
+        backend_http_settings: Optional["_models.ApplicationGatewayBackendHttpSettings"] = None,
+        servers: Optional[List["_models.ApplicationGatewayBackendHealthServer"]] = None,
         **kwargs
     ):
         """
@@ -732,8 +734,8 @@ class ApplicationGatewayBackendHealthPool(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        backend_address_pool: Optional["ApplicationGatewayBackendAddressPool"] = None,
-        backend_http_settings_collection: Optional[List["ApplicationGatewayBackendHealthHttpSettings"]] = None,
+        backend_address_pool: Optional["_models.ApplicationGatewayBackendAddressPool"] = None,
+        backend_http_settings_collection: Optional[List["_models.ApplicationGatewayBackendHealthHttpSettings"]] = None,
         **kwargs
     ):
         """
@@ -758,8 +760,8 @@ class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
     :ivar ip_configuration: Reference of IP configuration of backend server.
     :vartype ip_configuration:
      ~azure.mgmt.network.v2017_06_01.models.NetworkInterfaceIPConfiguration
-    :ivar health: Health of backend server. Possible values include: "Unknown", "Up", "Down",
-     "Partial", "Draining".
+    :ivar health: Health of backend server. Known values are: "Unknown", "Up", "Down", "Partial",
+     "Draining".
     :vartype health: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayBackendHealthServerHealth
     """
@@ -774,8 +776,8 @@ class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
         self,
         *,
         address: Optional[str] = None,
-        ip_configuration: Optional["NetworkInterfaceIPConfiguration"] = None,
-        health: Optional[Union[str, "ApplicationGatewayBackendHealthServerHealth"]] = None,
+        ip_configuration: Optional["_models.NetworkInterfaceIPConfiguration"] = None,
+        health: Optional[Union[str, "_models.ApplicationGatewayBackendHealthServerHealth"]] = None,
         **kwargs
     ):
         """
@@ -784,7 +786,7 @@ class ApplicationGatewayBackendHealthServer(msrest.serialization.Model):
         :keyword ip_configuration: Reference of IP configuration of backend server.
         :paramtype ip_configuration:
          ~azure.mgmt.network.v2017_06_01.models.NetworkInterfaceIPConfiguration
-        :keyword health: Health of backend server. Possible values include: "Unknown", "Up", "Down",
+        :keyword health: Health of backend server. Known values are: "Unknown", "Up", "Down",
          "Partial", "Draining".
         :paramtype health: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayBackendHealthServerHealth
@@ -809,10 +811,9 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :vartype type: str
     :ivar port: Port.
     :vartype port: int
-    :ivar protocol: Protocol. Possible values include: "Http", "Https".
+    :ivar protocol: Protocol. Known values are: "Http", "Https".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol
-    :ivar cookie_based_affinity: Cookie based affinity. Possible values include: "Enabled",
-     "Disabled".
+    :ivar cookie_based_affinity: Cookie based affinity. Known values are: "Enabled", "Disabled".
     :vartype cookie_based_affinity: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayCookieBasedAffinity
     :ivar request_timeout: Request timeout in seconds. Application Gateway will fail the request if
@@ -872,12 +873,12 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         etag: Optional[str] = None,
         type: Optional[str] = None,
         port: Optional[int] = None,
-        protocol: Optional[Union[str, "ApplicationGatewayProtocol"]] = None,
-        cookie_based_affinity: Optional[Union[str, "ApplicationGatewayCookieBasedAffinity"]] = None,
+        protocol: Optional[Union[str, "_models.ApplicationGatewayProtocol"]] = None,
+        cookie_based_affinity: Optional[Union[str, "_models.ApplicationGatewayCookieBasedAffinity"]] = None,
         request_timeout: Optional[int] = None,
-        probe: Optional["SubResource"] = None,
-        authentication_certificates: Optional[List["SubResource"]] = None,
-        connection_draining: Optional["ApplicationGatewayConnectionDraining"] = None,
+        probe: Optional["_models.SubResource"] = None,
+        authentication_certificates: Optional[List["_models.SubResource"]] = None,
+        connection_draining: Optional["_models.ApplicationGatewayConnectionDraining"] = None,
         host_name: Optional[str] = None,
         pick_host_name_from_backend_address: Optional[bool] = None,
         affinity_cookie_name: Optional[str] = None,
@@ -898,10 +899,9 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         :paramtype type: str
         :keyword port: Port.
         :paramtype port: int
-        :keyword protocol: Protocol. Possible values include: "Http", "Https".
+        :keyword protocol: Protocol. Known values are: "Http", "Https".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol
-        :keyword cookie_based_affinity: Cookie based affinity. Possible values include: "Enabled",
-         "Disabled".
+        :keyword cookie_based_affinity: Cookie based affinity. Known values are: "Enabled", "Disabled".
         :paramtype cookie_based_affinity: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayCookieBasedAffinity
         :keyword request_timeout: Request timeout in seconds. Application Gateway will fail the request
@@ -1099,7 +1099,7 @@ class ApplicationGatewayFirewallRuleGroup(msrest.serialization.Model):
         self,
         *,
         rule_group_name: str,
-        rules: List["ApplicationGatewayFirewallRule"],
+        rules: List["_models.ApplicationGatewayFirewallRule"],
         description: Optional[str] = None,
         **kwargs
     ):
@@ -1169,7 +1169,7 @@ class ApplicationGatewayFirewallRuleSet(Resource):
         provisioning_state: Optional[str] = None,
         rule_set_type: Optional[str] = None,
         rule_set_version: Optional[str] = None,
-        rule_groups: Optional[List["ApplicationGatewayFirewallRuleGroup"]] = None,
+        rule_groups: Optional[List["_models.ApplicationGatewayFirewallRuleGroup"]] = None,
         **kwargs
     ):
         """
@@ -1210,8 +1210,8 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :vartype type: str
     :ivar private_ip_address: PrivateIPAddress of the network interface IP Configuration.
     :vartype private_ip_address: str
-    :ivar private_ip_allocation_method: PrivateIP allocation method. Possible values include:
-     "Static", "Dynamic".
+    :ivar private_ip_allocation_method: PrivateIP allocation method. Known values are: "Static",
+     "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
     :ivar subnet: Reference of the subnet resource.
@@ -1243,9 +1243,9 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
         etag: Optional[str] = None,
         type: Optional[str] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["SubResource"] = None,
-        public_ip_address: Optional["SubResource"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.SubResource"] = None,
+        public_ip_address: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1261,8 +1261,8 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
         :paramtype type: str
         :keyword private_ip_address: PrivateIPAddress of the network interface IP Configuration.
         :paramtype private_ip_address: str
-        :keyword private_ip_allocation_method: PrivateIP allocation method. Possible values include:
-         "Static", "Dynamic".
+        :keyword private_ip_allocation_method: PrivateIP allocation method. Known values are: "Static",
+         "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
         :keyword subnet: Reference of the subnet resource.
@@ -1363,7 +1363,7 @@ class ApplicationGatewayHttpListener(SubResource):
     :vartype frontend_ip_configuration: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :ivar frontend_port: Frontend port resource of an application gateway.
     :vartype frontend_port: ~azure.mgmt.network.v2017_06_01.models.SubResource
-    :ivar protocol: Protocol. Possible values include: "Http", "Https".
+    :ivar protocol: Protocol. Known values are: "Http", "Https".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol
     :ivar host_name: Host name of HTTP listener.
     :vartype host_name: str
@@ -1398,11 +1398,11 @@ class ApplicationGatewayHttpListener(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         type: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        frontend_port: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "ApplicationGatewayProtocol"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        frontend_port: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.ApplicationGatewayProtocol"]] = None,
         host_name: Optional[str] = None,
-        ssl_certificate: Optional["SubResource"] = None,
+        ssl_certificate: Optional["_models.SubResource"] = None,
         require_server_name_indication: Optional[bool] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -1422,7 +1422,7 @@ class ApplicationGatewayHttpListener(SubResource):
         :paramtype frontend_ip_configuration: ~azure.mgmt.network.v2017_06_01.models.SubResource
         :keyword frontend_port: Frontend port resource of an application gateway.
         :paramtype frontend_port: ~azure.mgmt.network.v2017_06_01.models.SubResource
-        :keyword protocol: Protocol. Possible values include: "Http", "Https".
+        :keyword protocol: Protocol. Known values are: "Http", "Https".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol
         :keyword host_name: Host name of HTTP listener.
         :paramtype host_name: str
@@ -1484,7 +1484,7 @@ class ApplicationGatewayIPConfiguration(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         type: Optional[str] = None,
-        subnet: Optional["SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1530,7 +1530,7 @@ class ApplicationGatewayListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ApplicationGateway"]] = None,
+        value: Optional[List["_models.ApplicationGateway"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1590,9 +1590,9 @@ class ApplicationGatewayPathRule(SubResource):
         etag: Optional[str] = None,
         type: Optional[str] = None,
         paths: Optional[List[str]] = None,
-        backend_address_pool: Optional["SubResource"] = None,
-        backend_http_settings: Optional["SubResource"] = None,
-        redirect_configuration: Optional["SubResource"] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
+        backend_http_settings: Optional["_models.SubResource"] = None,
+        redirect_configuration: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1641,7 +1641,7 @@ class ApplicationGatewayProbe(SubResource):
     :vartype etag: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :ivar protocol: Protocol. Possible values include: "Http", "Https".
+    :ivar protocol: Protocol. Known values are: "Http", "Https".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol
     :ivar host: Host name to send the probe to.
     :vartype host: str
@@ -1696,7 +1696,7 @@ class ApplicationGatewayProbe(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         type: Optional[str] = None,
-        protocol: Optional[Union[str, "ApplicationGatewayProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.ApplicationGatewayProtocol"]] = None,
         host: Optional[str] = None,
         path: Optional[str] = None,
         interval: Optional[int] = None,
@@ -1704,7 +1704,7 @@ class ApplicationGatewayProbe(SubResource):
         unhealthy_threshold: Optional[int] = None,
         pick_host_name_from_backend_http_settings: Optional[bool] = None,
         min_servers: Optional[int] = None,
-        match: Optional["ApplicationGatewayProbeHealthResponseMatch"] = None,
+        match: Optional["_models.ApplicationGatewayProbeHealthResponseMatch"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1718,7 +1718,7 @@ class ApplicationGatewayProbe(SubResource):
         :paramtype etag: str
         :keyword type: Type of the resource.
         :paramtype type: str
-        :keyword protocol: Protocol. Possible values include: "Http", "Https".
+        :keyword protocol: Protocol. Known values are: "Http", "Https".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayProtocol
         :keyword host: Host name to send the probe to.
         :paramtype host: str
@@ -1811,7 +1811,7 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
     :ivar type: Type of the resource.
     :vartype type: str
     :ivar redirect_type: Supported http redirection types - Permanent, Temporary, Found, SeeOther.
-     Possible values include: "Permanent", "Found", "SeeOther", "Temporary".
+     Known values are: "Permanent", "Found", "SeeOther", "Temporary".
     :vartype redirect_type: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRedirectType
     :ivar target_listener: Reference to a listener to redirect the request to.
@@ -1852,14 +1852,14 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         type: Optional[str] = None,
-        redirect_type: Optional[Union[str, "ApplicationGatewayRedirectType"]] = None,
-        target_listener: Optional["SubResource"] = None,
+        redirect_type: Optional[Union[str, "_models.ApplicationGatewayRedirectType"]] = None,
+        target_listener: Optional["_models.SubResource"] = None,
         target_url: Optional[str] = None,
         include_path: Optional[bool] = None,
         include_query_string: Optional[bool] = None,
-        request_routing_rules: Optional[List["SubResource"]] = None,
-        url_path_maps: Optional[List["SubResource"]] = None,
-        path_rules: Optional[List["SubResource"]] = None,
+        request_routing_rules: Optional[List["_models.SubResource"]] = None,
+        url_path_maps: Optional[List["_models.SubResource"]] = None,
+        path_rules: Optional[List["_models.SubResource"]] = None,
         **kwargs
     ):
         """
@@ -1873,7 +1873,7 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
         :keyword type: Type of the resource.
         :paramtype type: str
         :keyword redirect_type: Supported http redirection types - Permanent, Temporary, Found,
-         SeeOther. Possible values include: "Permanent", "Found", "SeeOther", "Temporary".
+         SeeOther. Known values are: "Permanent", "Found", "SeeOther", "Temporary".
         :paramtype redirect_type: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRedirectType
         :keyword target_listener: Reference to a listener to redirect the request to.
@@ -1917,7 +1917,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :vartype etag: str
     :ivar type: Type of the resource.
     :vartype type: str
-    :ivar rule_type: Rule type. Possible values include: "Basic", "PathBasedRouting".
+    :ivar rule_type: Rule type. Known values are: "Basic", "PathBasedRouting".
     :vartype rule_type: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRequestRoutingRuleType
     :ivar backend_address_pool: Backend address pool resource of the application gateway.
@@ -1956,12 +1956,12 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         type: Optional[str] = None,
-        rule_type: Optional[Union[str, "ApplicationGatewayRequestRoutingRuleType"]] = None,
-        backend_address_pool: Optional["SubResource"] = None,
-        backend_http_settings: Optional["SubResource"] = None,
-        http_listener: Optional["SubResource"] = None,
-        url_path_map: Optional["SubResource"] = None,
-        redirect_configuration: Optional["SubResource"] = None,
+        rule_type: Optional[Union[str, "_models.ApplicationGatewayRequestRoutingRuleType"]] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
+        backend_http_settings: Optional["_models.SubResource"] = None,
+        http_listener: Optional["_models.SubResource"] = None,
+        url_path_map: Optional["_models.SubResource"] = None,
+        redirect_configuration: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -1975,7 +1975,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         :paramtype etag: str
         :keyword type: Type of the resource.
         :paramtype type: str
-        :keyword rule_type: Rule type. Possible values include: "Basic", "PathBasedRouting".
+        :keyword rule_type: Rule type. Known values are: "Basic", "PathBasedRouting".
         :paramtype rule_type: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRequestRoutingRuleType
         :keyword backend_address_pool: Backend address pool resource of the application gateway.
@@ -2008,10 +2008,10 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
 class ApplicationGatewaySku(msrest.serialization.Model):
     """SKU of an application gateway.
 
-    :ivar name: Name of an application gateway SKU. Possible values include: "Standard_Small",
+    :ivar name: Name of an application gateway SKU. Known values are: "Standard_Small",
      "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large".
     :vartype name: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySkuName
-    :ivar tier: Tier of an application gateway. Possible values include: "Standard", "WAF".
+    :ivar tier: Tier of an application gateway. Known values are: "Standard", "WAF".
     :vartype tier: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayTier
     :ivar capacity: Capacity (instance count) of an application gateway.
     :vartype capacity: int
@@ -2026,16 +2026,16 @@ class ApplicationGatewaySku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "ApplicationGatewaySkuName"]] = None,
-        tier: Optional[Union[str, "ApplicationGatewayTier"]] = None,
+        name: Optional[Union[str, "_models.ApplicationGatewaySkuName"]] = None,
+        tier: Optional[Union[str, "_models.ApplicationGatewayTier"]] = None,
         capacity: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword name: Name of an application gateway SKU. Possible values include: "Standard_Small",
+        :keyword name: Name of an application gateway SKU. Known values are: "Standard_Small",
          "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large".
         :paramtype name: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySkuName
-        :keyword tier: Tier of an application gateway. Possible values include: "Standard", "WAF".
+        :keyword tier: Tier of an application gateway. Known values are: "Standard", "WAF".
         :paramtype tier: str or ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayTier
         :keyword capacity: Capacity (instance count) of an application gateway.
         :paramtype capacity: int
@@ -2131,11 +2131,11 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
     :ivar disabled_ssl_protocols: Ssl protocols to be disabled on application gateway.
     :vartype disabled_ssl_protocols: list[str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol]
-    :ivar policy_type: Type of Ssl Policy. Possible values include: "Predefined", "Custom".
+    :ivar policy_type: Type of Ssl Policy. Known values are: "Predefined", "Custom".
     :vartype policy_type: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicyType
-    :ivar policy_name: Name of Ssl predefined policy. Possible values include:
-     "AppGwSslPolicy20150501", "AppGwSslPolicy20170401", "AppGwSslPolicy20170401S".
+    :ivar policy_name: Name of Ssl predefined policy. Known values are: "AppGwSslPolicy20150501",
+     "AppGwSslPolicy20170401", "AppGwSslPolicy20170401S".
     :vartype policy_name: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicyName
     :ivar cipher_suites: Ssl cipher suites to be enabled in the specified order to application
@@ -2143,7 +2143,7 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
     :vartype cipher_suites: list[str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslCipherSuite]
     :ivar min_protocol_version: Minimum version of Ssl protocol to be supported on application
-     gateway. Possible values include: "TLSv1_0", "TLSv1_1", "TLSv1_2".
+     gateway. Known values are: "TLSv1_0", "TLSv1_1", "TLSv1_2".
     :vartype min_protocol_version: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol
     """
@@ -2159,21 +2159,21 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        disabled_ssl_protocols: Optional[List[Union[str, "ApplicationGatewaySslProtocol"]]] = None,
-        policy_type: Optional[Union[str, "ApplicationGatewaySslPolicyType"]] = None,
-        policy_name: Optional[Union[str, "ApplicationGatewaySslPolicyName"]] = None,
-        cipher_suites: Optional[List[Union[str, "ApplicationGatewaySslCipherSuite"]]] = None,
-        min_protocol_version: Optional[Union[str, "ApplicationGatewaySslProtocol"]] = None,
+        disabled_ssl_protocols: Optional[List[Union[str, "_models.ApplicationGatewaySslProtocol"]]] = None,
+        policy_type: Optional[Union[str, "_models.ApplicationGatewaySslPolicyType"]] = None,
+        policy_name: Optional[Union[str, "_models.ApplicationGatewaySslPolicyName"]] = None,
+        cipher_suites: Optional[List[Union[str, "_models.ApplicationGatewaySslCipherSuite"]]] = None,
+        min_protocol_version: Optional[Union[str, "_models.ApplicationGatewaySslProtocol"]] = None,
         **kwargs
     ):
         """
         :keyword disabled_ssl_protocols: Ssl protocols to be disabled on application gateway.
         :paramtype disabled_ssl_protocols: list[str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol]
-        :keyword policy_type: Type of Ssl Policy. Possible values include: "Predefined", "Custom".
+        :keyword policy_type: Type of Ssl Policy. Known values are: "Predefined", "Custom".
         :paramtype policy_type: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicyType
-        :keyword policy_name: Name of Ssl predefined policy. Possible values include:
+        :keyword policy_name: Name of Ssl predefined policy. Known values are:
          "AppGwSslPolicy20150501", "AppGwSslPolicy20170401", "AppGwSslPolicy20170401S".
         :paramtype policy_name: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslPolicyName
@@ -2182,7 +2182,7 @@ class ApplicationGatewaySslPolicy(msrest.serialization.Model):
         :paramtype cipher_suites: list[str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslCipherSuite]
         :keyword min_protocol_version: Minimum version of Ssl protocol to be supported on application
-         gateway. Possible values include: "TLSv1_0", "TLSv1_1", "TLSv1_2".
+         gateway. Known values are: "TLSv1_0", "TLSv1_1", "TLSv1_2".
         :paramtype min_protocol_version: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol
         """
@@ -2206,7 +2206,7 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
     :vartype cipher_suites: list[str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslCipherSuite]
     :ivar min_protocol_version: Minimum version of Ssl protocol to be supported on application
-     gateway. Possible values include: "TLSv1_0", "TLSv1_1", "TLSv1_2".
+     gateway. Known values are: "TLSv1_0", "TLSv1_1", "TLSv1_2".
     :vartype min_protocol_version: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol
     """
@@ -2223,8 +2223,8 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
         *,
         id: Optional[str] = None,
         name: Optional[str] = None,
-        cipher_suites: Optional[List[Union[str, "ApplicationGatewaySslCipherSuite"]]] = None,
-        min_protocol_version: Optional[Union[str, "ApplicationGatewaySslProtocol"]] = None,
+        cipher_suites: Optional[List[Union[str, "_models.ApplicationGatewaySslCipherSuite"]]] = None,
+        min_protocol_version: Optional[Union[str, "_models.ApplicationGatewaySslProtocol"]] = None,
         **kwargs
     ):
         """
@@ -2237,7 +2237,7 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
         :paramtype cipher_suites: list[str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslCipherSuite]
         :keyword min_protocol_version: Minimum version of Ssl protocol to be supported on application
-         gateway. Possible values include: "TLSv1_0", "TLSv1_1", "TLSv1_2".
+         gateway. Known values are: "TLSv1_0", "TLSv1_1", "TLSv1_2".
         :paramtype min_protocol_version: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol
         """
@@ -2291,10 +2291,10 @@ class ApplicationGatewayUrlPathMap(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         type: Optional[str] = None,
-        default_backend_address_pool: Optional["SubResource"] = None,
-        default_backend_http_settings: Optional["SubResource"] = None,
-        default_redirect_configuration: Optional["SubResource"] = None,
-        path_rules: Optional[List["ApplicationGatewayPathRule"]] = None,
+        default_backend_address_pool: Optional["_models.SubResource"] = None,
+        default_backend_http_settings: Optional["_models.SubResource"] = None,
+        default_redirect_configuration: Optional["_models.SubResource"] = None,
+        path_rules: Optional[List["_models.ApplicationGatewayPathRule"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -2339,8 +2339,8 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(msrest.serialization
 
     :ivar enabled: Required. Whether the web application firewall is enabled or not.
     :vartype enabled: bool
-    :ivar firewall_mode: Required. Web application firewall mode. Possible values include:
-     "Detection", "Prevention".
+    :ivar firewall_mode: Required. Web application firewall mode. Known values are: "Detection",
+     "Prevention".
     :vartype firewall_mode: str or
      ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallMode
     :ivar rule_set_type: Required. The type of the web application firewall rule set. Possible
@@ -2372,17 +2372,17 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(msrest.serialization
         self,
         *,
         enabled: bool,
-        firewall_mode: Union[str, "ApplicationGatewayFirewallMode"],
+        firewall_mode: Union[str, "_models.ApplicationGatewayFirewallMode"],
         rule_set_type: str,
         rule_set_version: str,
-        disabled_rule_groups: Optional[List["ApplicationGatewayFirewallDisabledRuleGroup"]] = None,
+        disabled_rule_groups: Optional[List["_models.ApplicationGatewayFirewallDisabledRuleGroup"]] = None,
         **kwargs
     ):
         """
         :keyword enabled: Required. Whether the web application firewall is enabled or not.
         :paramtype enabled: bool
-        :keyword firewall_mode: Required. Web application firewall mode. Possible values include:
-         "Detection", "Prevention".
+        :keyword firewall_mode: Required. Web application firewall mode. Known values are: "Detection",
+         "Prevention".
         :paramtype firewall_mode: str or
          ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayFirewallMode
         :keyword rule_set_type: Required. The type of the web application firewall rule set. Possible
@@ -2419,7 +2419,7 @@ class AuthorizationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitAuthorization"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitAuthorization"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2438,7 +2438,7 @@ class AzureAsyncOperationResult(msrest.serialization.Model):
     """The response body contains the status of the specified asynchronous operation, indicating whether it has succeeded, is in progress, or has failed. Note that this status is distinct from the HTTP status code returned for the Get Operation Status operation itself. If the asynchronous operation succeeded, the response body includes the HTTP status code for the successful request. If the asynchronous operation failed, the response body includes the HTTP status code for the failed request and error information regarding the failure.
 
     :ivar status: Status of the Azure async operation. Possible values are: 'InProgress',
-     'Succeeded', and 'Failed'. Possible values include: "InProgress", "Succeeded", "Failed".
+     'Succeeded', and 'Failed'. Known values are: "InProgress", "Succeeded", "Failed".
     :vartype status: str or ~azure.mgmt.network.v2017_06_01.models.NetworkOperationStatus
     :ivar error:
     :vartype error: ~azure.mgmt.network.v2017_06_01.models.Error
@@ -2452,13 +2452,13 @@ class AzureAsyncOperationResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "NetworkOperationStatus"]] = None,
-        error: Optional["Error"] = None,
+        status: Optional[Union[str, "_models.NetworkOperationStatus"]] = None,
+        error: Optional["_models.Error"] = None,
         **kwargs
     ):
         """
         :keyword status: Status of the Azure async operation. Possible values are: 'InProgress',
-         'Succeeded', and 'Failed'. Possible values include: "InProgress", "Succeeded", "Failed".
+         'Succeeded', and 'Failed'. Known values are: "InProgress", "Succeeded", "Failed".
         :paramtype status: str or ~azure.mgmt.network.v2017_06_01.models.NetworkOperationStatus
         :keyword error:
         :paramtype error: ~azure.mgmt.network.v2017_06_01.models.Error
@@ -2614,8 +2614,8 @@ class BgpPeerStatus(msrest.serialization.Model):
     :vartype neighbor: str
     :ivar asn: The autonomous system number of the remote BGP peer.
     :vartype asn: int
-    :ivar state: The BGP peer state. Possible values include: "Unknown", "Stopped", "Idle",
-     "Connecting", "Connected".
+    :ivar state: The BGP peer state. Known values are: "Unknown", "Stopped", "Idle", "Connecting",
+     "Connected".
     :vartype state: str or ~azure.mgmt.network.v2017_06_01.models.BgpPeerState
     :ivar connected_duration: For how long the peering has been up.
     :vartype connected_duration: str
@@ -2680,7 +2680,7 @@ class BgpPeerStatusListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["BgpPeerStatus"]] = None,
+        value: Optional[List["_models.BgpPeerStatus"]] = None,
         **kwargs
     ):
         """
@@ -2734,7 +2734,7 @@ class BgpServiceCommunity(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         service_name: Optional[str] = None,
-        bgp_communities: Optional[List["BGPCommunity"]] = None,
+        bgp_communities: Optional[List["_models.BGPCommunity"]] = None,
         **kwargs
     ):
         """
@@ -2771,7 +2771,7 @@ class BgpServiceCommunityListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["BgpServiceCommunity"]] = None,
+        value: Optional[List["_models.BgpServiceCommunity"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -2988,8 +2988,8 @@ class ConnectivityInformation(msrest.serialization.Model):
 
     :ivar hops: List of hops between the source and the destination.
     :vartype hops: list[~azure.mgmt.network.v2017_06_01.models.ConnectivityHop]
-    :ivar connection_status: The connection status. Possible values include: "Unknown",
-     "Connected", "Disconnected", "Degraded".
+    :ivar connection_status: The connection status. Known values are: "Unknown", "Connected",
+     "Disconnected", "Degraded".
     :vartype connection_status: str or ~azure.mgmt.network.v2017_06_01.models.ConnectionStatus
     :ivar avg_latency_in_ms: Average latency in milliseconds.
     :vartype avg_latency_in_ms: int
@@ -3044,13 +3044,13 @@ class ConnectivityIssue(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar origin: The origin of the issue. Possible values include: "Local", "Inbound", "Outbound".
+    :ivar origin: The origin of the issue. Known values are: "Local", "Inbound", "Outbound".
     :vartype origin: str or ~azure.mgmt.network.v2017_06_01.models.Origin
-    :ivar severity: The severity of the issue. Possible values include: "Error", "Warning".
+    :ivar severity: The severity of the issue. Known values are: "Error", "Warning".
     :vartype severity: str or ~azure.mgmt.network.v2017_06_01.models.Severity
-    :ivar type: The type of issue. Possible values include: "Unknown", "AgentStopped",
-     "GuestFirewall", "DnsResolution", "SocketBind", "NetworkSecurityRule", "UserDefinedRoute",
-     "PortThrottled", "Platform".
+    :ivar type: The type of issue. Known values are: "Unknown", "AgentStopped", "GuestFirewall",
+     "DnsResolution", "SocketBind", "NetworkSecurityRule", "UserDefinedRoute", "PortThrottled",
+     "Platform".
     :vartype type: str or ~azure.mgmt.network.v2017_06_01.models.IssueType
     :ivar context: Provides additional context on the issue.
     :vartype context: list[dict[str, str]]
@@ -3107,8 +3107,8 @@ class ConnectivityParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source: "ConnectivitySource",
-        destination: "ConnectivityDestination",
+        source: "_models.ConnectivitySource",
+        destination: "_models.ConnectivityDestination",
         **kwargs
     ):
         """
@@ -3237,9 +3237,9 @@ class EffectiveNetworkSecurityGroup(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        network_security_group: Optional["SubResource"] = None,
-        association: Optional["EffectiveNetworkSecurityGroupAssociation"] = None,
-        effective_security_rules: Optional[List["EffectiveNetworkSecurityRule"]] = None,
+        network_security_group: Optional["_models.SubResource"] = None,
+        association: Optional["_models.EffectiveNetworkSecurityGroupAssociation"] = None,
+        effective_security_rules: Optional[List["_models.EffectiveNetworkSecurityRule"]] = None,
         tag_map: Optional[str] = None,
         **kwargs
     ):
@@ -3279,8 +3279,8 @@ class EffectiveNetworkSecurityGroupAssociation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        subnet: Optional["SubResource"] = None,
-        network_interface: Optional["SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
+        network_interface: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -3317,7 +3317,7 @@ class EffectiveNetworkSecurityGroupListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["EffectiveNetworkSecurityGroup"]] = None,
+        value: Optional[List["_models.EffectiveNetworkSecurityGroup"]] = None,
         **kwargs
     ):
         """
@@ -3335,7 +3335,7 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
     :ivar name: The name of the security rule specified by the user (if created by the user).
     :vartype name: str
     :ivar protocol: The network protocol this rule applies to. Possible values are: 'Tcp', 'Udp',
-     and 'All'. Possible values include: "Tcp", "Udp", "All".
+     and 'All'. Known values are: "Tcp", "Udp", "All".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.EffectiveSecurityRuleProtocol
     :ivar source_port_range: The source port or range.
     :vartype source_port_range: str
@@ -3364,12 +3364,12 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
     :ivar expanded_destination_address_prefix: Expanded destination address prefix.
     :vartype expanded_destination_address_prefix: list[str]
     :ivar access: Whether network traffic is allowed or denied. Possible values are: 'Allow' and
-     'Deny'. Possible values include: "Allow", "Deny".
+     'Deny'. Known values are: "Allow", "Deny".
     :vartype access: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleAccess
     :ivar priority: The priority of the rule.
     :vartype priority: int
-    :ivar direction: The direction of the rule. Possible values are: 'Inbound and Outbound'.
-     Possible values include: "Inbound", "Outbound".
+    :ivar direction: The direction of the rule. Possible values are: 'Inbound and Outbound'. Known
+     values are: "Inbound", "Outbound".
     :vartype direction: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleDirection
     """
 
@@ -3395,7 +3395,7 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        protocol: Optional[Union[str, "EffectiveSecurityRuleProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.EffectiveSecurityRuleProtocol"]] = None,
         source_port_range: Optional[str] = None,
         destination_port_range: Optional[str] = None,
         source_port_ranges: Optional[List[str]] = None,
@@ -3406,16 +3406,16 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
         destination_address_prefixes: Optional[List[str]] = None,
         expanded_source_address_prefix: Optional[List[str]] = None,
         expanded_destination_address_prefix: Optional[List[str]] = None,
-        access: Optional[Union[str, "SecurityRuleAccess"]] = None,
+        access: Optional[Union[str, "_models.SecurityRuleAccess"]] = None,
         priority: Optional[int] = None,
-        direction: Optional[Union[str, "SecurityRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityRuleDirection"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the security rule specified by the user (if created by the user).
         :paramtype name: str
         :keyword protocol: The network protocol this rule applies to. Possible values are: 'Tcp',
-         'Udp', and 'All'. Possible values include: "Tcp", "Udp", "All".
+         'Udp', and 'All'. Known values are: "Tcp", "Udp", "All".
         :paramtype protocol: str or
          ~azure.mgmt.network.v2017_06_01.models.EffectiveSecurityRuleProtocol
         :keyword source_port_range: The source port or range.
@@ -3445,12 +3445,12 @@ class EffectiveNetworkSecurityRule(msrest.serialization.Model):
         :keyword expanded_destination_address_prefix: Expanded destination address prefix.
         :paramtype expanded_destination_address_prefix: list[str]
         :keyword access: Whether network traffic is allowed or denied. Possible values are: 'Allow' and
-         'Deny'. Possible values include: "Allow", "Deny".
+         'Deny'. Known values are: "Allow", "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleAccess
         :keyword priority: The priority of the rule.
         :paramtype priority: int
         :keyword direction: The direction of the rule. Possible values are: 'Inbound and Outbound'.
-         Possible values include: "Inbound", "Outbound".
+         Known values are: "Inbound", "Outbound".
         :paramtype direction: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleDirection
         """
         super(EffectiveNetworkSecurityRule, self).__init__(**kwargs)
@@ -3477,19 +3477,19 @@ class EffectiveRoute(msrest.serialization.Model):
     :ivar name: The name of the user defined route. This is optional.
     :vartype name: str
     :ivar source: Who created the route. Possible values are: 'Unknown', 'User',
-     'VirtualNetworkGateway', and 'Default'. Possible values include: "Unknown", "User",
+     'VirtualNetworkGateway', and 'Default'. Known values are: "Unknown", "User",
      "VirtualNetworkGateway", "Default".
     :vartype source: str or ~azure.mgmt.network.v2017_06_01.models.EffectiveRouteSource
-    :ivar state: The value of effective route. Possible values are: 'Active' and 'Invalid'.
-     Possible values include: "Active", "Invalid".
+    :ivar state: The value of effective route. Possible values are: 'Active' and 'Invalid'. Known
+     values are: "Active", "Invalid".
     :vartype state: str or ~azure.mgmt.network.v2017_06_01.models.EffectiveRouteState
     :ivar address_prefix: The address prefixes of the effective routes in CIDR notation.
     :vartype address_prefix: list[str]
     :ivar next_hop_ip_address: The IP address of the next hop of the effective route.
     :vartype next_hop_ip_address: list[str]
     :ivar next_hop_type: The type of Azure hop the packet should be sent to. Possible values are:
-     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-     values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known values
+     are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.v2017_06_01.models.RouteNextHopType
     """
 
@@ -3506,30 +3506,30 @@ class EffectiveRoute(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        source: Optional[Union[str, "EffectiveRouteSource"]] = None,
-        state: Optional[Union[str, "EffectiveRouteState"]] = None,
+        source: Optional[Union[str, "_models.EffectiveRouteSource"]] = None,
+        state: Optional[Union[str, "_models.EffectiveRouteState"]] = None,
         address_prefix: Optional[List[str]] = None,
         next_hop_ip_address: Optional[List[str]] = None,
-        next_hop_type: Optional[Union[str, "RouteNextHopType"]] = None,
+        next_hop_type: Optional[Union[str, "_models.RouteNextHopType"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the user defined route. This is optional.
         :paramtype name: str
         :keyword source: Who created the route. Possible values are: 'Unknown', 'User',
-         'VirtualNetworkGateway', and 'Default'. Possible values include: "Unknown", "User",
+         'VirtualNetworkGateway', and 'Default'. Known values are: "Unknown", "User",
          "VirtualNetworkGateway", "Default".
         :paramtype source: str or ~azure.mgmt.network.v2017_06_01.models.EffectiveRouteSource
         :keyword state: The value of effective route. Possible values are: 'Active' and 'Invalid'.
-         Possible values include: "Active", "Invalid".
+         Known values are: "Active", "Invalid".
         :paramtype state: str or ~azure.mgmt.network.v2017_06_01.models.EffectiveRouteState
         :keyword address_prefix: The address prefixes of the effective routes in CIDR notation.
         :paramtype address_prefix: list[str]
         :keyword next_hop_ip_address: The IP address of the next hop of the effective route.
         :paramtype next_hop_ip_address: list[str]
         :keyword next_hop_type: The type of Azure hop the packet should be sent to. Possible values
-         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-         values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known
+         values are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
         :paramtype next_hop_type: str or ~azure.mgmt.network.v2017_06_01.models.RouteNextHopType
         """
         super(EffectiveRoute, self).__init__(**kwargs)
@@ -3564,7 +3564,7 @@ class EffectiveRouteListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["EffectiveRoute"]] = None,
+        value: Optional[List["_models.EffectiveRoute"]] = None,
         **kwargs
     ):
         """
@@ -3632,7 +3632,7 @@ class EndpointServicesListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["EndpointServiceResult"]] = None,
+        value: Optional[List["_models.EndpointServiceResult"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -3676,7 +3676,7 @@ class Error(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["ErrorDetails"]] = None,
+        details: Optional[List["_models.ErrorDetails"]] = None,
         inner_error: Optional[str] = None,
         **kwargs
     ):
@@ -3764,7 +3764,7 @@ class ExpressRouteCircuit(Resource):
     :vartype circuit_provisioning_state: str
     :ivar service_provider_provisioning_state: The ServiceProviderProvisioningState state of the
      resource. Possible values are 'NotProvisioned', 'Provisioning', 'Provisioned', and
-     'Deprovisioning'. Possible values include: "NotProvisioned", "Provisioning", "Provisioned",
+     'Deprovisioning'. Known values are: "NotProvisioned", "Provisioning", "Provisioned",
      "Deprovisioning".
     :vartype service_provider_provisioning_state: str or
      ~azure.mgmt.network.v2017_06_01.models.ServiceProviderProvisioningState
@@ -3819,15 +3819,15 @@ class ExpressRouteCircuit(Resource):
         id: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["ExpressRouteCircuitSku"] = None,
+        sku: Optional["_models.ExpressRouteCircuitSku"] = None,
         allow_classic_operations: Optional[bool] = None,
         circuit_provisioning_state: Optional[str] = None,
-        service_provider_provisioning_state: Optional[Union[str, "ServiceProviderProvisioningState"]] = None,
-        authorizations: Optional[List["ExpressRouteCircuitAuthorization"]] = None,
-        peerings: Optional[List["ExpressRouteCircuitPeering"]] = None,
+        service_provider_provisioning_state: Optional[Union[str, "_models.ServiceProviderProvisioningState"]] = None,
+        authorizations: Optional[List["_models.ExpressRouteCircuitAuthorization"]] = None,
+        peerings: Optional[List["_models.ExpressRouteCircuitPeering"]] = None,
         service_key: Optional[str] = None,
         service_provider_notes: Optional[str] = None,
-        service_provider_properties: Optional["ExpressRouteCircuitServiceProviderProperties"] = None,
+        service_provider_properties: Optional["_models.ExpressRouteCircuitServiceProviderProperties"] = None,
         provisioning_state: Optional[str] = None,
         gateway_manager_etag: Optional[str] = None,
         **kwargs
@@ -3847,7 +3847,7 @@ class ExpressRouteCircuit(Resource):
         :paramtype circuit_provisioning_state: str
         :keyword service_provider_provisioning_state: The ServiceProviderProvisioningState state of the
          resource. Possible values are 'NotProvisioned', 'Provisioning', 'Provisioned', and
-         'Deprovisioning'. Possible values include: "NotProvisioned", "Provisioning", "Provisioned",
+         'Deprovisioning'. Known values are: "NotProvisioned", "Provisioning", "Provisioned",
          "Deprovisioning".
         :paramtype service_provider_provisioning_state: str or
          ~azure.mgmt.network.v2017_06_01.models.ServiceProviderProvisioningState
@@ -3945,7 +3945,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
     :ivar authorization_key: The authorization key.
     :vartype authorization_key: str
     :ivar authorization_use_status: AuthorizationUseStatus. Possible values are: 'Available' and
-     'InUse'. Possible values include: "Available", "InUse".
+     'InUse'. Known values are: "Available", "InUse".
     :vartype authorization_use_status: str or
      ~azure.mgmt.network.v2017_06_01.models.AuthorizationUseStatus
     :ivar provisioning_state: Gets the provisioning state of the public IP resource. Possible
@@ -3972,7 +3972,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         authorization_key: Optional[str] = None,
-        authorization_use_status: Optional[Union[str, "AuthorizationUseStatus"]] = None,
+        authorization_use_status: Optional[Union[str, "_models.AuthorizationUseStatus"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -3985,7 +3985,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
         :keyword authorization_key: The authorization key.
         :paramtype authorization_key: str
         :keyword authorization_use_status: AuthorizationUseStatus. Possible values are: 'Available' and
-         'InUse'. Possible values include: "Available", "InUse".
+         'InUse'. Known values are: "Available", "InUse".
         :paramtype authorization_use_status: str or
          ~azure.mgmt.network.v2017_06_01.models.AuthorizationUseStatus
         :keyword provisioning_state: Gets the provisioning state of the public IP resource. Possible
@@ -4017,7 +4017,7 @@ class ExpressRouteCircuitListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuit"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuit"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4045,12 +4045,12 @@ class ExpressRouteCircuitPeering(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar peering_type: The PeeringType. Possible values are: 'AzurePublicPeering',
-     'AzurePrivatePeering', and 'MicrosoftPeering'. Possible values include: "AzurePublicPeering",
+     'AzurePrivatePeering', and 'MicrosoftPeering'. Known values are: "AzurePublicPeering",
      "AzurePrivatePeering", "MicrosoftPeering".
     :vartype peering_type: str or
      ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringType
-    :ivar state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Possible
-     values include: "Disabled", "Enabled".
+    :ivar state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Known values
+     are: "Disabled", "Enabled".
     :vartype state: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringState
     :ivar azure_asn: The Azure ASN.
     :vartype azure_asn: int
@@ -4119,8 +4119,8 @@ class ExpressRouteCircuitPeering(SubResource):
         *,
         id: Optional[str] = None,
         name: Optional[str] = None,
-        peering_type: Optional[Union[str, "ExpressRouteCircuitPeeringType"]] = None,
-        state: Optional[Union[str, "ExpressRouteCircuitPeeringState"]] = None,
+        peering_type: Optional[Union[str, "_models.ExpressRouteCircuitPeeringType"]] = None,
+        state: Optional[Union[str, "_models.ExpressRouteCircuitPeeringState"]] = None,
         azure_asn: Optional[int] = None,
         peer_asn: Optional[int] = None,
         primary_peer_address_prefix: Optional[str] = None,
@@ -4129,13 +4129,13 @@ class ExpressRouteCircuitPeering(SubResource):
         secondary_azure_port: Optional[str] = None,
         shared_key: Optional[str] = None,
         vlan_id: Optional[int] = None,
-        microsoft_peering_config: Optional["ExpressRouteCircuitPeeringConfig"] = None,
-        stats: Optional["ExpressRouteCircuitStats"] = None,
+        microsoft_peering_config: Optional["_models.ExpressRouteCircuitPeeringConfig"] = None,
+        stats: Optional["_models.ExpressRouteCircuitStats"] = None,
         provisioning_state: Optional[str] = None,
         gateway_manager_etag: Optional[str] = None,
         last_modified_by: Optional[str] = None,
-        route_filter: Optional["RouteFilter"] = None,
-        ipv6_peering_config: Optional["Ipv6ExpressRouteCircuitPeeringConfig"] = None,
+        route_filter: Optional["_models.RouteFilter"] = None,
+        ipv6_peering_config: Optional["_models.Ipv6ExpressRouteCircuitPeeringConfig"] = None,
         **kwargs
     ):
         """
@@ -4145,12 +4145,12 @@ class ExpressRouteCircuitPeering(SubResource):
          be used to access the resource.
         :paramtype name: str
         :keyword peering_type: The PeeringType. Possible values are: 'AzurePublicPeering',
-         'AzurePrivatePeering', and 'MicrosoftPeering'. Possible values include: "AzurePublicPeering",
+         'AzurePrivatePeering', and 'MicrosoftPeering'. Known values are: "AzurePublicPeering",
          "AzurePrivatePeering", "MicrosoftPeering".
         :paramtype peering_type: str or
          ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringType
-        :keyword state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Possible
-         values include: "Disabled", "Enabled".
+        :keyword state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Known
+         values are: "Disabled", "Enabled".
         :paramtype state: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringState
         :keyword azure_asn: The Azure ASN.
         :paramtype azure_asn: int
@@ -4216,8 +4216,8 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
     :ivar advertised_communities: The communities of bgp peering. Specified for microsoft peering.
     :vartype advertised_communities: list[str]
     :ivar advertised_public_prefixes_state: AdvertisedPublicPrefixState of the Peering resource.
-     Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'.
-     Possible values include: "NotConfigured", "Configuring", "Configured", "ValidationNeeded".
+     Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'. Known
+     values are: "NotConfigured", "Configuring", "Configured", "ValidationNeeded".
     :vartype advertised_public_prefixes_state: str or
      ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
     :ivar legacy_mode: The legacy mode of the peering.
@@ -4242,7 +4242,7 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
         *,
         advertised_public_prefixes: Optional[List[str]] = None,
         advertised_communities: Optional[List[str]] = None,
-        advertised_public_prefixes_state: Optional[Union[str, "ExpressRouteCircuitPeeringAdvertisedPublicPrefixState"]] = None,
+        advertised_public_prefixes_state: Optional[Union[str, "_models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState"]] = None,
         legacy_mode: Optional[int] = None,
         customer_asn: Optional[int] = None,
         routing_registry_name: Optional[str] = None,
@@ -4255,8 +4255,8 @@ class ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
          peering.
         :paramtype advertised_communities: list[str]
         :keyword advertised_public_prefixes_state: AdvertisedPublicPrefixState of the Peering resource.
-         Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'.
-         Possible values include: "NotConfigured", "Configuring", "Configured", "ValidationNeeded".
+         Possible values are 'NotConfigured', 'Configuring', 'Configured', and 'ValidationNeeded'. Known
+         values are: "NotConfigured", "Configuring", "Configured", "ValidationNeeded".
         :paramtype advertised_public_prefixes_state: str or
          ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
         :keyword legacy_mode: The legacy mode of the peering.
@@ -4292,7 +4292,7 @@ class ExpressRouteCircuitPeeringListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitPeering"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitPeering"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4434,7 +4434,7 @@ class ExpressRouteCircuitsArpTableListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitArpTable"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitArpTable"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4493,11 +4493,11 @@ class ExpressRouteCircuitSku(msrest.serialization.Model):
 
     :ivar name: The name of the SKU.
     :vartype name: str
-    :ivar tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Possible values
-     include: "Standard", "Premium", "Transport".
+    :ivar tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Known values
+     are: "Standard", "Premium", "Transport".
     :vartype tier: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitSkuTier
     :ivar family: The family of the SKU. Possible values are: 'UnlimitedData' and 'MeteredData'.
-     Possible values include: "UnlimitedData", "MeteredData".
+     Known values are: "UnlimitedData", "MeteredData".
     :vartype family: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitSkuFamily
     """
 
@@ -4511,18 +4511,18 @@ class ExpressRouteCircuitSku(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        tier: Optional[Union[str, "ExpressRouteCircuitSkuTier"]] = None,
-        family: Optional[Union[str, "ExpressRouteCircuitSkuFamily"]] = None,
+        tier: Optional[Union[str, "_models.ExpressRouteCircuitSkuTier"]] = None,
+        family: Optional[Union[str, "_models.ExpressRouteCircuitSkuFamily"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the SKU.
         :paramtype name: str
-        :keyword tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Possible
-         values include: "Standard", "Premium", "Transport".
+        :keyword tier: The tier of the SKU. Possible values are 'Standard' and 'Premium'. Known values
+         are: "Standard", "Premium", "Transport".
         :paramtype tier: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitSkuTier
         :keyword family: The family of the SKU. Possible values are: 'UnlimitedData' and 'MeteredData'.
-         Possible values include: "UnlimitedData", "MeteredData".
+         Known values are: "UnlimitedData", "MeteredData".
         :paramtype family: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitSkuFamily
         """
         super(ExpressRouteCircuitSku, self).__init__(**kwargs)
@@ -4548,7 +4548,7 @@ class ExpressRouteCircuitsRoutesTableListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitRoutesTable"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitRoutesTable"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4581,7 +4581,7 @@ class ExpressRouteCircuitsRoutesTableSummaryListResult(msrest.serialization.Mode
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteCircuitRoutesTableSummary"]] = None,
+        value: Optional[List["_models.ExpressRouteCircuitRoutesTableSummary"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4690,7 +4690,7 @@ class ExpressRouteServiceProvider(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         peering_locations: Optional[List[str]] = None,
-        bandwidths_offered: Optional[List["ExpressRouteServiceProviderBandwidthsOffered"]] = None,
+        bandwidths_offered: Optional[List["_models.ExpressRouteServiceProviderBandwidthsOffered"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -4764,7 +4764,7 @@ class ExpressRouteServiceProviderListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ExpressRouteServiceProvider"]] = None,
+        value: Optional[List["_models.ExpressRouteServiceProvider"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -4813,7 +4813,7 @@ class FlowLogInformation(msrest.serialization.Model):
         target_resource_id: str,
         storage_id: str,
         enabled: bool,
-        retention_policy: Optional["RetentionPolicyParameters"] = None,
+        retention_policy: Optional["_models.RetentionPolicyParameters"] = None,
         **kwargs
     ):
         """
@@ -4891,7 +4891,7 @@ class FrontendIPConfiguration(SubResource):
     :ivar private_ip_address: The private IP address of the IP configuration.
     :vartype private_ip_address: str
     :ivar private_ip_allocation_method: The Private IP allocation method. Possible values are:
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
     :ivar subnet: The reference of the subnet resource.
@@ -4934,9 +4934,9 @@ class FrontendIPConfiguration(SubResource):
         etag: Optional[str] = None,
         zones: Optional[List[str]] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["Subnet"] = None,
-        public_ip_address: Optional["PublicIPAddress"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.Subnet"] = None,
+        public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -4954,7 +4954,7 @@ class FrontendIPConfiguration(SubResource):
         :keyword private_ip_address: The private IP address of the IP configuration.
         :paramtype private_ip_address: str
         :keyword private_ip_allocation_method: The Private IP allocation method. Possible values are:
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
         :keyword subnet: The reference of the subnet resource.
@@ -5051,7 +5051,7 @@ class GatewayRouteListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["GatewayRoute"]] = None,
+        value: Optional[List["_models.GatewayRoute"]] = None,
         **kwargs
     ):
         """
@@ -5075,7 +5075,7 @@ class InboundNatPool(SubResource):
     :ivar frontend_ip_configuration: A reference to frontend IP addresses.
     :vartype frontend_ip_configuration: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :ivar protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or 'Tcp'.
-     Possible values include: "Udp", "Tcp".
+     Known values are: "Udp", "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.TransportProtocol
     :ivar frontend_port_range_start: The first port number in the range of external ports that will
      be used to provide Inbound Nat to NICs associated with a load balancer. Acceptable values range
@@ -5111,8 +5111,8 @@ class InboundNatPool(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "TransportProtocol"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         frontend_port_range_start: Optional[int] = None,
         frontend_port_range_end: Optional[int] = None,
         backend_port: Optional[int] = None,
@@ -5130,7 +5130,7 @@ class InboundNatPool(SubResource):
         :keyword frontend_ip_configuration: A reference to frontend IP addresses.
         :paramtype frontend_ip_configuration: ~azure.mgmt.network.v2017_06_01.models.SubResource
         :keyword protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or
-         'Tcp'. Possible values include: "Udp", "Tcp".
+         'Tcp'. Known values are: "Udp", "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.TransportProtocol
         :keyword frontend_port_range_start: The first port number in the range of external ports that
          will be used to provide Inbound Nat to NICs associated with a load balancer. Acceptable values
@@ -5178,7 +5178,7 @@ class InboundNatRule(SubResource):
     :vartype backend_ip_configuration:
      ~azure.mgmt.network.v2017_06_01.models.NetworkInterfaceIPConfiguration
     :ivar protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or 'Tcp'.
-     Possible values include: "Udp", "Tcp".
+     Known values are: "Udp", "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.TransportProtocol
     :ivar frontend_port: The port for the external endpoint. Port numbers for each rule must be
      unique within the Load Balancer. Acceptable values range from 1 to 65534.
@@ -5224,8 +5224,8 @@ class InboundNatRule(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "TransportProtocol"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         frontend_port: Optional[int] = None,
         backend_port: Optional[int] = None,
         idle_timeout_in_minutes: Optional[int] = None,
@@ -5244,7 +5244,7 @@ class InboundNatRule(SubResource):
         :keyword frontend_ip_configuration: A reference to frontend IP addresses.
         :paramtype frontend_ip_configuration: ~azure.mgmt.network.v2017_06_01.models.SubResource
         :keyword protocol: The transport protocol for the endpoint. Possible values are: 'Udp' or
-         'Tcp'. Possible values include: "Udp", "Tcp".
+         'Tcp'. Known values are: "Udp", "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.TransportProtocol
         :keyword frontend_port: The port for the external endpoint. Port numbers for each rule must be
          unique within the Load Balancer. Acceptable values range from 1 to 65534.
@@ -5301,7 +5301,7 @@ class InboundNatRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["InboundNatRule"]] = None,
+        value: Optional[List["_models.InboundNatRule"]] = None,
         **kwargs
     ):
         """
@@ -5360,7 +5360,7 @@ class IPConfiguration(SubResource):
     :ivar private_ip_address: The private IP address of the IP configuration.
     :vartype private_ip_address: str
     :ivar private_ip_allocation_method: The private IP allocation method. Possible values are
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
     :ivar subnet: The reference of the subnet resource.
@@ -5390,9 +5390,9 @@ class IPConfiguration(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["Subnet"] = None,
-        public_ip_address: Optional["PublicIPAddress"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.Subnet"] = None,
+        public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -5407,7 +5407,7 @@ class IPConfiguration(SubResource):
         :keyword private_ip_address: The private IP address of the IP configuration.
         :paramtype private_ip_address: str
         :keyword private_ip_allocation_method: The private IP allocation method. Possible values are
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
         :keyword subnet: The reference of the subnet resource.
@@ -5439,25 +5439,24 @@ class IpsecPolicy(msrest.serialization.Model):
     :ivar sa_data_size_kilobytes: Required. The IPSec Security Association (also called Quick Mode
      or Phase 2 SA) payload size in KB for a site to site VPN tunnel.
     :vartype sa_data_size_kilobytes: int
-    :ivar ipsec_encryption: Required. The IPSec encryption algorithm (IKE phase 1). Possible values
-     include: "None", "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES128", "GCMAES192",
+    :ivar ipsec_encryption: Required. The IPSec encryption algorithm (IKE phase 1). Known values
+     are: "None", "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES128", "GCMAES192",
      "GCMAES256".
     :vartype ipsec_encryption: str or ~azure.mgmt.network.v2017_06_01.models.IpsecEncryption
-    :ivar ipsec_integrity: Required. The IPSec integrity algorithm (IKE phase 1). Possible values
-     include: "MD5", "SHA1", "SHA256", "GCMAES128", "GCMAES192", "GCMAES256".
+    :ivar ipsec_integrity: Required. The IPSec integrity algorithm (IKE phase 1). Known values are:
+     "MD5", "SHA1", "SHA256", "GCMAES128", "GCMAES192", "GCMAES256".
     :vartype ipsec_integrity: str or ~azure.mgmt.network.v2017_06_01.models.IpsecIntegrity
-    :ivar ike_encryption: Required. The IKE encryption algorithm (IKE phase 2). Possible values
-     include: "DES", "DES3", "AES128", "AES192", "AES256".
+    :ivar ike_encryption: Required. The IKE encryption algorithm (IKE phase 2). Known values are:
+     "DES", "DES3", "AES128", "AES192", "AES256".
     :vartype ike_encryption: str or ~azure.mgmt.network.v2017_06_01.models.IkeEncryption
-    :ivar ike_integrity: Required. The IKE integrity algorithm (IKE phase 2). Possible values
-     include: "MD5", "SHA1", "SHA256", "SHA384".
+    :ivar ike_integrity: Required. The IKE integrity algorithm (IKE phase 2). Known values are:
+     "MD5", "SHA1", "SHA256", "SHA384".
     :vartype ike_integrity: str or ~azure.mgmt.network.v2017_06_01.models.IkeIntegrity
-    :ivar dh_group: Required. The DH Groups used in IKE Phase 1 for initial SA. Possible values
-     include: "None", "DHGroup1", "DHGroup2", "DHGroup14", "DHGroup2048", "ECP256", "ECP384",
-     "DHGroup24".
+    :ivar dh_group: Required. The DH Groups used in IKE Phase 1 for initial SA. Known values are:
+     "None", "DHGroup1", "DHGroup2", "DHGroup14", "DHGroup2048", "ECP256", "ECP384", "DHGroup24".
     :vartype dh_group: str or ~azure.mgmt.network.v2017_06_01.models.DhGroup
-    :ivar pfs_group: Required. The DH Groups used in IKE Phase 2 for new child SA. Possible values
-     include: "None", "PFS1", "PFS2", "PFS2048", "ECP256", "ECP384", "PFS24".
+    :ivar pfs_group: Required. The DH Groups used in IKE Phase 2 for new child SA. Known values
+     are: "None", "PFS1", "PFS2", "PFS2048", "ECP256", "ECP384", "PFS24".
     :vartype pfs_group: str or ~azure.mgmt.network.v2017_06_01.models.PfsGroup
     """
 
@@ -5488,12 +5487,12 @@ class IpsecPolicy(msrest.serialization.Model):
         *,
         sa_life_time_seconds: int,
         sa_data_size_kilobytes: int,
-        ipsec_encryption: Union[str, "IpsecEncryption"],
-        ipsec_integrity: Union[str, "IpsecIntegrity"],
-        ike_encryption: Union[str, "IkeEncryption"],
-        ike_integrity: Union[str, "IkeIntegrity"],
-        dh_group: Union[str, "DhGroup"],
-        pfs_group: Union[str, "PfsGroup"],
+        ipsec_encryption: Union[str, "_models.IpsecEncryption"],
+        ipsec_integrity: Union[str, "_models.IpsecIntegrity"],
+        ike_encryption: Union[str, "_models.IkeEncryption"],
+        ike_integrity: Union[str, "_models.IkeIntegrity"],
+        dh_group: Union[str, "_models.DhGroup"],
+        pfs_group: Union[str, "_models.PfsGroup"],
         **kwargs
     ):
         """
@@ -5503,25 +5502,25 @@ class IpsecPolicy(msrest.serialization.Model):
         :keyword sa_data_size_kilobytes: Required. The IPSec Security Association (also called Quick
          Mode or Phase 2 SA) payload size in KB for a site to site VPN tunnel.
         :paramtype sa_data_size_kilobytes: int
-        :keyword ipsec_encryption: Required. The IPSec encryption algorithm (IKE phase 1). Possible
-         values include: "None", "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES128", "GCMAES192",
+        :keyword ipsec_encryption: Required. The IPSec encryption algorithm (IKE phase 1). Known values
+         are: "None", "DES", "DES3", "AES128", "AES192", "AES256", "GCMAES128", "GCMAES192",
          "GCMAES256".
         :paramtype ipsec_encryption: str or ~azure.mgmt.network.v2017_06_01.models.IpsecEncryption
-        :keyword ipsec_integrity: Required. The IPSec integrity algorithm (IKE phase 1). Possible
-         values include: "MD5", "SHA1", "SHA256", "GCMAES128", "GCMAES192", "GCMAES256".
+        :keyword ipsec_integrity: Required. The IPSec integrity algorithm (IKE phase 1). Known values
+         are: "MD5", "SHA1", "SHA256", "GCMAES128", "GCMAES192", "GCMAES256".
         :paramtype ipsec_integrity: str or ~azure.mgmt.network.v2017_06_01.models.IpsecIntegrity
-        :keyword ike_encryption: Required. The IKE encryption algorithm (IKE phase 2). Possible values
-         include: "DES", "DES3", "AES128", "AES192", "AES256".
+        :keyword ike_encryption: Required. The IKE encryption algorithm (IKE phase 2). Known values
+         are: "DES", "DES3", "AES128", "AES192", "AES256".
         :paramtype ike_encryption: str or ~azure.mgmt.network.v2017_06_01.models.IkeEncryption
-        :keyword ike_integrity: Required. The IKE integrity algorithm (IKE phase 2). Possible values
-         include: "MD5", "SHA1", "SHA256", "SHA384".
+        :keyword ike_integrity: Required. The IKE integrity algorithm (IKE phase 2). Known values are:
+         "MD5", "SHA1", "SHA256", "SHA384".
         :paramtype ike_integrity: str or ~azure.mgmt.network.v2017_06_01.models.IkeIntegrity
-        :keyword dh_group: Required. The DH Groups used in IKE Phase 1 for initial SA. Possible values
-         include: "None", "DHGroup1", "DHGroup2", "DHGroup14", "DHGroup2048", "ECP256", "ECP384",
+        :keyword dh_group: Required. The DH Groups used in IKE Phase 1 for initial SA. Known values
+         are: "None", "DHGroup1", "DHGroup2", "DHGroup14", "DHGroup2048", "ECP256", "ECP384",
          "DHGroup24".
         :paramtype dh_group: str or ~azure.mgmt.network.v2017_06_01.models.DhGroup
-        :keyword pfs_group: Required. The DH Groups used in IKE Phase 2 for new child SA. Possible
-         values include: "None", "PFS1", "PFS2", "PFS2048", "ECP256", "ECP384", "PFS24".
+        :keyword pfs_group: Required. The DH Groups used in IKE Phase 2 for new child SA. Known values
+         are: "None", "PFS1", "PFS2", "PFS2048", "ECP256", "ECP384", "PFS24".
         :paramtype pfs_group: str or ~azure.mgmt.network.v2017_06_01.models.PfsGroup
         """
         super(IpsecPolicy, self).__init__(**kwargs)
@@ -5547,8 +5546,8 @@ class Ipv6ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
      ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringConfig
     :ivar route_filter: The reference of the RouteFilter resource.
     :vartype route_filter: ~azure.mgmt.network.v2017_06_01.models.RouteFilter
-    :ivar state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Possible
-     values include: "Disabled", "Enabled".
+    :ivar state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Known values
+     are: "Disabled", "Enabled".
     :vartype state: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringState
     """
 
@@ -5565,9 +5564,9 @@ class Ipv6ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
         *,
         primary_peer_address_prefix: Optional[str] = None,
         secondary_peer_address_prefix: Optional[str] = None,
-        microsoft_peering_config: Optional["ExpressRouteCircuitPeeringConfig"] = None,
-        route_filter: Optional["RouteFilter"] = None,
-        state: Optional[Union[str, "ExpressRouteCircuitPeeringState"]] = None,
+        microsoft_peering_config: Optional["_models.ExpressRouteCircuitPeeringConfig"] = None,
+        route_filter: Optional["_models.RouteFilter"] = None,
+        state: Optional[Union[str, "_models.ExpressRouteCircuitPeeringState"]] = None,
         **kwargs
     ):
         """
@@ -5580,8 +5579,8 @@ class Ipv6ExpressRouteCircuitPeeringConfig(msrest.serialization.Model):
          ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringConfig
         :keyword route_filter: The reference of the RouteFilter resource.
         :paramtype route_filter: ~azure.mgmt.network.v2017_06_01.models.RouteFilter
-        :keyword state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Possible
-         values include: "Disabled", "Enabled".
+        :keyword state: The state of peering. Possible values are: 'Disabled' and 'Enabled'. Known
+         values are: "Disabled", "Enabled".
         :paramtype state: str or ~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeeringState
         """
         super(Ipv6ExpressRouteCircuitPeeringConfig, self).__init__(**kwargs)
@@ -5673,13 +5672,13 @@ class LoadBalancer(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        frontend_ip_configurations: Optional[List["FrontendIPConfiguration"]] = None,
-        backend_address_pools: Optional[List["BackendAddressPool"]] = None,
-        load_balancing_rules: Optional[List["LoadBalancingRule"]] = None,
-        probes: Optional[List["Probe"]] = None,
-        inbound_nat_rules: Optional[List["InboundNatRule"]] = None,
-        inbound_nat_pools: Optional[List["InboundNatPool"]] = None,
-        outbound_nat_rules: Optional[List["OutboundNatRule"]] = None,
+        frontend_ip_configurations: Optional[List["_models.FrontendIPConfiguration"]] = None,
+        backend_address_pools: Optional[List["_models.BackendAddressPool"]] = None,
+        load_balancing_rules: Optional[List["_models.LoadBalancingRule"]] = None,
+        probes: Optional[List["_models.Probe"]] = None,
+        inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None,
+        inbound_nat_pools: Optional[List["_models.InboundNatPool"]] = None,
+        outbound_nat_rules: Optional[List["_models.OutboundNatRule"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -5763,7 +5762,7 @@ class LoadBalancerBackendAddressPoolListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["BackendAddressPool"]] = None,
+        value: Optional[List["_models.BackendAddressPool"]] = None,
         **kwargs
     ):
         """
@@ -5798,7 +5797,7 @@ class LoadBalancerFrontendIPConfigurationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["FrontendIPConfiguration"]] = None,
+        value: Optional[List["_models.FrontendIPConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -5833,7 +5832,7 @@ class LoadBalancerListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["LoadBalancer"]] = None,
+        value: Optional[List["_models.LoadBalancer"]] = None,
         **kwargs
     ):
         """
@@ -5868,7 +5867,7 @@ class LoadBalancerLoadBalancingRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["LoadBalancingRule"]] = None,
+        value: Optional[List["_models.LoadBalancingRule"]] = None,
         **kwargs
     ):
         """
@@ -5903,7 +5902,7 @@ class LoadBalancerProbeListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Probe"]] = None,
+        value: Optional[List["_models.Probe"]] = None,
         **kwargs
     ):
         """
@@ -5933,10 +5932,10 @@ class LoadBalancingRule(SubResource):
     :ivar probe: The reference of the load balancer probe used by the load balancing rule.
     :vartype probe: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :ivar protocol: The transport protocol for the external endpoint. Possible values are 'Udp' or
-     'Tcp'. Possible values include: "Udp", "Tcp".
+     'Tcp'. Known values are: "Udp", "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.TransportProtocol
     :ivar load_distribution: The load distribution policy for this rule. Possible values are
-     'Default', 'SourceIP', and 'SourceIPProtocol'. Possible values include: "Default", "SourceIP",
+     'Default', 'SourceIP', and 'SourceIPProtocol'. Known values are: "Default", "SourceIP",
      "SourceIPProtocol".
     :vartype load_distribution: str or ~azure.mgmt.network.v2017_06_01.models.LoadDistribution
     :ivar frontend_port: The port for the external endpoint. Port numbers for each rule must be
@@ -5981,11 +5980,11 @@ class LoadBalancingRule(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        frontend_ip_configuration: Optional["SubResource"] = None,
-        backend_address_pool: Optional["SubResource"] = None,
-        probe: Optional["SubResource"] = None,
-        protocol: Optional[Union[str, "TransportProtocol"]] = None,
-        load_distribution: Optional[Union[str, "LoadDistribution"]] = None,
+        frontend_ip_configuration: Optional["_models.SubResource"] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
+        probe: Optional["_models.SubResource"] = None,
+        protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
+        load_distribution: Optional[Union[str, "_models.LoadDistribution"]] = None,
         frontend_port: Optional[int] = None,
         backend_port: Optional[int] = None,
         idle_timeout_in_minutes: Optional[int] = None,
@@ -6009,10 +6008,10 @@ class LoadBalancingRule(SubResource):
         :keyword probe: The reference of the load balancer probe used by the load balancing rule.
         :paramtype probe: ~azure.mgmt.network.v2017_06_01.models.SubResource
         :keyword protocol: The transport protocol for the external endpoint. Possible values are 'Udp'
-         or 'Tcp'. Possible values include: "Udp", "Tcp".
+         or 'Tcp'. Known values are: "Udp", "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.TransportProtocol
         :keyword load_distribution: The load distribution policy for this rule. Possible values are
-         'Default', 'SourceIP', and 'SourceIPProtocol'. Possible values include: "Default", "SourceIP",
+         'Default', 'SourceIP', and 'SourceIPProtocol'. Known values are: "Default", "SourceIP",
          "SourceIPProtocol".
         :paramtype load_distribution: str or ~azure.mgmt.network.v2017_06_01.models.LoadDistribution
         :keyword frontend_port: The port for the external endpoint. Port numbers for each rule must be
@@ -6106,9 +6105,9 @@ class LocalNetworkGateway(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        local_network_address_space: Optional["AddressSpace"] = None,
+        local_network_address_space: Optional["_models.AddressSpace"] = None,
         gateway_ip_address: Optional[str] = None,
-        bgp_settings: Optional["BgpSettings"] = None,
+        bgp_settings: Optional["_models.BgpSettings"] = None,
         resource_guid: Optional[str] = None,
         **kwargs
     ):
@@ -6162,7 +6161,7 @@ class LocalNetworkGatewayListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["LocalNetworkGateway"]] = None,
+        value: Optional[List["_models.LocalNetworkGateway"]] = None,
         **kwargs
     ):
         """
@@ -6248,10 +6247,10 @@ class NetworkInterface(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        virtual_machine: Optional["SubResource"] = None,
-        network_security_group: Optional["NetworkSecurityGroup"] = None,
-        ip_configurations: Optional[List["NetworkInterfaceIPConfiguration"]] = None,
-        dns_settings: Optional["NetworkInterfaceDnsSettings"] = None,
+        virtual_machine: Optional["_models.SubResource"] = None,
+        network_security_group: Optional["_models.NetworkSecurityGroup"] = None,
+        ip_configurations: Optional[List["_models.NetworkInterfaceIPConfiguration"]] = None,
+        dns_settings: Optional["_models.NetworkInterfaceDnsSettings"] = None,
         mac_address: Optional[str] = None,
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
@@ -6331,7 +6330,7 @@ class NetworkInterfaceAssociation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        security_rules: Optional[List["SecurityRule"]] = None,
+        security_rules: Optional[List["_models.SecurityRule"]] = None,
         **kwargs
     ):
         """
@@ -6436,12 +6435,12 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :ivar private_ip_address: Private IP address of the IP configuration.
     :vartype private_ip_address: str
     :ivar private_ip_allocation_method: Defines how a private IP address is assigned. Possible
-     values are: 'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     values are: 'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
     :ivar private_ip_address_version: Available from Api-Version 2016-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.network.v2017_06_01.models.IPVersion
     :ivar subnet: Subnet bound to the IP configuration.
     :vartype subnet: ~azure.mgmt.network.v2017_06_01.models.Subnet
@@ -6476,15 +6475,15 @@ class NetworkInterfaceIPConfiguration(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        application_gateway_backend_address_pools: Optional[List["ApplicationGatewayBackendAddressPool"]] = None,
-        load_balancer_backend_address_pools: Optional[List["BackendAddressPool"]] = None,
-        load_balancer_inbound_nat_rules: Optional[List["InboundNatRule"]] = None,
+        application_gateway_backend_address_pools: Optional[List["_models.ApplicationGatewayBackendAddressPool"]] = None,
+        load_balancer_backend_address_pools: Optional[List["_models.BackendAddressPool"]] = None,
+        load_balancer_inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None,
         private_ip_address: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        private_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        subnet: Optional["Subnet"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        subnet: Optional["_models.Subnet"] = None,
         primary: Optional[bool] = None,
-        public_ip_address: Optional["PublicIPAddress"] = None,
+        public_ip_address: Optional["_models.PublicIPAddress"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -6510,12 +6509,12 @@ class NetworkInterfaceIPConfiguration(SubResource):
         :keyword private_ip_address: Private IP address of the IP configuration.
         :paramtype private_ip_address: str
         :keyword private_ip_allocation_method: Defines how a private IP address is assigned. Possible
-         values are: 'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         values are: 'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
         :keyword private_ip_address_version: Available from Api-Version 2016-03-30 onwards, it
          represents whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.
-         Possible values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         Possible values are: 'IPv4' and 'IPv6'. Known values are: "IPv4", "IPv6".
         :paramtype private_ip_address_version: str or ~azure.mgmt.network.v2017_06_01.models.IPVersion
         :keyword subnet: Subnet bound to the IP configuration.
         :paramtype subnet: ~azure.mgmt.network.v2017_06_01.models.Subnet
@@ -6565,7 +6564,7 @@ class NetworkInterfaceIPConfigurationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["NetworkInterfaceIPConfiguration"]] = None,
+        value: Optional[List["_models.NetworkInterfaceIPConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -6600,7 +6599,7 @@ class NetworkInterfaceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["NetworkInterface"]] = None,
+        value: Optional[List["_models.NetworkInterface"]] = None,
         **kwargs
     ):
         """
@@ -6635,7 +6634,7 @@ class NetworkInterfaceLoadBalancerListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["LoadBalancer"]] = None,
+        value: Optional[List["_models.LoadBalancer"]] = None,
         **kwargs
     ):
         """
@@ -6708,8 +6707,8 @@ class NetworkSecurityGroup(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        security_rules: Optional[List["SecurityRule"]] = None,
-        default_security_rules: Optional[List["SecurityRule"]] = None,
+        security_rules: Optional[List["_models.SecurityRule"]] = None,
+        default_security_rules: Optional[List["_models.SecurityRule"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -6760,7 +6759,7 @@ class NetworkSecurityGroupListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["NetworkSecurityGroup"]] = None,
+        value: Optional[List["_models.NetworkSecurityGroup"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -6792,7 +6791,7 @@ class NetworkWatcher(Resource):
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
      "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2017_06_01.models.ProvisioningState
     """
@@ -6851,7 +6850,7 @@ class NetworkWatcherListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["NetworkWatcher"]] = None,
+        value: Optional[List["_models.NetworkWatcher"]] = None,
         **kwargs
     ):
         """
@@ -6923,7 +6922,7 @@ class NextHopParameters(msrest.serialization.Model):
 class NextHopResult(msrest.serialization.Model):
     """The information about next hop from the specified VM.
 
-    :ivar next_hop_type: Next hop type. Possible values include: "Internet", "VirtualAppliance",
+    :ivar next_hop_type: Next hop type. Known values are: "Internet", "VirtualAppliance",
      "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.v2017_06_01.models.NextHopType
     :ivar next_hop_ip_address: Next hop IP Address.
@@ -6943,13 +6942,13 @@ class NextHopResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        next_hop_type: Optional[Union[str, "NextHopType"]] = None,
+        next_hop_type: Optional[Union[str, "_models.NextHopType"]] = None,
         next_hop_ip_address: Optional[str] = None,
         route_table_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword next_hop_type: Next hop type. Possible values include: "Internet", "VirtualAppliance",
+        :keyword next_hop_type: Next hop type. Known values are: "Internet", "VirtualAppliance",
          "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", "None".
         :paramtype next_hop_type: str or ~azure.mgmt.network.v2017_06_01.models.NextHopType
         :keyword next_hop_ip_address: Next hop IP Address.
@@ -7004,8 +7003,8 @@ class OutboundNatRule(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         allocated_outbound_ports: Optional[int] = None,
-        frontend_ip_configurations: Optional[List["SubResource"]] = None,
-        backend_address_pool: Optional["SubResource"] = None,
+        frontend_ip_configurations: Optional[List["_models.SubResource"]] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -7075,11 +7074,11 @@ class PacketCapture(msrest.serialization.Model):
         self,
         *,
         target: str,
-        storage_location: "PacketCaptureStorageLocation",
+        storage_location: "_models.PacketCaptureStorageLocation",
         bytes_to_capture_per_packet: Optional[int] = 0,
         total_bytes_per_session: Optional[int] = 1073741824,
         time_limit_in_seconds: Optional[int] = 18000,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
         **kwargs
     ):
         """
@@ -7111,8 +7110,8 @@ class PacketCapture(msrest.serialization.Model):
 class PacketCaptureFilter(msrest.serialization.Model):
     """Filter that is applied to packet capture request. Multiple filters can be applied.
 
-    :ivar protocol: Protocol to be filtered on. Possible values include: "TCP", "UDP", "Any".
-     Default value: "Any".
+    :ivar protocol: Protocol to be filtered on. Known values are: "TCP", "UDP", "Any". Default
+     value: "Any".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.PcProtocol
     :ivar local_ip_address: Local IP Address to be filtered on. Notation: "127.0.0.1" for single
      address entry. "127.0.0.1-127.0.0.255" for range. "127.0.0.1;127.0.0.5"? for multiple entries.
@@ -7145,7 +7144,7 @@ class PacketCaptureFilter(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        protocol: Optional[Union[str, "PcProtocol"]] = "Any",
+        protocol: Optional[Union[str, "_models.PcProtocol"]] = "Any",
         local_ip_address: Optional[str] = None,
         remote_ip_address: Optional[str] = None,
         local_port: Optional[str] = None,
@@ -7153,8 +7152,8 @@ class PacketCaptureFilter(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword protocol: Protocol to be filtered on. Possible values include: "TCP", "UDP", "Any".
-         Default value: "Any".
+        :keyword protocol: Protocol to be filtered on. Known values are: "TCP", "UDP", "Any". Default
+         value: "Any".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.PcProtocol
         :keyword local_ip_address: Local IP Address to be filtered on. Notation: "127.0.0.1" for single
          address entry. "127.0.0.1-127.0.0.255" for range. "127.0.0.1;127.0.0.5"? for multiple entries.
@@ -7197,7 +7196,7 @@ class PacketCaptureListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PacketCaptureResult"]] = None,
+        value: Optional[List["_models.PacketCaptureResult"]] = None,
         **kwargs
     ):
         """
@@ -7246,11 +7245,11 @@ class PacketCaptureParameters(msrest.serialization.Model):
         self,
         *,
         target: str,
-        storage_location: "PacketCaptureStorageLocation",
+        storage_location: "_models.PacketCaptureStorageLocation",
         bytes_to_capture_per_packet: Optional[int] = 0,
         total_bytes_per_session: Optional[int] = 1073741824,
         time_limit_in_seconds: Optional[int] = 18000,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
         **kwargs
     ):
         """
@@ -7288,7 +7287,7 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
     :vartype id: str
     :ivar capture_start_time: The start time of the packet capture session.
     :vartype capture_start_time: ~datetime.datetime
-    :ivar packet_capture_status: The status of the packet capture session. Possible values include:
+    :ivar packet_capture_status: The status of the packet capture session. Known values are:
      "NotStarted", "Running", "Stopped", "Error", "Unknown".
     :vartype packet_capture_status: str or ~azure.mgmt.network.v2017_06_01.models.PcStatus
     :ivar stop_reason: The reason the current packet capture session was stopped.
@@ -7312,9 +7311,9 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
         name: Optional[str] = None,
         id: Optional[str] = None,
         capture_start_time: Optional[datetime.datetime] = None,
-        packet_capture_status: Optional[Union[str, "PcStatus"]] = None,
+        packet_capture_status: Optional[Union[str, "_models.PcStatus"]] = None,
         stop_reason: Optional[str] = None,
-        packet_capture_error: Optional[List[Union[str, "PcError"]]] = None,
+        packet_capture_error: Optional[List[Union[str, "_models.PcError"]]] = None,
         **kwargs
     ):
         """
@@ -7324,8 +7323,8 @@ class PacketCaptureQueryStatusResult(msrest.serialization.Model):
         :paramtype id: str
         :keyword capture_start_time: The start time of the packet capture session.
         :paramtype capture_start_time: ~datetime.datetime
-        :keyword packet_capture_status: The status of the packet capture session. Possible values
-         include: "NotStarted", "Running", "Stopped", "Error", "Unknown".
+        :keyword packet_capture_status: The status of the packet capture session. Known values are:
+         "NotStarted", "Running", "Stopped", "Error", "Unknown".
         :paramtype packet_capture_status: str or ~azure.mgmt.network.v2017_06_01.models.PcStatus
         :keyword stop_reason: The reason the current packet capture session was stopped.
         :paramtype stop_reason: str
@@ -7365,8 +7364,8 @@ class PacketCaptureResult(msrest.serialization.Model):
     :vartype storage_location: ~azure.mgmt.network.v2017_06_01.models.PacketCaptureStorageLocation
     :ivar filters:
     :vartype filters: list[~azure.mgmt.network.v2017_06_01.models.PacketCaptureFilter]
-    :ivar provisioning_state: The provisioning state of the packet capture session. Possible values
-     include: "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the packet capture session. Known values
+     are: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2017_06_01.models.ProvisioningState
     """
 
@@ -7396,9 +7395,9 @@ class PacketCaptureResult(msrest.serialization.Model):
         bytes_to_capture_per_packet: Optional[int] = 0,
         total_bytes_per_session: Optional[int] = 1073741824,
         time_limit_in_seconds: Optional[int] = 18000,
-        storage_location: Optional["PacketCaptureStorageLocation"] = None,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        storage_location: Optional["_models.PacketCaptureStorageLocation"] = None,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -7418,8 +7417,8 @@ class PacketCaptureResult(msrest.serialization.Model):
          ~azure.mgmt.network.v2017_06_01.models.PacketCaptureStorageLocation
         :keyword filters:
         :paramtype filters: list[~azure.mgmt.network.v2017_06_01.models.PacketCaptureFilter]
-        :keyword provisioning_state: The provisioning state of the packet capture session. Possible
-         values include: "Succeeded", "Updating", "Deleting", "Failed".
+        :keyword provisioning_state: The provisioning state of the packet capture session. Known values
+         are: "Succeeded", "Updating", "Deleting", "Failed".
         :paramtype provisioning_state: str or ~azure.mgmt.network.v2017_06_01.models.ProvisioningState
         """
         super(PacketCaptureResult, self).__init__(**kwargs)
@@ -7453,8 +7452,8 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
     :vartype storage_location: ~azure.mgmt.network.v2017_06_01.models.PacketCaptureStorageLocation
     :ivar filters:
     :vartype filters: list[~azure.mgmt.network.v2017_06_01.models.PacketCaptureFilter]
-    :ivar provisioning_state: The provisioning state of the packet capture session. Possible values
-     include: "Succeeded", "Updating", "Deleting", "Failed".
+    :ivar provisioning_state: The provisioning state of the packet capture session. Known values
+     are: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2017_06_01.models.ProvisioningState
     """
 
@@ -7477,12 +7476,12 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
         self,
         *,
         target: str,
-        storage_location: "PacketCaptureStorageLocation",
+        storage_location: "_models.PacketCaptureStorageLocation",
         bytes_to_capture_per_packet: Optional[int] = 0,
         total_bytes_per_session: Optional[int] = 1073741824,
         time_limit_in_seconds: Optional[int] = 18000,
-        filters: Optional[List["PacketCaptureFilter"]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        filters: Optional[List["_models.PacketCaptureFilter"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -7501,8 +7500,8 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
          ~azure.mgmt.network.v2017_06_01.models.PacketCaptureStorageLocation
         :keyword filters:
         :paramtype filters: list[~azure.mgmt.network.v2017_06_01.models.PacketCaptureFilter]
-        :keyword provisioning_state: The provisioning state of the packet capture session. Possible
-         values include: "Succeeded", "Updating", "Deleting", "Failed".
+        :keyword provisioning_state: The provisioning state of the packet capture session. Known values
+         are: "Succeeded", "Updating", "Deleting", "Failed".
         :paramtype provisioning_state: str or ~azure.mgmt.network.v2017_06_01.models.ProvisioningState
         """
         super(PacketCaptureResultProperties, self).__init__(target=target, bytes_to_capture_per_packet=bytes_to_capture_per_packet, total_bytes_per_session=total_bytes_per_session, time_limit_in_seconds=time_limit_in_seconds, storage_location=storage_location, filters=filters, **kwargs)
@@ -7604,8 +7603,8 @@ class PatchRouteFilter(SubResource):
         *,
         id: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        rules: Optional[List["RouteFilterRule"]] = None,
-        peerings: Optional[List["ExpressRouteCircuitPeering"]] = None,
+        rules: Optional[List["_models.RouteFilterRule"]] = None,
+        peerings: Optional[List["_models.ExpressRouteCircuitPeering"]] = None,
         **kwargs
     ):
         """
@@ -7642,11 +7641,11 @@ class PatchRouteFilterRule(SubResource):
     :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Possible values
-     include: "Allow", "Deny".
+    :ivar access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Known values are:
+     "Allow", "Deny".
     :vartype access: str or ~azure.mgmt.network.v2017_06_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Possible
-     values include: "Community".
+    :ivar route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Known
+     values are: "Community".
     :vartype route_filter_rule_type: str or
      ~azure.mgmt.network.v2017_06_01.models.RouteFilterRuleType
     :ivar communities: The collection for bgp community values to filter on. e.g.
@@ -7679,8 +7678,8 @@ class PatchRouteFilterRule(SubResource):
         *,
         id: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        access: Optional[Union[str, "Access"]] = None,
-        route_filter_rule_type: Optional[Union[str, "RouteFilterRuleType"]] = None,
+        access: Optional[Union[str, "_models.Access"]] = None,
+        route_filter_rule_type: Optional[Union[str, "_models.RouteFilterRuleType"]] = None,
         communities: Optional[List[str]] = None,
         **kwargs
     ):
@@ -7689,11 +7688,11 @@ class PatchRouteFilterRule(SubResource):
         :paramtype id: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Possible
-         values include: "Allow", "Deny".
+        :keyword access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Known values
+         are: "Allow", "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2017_06_01.models.Access
-        :keyword route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'.
-         Possible values include: "Community".
+        :keyword route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Known
+         values are: "Community".
         :paramtype route_filter_rule_type: str or
          ~azure.mgmt.network.v2017_06_01.models.RouteFilterRuleType
         :keyword communities: The collection for bgp community values to filter on. e.g.
@@ -7727,7 +7726,7 @@ class Probe(SubResource):
     :ivar protocol: The protocol of the end point. Possible values are: 'Http' or 'Tcp'. If 'Tcp'
      is specified, a received ACK is required for the probe to be successful. If 'Http' is
      specified, a 200 OK response from the specifies URI is required for the probe to be successful.
-     Possible values include: "Http", "Tcp".
+     Known values are: "Http", "Tcp".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ProbeProtocol
     :ivar port: The port for communicating the probe. Possible values range from 1 to 65535,
      inclusive.
@@ -7772,7 +7771,7 @@ class Probe(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        protocol: Optional[Union[str, "ProbeProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.ProbeProtocol"]] = None,
         port: Optional[int] = None,
         interval_in_seconds: Optional[int] = None,
         number_of_probes: Optional[int] = None,
@@ -7791,7 +7790,7 @@ class Probe(SubResource):
         :keyword protocol: The protocol of the end point. Possible values are: 'Http' or 'Tcp'. If
          'Tcp' is specified, a received ACK is required for the probe to be successful. If 'Http' is
          specified, a 200 OK response from the specifies URI is required for the probe to be successful.
-         Possible values include: "Http", "Tcp".
+         Known values are: "Http", "Tcp".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.ProbeProtocol
         :keyword port: The port for communicating the probe. Possible values range from 1 to 65535,
          inclusive.
@@ -7845,11 +7844,11 @@ class PublicIPAddress(Resource):
      come from.
     :vartype zones: list[str]
     :ivar public_ip_allocation_method: The public IP allocation method. Possible values are:
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
     :vartype public_ip_allocation_method: str or
      ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
     :ivar public_ip_address_version: The public IP address version. Possible values are: 'IPv4' and
-     'IPv6'. Possible values include: "IPv4", "IPv6".
+     'IPv6'. Known values are: "IPv4", "IPv6".
     :vartype public_ip_address_version: str or ~azure.mgmt.network.v2017_06_01.models.IPVersion
     :ivar ip_configuration: The IP configuration associated with the public IP address.
     :vartype ip_configuration: ~azure.mgmt.network.v2017_06_01.models.IPConfiguration
@@ -7898,9 +7897,9 @@ class PublicIPAddress(Resource):
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         zones: Optional[List[str]] = None,
-        public_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        public_ip_address_version: Optional[Union[str, "IPVersion"]] = None,
-        dns_settings: Optional["PublicIPAddressDnsSettings"] = None,
+        public_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        public_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        dns_settings: Optional["_models.PublicIPAddressDnsSettings"] = None,
         ip_address: Optional[str] = None,
         idle_timeout_in_minutes: Optional[int] = None,
         resource_guid: Optional[str] = None,
@@ -7920,11 +7919,11 @@ class PublicIPAddress(Resource):
          to come from.
         :paramtype zones: list[str]
         :keyword public_ip_allocation_method: The public IP allocation method. Possible values are:
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
         :paramtype public_ip_allocation_method: str or
          ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
         :keyword public_ip_address_version: The public IP address version. Possible values are: 'IPv4'
-         and 'IPv6'. Possible values include: "IPv4", "IPv6".
+         and 'IPv6'. Known values are: "IPv4", "IPv6".
         :paramtype public_ip_address_version: str or ~azure.mgmt.network.v2017_06_01.models.IPVersion
         :keyword dns_settings: The FQDN of the DNS record associated with the public IP address.
         :paramtype dns_settings: ~azure.mgmt.network.v2017_06_01.models.PublicIPAddressDnsSettings
@@ -8019,7 +8018,7 @@ class PublicIPAddressListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PublicIPAddress"]] = None,
+        value: Optional[List["_models.PublicIPAddress"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -8173,8 +8172,8 @@ class Route(SubResource):
     :ivar address_prefix: The destination CIDR to which the route applies.
     :vartype address_prefix: str
     :ivar next_hop_type: The type of Azure hop the packet should be sent to. Possible values are:
-     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-     values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known values
+     are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.v2017_06_01.models.RouteNextHopType
     :ivar next_hop_ip_address: The IP address packets should be forwarded to. Next hop values are
      only allowed in routes where the next hop type is VirtualAppliance.
@@ -8201,7 +8200,7 @@ class Route(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         address_prefix: Optional[str] = None,
-        next_hop_type: Optional[Union[str, "RouteNextHopType"]] = None,
+        next_hop_type: Optional[Union[str, "_models.RouteNextHopType"]] = None,
         next_hop_ip_address: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -8217,8 +8216,8 @@ class Route(SubResource):
         :keyword address_prefix: The destination CIDR to which the route applies.
         :paramtype address_prefix: str
         :keyword next_hop_type: The type of Azure hop the packet should be sent to. Possible values
-         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Possible
-         values include: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
+         are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance', and 'None'. Known
+         values are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "None".
         :paramtype next_hop_type: str or ~azure.mgmt.network.v2017_06_01.models.RouteNextHopType
         :keyword next_hop_ip_address: The IP address packets should be forwarded to. Next hop values
          are only allowed in routes where the next hop type is VirtualAppliance.
@@ -8287,8 +8286,8 @@ class RouteFilter(Resource):
         id: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        rules: Optional[List["RouteFilterRule"]] = None,
-        peerings: Optional[List["ExpressRouteCircuitPeering"]] = None,
+        rules: Optional[List["_models.RouteFilterRule"]] = None,
+        peerings: Optional[List["_models.ExpressRouteCircuitPeering"]] = None,
         **kwargs
     ):
         """
@@ -8327,7 +8326,7 @@ class RouteFilterListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["RouteFilter"]] = None,
+        value: Optional[List["_models.RouteFilter"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -8358,11 +8357,11 @@ class RouteFilterRule(SubResource):
     :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Possible values
-     include: "Allow", "Deny".
+    :ivar access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Known values are:
+     "Allow", "Deny".
     :vartype access: str or ~azure.mgmt.network.v2017_06_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Possible
-     values include: "Community".
+    :ivar route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Known
+     values are: "Community".
     :vartype route_filter_rule_type: str or
      ~azure.mgmt.network.v2017_06_01.models.RouteFilterRuleType
     :ivar communities: The collection for bgp community values to filter on. e.g.
@@ -8397,8 +8396,8 @@ class RouteFilterRule(SubResource):
         name: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        access: Optional[Union[str, "Access"]] = None,
-        route_filter_rule_type: Optional[Union[str, "RouteFilterRuleType"]] = None,
+        access: Optional[Union[str, "_models.Access"]] = None,
+        route_filter_rule_type: Optional[Union[str, "_models.RouteFilterRuleType"]] = None,
         communities: Optional[List[str]] = None,
         **kwargs
     ):
@@ -8412,11 +8411,11 @@ class RouteFilterRule(SubResource):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Possible
-         values include: "Allow", "Deny".
+        :keyword access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Known values
+         are: "Allow", "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2017_06_01.models.Access
-        :keyword route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'.
-         Possible values include: "Community".
+        :keyword route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Known
+         values are: "Community".
         :paramtype route_filter_rule_type: str or
          ~azure.mgmt.network.v2017_06_01.models.RouteFilterRuleType
         :keyword communities: The collection for bgp community values to filter on. e.g.
@@ -8451,7 +8450,7 @@ class RouteFilterRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["RouteFilterRule"]] = None,
+        value: Optional[List["_models.RouteFilterRule"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -8483,7 +8482,7 @@ class RouteListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Route"]] = None,
+        value: Optional[List["_models.Route"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -8549,7 +8548,7 @@ class RouteTable(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        routes: Optional[List["Route"]] = None,
+        routes: Optional[List["_models.Route"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -8592,7 +8591,7 @@ class RouteTableListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["RouteTable"]] = None,
+        value: Optional[List["_models.RouteTable"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -8626,7 +8625,7 @@ class SecurityGroupNetworkInterface(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        security_rule_associations: Optional["SecurityRuleAssociations"] = None,
+        security_rule_associations: Optional["_models.SecurityRuleAssociations"] = None,
         **kwargs
     ):
         """
@@ -8687,7 +8686,7 @@ class SecurityGroupViewResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        network_interfaces: Optional[List["SecurityGroupNetworkInterface"]] = None,
+        network_interfaces: Optional[List["_models.SecurityGroupNetworkInterface"]] = None,
         **kwargs
     ):
         """
@@ -8712,7 +8711,7 @@ class SecurityRule(SubResource):
     :ivar description: A description for this rule. Restricted to 140 chars.
     :vartype description: str
     :ivar protocol: Network protocol this rule applies to. Possible values are 'Tcp', 'Udp', and
-     '*'. Possible values include: "Tcp", "Udp", "*".
+     '*'. Known values are: "Tcp", "Udp", "*".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleProtocol
     :ivar source_port_range: The source port or range. Integer or range between 0 and 65535.
      Asterisk '*' can also be used to match all ports.
@@ -8738,15 +8737,15 @@ class SecurityRule(SubResource):
     :ivar destination_port_ranges: The destination port ranges.
     :vartype destination_port_ranges: list[str]
     :ivar access: The network traffic is allowed or denied. Possible values are: 'Allow' and
-     'Deny'. Possible values include: "Allow", "Deny".
+     'Deny'. Known values are: "Allow", "Deny".
     :vartype access: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleAccess
     :ivar priority: The priority of the rule. The value can be between 100 and 4096. The priority
      number must be unique for each rule in the collection. The lower the priority number, the
      higher the priority of the rule.
     :vartype priority: int
     :ivar direction: The direction of the rule. The direction specifies if rule will be evaluated
-     on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'. Possible values
-     include: "Inbound", "Outbound".
+     on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'. Known values
+     are: "Inbound", "Outbound".
     :vartype direction: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleDirection
     :ivar provisioning_state: The provisioning state of the public IP resource. Possible values
      are: 'Updating', 'Deleting', and 'Failed'.
@@ -8780,7 +8779,7 @@ class SecurityRule(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         description: Optional[str] = None,
-        protocol: Optional[Union[str, "SecurityRuleProtocol"]] = None,
+        protocol: Optional[Union[str, "_models.SecurityRuleProtocol"]] = None,
         source_port_range: Optional[str] = None,
         destination_port_range: Optional[str] = None,
         source_address_prefix: Optional[str] = None,
@@ -8789,9 +8788,9 @@ class SecurityRule(SubResource):
         destination_address_prefixes: Optional[List[str]] = None,
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
-        access: Optional[Union[str, "SecurityRuleAccess"]] = None,
+        access: Optional[Union[str, "_models.SecurityRuleAccess"]] = None,
         priority: Optional[int] = None,
-        direction: Optional[Union[str, "SecurityRuleDirection"]] = None,
+        direction: Optional[Union[str, "_models.SecurityRuleDirection"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -8806,7 +8805,7 @@ class SecurityRule(SubResource):
         :keyword description: A description for this rule. Restricted to 140 chars.
         :paramtype description: str
         :keyword protocol: Network protocol this rule applies to. Possible values are 'Tcp', 'Udp', and
-         '*'. Possible values include: "Tcp", "Udp", "*".
+         '*'. Known values are: "Tcp", "Udp", "*".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleProtocol
         :keyword source_port_range: The source port or range. Integer or range between 0 and 65535.
          Asterisk '*' can also be used to match all ports.
@@ -8832,15 +8831,15 @@ class SecurityRule(SubResource):
         :keyword destination_port_ranges: The destination port ranges.
         :paramtype destination_port_ranges: list[str]
         :keyword access: The network traffic is allowed or denied. Possible values are: 'Allow' and
-         'Deny'. Possible values include: "Allow", "Deny".
+         'Deny'. Known values are: "Allow", "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleAccess
         :keyword priority: The priority of the rule. The value can be between 100 and 4096. The
          priority number must be unique for each rule in the collection. The lower the priority number,
          the higher the priority of the rule.
         :paramtype priority: int
         :keyword direction: The direction of the rule. The direction specifies if rule will be
-         evaluated on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'.
-         Possible values include: "Inbound", "Outbound".
+         evaluated on incoming or outgoing traffic. Possible values are: 'Inbound' and 'Outbound'. Known
+         values are: "Inbound", "Outbound".
         :paramtype direction: str or ~azure.mgmt.network.v2017_06_01.models.SecurityRuleDirection
         :keyword provisioning_state: The provisioning state of the public IP resource. Possible values
          are: 'Updating', 'Deleting', and 'Failed'.
@@ -8891,10 +8890,10 @@ class SecurityRuleAssociations(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        network_interface_association: Optional["NetworkInterfaceAssociation"] = None,
-        subnet_association: Optional["SubnetAssociation"] = None,
-        default_security_rules: Optional[List["SecurityRule"]] = None,
-        effective_security_rules: Optional[List["EffectiveNetworkSecurityRule"]] = None,
+        network_interface_association: Optional["_models.NetworkInterfaceAssociation"] = None,
+        subnet_association: Optional["_models.SubnetAssociation"] = None,
+        default_security_rules: Optional[List["_models.SecurityRule"]] = None,
+        effective_security_rules: Optional[List["_models.EffectiveNetworkSecurityRule"]] = None,
         **kwargs
     ):
         """
@@ -8934,7 +8933,7 @@ class SecurityRuleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["SecurityRule"]] = None,
+        value: Optional[List["_models.SecurityRule"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -9044,10 +9043,10 @@ class Subnet(SubResource):
         name: Optional[str] = None,
         etag: Optional[str] = None,
         address_prefix: Optional[str] = None,
-        network_security_group: Optional["NetworkSecurityGroup"] = None,
-        route_table: Optional["RouteTable"] = None,
-        service_endpoints: Optional[List["ServiceEndpointPropertiesFormat"]] = None,
-        resource_navigation_links: Optional[List["ResourceNavigationLink"]] = None,
+        network_security_group: Optional["_models.NetworkSecurityGroup"] = None,
+        route_table: Optional["_models.RouteTable"] = None,
+        service_endpoints: Optional[List["_models.ServiceEndpointPropertiesFormat"]] = None,
+        resource_navigation_links: Optional[List["_models.ResourceNavigationLink"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -9110,7 +9109,7 @@ class SubnetAssociation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        security_rules: Optional[List["SecurityRule"]] = None,
+        security_rules: Optional[List["_models.SecurityRule"]] = None,
         **kwargs
     ):
         """
@@ -9139,7 +9138,7 @@ class SubnetListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Subnet"]] = None,
+        value: Optional[List["_models.Subnet"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -9186,7 +9185,7 @@ class Topology(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        resources: Optional[List["TopologyResource"]] = None,
+        resources: Optional[List["_models.TopologyResource"]] = None,
         **kwargs
     ):
         """
@@ -9208,7 +9207,7 @@ class TopologyAssociation(msrest.serialization.Model):
     :ivar resource_id: The ID of the resource that is associated with the parent resource.
     :vartype resource_id: str
     :ivar association_type: The association type of the child resource to the parent resource.
-     Possible values include: "Associated", "Contains".
+     Known values are: "Associated", "Contains".
     :vartype association_type: str or ~azure.mgmt.network.v2017_06_01.models.AssociationType
     """
 
@@ -9223,7 +9222,7 @@ class TopologyAssociation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         resource_id: Optional[str] = None,
-        association_type: Optional[Union[str, "AssociationType"]] = None,
+        association_type: Optional[Union[str, "_models.AssociationType"]] = None,
         **kwargs
     ):
         """
@@ -9232,7 +9231,7 @@ class TopologyAssociation(msrest.serialization.Model):
         :keyword resource_id: The ID of the resource that is associated with the parent resource.
         :paramtype resource_id: str
         :keyword association_type: The association type of the child resource to the parent resource.
-         Possible values include: "Associated", "Contains".
+         Known values are: "Associated", "Contains".
         :paramtype association_type: str or ~azure.mgmt.network.v2017_06_01.models.AssociationType
         """
         super(TopologyAssociation, self).__init__(**kwargs)
@@ -9301,7 +9300,7 @@ class TopologyResource(msrest.serialization.Model):
         name: Optional[str] = None,
         id: Optional[str] = None,
         location: Optional[str] = None,
-        associations: Optional[List["TopologyAssociation"]] = None,
+        associations: Optional[List["_models.TopologyAssociation"]] = None,
         **kwargs
     ):
         """
@@ -9353,7 +9352,7 @@ class TroubleshootingDetails(msrest.serialization.Model):
         reason_type: Optional[str] = None,
         summary: Optional[str] = None,
         detail: Optional[str] = None,
-        recommended_actions: Optional[List["TroubleshootingRecommendedActions"]] = None,
+        recommended_actions: Optional[List["_models.TroubleshootingRecommendedActions"]] = None,
         **kwargs
     ):
         """
@@ -9500,7 +9499,7 @@ class TroubleshootingResult(msrest.serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         code: Optional[str] = None,
-        results: Optional[List["TroubleshootingDetails"]] = None,
+        results: Optional[List["_models.TroubleshootingDetails"]] = None,
         **kwargs
     ):
         """
@@ -9527,7 +9526,7 @@ class TunnelConnectionHealth(msrest.serialization.Model):
 
     :ivar tunnel: Tunnel name.
     :vartype tunnel: str
-    :ivar connection_status: Virtual network Gateway connection status. Possible values include:
+    :ivar connection_status: Virtual network Gateway connection status. Known values are:
      "Unknown", "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionStatus
@@ -9575,8 +9574,7 @@ class Usage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. An enum describing the unit of measurement. Possible values include:
-     "Count".
+    :ivar unit: Required. An enum describing the unit of measurement. Known values are: "Count".
     :vartype unit: str or ~azure.mgmt.network.v2017_06_01.models.UsageUnit
     :ivar current_value: Required. The current value of the usage.
     :vartype current_value: long
@@ -9603,15 +9601,14 @@ class Usage(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        unit: Union[str, "UsageUnit"],
+        unit: Union[str, "_models.UsageUnit"],
         current_value: int,
         limit: int,
-        name: "UsageName",
+        name: "_models.UsageName",
         **kwargs
     ):
         """
-        :keyword unit: Required. An enum describing the unit of measurement. Possible values include:
-         "Count".
+        :keyword unit: Required. An enum describing the unit of measurement. Known values are: "Count".
         :paramtype unit: str or ~azure.mgmt.network.v2017_06_01.models.UsageUnit
         :keyword current_value: Required. The current value of the usage.
         :paramtype current_value: long
@@ -9676,7 +9673,7 @@ class UsagesListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Usage"]] = None,
+        value: Optional[List["_models.Usage"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -9698,10 +9695,10 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
 
     :ivar target_resource_id: Required. The ID of the target resource to perform next-hop on.
     :vartype target_resource_id: str
-    :ivar direction: Required. The direction of the packet represented as a 5-tuple. Possible
-     values include: "Inbound", "Outbound".
+    :ivar direction: Required. The direction of the packet represented as a 5-tuple. Known values
+     are: "Inbound", "Outbound".
     :vartype direction: str or ~azure.mgmt.network.v2017_06_01.models.Direction
-    :ivar protocol: Required. Protocol to be verified on. Possible values include: "TCP", "UDP".
+    :ivar protocol: Required. Protocol to be verified on. Known values are: "TCP", "UDP".
     :vartype protocol: str or ~azure.mgmt.network.v2017_06_01.models.Protocol
     :ivar local_port: Required. The local port. Acceptable values are a single integer in the range
      (0-65535). Support for * for the source port, which depends on the direction.
@@ -9745,8 +9742,8 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
         self,
         *,
         target_resource_id: str,
-        direction: Union[str, "Direction"],
-        protocol: Union[str, "Protocol"],
+        direction: Union[str, "_models.Direction"],
+        protocol: Union[str, "_models.Protocol"],
         local_port: str,
         remote_port: str,
         local_ip_address: str,
@@ -9757,10 +9754,10 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
         """
         :keyword target_resource_id: Required. The ID of the target resource to perform next-hop on.
         :paramtype target_resource_id: str
-        :keyword direction: Required. The direction of the packet represented as a 5-tuple. Possible
-         values include: "Inbound", "Outbound".
+        :keyword direction: Required. The direction of the packet represented as a 5-tuple. Known
+         values are: "Inbound", "Outbound".
         :paramtype direction: str or ~azure.mgmt.network.v2017_06_01.models.Direction
-        :keyword protocol: Required. Protocol to be verified on. Possible values include: "TCP", "UDP".
+        :keyword protocol: Required. Protocol to be verified on. Known values are: "TCP", "UDP".
         :paramtype protocol: str or ~azure.mgmt.network.v2017_06_01.models.Protocol
         :keyword local_port: Required. The local port. Acceptable values are a single integer in the
          range (0-65535). Support for * for the source port, which depends on the direction.
@@ -9792,8 +9789,8 @@ class VerificationIPFlowParameters(msrest.serialization.Model):
 class VerificationIPFlowResult(msrest.serialization.Model):
     """Results of IP flow verification on the target resource.
 
-    :ivar access: Indicates whether the traffic is allowed or denied. Possible values include:
-     "Allow", "Deny".
+    :ivar access: Indicates whether the traffic is allowed or denied. Known values are: "Allow",
+     "Deny".
     :vartype access: str or ~azure.mgmt.network.v2017_06_01.models.Access
     :ivar rule_name: Name of the rule. If input is not matched against any security rule, it is not
      displayed.
@@ -9808,13 +9805,13 @@ class VerificationIPFlowResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        access: Optional[Union[str, "Access"]] = None,
+        access: Optional[Union[str, "_models.Access"]] = None,
         rule_name: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword access: Indicates whether the traffic is allowed or denied. Possible values include:
-         "Allow", "Deny".
+        :keyword access: Indicates whether the traffic is allowed or denied. Known values are: "Allow",
+         "Deny".
         :paramtype access: str or ~azure.mgmt.network.v2017_06_01.models.Access
         :keyword rule_name: Name of the rule. If input is not matched against any security rule, it is
          not displayed.
@@ -9887,10 +9884,10 @@ class VirtualNetwork(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        address_space: Optional["AddressSpace"] = None,
-        dhcp_options: Optional["DhcpOptions"] = None,
-        subnets: Optional[List["Subnet"]] = None,
-        virtual_network_peerings: Optional[List["VirtualNetworkPeering"]] = None,
+        address_space: Optional["_models.AddressSpace"] = None,
+        dhcp_options: Optional["_models.DhcpOptions"] = None,
+        subnets: Optional[List["_models.Subnet"]] = None,
+        virtual_network_peerings: Optional[List["_models.VirtualNetworkPeering"]] = None,
         resource_guid: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
@@ -9983,10 +9980,10 @@ class VirtualNetworkGateway(Resource):
     :vartype ip_configurations:
      list[~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayIPConfiguration]
     :ivar gateway_type: The type of this virtual network gateway. Possible values are: 'Vpn' and
-     'ExpressRoute'. Possible values include: "Vpn", "ExpressRoute".
+     'ExpressRoute'. Known values are: "Vpn", "ExpressRoute".
     :vartype gateway_type: str or ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayType
     :ivar vpn_type: The type of this virtual network gateway. Possible values are: 'PolicyBased'
-     and 'RouteBased'. Possible values include: "PolicyBased", "RouteBased".
+     and 'RouteBased'. Known values are: "PolicyBased", "RouteBased".
     :vartype vpn_type: str or ~azure.mgmt.network.v2017_06_01.models.VpnType
     :ivar enable_bgp: Whether BGP is enabled for this virtual network gateway or not.
     :vartype enable_bgp: bool
@@ -10045,15 +10042,15 @@ class VirtualNetworkGateway(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        ip_configurations: Optional[List["VirtualNetworkGatewayIPConfiguration"]] = None,
-        gateway_type: Optional[Union[str, "VirtualNetworkGatewayType"]] = None,
-        vpn_type: Optional[Union[str, "VpnType"]] = None,
+        ip_configurations: Optional[List["_models.VirtualNetworkGatewayIPConfiguration"]] = None,
+        gateway_type: Optional[Union[str, "_models.VirtualNetworkGatewayType"]] = None,
+        vpn_type: Optional[Union[str, "_models.VpnType"]] = None,
         enable_bgp: Optional[bool] = None,
         active: Optional[bool] = None,
-        gateway_default_site: Optional["SubResource"] = None,
-        sku: Optional["VirtualNetworkGatewaySku"] = None,
-        vpn_client_configuration: Optional["VpnClientConfiguration"] = None,
-        bgp_settings: Optional["BgpSettings"] = None,
+        gateway_default_site: Optional["_models.SubResource"] = None,
+        sku: Optional["_models.VirtualNetworkGatewaySku"] = None,
+        vpn_client_configuration: Optional["_models.VpnClientConfiguration"] = None,
+        bgp_settings: Optional["_models.BgpSettings"] = None,
         resource_guid: Optional[str] = None,
         **kwargs
     ):
@@ -10070,11 +10067,11 @@ class VirtualNetworkGateway(Resource):
         :paramtype ip_configurations:
          list[~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayIPConfiguration]
         :keyword gateway_type: The type of this virtual network gateway. Possible values are: 'Vpn' and
-         'ExpressRoute'. Possible values include: "Vpn", "ExpressRoute".
+         'ExpressRoute'. Known values are: "Vpn", "ExpressRoute".
         :paramtype gateway_type: str or
          ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayType
         :keyword vpn_type: The type of this virtual network gateway. Possible values are: 'PolicyBased'
-         and 'RouteBased'. Possible values include: "PolicyBased", "RouteBased".
+         and 'RouteBased'. Known values are: "PolicyBased", "RouteBased".
         :paramtype vpn_type: str or ~azure.mgmt.network.v2017_06_01.models.VpnType
         :keyword enable_bgp: Whether BGP is enabled for this virtual network gateway or not.
         :paramtype enable_bgp: bool
@@ -10139,8 +10136,8 @@ class VirtualNetworkGatewayConnection(Resource):
     :ivar local_network_gateway2: The reference to local network gateway resource.
     :vartype local_network_gateway2: ~azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway
     :ivar connection_type: Required. Gateway connection type. Possible values are:
-     'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values include: "IPsec",
-     "Vnet2Vnet", "ExpressRoute", "VPNClient".
+     'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Known values are: "IPsec", "Vnet2Vnet",
+     "ExpressRoute", "VPNClient".
     :vartype connection_type: str or
      ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionType
     :ivar routing_weight: The routing weight.
@@ -10148,7 +10145,7 @@ class VirtualNetworkGatewayConnection(Resource):
     :ivar shared_key: The IPSec shared key.
     :vartype shared_key: str
     :ivar connection_status: Virtual network Gateway connection status. Possible values are
-     'Unknown', 'Connecting', 'Connected' and 'NotConnected'. Possible values include: "Unknown",
+     'Unknown', 'Connecting', 'Connected' and 'NotConnected'. Known values are: "Unknown",
      "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionStatus
@@ -10216,21 +10213,21 @@ class VirtualNetworkGatewayConnection(Resource):
     def __init__(
         self,
         *,
-        virtual_network_gateway1: "VirtualNetworkGateway",
-        connection_type: Union[str, "VirtualNetworkGatewayConnectionType"],
+        virtual_network_gateway1: "_models.VirtualNetworkGateway",
+        connection_type: Union[str, "_models.VirtualNetworkGatewayConnectionType"],
         id: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         authorization_key: Optional[str] = None,
-        virtual_network_gateway2: Optional["VirtualNetworkGateway"] = None,
-        local_network_gateway2: Optional["LocalNetworkGateway"] = None,
+        virtual_network_gateway2: Optional["_models.VirtualNetworkGateway"] = None,
+        local_network_gateway2: Optional["_models.LocalNetworkGateway"] = None,
         routing_weight: Optional[int] = None,
         shared_key: Optional[str] = None,
-        peer: Optional["SubResource"] = None,
+        peer: Optional["_models.SubResource"] = None,
         enable_bgp: Optional[bool] = None,
         use_policy_based_traffic_selectors: Optional[bool] = None,
-        ipsec_policies: Optional[List["IpsecPolicy"]] = None,
+        ipsec_policies: Optional[List["_models.IpsecPolicy"]] = None,
         resource_guid: Optional[str] = None,
         **kwargs
     ):
@@ -10254,8 +10251,8 @@ class VirtualNetworkGatewayConnection(Resource):
         :keyword local_network_gateway2: The reference to local network gateway resource.
         :paramtype local_network_gateway2: ~azure.mgmt.network.v2017_06_01.models.LocalNetworkGateway
         :keyword connection_type: Required. Gateway connection type. Possible values are:
-         'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values include: "IPsec",
-         "Vnet2Vnet", "ExpressRoute", "VPNClient".
+         'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Known values are: "IPsec", "Vnet2Vnet",
+         "ExpressRoute", "VPNClient".
         :paramtype connection_type: str or
          ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionType
         :keyword routing_weight: The routing weight.
@@ -10326,8 +10323,8 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :vartype local_network_gateway2:
      ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference
     :ivar connection_type: Required. Gateway connection type. Possible values are:
-     'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values include: "IPsec",
-     "Vnet2Vnet", "ExpressRoute", "VPNClient".
+     'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Known values are: "IPsec", "Vnet2Vnet",
+     "ExpressRoute", "VPNClient".
     :vartype connection_type: str or
      ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionType
     :ivar routing_weight: The routing weight.
@@ -10335,7 +10332,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :ivar shared_key: The IPSec shared key.
     :vartype shared_key: str
     :ivar connection_status: Virtual network Gateway connection status. Possible values are
-     'Unknown', 'Connecting', 'Connected' and 'NotConnected'. Possible values include: "Unknown",
+     'Unknown', 'Connecting', 'Connected' and 'NotConnected'. Known values are: "Unknown",
      "Connecting", "Connected", "NotConnected".
     :vartype connection_status: str or
      ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionStatus
@@ -10403,21 +10400,21 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     def __init__(
         self,
         *,
-        virtual_network_gateway1: "VirtualNetworkConnectionGatewayReference",
-        connection_type: Union[str, "VirtualNetworkGatewayConnectionType"],
+        virtual_network_gateway1: "_models.VirtualNetworkConnectionGatewayReference",
+        connection_type: Union[str, "_models.VirtualNetworkGatewayConnectionType"],
         id: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         authorization_key: Optional[str] = None,
-        virtual_network_gateway2: Optional["VirtualNetworkConnectionGatewayReference"] = None,
-        local_network_gateway2: Optional["VirtualNetworkConnectionGatewayReference"] = None,
+        virtual_network_gateway2: Optional["_models.VirtualNetworkConnectionGatewayReference"] = None,
+        local_network_gateway2: Optional["_models.VirtualNetworkConnectionGatewayReference"] = None,
         routing_weight: Optional[int] = None,
         shared_key: Optional[str] = None,
-        peer: Optional["SubResource"] = None,
+        peer: Optional["_models.SubResource"] = None,
         enable_bgp: Optional[bool] = None,
         use_policy_based_traffic_selectors: Optional[bool] = None,
-        ipsec_policies: Optional[List["IpsecPolicy"]] = None,
+        ipsec_policies: Optional[List["_models.IpsecPolicy"]] = None,
         resource_guid: Optional[str] = None,
         **kwargs
     ):
@@ -10442,8 +10439,8 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
         :paramtype local_network_gateway2:
          ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkConnectionGatewayReference
         :keyword connection_type: Required. Gateway connection type. Possible values are:
-         'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values include: "IPsec",
-         "Vnet2Vnet", "ExpressRoute", "VPNClient".
+         'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Known values are: "IPsec", "Vnet2Vnet",
+         "ExpressRoute", "VPNClient".
         :paramtype connection_type: str or
          ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayConnectionType
         :keyword routing_weight: The routing weight.
@@ -10507,7 +10504,7 @@ class VirtualNetworkGatewayConnectionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkGatewayConnection"]] = None,
+        value: Optional[List["_models.VirtualNetworkGatewayConnection"]] = None,
         **kwargs
     ):
         """
@@ -10533,7 +10530,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar private_ip_allocation_method: The private IP allocation method. Possible values are:
-     'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+     'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
     :vartype private_ip_allocation_method: str or
      ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
     :ivar subnet: The reference of the subnet resource.
@@ -10565,9 +10562,9 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         id: Optional[str] = None,
         name: Optional[str] = None,
         etag: Optional[str] = None,
-        private_ip_allocation_method: Optional[Union[str, "IPAllocationMethod"]] = None,
-        subnet: Optional["SubResource"] = None,
-        public_ip_address: Optional["SubResource"] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        subnet: Optional["_models.SubResource"] = None,
+        public_ip_address: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -10579,7 +10576,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         :keyword etag: A unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
         :keyword private_ip_allocation_method: The private IP allocation method. Possible values are:
-         'Static' and 'Dynamic'. Possible values include: "Static", "Dynamic".
+         'Static' and 'Dynamic'. Known values are: "Static", "Dynamic".
         :paramtype private_ip_allocation_method: str or
          ~azure.mgmt.network.v2017_06_01.models.IPAllocationMethod
         :keyword subnet: The reference of the subnet resource.
@@ -10621,7 +10618,7 @@ class VirtualNetworkGatewayListConnectionsResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkGatewayConnectionListEntity"]] = None,
+        value: Optional[List["_models.VirtualNetworkGatewayConnectionListEntity"]] = None,
         **kwargs
     ):
         """
@@ -10658,7 +10655,7 @@ class VirtualNetworkGatewayListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkGateway"]] = None,
+        value: Optional[List["_models.VirtualNetworkGateway"]] = None,
         **kwargs
     ):
         """
@@ -10673,10 +10670,10 @@ class VirtualNetworkGatewayListResult(msrest.serialization.Model):
 class VirtualNetworkGatewaySku(msrest.serialization.Model):
     """VirtualNetworkGatewaySku details.
 
-    :ivar name: Gateway SKU name. Possible values include: "Basic", "HighPerformance", "Standard",
+    :ivar name: Gateway SKU name. Known values are: "Basic", "HighPerformance", "Standard",
      "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3".
     :vartype name: str or ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySkuName
-    :ivar tier: Gateway SKU tier. Possible values include: "Basic", "HighPerformance", "Standard",
+    :ivar tier: Gateway SKU tier. Known values are: "Basic", "HighPerformance", "Standard",
      "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3".
     :vartype tier: str or ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySkuTier
     :ivar capacity: The capacity.
@@ -10692,17 +10689,17 @@ class VirtualNetworkGatewaySku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "VirtualNetworkGatewaySkuName"]] = None,
-        tier: Optional[Union[str, "VirtualNetworkGatewaySkuTier"]] = None,
+        name: Optional[Union[str, "_models.VirtualNetworkGatewaySkuName"]] = None,
+        tier: Optional[Union[str, "_models.VirtualNetworkGatewaySkuTier"]] = None,
         capacity: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword name: Gateway SKU name. Possible values include: "Basic", "HighPerformance",
-         "Standard", "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3".
+        :keyword name: Gateway SKU name. Known values are: "Basic", "HighPerformance", "Standard",
+         "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3".
         :paramtype name: str or ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySkuName
-        :keyword tier: Gateway SKU tier. Possible values include: "Basic", "HighPerformance",
-         "Standard", "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3".
+        :keyword tier: Gateway SKU tier. Known values are: "Basic", "HighPerformance", "Standard",
+         "UltraPerformance", "VpnGw1", "VpnGw2", "VpnGw3".
         :paramtype tier: str or ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySkuTier
         :keyword capacity: The capacity.
         :paramtype capacity: int
@@ -10730,7 +10727,7 @@ class VirtualNetworkListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetwork"]] = None,
+        value: Optional[List["_models.VirtualNetwork"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -10807,8 +10804,8 @@ class VirtualNetworkPeering(SubResource):
     :ivar remote_virtual_network: The reference of the remote virtual network.
     :vartype remote_virtual_network: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :ivar peering_state: The status of the virtual network peering. Possible values are
-     'Initiated', 'Connected', and 'Disconnected'. Possible values include: "Initiated",
-     "Connected", "Disconnected".
+     'Initiated', 'Connected', and 'Disconnected'. Known values are: "Initiated", "Connected",
+     "Disconnected".
     :vartype peering_state: str or
      ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkPeeringState
     :ivar provisioning_state: The provisioning state of the resource.
@@ -10838,8 +10835,8 @@ class VirtualNetworkPeering(SubResource):
         allow_forwarded_traffic: Optional[bool] = None,
         allow_gateway_transit: Optional[bool] = None,
         use_remote_gateways: Optional[bool] = None,
-        remote_virtual_network: Optional["SubResource"] = None,
-        peering_state: Optional[Union[str, "VirtualNetworkPeeringState"]] = None,
+        remote_virtual_network: Optional["_models.SubResource"] = None,
+        peering_state: Optional[Union[str, "_models.VirtualNetworkPeeringState"]] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
@@ -10868,8 +10865,8 @@ class VirtualNetworkPeering(SubResource):
         :keyword remote_virtual_network: The reference of the remote virtual network.
         :paramtype remote_virtual_network: ~azure.mgmt.network.v2017_06_01.models.SubResource
         :keyword peering_state: The status of the virtual network peering. Possible values are
-         'Initiated', 'Connected', and 'Disconnected'. Possible values include: "Initiated",
-         "Connected", "Disconnected".
+         'Initiated', 'Connected', and 'Disconnected'. Known values are: "Initiated", "Connected",
+         "Disconnected".
         :paramtype peering_state: str or
          ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkPeeringState
         :keyword provisioning_state: The provisioning state of the resource.
@@ -10904,7 +10901,7 @@ class VirtualNetworkPeeringListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["VirtualNetworkPeering"]] = None,
+        value: Optional[List["_models.VirtualNetworkPeering"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -11033,10 +11030,10 @@ class VpnClientConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        vpn_client_address_pool: Optional["AddressSpace"] = None,
-        vpn_client_root_certificates: Optional[List["VpnClientRootCertificate"]] = None,
-        vpn_client_revoked_certificates: Optional[List["VpnClientRevokedCertificate"]] = None,
-        vpn_client_protocols: Optional[List[Union[str, "VpnClientProtocol"]]] = None,
+        vpn_client_address_pool: Optional["_models.AddressSpace"] = None,
+        vpn_client_root_certificates: Optional[List["_models.VpnClientRootCertificate"]] = None,
+        vpn_client_revoked_certificates: Optional[List["_models.VpnClientRevokedCertificate"]] = None,
+        vpn_client_protocols: Optional[List[Union[str, "_models.VpnClientProtocol"]]] = None,
         radius_server_address: Optional[str] = None,
         radius_server_secret: Optional[str] = None,
         **kwargs
@@ -11075,11 +11072,11 @@ class VpnClientParameters(msrest.serialization.Model):
     """Vpn Client Parameters for package generation.
 
     :ivar processor_architecture: VPN client Processor Architecture. Possible values are: 'AMD64'
-     and 'X86'. Possible values include: "Amd64", "X86".
+     and 'X86'. Known values are: "Amd64", "X86".
     :vartype processor_architecture: str or
      ~azure.mgmt.network.v2017_06_01.models.ProcessorArchitecture
     :ivar authentication_method: VPN client Authentication Method. Possible values are: 'EAPTLS'
-     and 'EAPMSCHAPv2'. Possible values include: "EAPTLS", "EAPMSCHAPv2".
+     and 'EAPMSCHAPv2'. Known values are: "EAPTLS", "EAPMSCHAPv2".
     :vartype authentication_method: str or
      ~azure.mgmt.network.v2017_06_01.models.AuthenticationMethod
     :ivar radius_server_auth_certificate: The public certificate data for the radius server
@@ -11102,19 +11099,19 @@ class VpnClientParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        processor_architecture: Optional[Union[str, "ProcessorArchitecture"]] = None,
-        authentication_method: Optional[Union[str, "AuthenticationMethod"]] = None,
+        processor_architecture: Optional[Union[str, "_models.ProcessorArchitecture"]] = None,
+        authentication_method: Optional[Union[str, "_models.AuthenticationMethod"]] = None,
         radius_server_auth_certificate: Optional[str] = None,
         client_root_certificates: Optional[List[str]] = None,
         **kwargs
     ):
         """
         :keyword processor_architecture: VPN client Processor Architecture. Possible values are:
-         'AMD64' and 'X86'. Possible values include: "Amd64", "X86".
+         'AMD64' and 'X86'. Known values are: "Amd64", "X86".
         :paramtype processor_architecture: str or
          ~azure.mgmt.network.v2017_06_01.models.ProcessorArchitecture
         :keyword authentication_method: VPN client Authentication Method. Possible values are: 'EAPTLS'
-         and 'EAPMSCHAPv2'. Possible values include: "EAPTLS", "EAPMSCHAPv2".
+         and 'EAPMSCHAPv2'. Known values are: "EAPTLS", "EAPMSCHAPv2".
         :paramtype authentication_method: str or
          ~azure.mgmt.network.v2017_06_01.models.AuthenticationMethod
         :keyword radius_server_auth_certificate: The public certificate data for the radius server

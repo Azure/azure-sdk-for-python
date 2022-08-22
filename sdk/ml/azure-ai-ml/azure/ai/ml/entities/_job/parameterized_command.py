@@ -2,18 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 from typing import Dict, Union
 
 from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob
-from .distribution import MpiDistribution, TensorFlowDistribution, PyTorchDistribution
 from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
-from .resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._assets import Environment
-from ..._schema import UnionField, NestedField
-from ..._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
+
+from ..._schema import NestedField, UnionField
+from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
+from .distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from .resource_configuration import ResourceConfiguration
 
 module_logger = logging.getLogger(__name__)
 
@@ -23,7 +26,8 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand(LoadableMixin):
-    """Command component that contains the traning command and supporting parameters for the command.
+    """Command component that contains the training command and supporting
+    parameters for the command.
 
     :param command: Command to be executed in training.
     :type command: str
@@ -58,7 +62,9 @@ class ParameterizedCommand(LoadableMixin):
         self.resources = resources
 
     @property
-    def distribution(self) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution]:
+    def distribution(
+        self,
+    ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution]:
         return self._distribution
 
     @distribution.setter

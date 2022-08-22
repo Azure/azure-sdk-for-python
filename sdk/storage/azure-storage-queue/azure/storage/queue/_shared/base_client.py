@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     Optional,
     Any,
     Tuple,
+    TYPE_CHECKING
 )
 
 try:
@@ -20,7 +21,7 @@ except ImportError:
 import six
 
 from azure.core.configuration import Configuration
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
@@ -53,6 +54,9 @@ from .policies import (
 from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -67,7 +71,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         parsed_url,  # type: Any
         service,  # type: str
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -352,6 +356,8 @@ def _format_shared_key_credential(account_name, credential):
         if "account_key" not in credential:
             raise ValueError("Shared key credential missing 'account_key")
         return SharedKeyCredentialPolicy(**credential)
+    if isinstance(credential, AzureNamedKeyCredential):
+        return SharedKeyCredentialPolicy(credential.named_key.name, credential.named_key.key)
     return credential
 
 

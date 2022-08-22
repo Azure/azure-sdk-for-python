@@ -127,7 +127,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_invoice_tiff(self, client, **kwargs):
-        poller = client.begin_analyze_document_from_url(model="prebuilt-invoice", document_url=self.invoice_url_tiff)
+        poller = client.begin_analyze_document_from_url(model_id="prebuilt-invoice", document_url=self.invoice_url_tiff)
 
         result = poller.result()
         assert len(result.documents) == 1

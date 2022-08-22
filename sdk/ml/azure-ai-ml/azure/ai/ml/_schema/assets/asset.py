@@ -2,12 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 
-from marshmallow import fields, ValidationError
+from marshmallow import ValidationError, fields
 from marshmallow.decorators import pre_load
+
 from azure.ai.ml._schema.core.fields import NestedField, VersionField
 from azure.ai.ml._schema.job.creation_context import CreationContextSchema
+
 from ..core.resource import ResourceSchema
 
 module_logger = logging.getLogger(__name__)

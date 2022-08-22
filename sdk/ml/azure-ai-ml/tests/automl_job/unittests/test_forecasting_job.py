@@ -5,7 +5,7 @@
 import pytest
 
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (       
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     MLTableJobInput,
     UserIdentity,
 )
@@ -35,7 +35,7 @@ class TestAutoMLForecasting:
             name="forecasting_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity = identity,
+            identity=identity,
         )  # type: ForecastingJob
         forecasting_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4)
         forecasting_job.set_training(

@@ -7,11 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
-from msrest import Serializer
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -19,323 +23,281 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
+from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
+
 
 def build_create_request(
-    url,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    url: str,
+    *,
+    request_id_parameter: Optional[str] = None,
+    timeout: Optional[int] = None,
+    properties: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop('resource', _params.pop('resource', "filesystem"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-06-08"))  # type: str
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    properties = kwargs.pop('properties', _headers.pop('x-ms-properties', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{filesystem}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    _params["resource"] = _SERIALIZER.query("resource", resource, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if properties is not None:
-        _headers['x-ms-properties'] = _SERIALIZER.header("properties", properties, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["x-ms-properties"] = _SERIALIZER.header("properties", properties, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_set_properties_request(
-    url,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    url: str,
+    *,
+    request_id_parameter: Optional[str] = None,
+    timeout: Optional[int] = None,
+    properties: Optional[str] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop('resource', _params.pop('resource', "filesystem"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-06-08"))  # type: str
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    properties = kwargs.pop('properties', _headers.pop('x-ms-properties', None))  # type: Optional[str]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    accept = _headers.pop('Accept', "application/json")
+    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{filesystem}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    _params["resource"] = _SERIALIZER.query("resource", resource, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if properties is not None:
-        _headers['x-ms-properties'] = _SERIALIZER.header("properties", properties, 'str')
+        _headers["x-ms-properties"] = _SERIALIZER.header("properties", properties, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PATCH",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_properties_request(
-    url,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    url: str, *, request_id_parameter: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop('resource', _params.pop('resource', "filesystem"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-06-08"))  # type: str
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    accept = _headers.pop('Accept', "application/json")
+    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{filesystem}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    _params["resource"] = _SERIALIZER.query("resource", resource, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="HEAD",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_delete_request(
-    url,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    url: str,
+    *,
+    request_id_parameter: Optional[str] = None,
+    timeout: Optional[int] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop('resource', _params.pop('resource', "filesystem"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-06-08"))  # type: str
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    accept = _headers.pop('Accept', "application/json")
+    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{filesystem}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    _params["resource"] = _SERIALIZER.query("resource", resource, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_paths_request(
-    url,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    url: str,
+    *,
+    recursive: bool,
+    request_id_parameter: Optional[str] = None,
+    timeout: Optional[int] = None,
+    continuation: Optional[str] = None,
+    path: Optional[str] = None,
+    max_results: Optional[int] = None,
+    upn: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    resource = kwargs.pop('resource', _params.pop('resource', "filesystem"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-06-08"))  # type: str
-    recursive = kwargs.pop('recursive')  # type: bool
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    continuation = kwargs.pop('continuation', _params.pop('continuation', None))  # type: Optional[str]
-    path = kwargs.pop('path', _params.pop('directory', None))  # type: Optional[str]
-    max_results = kwargs.pop('max_results', _params.pop('maxResults', None))  # type: Optional[int]
-    upn = kwargs.pop('upn', _params.pop('upn', None))  # type: Optional[bool]
-    accept = _headers.pop('Accept', "application/json")
+    resource = kwargs.pop("resource", _params.pop("resource", "filesystem"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{filesystem}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['resource'] = _SERIALIZER.query("resource", resource, 'str')
+    _params["resource"] = _SERIALIZER.query("resource", resource, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
     if continuation is not None:
-        _params['continuation'] = _SERIALIZER.query("continuation", continuation, 'str')
+        _params["continuation"] = _SERIALIZER.query("continuation", continuation, "str")
     if path is not None:
-        _params['directory'] = _SERIALIZER.query("path", path, 'str')
-    _params['recursive'] = _SERIALIZER.query("recursive", recursive, 'bool')
+        _params["directory"] = _SERIALIZER.query("path", path, "str")
+    _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
     if max_results is not None:
-        _params['maxResults'] = _SERIALIZER.query("max_results", max_results, 'int', minimum=1)
+        _params["maxResults"] = _SERIALIZER.query("max_results", max_results, "int", minimum=1)
     if upn is not None:
-        _params['upn'] = _SERIALIZER.query("upn", upn, 'bool')
+        _params["upn"] = _SERIALIZER.query("upn", upn, "bool")
 
     # Construct headers
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_blob_hierarchy_segment_request(
-    url,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    url: str,
+    *,
+    prefix: Optional[str] = None,
+    delimiter: Optional[str] = None,
+    marker: Optional[str] = None,
+    max_results: Optional[int] = None,
+    include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+    showonly: str = "deleted",
+    timeout: Optional[int] = None,
+    request_id_parameter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-    comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-06-08"))  # type: str
-    prefix = kwargs.pop('prefix', _params.pop('prefix', None))  # type: Optional[str]
-    delimiter = kwargs.pop('delimiter', _params.pop('delimiter', None))  # type: Optional[str]
-    marker = kwargs.pop('marker', _params.pop('marker', None))  # type: Optional[str]
-    max_results = kwargs.pop('max_results', _params.pop('maxResults', None))  # type: Optional[int]
-    include = kwargs.pop('include', _params.pop('include', None))  # type: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]]
-    showonly = kwargs.pop('showonly', _params.pop('showonly', "deleted"))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
+    comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{filesystem}")
     path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['restype'] = _SERIALIZER.query("restype", restype, 'str')
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
+    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
     if prefix is not None:
-        _params['prefix'] = _SERIALIZER.query("prefix", prefix, 'str')
+        _params["prefix"] = _SERIALIZER.query("prefix", prefix, "str")
     if delimiter is not None:
-        _params['delimiter'] = _SERIALIZER.query("delimiter", delimiter, 'str')
+        _params["delimiter"] = _SERIALIZER.query("delimiter", delimiter, "str")
     if marker is not None:
-        _params['marker'] = _SERIALIZER.query("marker", marker, 'str')
+        _params["marker"] = _SERIALIZER.query("marker", marker, "str")
     if max_results is not None:
-        _params['maxResults'] = _SERIALIZER.query("max_results", max_results, 'int', minimum=1)
+        _params["maxResults"] = _SERIALIZER.query("max_results", max_results, "int", minimum=1)
     if include is not None:
-        _params['include'] = _SERIALIZER.query("include", include, '[str]', div=',')
+        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
     if showonly is not None:
-        _params['showonly'] = _SERIALIZER.query("showonly", showonly, 'str')
+        _params["showonly"] = _SERIALIZER.query("showonly", showonly, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
-# fmt: on
-class FileSystemOperations(object):
+
+class FileSystemOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -354,16 +316,14 @@ class FileSystemOperations(object):
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def create(  # pylint: disable=inconsistent-return-statements
         self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        properties=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        properties: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Create FileSystem.
 
         Create a FileSystem rooted at the specified location. If the FileSystem already exists, the
@@ -388,29 +348,26 @@ class FileSystemOperations(object):
          None.
         :type properties: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_create_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
-            template_url=self.create.metadata['url'],
+            resource=self._config.resource,
+            version=self._config.version,
+            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -418,10 +375,9 @@ class FileSystemOperations(object):
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -430,30 +386,29 @@ class FileSystemOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['x-ms-namespace-enabled']=self._deserialize('str', response.headers.get('x-ms-namespace-enabled'))
-
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-namespace-enabled"] = self._deserialize(
+            "str", response.headers.get("x-ms-namespace-enabled")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': "{url}/{filesystem}"}  # type: ignore
-
+    create.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
         self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        properties=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        properties: Optional[str] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        **kwargs: Any
+    ) -> None:
         """Set FileSystem Properties.
 
         Set properties for the FileSystem.  This operation supports conditional HTTP requests.  For
@@ -481,19 +436,17 @@ class FileSystemOperations(object):
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -503,14 +456,14 @@ class FileSystemOperations(object):
 
         request = build_set_properties_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.set_properties.metadata['url'],
+            resource=self._config.resource,
+            version=self._config.version,
+            template_url=self.set_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -518,10 +471,9 @@ class FileSystemOperations(object):
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -530,27 +482,21 @@ class FileSystemOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': "{url}/{filesystem}"}  # type: ignore
-
+    set_properties.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
-        self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self, request_id_parameter: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """Get FileSystem Properties.
 
         All system and user-defined filesystem properties are specified in the response headers.
@@ -565,28 +511,25 @@ class FileSystemOperations(object):
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_get_properties_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
-            template_url=self.get_properties.metadata['url'],
+            resource=self._config.resource,
+            version=self._config.version,
+            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -594,10 +537,9 @@ class FileSystemOperations(object):
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -606,30 +548,29 @@ class FileSystemOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['x-ms-properties']=self._deserialize('str', response.headers.get('x-ms-properties'))
-        response_headers['x-ms-namespace-enabled']=self._deserialize('str', response.headers.get('x-ms-namespace-enabled'))
-
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-properties"] = self._deserialize("str", response.headers.get("x-ms-properties"))
+        response_headers["x-ms-namespace-enabled"] = self._deserialize(
+            "str", response.headers.get("x-ms-namespace-enabled")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': "{url}/{filesystem}"}  # type: ignore
-
+    get_properties.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        **kwargs: Any
+    ) -> None:
         """Delete FileSystem.
 
         Marks the FileSystem for deletion.  When a FileSystem is deleted, a FileSystem with the same
@@ -654,19 +595,17 @@ class FileSystemOperations(object):
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -676,13 +615,13 @@ class FileSystemOperations(object):
 
         request = build_delete_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.delete.metadata['url'],
+            resource=self._config.resource,
+            version=self._config.version,
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -690,10 +629,9 @@ class FileSystemOperations(object):
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -702,35 +640,32 @@ class FileSystemOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': "{url}/{filesystem}"}  # type: ignore
-
+    delete.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
 
     @distributed_trace
     def list_paths(
         self,
-        recursive,  # type: bool
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        continuation=None,  # type: Optional[str]
-        path=None,  # type: Optional[str]
-        max_results=None,  # type: Optional[int]
-        upn=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.PathList
+        recursive: bool,
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        continuation: Optional[str] = None,
+        path: Optional[str] = None,
+        max_results: Optional[int] = None,
+        upn: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.PathList:
         """List Paths.
 
         List FileSystem paths and their properties.
 
-        :param recursive: Required.
+        :param recursive: Required. Required.
         :type recursive: bool
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -759,28 +694,23 @@ class FileSystemOperations(object):
          headers will be transformed from Azure Active Directory Object IDs to User Principal Names.  If
          "false", the values will be returned as Azure Active Directory Object IDs. The default value is
          false. Note that group and application Object IDs are not translated because they do not have
-         unique friendly names.
+         unique friendly names. Default value is None.
         :type upn: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PathList, or the result of cls(response)
+        :return: PathList or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.PathList
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PathList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PathList]
 
-        
         request = build_list_paths_request(
             url=self._config.url,
-            resource=self._config.resource,
-            version=self._config.version,
             recursive=recursive,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
@@ -788,7 +718,9 @@ class FileSystemOperations(object):
             path=path,
             max_results=max_results,
             upn=upn,
-            template_url=self.list_paths.metadata['url'],
+            resource=self._config.resource,
+            version=self._config.version,
+            template_url=self.list_paths.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -796,10 +728,9 @@ class FileSystemOperations(object):
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -808,37 +739,35 @@ class FileSystemOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['x-ms-continuation']=self._deserialize('str', response.headers.get('x-ms-continuation'))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-continuation"] = self._deserialize("str", response.headers.get("x-ms-continuation"))
 
-        deserialized = self._deserialize('PathList', pipeline_response)
+        deserialized = self._deserialize("PathList", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    list_paths.metadata = {'url': "{url}/{filesystem}"}  # type: ignore
-
+    list_paths.metadata = {"url": "{url}/{filesystem}"}  # type: ignore
 
     @distributed_trace
     def list_blob_hierarchy_segment(
         self,
-        prefix=None,  # type: Optional[str]
-        delimiter=None,  # type: Optional[str]
-        marker=None,  # type: Optional[str]
-        max_results=None,  # type: Optional[int]
-        include=None,  # type: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]]
-        showonly="deleted",  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.ListBlobsHierarchySegmentResponse
+        prefix: Optional[str] = None,
+        delimiter: Optional[str] = None,
+        marker: Optional[str] = None,
+        max_results: Optional[int] = None,
+        include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+        showonly: str = "deleted",
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ListBlobsHierarchySegmentResponse:
         """The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters results to filesystems within the specified prefix. Default value is
@@ -864,7 +793,7 @@ class FileSystemOperations(object):
          response. Default value is None.
         :type include: list[str or ~azure.storage.filedatalake.models.ListBlobsIncludeItem]
         :param showonly: Include this parameter to specify one or more datasets to include in the
-         response. Known values are "deleted" or None. Default value is "deleted".
+         response. Known values are "deleted" and None. Default value is "deleted".
         :type showonly: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -882,28 +811,22 @@ class FileSystemOperations(object):
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListBlobsHierarchySegmentResponse, or the result of cls(response)
+        :return: ListBlobsHierarchySegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.ListBlobsHierarchySegmentResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListBlobsHierarchySegmentResponse]
+        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListBlobsHierarchySegmentResponse]
 
-        
         request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             prefix=prefix,
             delimiter=delimiter,
             marker=marker,
@@ -912,7 +835,10 @@ class FileSystemOperations(object):
             showonly=showonly,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.list_blob_hierarchy_segment.metadata['url'],
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            template_url=self.list_blob_hierarchy_segment.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -920,10 +846,9 @@ class FileSystemOperations(object):
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -932,18 +857,19 @@ class FileSystemOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize('ListBlobsHierarchySegmentResponse', pipeline_response)
+        deserialized = self._deserialize("ListBlobsHierarchySegmentResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {'url': "{url}/{filesystem}"}  # type: ignore
-
+    list_blob_hierarchy_segment.metadata = {"url": "{url}/{filesystem}"}  # type: ignore

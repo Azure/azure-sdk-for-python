@@ -46,7 +46,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @recorded_by_proxy_async
     async def test_example_key_crud_operations(self, key_client, **kwargs):
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
 
         key_name = self.get_resource_name("key-name")
 

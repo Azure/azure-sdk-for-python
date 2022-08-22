@@ -12,7 +12,7 @@ from msrest import Serializer, Deserializer
 from typing import Any, AsyncIterable, IO, List, Optional, Union
 
 # FIXME: have to manually reconfigure import path for multiapi operation mixin
-from ...aio._async_polling import AsyncDocumentModelAdministrationLROPoller
+from ...aio._async_polling import AsyncDocumentModelAdministrationClientLROPoller
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.polling import AsyncLROPoller
 
@@ -501,7 +501,7 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         build_request: _models.BuildDocumentModelRequest,
         **kwargs: Any
-    ) -> AsyncDocumentModelAdministrationLROPoller[None]:
+    ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
         """Build model.
 
         Builds a custom document analysis model.
@@ -517,9 +517,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncDocumentModelAdministrationLROPoller that returns either None or
-         the result of cls(response)
-        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationLROPoller[None]
+        :return: An instance of AsyncDocumentModelAdministrationClientLROPoller that returns either
+         None or the result of cls(response)
+        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_build_document_model')
@@ -577,7 +577,7 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         compose_request: _models.ComposeDocumentModelRequest,
         **kwargs: Any
-    ) -> AsyncDocumentModelAdministrationLROPoller[None]:
+    ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
         """Compose model.
 
         Creates a new model from document types of existing models.
@@ -593,9 +593,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncDocumentModelAdministrationLROPoller that returns either None or
-         the result of cls(response)
-        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationLROPoller[None]
+        :return: An instance of AsyncDocumentModelAdministrationClientLROPoller that returns either
+         None or the result of cls(response)
+        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_compose_document_model')
@@ -658,7 +658,7 @@ class FormRecognizerClientOperationsMixin(object):
         model_id: str,
         copy_to_request: _models.CopyAuthorization,
         **kwargs: Any
-    ) -> AsyncDocumentModelAdministrationLROPoller[None]:
+    ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
         """Copy model.
 
         Copies model to the target resource, region, and modelId.
@@ -675,9 +675,9 @@ class FormRecognizerClientOperationsMixin(object):
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncDocumentModelAdministrationLROPoller that returns either None or
-         the result of cls(response)
-        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationLROPoller[None]
+        :return: An instance of AsyncDocumentModelAdministrationClientLROPoller that returns either
+         None or the result of cls(response)
+        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_copy_document_model_to')

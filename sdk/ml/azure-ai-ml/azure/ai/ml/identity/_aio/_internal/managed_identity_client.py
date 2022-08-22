@@ -5,14 +5,15 @@
 import time
 from typing import TYPE_CHECKING
 
-from .._internal import AsyncContextManager
 from ..._internal import _scopes_to_resource
 from ..._internal.managed_identity_client import ManagedIdentityClientBase
 from ..._internal.pipeline import build_async_pipeline
+from .._internal import AsyncContextManager
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from typing import Any
+
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import AsyncPipeline
 

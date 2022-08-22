@@ -11,6 +11,7 @@ from ._generated.models import (
 )
 
 from ._shared.models import (
+    CommunicationCloudEnvironment,
     CommunicationIdentifier,
     CommunicationIdentifierKind,
     CommunicationUserIdentifier,
@@ -28,6 +29,7 @@ __all__ = [
     'CommunicationTokenScope',
 
     # from _shared
+    'CommunicationCloudEnvironment',
     'CommunicationIdentifier',
     'CommunicationIdentifierKind',
     'CommunicationUserIdentifier',

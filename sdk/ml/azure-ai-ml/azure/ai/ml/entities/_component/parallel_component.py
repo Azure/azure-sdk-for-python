@@ -1,35 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import json
-import re
 import os
+import re
+from typing import Any, Dict, Union
 
 from marshmallow import INCLUDE, Schema
-from typing import Dict, Any, Union
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    ComponentVersionData,
-    ComponentVersionDetails,
-)
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema, RestParallelComponentSchema
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    COMPONENT_TYPE,
-    NodeType,
-    ComponentSource,
-)
-from azure.ai.ml.entities._component.input_output import ComponentInput, ComponentOutput
-from .component import Component
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
-from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, NodeType
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
-from .._util import validate_attribute_type
+from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
+from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 from ..._schema import PathAwareSchema
+from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .component import Component
 
 
 class ParallelComponent(Component, ParameterizedParallel):
@@ -75,6 +65,8 @@ class ParallelComponent(Component, ParameterizedParallel):
     :type code: str
     :param instance_count: promoted property from resources.instance_count
     :type instance_count: int
+    :param is_deterministic: Whether the parallel component is deterministic.
+    :type is_deterministic: bool
     """
 
     def __init__(
@@ -98,6 +90,7 @@ class ParallelComponent(Component, ParameterizedParallel):
         outputs: Dict = None,
         code: str = None,  # promoted property from task.code
         instance_count: int = None,  # promoted property from resources.instance_count
+        is_deterministic: bool = True,
         **kwargs,
     ):
         # validate init params are valid type
@@ -113,6 +106,7 @@ class ParallelComponent(Component, ParameterizedParallel):
             display_name=display_name,
             inputs=inputs,
             outputs=outputs,
+            is_deterministic=is_deterministic,
             **kwargs,
         )
 
@@ -161,8 +155,7 @@ class ParallelComponent(Component, ParameterizedParallel):
 
     @property
     def instance_count(self) -> int:
-        """
-        Return value of promoted property resources.instance_count.
+        """Return value of promoted property resources.instance_count.
 
         :return: Value of resources.instance_count.
         :rtype: Optional[int]
@@ -180,9 +173,8 @@ class ParallelComponent(Component, ParameterizedParallel):
 
     @property
     def code(self) -> str:
-        """
-        Return value of promoted property task.code,
-        which is a local or remote path pointing at source code.
+        """Return value of promoted property task.code, which is a local or
+        remote path pointing at source code.
 
         :return: Value of task.code.
         :rtype: Optional[str]
@@ -200,9 +192,8 @@ class ParallelComponent(Component, ParameterizedParallel):
 
     @property
     def environment(self) -> str:
-        """
-        Return value of promoted property task.environment,
-        indicate the environment that training job will run in.
+        """Return value of promoted property task.environment, indicate the
+        environment that training job will run in.
 
         :return: Value of task.environment.
         :rtype: Optional[Environment, str]
@@ -234,48 +225,16 @@ class ParallelComponent(Component, ParameterizedParallel):
 
     def _to_dict(self) -> Dict:
         """Dump the parallel component content into a dictionary."""
-
-        # Replace the name of $schema to schema.
-        component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop("base_path", None)
-        return {**self._other_parameter, **component_schema_dict}
-
-    @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "ParallelComponent":
-        return ParallelComponent(
-            yaml_str=kwargs.pop("yaml_str", None),
-            _source=kwargs.pop("_source", ComponentSource.YAML),
-            **(ParallelComponentSchema(context=context).load(data, unknown=INCLUDE, **kwargs)),
-        )
-
-    def _to_rest_object(self) -> ComponentVersionData:
-        # Convert nested ordered dict to dict.
-        # TODO: we may need to use original dict from component YAML(only change code and environment), returning
-        # parsed dict might add default value for some field, eg: if we add property "optional" with default value
-        # to ComponentInput, it will add field "optional" to all inputs even if user doesn't specify one
-        component = json.loads(json.dumps(self._to_dict()))
-
-        properties = ComponentVersionDetails(
-            component_spec=component,
-            description=self.description,
-            is_anonymous=self._is_anonymous,
-            properties=self.properties,
-            tags=self.tags,
-        )
-        result = ComponentVersionData(properties=properties)
-        result.name = self.name
-        return result
+        return convert_ordered_dict_to_dict({**self._other_parameter, **super(ParallelComponent, self)._to_dict()})
 
     @classmethod
     def _load_from_rest(cls, obj: ComponentVersionData) -> "ParallelComponent":
         rest_component_version = obj.properties
         inputs = {
-            k: ComponentInput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
+            k: Input._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
         }
         outputs = {
-            k: ComponentOutput._from_rest_object(v)
-            for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
+            k: Output._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
         }
         parallel_component = ParallelComponent(
             id=obj.id,
@@ -286,14 +245,11 @@ class ParallelComponent(Component, ParameterizedParallel):
             **RestParallelComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).load(
                 rest_component_version.component_spec, unknown=INCLUDE
             ),
-            _source=ComponentSource.REST,
         )
         return parallel_component
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
-        from azure.ai.ml._schema.component import ParallelComponentSchema
-
         return ParallelComponentSchema(context=context)
 
     def __str__(self):

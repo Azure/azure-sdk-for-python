@@ -2,6 +2,8 @@
 
 ## 12.0.0b5 (Unreleased)
 
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
 ### Features Added
 
 ### Bugs Fixed

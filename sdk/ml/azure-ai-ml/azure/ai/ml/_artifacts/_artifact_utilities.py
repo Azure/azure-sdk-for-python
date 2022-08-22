@@ -2,46 +2,49 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 import os
-from typing import Optional, Dict, TypeVar, Union, Tuple
-from pathlib import Path
-from datetime import datetime, timedelta
 import uuid
-from azure.ai.ml._azure_environments import ENDPOINT_URLS, _get_cloud_details
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Dict, Optional, Tuple, TypeVar, Union
 
-from azure.storage.blob import generate_blob_sas, BlobSasPermissions
-from azure.storage.filedatalake import generate_file_sas, FileSasPermissions
-from azure.ai.ml._ml_exceptions import ValidationException
-from azure.ai.ml.operations import DatastoreOperations
-from azure.ai.ml._utils._storage_utils import get_storage_client
-from azure.ai.ml.entities import Environment
-from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
-from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
-from azure.ai.ml._utils._arm_id_utils import (
-    get_datastore_arm_id,
-    get_resource_name_from_arm_id,
-    remove_aml_prefix,
-    is_ARM_id_for_resource,
-)
-from azure.ai.ml._utils._asset_utils import (
-    _validate_path,
-    get_object_hash,
-    get_ignore_file,
-    IgnoreFile,
-    _build_metadata_dict,
-)
-from azure.ai.ml._utils._storage_utils import get_artifact_path_from_storage_url, AzureMLDatastorePathUri
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    DatastoreType,
-)
-from azure.ai.ml._utils.utils import is_url, is_mlflow_uri
-from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId
-from azure.ai.ml.constants import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
-from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
+from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
+from azure.ai.ml._ml_exceptions import ValidationException
+from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._utils._arm_id_utils import (
+    AMLNamedArmId,
+    get_datastore_arm_id,
+    get_resource_name_from_arm_id,
+    is_ARM_id_for_resource,
+    remove_aml_prefix,
+)
+from azure.ai.ml._utils._asset_utils import (
+    IgnoreFile,
+    _build_metadata_dict,
+    _validate_path,
+    get_ignore_file,
+    get_object_hash,
+)
+from azure.ai.ml._utils._storage_utils import (
+    AzureMLDatastorePathUri,
+    get_artifact_path_from_storage_url,
+    get_storage_client,
+)
+from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
+from azure.ai.ml.constants import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
+from azure.ai.ml.entities import Environment
+from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
+from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
+from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
 module_logger = logging.getLogger(__name__)
 
@@ -59,17 +62,14 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
 
 
 def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, str]:
-    """
-    Get datastore account, type, and auth information
-    """
+    """Get datastore account, type, and auth information."""
     datastore_info = {}
     if name:
         datastore = operations.get(name, include_secrets=True)
     else:
         datastore = operations.get_default(include_secrets=True)
 
-    cloud_details = _get_cloud_details()
-    storage_endpoint = cloud_details.get(ENDPOINT_URLS.STORAGE_ENDPOINT)
+    storage_endpoint = _get_storage_endpoint_from_metadata()
     credentials = datastore.credentials
     datastore_info["storage_type"] = datastore.type
     datastore_info["storage_account"] = datastore.account_name
@@ -101,14 +101,17 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
 
 
 def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
-    """
-    Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of RunDetails.logFiles
+    """Returns a dictionary of file name to blob or data lake uri with SAS
+    token, matching the structure of RunDetails.logFiles.
 
     legacy_log_folder_name: the name of the folder in the datastore that contains the logs
         /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
         /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
     """
-    if ds_info["storage_type"] not in [DatastoreType.AZURE_BLOB, DatastoreType.AZURE_DATA_LAKE_GEN2]:
+    if ds_info["storage_type"] not in [
+        DatastoreType.AZURE_BLOB,
+        DatastoreType.AZURE_DATA_LAKE_GEN2,
+    ]:
         raise Exception("Only Blob and Azure DataLake Storage Gen2 datastores are supported.")
 
     storage_client = get_storage_client(
@@ -164,9 +167,7 @@ def upload_artifact(
     ignore_file: IgnoreFile = IgnoreFile(None),
     sas_uri=None,
 ) -> ArtifactStorageInfo:
-    """
-    Upload local file or directory to datastore
-    """
+    """Upload local file or directory to datastore."""
     if sas_uri:
         storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
     else:
@@ -205,8 +206,7 @@ def download_artifact(
     datastore_name: Optional[str],
     datastore_info: Dict = None,
 ) -> str:
-    """
-    Download datastore path to local file or directory.
+    """Download datastore path to local file or directory.
 
     :param Union[str, os.PathLike] starts_with: Prefix of blobs to download
     :param str destination: Path that files will be written to
@@ -230,9 +230,7 @@ def download_artifact_from_storage_url(
     datastore_operation: DatastoreOperations,
     datastore_name: Optional[str],
 ) -> str:
-    """
-    Download datastore blob URL to local file or directory.
-    """
+    """Download datastore blob URL to local file or directory."""
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     datastore_info = get_datastore_info(datastore_operation, datastore_name)
     starts_with = get_artifact_path_from_storage_url(
@@ -248,7 +246,8 @@ def download_artifact_from_storage_url(
 
 
 def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations):
-    """Downloads artifact pointed to by URI of the form `azureml://...` to destination
+    """Downloads artifact pointed to by URI of the form `azureml://...` to
+    destination.
 
     :param str uri: AzureML uri of artifact to download
     :param str destination: Path to download artifact to
@@ -265,7 +264,8 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
 
 
 def aml_datastore_path_exists(uri: str, datastore_operation: DatastoreOperations, datastore_info: dict = None):
-    """Checks whether `uri` of the form "azureml://" points to either a directory or a file
+    """Checks whether `uri` of the form "azureml://" points to either a
+    directory or a file.
 
     :param str uri: azure ml datastore uri
     :param DatastoreOperations datastore_operation: Datastore operation
@@ -357,14 +357,16 @@ T = TypeVar("T", bound=Artifact)
 
 def _check_and_upload_path(
     artifact: T,
-    asset_operations: Union["DatasetOperations", "DataOperations", "ModelOperations", "CodeOperations"],
+    asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
     datastore_name: str = None,
     sas_uri: str = None,
 ) -> Tuple[T, str]:
-    """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
-    param T artifact: artifact to check and upload
-    param Union["DatasetOperations", "DataOperations", "ModelOperations", "CodeOperations"] asset_operations:
-        the asset operations to use for uploading
+    """Checks whether `artifact` is a path or a uri and uploads it to the
+    datastore if necessary.
+
+    param T artifact: artifact to check and upload param
+    Union["DataOperations", "ModelOperations", "CodeOperations"]
+    asset_operations:     the asset operations to use for uploading
     param str datastore_name: the name of the datastore to upload to
     param str sas_uri: the sas uri to use for uploading
     """
@@ -398,7 +400,10 @@ def _check_and_upload_path(
         )
         indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
         if artifact._is_anonymous:
-            artifact.name, artifact.version = uploaded_artifact.name, uploaded_artifact.version
+            artifact.name, artifact.version = (
+                uploaded_artifact.name,
+                uploaded_artifact.version,
+            )
         # Pass all of the upload information to the assets, and they will each construct the URLs that they support
         artifact._update_path(uploaded_artifact)
     return artifact, indicator_file

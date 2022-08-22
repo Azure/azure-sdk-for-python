@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, TypeVar, Union,
+    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, TypeVar, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
@@ -31,6 +31,7 @@ from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
 from ._blob_client import BlobClient
 from ._deserialize import deserialize_container_properties
+from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
@@ -87,10 +88,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -132,7 +135,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     def __init__(
             self, account_url,  # type: str
             container_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):
         # type: (...) -> None
@@ -168,8 +171,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self._query_str)
 
     @classmethod
-    def from_container_url(cls, container_url, credential=None, **kwargs):
-        # type: (Type[ClassType], str, Optional[Any], Any) -> ClassType
+    def from_container_url(
+            cls,  # type: Type[ClassType]
+            container_url,  # type: str
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+            **kwargs  # type: Any
+        ):  # type: (...) -> ClassType
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -180,10 +187,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
         """
@@ -215,7 +224,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             cls,  # type: Type[ClassType]
             conn_str,  # type: str
             container_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
         ):  # type: (...) -> ClassType
         """Create ContainerClient from a Connection String.
@@ -229,9 +238,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
 
@@ -741,10 +752,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
-        :param list[str] or str include:
+        :param include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
+        :paramtype include: list[str] or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
@@ -1060,9 +1072,34 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             timeout=timeout,
             **kwargs)
 
+    @overload
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: str,
+            **kwargs) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: None = None,
+            **kwargs) -> StorageStreamDownloader[bytes]:
+        ...
+
     @distributed_trace
-    def download_blob(self, blob, offset=None, length=None, **kwargs):
-        # type: (Union[str, BlobProperties], Optional[int], Optional[int], **Any) -> StorageStreamDownloader
+    def download_blob(
+            self, blob: Union[str, BlobProperties],
+            offset: int = None,
+            length: int = None,
+            *,
+            encoding: Optional[str] = None,
+            **kwargs) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
@@ -1143,7 +1180,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
-        return blob_client.download_blob(offset=offset, length=length, **kwargs)
+        return blob_client.download_blob(
+            offset=offset,
+            length=length,
+            encoding=encoding,
+            **kwargs)
 
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,

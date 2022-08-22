@@ -41,7 +41,7 @@ import os
 def sample_compose_model():
     # [START composed_model]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
+    from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -52,16 +52,16 @@ def sample_compose_model():
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     supplies_poller = document_model_admin_client.begin_build_model(
-        po_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Office supplies"
+        ModelBuildMode.TEMPLATE, blob_container_url=po_supplies, description="Purchase order-Office supplies"
     )
     equipment_poller = document_model_admin_client.begin_build_model(
-        po_equipment, DocumentBuildMode.TEMPLATE, description="Purchase order-Office Equipment"
+        ModelBuildMode.TEMPLATE, blob_container_url=po_equipment, description="Purchase order-Office Equipment"
     )
     furniture_poller = document_model_admin_client.begin_build_model(
-        po_furniture, DocumentBuildMode.TEMPLATE, description="Purchase order-Furniture"
+        ModelBuildMode.TEMPLATE, blob_container_url=po_furniture, description="Purchase order-Furniture"
     )
     cleaning_supplies_poller = document_model_admin_client.begin_build_model(
-        po_cleaning_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Cleaning Supplies"
+        ModelBuildMode.TEMPLATE, blob_container_url=po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
     )
     supplies_model = supplies_poller.result()
     equipment_model = equipment_poller.result()

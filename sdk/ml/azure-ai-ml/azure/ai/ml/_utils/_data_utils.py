@@ -3,27 +3,30 @@
 # ---------------------------------------------------------
 
 import io
-import logging
-import yaml
-import requests
 import json
-from jsonschema import Draft7Validator, ValidationError
-from jsonschema.exceptions import best_match
+import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, Union
 from urllib.parse import urlparse
-from azure.ai.ml.operations import DatastoreOperations
-from azure.ai.ml._artifacts._constants import INVALID_MLTABLE_METADATA_SCHEMA_ERROR, INVALID_MLTABLE_METADATA_SCHEMA_MSG
+
+import requests
+import yaml
+from jsonschema import Draft7Validator, ValidationError
+from jsonschema.exceptions import best_match
+
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, get_storage_client
+from azure.ai.ml._artifacts._constants import INVALID_MLTABLE_METADATA_SCHEMA_ERROR, INVALID_MLTABLE_METADATA_SCHEMA_MSG
 from azure.ai.ml._ml_exceptions import DataException, ErrorCategory, ErrorTarget
-from .utils import load_yaml
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+
 from ._storage_utils import AzureMLDatastorePathUri
+from .utils import load_yaml
 
 module_logger = logging.getLogger(__name__)
 
 
-def download_mltable_schema(mltable_schema_url: str):
+def download_mltable_metadata_schema(mltable_schema_url: str):
     response = requests.get(mltable_schema_url, stream=True)
     return response.json()
 

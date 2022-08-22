@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MobileNetworkManagementClientConfiguration(Configuration):
+class MobileNetworkManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for MobileNetworkManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,6 +29,9 @@ class MobileNetworkManagementClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2022-04-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,6 +41,8 @@ class MobileNetworkManagementClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(MobileNetworkManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +50,7 @@ class MobileNetworkManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2022-03-01-preview"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-mobilenetwork/{}'.format(VERSION))
         self._configure(**kwargs)

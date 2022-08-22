@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast
 
-from .....aio._async_polling import AsyncDocumentModelAdministrationLROPoller
+from .....aio._async_polling import AsyncDocumentModelAdministrationClientLROPoller
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -336,7 +336,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         build_request: _models.BuildDocumentModelRequest,
         **kwargs: Any
-    ) -> AsyncDocumentModelAdministrationLROPoller[None]:
+    ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
         """Build model.
 
         Builds a custom document analysis model.
@@ -352,9 +352,9 @@ class FormRecognizerClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncDocumentModelAdministrationLROPoller that returns either None or
-         the result of cls(response)
-        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationLROPoller[None]
+        :return: An instance of AsyncDocumentModelAdministrationClientLROPoller that returns either
+         None or the result of cls(response)
+        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -400,13 +400,13 @@ class FormRecognizerClientOperationsMixin:
         elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return AsyncDocumentModelAdministrationLROPoller.from_continuation_token(
+            return AsyncDocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return AsyncDocumentModelAdministrationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncDocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_build_document_model.metadata = {'url': "/documentModels:build"}  # type: ignore
 
@@ -469,7 +469,7 @@ class FormRecognizerClientOperationsMixin:
         self,
         compose_request: _models.ComposeDocumentModelRequest,
         **kwargs: Any
-    ) -> AsyncDocumentModelAdministrationLROPoller[None]:
+    ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
         """Compose model.
 
         Creates a new model from document types of existing models.
@@ -485,9 +485,9 @@ class FormRecognizerClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncDocumentModelAdministrationLROPoller that returns either None or
-         the result of cls(response)
-        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationLROPoller[None]
+        :return: An instance of AsyncDocumentModelAdministrationClientLROPoller that returns either
+         None or the result of cls(response)
+        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -533,13 +533,13 @@ class FormRecognizerClientOperationsMixin:
         elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return AsyncDocumentModelAdministrationLROPoller.from_continuation_token(
+            return AsyncDocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return AsyncDocumentModelAdministrationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncDocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_compose_document_model.metadata = {'url': "/documentModels:compose"}  # type: ignore
 
@@ -674,7 +674,7 @@ class FormRecognizerClientOperationsMixin:
         model_id: str,
         copy_to_request: _models.CopyAuthorization,
         **kwargs: Any
-    ) -> AsyncDocumentModelAdministrationLROPoller[None]:
+    ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
         """Copy model.
 
         Copies model to the target resource, region, and modelId.
@@ -691,9 +691,9 @@ class FormRecognizerClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncDocumentModelAdministrationLROPoller that returns either None or
-         the result of cls(response)
-        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationLROPoller[None]
+        :return: An instance of AsyncDocumentModelAdministrationClientLROPoller that returns either
+         None or the result of cls(response)
+        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -740,13 +740,13 @@ class FormRecognizerClientOperationsMixin:
         elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return AsyncDocumentModelAdministrationLROPoller.from_continuation_token(
+            return AsyncDocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return AsyncDocumentModelAdministrationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncDocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_copy_document_model_to.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
 

@@ -1,0 +1,365 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/utcontainer3c45352f?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:04 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:04 GMT",
+        "ETag": "\u00220x8DA6B7FBFFE7314\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:16:05 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/utcontainersource13c45352f?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:04 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:04 GMT",
+        "ETag": "\u00220x8DA6B7FC0085CB2\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:16:05 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamestorname/blobServices/default/containers/vlwcontainer3c45352f?api-version=2021-04-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "69",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-azure-mgmt-storage/20.0.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": true
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "455",
+        "Content-Type": "application/json",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "ETag": "\u00220x8DA6B7FC18C4AE5\u0022",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1e462386-8441-452f-94a7-7152883d7acc",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-routing-request-id": "WESTUS2:20220722T011607Z:1e462386-8441-452f-94a7-7152883d7acc"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamestorname/blobServices/default/containers/vlwcontainer3c45352f",
+        "name": "vlwcontainer3c45352f",
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": true
+          },
+          "deleted": false,
+          "remainingRetentionDays": 0,
+          "hasImmutabilityPolicy": false,
+          "hasLegalHold": false
+        }
+      }
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f?comp=block\u0026blockid=MQ%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "3",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "QUFB",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "Cc/2Kr4DuKg=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f?comp=block\u0026blockid=Mg%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "3",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "QkJC",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "\u002B3yuPEA7IqE=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f?comp=block\u0026blockid=Mw%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "3",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "Q0ND",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "VRJmMeosVKY=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f?comp=blocklist",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "125",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-immutability-policy-mode": "Unlocked",
+        "x-ms-immutability-policy-until-date": "Fri, 22 Jul 2022 01:16:12 GMT",
+        "x-ms-legal-hold": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CBlockList\u003E\u003CLatest\u003EMQ==\u003C/Latest\u003E\u003CLatest\u003EMg==\u003C/Latest\u003E\u003CLatest\u003EMw==\u003C/Latest\u003E\u003C/BlockList\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "ETag": "\u00220x8DA6B7FC1B9BAA3\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:16:08 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "dAoQ5rLgKr0=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06",
+        "x-ms-version-id": "2022-07-22T01:16:08.1539747Z"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-range": "bytes=0-33554431",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "9",
+        "Content-Range": "bytes 0-8/9",
+        "Content-Type": "application/octet-stream",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "ETag": "\u00220x8DA6B7FC1B9BAA3\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:16:08 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Fri, 22 Jul 2022 01:16:08 GMT",
+        "x-ms-immutability-policy-mode": "unlocked",
+        "x-ms-immutability-policy-until-date": "Fri, 22 Jul 2022 01:16:12 GMT",
+        "x-ms-is-current-version": "true",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-legal-hold": "true",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06",
+        "x-ms-version-id": "2022-07-22T01:16:08.1539747Z"
+      },
+      "ResponseBody": "QUFBQkJCQ0ND"
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f?comp=immutabilityPolicies",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f?comp=legalhold",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-legal-hold": "false",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-legal-hold": "false",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagenamestorname.blob.core.windows.net/vlwcontainer3c45352f/blob3c45352f",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storagenamestorname/blobServices/default/containers/vlwcontainer3c45352f?api-version=2021-04-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-azure-mgmt-storage/20.0.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Fri, 22 Jul 2022 01:16:07 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "0d46b6c0-669b-4ebe-8d76-8ee984d3c211",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14999",
+        "x-ms-routing-request-id": "WESTUS2:20220722T011608Z:0d46b6c0-669b-4ebe-8d76-8ee984d3c211"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "expiry_time": "2022-07-22T01:16:12.828272"
+  }
+}

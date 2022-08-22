@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 import logging
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
+
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
-from azure.ai.ml.constants import REGISTRY_ASSET_ID
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import TemporaryDataReferenceRequestDto
+from azure.ai.ml.constants import REGISTRY_ASSET_ID
 from azure.core.exceptions import HttpResponseError
 
 module_logger = logging.getLogger(__name__)
@@ -15,7 +16,8 @@ MFE_PATH_PREFIX = "mferp/managementfrontend"
 
 
 def _get_registry_discovery_uri(
-    service_client_registry_discovery_client: ServiceClientRegistryDiscovery, registry_name: str
+    service_client_registry_discovery_client: ServiceClientRegistryDiscovery,
+    registry_name: str,
 ) -> str:
     response = (
         service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(

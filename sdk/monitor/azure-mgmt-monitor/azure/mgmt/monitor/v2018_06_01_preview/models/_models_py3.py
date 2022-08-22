@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class DataSource(msrest.serialization.Model):
@@ -19,8 +21,8 @@ class DataSource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. Datasource kind. Possible values include: "PerformanceCounter",
-     "ETWProviders", "WindowsEventLogs".
+    :ivar kind: Required. Datasource kind. Known values are: "PerformanceCounter", "ETWProviders",
+     "WindowsEventLogs".
     :vartype kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceKind
     :ivar configuration: Required.
     :vartype configuration:
@@ -44,13 +46,13 @@ class DataSource(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        kind: Union[str, "DataSourceKind"],
-        configuration: "DataSourceConfiguration",
-        sinks: List["SinkConfiguration"],
+        kind: Union[str, "_models.DataSourceKind"],
+        configuration: "_models.DataSourceConfiguration",
+        sinks: List["_models.SinkConfiguration"],
         **kwargs
     ):
         """
-        :keyword kind: Required. Datasource kind. Possible values include: "PerformanceCounter",
+        :keyword kind: Required. Datasource kind. Known values are: "PerformanceCounter",
          "ETWProviders", "WindowsEventLogs".
         :paramtype kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceKind
         :keyword configuration: Required.
@@ -88,9 +90,9 @@ class DataSourceConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        providers: Optional[List["EtwProviderConfiguration"]] = None,
-        perf_counters: Optional[List["PerformanceCounterConfiguration"]] = None,
-        event_logs: Optional[List["EventLogConfiguration"]] = None,
+        providers: Optional[List["_models.EtwProviderConfiguration"]] = None,
+        perf_counters: Optional[List["_models.PerformanceCounterConfiguration"]] = None,
+        event_logs: Optional[List["_models.EventLogConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -214,7 +216,7 @@ class EtwProviderConfiguration(msrest.serialization.Model):
         self,
         *,
         id: str,
-        events: List["EtwEventConfiguration"],
+        events: List["_models.EtwEventConfiguration"],
         **kwargs
     ):
         """
@@ -285,7 +287,7 @@ class GuestDiagnosticSettingsAssociationList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["GuestDiagnosticSettingsAssociationResource"]] = None,
+        value: Optional[List["_models.GuestDiagnosticSettingsAssociationResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -464,7 +466,7 @@ class GuestDiagnosticSettingsList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["GuestDiagnosticSettingsResource"]] = None,
+        value: Optional[List["_models.GuestDiagnosticSettingsResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -485,7 +487,7 @@ class GuestDiagnosticSettingsPatchResource(msrest.serialization.Model):
 
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar os_type: Operating system type for the configuration. Possible values include: "Windows",
+    :ivar os_type: Operating system type for the configuration. Known values are: "Windows",
      "Linux".
     :vartype os_type: str or
      ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
@@ -507,16 +509,16 @@ class GuestDiagnosticSettingsPatchResource(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        os_type: Optional[Union[str, "GuestDiagnosticSettingsOsType"]] = None,
-        data_sources: Optional[List["DataSource"]] = None,
+        os_type: Optional[Union[str, "_models.GuestDiagnosticSettingsOsType"]] = None,
+        data_sources: Optional[List["_models.DataSource"]] = None,
         proxy_setting: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword os_type: Operating system type for the configuration. Possible values include:
-         "Windows", "Linux".
+        :keyword os_type: Operating system type for the configuration. Known values are: "Windows",
+         "Linux".
         :paramtype os_type: str or
          ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
         :keyword data_sources: the array of data source object which are configured to collect and send
@@ -549,7 +551,7 @@ class GuestDiagnosticSettingsResource(Resource):
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar os_type: Operating system type for the configuration. Possible values include: "Windows",
+    :ivar os_type: Operating system type for the configuration. Known values are: "Windows",
      "Linux".
     :vartype os_type: str or
      ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
@@ -583,8 +585,8 @@ class GuestDiagnosticSettingsResource(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        os_type: Optional[Union[str, "GuestDiagnosticSettingsOsType"]] = None,
-        data_sources: Optional[List["DataSource"]] = None,
+        os_type: Optional[Union[str, "_models.GuestDiagnosticSettingsOsType"]] = None,
+        data_sources: Optional[List["_models.DataSource"]] = None,
         proxy_setting: Optional[str] = None,
         **kwargs
     ):
@@ -593,8 +595,8 @@ class GuestDiagnosticSettingsResource(Resource):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword os_type: Operating system type for the configuration. Possible values include:
-         "Windows", "Linux".
+        :keyword os_type: Operating system type for the configuration. Known values are: "Windows",
+         "Linux".
         :paramtype os_type: str or
          ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
         :keyword data_sources: the array of data source object which are configured to collect and send
@@ -660,8 +662,7 @@ class SinkConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. Possible values include: "EventHub", "ApplicationInsights",
-     "LogAnalytics".
+    :ivar kind: Required. Known values are: "EventHub", "ApplicationInsights", "LogAnalytics".
     :vartype kind: str or
      ~$(python-base-namespace).v2018_06_01_preview.models.SinkConfigurationKind
     """
@@ -677,12 +678,11 @@ class SinkConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        kind: Union[str, "SinkConfigurationKind"],
+        kind: Union[str, "_models.SinkConfigurationKind"],
         **kwargs
     ):
         """
-        :keyword kind: Required. Possible values include: "EventHub", "ApplicationInsights",
-         "LogAnalytics".
+        :keyword kind: Required. Known values are: "EventHub", "ApplicationInsights", "LogAnalytics".
         :paramtype kind: str or
          ~$(python-base-namespace).v2018_06_01_preview.models.SinkConfigurationKind
         """

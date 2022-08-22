@@ -2,35 +2,34 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 from abc import ABC
 from typing import Any, Dict, Union
 
-from azure.ai.ml.constants import AssetTypes, AutoMLConstants, TYPE, JobType
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    AmlToken,
     JobBaseData,
+    ManagedIdentity,
     MLTableJobInput,
     ResourceConfiguration,
     TaskType,
-    ManagedIdentity,
     UserIdentity,
-    AmlToken,
 )
-from azure.ai.ml.entities import Job
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants import TYPE, AssetTypes, AutoMLConstants, JobType
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._job.pipeline._io import AutoMLNodeIOMixin
-
 
 module_logger = logging.getLogger(__name__)
 
 
 class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
-    """
-    AutoML job entity.
-    """
+    """AutoML job entity."""
 
     def __init__(
         self,
@@ -39,8 +38,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
         **kwargs: Any,
     ) -> None:
-        """
-        Initialize an AutoML job entity.
+        """Initialize an AutoML job entity.
 
         :param task_details: The task configuration of the job. This can be Classification, Regression, etc.
         :param resources: Resource configuration for the job.
@@ -77,7 +75,12 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
 
     @classmethod
     def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, inside_pipeline=False, **kwargs
+        cls,
+        data: Dict,
+        context: Dict,
+        additional_message: str,
+        inside_pipeline=False,
+        **kwargs,
     ) -> "AutoMLJob":
         task_type = data.get(AutoMLConstants.TASK_TYPE_YAML)
         class_type = cls._get_task_mapping().get(task_type, None)
@@ -99,23 +102,31 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             )
 
     @classmethod
+    def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "AutoMLJob":
+        """Create an automl job instance from schema parsed dict."""
+        task_type = loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML)
+        class_type = cls._get_task_mapping().get(task_type, None)
+        if class_type:
+            return class_type._create_instance_from_schema_dict(loaded_data=loaded_data)
+        else:
+            msg = f"Unsupported task type: {task_type}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.AUTOML,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+    @classmethod
     def _get_task_mapping(cls):
-        from .tabular import (
-            ClassificationJob,
-            RegressionJob,
-            ForecastingJob,
-        )
         from .image import (
             ImageClassificationJob,
             ImageClassificationMultilabelJob,
-            ImageObjectDetectionJob,
             ImageInstanceSegmentationJob,
+            ImageObjectDetectionJob,
         )
-        from .nlp import (
-            TextNerJob,
-            TextClassificationJob,
-            TextClassificationMultilabelJob,
-        )
+        from .nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
+        from .tabular import ClassificationJob, ForecastingJob, RegressionJob
 
         # create a mapping of task type to job class
         return {
@@ -132,7 +143,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         }
 
     def _resolve_data_inputs(self):
-        """Resolve JobInputs to MLTableJobInputs within data_settings"""
+        """Resolve JobInputs to MLTableJobInputs within data_settings."""
         training_data = self._data.training_data
         if isinstance(training_data.data, Input):
             self._data.training_data.data = MLTableJobInput(uri=training_data.data.path)
@@ -144,7 +155,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             self._data.test_data.data = MLTableJobInput(uri=test_data.data.path)
 
     def _restore_data_inputs(self):
-        """Restore MLTableJobInputs to JobInputs within data_settings"""
+        """Restore MLTableJobInputs to JobInputs within data_settings."""
         training_data = self._data.training_data
         if isinstance(training_data.data, MLTableJobInput):
             self._data.training_data.data = Input(type=AssetTypes.MLTABLE, path=training_data.data.uri)

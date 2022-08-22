@@ -22,7 +22,6 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
             self.m365_client_id = "sanitized"
             self.m365_aad_authority = "sanitized"
             self.m365_aad_tenant = "sanitized"
-            self.m365_scope = "sanitized" 
             self.msal_username = "sanitized" 
             self.msal_password = "sanitized"
             self.expired_teams_token = "sanitized"
@@ -32,7 +31,6 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
             self.m365_client_id = os.getenv('COMMUNICATION_M365_APP_ID') 
             self.m365_aad_authority = os.getenv('COMMUNICATION_M365_AAD_AUTHORITY') 
             self.m365_aad_tenant = os.getenv('COMMUNICATION_M365_AAD_TENANT')
-            self.m365_scope = os.getenv('COMMUNICATION_M365_SCOPE') 
             self.msal_username = os.getenv('COMMUNICATION_MSAL_USERNAME') 
             self.msal_password = os.getenv('COMMUNICATION_MSAL_PASSWORD')
             self.expired_teams_token = os.getenv('COMMUNICATION_EXPIRED_TEAMS_TOKEN')  
@@ -49,7 +47,11 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
             msal_app = PublicClientApplication(
                 client_id=self.m365_client_id,
                 authority="{}/{}".format(self.m365_aad_authority, self.m365_aad_tenant))
-            result = msal_app.acquire_token_by_username_password(username=self.msal_username, password=self.msal_password, scopes=[self.m365_scope])
+            scopes = [ 
+                "https://auth.msft.communication.azure.com/Teams.ManageCalls",
+                "https://auth.msft.communication.azure.com/Teams.ManageChats"
+            ]
+            result = msal_app.acquire_token_by_username_password(username=self.msal_username, password=self.msal_password, scopes=scopes)
             teams_user_aad_token = result["access_token"]
             teams_user_oid = result["id_token_claims"]["oid"]
         return (teams_user_aad_token, teams_user_oid) 

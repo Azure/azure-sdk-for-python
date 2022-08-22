@@ -1,29 +1,30 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import logging
 from typing import Any, Iterable, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
-from azure.ai.ml.constants import ARM_ID_PREFIX, AzureMLResourceType
-from azure.ai.ml._scope_dependent_operations import _ScopeDependentOperations, OperationScope, OperationsContainer
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EnvironmentVersionData, ListViewType
-from azure.ai.ml._restclient.v2022_05_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient052022,
-)
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._utils._registry_utils import get_sas_uri_for_registry_asset, get_asset_body_for_registry_storage
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EnvironmentVersionData, ListViewType
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
+    _archive_or_restore,
     _create_or_update_autoincrement,
     _get_latest,
     _resolve_label_to_asset,
-    _archive_or_restore,
 )
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml.constants import ARM_ID_PREFIX, AzureMLResourceType
+from azure.ai.ml.entities._assets import Environment
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -31,10 +32,11 @@ module_logger = logging.getLogger(__name__)
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
-    """
-    EnvironmentOperations
+    """EnvironmentOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
@@ -69,6 +71,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         sas_uri = None
 
+        if not environment.version and self._registry_name:
+            raise Exception("Environment version is required for registry")
+
         if self._registry_name:
             sas_uri = get_sas_uri_for_registry_asset(
                 service_client=self._service_client,
@@ -77,12 +82,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 resource_group=self._resource_group_name,
                 registry=self._registry_name,
                 body=get_asset_body_for_registry_storage(
-                    self._registry_name, "environments", environment.name, environment.version
+                    self._registry_name,
+                    "environments",
+                    environment.name,
+                    environment.version,
                 ),
             )
             if not sas_uri:
                 module_logger.debug(
-                    f"Getting the existing asset name: {environment.name}, version: {environment.version}"
+                    "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                 )
                 return self.get(name=environment.name, version=environment.version)
 
@@ -144,22 +152,21 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     **self._kwargs,
                 )
             )
-        else:
-            return (
-                self._containers_operations.get(
-                    name=name,
-                    registry_name=self._registry_name,
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                )
-                if self._registry_name
-                else self._containers_operations.get(
-                    name=name,
-                    workspace_name=self._workspace_name,
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                )
+        return (
+            self._containers_operations.get(
+                name=name,
+                registry_name=self._registry_name,
+                **self._scope_kwargs,
+                **self._kwargs,
             )
+            if self._registry_name
+            else self._containers_operations.get(
+                name=name,
+                workspace_name=self._workspace_name,
+                **self._scope_kwargs,
+                **self._kwargs,
+            )
+        )
 
     @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str = None, label: str = None) -> Environment:
@@ -200,13 +207,17 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
     def list(
-        self, name: str = None, *, list_view_type: ListViewType = ListViewType.ACTIVE_ONLY
+        self,
+        name: str = None,
+        *,
+        list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> Iterable[Environment]:
         """List all environment assets in workspace.
 
         :param name: Name of the environment.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived environments. Default: ACTIVE_ONLY.
+        :param list_view_type: View type for including/excluding (for example) archived environments.
+            Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Environment objects.
         :rtype: ~azure.core.paging.ItemPaged[Environment]
@@ -230,28 +241,27 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     **self._kwargs,
                 )
             )
-        else:
-            return (
-                self._containers_operations.list(
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                )
-                if self._registry_name
-                else self._containers_operations.list(
-                    workspace_name=self._workspace_name,
-                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                    list_view_type=list_view_type,
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                )
+        return (
+            self._containers_operations.list(
+                registry_name=self._registry_name,
+                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
+                **self._scope_kwargs,
+                **self._kwargs,
             )
+            if self._registry_name
+            else self._containers_operations.list(
+                workspace_name=self._workspace_name,
+                cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
+                list_view_type=list_view_type,
+                **self._scope_kwargs,
+                **self._kwargs,
+            )
+        )
 
     @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
     def archive(self, name: str, version: str = None, label: str = None) -> None:
-        """
-        Archive an environment or an environment version.
+        """Archive an environment or an environment version.
+
         :param name: Name of the environment.
         :type name: str
         :param version: Version of the environment.
@@ -271,9 +281,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None:
-        """
-        Restore an archived environment version.
+    def restore(self, name: str, version: str = None, label: str = None) -> None:
+        """Restore an archived environment version.
+
         :param name: Name of the environment.
         :type name: str
         :param version: Version of the environment.
@@ -295,9 +305,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Environment:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most recently updated.
+        Latest is defined as the most recently created, not the most
+        recently updated.
         """
-        result = _get_latest(name, self._version_operations, self._resource_group_name, self._workspace_name)
+        result = _get_latest(
+            name,
+            self._version_operations,
+            self._resource_group_name,
+            self._workspace_name,
+        )
         return Environment._from_rest_object(result)
 
 
