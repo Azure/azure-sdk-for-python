@@ -4,16 +4,12 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from .component import BaseComponentSchema
-from .command_component import CommandComponentSchema, AnonymousCommandComponentSchema, ComponentFileRefField
-from .parallel_component import (
-    ParallelComponentSchema,
-    AnonymousParallelComponentSchema,
-    ParallelComponentFileRefField,
-)
+from .command_component import AnonymousCommandComponentSchema, CommandComponentSchema, ComponentFileRefField
+from .component import ComponentSchema
+from .parallel_component import AnonymousParallelComponentSchema, ParallelComponentFileRefField, ParallelComponentSchema
 
 __all__ = [
-    "BaseComponentSchema",
+    "ComponentSchema",
     "CommandComponentSchema",
     "AnonymousCommandComponentSchema",
     "ComponentFileRefField",

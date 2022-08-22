@@ -58,23 +58,13 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
-        )
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
         super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            api_version=api_version,
-            client_kind="document",
-            **kwargs
+            endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
 
-    def _analyze_document_callback(
-        self, raw_response, _, headers
-    ):  # pylint: disable=unused-argument
-        analyze_operation_result = self._deserialize(
-            self._generated_models.AnalyzeResultOperation, raw_response
-        )
+    def _analyze_document_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+        analyze_operation_result = self._deserialize(self._generated_models.AnalyzeResultOperation, raw_response)
         return AnalyzeResult._from_generated(analyze_operation_result.analyze_result)
 
     @distributed_trace

@@ -5,22 +5,20 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants, LONG_URI_FORMAT, AssetTypes
 from azure.ai.ml._restclient.v2022_05_01.models import (
-    ModelContainerData,
-    ModelVersionDetails,
-    ModelVersionData,
     FlavorData,
+    ModelContainerData,
+    ModelVersionData,
+    ModelVersionDetails,
 )
-
-
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
-from azure.ai.ml._utils.utils import load_yaml, snake_to_pascal
-from azure.ai.ml.entities._assets import Artifact
-from .artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._util import load_from_dict, get_md5_string
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY, ArmConstants, AssetTypes
+from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+
+from .artifact import ArtifactStorageInfo
 
 
 class Model(Artifact):

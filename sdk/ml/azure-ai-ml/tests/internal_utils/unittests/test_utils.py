@@ -1,14 +1,15 @@
 import pytest
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from collections import OrderedDict
+
 from azure.ai.ml._utils.utils import (
     dict_eq,
     _get_mfe_base_url_from_batch_endpoint,
     map_single_brackets_and_warn,
-    get_list_view_type,
     is_data_binding_expression,
+    get_all_data_binding_expressions,
 )
 from azure.ai.ml.entities import BatchEndpoint
-from azure.ai.ml._restclient.v2021_10_01.models import ListViewType
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 
 @pytest.mark.unittest
@@ -48,3 +49,24 @@ class TestUtils:
         assert is_data_binding_expression(target_string, is_singular=False)
         assert is_data_binding_expression(target_string, ["parent", "inputs", "input_string"], is_singular=False)
         assert not is_data_binding_expression(target_string, ["parent", "name"], is_singular=False)
+
+    def test_get_all_data_binding_expression(self):
+        target_string = "cat ${{inputs.input_folder}}/${{inputs.file_name}} && cp ${{inputs.input_folder}}/${{inputs.file_name}} ${{outputs.output_folder}}/${{inputs.file_name}}"
+        data_binding_expressions = get_all_data_binding_expressions(target_string, is_singular=False)
+        assert data_binding_expressions == [
+            "inputs.input_folder",
+            "inputs.file_name",
+            "inputs.input_folder",
+            "inputs.file_name",
+            "outputs.output_folder",
+            "inputs.file_name",
+        ]
+
+    def test_ordered_dict_nested_in_list_conversion(self):
+        ordered_dict1, ordered_dict2 = OrderedDict(), OrderedDict()
+        ordered_dict1["a"] = 1
+        ordered_dict1["b"] = 2
+        ordered_dict2["d"] = 3
+        ordered_dict2["c"] = 4
+        target_list = [ordered_dict1, ordered_dict2]
+        assert convert_ordered_dict_to_dict(target_list) == [{"a": 1, "b": 2}, {"d": 3, "c": 4}]

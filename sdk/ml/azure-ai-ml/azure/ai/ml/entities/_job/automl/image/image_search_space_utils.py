@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import re
+# pylint: disable=protected-access
 
+import re
 from typing import Union
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.constants import SearchSpace
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 
 def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, SweepDistribution]) -> str:
@@ -104,7 +105,9 @@ def _get_type_inferred_value(value: str) -> Union[bool, int, float, str]:
         return value.strip("'\"")
 
 
-def _convert_from_rest_object(sweep_distribution_str: str) -> Union[bool, int, float, str, SweepDistribution]:
+def _convert_from_rest_object(
+    sweep_distribution_str: str,
+) -> Union[bool, int, float, str, SweepDistribution]:
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')" or
     # a single value like "True", "1", "1.0567", "vitb16r224"
 

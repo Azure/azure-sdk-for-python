@@ -3,21 +3,18 @@
 # ---------------------------------------------------------
 
 
-from marshmallow import fields, INCLUDE
-from azure.ai.ml._schema import StringTransformedEnum, UnionField, NestedField
+from marshmallow import fields
 
-from azure.ai.ml._schema import PatchedSchemaMeta, ArmVersionedStr
-from azure.ai.ml.constants import (
-    ParallelTaskType,
-    AzureMLResourceType,
-)
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
+from azure.ai.ml.constants import AzureMLResourceType, ParallelTaskType
 
 
 class ComponentParallelTaskSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
-        allowed_values=[ParallelTaskType.FUNCTION, ParallelTaskType.MODEL],
-        Required=True,
+        allowed_values=[ParallelTaskType.RUN_FUNCTION, ParallelTaskType.MODEL, ParallelTaskType.FUNCTION],
+        required=True,
     )
     code = UnionField(
         [
@@ -28,7 +25,7 @@ class ComponentParallelTaskSchema(metaclass=PatchedSchemaMeta):
         metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
     )
     entry_script = fields.Str()
-    args = fields.Str()
+    program_arguments = fields.Str()
     model = fields.Str()
     append_row_to = fields.Str()
     environment = UnionField(

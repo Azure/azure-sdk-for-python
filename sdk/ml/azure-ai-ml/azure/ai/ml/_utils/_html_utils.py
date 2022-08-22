@@ -4,8 +4,9 @@
 
 import logging
 from collections import OrderedDict
-import six
 from datetime import datetime, timedelta
+
+import six
 
 if six.PY3:
     from html import escape

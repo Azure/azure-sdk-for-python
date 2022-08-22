@@ -2,7 +2,8 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 -e ../../identity/azure-identity
--e ../azure-mgmt-keyvault
 ../../nspkg/azure-keyvault-nspkg
 aiohttp>=3.0
+azure-mgmt-core==1.3.0
+azure-mgmt-keyvault==10.0.0
 parameterized>=0.7.3

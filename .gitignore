@@ -45,6 +45,9 @@ coverage-*.xml
 stderr.txt
 stdout.txt
 _proxy_log_*.log
+_azci_*.log
+.artifacts
+.tmp_whl_dir
 
 # tox environment folders
 .tox/

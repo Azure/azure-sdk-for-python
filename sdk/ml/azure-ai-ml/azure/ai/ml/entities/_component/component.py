@@ -1,6 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
+import tempfile
 import typing
 from abc import abstractmethod
 from os import PathLike
@@ -9,26 +13,37 @@ from typing import Dict, Union
 
 from marshmallow import Schema
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails, SystemData
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import Asset
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, SystemData, ComponentVersionDetails
+from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
 from azure.ai.ml.constants import (
+    ANONYMOUS_COMPONENT_NAME,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
+    REGISTRY_URI_FORMAT,
     ComponentSource,
-    ANONYMOUS_COMPONENT_NAME,
-    SOURCE_PATH_CONTEXT_KEY,
 )
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, YamlTranslatableMixin, TelemetryMixin
-from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
-from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.entities._validation import ValidationResult, SchemaValidatableMixin
+from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+
+COMPONENT_PLACEHOLDER = "COMPONENT_PLACEHOLDER"
+COMPONENT_CODE_PLACEHOLDER = "command_component: code_placeholder"
 
 
-class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin, SchemaValidatableMixin):
-    """Base class for component version, used to define a component. Can't be instantiated directly.
+class Component(
+    Asset,
+    RestTranslatableMixin,
+    TelemetryMixin,
+    YamlTranslatableMixin,
+    SchemaValidatableMixin,
+):
+    """Base class for component version, used to define a component. Can't be
+    instantiated directly.
 
     :param name: Name of the resource.
     :type name: str
@@ -81,6 +96,10 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
     ):
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
         self._auto_increment_version = kwargs.pop("auto_increment", False)
+        # Get source from id first, then kwargs.
+        self._source = (
+            self._resolve_component_source_from_id(id) if id else kwargs.pop("_source", ComponentSource.CLASS)
+        )
 
         super().__init__(
             name=name,
@@ -92,12 +111,13 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
             creation_context=creation_context,
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
-            source_path=kwargs.pop("source_path", None),
         )
+        # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
+        # fields not defined in current schema.
+
         # update component name to ANONYMOUS_COMPONENT_NAME if it is anonymous
         if hasattr(self, "_is_anonymous"):
             self._set_is_anonymous(self._is_anonymous)
-        # TODO: check why do we dropped kwargs, seems because _source is not a valid parameter for a super.__init__
 
         inputs = inputs if inputs else {}
         outputs = outputs if outputs else {}
@@ -108,7 +128,6 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         self._is_deterministic = is_deterministic
         self._inputs = self.build_validate_io(inputs, is_input=True)
         self._outputs = self.build_validate_io(outputs, is_input=False)
-        self._source = kwargs.pop("_source", ComponentSource.SDK)
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
@@ -144,7 +163,8 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         return self._type
 
     def _set_is_anonymous(self, is_anonymous: bool):
-        """Mark this component as anonymous and overwrite component name to ANONYMOUS_COMPONENT_NAME."""
+        """Mark this component as anonymous and overwrite component name to
+        ANONYMOUS_COMPONENT_NAME."""
         if is_anonymous is True:
             self._is_anonymous = True
             self.name = ANONYMOUS_COMPONENT_NAME
@@ -152,8 +172,10 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
             self._is_anonymous = False
 
     def _update_anonymous_hash(self):
-        """For anonymous component, we use code hash + yaml hash as component version
-        so the same anonymous component(same interface and same code) won't be created again.
+        """For anonymous component, we use code hash + yaml hash as component
+        version so the same anonymous component(same interface and same code)
+        won't be created again.
+
         Should be called before _to_rest_object.
         """
         if self._is_anonymous:
@@ -162,12 +184,26 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
 
-        same anonymous component(same code and interface) will have same name.
+        same anonymous component(same code and interface) will have same
+        name.
         """
         component_interface_dict = self._to_dict()
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+
+    @staticmethod
+    def _resolve_component_source_from_id(id):
+        """Resolve the component source from id."""
+        if id is None:
+            return ComponentSource.CLASS
+        # Consider default is workspace source, as
+        # azureml: prefix will be removed for arm versioned id.
+        return (
+            ComponentSource.REMOTE_REGISTRY
+            if id.startswith(REGISTRY_URI_FORMAT)
+            else ComponentSource.REMOTE_WORKSPACE_COMPONENT
+        )
 
     @property
     def display_name(self) -> str:
@@ -180,7 +216,7 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
 
     @display_name.setter
     def display_name(self, custom_display_name):
-        """Set display_name of the component"""
+        """Set display_name of the component."""
         self._display_name = custom_display_name
 
     @property
@@ -260,7 +296,8 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
             and not is_private_preview_enabled()
         ):
             validation_result.append_error(
-                message="Not a valid code value: git paths are not supported.", yaml_path="code"
+                message="Not a valid code value: git paths are not supported.",
+                yaml_path="code",
             )
         return validation_result
 
@@ -276,24 +313,30 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            SOURCE_PATH_CONTEXT_KEY: Path(yaml_path) if yaml_path else None,
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
         type_in_override = find_type_in_override(params_override)
         from azure.ai.ml.entities._component.component_factory import component_factory
 
-        return component_factory.load_from_dict(_type=type_in_override, data=data, context=context, **kwargs)
+        component = component_factory.load_from_dict(_type=type_in_override, data=data, context=context, **kwargs)
+        if yaml_path:
+            component._source_path = yaml_path
+        return component
 
     @classmethod
     def _from_rest_object(cls, component_rest_object: ComponentVersionData) -> "Component":
         from azure.ai.ml.entities._component.component_factory import component_factory
 
+        # Object got from rest data contain _source, we delete it.
+        if "_source" in component_rest_object.properties.component_spec:
+            del component_rest_object.properties.component_spec["_source"]
         return component_factory.load_from_rest(obj=component_rest_object)
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = self._to_dict()
-
+        # add source type to component rest object
+        component["_source"] = self._source
         properties = ComponentVersionDetails(
             component_spec=component,
             description=self.description,
@@ -316,8 +359,29 @@ class Component(Asset, RestTranslatableMixin, TelemetryMixin, YamlTranslatableMi
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict
 
+    def _resolve_local_code(self, get_code_arm_id_and_fill_back) -> None:
+        tmp_dir = None
+        if hasattr(self, "code") and self.code is None:
+            # Hack: when code not specified, we generated a file which contains COMPONENT_PLACEHOLDER as code
+            # This hack was introduced because job does not allow running component without a code, and we need to
+            # make sure when component updated some field(eg: description), the code remains the same.
+            # Benefit of using a constant code for all components without code is this will generate same code for
+            # anonymous components which enables component reuse
+            tmp_dir = tempfile.TemporaryDirectory()
+            code_file_path = Path(tmp_dir.name) / COMPONENT_PLACEHOLDER
+            with open(code_file_path, "w") as f:
+                f.write(COMPONENT_CODE_PLACEHOLDER)
+            self.code = code_file_path
+
+        self.code = get_code_arm_id_and_fill_back(Code(base_path=self._base_path, path=self.code))
+
+        if tmp_dir is not None:
+            tmp_dir.cleanup()
+
     def _get_telemetry_values(self):
-        return {"type": self.type, "source": self._source, "is_anonymous": self._is_anonymous}
+        # Note: the is_anonymous is not reliable here, create_or_update will log is_anonymous from parameter.
+        is_anonymous = self.name is None or ANONYMOUS_COMPONENT_NAME in self.name
+        return {"type": self.type, "source": self._source, "is_anonymous": is_anonymous}
 
     def __call__(self, *args, **kwargs) -> [..., Union["Command", "Parallel"]]:
         """Call ComponentVersion as a function and get a Component object."""

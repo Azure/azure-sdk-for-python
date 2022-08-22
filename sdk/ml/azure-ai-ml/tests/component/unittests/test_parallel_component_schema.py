@@ -7,14 +7,14 @@ from pathlib import Path
 import pytest
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.operations._component_operations import COMPONENT_PLACEHOLDER
 from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
 
-from azure.ai.ml.entities import ParallelComponent
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -58,7 +58,7 @@ def load_component_entity_from_yaml(
         "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
         side_effect=mock_get_asset_arm_id,
     ):
-        mock_machinelearning_client.components._upload_dependencies(internal_representation)
+        mock_machinelearning_client.components._resolve_arm_id_or_upload_dependencies(internal_representation)
     rest_component = internal_representation._to_rest_object()
     # set arm id before deserialize
     mock_workspace_scope = mock_machinelearning_client._operation_scope

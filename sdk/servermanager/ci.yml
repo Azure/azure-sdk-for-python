@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servermanager
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-servermanager
       safeName: azuremgmtservermanager

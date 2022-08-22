@@ -10,6 +10,7 @@ from urllib.parse import urlencode
 from typing import Any, Mapping, Optional, Callable, TypeVar, cast
 from typing_extensions import Protocol, runtime_checkable
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -24,11 +25,12 @@ _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
-PollingReturnType = TypeVar("PollingReturnType", covariant=True)
+PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class TextAnalysisLROPoller(Protocol[PollingReturnType]):
+class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
     """Implements a protocol which returned poller objects are consistent with.
     """
 
@@ -320,6 +322,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self, **kwargs: Any) -> LROPoller[None]:  # type: ignore
         """Cancel the operation currently being polled.
 
@@ -517,6 +520,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self) -> None:
         """Cancel the operation currently being polled.
 

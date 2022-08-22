@@ -2,26 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 from abc import abstractmethod
 from os import PathLike
 from typing import Any, Dict, Union
 
+from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2021_10_01.models import OnlineDeploymentData
+from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 from .code_configuration import CodeConfiguration
-from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    OnlineDeploymentData,
-)
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    BatchDeploymentData,
-)
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._assets import Code
-
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -131,7 +127,8 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]):
-        from azure.ai.ml.entities import OnlineDeployment, BatchDeployment
+        from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
+        from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 
         if type(deployment_rest_object) is OnlineDeploymentData:
             return OnlineDeployment._from_rest_object(deployment_rest_object)
@@ -164,7 +161,10 @@ class Deployment(Resource, RestTranslatableMixin):
             if other.properties:
                 self.properties = {**self.properties, **other.properties}
             if other.environment_variables:
-                self.environment_variables = {**self.environment_variables, **other.environment_variables}
+                self.environment_variables = {
+                    **self.environment_variables,
+                    **other.environment_variables,
+                }
             self.code_configuration = other.code_configuration or self.code_configuration
             self.model = other.model or self.model
             self.environment = other.environment or self.environment

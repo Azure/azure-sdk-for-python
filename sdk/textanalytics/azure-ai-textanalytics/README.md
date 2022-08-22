@@ -77,14 +77,14 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note that `5.2.0b4` is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
-In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
+> Note that `5.2.0b4` was the first version of the client library that targeted the Azure Cognitive Service for Language APIs which include the existing text analysis and natural language processing features found in the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b4 - Latest beta release | 3.0, 3.1, 2022-04-01-preview (default) |
+| 5.2.0b5 - Latest beta release | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0 - Latest stable release | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
@@ -136,7 +136,7 @@ Authentication with AAD requires some initial setup:
 
 - [Install azure-identity][install_azure_identity]
 - [Register a new AAD application][register_aad_app]
-- [Grant access][grant_role_access] to the Language service by assigning the `"Cognitive Services User"` role to your service principal.
+- [Grant access][grant_role_access] to the Language service by assigning the `"Cognitive Services Language Reader"` role to your service principal.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
@@ -531,7 +531,7 @@ Note: The Healthcare Entities Analysis service is only available in the Standard
 - Custom Entity Recognition (see sample [here][recognize_custom_entities_sample])
 - Custom Single Label Classification (see sample [here][single_label_classify_sample])
 - Custom Multi Label Classification (see sample [here][multi_label_classify_sample])
-- Healthcare Entities Analysis
+- Healthcare Entities Analysis (see sample [here][healthcare_action_sample])
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -763,6 +763,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [single_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_label_classify_async.py
 [multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_label_classify.py
 [multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
+[healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

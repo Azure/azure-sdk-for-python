@@ -12,6 +12,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.tracing.decorator_async import distributed_trace_async
 from .._lro import TextAnalyticsOperationResourcePolling
 from .._generated.v2022_05_01.models import JobState
 
@@ -276,6 +277,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
             polling_method  # type: ignore
         )
 
+    @distributed_trace_async
     async def cancel(self, **kwargs) -> "AsyncLROPoller[None]":  # type: ignore
         """Cancel the operation currently being polled.
 
@@ -470,6 +472,7 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
             polling_method  # type: ignore
         )
 
+    @distributed_trace_async
     async def cancel(self) -> None:
         """Cancel the operation currently being polled.
 

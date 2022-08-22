@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from collections import namedtuple
 from typing import Any, NamedTuple, Optional
-from typing_extensions import Protocol
+from typing_extensions import Protocol, runtime_checkable
 
 
 class AccessToken(NamedTuple):
@@ -18,6 +18,7 @@ AccessToken.token.__doc__ = """The token string."""
 AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
 
 
+@runtime_checkable
 class TokenCredential(Protocol):
     """Protocol for classes able to provide OAuth tokens."""
 

@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 class PipelineJobSettings(object):
-    """
-    Settings of PipelineJob, include default_datastore, default_compute, continue_on_step_failure and force_rerun.
+    """Settings of PipelineJob, include default_datastore, default_compute,
+    continue_on_step_failure and force_rerun.
 
     :param default_datastore: The default datastore of pipeline.
     :type default_datastore: str

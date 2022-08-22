@@ -47,6 +47,11 @@ jobs:
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
+          if [ "$(REST_REPO_HASH)" ]; then
+            cd azure-rest-api-specs
+            git reset --hard $(REST_REPO_HASH)
+            cd ../
+          fi
 
           # install autorest
           sudo npm install -g n
