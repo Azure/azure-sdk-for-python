@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import asyncio
 import logging
 from typing import Dict, List, Callable, Optional, Awaitable, TYPE_CHECKING
@@ -13,6 +14,7 @@ from ._buffered_producer_async import BufferedProducer
 from ...exceptions import EventDataSendError, ConnectError, EventHubError
 
 if TYPE_CHECKING:
+    from .._transport._base_async import AmqpTransportAsync
     from ..._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
@@ -32,7 +34,7 @@ class BufferedProducerDispatcher:
         max_message_size_on_link: int,
         *,
         max_buffer_length: int = 1500,
-        max_wait_time: float = 1,
+        max_wait_time: float = 1
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
