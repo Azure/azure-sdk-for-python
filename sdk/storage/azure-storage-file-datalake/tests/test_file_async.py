@@ -455,8 +455,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             # flush is unsuccessful because extra data were appended.
             await file_client.flush_data(6, etag=resp['etag'], match_condition=MatchConditions.IfNotModified)
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy_async
     async def test_upload_data_in_substreams(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")

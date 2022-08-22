@@ -476,8 +476,8 @@ class TestFile(StorageRecordedTestCase):
         downloaded_data = file_client.download_file().readall()
         assert data == downloaded_data
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_upload_data_in_substreams(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
