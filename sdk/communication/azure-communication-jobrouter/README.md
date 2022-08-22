@@ -243,7 +243,7 @@ Running into issues? This section should contain details as to what to do there.
 - [Read more about Router in Azure Communication Services][router_concepts]
 
 ### More sample code
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-jobrouter/samples) directory for detailed examples of how to use this library.
+Please take a look at the [samples][job_router_samples] directory for detailed examples of how to use this library.
 
 ## Provide Feedback
 
@@ -263,3 +263,4 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 <!-- LINKS -->
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [router_concepts]: https://docs.microsoft.com/azure/communication-services/concepts/router/concepts
+<! -- [job_router_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-jobrouter/samples -->
