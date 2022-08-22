@@ -22,8 +22,7 @@ from ..._utils import get_authentication_policy
 from ..._version import SDK_MONIKER
 from ..models import (
     SearchIndex,
-    SynonymMap,
-    SearchAlias
+    SynonymMap
 )
 
 if TYPE_CHECKING:
