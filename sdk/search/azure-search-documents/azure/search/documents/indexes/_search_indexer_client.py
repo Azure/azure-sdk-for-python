@@ -16,9 +16,7 @@ from ._utils import (
     normalize_endpoint,
 )
 from .models import (
-    EntityRecognitionSkillVersion,
     SearchIndexerDataSourceConnection,
-    SentimentSkillVersion
 )
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
