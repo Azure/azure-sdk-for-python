@@ -68,6 +68,7 @@ class SASLExternalCredential(object):
     def start(self):
         return b''
 
+
 class SASLTransportMixin():
     def _negotiate(self):
         self.write(SASL_HEADER_FRAME)
@@ -111,11 +112,13 @@ class SASLWithWebSocket(WebSocketTransport, SASLTransportMixin):
     def __init__(self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
+        http_proxy = kwargs.pop('http_proxy', None)
         self._transport = WebSocketTransport(
             host,
             port=port,
             connect_timeout=connect_timeout,
             ssl=ssl,
+            http_proxy=http_proxy,
             **kwargs
         )
         super().__init__(host, port, connect_timeout, ssl, **kwargs)
