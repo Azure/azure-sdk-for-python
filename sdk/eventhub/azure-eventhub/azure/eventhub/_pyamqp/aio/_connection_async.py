@@ -305,7 +305,11 @@ class Connection(object):
             await self._outgoing_open()
             await self._set_state(ConnectionState.OPENED)
         else:
-            pass  # TODO what now...?
+            # TODO what now...?
+            self.close(error=AMQPError(
+                condition=ErrorCondition.IllegalState, 
+                description=f"connection is an illegal state: {self.state}"))
+            _LOGGER.error(f"connection is an illegal state: {self.state}")
 
     async def _outgoing_close(self, error=None):
         close_frame = CloseFrame(error=error)
@@ -356,10 +360,12 @@ class Connection(object):
     async def _incoming_end(self, channel, frame):
         try:
             await self.incoming_endpoints[channel]._incoming_end(frame)
+            self.incoming_endpoints.pop(channel)
+            self.outgoing_endpoints.pop(channel)
         except KeyError:
-            pass  # TODO: channel error
-        # self.incoming_endpoints.pop(channel)  # TODO
-        # self.outgoing_endpoints.pop(channel)  # TODO
+            end_error = AMQPError(condition=ErrorCondition.InvalidField, description=f"Invalid channel {channel}", info=None)
+            _LOGGER.error(f"Invalid channel {channel} ")
+            self.close(error=end_error)
 
     async def _process_incoming_frame(self, channel, frame):
         try:
