@@ -415,7 +415,7 @@ class Connection(object):
             self.close(error=AMQPError(
                 condition=ErrorCondition.IllegalState, 
                 description=f"connection is an illegal state: {self.state}"))
-            _LOGGER.error(f"connection is an illegal state: {self.state}"))
+            _LOGGER.error(f"connection is an illegal state: {self.state}")
 
     def _outgoing_close(self, error=None):
         # type: (Optional[AMQPError]) -> None
