@@ -2276,7 +2276,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             tuple of (dict, dict)
 
         """
-        print(request_params)
         request = self.pipeline_client.post(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
