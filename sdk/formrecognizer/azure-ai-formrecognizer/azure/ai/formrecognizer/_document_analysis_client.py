@@ -58,7 +58,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_08_31)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -156,6 +156,11 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
+
+        if not isinstance(document_url, str):
+            raise ValueError(
+                "'document_url' needs to be of type 'str'."
+                "Please see `begin_analyze_document()` to pass a byte stream.")
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
