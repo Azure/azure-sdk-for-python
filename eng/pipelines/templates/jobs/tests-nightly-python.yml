@@ -35,6 +35,7 @@ jobs:
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
+          AIOHTTP_NO_EXTENSIONS: 1
           PROXY_URL: "http://localhost:5000"
         continueOnError: true
 
@@ -81,6 +82,7 @@ jobs:
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
+          AIOHTTP_NO_EXTENSIONS: 1
           PROXY_URL: "http://localhost:5000"
         continueOnError: true
 
@@ -137,6 +139,7 @@ jobs:
         env:
           YARL_NO_EXTENSIONS: 1
           PROXY_URL: "http://localhost:5000"
+          AIOHTTP_NO_EXTENSIONS: 1
         continueOnError: true
 
       - task: PublishTestResults@2
