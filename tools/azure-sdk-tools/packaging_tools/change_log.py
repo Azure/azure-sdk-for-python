@@ -33,9 +33,13 @@ class ChangeLog:
         if self.features:
             _build_md(sorted(set(self.features), key=self.features.index), "### Features Added", buffer)
         if self.breaking_changes:
-            _build_md(sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer)
+            _build_md(
+                sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer
+            )
         if not (self.features or self.breaking_changes) and self.optional_features:
-            _build_md(sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer)
+            _build_md(
+                sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer
+            )
 
         return "\n".join(buffer).strip()
 
@@ -214,6 +218,7 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
             package_name,
             version=version if version not in ["pypi", "latest"] else None,
             last_pypi=version == "pypi",
+            last_pypi_stable=tag_is_stable,
         )
         if not result:
             raise ValueError("Was not able to build a report")
