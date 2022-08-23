@@ -31,10 +31,11 @@ jobs:
           runProxy: false
 
       - script: |
-          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
+          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
+          PROXY_URL: "http://localhost:5000"
         continueOnError: true
 
       - task: PublishTestResults@2
@@ -76,11 +77,11 @@ jobs:
       - script: |
           find /usr/lib -name "libffi.so*"
           ln -s /usr/lib/x86_64-linux-gnu/libffi.so.7 /usr/lib/x86_64-linux-gnu/libffi.so.6
-
-          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
+          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
+          PROXY_URL: "http://localhost:5000"
         continueOnError: true
 
       - task: PublishTestResults@2
@@ -106,6 +107,11 @@ jobs:
         inputs:
           versionSpec: '3.9'
 
+
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+        parameters:
+          runProxy: false
+
       - script: |
           sudo apt-get update
           sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
@@ -120,16 +126,18 @@ jobs:
           export PATH=~/bin:$PATH
           export PATH=~/lib:$PATH
           export PATH=~/.local/bin:$PATH
+          export PROXY_URL="http://localhost:5000"
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
           python3 -m pip install setuptools wheel
           python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)
-          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl"
+          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests "Nightly" using Python Edge'
         env:
           YARL_NO_EXTENSIONS: 1
+          PROXY_URL: "http://localhost:5000"
         continueOnError: true
 
       - task: PublishTestResults@2
