@@ -72,6 +72,8 @@ def filter_for_compatibility(package_set: List[str]) -> List[str]:
     If a package is unsupported by the executable, it will be omitted from the returned list.
 
     A manual override list of these compatibilities is also supported, but requires code change to enable. Check TEST_COMPATIBILITY_MAP in this same file.
+
+    :param List[str] package_set: a list of paths to python packages. Each item can either be a package folder or a direct path to setup.py.
     """
     collected_packages = []
     v = sys.version_info
