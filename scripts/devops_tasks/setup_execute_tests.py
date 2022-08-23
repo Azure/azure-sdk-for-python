@@ -282,7 +282,6 @@ if __name__ == "__main__":
         help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
         choices=['Build', "Docs", "Regression", "Omit_management", "None"]
     )
-    
     parser.add_argument(
         "-d",
         "--dest-dir",
