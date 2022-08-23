@@ -63,7 +63,6 @@ class EnvironmentVariableSanitizer:
         current_values = {variable: self.sanitize(variable, variables[variable]) for variable in variables}
         return current_values
 
-
     def get(self, variable: str) -> str:
         """Returns the value of the specified environment variable in live mode, or the sanitized value in playback.
 
