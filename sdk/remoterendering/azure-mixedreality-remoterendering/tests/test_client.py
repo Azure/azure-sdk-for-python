@@ -141,11 +141,6 @@ class ClientTests(AzureTestCase):
             conversion_id=conversion_id,  input_settings=input_settings, output_settings=output_settings
         )
 
-        conversion = client.get_asset_conversion(conversion_id)
-        assert conversion.id == conversion_id
-        assert conversion.settings.input_settings.relative_input_asset_path == input_settings.relative_input_asset_path
-        assert conversion.status != AssetConversionStatus.FAILED
-
         finished_conversion = conversion_poller.result()
 
         assert finished_conversion.id == conversion_id
