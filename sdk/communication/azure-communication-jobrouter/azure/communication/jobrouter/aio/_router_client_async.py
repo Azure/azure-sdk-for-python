@@ -126,6 +126,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return QueueStatistics
         :rtype ~azure.communication.jobrouter.QueueStatistics
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START get_queue_statistics_async]
+                :end-before: [END get_queue_statistics_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to fetch queue statistics
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
