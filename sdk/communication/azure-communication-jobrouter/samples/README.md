@@ -4,22 +4,63 @@ languages:
   - python
 products:
   - azure
-  - azure-communication
-urlFragment: communication-jobrouter-samples
+  - azure-communication-services
+urlFragment: communication-jobrouter-samples 
+name: azure-communication-jobrouter samples for Python
+description: Samples for the azure-communication-jobrouter client library
 ---
   
-# Azure Communication Services Router client library for Python Samples
+# Azure Communication JobRouter client SDK Samples
 
-These are code samples that show common scenario operations with the Azure Communication Services Router client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
+- Authentication
+  - [RouterClient and RouterAdministrationClient][sample_authentication]([async version][sample_authentication_async])
+    - Create client from connection string
 
+- Crud operations
+  - [Classification Policy][classificationPolicyCrudOps]([async version][classificationPolicyCrudOpsAsync])
+  - [Distribution Policy][distributionPolicyCrudOps]([async version][distributionPolicyCrudOpsAsync])
+  - [Exception Policy][exceptionPolicyCrudOps]([async version][exceptionPolicyCrudOpsAsync])
+  - [Job Queue][jobQueueCrudOps]([async version][jobQueueCrudOpsAsync])
+  - [Router Worker][routerWorkerCrudOps]([async version][routerWorkerCrudOpsAsync])
+  - [Router Job][routerJobCrudOps]([async version][routerJobCrudOpsAsync])
 
-* [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/sample_authentication_async.py)) - Examples for authenticating and creating the client:
-    * From a connection string
+- Routing Scenarios
+  - Basic Scenario
+    - [Create Distribution Policy, Queue, Worker and Job | Accept Job Offer | Close and Complete job][basicScenario]([async version][basicScenarioAsync])
+    - [Requested worker selectors with job][requestedWorkerSelectorWithJobAsync]
+  - Using Classification Policy
+    - [Queue selection with QueueSelectors][queueSelectionWithClassificationPolicyAsync]
+    - [Dynamically assigning priority to job][prioritizationWithClassificationPolicyAsync]
+    - [Dynamically attach WorkerSelectors to job][attachedWorkerSelectorWithClassificationPolicyAsync]
+  - Using Distribution Policy
+    - [Basic Scenario][distributingOffersSimpleAsync]
+    - [Multiple offers for a job][distributingOffersAdvancedAsync]
+  - Using Exception Policy
+    - [Trigger exception with WaitTimeExceptionTrigger][waitTimeExceptionTriggerAsync]
+    - [Trigger exception with QueueLengthExceptionTrigger][queueLengthExceptionTriggerAsync]
 
-* [exception_policy_crud_ops.py](https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops.py) ([async version]) - Examples for interacting with exception policies using the client:
-    * Create or update an exception policy
-    * Get an exception policy
-    * List exception policies
-    * Delete an exception policy
-    
+<!-- LINKS -->
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/sample_authentication_async.py
+[classificationPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/ClassificationPolicyCrud.md
+[classificationPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/ClassificationPolicyCrudAsync.md
+[distributionPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/DistributionPolicyCrud.md
+[distributionPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/DistributionPolicyCrudAsync.md
+[exceptionPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/restapi_job_router/repo_setup/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops.py
+[exceptionPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/ExceptionPolicyCrudAsync.md
+[jobQueueCrudOps]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/JobQueueCrud.md
+[jobQueueCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/JobQueueCrudAsync.md
+[routerWorkerCrudOps]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/RouterWorkerCrud.md
+[routerWorkerCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/RouterWorkerCrudAsync.md
+[routerJobCrudOps]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/RouterJobCrud.md
+[routerJobCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/RouterJobCrudAsync.md
+[basicScenario]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample1_HelloWorld.md
+[basicScenarioAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample1_HelloWorldAsync.md
+[requestedWorkerSelectorWithJobAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample1_RequestedWorkerSelectorAsync.md
+[queueSelectionWithClassificationPolicyAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample2_ClassificationWithQueueSelectorAsync.md
+[prioritizationWithClassificationPolicyAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample2_ClassificationWithPriorityRuleAsync.md
+[attachedWorkerSelectorWithClassificationPolicyAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample2_ClassificationWithWorkerSelectorAsync.md
+[distributingOffersSimpleAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample3_SimpleDistributionAsync.md
+[distributingOffersAdvancedAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample3_AdvancedDistributionAsync.md
+[waitTimeExceptionTriggerAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample4_WaitTimeExceptionAsync.md
+[queueLengthExceptionTriggerAsync]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample4_QueueLengthExceptionTriggerAsync.md

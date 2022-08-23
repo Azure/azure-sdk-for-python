@@ -20,6 +20,7 @@ USAGE:
 import os
 import asyncio
 
+
 class RouterClientAuthenticationSamplesAsync(object):
     endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
     if not endpoint:
@@ -28,19 +29,32 @@ class RouterClientAuthenticationSamplesAsync(object):
     async def create_router_client(self):
         connection_string = self.endpoint
 
-        # [START auth_from_connection_string]
+        # [START auth_from_connection_string_async]
         from azure.communication.jobrouter.aio import RouterClient
 
         # set `connection_string` to an existing ACS endpoint
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
         print("RouterClient created successfully!")
 
-        # [END auth_from_connection_string]
+        # [END auth_from_connection_string_async]
+
+    async def create_router_admin_client(self):
+        connection_string = self.endpoint
+
+        # [START admin_auth_from_connection_string_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
+
+        # set `connection_string` to an existing ACS endpoint
+        router_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        print("RouterAdministrationClient created successfully!")
+
+        # [END admin_auth_from_connection_string_async]
 
 
 async def main():
     sample = RouterClientAuthenticationSamplesAsync()
     await sample.create_router_client()
+    await sample.create_router_admin_client()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

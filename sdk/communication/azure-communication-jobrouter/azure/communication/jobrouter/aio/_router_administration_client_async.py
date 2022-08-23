@@ -93,8 +93,17 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :returns: Instance of RouterClient.
-        :rtype: ~azure.communication.RouterClient
+        :returns: Instance of RouterAdministrationClient.
+        :rtype: ~azure.communication.jobrouter.aio.RouterAdministrationClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_authentication_async.py
+                :start-after: [START admin_auth_from_connection_string_async]
+                :end-before: [END admin_auth_from_connection_string_async]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a RouterAdministrationClient from a connection_string
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -123,6 +132,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return ExceptionPolicy
         :rtype ~azure.communication.jobrouter.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops_async.py
+                :start-after: [START create_exception_policy_async]
+                :end-before: [END create_exception_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to create an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
@@ -165,6 +183,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return ExceptionPolicy
         :rtype ~azure.communication.jobrouter.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops_async.py
+                :start-after: [START update_exception_policy_async]
+                :end-before: [END update_exception_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to update an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
@@ -208,6 +235,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return ExceptionPolicy
         :rtype ~azure.communication.jobrouter.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops_async.py
+                :start-after: [START get_exception_policy_async]
+                :end-before: [END get_exception_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to get an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
@@ -230,6 +266,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.ExceptionPolicyItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops_async.py
+                :start-after: [START list_exception_policies_async]
+                :end-before: [END list_exception_policies_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to list exception policies
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -256,6 +301,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops_async.py
+                :start-after: [START delete_exception_policy_async]
+                :end-before: [END delete_exception_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to delete an exception policy
         """
 
         if not exception_policy_id:
@@ -294,6 +348,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return DistributionPolicy
         :rtype ~azure.communication.jobrouter.DistributionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops_async.py
+                :start-after: [START create_distribution_policy_async]
+                :end-before: [END create_distribution_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to create a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
@@ -343,6 +406,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return DistributionPolicy
         :rtype ~azure.communication.jobrouter.DistributionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops_async.py
+                :start-after: [START update_distribution_policy_async]
+                :end-before: [END update_distribution_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to update a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
@@ -393,6 +465,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return DistributionPolicy
         :rtype ~azure.communication.jobrouter.DistributionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops_async.py
+                :start-after: [START get_distribution_policy_async]
+                :end-before: [END get_distribution_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to get a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
@@ -415,6 +496,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return: An iterator like instance of DistributionPolicyItem
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.DistributionPolicyItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops_async.py
+                :start-after: [START list_distribution_policies_async]
+                :end-before: [END list_distribution_policies_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to list distribution policies
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -441,6 +531,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops_async.py
+                :start-after: [START delete_distribution_policy_async]
+                :end-before: [END delete_distribution_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to delete a distribution policy
         """
 
         if not distribution_policy_id:
@@ -693,6 +792,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return ClassificationPolicy
         :rtype ~azure.communication.jobrouter.ClassificationPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops_async.py
+                :start-after: [START create_classification_policy_async]
+                :end-before: [END create_classification_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to create a classification policy
         """
 
         if not classification_policy_id:
@@ -751,6 +859,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return ClassificationPolicy
         :rtype ~azure.communication.jobrouter.ClassificationPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops_async.py
+                :start-after: [START update_classification_policy_async]
+                :end-before: [END update_classification_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to update a classification policy
         """
 
         if not classification_policy_id:
@@ -814,9 +931,18 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return ClassificationPolicy
         :rtype ~azure.communication.jobrouter.ClassificationPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops_async.py
+                :start-after: [START get_classification_policy_async]
+                :end-before: [END get_classification_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to get a classification policy
         """
         if not classification_policy_id:
-            raise ValueError("identifier cannot be None.")
+            raise ValueError("classification_policy_id cannot be None.")
 
         return await self._client.job_router_administration.get_classification_policy(
             classification_policy_id,
@@ -835,6 +961,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return: An iterator like instance of ClassificationPolicy
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.PagedClassificationPolicy]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops_async.py
+                :start-after: [START list_classification_policies_async]
+                :end-before: [END list_classification_policies_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to list classification policies
         """
         results_per_page = kwargs.pop("results_per_page", None)
 
@@ -860,6 +995,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops_async.py
+                :start-after: [START delete_classification_policy_async]
+                :end-before: [END delete_classification_policy_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to delete a classification policy
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")

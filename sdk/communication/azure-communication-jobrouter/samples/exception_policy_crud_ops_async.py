@@ -5,33 +5,34 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: exception_policy_crud_ops.py
+FILE: exception_policy_crud_ops_async.py
 DESCRIPTION:
     These samples demonstrates how to create Exception Policy used in ACS JobRouter.
     You need a valid connection string to an Azure Communication Service to execute the sample
 
 USAGE:
-    python exception_policy_crud_ops.py
+    python exception_policy_crud_ops_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
 """
 
 import os
+import asyncio
 
 
-class ExceptionPolicySamples(object):
+class ExceptionPolicySamplesAsync(object):
     endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
     if not endpoint:
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
 
     _ep_policy_id = "sample_ep_policy"
 
-    def create_exception_policy(self):
+    async def create_exception_policy(self):
         connection_string = self.endpoint
         policy_id = self._ep_policy_id
-        # [START create_exception_policy]
+        # [START create_exception_policy_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
             WaitTimeExceptionTrigger,
             QueueLengthExceptionTrigger,
             ReclassifyExceptionAction,
@@ -91,21 +92,22 @@ class ExceptionPolicySamples(object):
 
         # create the exception policy
         # set a unique value to `policy_id`
-        exception_policy = router_admin_client.create_exception_policy(
-            exception_policy_id = policy_id,
-            name = "TriggerJobCancellationWhenQueueLenIs10",
-            exception_rules = exception_rule
-        )
+        async with router_admin_client:
+            exception_policy = await router_admin_client.create_exception_policy(
+                exception_policy_id = policy_id,
+                name = "TriggerJobCancellationWhenQueueLenIs10",
+                exception_rules = exception_rule
+            )
 
-        print(f"Exception policy has been successfully created with id: {exception_policy.id}")
-        # [END create_exception_policy]
+            print(f"Exception policy has been successfully created with id: {exception_policy.id}")
+        # [END create_exception_policy_async]
 
-    def update_exception_policy(self):
+    async def update_exception_policy(self):
         connection_string = self.endpoint
         policy_id = self._ep_policy_id
-        # [START update_exception_policy]
+        # [START update_exception_policy_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
             WaitTimeExceptionTrigger,
             ReclassifyExceptionAction,
             ExceptionPolicy,
@@ -138,90 +140,97 @@ class ExceptionPolicySamples(object):
             }
         )
 
-        updated_exception_policy: ExceptionPolicy = router_admin_client.update_exception_policy(
-            identifier = policy_id,
-            exception_rules = {
-                # adding new rule
-                "EscalateJobOnWaitTimeExceededTrigger2Min": ExceptionRule(
-                    trigger = escalate_job_on_wait_time_exceed2,
-                    actions = {
-                        "EscalationJobActionOnWaitTimeExceed": escalate_job_on_wait_time_exceeded2
-                    }
-                ),
-                # modifying existing rule
-                "EscalateJobOnQueueOverFlowTrigger": ExceptionRule(
-                    trigger = QueueLengthExceptionTrigger(threshold = 100),
-                    actions = {
-                        "EscalationJobActionOnQueueOverFlow": ReclassifyExceptionAction(
-                            classification_policy_id = "escalation-on-q-over-flow",
-                            labels_to_upsert = {
-                                "EscalateJob": True,
-                                "EscalationReasonCode": "QueueOverFlow"
-                            }
-                        )
-                    }
-                ),
-                # deleting existing rule
-                "EscalateJobOnWaitTimeExceededTrigger": None
-            }
-        )
+        async with router_admin_client:
+            updated_exception_policy: ExceptionPolicy = await router_admin_client.update_exception_policy(
+                identifier = policy_id,
+                exception_rules = {
+                    # adding new rule
+                    "EscalateJobOnWaitTimeExceededTrigger2Min": ExceptionRule(
+                        trigger = escalate_job_on_wait_time_exceed2,
+                        actions = {
+                            "EscalationJobActionOnWaitTimeExceed": escalate_job_on_wait_time_exceeded2
+                        }
+                    ),
+                    # modifying existing rule
+                    "EscalateJobOnQueueOverFlowTrigger": ExceptionRule(
+                        trigger = QueueLengthExceptionTrigger(threshold = 100),
+                        actions = {
+                            "EscalationJobActionOnQueueOverFlow": ReclassifyExceptionAction(
+                                classification_policy_id = "escalation-on-q-over-flow",
+                                labels_to_upsert = {
+                                    "EscalateJob": True,
+                                    "EscalationReasonCode": "QueueOverFlow"
+                                }
+                            )
+                        }
+                    ),
+                    # deleting existing rule
+                    "EscalateJobOnWaitTimeExceededTrigger": None
+                }
+            )
 
-        print(
-            f"Exception policy updated with rules: {[k for k, v in updated_exception_policy.exception_rules.items()]}")
-        print("Exception policy has been successfully updated")
+            print(f"Exception policy updated with rules: {[k for k,v in updated_exception_policy.exception_rules.items()]}")
+            print("Exception policy has been successfully updated")
 
-        # [END update_exception_policy]
+        # [END update_exception_policy_async]
 
-    def get_exception_policy(self):
+    async def get_exception_policy(self):
         connection_string = self.endpoint
         policy_id = self._ep_policy_id
-        # [START get_exception_policy]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        # [START get_exception_policy_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
-        exception_policy = router_admin_client.get_exception_policy(exception_policy_id = policy_id)
+        async with router_admin_client:
+            exception_policy = await router_admin_client.get_exception_policy(exception_policy_id = policy_id)
 
-        print(f"Successfully fetched exception policy with id: {exception_policy.id}")
-        # [END get_exception_policy]
+            print(f"Successfully fetched exception policy with id: {exception_policy.id}")
+        # [END get_exception_policy_async]
 
-    def list_exception_policies(self):
+    async def list_exception_policies(self):
         connection_string = self.endpoint
-        # [START list_exception_policies]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        # [START list_exception_policies_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
-        exception_policy_iterator = router_admin_client.list_exception_policies(results_per_page = 10)
+        async with router_admin_client:
+            exception_policy_iterator = router_admin_client.list_exception_policies(results_per_page = 10)
 
-        for policy_page in exception_policy_iterator.by_page():
-            policies_in_page = list(policy_page)
-            print(f"Retrieved {len(policies_in_page)} policies in current page")
+            async for policy_page in exception_policy_iterator.by_page():
+                policies_in_page = [i async for i in policy_page]
+                print(f"Retrieved {len(policies_in_page)} policies in current page")
 
-            for ep in policies_in_page:
-                print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
+                for ep in policies_in_page:
+                    print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
 
-        print(f"Successfully completed fetching exception policies")
-        # [END list_exception_policies]
+            print(f"Successfully completed fetching exception policies")
+        # [END list_exception_policies_async]
 
-    def clean_up(self):
+    async def clean_up(self):
         connection_string = self.endpoint
         policy_id = self._ep_policy_id
 
-        # [START delete_exception_policy]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        # [START delete_exception_policy_async]
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
 
         router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
-        router_admin_client.delete_exception_policy(exception_policy_id = policy_id)
+        async with router_admin_client:
+            await router_admin_client.delete_exception_policy(exception_policy_id = policy_id)
 
-        # [END delete_exception_policy]
+        # [END delete_exception_policy_async]
 
+
+async def main():
+    sample = ExceptionPolicySamplesAsync()
+    await sample.create_exception_policy()
+    await sample.get_exception_policy()
+    await sample.update_exception_policy()
+    await sample.list_exception_policies()
+    await sample.clean_up()
 
 if __name__ == '__main__':
-    sample = ExceptionPolicySamples()
-    sample.create_exception_policy()
-    sample.update_exception_policy()
-    sample.get_exception_policy()
-    sample.list_exception_policies()
-    sample.clean_up()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

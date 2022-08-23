@@ -95,7 +95,16 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of RouterClient.
-        :rtype: ~azure.communication.RouterClient
+        :rtype: ~azure.communication.jobrouter.aio.RouterClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_authentication_async.py
+                :start-after: [START auth_from_connection_string_async]
+                :end-before: [END auth_from_connection_string_async]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a RouterClient from a connection_string
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
