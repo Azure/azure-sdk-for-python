@@ -581,6 +581,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return JobQueue
         :rtype ~azure.communication.jobrouter.JobQueue
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START create_queue_async]
+                :end-before: [END create_queue_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to create a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
@@ -632,6 +641,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return JobQueue
         :rtype ~azure.communication.jobrouter.JobQueue
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START update_queue_async]
+                :end-before: [END update_queue_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to update a queue
         """
         if not queue_id:
             raise ValueError("identifier cannot be None.")
@@ -690,6 +708,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return JobQueue
         :rtype ~azure.communication.jobrouter.JobQueue
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START get_queue_async]
+                :end-before: [END get_queue_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to get a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
@@ -714,6 +741,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return: An iterator like instance of JobQueueItem
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.JobQueueItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START list_queues_async]
+                :end-before: [END list_queues_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to list queues
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -741,6 +777,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START delete_queue_async]
+                :end-before: [END delete_queue_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterAdministrationClient to delete a queue
         """
 
         if not queue_id:
