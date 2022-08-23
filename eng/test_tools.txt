@@ -30,7 +30,7 @@ packaging==20.4
 Jinja2==2.11.2
 markupsafe==2.0.1; python_version > '2.7'
 markupsafe==1.1.1; python_version == '2.7'
-wrapt==1.12.1
+wrapt==1.14.1
 
 # Locking pylint and required packages
 pylint==1.8.4; python_version < '3.4'
