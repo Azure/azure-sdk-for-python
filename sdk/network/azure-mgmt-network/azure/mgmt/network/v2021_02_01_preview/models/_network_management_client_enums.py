@@ -11,126 +11,125 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Direction that specifies whether the access rules is inbound/outbound.
-    """
+    """Direction that specifies whether the access rules is inbound/outbound."""
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
+
 class AddressPrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Address prefix type.
-    """
+    """Address prefix type."""
 
     IP_PREFIX = "IPPrefix"
     SERVICE_TAG = "ServiceTag"
 
+
 class AdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether the rule is custom or default.
-    """
+    """Whether the rule is custom or default."""
 
     CUSTOM = "Custom"
     DEFAULT = "Default"
 
+
 class AssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Access mode on the association.
-    """
+    """Access mode on the association."""
 
     LEARNING = "Learning"
     ENFORCED = "Enforced"
     AUDIT = "Audit"
 
+
 class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Configuration Deployment Type.
-    """
+    """Configuration Deployment Type."""
 
     SECURITY_ADMIN = "SecurityAdmin"
     SECURITY_USER = "SecurityUser"
     CONNECTIVITY = "Connectivity"
 
+
 class ConnectivityTopology(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Connectivity topology type.
-    """
+    """Connectivity topology type."""
 
     HUB_AND_SPOKE = "HubAndSpoke"
     MESH = "Mesh"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class DeleteExistingNSGs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag if need to delete existing network security groups.
-    """
+    """Flag if need to delete existing network security groups."""
 
     FALSE = "False"
     TRUE = "True"
+
 
 class DeleteExistingPeering(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag if need to remove current existing peerings.
-    """
+    """Flag if need to remove current existing peerings."""
 
     FALSE = "False"
     TRUE = "True"
 
+
 class DeploymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Deployment Status.
-    """
+    """Deployment Status."""
 
     NOT_STARTED = "NotStarted"
     DEPLOYING = "Deploying"
     DEPLOYED = "Deployed"
     FAILED = "Failed"
 
+
 class EffectiveAdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether the rule is custom or default.
-    """
+    """Whether the rule is custom or default."""
 
     CUSTOM = "Custom"
     DEFAULT = "Default"
+
 
 class EffectiveUserRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether the rule is custom or default.
-    """
+    """Whether the rule is custom or default."""
 
     CUSTOM = "Custom"
     DEFAULT = "Default"
 
+
 class GroupConnectivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Group connectivity type.
-    """
+    """Group connectivity type."""
 
     NONE = "None"
     DIRECTLY_CONNECTED = "DirectlyConnected"
 
+
 class IsGlobal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag if global mesh is supported.
-    """
+    """Flag if global mesh is supported."""
 
     FALSE = "False"
     TRUE = "True"
 
+
 class IsMember(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """yes/no, if it is member or not.
-    """
+    """yes/no, if it is member or not."""
 
     YES = "yes"
     NO = "no"
 
+
 class MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Membership Type.
-    """
+    """Membership Type."""
 
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
+
 class NspProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
@@ -139,22 +138,23 @@ class NspProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCEPTED = "Accepted"
     FAILED = "Failed"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
+
 class SecurityConfigurationRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether network traffic is allowed or denied.
-    """
+    """Whether network traffic is allowed or denied."""
 
     ALLOW = "Allow"
     DENY = "Deny"
     ALWAYS_ALLOW = "AlwaysAllow"
+
 
 class SecurityConfigurationRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The direction of the rule. The direction specifies if the rule will be evaluated on incoming or
@@ -164,9 +164,9 @@ class SecurityConfigurationRuleDirection(str, Enum, metaclass=CaseInsensitiveEnu
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
+
 class SecurityConfigurationRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Network protocol this rule applies to.
-    """
+    """Network protocol this rule applies to."""
 
     TCP = "Tcp"
     UDP = "Udp"
@@ -175,23 +175,23 @@ class SecurityConfigurationRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnum
     ANY = "Any"
     AH = "Ah"
 
+
 class SecurityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Security Type.
-    """
+    """Security Type."""
 
     ADMIN_POLICY = "AdminPolicy"
     USER_POLICY = "UserPolicy"
 
+
 class UseHubGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag if need to use hub gateway.
-    """
+    """Flag if need to use hub gateway."""
 
     FALSE = "False"
     TRUE = "True"
 
+
 class UserRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether the rule is custom or default.
-    """
+    """Whether the rule is custom or default."""
 
     CUSTOM = "Custom"
     DEFAULT = "Default"
