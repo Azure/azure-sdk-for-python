@@ -20,7 +20,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from .helpers import get_test_id, is_live, is_live_and_not_recording
 from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request
 from .proxy_startup import test_proxy
-from .sanitizers import add_general_regex_sanitizer
+from .sanitizers import add_general_string_sanitizer
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Tuple
@@ -45,7 +45,7 @@ class EnvironmentVariableSanitizer:
         self._fake_values[variable] = value
         real_value = os.getenv(variable)
         if real_value:
-            add_general_regex_sanitizer(regex=real_value, value=value)
+            add_general_string_sanitizer(target=real_value, value=value)
         else:
             _LOGGER.info(f"No value for {variable} was found, so a sanitizer could not be registered for the variable.")
 
