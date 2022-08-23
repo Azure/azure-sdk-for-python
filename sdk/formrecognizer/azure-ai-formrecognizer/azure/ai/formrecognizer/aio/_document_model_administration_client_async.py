@@ -82,7 +82,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_08_31)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -133,8 +133,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelBuildOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         description = kwargs.pop("description", None)
@@ -201,8 +201,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelComposeOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         model_id = kwargs.pop("model_id", None)
@@ -220,7 +220,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 description=description,
                 tags=tags,
                 component_models=[
-                    self._generated_models.ComponentModelInfo(model_id=model_id) for model_id in component_model_ids
+                    self._generated_models.ComponentDocumentModelDetails(model_id=model_id)
+                    for model_id in component_model_ids
                 ]
                 if component_model_ids
                 else [],
@@ -300,8 +301,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelCopyToOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         if not model_id:
@@ -352,7 +353,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return await self._client.delete_model(model_id=model_id, **kwargs)
+        return await self._client.delete_document_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_models(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelSummary]:
@@ -373,7 +374,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: List all models that were built successfully under the Form Recognizer resource.
         """
 
-        return self._client.get_models(  # type: ignore
+        return self._client.get_document_models(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [DocumentModelSummary._from_generated(x) for x in objs],
@@ -399,7 +400,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: Get model counts and limits under the Form Recognizer resource.
         """
 
-        response = await self._client.get_info(**kwargs)
+        response = await self._client.get_resource_details(**kwargs)
         return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace_async
@@ -424,7 +425,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = await self._client.get_model(model_id=model_id, **kwargs)
+        response = await self._client.get_document_model(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
