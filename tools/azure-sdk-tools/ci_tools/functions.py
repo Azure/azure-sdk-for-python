@@ -114,10 +114,17 @@ def discover_targeted_packages(
     target_root_dir: str,
     additional_contains_filter: str = "",
     filter_type: str = "Build",
+    compatibility_filter: bool = True
 ) -> List[str]:
     """
     During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
     This function centralizes business and material requirements and outputs the set of packages that should be targeted.
+
+    :param str glob_string: The basic glob used to query packages within the repo. Defaults to "azure-*"
+    :param str target_root_dir: The root directory in which globbing will begin.
+    :param str additional_contains_filter: Additional filter option. Used when needing to provide one-off filtration that doesn't merit an additional filter_type. Defaults to empty string.
+    :param str filter_type: One a string representing a filter function as a set of options. Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
+    :param bool compatibility_filter: Enables or disables compatibility filtering of found packages. If the invoking python executable does not match a found package's specifiers, the package will be omitted. Defaults to True.
     """
     if glob_string:
         individual_globs = glob_string.split(",")
@@ -137,12 +144,14 @@ def discover_targeted_packages(
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
-        pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
+        if compatibility_filter:
+            pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
         allowed_package_set = remove_omitted_packages(collected_directories)
-        pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
+        if compatibility_filter:
+            pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
