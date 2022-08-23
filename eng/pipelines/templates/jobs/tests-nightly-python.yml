@@ -126,7 +126,6 @@ jobs:
           export PATH=~/bin:$PATH
           export PATH=~/lib:$PATH
           export PATH=~/.local/bin:$PATH
-          export PROXY_URL="http://localhost:5000"
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
           python3 -m pip install setuptools wheel
