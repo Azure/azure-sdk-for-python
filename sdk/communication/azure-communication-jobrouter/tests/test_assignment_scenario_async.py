@@ -70,7 +70,7 @@ class TestAssignmentScenarioAsync(AsyncRouterTestCase):
                             await router_client.update_worker(worker_id = _id, available_for_offers = False)
 
                             await self._poll_until_no_exception(
-                                self.validate_worker_deregistration,
+                                self.validate_worker_deregistration,  # cSpell:disable-line
                                 Exception,
                                 _id)
                             # delete worker
