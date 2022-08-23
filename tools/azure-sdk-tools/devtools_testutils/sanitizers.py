@@ -567,11 +567,7 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
     if is_live_and_not_recording():
         return
 
-    response = requests.post(
-        f"{PROXY_URL}/Admin/SetRecordingOptions",
-        headers=headers,
-        json=parameters
-    )
+    response = requests.post(f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, json=parameters)
     response.raise_for_status()
 
 
