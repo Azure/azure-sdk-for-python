@@ -374,6 +374,7 @@ class TestStorageCPK(StorageRecordedTestCase):
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
             max_page_size=1024)
+
         self._setup(bsc)
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # chunk upload
@@ -402,8 +403,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Assert
         assert append_blob_prop['etag'] is not None
         assert append_blob_prop['last_modified'] is not None
-        # TODO: verify that the swagger is correct, header wasn't added for the response
-        # assert append_blob_prop['request_server_encrypted']
+        assert append_blob_prop['request_server_encrypted']
         assert append_blob_prop['encryption_key_sha256'] == TEST_ENCRYPTION_KEY.key_hash
 
         # Act get the blob content without cpk should fail
@@ -518,6 +518,7 @@ class TestStorageCPK(StorageRecordedTestCase):
             max_block_size=1024,
             max_page_size=1024)
         self._setup(bsc)
+
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
@@ -547,8 +548,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         assert page_blob_prop['etag'] is not None
         assert page_blob_prop['last_modified'] is not None
         assert page_blob_prop['request_server_encrypted']
-        # TODO: FIX SWAGGER
-        # assert page_blob_prop['encryption_key_sha256'] == TEST_ENCRYPTION_KEY.key_hash
+        assert page_blob_prop['encryption_key_sha256'] == TEST_ENCRYPTION_KEY.key_hash
 
         # Act get the blob content without cpk should fail
         with pytest.raises(HttpResponseError):
@@ -557,7 +557,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         # Act get the blob content
         blob = blob_client.download_blob(offset=0,
                                          length=len(self.byte_data),
-                                         cpk=TEST_ENCRYPTION_KEY, )
+                                         cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
         assert blob.readall() == self.byte_data
@@ -603,33 +603,6 @@ class TestStorageCPK(StorageRecordedTestCase):
         assert blob.readall() == self.byte_data
         assert blob.properties.encryption_key_sha256 == TEST_ENCRYPTION_KEY.key_hash
         self._teardown(bsc)
-
-    # TODO: verify why clear page works without providing cpk
-    # @record
-    # def test_clear_page(self):
-    #     # Arrange
-    #     blob_client = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-    #     data = self.get_random_bytes(1024)
-    #     blob_client.upload_blob(data, blob_type=BlobType.PageBlob, cpk=TEST_ENCRYPTION_KEY)
-    #
-    #     # Act
-    #     blob = blob_client.download_blob(cpk=TEST_ENCRYPTION_KEY)
-    #     assert blob.readall() == data
-    #
-    #     # with pytest.raises(HttpResponseError):
-    #     #     blob_client.clear_page(0, 511)
-    #
-    #     resp = blob_client.clear_page(0, 511, cpk=TEST_ENCRYPTION_KEY)
-    #     blob = blob_client.download_blob(0, 511, cpk=TEST_ENCRYPTION_KEY)
-    #
-    #     # Assert
-    #     assert resp.get('etag') is not None
-    #     assert resp.get('last_modified') is not None
-    #     assert resp.get('blob_sequence_number') is not None
-    #     assert blob.readall() == b'\x00' * 512
-    #
-    #     blob = blob_client.download_blob(512, 1023, cpk=TEST_ENCRYPTION_KEY)
-    #     assert blob.readall() == data[512:]
 
     @BlobPreparer()
     @recorded_by_proxy

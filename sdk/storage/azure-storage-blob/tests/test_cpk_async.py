@@ -395,8 +395,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert append_blob_prop['etag'] is not None
         assert append_blob_prop['last_modified'] is not None
-        # TODO: verify that the swagger is correct, header wasn't added for the response
-        # assert append_blob_prop['request_server_encrypted']
+        assert append_blob_prop['request_server_encrypted']
         assert append_blob_prop['encryption_key_sha256'] == TEST_ENCRYPTION_KEY.key_hash
 
         # Act get the blob content without cpk should fail
@@ -535,8 +534,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         assert page_blob_prop['etag'] is not None
         assert page_blob_prop['last_modified'] is not None
         assert page_blob_prop['request_server_encrypted']
-        # TODO: FIX SWAGGER
-        # assert page_blob_prop['encryption_key_sha256'] == TEST_ENCRYPTION_KEY.key_hash
+        assert page_blob_prop['encryption_key_sha256'] == TEST_ENCRYPTION_KEY.key_hash
 
         # Act get the blob content without cpk should fail
         with pytest.raises(HttpResponseError):
