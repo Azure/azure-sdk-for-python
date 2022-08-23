@@ -35,7 +35,6 @@ from .http_constants import StatusCodes
 from .offer import ThroughputProperties
 from .scripts import ScriptsProxy
 from .partition_key import NonePartitionKeyValue
-from .cosmos_diagnostics import CosmosDiagnostics
 
 __all__ = ("ContainerProxy",)
 
@@ -66,7 +65,6 @@ class ContainerProxy(object):
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
         self._scripts = None  # type: Optional[ScriptsProxy]
-        # self.diagnostics = CosmosDiagnostics()
 
     def __repr__(self):
         # type () -> str
@@ -167,8 +165,6 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, self._properties, self.client_connection.last_exceptions)
-
         return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
@@ -230,8 +226,6 @@ class ContainerProxy(object):
         result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -279,8 +273,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, items,
-        #                                     self.client_connection.last_exceptions)
         return items
 
     @distributed_trace
@@ -328,8 +320,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -423,8 +413,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, items,
-        #                                     self.client_connection.last_exceptions)
         return items
 
     @distributed_trace
@@ -477,8 +465,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -531,8 +517,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -588,8 +572,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -640,8 +622,6 @@ class ContainerProxy(object):
         result = self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
 
     @distributed_trace
     def read_offer(self, **kwargs):
@@ -687,8 +667,6 @@ class ContainerProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, throughput_properties,
-        #                                     self.client_connection.last_exceptions)
 
         return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
                                     properties=throughput_properties[0])
@@ -796,8 +774,6 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
         return result
 
     @distributed_trace
@@ -850,5 +826,19 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        # self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-        #                                     self.client_connection.last_exceptions)
+
+    def diagnostics(self, p=False):
+        """Returns a dictionary of the diagnostics from the last request.
+
+        Best used when catching an exception.
+
+        Ex:
+            >>>try:
+            >>>    database = client.create_database_if_not_exists(id="DatabaseTest")
+            >>>except:
+            >>>    client.diagnostics(p=True)
+
+        :param p: Defaulted to False, if set to true will print the diagnostics in a nicely formatted style.
+        :rtype: dict
+        """
+        return self.client_connection.diagnostics(p=p)

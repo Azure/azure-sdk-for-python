@@ -134,6 +134,7 @@ class _QueryExecutionContextBase(object):
             else:
                 self._continuation = None
             if fetched_items:
+                self._client.diagnostics.update_diagnostics(response_headers, fetched_items)
                 break
         return fetched_items
 

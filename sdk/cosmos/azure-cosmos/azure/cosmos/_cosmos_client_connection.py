@@ -238,7 +238,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         else:
             # Set consistency level header to be used for the client
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-
+        self.diagnostics.consistency_level = consistency_level
         if consistency_level == documents.ConsistencyLevel.Session:
             # create a session - this is maintained only if the default consistency level
             # on the client is set to session, or if the user explicitly sets it as a property
@@ -2276,6 +2276,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             tuple of (dict, dict)
 
         """
+        print(request_params)
         request = self.pipeline_client.post(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
             client=self,

@@ -60,13 +60,16 @@ class CosmosDiagnostics(object):
 
     def __init__(self, ua):
         self._user_agent = ua
+        self._consistency_level = None
+        self._operation_type = None
+        self._resource_type = None
         self._request_headers = CaseInsensitiveDict()
         self._response_headers = CaseInsensitiveDict()
         self._body = None
-        self._status_code = 0
-        self._status_reason = ""
+        self._status_code = None
+        self._status_reason = None
         self._substatus_code = 0
-        self._status_message = ""
+        self._status_message = None
         self._elapsed_time = None
 
         self._system_information = self.get_system_info()
@@ -89,7 +92,7 @@ class CosmosDiagnostics(object):
 
     @property
     def body(self):
-        return self._body
+        return dict(self._body)
 
     @body.setter
     def body(self, value: dict):
@@ -106,6 +109,7 @@ class CosmosDiagnostics(object):
     @property
     def substatus_code(self):
         return self._substatus_code
+
     @substatus_code.setter
     def substatus_code(self, value: int):
         self._substatus_code = value
@@ -113,6 +117,7 @@ class CosmosDiagnostics(object):
     @property
     def status_reason(self):
         return self._status_reason
+
     @status_reason.setter
     def status_reason(self, value: str):
         self._status_reason = value
@@ -120,6 +125,7 @@ class CosmosDiagnostics(object):
     @property
     def elapsed_time(self):
         return self._elapsed_time
+
     @elapsed_time.setter
     def elapsed_time(self, value):
         self._elapsed_time = value
@@ -132,26 +138,45 @@ class CosmosDiagnostics(object):
     def status_message(self, value: str):
         self._status_message = value
 
-
-
     @property
     def user_agent(self):
         return self._user_agent
+
     @user_agent.setter
     def user_agent(self, value: str):
         self._user_agent = value
 
+    @property
+    def consistency_level(self):
+        return self._consistency_level
 
-    def update_header_and_body(self, header, body):
-        self.header(header)
-        self.body(body)
+    @consistency_level.setter
+    def consistency_level(self, value: str):
+        self._consistency_level = value
+
+    @property
+    def operation_type(self):
+        return self._operation_type
+
+    @operation_type.setter
+    def operation_type(self, value: str):
+        self._operation_type = value
+
+    @property
+    def resource_type(self):
+        return self._resource_type
+
+    @resource_type.setter
+    def resource_type(self, value: str):
+        self._resource_type = value
 
     def update_diagnostics(self, header: dict, body: dict, **kwargs):
         self.clear()
         self.response_headers = header
-        self.body = body
-        #Note: Plan is to use kwargs to be able to easily modify this function to update with needed information
-        #notes figure out how to just get status information instead of just relying on exceptions being passed
+        try:
+            self.body = dict(body)
+        except ValueError as ve:
+            self.body = body
         eTime = kwargs.get("elapsed_time")
         if eTime:
             self.elapsed_time = eTime
@@ -176,11 +201,16 @@ class CosmosDiagnostics(object):
         rh = kwargs.get("request_headers")
         if rh:
             self.request_headers = dict(rh)
+        ot = kwargs.get("operation_type")
+        if ot:
+            self.operation_type = ot
+        rt = kwargs.get("resource_type")
+        if rt:
+            self.resource_type = rt
         if e:
             self.status_code = e.status_code
             self.status_message = e.message
 
-    #Note: Planning to add a flag to print it in a pretty format instead of just returning a dictionary
     def __call__(self, p=False):
         #This will format all the properties into a dictionary
         ret = {
@@ -198,22 +228,19 @@ class CosmosDiagnostics(object):
                     print(str(key)+": "+str(value))
         else:
             return ret
-        # return {
-        #     key: value
-        #     for key, value in self.__dict__.items()
-        #     if isinstance(value, property)
-        # }
 
     def __getattr__(self, name):
         temp_name = name
         key = "x-ms-" + temp_name.replace("_", "-")
-        if key in self._common:
-            return self._headers[key]
-        else:
-            return getattr(self, name)
-        raise AttributeError(name)
+        try:
+            if key in self._common:
+                return self._response_headers[key]
+            else:
+                return getattr(self, name)
+        except:
+            raise AttributeError(name)
 
-    #Current System info I was able to get
+    #Current System info
     def get_system_info(self):
         ret = {}
         ret["system"] = platform.system()
@@ -229,9 +256,10 @@ class CosmosDiagnostics(object):
         self.response_headers = CaseInsensitiveDict()
         self.request_headers = CaseInsensitiveDict()
         self.body = None
-        self.status_code = 0
-        self.status_reason = ""
+        self.status_code = None
+        self.status_reason = None
         self.substatus_code = 0
-        self.status_message = ""
+        self.status_message = None
         self.elapsed_time = None
-        pass
+        self.operation_type = None
+        self.resource_type = None

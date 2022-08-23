@@ -490,4 +490,17 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         return result
 
     def diagnostics(self, p=False):
+        """Returns a dictionary of the diagnostics from the last request.
+
+        Best used when catching an exception.
+
+        Ex:
+            >>>try:
+            >>>    database = client.create_database_if_not_exists(id="DatabaseTest")
+            >>>except:
+            >>>    client.diagnostics(p=True)
+
+        :param p: Defaulted to False, if set to true will print the diagnostics in a nicely formatted style.
+        :rtype: dict
+        """
         return self.client_connection.diagnostics(p=p)

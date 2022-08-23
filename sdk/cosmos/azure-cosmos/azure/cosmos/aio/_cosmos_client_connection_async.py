@@ -254,7 +254,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         else:
             # Use database_account if no consistency passed in to verify consistency level to be used
             user_defined_consistency = self._check_if_account_session_consistency(database_account)
-
+        self.diagnostics.consistency_level = user_defined_consistency
         if user_defined_consistency == documents.ConsistencyLevel.Session:
             # create a Session if the user wants Session consistency
             self.session = _session.Session(self.url_connection)
@@ -279,7 +279,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # We only set the header if we're using session consistency in the account in order to keep
             # the current update_session logic which uses the header
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-
         return consistency_level
 
 

@@ -47,7 +47,6 @@ class UserProxy(object):
         self.id = id
         self.user_link = u"{}/users/{}".format(database_link, id)
         self._properties = properties
-        self.diagnostics = CosmosDiagnostics()
 
     def __repr__(self):
         # type () -> str
@@ -86,8 +85,6 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, self._properties,
-                                            self.client_connection.last_exceptions)
 
         return cast('Dict[str, Any]', self._properties)
 
@@ -110,8 +107,6 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-                                            self.client_connection.last_exceptions)
 
         return result
 
@@ -147,8 +142,6 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-                                            self.client_connection.last_exceptions)
 
         return result
 
@@ -173,8 +166,6 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission_resp,
-                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission_resp["id"],
@@ -206,8 +197,6 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission,
-                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission["id"],
@@ -240,8 +229,6 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission,
-                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission["id"],
@@ -276,8 +263,6 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, permission_resp,
-                                            self.client_connection.last_exceptions)
 
         return Permission(
             id=permission_resp["id"],
@@ -310,5 +295,19 @@ class UserProxy(object):
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-        self.diagnostics.update_diagnostics(self.client_connection.last_response_headers, result,
-                                            self.client_connection.last_exceptions)
+
+    def diagnostics(self, p=False):
+        """Returns a dictionary of the diagnostics from the last request.
+
+        Best used when catching an exception.
+
+        Ex:
+            >>>try:
+            >>>    database = client.create_database_if_not_exists(id="DatabaseTest")
+            >>>except:
+            >>>    client.diagnostics(p=True)
+
+        :param p: Defaulted to False, if set to true will print the diagnostics in a nicely formatted style.
+        :rtype: dict
+        """
+        return self.client_connection.diagnostics(p=p)

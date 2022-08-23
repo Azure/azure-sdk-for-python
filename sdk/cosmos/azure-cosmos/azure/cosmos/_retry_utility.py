@@ -90,12 +90,10 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
-            client.last_exceptions = None
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = None
-            #Current way of passing status code and message up, only works for exceptions though
-            client.last_exceptions = e
+
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
