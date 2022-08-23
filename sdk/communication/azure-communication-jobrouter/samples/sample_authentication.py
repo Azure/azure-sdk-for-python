@@ -37,7 +37,20 @@ class RouterClientAuthenticationSamples(object):
 
         # [END auth_from_connection_string]
 
+    def create_router_admin_client(self):
+        connection_string = self.endpoint
+
+        # [START admin_auth_from_connection_string]
+        from azure.communication.jobrouter import RouterAdministrationClient
+
+        # set `connection_string` to an existing ACS endpoint
+        router_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        print("RouterAdministrationClient created successfully!")
+
+        # [END admin_auth_from_connection_string]
+
 
 if __name__ == '__main__':
     sample = RouterClientAuthenticationSamples()
     sample.create_router_client()
+    sample.create_router_admin_client()

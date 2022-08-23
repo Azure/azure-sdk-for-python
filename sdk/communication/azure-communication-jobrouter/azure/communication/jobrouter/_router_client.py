@@ -94,7 +94,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of RouterClient.
-        :rtype: ~azure.communication.RouterClient
+        :rtype: ~azure.communication.jobrouter.RouterClient
 
         .. admonition:: Example:
 
