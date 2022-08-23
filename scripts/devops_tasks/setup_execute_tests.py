@@ -26,7 +26,7 @@ from common_tasks import (
     create_code_coverage_params
 )
 from tox_harness import prep_and_run_tox
-from ci_tools.functions import discover_targeted_packages, filter_packages_by_compatibility_override
+from ci_tools.functions import discover_targeted_packages
 
 logging.getLogger().setLevel(logging.INFO)
 
