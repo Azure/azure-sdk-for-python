@@ -7,15 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AzureCommunicationJobRouterServiceConfiguration
 from ._serialization import Deserializer, Serializer
-from .models import _models as models
 from .operations import JobRouterAdministrationOperations, JobRouterOperations
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Dict
 
 
 class AzureCommunicationJobRouterService:  # pylint: disable=client-accepts-api-version-keyword
@@ -40,9 +43,8 @@ class AzureCommunicationJobRouterService:  # pylint: disable=client-accepts-api-
         self._config = AzureCommunicationJobRouterServiceConfiguration(endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.job_router_administration = JobRouterAdministrationOperations(
             self._client, self._config, self._serialize, self._deserialize
