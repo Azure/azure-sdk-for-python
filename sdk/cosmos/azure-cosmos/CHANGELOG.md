@@ -4,6 +4,7 @@
 
 #### Features Added
 - GA release of integrated cache functionality. For more information on integrated cache please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache).
+- GA release of analytical ttl replace functionality. For more information on analytical ttl please see [Azure Cosmos DB analytical store](https://docs.microsoft.com/azure/cosmos-db/analytical-store-introduction).
 
 #### Bugs Fixed
 - Fixed parsing of args for overloaded `container.read()` method.
