@@ -40,7 +40,7 @@ def sample_chit_chat():
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
-            short_answer_options=qna.ShortAnswerOptions(
+            options=qna.ShortAnswerOptions(
                 confidence_threshold=0.2,
                 top=1
             ),
@@ -61,7 +61,7 @@ def sample_chit_chat():
                 previous_question=first_question,
                 previous_qna_id=best_candidate.qna_id
             ),
-            short_answer_options=qna.ShortAnswerOptions(
+            options=qna.ShortAnswerOptions(
                 confidence_threshold=0.2,
                 top=1
             ),

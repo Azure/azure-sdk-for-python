@@ -39,7 +39,7 @@ def sample_query_knowledgebase():
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
-            short_answer_options=qna.ShortAnswerOptions(
+            options=qna.ShortAnswerOptions(
                 confidence_threshold=0.2,
                 top=1
             ),
