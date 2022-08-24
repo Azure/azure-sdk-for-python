@@ -314,7 +314,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
     def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
-        self.add_for_test(client, to_list_kv)
+        to_list_kv = self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
@@ -365,14 +365,18 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string):
+    def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
+        recorded_variables = kwargs.pop("variables", {})
         self.set_up(appconfiguration_connection_string)
         exclude_today = self.client.list_configuration_settings(
-            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=recorded_variables.setdefault(
+                "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
+            )
         )
         all_inclusive = self.client.list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
         self.tear_down()
+        return recorded_variables
 
     # method: list_revisions
     @app_config_decorator
@@ -414,15 +418,16 @@ class TestAppConfigurationClient(AppConfigTestCase):
     @app_config_decorator
     @recorded_by_proxy
     def test_list_revisions_correct_etag(self, appconfiguration_connection_string):
-        self.set_up(appconfiguration_connection_string)
-        to_list1 = self.create_config_setting()
-        custom_headers = {"If-Match": to_list1.etag}
-        items = list(self.client.list_revisions(
-            key_filter=to_list1.key, label_filter=to_list1.label, headers=custom_headers
+        client = self.create_client(appconfiguration_connection_string)
+        to_list_kv = self.create_config_setting()
+        to_list_kv = self.add_for_test(client, to_list_kv)
+        custom_headers = {"If-Match": to_list_kv.etag}
+        items = list(client.list_revisions(
+            key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
         assert len(items) >= 1
-        assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
-        self.tear_down()
+        assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
+        client.delete_configuration_setting(to_list_kv.key)
 
     @app_config_decorator
     @recorded_by_proxy

@@ -57,7 +57,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         )
         if exist:
             client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
-        client.add_configuration_setting(config_setting)
+        return client.add_configuration_setting(config_setting)
     
     def set_up(self, appconfiguration_string, is_aad=False):
         if is_aad:

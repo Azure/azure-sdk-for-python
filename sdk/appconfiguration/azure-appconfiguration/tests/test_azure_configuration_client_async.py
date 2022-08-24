@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from asyncio import transports
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -10,6 +11,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
 )
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
@@ -283,7 +285,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
         items = await self.convert_to_list(self.client.list_configuration_settings(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         ))
@@ -294,7 +296,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
         resered_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
         resered_char_kv = await client.add_configuration_setting(resered_char_kv)
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
@@ -306,7 +308,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
@@ -317,7 +319,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
-        await self.add_for_test(client, to_list_kv)
+        to_list_kv = await self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = await self.convert_to_list(client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
@@ -329,7 +331,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_multi_pages(self, appconfiguration_connection_string):
-        client = self.create_client(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
             [
@@ -368,14 +370,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string):
+    async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
+        recorded_variables = kwargs.pop("variables", {})
         await self.set_up(appconfiguration_connection_string)
         exclude_today = await self.convert_to_list(self.client.list_configuration_settings(
-            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=recorded_variables.setdefault(
+                "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
+            )
         ))
         all_inclusive = await self.convert_to_list(self.client.list_configuration_settings())
         assert len(all_inclusive) > len(exclude_today)
         await self.tear_down()
+        return recorded_variables
 
     # method: list_revisions
     @app_config_decorator_async
@@ -411,7 +417,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string)
+        await self.set_up(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
         items = await self.convert_to_list(self.client.list_revisions(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         ))
@@ -421,15 +427,16 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_correct_etag(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string)
+        client = self.create_client(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
+        to_list_kv = await self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
-        items = await self.convert_to_list(self.client.list_revisions(
+        items = await self.convert_to_list(client.list_revisions(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
         assert len(items) >= 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
-        await self.tear_down()
+        await client.delete_configuration_setting(to_list_kv.key)
 
     @app_config_decorator_async
     @recorded_by_proxy_async

@@ -1,4 +1,188 @@
 {
-  "Entries": [],
+  "Entries": [
+    {
+      "RequestUri": "https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "370",
+        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-content-sha256": "2gh0Fne7Pf53APGPkI8w/6LOzn0FuRgFab7ip1kqIa0=",
+        "x-ms-date": "Aug, 24 2022 02:56:03.594752 GMT"
+      },
+      "RequestBody": {
+        "key": ".appconfig.featureflag/newflag",
+        "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
+        "value": "{\u0022enabled\u0022: true, \u0022conditions\u0022: {\u0022client_filters\u0022: [{\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abc\u0022, \u0022def\u0022], \u0022Groups\u0022: [\u0022ghi\u0022, \u0022jkl\u0022], \u0022DefaultRolloutPercentage\u0022: 75}}}]}}",
+        "tags": {}
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
+        "Connection": "keep-alive",
+        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
+        "Date": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "ETag": "\u0022433gWimzVJpk5mI9KgwvpZkWAl_H0Rkxz7XpSquf9z0\u0022",
+        "Last-Modified": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "Server": "openresty/1.17.8.2",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Sync-Token": "zAJw6V16=NTo1IzExNjg2OTI5;sn=11686929",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "436c384e-c032-452a-87b6-9bc9f8ae667f"
+      },
+      "ResponseBody": {
+        "etag": "433gWimzVJpk5mI9KgwvpZkWAl_H0Rkxz7XpSquf9z0",
+        "key": ".appconfig.featureflag/newflag",
+        "label": null,
+        "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
+        "value": "{\u0022enabled\u0022: true, \u0022conditions\u0022: {\u0022client_filters\u0022: [{\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abc\u0022, \u0022def\u0022], \u0022Groups\u0022: [\u0022ghi\u0022, \u0022jkl\u0022], \u0022DefaultRolloutPercentage\u0022: 75}}}]}}",
+        "tags": {},
+        "locked": false,
+        "last_modified": "2022-08-24T02:56:02\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "487",
+        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson",
+        "Sync-Token": "zAJw6V16=NTo1IzExNjg2OTI5",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-content-sha256": "fX5Jz/1B2EJqqeir9T9GetEUW6DpDMhKs1JyipLJjc4=",
+        "x-ms-date": "Aug, 24 2022 02:56:03.689968 GMT"
+      },
+      "RequestBody": {
+        "key": ".appconfig.featureflag/newflag",
+        "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
+        "value": "{\u0022enabled\u0022: true, \u0022conditions\u0022: {\u0022client_filters\u0022: [{\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abc\u0022, \u0022def\u0022], \u0022Groups\u0022: [\u0022ghi\u0022, \u0022jkl\u0022], \u0022DefaultRolloutPercentage\u0022: 80}}}]}}",
+        "last_modified": "2022-08-24T02:56:02.000Z",
+        "tags": {},
+        "locked": false,
+        "etag": "433gWimzVJpk5mI9KgwvpZkWAl_H0Rkxz7XpSquf9z0"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
+        "Connection": "keep-alive",
+        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
+        "Date": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "ETag": "\u0022DWl5rdF8-hyHzfbMoicpdTCGRM6baf5bFqyeS1mieRQ\u0022",
+        "Last-Modified": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "Server": "openresty/1.17.8.2",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Sync-Token": "zAJw6V16=NTo1IzExNjg2OTMx;sn=11686931",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "c73af3a9-4b01-4b2f-a263-33ebc25d16c0"
+      },
+      "ResponseBody": {
+        "etag": "DWl5rdF8-hyHzfbMoicpdTCGRM6baf5bFqyeS1mieRQ",
+        "key": ".appconfig.featureflag/newflag",
+        "label": null,
+        "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
+        "value": "{\u0022enabled\u0022: true, \u0022conditions\u0022: {\u0022client_filters\u0022: [{\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abc\u0022, \u0022def\u0022], \u0022Groups\u0022: [\u0022ghi\u0022, \u0022jkl\u0022], \u0022DefaultRolloutPercentage\u0022: 80}}}]}}",
+        "tags": {},
+        "locked": false,
+        "last_modified": "2022-08-24T02:56:02\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "836",
+        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson",
+        "Sync-Token": "zAJw6V16=NTo1IzExNjg2OTMx",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-content-sha256": "\u002Bgg73NFtbYk8g1hZxvmSd0T20eMP4t9HVSStpw8i5LM=",
+        "x-ms-date": "Aug, 24 2022 02:56:03.734234 GMT"
+      },
+      "RequestBody": {
+        "key": ".appconfig.featureflag/newflag",
+        "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
+        "value": "{\u0022enabled\u0022: true, \u0022conditions\u0022: {\u0022client_filters\u0022: [{\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abc\u0022, \u0022def\u0022], \u0022Groups\u0022: [\u0022ghi\u0022, \u0022jkl\u0022], \u0022DefaultRolloutPercentage\u0022: 80}}}, {\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abcd\u0022, \u0022defg\u0022], \u0022Groups\u0022: [\u0022ghij\u0022, \u0022jklm\u0022], \u0022DefaultRolloutPercentage\u0022: 50}}}, {\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abcde\u0022, \u0022defgh\u0022], \u0022Groups\u0022: [\u0022ghijk\u0022, \u0022jklmn\u0022], \u0022DefaultRolloutPercentage\u0022: 100}}}]}}",
+        "last_modified": "2022-08-24T02:56:02.000Z",
+        "tags": {},
+        "locked": false,
+        "etag": "DWl5rdF8-hyHzfbMoicpdTCGRM6baf5bFqyeS1mieRQ"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
+        "Connection": "keep-alive",
+        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
+        "Date": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "ETag": "\u0022-tx11eu3oBNpL22r71vpyi4VB3rVRZdnAZvZ_CLlAQQ\u0022",
+        "Last-Modified": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "Server": "openresty/1.17.8.2",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Sync-Token": "zAJw6V16=NTo1IzExNjg2OTMz;sn=11686933",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "797061de-3e74-4346-8d98-ded9958a9c9e"
+      },
+      "ResponseBody": {
+        "etag": "-tx11eu3oBNpL22r71vpyi4VB3rVRZdnAZvZ_CLlAQQ",
+        "key": ".appconfig.featureflag/newflag",
+        "label": null,
+        "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
+        "value": "{\u0022enabled\u0022: true, \u0022conditions\u0022: {\u0022client_filters\u0022: [{\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abc\u0022, \u0022def\u0022], \u0022Groups\u0022: [\u0022ghi\u0022, \u0022jkl\u0022], \u0022DefaultRolloutPercentage\u0022: 80}}}, {\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abcd\u0022, \u0022defg\u0022], \u0022Groups\u0022: [\u0022ghij\u0022, \u0022jklm\u0022], \u0022DefaultRolloutPercentage\u0022: 50}}}, {\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abcde\u0022, \u0022defgh\u0022], \u0022Groups\u0022: [\u0022ghijk\u0022, \u0022jklmn\u0022], \u0022DefaultRolloutPercentage\u0022: 100}}}]}}",
+        "tags": {},
+        "locked": false,
+        "last_modified": "2022-08-24T02:56:02\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fnewflag?api-version=1.0",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "Sync-Token": "zAJw6V16=NTo1IzExNjg2OTMz",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
+        "x-ms-date": "Aug, 24 2022 02:56:03.777005 GMT"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
+        "Connection": "keep-alive",
+        "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
+        "Date": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "ETag": "\u0022-tx11eu3oBNpL22r71vpyi4VB3rVRZdnAZvZ_CLlAQQ\u0022",
+        "Last-Modified": "Wed, 24 Aug 2022 02:56:02 GMT",
+        "Server": "openresty/1.17.8.2",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Sync-Token": "zAJw6V16=NTo1IzExNjg2OTM1;sn=11686935",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "b43579cf-d39f-4872-af09-131164222360"
+      },
+      "ResponseBody": {
+        "etag": "-tx11eu3oBNpL22r71vpyi4VB3rVRZdnAZvZ_CLlAQQ",
+        "key": ".appconfig.featureflag/newflag",
+        "label": null,
+        "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
+        "value": "{\u0022enabled\u0022: true, \u0022conditions\u0022: {\u0022client_filters\u0022: [{\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abc\u0022, \u0022def\u0022], \u0022Groups\u0022: [\u0022ghi\u0022, \u0022jkl\u0022], \u0022DefaultRolloutPercentage\u0022: 80}}}, {\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abcd\u0022, \u0022defg\u0022], \u0022Groups\u0022: [\u0022ghij\u0022, \u0022jklm\u0022], \u0022DefaultRolloutPercentage\u0022: 50}}}, {\u0022name\u0022: \u0022Microsoft.Targeting\u0022, \u0022parameters\u0022: {\u0022Audience\u0022: {\u0022Users\u0022: [\u0022abcde\u0022, \u0022defgh\u0022], \u0022Groups\u0022: [\u0022ghijk\u0022, \u0022jklmn\u0022], \u0022DefaultRolloutPercentage\u0022: 100}}}]}}",
+        "tags": {},
+        "locked": false,
+        "last_modified": "2022-08-24T02:56:02\u002B00:00"
+      }
+    }
+  ],
   "Variables": {}
 }

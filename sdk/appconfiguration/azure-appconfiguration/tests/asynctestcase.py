@@ -7,16 +7,17 @@
 from azure.appconfiguration.aio import (
     AzureAppConfigurationClient,
 )
+from azure.core.pipeline.transport import AioHttpTransport
 from testcase import AppConfigTestCase
 
 
 class AsyncAppConfigTestCase(AppConfigTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
-        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, transport=AioHttpTransport())
     
-    def create_client(self, appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
+    def create_client(self, appconfiguration_connection_string, transport=AioHttpTransport()):
+        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, transport=transport)
 
     async def add_for_test(self, client, config_setting):
         exist_list = await self.convert_to_list(client.list_configuration_settings(
@@ -25,7 +26,7 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
         exist = bool(exist_list)
         if exist:
             await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
-        await client.add_configuration_setting(config_setting)
+        return await client.add_configuration_setting(config_setting)
         
     async def convert_to_list(self, config_settings): # type: (AsyncItemPaged) -> list
         list = []
@@ -33,11 +34,11 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
             list.append(item)
         return list
     
-    async def set_up(self, appconfiguration_string, is_aad=False):
+    async def set_up(self, appconfiguration_string, is_aad=False, transport=AioHttpTransport()):
         if is_aad:
             self.client = self.create_aad_client(appconfiguration_string)
         else:
-            self.client = self.create_client(appconfiguration_string)
+            self.client = self.create_client(appconfiguration_string, transport=transport)
         await self.add_for_test(self.client, self.create_config_setting())
         await self.add_for_test(self.client, self.create_config_setting_no_label())
     
