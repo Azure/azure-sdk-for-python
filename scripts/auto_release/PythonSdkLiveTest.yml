@@ -47,6 +47,12 @@ jobs:
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
+          cd azure-sdk-for-python
+          git remote add msyyc https://github.com/msyyc/azure-sdk-for-python.git
+          git fetch msyyc auto-release-debug
+          git checkout msyyc/auto-release-debug
+          cd ../
+
           if [ "$(REST_REPO_HASH)" ]; then
             cd azure-rest-api-specs
             git reset --hard $(REST_REPO_HASH)
