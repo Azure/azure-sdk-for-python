@@ -167,6 +167,8 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
+        # continuation token requests do not perform the same value checks as
+        # regular analysis requests
         if continuation_token is not None:
             return self._client.begin_analyze_document(  # type: ignore
             model_id=model_id,
@@ -182,7 +184,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         if not isinstance(document_url, str):
             raise ValueError(
-                "'document_url' needs to be of type 'str'."
+                "'document_url' needs to be of type 'str'. "
                 "Please see `begin_analyze_document()` to pass a byte stream.")
 
         return self._client.begin_analyze_document(  # type: ignore

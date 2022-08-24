@@ -245,8 +245,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
-                result = await poller.result()
-                assert str(e) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a stream."
+        assert str(e.value) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

@@ -218,7 +218,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         with open(self.receipt_png, "rb") as receipt:
             with pytest.raises(ValueError) as e:
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
-                assert str(e) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a stream."
+            assert str(e.value) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
