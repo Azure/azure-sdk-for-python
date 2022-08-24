@@ -164,7 +164,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Create Geospatial Index
 * Provision Autoscale DBs or containers
 * Update Autoscale throughput
-* Update analytical store ttl (time to live)
 * Get the connection string
 * Get the minimum RU/s of a container
 
