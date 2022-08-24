@@ -16,18 +16,17 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-7z-AF0HorI7pQeq3hRiuNQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:50 GMT",
+        "Date": "Wed, 24 Aug 2022 18:03:30 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Aqxv0WWz-opHqx3rx-uB4NjTtwcvAwAAAEapjNoOAAAA; expires=Wed, 14-Sep-2022 20:53:51 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhXdxS1Bvb9IllKPqzRnXIXTtwcvAwAAANdemNoOAAAA; expires=Fri, 23-Sep-2022 18:03:30 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13524.5 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13481.12 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -105,7 +104,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Aqxv0WWz-opHqx3rx-uB4NjTtwcvAwAAAEapjNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AhXdxS1Bvb9IllKPqzRnXIXTtwcvAwAAANdemNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -115,18 +114,17 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-OAtxmL-dgsF96kHvwRtCLA\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:50 GMT",
+        "Date": "Wed, 24 Aug 2022 18:03:30 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Aqxv0WWz-opHqx3rx-uB4NjTtwcvAwAAAEapjNoOAAAA; expires=Wed, 14-Sep-2022 20:53:51 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhXdxS1Bvb9IllKPqzRnXIXTtwcvAwAAANdemNoOAAAA; expires=Fri, 23-Sep-2022 18:03:30 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13524.5 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13481.12 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -182,11 +180,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "c5b88dbf-7593-4e0c-80dd-a2e768c7175a",
+        "client-request-id": "58ff341d-de1f-4d87-939a-b97712fae71d",
         "Connection": "keep-alive",
         "Content-Length": "293",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=Aqxv0WWz-opHqx3rx-uB4NjTtwcvAwAAAEapjNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AhXdxS1Bvb9IllKPqzRnXIXTtwcvAwAAANdemNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.10.6 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -200,22 +198,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "c5b88dbf-7593-4e0c-80dd-a2e768c7175a",
+        "client-request-id": "58ff341d-de1f-4d87-939a-b97712fae71d",
         "Content-Length": "111",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:51 GMT",
+        "Date": "Wed, 24 Aug 2022 18:03:30 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=Aqxv0WWz-opHqx3rx-uB4NjTtwcvBAAAAEapjNoOAAAA; expires=Wed, 14-Sep-2022 20:53:51 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhXdxS1Bvb9IllKPqzRnXIXTtwcvBAAAANdemNoOAAAA; expires=Fri, 23-Sep-2022 18:03:30 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13524.5 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13481.12 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -240,9 +238,9 @@
       "ResponseHeaders": {
         "Content-Length": "330",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:51 GMT",
-        "mise-correlation-id": "201119c6-92de-4b5e-bb23-dc9b5cbf5817",
-        "traceparent": "00-14ee9814617448e7846ca19e567f039a-9162ffa993eb1fb6-00"
+        "Date": "Wed, 24 Aug 2022 18:03:30 GMT",
+        "mise-correlation-id": "059cb8d7-b83d-4c5e-87ca-dff11b02a175",
+        "traceparent": "00-98907c9abb3cdde0e078d56d2c8d5d5e-b613c23959eba4e4-00"
       },
       "ResponseBody": {
         "groupId": "foo",

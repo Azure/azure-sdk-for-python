@@ -3,7 +3,7 @@
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/dpokluda/azure-rest-api-specs/bbf13b0366e5863ce65f84d588ed5681326af0cb/specification/deviceupdate/data-plane/Microsoft.DeviceUpdate/stable/2022-10-01/deviceupdate.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/d01a6a71b73e6b3cac477eae7e78454c3f6d4340/specification/deviceupdate/data-plane/Microsoft.DeviceUpdate/stable/2022-10-01/deviceupdate.json
 output-folder: ../azure/iot/deviceupdate
 namespace: azure.iot.deviceupdate
 package-name: azure-iot-deviceupdate

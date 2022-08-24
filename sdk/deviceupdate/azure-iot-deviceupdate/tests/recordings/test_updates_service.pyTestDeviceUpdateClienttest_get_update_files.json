@@ -17,16 +17,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:16 GMT",
+        "Date": "Wed, 24 Aug 2022 18:02:57 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AvC_dQl5KFZLtUYNCsGZQhDTtwcvBwAAADipjNoOAAAA; expires=Wed, 14-Sep-2022 20:53:17 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqJZhQG0GtNNmcn69prPJ5XTtwcvBwAAAM1emNoOAAAA; expires=Fri, 23-Sep-2022 18:02:57 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13524.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13481.12 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -104,7 +104,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AvC_dQl5KFZLtUYNCsGZQhDTtwcvBwAAADipjNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqJZhQG0GtNNmcn69prPJ5XTtwcvBwAAAM1emNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -115,16 +115,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:16 GMT",
+        "Date": "Wed, 24 Aug 2022 18:02:57 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AvC_dQl5KFZLtUYNCsGZQhDTtwcvBwAAADipjNoOAAAA; expires=Wed, 14-Sep-2022 20:53:17 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqJZhQG0GtNNmcn69prPJ5XTtwcvBwAAAM1emNoOAAAA; expires=Fri, 23-Sep-2022 18:02:57 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13524.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13481.12 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -180,11 +180,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "969e8150-c72d-4534-bc4a-76c163822957",
+        "client-request-id": "b942ee1f-ed4a-4485-a547-da7f2cdcd656",
         "Connection": "keep-alive",
         "Content-Length": "293",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AvC_dQl5KFZLtUYNCsGZQhDTtwcvBwAAADipjNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AqJZhQG0GtNNmcn69prPJ5XTtwcvBwAAAM1emNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.10.6 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -198,23 +198,23 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "969e8150-c72d-4534-bc4a-76c163822957",
+        "client-request-id": "b942ee1f-ed4a-4485-a547-da7f2cdcd656",
         "Content-Length": "111",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-5YVXRMuG38avd8iaUCEojg\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-oW0FoIa_hgmVi236L_bD_w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:16 GMT",
+        "Date": "Wed, 24 Aug 2022 18:02:57 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AvC_dQl5KFZLtUYNCsGZQhDTtwcvCAAAADipjNoOAAAA; expires=Wed, 14-Sep-2022 20:53:17 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AqJZhQG0GtNNmcn69prPJ5XTtwcvCAAAAM1emNoOAAAA; expires=Fri, 23-Sep-2022 18:02:57 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13524.5 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13481.12 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -239,9 +239,9 @@
       "ResponseHeaders": {
         "Content-Length": "31",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 15 Aug 2022 20:53:16 GMT",
-        "mise-correlation-id": "a6bd5662-b960-481a-84ea-c0c3a2628092",
-        "traceparent": "00-e60a13e83b550ca62c721b3d30d94e51-55025a66d5834c0c-00"
+        "Date": "Wed, 24 Aug 2022 18:02:57 GMT",
+        "mise-correlation-id": "381a1ed8-e34b-4f88-a30c-9695dbbfcaf3",
+        "traceparent": "00-8e8da4364aac4b5512041a861fb0403e-975bb0146474e2f0-00"
       },
       "ResponseBody": {
         "value": [
