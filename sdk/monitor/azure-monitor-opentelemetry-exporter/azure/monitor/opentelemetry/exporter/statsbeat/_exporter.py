@@ -9,9 +9,7 @@ from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_METRIC_NAME_MAPPINGS
-
-_logger = logging.getLogger(__name__)
+from azure.monitor.opentelemetry.exporter._constants import _STATSBEAT_METRIC_NAME_MAPPINGS
 
 
 class _StatsBeatExporter(AzureMonitorMetricExporter):

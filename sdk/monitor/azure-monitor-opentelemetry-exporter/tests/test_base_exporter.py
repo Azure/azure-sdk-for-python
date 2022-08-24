@@ -17,9 +17,14 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter._constants import (
+    _REQ_DURATION_NAME,
+    _REQ_EXCEPTION_NAME,
+    _REQ_FAILURE_NAME,
+    _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
-    _REQUESTS_MAP,
+    _REQ_THROTTLE_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -211,8 +216,9 @@ class TestBaseExporter(unittest.TestCase):
                 errors=[],
             )
             result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(len(_REQUESTS_MAP), 1)
+        self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_SUCCESS_NAME[1]], 1)
+        self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.SUCCESS)
 
     def test_transmission_206_retry(self):
@@ -286,7 +292,7 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(439, "{}")
             result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_500(self):
         with mock.patch("requests.Session.request") as post:

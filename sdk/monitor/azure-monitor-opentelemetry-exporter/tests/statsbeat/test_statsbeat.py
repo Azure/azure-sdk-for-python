@@ -7,10 +7,12 @@ from unittest import mock
 from opentelemetry.sdk.metrics import MeterProvider, ObservableGauge
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
+from azure.monitor.opentelemetry.exporter._constants import (
+    _REQ_SUCCESS_NAME,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat import _statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQ_SUCCESS_NAME,
     _REQUESTS_MAP,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
