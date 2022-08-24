@@ -83,16 +83,6 @@ class AutoScaleTest(unittest.TestCase):
 
         await self.created_database.delete_container(created_container)
 
-    async def test_auto_scale_settings(self):
-        # Testing for wrong attributes for the auto_scale_settings in the created container
-        with pytest.raises(AssertionError) as e:
-            created_container = await self.created_database.create_container(
-                id='container_with_wrong_auto_scale_settings',
-                partition_key=PartitionKey(path="/id"),
-                offer_throughput="wrong setting")
-            assert "Wrong attribute" in str(e.value)
-            await self.created_database.delete_container(created_container)
-
     async def test_create_container_if_not_exist(self):
         # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = await self.created_database.create_container_if_not_exists(
