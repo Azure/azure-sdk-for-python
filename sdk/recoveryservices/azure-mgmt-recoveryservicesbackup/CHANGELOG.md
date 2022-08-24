@@ -1,5 +1,12 @@
 # Release History
 
+## 5.1.0b1 (2022-08-24)
+
+### Features Added
+
+  - Model AzureIaaSVMProtectionPolicy has a new parameter tiering_policy
+  - Model SubProtectionPolicy has a new parameter tiering_policy
+
 ## 5.0.0 (2022-05-16)
 
 **Breaking changes**
