@@ -198,7 +198,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-communication-phonenumbers msrest>=0.7.1
 #override azure-communication-chat msrest>=0.7.1
 #override azure-communication-chat azure-core<2.0.0,>=1.24.0
-#override azure-communication-sms azure-core<2.0.0,>=1.15.0
+#override azure-communication-sms azure-core<2.0.0,>=1.24.0
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.15.0
 #override azure-communication-identity azure-core<2.0.0,>=1.24.0
 #override azure-communication-identity msrest>=0.7.1
