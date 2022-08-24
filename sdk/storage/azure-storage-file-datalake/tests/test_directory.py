@@ -1,4 +1,3 @@
-# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -6,6 +5,7 @@
 # --------------------------------------------------------------------------
 import unittest
 from datetime import datetime, timedelta
+from time import sleep
 
 import pytest
 
@@ -568,26 +568,44 @@ class TestDirectory(StorageRecordedTestCase):
     def test_set_access_control_recursive_with_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        variables = kwargs.pop('variables', {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # if not self.is_playback():
-        #     return
+
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
-        # Using an AAD identity, create a directory to put files under that
+        # Create files and directories with provided owner except file3
+        test_guid = "5d56d308-df82-4266-ba63-ef1da3945873"
         directory_name = self._get_directory_reference()
-        token_credential = self.generate_oauth_token()
-        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token_credential)
-        directory_client.create_directory()
-        num_sub_dirs = 5
-        num_file_per_sub_dir = 5
-        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory(owner=test_guid)
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        directory_client.get_file_client('file3').create_file()
 
-        # Create a file as super user
-        self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
-            .create_file()
+        # User delegation SAS with provided owner permissions
+        token_credential = self.generate_oauth_token()
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        owner_dsc = DataLakeServiceClient(url, credential=token_credential)
+        user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
+        sas_token = generate_directory_sas(datalake_storage_account_name,
+                                           self.file_system_name,
+                                           directory_name,
+                                           user_delegation_key,
+                                           permission='racwdlmeop',
+                                           expiry=expiry_time,
+                                           agent_object_id=test_guid
+                                           )
+
+        if self.is_live:
+            sleep(10)
+
+        owner_dir_client = DataLakeDirectoryClient(url, self.file_system_name, directory_name, sas_token)
 
         acl = 'user::rwx,group::r-x,other::rwx'
         running_tally = AccessControlChangeCounters(0, 0, 0)
@@ -599,7 +617,7 @@ class TestDirectory(StorageRecordedTestCase):
             running_tally.failure_count += resp.batch_counters.failure_count
             failed_entries.append(resp.batch_failures)
 
-        summary = directory_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
+        summary = owner_dir_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
                                                                 batch_size=2)
 
         # Assert
@@ -609,31 +627,51 @@ class TestDirectory(StorageRecordedTestCase):
         assert summary.counters.failure_count == running_tally.failure_count
         assert len(failed_entries) == 1
 
+        return variables
+
     @DataLakePreparer()
     @recorded_by_proxy
     def test_set_access_control_recursive_stop_on_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        variables = kwargs.pop('variables', {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        if not self.is_playback():
-            return
+
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
-        # Using an AAD identity, create a directory to put files under that
+        # Create files and directories with provided owner except file3
+        test_guid = "5d56d308-df82-4266-ba63-ef1da3945873"
         directory_name = self._get_directory_reference()
-        token_credential = self.generate_oauth_token()
-        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token_credential)
-        directory_client.create_directory()
-        num_sub_dirs = 5
-        num_file_per_sub_dir = 5
-        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory(owner=test_guid)
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid,permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid,permissions='0777')
+        directory_client.get_file_client('file3').create_file()
 
-        # Create a file as super user
-        self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
-            .create_file()
+        # User delegation SAS with provided owner permissions
+        token_credential = self.generate_oauth_token()
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        owner_dsc = DataLakeServiceClient(url, credential=token_credential)
+        user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
+        sas_token = generate_directory_sas(datalake_storage_account_name,
+                                           self.file_system_name,
+                                           directory_name,
+                                           user_delegation_key,
+                                           permission='racwdlmeop',
+                                           expiry=expiry_time,
+                                           agent_object_id=test_guid
+                                           )
+
+        if self.is_live:
+            sleep(10)
+
+        owner_dir_client = DataLakeDirectoryClient(url, self.file_system_name, directory_name, sas_token)
 
         acl = 'user::rwx,group::r-x,other::rwx'
         running_tally = AccessControlChangeCounters(0, 0, 0)
@@ -644,10 +682,10 @@ class TestDirectory(StorageRecordedTestCase):
             running_tally.files_successful += resp.batch_counters.files_successful
             running_tally.failure_count += resp.batch_counters.failure_count
             if resp.batch_failures:
-                failed_entries.extend(resp.batch_failures)
+                failed_entries.append(resp.batch_failures)
 
-        summary = directory_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
-                                                                batch_size=6)
+        summary = owner_dir_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
+                                                                batch_size=2)
 
         # Assert
         assert summary.counters.failure_count == 1
@@ -656,33 +694,53 @@ class TestDirectory(StorageRecordedTestCase):
         assert summary.counters.failure_count == running_tally.failure_count
         assert len(failed_entries) == 1
 
+        return variables
+
     @DataLakePreparer()
     @recorded_by_proxy
     def test_set_access_control_recursive_continue_on_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        variables = kwargs.pop('variables', {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        if not self.is_playback():
-            return
+
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
-        # Using an AAD identity, create a directory to put files under that
+        # Create files and directories with provided owner except file3, dir3
+        test_guid = "5d56d308-df82-4266-ba63-ef1da3945873"
         directory_name = self._get_directory_reference()
-        token_credential = self.generate_oauth_token()
-        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token_credential)
-        directory_client.create_directory()
-        num_sub_dirs = 5
-        num_file_per_sub_dir = 5
-        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory(owner=test_guid)
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
 
-        # Create a file as super user
-        self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
-            .create_file()
-        self.dsc.get_directory_client(self.file_system_name, directory_name).get_sub_directory_client("cannottouchthisdir") \
-            .create_directory()
+        directory_client.get_file_client('file3').create_file()
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/dir3').create_directory()
+
+        # User delegation SAS with provided owner permissions
+        token_credential = self.generate_oauth_token()
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        owner_dsc = DataLakeServiceClient(url, credential=token_credential)
+        user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
+        sas_token = generate_directory_sas(datalake_storage_account_name,
+                                           self.file_system_name,
+                                           directory_name,
+                                           user_delegation_key,
+                                           permission='racwdlmeop',
+                                           expiry=expiry_time,
+                                           agent_object_id=test_guid
+                                           )
+
+        if self.is_live:
+            sleep(10)
+
+        owner_dir_client = DataLakeDirectoryClient(url, self.file_system_name, directory_name, sas_token)
 
         acl = 'user::rwx,group::r-x,other::rwx'
         running_tally = AccessControlChangeCounters(0, 0, 0)
@@ -693,12 +751,10 @@ class TestDirectory(StorageRecordedTestCase):
             running_tally.files_successful += resp.batch_counters.files_successful
             running_tally.failure_count += resp.batch_counters.failure_count
             if resp.batch_failures:
-                failed_entries.extend(resp.batch_failures)
+                failed_entries.append(resp.batch_failures)
 
-        # set acl for all directories
-        summary = directory_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
-                                                                batch_size=6,
-                                                                continue_on_failure=True)
+        summary = owner_dir_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
+                                                                batch_size=2, continue_on_failure=True)
 
         # Assert
         assert summary.counters.failure_count == 2
@@ -706,20 +762,8 @@ class TestDirectory(StorageRecordedTestCase):
         assert summary.counters.files_successful == running_tally.files_successful
         assert summary.counters.failure_count == running_tally.failure_count
         assert len(failed_entries) == 2
-        assert summary.continuation is None
 
-        # reset the counter, set acl for part of the directories
-        running_tally = AccessControlChangeCounters(0, 0, 0)
-        failed_entries = []
-        summary2 = directory_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
-                                                                 batch_size=6, max_batches=3,
-                                                                 continue_on_failure=True)
-        assert summary2.counters.failure_count == 2
-        assert summary2.counters.directories_successful == running_tally.directories_successful
-        assert summary2.counters.files_successful == running_tally.files_successful
-        assert summary2.counters.failure_count == running_tally.failure_count
-        assert len(failed_entries) == 2
-        assert summary2.continuation is not None
+        return variables
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -857,26 +901,44 @@ class TestDirectory(StorageRecordedTestCase):
     def test_update_access_control_recursive_with_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        variables = kwargs.pop('variables', {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        if not self.is_playback():
-            return
+
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
-        # Using an AAD identity, create a directory to put files under that
+        # Create files and directories with provided owner except file3
+        test_guid = "5d56d308-df82-4266-ba63-ef1da3945873"
         directory_name = self._get_directory_reference()
-        token_credential = self.generate_oauth_token()
-        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token_credential)
-        directory_client.create_directory()
-        num_sub_dirs = 5
-        num_file_per_sub_dir = 5
-        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory(owner=test_guid)
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        directory_client.get_file_client('file3').create_file()
 
-        # Create a file as super user
-        self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
-            .create_file()
+        # User delegation SAS with provided owner permissions
+        token_credential = self.generate_oauth_token()
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        owner_dsc = DataLakeServiceClient(url, credential=token_credential)
+        user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
+        sas_token = generate_directory_sas(datalake_storage_account_name,
+                                           self.file_system_name,
+                                           directory_name,
+                                           user_delegation_key,
+                                           permission='racwdlmeop',
+                                           expiry=expiry_time,
+                                           agent_object_id=test_guid
+                                           )
+
+        if self.is_live:
+            sleep(10)
+
+        owner_dir_client = DataLakeDirectoryClient(url, self.file_system_name, directory_name, sas_token)
 
         acl = 'user::rwx,group::r-x,other::rwx'
         running_tally = AccessControlChangeCounters(0, 0, 0)
@@ -886,9 +948,10 @@ class TestDirectory(StorageRecordedTestCase):
             running_tally.directories_successful += resp.batch_counters.directories_successful
             running_tally.files_successful += resp.batch_counters.files_successful
             running_tally.failure_count += resp.batch_counters.failure_count
-            failed_entries.append(resp.batch_failures)
+            if resp.batch_failures:
+                failed_entries.append(resp.batch_failures)
 
-        summary = directory_client.update_access_control_recursive(acl=acl, progress_hook=progress_callback,
+        summary = owner_dir_client.update_access_control_recursive(acl=acl, progress_hook=progress_callback,
                                                                    batch_size=2)
 
         # Assert
@@ -897,6 +960,8 @@ class TestDirectory(StorageRecordedTestCase):
         assert summary.counters.files_successful == running_tally.files_successful
         assert summary.counters.failure_count == running_tally.failure_count
         assert len(failed_entries) == 1
+
+        return variables
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -983,26 +1048,44 @@ class TestDirectory(StorageRecordedTestCase):
     def test_remove_access_control_recursive_with_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        variables = kwargs.pop('variables', {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        if not self.is_playback():
-            return
+
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
-        # Using an AAD identity, create a directory to put files under that
+        # Create files and directories with provided owner except file3
+        test_guid = "5d56d308-df82-4266-ba63-ef1da3945873"
         directory_name = self._get_directory_reference()
-        token_credential = self.generate_oauth_token()
-        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
-                                                   credential=token_credential)
-        directory_client.create_directory()
-        num_sub_dirs = 5
-        num_file_per_sub_dir = 5
-        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory(owner=test_guid)
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        directory_client.get_file_client('file3').create_file()
 
-        # Create a file as super user
-        self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
-            .create_file()
+        # User delegation SAS with provided owner permissions
+        token_credential = self.generate_oauth_token()
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        owner_dsc = DataLakeServiceClient(url, credential=token_credential)
+        user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
+        sas_token = generate_directory_sas(datalake_storage_account_name,
+                                           self.file_system_name,
+                                           directory_name,
+                                           user_delegation_key,
+                                           permission='racwdlmeop',
+                                           expiry=expiry_time,
+                                           agent_object_id=test_guid
+                                           )
+
+        if self.is_live:
+            sleep(10)
+
+        owner_dir_client = DataLakeDirectoryClient(url, self.file_system_name, directory_name, sas_token)
 
         running_tally = AccessControlChangeCounters(0, 0, 0)
         failed_entries = []
@@ -1011,10 +1094,10 @@ class TestDirectory(StorageRecordedTestCase):
             running_tally.directories_successful += resp.batch_counters.directories_successful
             running_tally.files_successful += resp.batch_counters.files_successful
             running_tally.failure_count += resp.batch_counters.failure_count
-            failed_entries.append(resp.batch_failures)
+            if resp.batch_failures:
+                failed_entries.append(resp.batch_failures)
 
-        summary = directory_client.remove_access_control_recursive(acl=REMOVE_ACL, progress_hook=progress_callback,
-                                                                   batch_size=2)
+        summary = owner_dir_client.remove_access_control_recursive(acl=REMOVE_ACL, progress_hook=progress_callback, batch_size=2)
 
         # Assert
         assert summary.counters.failure_count == 1
@@ -1022,6 +1105,8 @@ class TestDirectory(StorageRecordedTestCase):
         assert summary.counters.files_successful == running_tally.files_successful
         assert summary.counters.failure_count == running_tally.failure_count
         assert len(failed_entries) == 1
+
+        return variables
 
     @DataLakePreparer()
     @recorded_by_proxy
