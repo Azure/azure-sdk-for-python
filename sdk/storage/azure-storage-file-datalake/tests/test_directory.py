@@ -563,8 +563,8 @@ class TestDirectory(StorageRecordedTestCase):
         assert access_control is not None
         assert acl == access_control['acl']
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_set_access_control_recursive_with_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -630,8 +630,8 @@ class TestDirectory(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_set_access_control_recursive_stop_on_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -697,8 +697,8 @@ class TestDirectory(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_set_access_control_recursive_continue_on_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -897,8 +897,8 @@ class TestDirectory(StorageRecordedTestCase):
         assert access_control is not None
         assert acl == access_control['acl']
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_update_access_control_recursive_with_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1044,8 +1044,8 @@ class TestDirectory(StorageRecordedTestCase):
         assert summary.counters.files_successful == last_response.counters.files_successful
         assert summary.counters.failure_count == last_response.counters.failure_count
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_remove_access_control_recursive_with_failures(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
