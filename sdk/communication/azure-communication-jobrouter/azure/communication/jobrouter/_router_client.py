@@ -182,6 +182,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return RouterWorker
         :rtype ~azure.communication.jobrouter.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START create_worker]
+                :end-before: [END create_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to create a worker
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -246,6 +255,33 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return RouterWorker
         :rtype ~azure.communication.jobrouter.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START update_worker]
+                :end-before: [END update_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to update a worker
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START register_worker]
+                :end-before: [END register_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to register a worker
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START deregister_worker]
+                :end-before: [END deregister_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to de-register a worker
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -320,6 +356,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return RouterWorker
         :rtype ~azure.communication.jobrouter.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START get_worker]
+                :end-before: [END get_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to get a worker
         """
         if not worker_id:
             raise ValueError("identifier cannot be None.")
@@ -361,6 +406,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: An iterator like instance of RouterWorkerItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.RouterWorkerItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START list_workers]
+                :end-before: [END list_workers]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to retrieve workers
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -406,6 +460,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START delete_worker]
+                :end-before: [END delete_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to delete an existing worker
         """
 
         if not worker_id:
