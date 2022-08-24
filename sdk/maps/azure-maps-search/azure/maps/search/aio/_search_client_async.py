@@ -36,12 +36,6 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.polling import AsyncLROPoller
 
-LatLon = namedtuple("LatLon", "lat lon")
-
-def latlon_to_string(latlon=LatLon(0, 0)):
-    return f"{latlon.lat}, {latlon.lon}"
-
-
 def get_batch_id_from_poller(polling_method):
     if hasattr(polling_method, "_operation"):
         operation=polling_method._operation
@@ -138,7 +132,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :keyword Tuple coordinates: coordinates as (lat, long)
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :keyword BoundingBox bounding_box: Top left and bottom right position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
+         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :keyword str language: Language in which search results should be returned. Should be one of
          supported IETF language tags, case insensitive. When data in specified language is not
          available for a specific field, default language is used.
@@ -191,8 +186,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
             query,
             lat=coordinates[0],
             lon=coordinates[1],
-            btm_right=latlon_to_string(bounding_box.bottom_right),
-            top_left=latlon_to_string(bounding_box.top_left),
+            btm_right=f"{bounding_box.south}, {bounding_box.east}",
+            top_left=f"{bounding_box.north}, {bounding_box.west}",
             **kwargs
         )
         return SearchAddressResult(summary=result.summary, results=result.results)
@@ -470,7 +465,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :keyword Tuple coordinates: coordinates as (lat, lon)
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :keyword BoundingBox bounding_box: Top left and bottom right position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
+         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :keyword str language: Language in which search results should be returned.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
@@ -496,8 +492,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
             query,
             lat=coordinates[0],
             lon=coordinates[1],
-            btm_right=latlon_to_string(bounding_box.bottom_right),
-            top_left=latlon_to_string(bounding_box.top_left),
+            btm_right=f"{bounding_box.south}, {bounding_box.east}",
+            top_left=f"{bounding_box.north}, {bounding_box.west}",
             **kwargs
         )
         return SearchAddressResult(result.summary, result.results)
@@ -584,7 +580,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :paramtype country_filter: list[str]
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :keyword BoundingBox bounding_box: Top left and bottom right position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
+         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :keyword str language: Language in which search results should be returned.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
@@ -614,8 +611,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
             query,
             lat=coordinates[0],
             lon=coordinates[1],
-            btm_right=latlon_to_string(bounding_box.bottom_right),
-            top_left=latlon_to_string(bounding_box.top_left),
+            btm_right=f"{bounding_box.south}, {bounding_box.east}",
+            top_left=f"{bounding_box.north}, {bounding_box.west}",
             **kwargs
         )
         return SearchAddressResult(result.summary, result.results)
@@ -653,7 +650,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :keyword country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :paramtype country_filter: list[str]
-        :keyword BoundingBox bounding_box: Top left and bottom right position of the bounding box. E.g. 37.553,-122.453.
+        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
+         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :keyword str language: Language in which search results should be returned.
         :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
          the results.
@@ -674,8 +672,8 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
             query,
             lat=coordinates[0],
             lon=coordinates[1],
-            btm_right=latlon_to_string(bounding_box.bottom_right),
-            top_left=latlon_to_string(bounding_box.top_left),
+            btm_right=f"{bounding_box.south}, {bounding_box.east}",
+            top_left=f"{bounding_box.north}, {bounding_box.west}",
             **kwargs
         )
         return SearchAddressResult(result.summary, result.results)

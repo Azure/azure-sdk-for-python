@@ -24,10 +24,11 @@ def fuzzy_search():
     # [START fuzzy_search]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
+    from azure.maps.search.models import BoundingBox
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.fuzzy_search(query="starbucks", coordinates=(25.105497, 121.597366))
+    result = maps_search_client.fuzzy_search(query="starbucks", bounding_box=BoundingBox(-122.4594, 25.105497, 121.597366, 121.597366))
 
     print("Get Search Fuzzy with coordinates with search query: " + result.query)
     print("Fuzzy level: {}".format(result.fuzzy_level))
