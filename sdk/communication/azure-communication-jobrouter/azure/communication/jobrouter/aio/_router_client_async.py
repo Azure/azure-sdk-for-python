@@ -529,6 +529,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return RouterJob
         :rtype ~azure.communication.jobrouter.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START create_job_async]
+                :end-before: [END create_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to create a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -609,6 +618,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return RouterJob
         :rtype ~azure.communication.jobrouter.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START update_job_async]
+                :end-before: [END update_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to update a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -711,6 +729,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return RouterJob
         :rtype ~azure.communication.jobrouter.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START get_job_async]
+                :end-before: [END get_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to get a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -750,6 +777,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: An iterator like instance of RouterJobItem
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterJobItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START list_jobs_async]
+                :end-before: [END list_jobs_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to retrieve jobs
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -795,6 +831,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START delete_job_async]
+                :end-before: [END delete_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to delete a job
         """
 
         if not job_id:
@@ -819,6 +864,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: JobPositionDetails
         :rtype: ~azure.communication.jobrouter.JobPositionDetails
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START get_job_position_async]
+                :end-before: [END get_job_position_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to get a job position in queue
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -858,6 +912,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: CloseJobResult
         :rtype: ~azure.communication.jobrouter.CloseJobResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START close_job_async]
+                :end-before: [END close_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to close a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -905,6 +968,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: CompleteJobResult
         :rtype: ~azure.communication.jobrouter.CompleteJobResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START complete_job_async]
+                :end-before: [END complete_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to complete a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -950,6 +1022,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: CancelJobResult
         :rtype: ~azure.communication.jobrouter.CancelJobResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START cancel_job_async]
+                :end-before: [END cancel_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to cancel a job
         """
 
         if not job_id:
@@ -985,6 +1066,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: ReclassifyJobResult
         :rtype: ~azure.communication.jobrouter.ReclassifyJobResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START reclassify_job_async]
+                :end-before: [END reclassify_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to re-classify a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -1019,6 +1109,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: AcceptJobOfferResponse
         :rtype: ~azure.communication.jobrouter.AcceptJobOfferResponse
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START accept_job_offer_async]
+                :end-before: [END accept_job_offer_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to accept a job offer
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -1050,6 +1149,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :return: DeclineJobOfferResult
         :rtype: ~azure.communication.jobrouter.DeclineJobOfferResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START decline_job_offer_async]
+                :end-before: [END decline_job_offer_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to decline a job offer
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")

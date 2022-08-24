@@ -1,9 +1,9 @@
 # Azure Communication JobRouter Package client library for Python
 
 This package contains a Python SDK for Azure Communication Services for JobRouter.
-Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
+Read more about Azure Communication Services [here][product_docs]
 
-[//]: # ([Source code]&#40;https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter&#41; | [Package &#40;Pypi&#41;]&#40;https://pypi.org/project/azure-communication-sms/&#41; | [API reference documentation]&#40;https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms&#41; | [Product documentation]&#40;https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python&#41;)
+[Source code][source] | [Package (Pypi)][pypi] | [Product documentation][product_docs]
 
 ## _Disclaimer_
 
@@ -12,14 +12,14 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 ## Getting started
 
 ### Prerequisites
+You need an [Azure subscription][azure_sub] and a [Communication Service Resource][communication_resource_docs] to use this package.
 
 - Python 3.6 or later is required to use this package.
-- A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
-- You must have a phone number configured that is associated with an Azure subscription
+- To create a new Communication Service, you can use the [Azure Portal][communication_resource_create_portal], the [Azure PowerShell][communication_resource_create_power_shell]
 
 ### Install the package
 
-Install the Azure Communication JobRouter client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Communication JobRouter client library for Python with [pip][pip]:
 
 ```bash
 pip install azure-communication-jobrouter
@@ -28,74 +28,48 @@ pip install azure-communication-jobrouter
 ## Key concepts
 
 ### Job
-
-A Job is a unit of work (demand), which must be routed to an available Worker (supply). A real-world example is an incoming call or chat in the context of a call center.
+A Job represents the unit of work, which needs to be routed to an available Worker.
+A real-world example of this may be an incoming call or chat in the context of a call center.
 
 ### Worker
-
-A Worker is the supply available to handle a Job. When you use the SDK to register a Worker to receive jobs, you can specify:
-
- - One or more queues to listen on.
- - The number of concurrent jobs per Channel that the Worker can handle.
- - A set of Labels that can be used to group and select workers. 
-
-A real-world example is an agent in a call center.
+A Worker represents the supply available to handle a Job. Each worker registers with or more queues to receive jobs.
+A real-world example of this may be an agent working in a call center.
 
 ### Queue
+A Queue represents an ordered list of jobs waiting to be served by a worker.  Workers will register with a queue to receive work from it.
+A real-world example of this may be a call queue in a call center.
 
-A Queue is an ordered list of jobs, that are waiting to be served to a worker. Workers register with a queue to receive work from it.
-
-A real-world example is a call queue in a call center.
-
-### Channel
-
-A Channel is a grouping of jobs by some type. When a worker registers to receive work, they must also specify for which channels they can handle work, and how much of each can they handle concurrently. Channels are just a string discriminator and aren't explicitly created.
-
-Real-world examples are `voice calls` or `chats` in a call center.
+## Channel
+A Channel represents a grouping of jobs by some type.  When a worker registers to receive work, they must also specify for which channels they can handle work, and how much of each can they handle concurrently.
+A real-world example of this may be `voice calls` or `chats` in a call center.
 
 ### Offer
-
-An Offer is extended by Job Router to a worker to handle a particular job when it determines a match. You can either accept or decline the offer with the JobRouter SDK. If you ignore the offer, it expires according to the time to live configured on the Distribution Policy.
-
-A real-world example is the ringing of an agent in a call center.
-
+An Offer is extended by JobRouter to a worker to handle a particular job when it determines a match, this notification is normally delivered via [EventGrid][subscribe_events].  The worker can either accept or decline the offer using th JobRouter API, or it will expire according to the time to live configured on the distribution policy.
+A real-world example of this may be the ringing of an agent in a call center.
 
 ### Distribution Policy
+A Distribution Policy represents a configuration set that governs how jobs in a queue are distributed to workers registered with that queue.
+This configuration includes how long an Offer is valid before it expires and the distribution mode, which define the order in which workers are picked when there are multiple available.
 
-A Distribution Policy is a configuration set that controls how jobs in a queue are distributed to workers registered with that queue. This configuration includes:
-
- - How long an Offer is valid before it expires.
- - The distribution mode, which define the order in which workers are picked when there are multiple available.
- - How many concurrent offers can there be for a given job.
+#### Distribution Mode
+The 3 types of modes are
+- **Round Robin**: Workers are ordered by `Id` and the next worker after the previous one that got an offer is picked.
+- **Longest Idle**: The worker that has not been working on a job for the longest.
+- **Best Worker**: You can specify an expression to compare 2 workers to determine which one to pick.
 
 ### Labels
+You can attach labels to workers, jobs and queues.  These are key value pairs that can be of `string`, `number` or `boolean` data types.
+A real-world example of this may be the skill level of a particular worker or the team or geographic location.
 
-You can attach labels to workers, jobs, and queues. Labels are key value pairs that can be of `string`, `number`, or `boolean` data types.
-
-A real-world example is the skill level of a particular worker or the team or geographic location.
-
-### Worker selectors
-
-Worker selectors can be attached to a job in order to target a subset of workers on the queue.
-
-A real-world example is a condition on an incoming call that the agent must have a minimum level of knowledge of a particular product.
+### Label Selectors
+Label selectors can be attached to a job in order to target a subset of workers serving the queue.
+A real-world example of this may be a condition on an incoming call that the agent must have a minimum level of knowledge of a particular product.
 
 ### Classification policy
-
-A classification policy can be used to programmatically select a queue, determine job priority, or attach worker label selectors to a job.
-
-### Queue selectors
-
-Queue selectors can be attached to a classification policy in order to target a queue which fulfills certain conditions.
-This queue is used enqueueing an incoming job.
-
-A real-world example is a condition on an incoming call that the call has to get queued to a queue which supports `chat`.
-
+A classification policy can be used to dynamically select a queue, determine job priority and attach worker label selectors to a job by leveraging a rules engine.
 
 ### Exception policy
-
 An exception policy controls the behavior of a Job based on a trigger and executes a desired action. The exception policy is attached to a Queue so it can control the behavior of Jobs in the Queue.
-
 
 ## Examples
 
@@ -104,143 +78,233 @@ To initialize the SMS Client, the connection string can be used to instantiate.
 Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
 
 ```python
-from azure.communication.jobrouter import RouterClient
+from azure.communication.jobrouter import (
+    RouterClient,
+    RouterAdministrationClient
+)
 from azure.identity import DefaultAzureCredential
 
 connection_string = "endpoint=ENDPOINT;accessKey=KEY"
 router_client = RouterClient.from_connection_string(conn_str = connection_string)
+router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
 endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
 router_client = RouterClient(endpoint, DefaultAzureCredential())
+router_admin_client = RouterAdministrationClient(endpoint, DefaultAzureCredential())
 ```
 
-### Create or update exception policy
-
-Once the client is initialized, the `upsert_exception_policy` method can be invoked to create or update exception policy.
+### Distribution Policy
+Before we can create a Queue, we need a Distribution Policy.
 
 ```python
 from azure.communication.jobrouter import (
-    RouterClient,
-    WaitTimeExceptionTrigger,
-    QueueLengthExceptionTrigger,
-    CancelExceptionAction,
-    ExceptionRule
+    LongestIdleMode,
+    DistributionPolicy
 )
 
-# set `connection_string` to an existing ACS endpoint
-connection_string = "endpoint=ENDPOINT;accessKey=KEY"
-router_client = RouterClient.from_connection_string(conn_str = connection_string)
-print("RouterClient created successfully!")
-
-# define an exception trigger
-# set up a QueueLengthExceptionTrigger with a threshold of 10,
-# i.e., kick off exception if there are already 10 jobs in a queue
-exception_trigger = QueueLengthExceptionTrigger(threshold = 10)
-
-# define an exception action
-# this sets up what action to take when an exception trigger condition is fulfilled
-# for this scenario, we simply cancel job
-exception_action = CancelExceptionAction()
-
-# define the exception rule combining the trigger and action
-# you can chain multiple rules together, so it is important to give a unique
-# `id` to the exception rule. For this use-case, the exception rule will be the following
-
-exception_rule = {
-    "CancelJobWhenQueueThresholdIs10": ExceptionRule(
-        trigger = exception_trigger,
-        actions = {
-            "CancelJobActionWhenQueueIsFull": exception_action
-        }
+distribution_policy: DistributionPolicy = router_admin_client.create_distribution_policy(
+    distribution_policy_id = "distribution-policy-1",
+    offer_ttl_seconds = 24 * 60 * 60,
+    mode = LongestIdleMode(
+        min_concurrent_offers = 1,
+        max_concurrent_offers = 1
     )
-}
-
-# create the exception policy
-# set a unique value to `policy_id`
-policy_id = "exception_policy"
-
-exception_policy = router_client.upsert_exception_policy(
-    identifier = policy_id,
-    name = "TriggerJobCancellationWhenQueueLenIs10",
-    exception_rules = exception_rule
 )
-
-print(f"Exception policy has been successfully created with id: {exception_policy.id}")
-
-# add additional exception rule to policy
-new_exception_trigger = WaitTimeExceptionTrigger(threshold = "PT1H")
-new_exception_rule = ExceptionRule(
-    trigger = new_exception_trigger,
-    actions = {
-        "CancelJobActionWhenJobInQFor1Hr": exception_action
-    }
-)
-exception_policy.exception_rules["CancelJobWhenInQueueFor1Hr"] = new_exception_rule
-
-updated_exception_policy = router_client.upsert_exception_policy(
-    identifier = policy_id,
-    exception_policy = exception_policy
-)
-
-print(f"Exception policy updated with rules: {[k for k,v in updated_exception_policy.exception_rules.items()]}")
-print("Exception policy has been successfully updated")
 ```
-
-- `identifier`: Id of the exception policy.
-- `exception_rules`: (Optional) A dictionary collection of exception rules on the exception policy. Key is the Id of each exception rule.
-- `name`: (Optional) An user-friendly name of the policy.
-- `exception_policy`: (Optional) An instance of exception policy. If this is provided, then upsert request will be made using this. Generally it is expected to be used when updating an existing policy.
-
-### Get an exception policy
-
-Use `get_exception_policy` to retrieve an existing exception policy.
+### Queue
+Next, we can create the queue.
 
 ```python
-policy_id = "exception_policy"
-
-exception_policy = router_client.get_exception_policy(identifier = policy_id)
-
-print(f"Successfully fetched exception policy with id: {exception_policy.id}")
+from azure.communication.jobrouter import (
+    JobQueue
+)
+queue: JobQueue = router_admin_client.create_queue(
+    queue_id = "queue-1",
+    distribution_policy_id = "distribution-policy-1"
+)
 ```
 
-- `identifier`: Id of the exception policy.
+### Job
+Now, we can submit a job directly to that queue, with a worker selector the requires the worker to have the label `Some-Skill` greater than 10.
+```python
+from azure.communication.jobrouter import (
+    RouterJob,
+    WorkerSelector,
+    LabelOperator
+)
 
-### List exception policies
+job: RouterJob = router_client.create_job(
+    job_id = "jobId-1",
+    channel_id = "my-channel",
+    queue_id = "queue-1",
+    channel_reference = "12345",
+    priority = 1,
+    requested_worker_selectors = [
+        WorkerSelector(key = "Some-Skill", label_operator = LabelOperator.EQUAL, value = 10)
+    ]
+)
+```
 
-Use `list_exception_policies` to retrieve a list of exception policies that have been already created.
+### Worker
+Now, we register a worker to receive work from that queue, with a label of `Some-Skill` equal to 11.
+```python
+from azure.communication.jobrouter import (
+    RouterWorker,
+    QueueAssignment,
+    ChannelConfiguration
+)
+
+worker = router_client.create_worker(
+    worker_id = "worker-1",
+    total_capacity = 1,
+    queue_assignments = {
+        "queue-1": QueueAssignment()
+    },
+    labels = {
+        "Some-Skill": 11
+    },
+    channel_configurations = {
+        "my-channel": ChannelConfiguration(capacity_cost_per_job = 1)
+    },
+    available_for_offers = True
+)
+```
+
+### Offer
+We should get a [RouterWorkerOfferIssued][offer_issued_event_schema] from our [EventGrid subscription][subscribe_events].
+
+There are several different Azure services that act as a [event handler][event_grid_event_handlers].
+For this scenario, we are going to assume Webhooks for event delivery. [Learn more about Webhook event delivery][webhook_event_grid_event_delivery]
+
+Once events are delivered to the event handler, we can deserialize the JSON payload into a list of events.
 
 ```python
-exception_policy_iterator = router_client.list_exception_policies(results_per_page = 10)
+# Parse the JSON payload into a list of events
+from azure.eventgrid import EventGridEvent
+import json
 
-for policy_page in exception_policy_iterator.by_page():
-    policies_in_page = list(policy_page)
-    print(f"Retrieved {len(policies_in_page)} policies in current page")
-
-    for ep in policies_in_page:
-        print(f"Retrieved exception policy with id: {ep.id}")
-
-print(f"Successfully completed fetching exception policies")
+## deserialize payload into a list of typed Events
+events = [EventGridEvent.from_json(json.loads(msg)) for msg in payload]
 ```
-- `results_per_page`: (Optional) The maximum number of policies to be returned per page.
-
-### Delete an exception policy
-
-Use `delete_exception_policy` to delete an exception policy.
 
 ```python
-router_client.delete_exception_policy(identifier = policy_id)
+offer_id = ""
+for event in events:
+    if event.event_type == "Microsoft.Communication.RouterWorkerOfferIssued":
+        offer_id = event.data.offer_id
+    else:
+        continue
 ```
 
-- `identifier`: Id of the exception policy.
+However, we could also wait a few seconds and then query the worker directly against the JobRouter API to see if an offer was issued to it.
+```python
+from azure.communication.jobrouter import (
+    RouterWorker,
+)
+
+router_worker: RouterWorker = router_client.get_worker(worker_id = "worker-1")
+
+for offer in router_worker.offers:
+    print(f"Worker {router_worker.id} has an active offer for job {offer.job_id}")
+```
+### Accept an offer
+Once a worker receives an offer, it can take two possible actions: accept or decline. We are going to accept the offer.
+```python
+from azure.communication.jobrouter import (
+    JobOffer,
+    AcceptJobOfferResult,
+    RouterJobStatus
+)
+
+# fetching the offer id
+job_offer: JobOffer = [offer for offer in router_worker.offers if offer.job_id == "jobId-1"][0]
+offer_id = job_offer.id
+
+# accepting the offer sent to `worker-1`
+accept_job_offer_result: AcceptJobOfferResult = router_client.accept_job_offer(
+    worker_id = "worker-1",
+    offer_id = offer_id
+)
+
+print(f"Offer: {job_offer.id} sent to worker: {router_worker.id} has been accepted")
+print(f"Job has been assigned to worker: {router_worker.id} with assignment: {accept_job_offer_result.assignment_id}")
+
+# verify job assignment is populated when querying job
+updated_job = router_client.get_job(job_id = "jobId-1")
+print(f"Job assignment has been successful: {updated_job.job_status == RouterJobStatus.Assigned and accept_job_offer_result.assignment_id in updated_job.assignments}")
+```
+
+### Completing a job
+Once the worker is done with the job, the worker has to mark the job as `completed`.
+```python
+import datetime
+from azure.communication.jobrouter import (
+    JobOffer,
+    AcceptJobOfferResult,
+    RouterJobStatus,
+    CompleteJobResult
+)
+
+complete_job_result: CompleteJobResult = router_client.complete_job(
+    job_id = "jobId-1",
+    assignment_id = accept_job_offer_result.assignment_id,
+    note = f"Job has been completed by {router_worker.id} at {datetime.datetime.utcnow()}"
+)
+
+print(f"Job has been successfully completed.")
+```
+
+### Closing a job
+After a job has been completed, the worker can perform wrap up actions to the job before closing the job and finally releasing its capacity to accept more incoming jobs
+```python
+from azure.communication.jobrouter import (
+    CloseJobResult,
+    RouterJob,
+    RouterJobStatus
+)
+
+close_job_result: CloseJobResult = router_client.close_job(
+    job_id = "jobId-1",
+    assignment_id = accept_job_offer_result.assignment_id,
+    note = f"Job has been closed by {router_worker.id} at {datetime.datetime.utcnow()}"
+)
+
+print(f"Job has been successfully closed.")
+
+update_job: RouterJob = router_client.get_job(job_id = "jobId-1")
+print(f"Updated job status: {update_job.job_status == RouterJobStatus.CLOSED}")
+```
+
+```python
+import time
+from datetime import datetime, timedelta
+from azure.communication.jobrouter import (
+    CloseJobResult,
+    RouterJob,
+    RouterJobStatus
+)
+
+close_job_in_future_result: CloseJobResult = router_client.close_job(
+    job_id = "jobId-1",
+    assignment_id = accept_job_offer_result.assignment_id,
+    note = f"Job has been closed by {router_worker.id} at {datetime.utcnow()}",
+    close_time = datetime.utcnow() + timedelta(seconds = 2)
+)
+
+print(f"Job has been marked to close")
+time.sleep(secs = 2)
+update_job: RouterJob = router_client.get_job(job_id = "jobId-1")
+print(f"Updated job status: {update_job.job_status == RouterJobStatus.CLOSED}")
+```
 
 ## Troubleshooting
 
 Running into issues? This section should contain details as to what to do there.
 
 ## Next steps
-- [Read more about Router in Azure Communication Services][router_concepts]
+- [Read more about Router in Azure Communication Services][nextsteps]
 
 ### More sample code
 Please take a look at the [samples][job_router_samples] directory for detailed examples of how to use this library.
@@ -251,16 +315,31 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the
-PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][coc]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
 
 <!-- LINKS -->
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
-[router_concepts]: https://docs.microsoft.com/azure/communication-services/concepts/router/concepts
-<! -- [job_router_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-jobrouter/samples -->
+[azure_sub]: https://azure.microsoft.com/free/python/
+[cla]: https://cla.microsoft.com
+[coc]: https://opensource.microsoft.com/codeofconduct/
+[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[coc_contact]: mailto:opencode@microsoft.com
+[communication_resource_docs]: https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp
+[communication_resource_create_portal]:  https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp
+[communication_resource_create_power_shell]: https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice
+[communication_resource_create_net]: https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-net
+[nextsteps]:https://docs.microsoft.com/azure/communication-services/concepts/router/concepts
+[source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter
+[product_docs]: https://docs.microsoft.com/azure/communication-services/overview
+[classification_concepts]: https://docs.microsoft.com/azure/communication-services/concepts/router/classification-concepts
+[subscribe_events]: https://docs.microsoft.com/azure/communication-services/how-tos/router-sdk/subscribe-events
+[offer_issued_event_schema]: https://docs.microsoft.com/azure/communication-services/how-tos/router-sdk/subscribe-events#microsoftcommunicationrouterworkerofferissued
+[deserialize_event_grid_event_data]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid#consume-from-servicebus
+[event_grid_event_handlers]: https://docs.microsoft.com/azure/event-grid/event-handlers
+[webhook_event_grid_event_delivery]: https://docs.microsoft.com/azure/event-grid/webhook-event-delivery
+[pypi]: https://pypi.org
+[pip]: https://pypi.org/project/pip/
+
+[//]: # ([job_router_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-jobrouter/samples)
