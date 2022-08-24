@@ -696,22 +696,9 @@ def _set_throughput_options(offer, options):
     # type: (int, Dict[str, Any]) -> Any
     offer_throughput = offer
     request_options = options
-    # if offer_throughput is not None:
-    #     try:
-    #         if offer_throughput.auto_scale_max_throughput:
-    #             request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
-    #         elif offer_throughput.auto_scale_increment_percent:
-    #             raise ValueError("auto_scale_max_throughput must be supplied in "
-    #                              "conjunction with auto_scale_increment_percent")
-    #         elif offer_throughput.offer_throughput:
-    #             request_options["offerThroughput"] = offer_throughput.offer_throughput
-    #
-    #     except AttributeError:
-    #         if isinstance(offer_throughput, int):
-    #             request_options["offerThroughput"] = offer_throughput
 
-    if offer_throughput is not None:
-        if isinstance(offer_throughput, int):
+    if offer is not None:
+        if isinstance(offer, int):
             request_options["offerThroughput"] = offer_throughput
 
         max_throughput = offer.auto_scale_max_throughput
