@@ -679,6 +679,7 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
 
 
 def _stringify_auto_scale(offer):
+    # type: (Dict[str, Any]) -> Any
     auto_scale_params = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
@@ -692,6 +693,7 @@ def _stringify_auto_scale(offer):
 
 
 def _set_throughput_options(offer, options):
+    # type: (int, Dict[str, Any]) -> Any
     offer_throughput = offer
     request_options = options
     if offer_throughput is not None:
@@ -710,19 +712,25 @@ def _set_throughput_options(offer, options):
 
 
 def _deserialize_throughput(throughput):
+    # type: (list) -> Any
     throughput_properties = throughput
-    if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
-            throughput_properties[0]['content']['offerAutopilotSettings']:
-        return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
-            throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
-                                    auto_scale_increment_percent=throughput_properties[0]['content']
-                                    ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                                        'incrementPercent'])
-
-    if 'offerAutopilotSettings' in throughput_properties[0]['content']:
-        return ThroughputProperties(properties=throughput_properties[0],
-                                    auto_scale_max_throughput=throughput_properties[0]['content'][
-                                        'offerAutopilotSettings']['maxThroughput'])
-
-    return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                properties=throughput_properties[0])
+    try:
+        max_throughput = throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput']
+    except (KeyError, TypeError):  # Adding TypeError just in case one of these dicts is None
+        max_throughput = None
+    try:
+        increment_percent = \
+        throughput_properties[0]['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+            'incrementPercent']
+    except (KeyError, TypeError):
+        increment_percent = None
+    try:
+        throughput = throughput_properties[0]["content"]["offerThroughput"]
+    except (KeyError, TypeError):
+        throughput = None
+    return ThroughputProperties(
+        auto_scale_max_throughput=max_throughput,
+        auto_scale_increment_percent=increment_percent,
+        offer_throughput=throughput,
+        properties=throughput_properties[0]
+    )
