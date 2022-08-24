@@ -9,8 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
-- This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+- This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 no longer supported
 
 ## 1.0.0 (2021-07-06)
 
