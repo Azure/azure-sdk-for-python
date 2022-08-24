@@ -199,7 +199,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-communication-chat azure-core<2.0.0,>=1.23.0
 #override azure-communication-sms azure-core<2.0.0,>=1.15.0
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.15.0
-#override azure-communication-identity azure-core<2.0.0,>=1.23.0
+#override azure-communication-identity azure-core<2.0.0,>=1.24.0
+#override azure-communication-identity msrest>=0.7.1
 #override azure-communication-networktraversal azure-core<2.0.0,>=1.23.0
 #override azure-communication-email azure-core<2.0.0,>=1.23.0
 #override azure-communication-email azure-mgmt-core<2.0.0,>=1.3.2
@@ -398,7 +399,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-eventhub azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-logic msrest>=0.7.1
 #override azure-mgmt-logic azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-mgmt-communication msrest>=0.6.21
+#override azure-mgmt-communication msrest>=0.7.1
 #override azure-mgmt-communication azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-marketplaceordering msrest>=0.7.1
 #override azure-mgmt-marketplaceordering azure-mgmt-core>=1.3.2,<2.0.0
