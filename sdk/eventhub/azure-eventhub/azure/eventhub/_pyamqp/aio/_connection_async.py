@@ -363,7 +363,7 @@ class Connection(object):
             self.incoming_endpoints.pop(channel)
             self.outgoing_endpoints.pop(channel)
         except KeyError:
-            end_error = AMQPError(condition=ErrorCondition.InvalidField, description=f"Invalid channel {channel}", info=None)
+            end_error = AMQPError(condition=ErrorCondition.ClientError, description=f"Invalid channel {channel}", info=None)
             _LOGGER.error(f"Invalid channel {channel} ")
             self.close(error=end_error)
 
