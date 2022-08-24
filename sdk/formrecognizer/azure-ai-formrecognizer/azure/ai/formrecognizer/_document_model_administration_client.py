@@ -86,7 +86,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_build_model(
+    def begin_build_document_model(
         self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Build a custom model.
@@ -165,7 +165,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_compose_model(
+    def begin_compose_document_model(
         self, component_model_ids: List[str], **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Creates a composed model from a collection of existing models.
@@ -269,7 +269,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return target
 
     @distributed_trace
-    def begin_copy_model_to(
+    def begin_copy_document_model_to(
         self, model_id: str, target: TargetAuthorization, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
         """Copy a model stored in this resource (the source) to the user specified
@@ -330,7 +330,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def delete_model(self, model_id: str, **kwargs: Any) -> None:
+    def delete_document_model(self, model_id: str, **kwargs: Any) -> None:
         """Delete a custom model.
 
         :param model_id: Model identifier.
@@ -354,7 +354,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return self._client.delete_document_model(model_id=model_id, **kwargs)
 
     @distributed_trace
-    def list_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
+    def list_document_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
         """List information for each model, including its model ID,
         description, and when it was created.
 
@@ -402,7 +402,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace
-    def get_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
+    def get_document_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
         """Get a model by its ID.
 
         :param str model_id: Model identifier.
