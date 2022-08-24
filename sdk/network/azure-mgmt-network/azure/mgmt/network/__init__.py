@@ -7,10 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._network_management_client import NetworkManagementClient
-from ._version import VERSION
-
 __all__ = ['NetworkManagementClient']
-__version__ = VERSION
 
 try:
     from ._patch import patch_sdk  # type: ignore
