@@ -29,6 +29,9 @@ from ._models import (
     DocumentModelDetails,
     DocumentModelSummary,
     DocumentModelOperationDetails,
+    DocumentModelBuildOperationDetails,
+    DocumentModelComposeOperationDetails,
+    DocumentModelCopyToOperationDetails,
     DocumentModelOperationSummary,
     ResourceDetails,
     TargetAuthorization,
@@ -457,7 +460,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def get_operation(self, operation_id: str, **kwargs: Any) -> DocumentModelOperationDetails:
+    def get_operation(self, operation_id: str, **kwargs: Any) -> Union[DocumentModelOperationDetails, DocumentModelBuildOperationDetails, DocumentModelComposeOperationDetails, DocumentModelCopyToOperationDetails]:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.
@@ -482,8 +485,15 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
+        response = self._client.get_operation(operation_id, **kwargs)
+        if response.kind == "documentModelBuild":
+            return DocumentModelOperationDetails._from_generated(response, api_version=self._api_version)
+        if response.kind == "documentModelCompose":
+            return DocumentModelOperationDetails._from_generated(response, api_version=self._api_version)
+        if response.kind == "documentModelCopyTo":
+            return DocumentModelOperationDetails._from_generated(response, api_version=self._api_version)
         return DocumentModelOperationDetails._from_generated(
-            self._client.get_operation(operation_id, **kwargs),
+            response,
             api_version=self._api_version,
         )
 

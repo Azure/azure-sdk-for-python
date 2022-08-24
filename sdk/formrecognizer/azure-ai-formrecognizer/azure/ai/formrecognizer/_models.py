@@ -3481,6 +3481,30 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
         )
 
 
+class DocumentModelBuildOperationDetails(DocumentModelOperationDetails):
+    """
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class DocumentModelComposeOperationDetails(DocumentModelOperationDetails):
+    """
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class DocumentModelCopyToOperationDetails(DocumentModelOperationDetails):
+    """
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
 class DocumentWord(DocumentContentElement):
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
@@ -3933,28 +3957,28 @@ class DocumentTypeDetails:
 class ResourceDetails:
     """Details regarding models under the Form Recognizer resource.
 
-    :ivar int document_model_count: Number of custom models in the current resource.
-    :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
+    :ivar int custom_document_model_count: Number of custom models in the current resource.
+    :ivar int custom_document_model_limit: Maximum number of custom models supported in the current resource.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.document_model_count = kwargs.get("document_model_count", None)
-        self.document_model_limit = kwargs.get("document_model_limit", None)
+        self.custom_document_model_count = kwargs.get("custom_document_model_count", None)
+        self.custom_document_model_limit = kwargs.get("custom_document_model_limit", None)
 
     def __repr__(self):
         return (
-            f"ResourceDetails(document_model_count={self.document_model_count}, "
-            f"document_model_limit={self.document_model_limit})"
+            f"ResourceDetails(custom_document_model_count={self.custom_document_model_count}, "
+            f"custom_document_model_limit={self.custom_document_model_limit})"
         )
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            document_model_count=info.count,
-            document_model_limit=info.limit,
+            custom_document_model_count=info.count,
+            custom_document_model_limit=info.limit,
         )
 
 
@@ -3965,8 +3989,8 @@ class ResourceDetails:
         :rtype: dict
         """
         return {
-            "document_model_count": self.document_model_count,
-            "document_model_limit": self.document_model_limit,
+            "custom_document_model_count": self.custom_document_model_count,
+            "custom_document_model_limit": self.custom_document_model_limit,
         }
 
     @classmethod
@@ -3978,8 +4002,8 @@ class ResourceDetails:
         :rtype: ResourceDetails
         """
         return cls(
-            document_model_count=data.get("document_model_count", None),
-            document_model_limit=data.get("document_model_limit", None),
+            custom_document_model_count=data.get("custom_document_model_count", None),
+            custom_document_model_limit=data.get("custom_document_model_limit", None),
         )
 
 

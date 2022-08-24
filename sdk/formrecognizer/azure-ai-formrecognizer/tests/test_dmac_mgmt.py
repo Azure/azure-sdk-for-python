@@ -13,7 +13,10 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.ai.formrecognizer import (
     DocumentModelAdministrationClient,
     DocumentAnalysisApiVersion,
-    DocumentModelOperationDetails
+    DocumentModelOperationDetails,
+    DocumentModelBuildOperationDetails,
+    DocumentModelComposeOperationDetails,
+    DocumentModelCopyToOperationDetails,
 )
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -154,7 +157,14 @@ class TestManagement(FormRecognizerTest):
             # assert op.tags is None
             # test to/from dict
             op_dict = op.to_dict()
-            op = DocumentModelOperationDetails.from_dict(op_dict)
+            if op.kind == "documentModelBuild":
+                op = DocumentModelBuildOperationDetails.from_dict(op_dict)
+            elif op.kind == "documentModelCompose":
+                op = DocumentModelComposeOperationDetails.from_dict(op_dict)
+            elif op.kind == "documentModelCopyTo":
+                op = DocumentModelCopyToOperationDetails.from_dict(op_dict)
+            else:
+                op = DocumentModelOperationDetails.from_dict(op_dict)
             assert op.error is None
             model = op.result
             assert model.model_id
@@ -174,7 +184,14 @@ class TestManagement(FormRecognizerTest):
             op = client.get_operation(failed_op.operation_id)
             # test to/from dict
             op_dict = op.to_dict()
-            op = DocumentModelOperationDetails.from_dict(op_dict)
+            if op.kind == "documentModelBuild":
+                op = DocumentModelBuildOperationDetails.from_dict(op_dict)
+            elif op.kind == "documentModelCompose":
+                op = DocumentModelComposeOperationDetails.from_dict(op_dict)
+            elif op.kind == "documentModelCopyTo":
+                op = DocumentModelCopyToOperationDetails.from_dict(op_dict)
+            else:
+                op = DocumentModelOperationDetails.from_dict(op_dict)
 
             assert op.result is None
             error = op.error

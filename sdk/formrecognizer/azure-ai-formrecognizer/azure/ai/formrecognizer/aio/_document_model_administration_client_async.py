@@ -29,6 +29,9 @@ from .._models import (
     DocumentModelDetails,
     DocumentModelSummary,
     DocumentModelOperationDetails,
+    DocumentModelBuildOperationDetails,
+    DocumentModelComposeOperationDetails,
+    DocumentModelCopyToOperationDetails,
     DocumentModelOperationSummary,
     ResourceDetails,
     TargetAuthorization,
@@ -484,8 +487,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
+        
+        response = await self._client.get_operation(operation_id, **kwargs)
+        if response.kind == "documentModelBuild":
+            return DocumentModelOperationDetails._from_generated(response, api_version=self._api_version)
+        if response.kind == "documentModelCompose":
+            return DocumentModelOperationDetails._from_generated(response, api_version=self._api_version)
+        if response.kind == "documentModelCopyTo":
+            return DocumentModelOperationDetails._from_generated(response, api_version=self._api_version)
         return DocumentModelOperationDetails._from_generated(
-            await self._client.get_operation(operation_id, **kwargs),
+            response,
             api_version=self._api_version,
         )
 
