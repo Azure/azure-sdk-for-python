@@ -5,3 +5,4 @@ package_pprint_name = "Cosmos DB Management"
 package_doc_id = "cosmosdb"
 is_stable = false
 is_arm = true
+sample_link = cosmosdb
