@@ -3,16 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-import unittest
 import asyncio
 import time
+import unittest
 from datetime import datetime, timedelta
 
+import pytest
 from azure.core import MatchConditions
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-
 from azure.core.exceptions import (
     AzureError,
     HttpResponseError,
@@ -33,9 +30,9 @@ from azure.storage.filedatalake import (
 )
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeServiceClient
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
-from devtools_testutils.aio import recorded_by_proxy_async
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase, AsyncStorageRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'

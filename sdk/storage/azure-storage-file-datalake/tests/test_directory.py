@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
-
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
@@ -30,10 +29,10 @@ from azure.storage.filedatalake import (
 )
 from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
-from devtools_testutils import recorded_by_proxy
 
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
