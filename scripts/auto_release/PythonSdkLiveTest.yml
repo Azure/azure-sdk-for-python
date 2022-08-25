@@ -47,11 +47,6 @@ jobs:
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
-          cd azure-sdk-for-python
-          git fetch origin test-autorest-6.1.3
-          git checkout test-autorest-6.1.3
-          cd ../
-
           if [ "$(REST_REPO_HASH)" ]; then
             cd azure-rest-api-specs
             git reset --hard $(REST_REPO_HASH)
