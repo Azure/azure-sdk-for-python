@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2022-08-25)
+## 1.0.0 (it should be stable) (2022-08-25)
 
+**Features**
 
+  - Added a default API version from 2022-04-01-preview to 2022-10-01
 
 ## 1.0.0b4 (2022-05-26)
 
