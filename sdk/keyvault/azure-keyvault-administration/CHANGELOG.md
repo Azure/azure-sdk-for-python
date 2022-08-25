@@ -1,6 +1,6 @@
 # Release History
 
-## 4.1.1 (Unreleased)
+## 4.2.0b1 (Unreleased)
 
 ### Features Added
 
@@ -9,7 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
- - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Updated minimum `azure-core` version to 1.24.0
+
+## 4.1.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.1.0 (2022-03-28)
 

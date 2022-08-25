@@ -1,5 +1,12 @@
 # Release History
 
+## 8.0.0b2 (2022-08-11)
+
+### Breaking Changes
+
+  - Renamed model `ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems` to `CassandraClusterDataCenterNodeItem`
+  - Renamed model `Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties` to `ManagedServiceIdentityUserAssignedIdentity`
+
 ## 8.0.0b1 (2022-08-03)
 
 **Features**

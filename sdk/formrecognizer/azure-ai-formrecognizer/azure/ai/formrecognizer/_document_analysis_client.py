@@ -58,7 +58,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_08_31)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -105,18 +105,28 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a custom document. For more samples see the `samples` folder.
         """
 
-        if not model_id:
-            raise ValueError("model_id cannot be None or empty.")
-
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
+
+        if continuation_token is not None:
+            return self._client.begin_analyze_document(  # type: ignore
+                model_id=model_id,
+                analyze_request=document,  # type: ignore
+                content_type="application/octet-stream",
+                string_index_type="unicodeCodePoint",
+                continuation_token=continuation_token,
+                cls=cls,
+                **kwargs
+            )
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         return self._client.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
-            continuation_token=continuation_token,
             cls=cls,
             **kwargs
         )
@@ -154,17 +164,33 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a receipt. For more samples see the `samples` folder.
         """
 
+        cls = kwargs.pop("cls", self._analyze_document_callback)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        # continuation token requests do not perform the same value checks as
+        # regular analysis requests
+        if continuation_token is not None:
+            return self._client.begin_analyze_document(  # type: ignore
+            model_id=model_id,
+            analyze_request={"urlSource": document_url},  # type: ignore
+            string_index_type="unicodeCodePoint",
+            continuation_token=continuation_token,
+            cls=cls,
+            **kwargs
+        )
+
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        cls = kwargs.pop("cls", self._analyze_document_callback)
-        continuation_token = kwargs.pop("continuation_token", None)
+        if not isinstance(document_url, str):
+            raise ValueError(
+                "'document_url' needs to be of type 'str'. "
+                "Please see `begin_analyze_document()` to pass a byte stream.")
 
         return self._client.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
-            continuation_token=continuation_token,
             cls=cls,
             **kwargs
         )

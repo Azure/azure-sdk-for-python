@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import StorageManagementClientConfiguration
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class StorageManagementClient:
+class StorageManagementClient:    # pylint: disable=too-many-instance-attributes
     """The Azure Storage Management API.
 
     :ivar operations: Operations operations
@@ -49,8 +50,11 @@ class StorageManagementClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2019-04-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -69,15 +73,33 @@ class StorageManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.storage_accounts = StorageAccountsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.management_policies = ManagementPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.blob_services = BlobServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.blob_containers = BlobContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file_services = FileServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.file_shares = FileSharesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.skus = SkusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.storage_accounts = StorageAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usages = UsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.management_policies = ManagementPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.blob_services = BlobServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.blob_containers = BlobContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.file_services = FileServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.file_shares = FileSharesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

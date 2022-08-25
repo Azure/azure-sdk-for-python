@@ -30,7 +30,7 @@ To use this package, you must have:
 Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class for distributed tracing, `AzureMonitorLogExporter` for logging and `AzureMonitorMetricExporter` for metrics. You will need a **connection_string** to instantiate the object.
 Please find the samples linked below for demonstration as to how to construct the exporter using a connection string.
 
-#### Logging
+#### Logging (experimental)
 
 NOTE: The logging signal for the `AzureMonitorLogExporter` is currently in an EXPERIMENTAL state. Possible breaking changes may ensue in the future.
 
