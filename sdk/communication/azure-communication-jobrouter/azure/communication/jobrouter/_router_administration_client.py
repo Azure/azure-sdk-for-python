@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -110,21 +110,75 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
     # region ExceptionPolicy
 
-    @distributed_trace
+    @overload
     def create_exception_policy(
             self,
             exception_policy_id,  # type: str
             exception_rules,  # type: Dict[str, ExceptionRule]
+            exception_policy,  # type: ExceptionPolicy
             **kwargs  # type: Any
     ):
-        #  type: (...) -> ExceptionPolicy
-        """Create a new exception policy.
+        #  type: (str, Dict[str, ExceptionRule], ExceptionPolicy, **Any) -> ExceptionPolicy
+        """ Create a new exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
 
         :param exception_rules: A dictionary collection of exception rules on the exception
           policy. Key is the Id of each exception rule.
         :type exception_rules: Dict[str, ~azure.communication.jobrouter.ExceptionRule]
+
+        :param exception_policy: An instance of exception policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+
+        :return: ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
+    def create_exception_policy(
+            self,
+            exception_policy_id,  # type: str
+            exception_rules,  # type: Dict[str, ExceptionRule]
+            **kwargs  # type: Any
+    ):
+        #  type: (str, Dict[str, ExceptionRule], **Any) -> ExceptionPolicy
+        """ Create a new exception policy.
+
+        :param str exception_policy_id: Id of the exception policy.
+
+        :param exception_rules: A dictionary collection of exception rules on the exception
+          policy. Key is the Id of each exception rule.
+        :type exception_rules: Dict[str, ~azure.communication.jobrouter.ExceptionRule]
+
+        :return: ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @distributed_trace
+    def create_exception_policy(
+            self,
+            exception_policy_id,  # type: str
+            exception_rules,  # type: Dict[str, ExceptionRule]
+            *args,  # type: ExceptionPolicy
+            **kwargs  # type: Any
+    ):
+        #  type: (...) -> ExceptionPolicy
+        """ Create a new exception policy.
+
+        :param str exception_policy_id: Id of the exception policy.
+
+        :param exception_rules: A dictionary collection of exception rules on the exception
+          policy. Key is the Id of each exception rule.
+        :type exception_rules: Dict[str, ~azure.communication.jobrouter.ExceptionRule]
+
+        :param exception_policy: An instance of exception policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
 
         :keyword Optional[str] name: The name of this policy.
 
@@ -148,8 +202,14 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not exception_rules or any(exception_rules) is False:
             raise ValueError("exception_rules cannot be None or empty.")
 
+        exception_policy = None
+        if len(args) == 1:
+            exception_policy = args[0]
+        else:
+            exception_policy = ExceptionPolicy()
+
         exception_policy = ExceptionPolicy(
-            name = kwargs.pop('name', None),
+            name = kwargs.pop('name', exception_policy.name),
             exception_rules = exception_rules
         )
 
@@ -159,14 +219,36 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             **kwargs
         )
 
-    @distributed_trace
+    @overload
+    def update_exception_policy(
+            self,
+            exception_policy_id,  # type: str
+            exception_policy,  # type: ExceptionPolicy
+            **kwargs  # type: Any
+    ):
+        #  type: (str, ExceptionPolicy, **Any) -> ExceptionPolicy
+        """ Update an exception policy.
+
+        :param str exception_policy_id: Id of the exception policy.
+
+        :param exception_policy: An instance of exception policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+
+        :return: ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
     def update_exception_policy(
             self,
             exception_policy_id,  # type: str
             **kwargs  # type: Any
     ):
-        #  type: (...) -> ExceptionPolicy
-        """Update an exception policy.
+        #  type: (str, **Any) -> ExceptionPolicy
+        """ Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
 
@@ -176,9 +258,33 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword Optional[str] name: The name of this policy.
 
-        :keyword exception_policy: An instance of exception policy. Properties defined in
-          class instance will not be considered if they are also specified in keyword arguments.
-        :paramtype exception_policy: Optional[~azure.communication.jobrouter.ExceptionPolicy]
+        :return: ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @distributed_trace
+    def update_exception_policy(
+            self,
+            exception_policy_id,  # type: str
+            *args,  # type: ExceptionPolicy
+            **kwargs  # type: Any
+    ):
+        #  type: (...) -> ExceptionPolicy
+        """ Update an exception policy.
+
+        :param str exception_policy_id: Id of the exception policy.
+
+        :param exception_policy: An instance of exception policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+
+        :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
+          policy. Key is the Id of each exception rule.
+        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.ExceptionRule]]
+
+        :keyword Optional[str] name: The name of this policy.
 
         :return: ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
@@ -197,23 +303,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
 
-        exception_policy = kwargs.pop("exception_policy", None)
-
-        # pylint:disable=protected-access
-        exception_rules = _get_value(
-            kwargs.pop("exception_rules", None),
-            getattr(exception_policy, 'exception_rules', None)
-        )
-
-        # pylint:disable=protected-access
-        name = _get_value(
-            kwargs.pop('name', None),
-            getattr(exception_policy, 'name', None)
-        )
+        exception_policy = None
+        if len(args) == 1:
+            exception_policy = args[0]
+        else:
+            exception_policy = ExceptionPolicy()
 
         patch = ExceptionPolicy(
-            name = name,
-            exception_rules = exception_rules
+            name = kwargs.pop('name', exception_policy.name),
+            exception_rules = kwargs.pop('exception_rules', exception_policy.exception_rules)
         )
 
         return self._client.job_router_administration.upsert_exception_policy(
@@ -325,7 +423,38 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
     # region DistributionPolicy
 
-    @distributed_trace
+    @overload
+    def create_distribution_policy(
+            self,
+            distribution_policy_id,  # type: str
+            offer_ttl_seconds,  # type: float
+            mode,  # type: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]
+            distribution_policy,  # type: DistributionPolicy
+            **kwargs  # type: Any
+    ):
+        #  type: (str, float, Union[BestWorkerMode, LongestIdleMode, RoundRobinMode], DistributionPolicy, **Any) -> DistributionPolicy  # pylint: disable=line-too-long
+        """ Create a new distribution policy.
+
+        :param str distribution_policy_id: Id of the distribution policy.
+        :param float offer_ttl_seconds: The expiry time of any offers created under this policy will
+          be governed by the offer time to live.
+
+        :param mode: Specified distribution mode
+        :type mode: Union[~azure.communication.jobrouter.BestWorkerMode,
+            ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]
+
+        :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+
+
+        :return: DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
     def create_distribution_policy(
             self,
             distribution_policy_id,  # type: str
@@ -333,16 +462,46 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             mode,  # type: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]
             **kwargs  # type: Any
     ):
-        #  type: (...) -> DistributionPolicy
-        """Create a new distribution policy.
+        #  type: (str, float, Union[BestWorkerMode, LongestIdleMode, RoundRobinMode], **Any) -> DistributionPolicy
+        """ Create a new distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
         :param float offer_ttl_seconds: The expiry time of any offers created under this policy will
-        be governed by the offer time to live.
+          be governed by the offer time to live.
 
         :param mode: Specified distribution mode
         :type mode: Union[~azure.communication.jobrouter.BestWorkerMode,
             ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]
+
+        :return: DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @distributed_trace
+    def create_distribution_policy(
+            self,
+            distribution_policy_id,  # type: str
+            offer_ttl_seconds,  # type: float
+            mode,  # type: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]
+            *args,  # type: DistributionPolicy
+            **kwargs  # type: Any
+    ):
+        #  type: (...) -> DistributionPolicy
+        """ Create a new distribution policy.
+
+        :param str distribution_policy_id: Id of the distribution policy.
+        :param float offer_ttl_seconds: The expiry time of any offers created under this policy will
+          be governed by the offer time to live.
+
+        :param mode: Specified distribution mode
+        :type mode: Union[~azure.communication.jobrouter.BestWorkerMode,
+            ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]
+
+        :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
         :keyword Optional[str] name: The name of this policy.
 
@@ -368,8 +527,14 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not mode:
             raise ValueError("mode cannot be None.")
 
+        distribution_policy = None
+        if len(args) == 1:
+            distribution_policy = args[0]
+        else:
+            distribution_policy = DistributionPolicy()
+
         distribution_policy = DistributionPolicy(
-            name = kwargs.pop('name', None),
+            name = kwargs.pop('name', distribution_policy.name),
             offer_ttl_seconds = offer_ttl_seconds,
             mode = mode
         )
@@ -380,14 +545,36 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             **kwargs
         )
 
-    @distributed_trace
+    @overload
+    def update_distribution_policy(
+            self,
+            distribution_policy_id,  # type: str
+            distribution_policy,  # type: DistributionPolicy
+            **kwargs  # type: Any
+    ):
+        #  type: (str, DistributionPolicy, **Any) -> DistributionPolicy
+        """ Update a distribution policy.
+
+        :param str distribution_policy_id: Id of the distribution policy.
+
+        :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+
+        :return: DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
     def update_distribution_policy(
             self,
             distribution_policy_id,  # type: str
             **kwargs  # type: Any
     ):
-        #  type: (...) -> DistributionPolicy
-        """Update a distribution policy.
+        #  type: (str, **Any) -> DistributionPolicy
+        """ Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
 
@@ -400,9 +587,36 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword Optional[str] name: The name of this policy.
 
-        :keyword distribution_policy: An instance of distribution policy. Properties defined in
-            class instance will not be considered if they are also specified in keyword arguments.
-        :paramtype distribution_policy: Optional[~azure.communication.jobrouter.DistributionPolicy]
+        :return: DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @distributed_trace
+    def update_distribution_policy(
+            self,
+            distribution_policy_id,  # type: str
+            *args,  # type: DistributionPolicy
+            **kwargs  # type: Any
+    ):
+        #  type: (...) -> DistributionPolicy
+        """ Update a distribution policy.
+
+        :param str distribution_policy_id: Id of the distribution policy.
+
+        :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+
+        :keyword Optional[float] offer_ttl_seconds: The expiry time of any offers created under this policy will
+          be governed by the offer time to live.
+
+        :keyword mode: Specified distribution mode
+        :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
+            ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]]
+
+        :keyword Optional[str] name: The name of this policy.
 
         :return: DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
@@ -420,30 +634,16 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
-        distribution_policy = kwargs.pop("distribution_policy", None)
-
-        # pylint:disable=protected-access
-        name = _get_value(
-            kwargs.pop('name', None),
-            getattr(distribution_policy, 'name', None)
-        )
-
-        # pylint:disable=protected-access
-        offer_ttl_seconds = _get_value(
-            kwargs.pop("offer_ttl_seconds", None),
-            getattr(distribution_policy, 'offer_ttl_seconds', None)
-        )
-
-        # pylint:disable=protected-access
-        mode = _get_value(
-            kwargs.pop("mode", None),
-            getattr(distribution_policy, 'mode', None)
-        )
+        distribution_policy = None
+        if len(args) == 1:
+            distribution_policy = args[0]
+        else:
+            distribution_policy = DistributionPolicy()
 
         patch = DistributionPolicy(
-            name = name,
-            offer_ttl_seconds = offer_ttl_seconds,
-            mode = mode
+            name = kwargs.pop("name", distribution_policy.name),
+            offer_ttl_seconds = kwargs.pop("offer_ttl_seconds", distribution_policy.offer_ttl_seconds),
+            mode = kwargs.pop("mode", distribution_policy.mode)
         )
 
         return self._client.job_router_administration.upsert_distribution_policy(
@@ -555,16 +755,76 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
     # region Queue
 
+    @overload
+    def create_queue(
+            self,
+            queue_id,  # type: str
+            distribution_policy_id,  # type: str
+            queue,  # type: JobQueue
+            **kwargs  # type: Any
+    ):
+        """ Create a job queue
+
+        :param str queue_id: Id of the queue.
+
+        :param queue: An instance of JobQueue. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type queue: ~azure.communication.jobrouter.JobQueue
+
+        :param str distribution_policy_id: The ID of the distribution policy that will determine
+          how a job is distributed to workers.
+
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.JobQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
     def create_queue(
             self,
             queue_id,  # type: str
             distribution_policy_id,  # type: str
             **kwargs  # type: Any
     ):
-        #  type: (...) -> JobQueue
-        """Create a job queue
+        """ Create a job queue
 
         :param str queue_id: Id of the queue.
+
+        :param str distribution_policy_id: The ID of the distribution policy that will determine
+          how a job is distributed to workers.
+
+        :keyword Optional[str] name: The name of this queue.
+
+        :keyword labels: A set of key/value pairs that are
+          identifying attributes used by the rules engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
+          job escalation rules.
+
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.JobQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @distributed_trace
+    def create_queue(
+            self,
+            queue_id,  # type: str
+            distribution_policy_id,  # type: str
+            *args,  # type: JobQueue
+            **kwargs  # type: Any
+    ):
+        #  type: (...) -> JobQueue
+        """ Create a job queue
+
+        :param str queue_id: Id of the queue.
+
+        :param queue: An instance of JobQueue. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type queue: ~azure.communication.jobrouter.JobQueue
 
         :param str distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -597,11 +857,17 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
+        queue = None
+        if len(args) == 1:
+            queue = args[0]
+        else:
+            queue = JobQueue()
+
         queue = JobQueue(
-            name = kwargs.pop('name', None),
+            name = kwargs.pop('name', queue.name),
             distribution_policy_id = distribution_policy_id,
-            labels = kwargs.pop('labels', None),
-            exception_policy_id = kwargs.pop('exception_policy_id', None)
+            labels = kwargs.pop('labels', queue.labels),
+            exception_policy_id = kwargs.pop('exception_policy_id', queue.exception_policy_id)
         )
 
         return self._client.job_router_administration.upsert_queue(
@@ -611,20 +877,38 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             cls = lambda http_response, deserialized_response, args: JobQueue._from_generated(deserialized_response),
             **kwargs)
 
-    @distributed_trace
+    @overload
+    def update_queue(
+            self,
+            queue_id,  # type: str
+            queue,  # type: JobQueue
+            **kwargs  # type: Any
+    ):
+        #  type: (str, JobQueue, **Any) -> JobQueue
+        """ Update a job queue
+
+        :param str queue_id: Id of the queue.
+
+        :param queue: An instance of JobQueue. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type queue: ~azure.communication.jobrouter.JobQueue
+
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.JobQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
     def update_queue(
             self,
             queue_id,  # type: str
             **kwargs  # type: Any
     ):
-        #  type: (...) -> JobQueue
-        """Update a job queue
+        #  type: (str, **Any) -> JobQueue
+        """ Update a job queue
 
         :param str queue_id: Id of the queue.
-
-        :keyword queue: An instance of JobQueue. Properties defined in
-          class instance will not be considered if they are also specified in keyword arguments.
-        :paramtype queue: Optional[~azure.communication.jobrouter.JobQueue]
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -636,7 +920,41 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
 
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
-        job escalation rules.
+          job escalation rules.
+
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.JobQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @distributed_trace
+    def update_queue(
+            self,
+            queue_id,  # type: str
+            *args,  # type: JobQueue
+            **kwargs  # type: Any
+    ):
+        #  type: (...) -> JobQueue
+        """ Update a job queue
+
+        :param str queue_id: Id of the queue.
+
+        :param queue: An instance of JobQueue. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type queue: ~azure.communication.jobrouter.JobQueue
+
+        :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
+          how a job is distributed to workers.
+
+        :keyword Optional[str] name: The name of this queue.
+
+        :keyword labels: A set of key/value pairs that are
+          identifying attributes used by the rules engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
+          job escalation rules.
 
         :return: JobQueue
         :rtype: ~azure.communication.jobrouter.JobQueue
@@ -654,37 +972,17 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
-        queue = kwargs.pop('queue', None)
-
-        # pylint:disable=protected-access
-        name = _get_value(
-            kwargs.pop('name', None),
-            getattr(queue, 'name', None)
-        )
-
-        # pylint:disable=protected-access
-        distribution_policy_id = _get_value(
-            kwargs.pop('distribution_policy_id', None),
-            getattr(queue, 'distribution_policy_id', None)
-        )
-
-        # pylint:disable=protected-access
-        queue_labels = _get_value(
-            kwargs.pop('labels', None),
-            getattr(queue, 'labels', None)
-        )
-
-        # pylint:disable=protected-access
-        exception_policy_id = _get_value(
-            kwargs.pop('exception_policy_id', None),
-            getattr(queue, 'exception_policy_id', None)
-        )
+        queue = None
+        if len(args) == 1:
+            queue = args[0]
+        else:
+            queue = JobQueue()
 
         patch = JobQueue(
-            name = name,
-            distribution_policy_id = distribution_policy_id,
-            labels = queue_labels,
-            exception_policy_id = exception_policy_id
+            name = kwargs.pop('name', queue.name),
+            distribution_policy_id = kwargs.pop('distribution_policy_id', queue.distribution_policy_id),
+            labels = kwargs.pop('labels', queue.labels),
+            exception_policy_id = kwargs.pop('exception_policy_id', queue.exception_policy_id)
         )
 
         return self._client.job_router_administration.upsert_queue(
@@ -800,16 +1098,83 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
     # region ClassificationPolicy
 
+    @overload
+    def create_classification_policy(
+            self,
+            classification_policy_id,  # type: str
+            classification_policy,  # type: ClassificationPolicy
+            **kwargs  # type: Any
+    ):
+        # type: (str, ClassificationPolicy, **Any) -> ClassificationPolicy
+        """ Create a classification policy
+
+        :param str classification_policy_id: Id of the classification policy.
+
+        :param classification_policy: An instance of Classification policy. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
+
+        :return: ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
+    def create_classification_policy(
+            self,
+            classification_policy_id,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (str, **Any) -> ClassificationPolicy
+        """ Create a classification policy
+
+        :param str classification_policy_id: Id of the classification policy.
+
+        :keyword Optional[str] name: Friendly name of this policy.
+
+        :keyword fallback_queue_id: The fallback queue to select if the queue selector doesn't find a match.
+        :paramtype fallback_queue_id: Optional[str]
+
+        :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
+        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+
+        :keyword prioritization_rule: The rule to determine a priority score for a given job.
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
+          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
+
+        :keyword worker_selectors: The worker label selectors to attach to a given job.
+        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+
+        :return: ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
     @distributed_trace
     def create_classification_policy(
             self,
             classification_policy_id,  # type: str
+            *args,  # type: ClassificationPolicy
             **kwargs  # type: Any
     ):
         # type: (...) -> ClassificationPolicy
         """ Create a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
+
+        :param classification_policy: An instance of Classification policy. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
 
         :keyword Optional[str] name: Friendly name of this policy.
 
@@ -850,22 +1215,92 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
 
+        classification_policy = None
+        if len(args) == 1:
+            classification_policy = args[0]
+        else:
+            classification_policy = ClassificationPolicy()
+
         classification_policy = ClassificationPolicy(
-            name = kwargs.pop("name", None),
-            fallback_queue_id = kwargs.pop("fallback_queue_id", None),
-            queue_selectors = kwargs.pop("queue_selectors", None),
-            prioritization_rule = kwargs.pop("prioritization_rule", None),
-            worker_selectors = kwargs.pop("worker_selectors", None))
+            name = kwargs.pop("name", classification_policy.name),
+            fallback_queue_id = kwargs.pop("fallback_queue_id", classification_policy.fallback_queue_id),
+            queue_selectors = kwargs.pop("queue_selectors", classification_policy.queue_selectors),
+            prioritization_rule = kwargs.pop("prioritization_rule", classification_policy.prioritization_rule),
+            worker_selectors = kwargs.pop("worker_selectors", classification_policy.worker_selectors)
+        )
 
         return self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
             patch = classification_policy,
             **kwargs)
 
+    @overload
+    def update_classification_policy(
+            self,
+            classification_policy_id,  # type: str
+            classification_policy,  # type: ClassificationPolicy
+            **kwargs  # type: Any
+    ):
+        # type: (str, ClassificationPolicy, **Any) -> ClassificationPolicy
+        """ Update a classification policy
+
+        :param str classification_policy_id: Id of the classification policy.
+
+        :param classification_policy: An instance of Classification policy. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
+
+        :return: ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
+    def update_classification_policy(
+            self,
+            classification_policy_id,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (str, **Any) -> ClassificationPolicy
+        """ Update a classification policy
+
+        :param str classification_policy_id: Id of the classification policy.
+
+        :keyword Optional[str] name: Friendly name of this policy.
+
+        :keyword fallback_queue_id: The fallback queue to select if the queue selector doesn't find a match.
+        :paramtype fallback_queue_id: Optional[str]
+
+        :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
+        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+
+        :keyword prioritization_rule: The rule to determine a priority score for a given job.
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
+          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
+
+        :keyword worker_selectors: The worker label selectors to attach to a given job.
+        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+
+        :return: ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
     @distributed_trace
     def update_classification_policy(
             self,
             classification_policy_id,  # type: str
+            *args,  # type: ClassificationPolicy
             **kwargs  # type: Any
     ):
         # type: (...) -> ClassificationPolicy
@@ -873,9 +1308,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str classification_policy_id: Id of the classification policy.
 
-        :keyword classification_policy: An instance of Classification policy. Properties defined in
-            class instance will not be considered if they are also specified in keyword arguments.
-        :paramtype classification_policy: Optional[~azure.communication.jobrouter.ClassificationPolicy]
+        :param classification_policy: An instance of Classification policy. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
 
         :keyword Optional[str] name: Friendly name of this policy.
 
@@ -916,44 +1351,19 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
 
-        classification_policy = kwargs.pop('classification_policy', None)
-
-        # pylint:disable=protected-access
-        name = _get_value(
-            kwargs.pop('name', None),
-            getattr(classification_policy, 'name', None)
-        )
-
-        # pylint:disable=protected-access
-        fallback_queue_id = _get_value(
-            kwargs.pop('fallback_queue_id', None),
-            getattr(classification_policy, 'fallback_queue_id', None)
-        )
-
-        # pylint:disable=protected-access
-        queue_selectors = _get_value(
-            kwargs.pop('queue_selectors', None),
-            getattr(classification_policy, 'queue_selectors', None)
-        )
-
-        # pylint:disable=protected-access
-        prioritization_rule = _get_value(
-            kwargs.pop('prioritization_rule', None),
-            getattr(classification_policy, 'prioritization_rule', None)
-        )
-
-        # pylint:disable=protected-access
-        worker_selectors = _get_value(
-            kwargs.pop('worker_selectors', None),
-            getattr(classification_policy, 'worker_selectors', None)
-        )
+        classification_policy = None
+        if len(args) == 1:
+            classification_policy = args[0]
+        else:
+            classification_policy = ClassificationPolicy()
 
         patch = ClassificationPolicy(
-            name = name,
-            fallback_queue_id = fallback_queue_id,
-            queue_selectors = queue_selectors,
-            prioritization_rule = prioritization_rule,
-            worker_selectors = worker_selectors)
+            name = kwargs.pop("name", classification_policy.name),
+            fallback_queue_id = kwargs.pop("fallback_queue_id", classification_policy.fallback_queue_id),
+            queue_selectors = kwargs.pop("queue_selectors", classification_policy.queue_selectors),
+            prioritization_rule = kwargs.pop("prioritization_rule", classification_policy.prioritization_rule),
+            worker_selectors = kwargs.pop("worker_selectors", classification_policy.worker_selectors)
+        )
 
         return self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,

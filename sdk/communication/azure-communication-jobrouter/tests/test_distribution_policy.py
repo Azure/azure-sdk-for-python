@@ -114,8 +114,8 @@ class TestDistributionPolicy(RouterTestCase):
             distribution_policy_response.mode = mode
 
             updated_distribution_policy = router_client.update_distribution_policy(
-                distribution_policy_id = dp_identifier,
-                distribution_policy = distribution_policy_response
+                dp_identifier,
+                distribution_policy_response
             )
 
             DistributionPolicyValidator.validate_distribution_policy(

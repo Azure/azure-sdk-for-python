@@ -297,8 +297,8 @@ class TestClassificationPolicy(RouterTestCase):
                     classification_policy.prioritization_rule = updated_prioritization_rule
 
                     updated_classification_policy = router_client.update_classification_policy(
-                        classification_policy_id = cp_identifier,
-                        classification_policy = classification_policy
+                        cp_identifier,
+                        classification_policy
                     )
 
                     ClassificationPolicyValidator.validate_classification_policy(

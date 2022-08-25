@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -216,14 +216,36 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             **kwargs
         )
 
-    @distributed_trace
+    @overload
+    def update_worker(
+            self,
+            worker_id,  # type: str
+            router_worker,  # type: RouterWorker
+            **kwargs  # type: Any
+    ):
+        #  type: (str, RouterWorker, **Any) -> RouterWorker
+        """ Update a router worker.
+
+        :param str worker_id: Id of the worker.
+
+        :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_worker: ~azure.communication.jobrouter.RouterWorker
+
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @overload
     def update_worker(
             self,
             worker_id,  # type: str
             **kwargs  # type: Any
     ):
-        #  type: (...) -> RouterWorker
-        """Update a router worker.
+        #  type: (str, **Any) -> RouterWorker
+        """ Update a router worker.
 
         :param str worker_id: Id of the worker.
 
@@ -248,9 +270,48 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
-        :keyword router_worker: An instance of RouterWorker. Properties defined in
-            class instance will not be considered if they are also specified in keyword arguments.
-        :paramtype router_worker: Optional[~azure.communication.jobrouter.RouterWorker]
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        pass
+
+    @distributed_trace
+    def update_worker(
+            self,
+            worker_id,  # type: str
+            *args,  # type: RouterWorker
+            **kwargs  # type: Any
+    ):
+        #  type: (...) -> RouterWorker
+        """ Update a router worker.
+
+        :param str worker_id: Id of the worker.
+
+        :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_worker: ~azure.communication.jobrouter.RouterWorker
+
+        :keyword queue_assignments: The queue(s) that this worker can receive work from.
+        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+
+        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
+         jobs.
+        :paramtype total_capacity: Optional[int]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: Optional[dict[str, Union[int, float, str, bool]]]
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :paramtype tags: Optional[dict[str, Union[int, float, str, bool]]]
+
+        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
+         workers capacity.
+        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
+
+        :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
+        :paramtype available_for_offers: Optional[bool]
 
         :return: RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
@@ -286,51 +347,17 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
-        router_worker = kwargs.pop("router_worker", None)
-
-        # pylint:disable=protected-access
-        queue_assignments = _get_value(
-            kwargs.pop('queue_assignments', None),
-            getattr(router_worker, 'queue_assignments', None)
-        )
-
-        # pylint:disable=protected-access
-        total_capacity = _get_value(
-            kwargs.pop('total_capacity', None),
-            getattr(router_worker, 'total_capacity', None)
-        )
-
-        # pylint:disable=protected-access
-        labels = _get_value(
-            kwargs.pop('labels', None),
-            getattr(router_worker, 'labels', None)
-        )
-
-        # pylint:disable=protected-access
-        tags = _get_value(
-            kwargs.pop('tags', None),
-            getattr(router_worker, 'tags', None)
-        )
-
-        # pylint:disable=protected-access
-        channel_configurations = _get_value(
-            kwargs.pop('channel_configurations', None),
-            getattr(router_worker, 'channel_configurations', None)
-        )
-
-        # pylint:disable=protected-access
-        available_for_offers = _get_value(
-            kwargs.pop('available_for_offers', None),
-            getattr(router_worker, 'available_for_offers', None)
-        )
+        router_worker = RouterWorker()
+        if len(args) == 1:
+            router_worker = args[0]
 
         patch = RouterWorker(
-            queue_assignments = queue_assignments,
-            total_capacity = total_capacity,
-            labels = labels,
-            tags = tags,
-            channel_configurations = channel_configurations,
-            available_for_offers = available_for_offers
+            queue_assignments = kwargs.pop('queue_assignments', router_worker.queue_assignments),
+            total_capacity = kwargs.pop('total_capacity', router_worker.total_capacity),
+            labels = kwargs.pop('labels', router_worker.labels),
+            tags = kwargs.pop('tags', router_worker.tags),
+            channel_configurations = kwargs.pop('channel_configurations', router_worker.channel_configurations),
+            available_for_offers = kwargs.pop('available_for_offers', router_worker.available_for_offers)
         )
 
         return self._client.job_router.upsert_worker(
