@@ -3,10 +3,13 @@
 ## 3.2.0b7 (Unreleased)
 
 ### Features Added
+- Added `custom_document_models` property on `ResourceDetails`.
+- Added new `CustomDocumentModelsDetails` model to represent the details of the custom document models in a given Form Recognizer resource.
 
 ### Breaking Changes
 - This library will default to service API version `2022-08-31` going forward.
 - Removed `kind` property on `DocumentPage`.
+- Removed `document_model_count` and `document_model_limit` properties on `ResourceDetails`.
 
 ### Bugs Fixed
 
