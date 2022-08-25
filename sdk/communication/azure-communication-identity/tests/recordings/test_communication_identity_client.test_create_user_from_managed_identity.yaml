@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -9,28 +9,28 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '0'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
+    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
+        2021-11-01, 2022-06-01, 2022-10-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Aug 2022 09:14:52 GMT
+      - Thu, 25 Aug 2022 20:03:40 GMT
       ms-cv:
-      - BMxGIFuPyk69RodcGvUanw.0
+      - OZltyLkse06l+Z2Q+XDG1A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -38,7 +38,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 209ms
+      - 234ms
     status:
       code: 201
       message: Created

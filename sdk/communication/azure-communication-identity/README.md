@@ -76,11 +76,32 @@ Pass in the user object as a parameter, and a list of `CommunicationTokenScope`.
 tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 print("Token issued with value: " + tokenresponse.token)
 ```
+
+### Issuing or Refreshing an access token with custom expiration for a user
+
+You can specify expiration time for the token. The token can be configured to expire in as little as one hour or as long as 24 hours. The default expiration time is 24 hours.
+
+```python
+token_expires_after = timedelta(minutes=60)
+tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
+print("Token issued with value: " + tokenresponse.token)
+```
+
 ### Creating a user and a token in a single request
 For convenience, use `create_user_and_token` to create a new user and issue a token with one function call. This translates into a single web request as opposed to creating a user first and then issuing a token.
 
 ```python
 user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
+print("User id:" + user.properties['id'])
+print("Token issued with value: " + tokenresponse.token)
+```
+
+### Creating a user and a token with custom expiration in a single request
+
+You can specify expiration time for the token. The token can be configured to expire in as little as one hour or as long as 24 hours. The default expiration time is 24 hours.
+```python
+token_expires_after = timedelta(minutes=60)
+user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_after=token_expires_after)
 print("User id:" + user.properties['id'])
 print("Token issued with value: " + tokenresponse.token)
 ```

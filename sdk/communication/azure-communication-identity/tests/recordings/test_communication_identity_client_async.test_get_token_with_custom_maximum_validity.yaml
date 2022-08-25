@@ -9,7 +9,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Thu, 25 Aug 2022 20:04:06 GMT
+      - Thu, 25 Aug 2022 20:04:18 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -22,43 +22,49 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01, 2022-10-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Thu, 25 Aug 2022 20:04:05 GMT
-      ms-cv: 9dpFfOjkQU2sfi05B2uwNg.0
+      date: Thu, 25 Aug 2022 20:04:18 GMT
+      ms-cv: SI0NfKboBUeOF6d8FDbMUw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 44ms
+      x-processing-time: 35ms
     status:
       code: 201
       message: Created
     url: https://test-petrsvihlik.ppe.communication.azure.net/identities?api-version=2022-10-01
 - request:
-    body: ''
+    body: '{"scopes": ["chat"], "expiresInMinutes": 1440}'
     headers:
       Accept:
+      - application/json
+      Content-Length:
+      - '46'
+      Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Thu, 25 Aug 2022 20:04:06 GMT
+      - Thu, 25 Aug 2022 20:04:18 GMT
       x-ms-return-client-request-id:
       - 'true'
-    method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+    method: POST
+    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized/:issueAccessToken?api-version=2022-10-01
   response:
     body:
-      string: ''
+      string: '{"token": "sanitized", "expiresOn": "2022-08-26T20:04:18.9851758+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-10-31-preview, 2021-11-01, 2022-06-01, 2022-10-01
-      date: Thu, 25 Aug 2022 20:04:06 GMT
-      ms-cv: S9OvRcNALk2jU3tbih623g.0
+      content-length: '804'
+      content-type: application/json; charset=utf-8
+      date: Thu, 25 Aug 2022 20:04:18 GMT
+      ms-cv: XyNNxmw1mEaH2LEAV6pdbg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 463ms
+      x-processing-time: 46ms
     status:
-      code: 204
-      message: No Content
-    url: https://test-petrsvihlik.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+      code: 200
+      message: OK
+    url: https://test-petrsvihlik.ppe.communication.azure.net/identities/sanitized/:issueAccessToken?api-version=2022-10-01
 version: 1

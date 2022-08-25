@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"token": "sanitized", "appId": "sanitized", "userId": "sanitized"}'
+    body: '{"createTokenWithScopes": ["chat"], "expiresInMinutes": 1441}'
     headers:
       Accept:
       - application/json
@@ -9,28 +9,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '83'
+      - '61'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Thu, 25 Aug 2022 20:03:50 GMT
+      - Thu, 25 Aug 2022 20:03:37 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/teamsUser/:exchangeAccessToken?api-version=2022-10-01
+    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
   response:
     body:
-      string: '{"error": {"code": "InvalidAccessToken", "message": "Provided access
-        token is not valid."}}'
+      string: '{"error": {"code": "ValidationError", "message": "ExpiresInMinutes
+        value 1441 is invalid.", "target": "ExpiresInMinutes"}}'
     headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01, 2022-10-01
       content-type:
       - application/json
       date:
-      - Thu, 25 Aug 2022 20:03:51 GMT
+      - Thu, 25 Aug 2022 20:03:37 GMT
       ms-cv:
-      - ApN59EeVDUKsMJP1ArXyGg.0
+      - xT8p+vjMoEaK5RCEFEwL9A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -40,8 +43,8 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 27ms
+      - 74ms
     status:
-      code: 401
-      message: Unauthorized
+      code: 400
+      message: Bad Request
 version: 1

@@ -1,39 +1,37 @@
 interactions:
 - request:
-    body: '{}'
+    body: ''
     headers:
       Accept:
       - application/json
-      Content-Length:
-      - '2'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 03 Aug 2022 09:15:38 GMT
+      - Thu, 25 Aug 2022 20:04:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
+    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+        2021-10-31-preview, 2021-11-01, 2022-06-01, 2022-10-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 03 Aug 2022 09:15:39 GMT
-      ms-cv: m1th7TnXNkmERV0ZkYsbnw.0
+      date: Thu, 25 Aug 2022 20:04:07 GMT
+      ms-cv: x8msplLrS0a88tRh7i0CXg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 102ms
+      x-processing-time: 36ms
     status:
       code: 201
       message: Created
-    url: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
+    url: https://test-petrsvihlik.ppe.communication.azure.net/identities?api-version=2022-10-01
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -44,29 +42,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 03 Aug 2022 09:15:39 GMT
+      - Thu, 25 Aug 2022 20:04:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
+    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized/:issueAccessToken?api-version=2022-10-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2022-08-04T09:15:39.6977724+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-08-26T20:04:08.7365911+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+        2021-10-31-preview, 2021-11-01, 2022-06-01, 2022-10-01
       content-length: '804'
       content-type: application/json; charset=utf-8
-      date: Wed, 03 Aug 2022 09:15:39 GMT
-      ms-cv: 4leV+QBfREuCXXYNn4W1mg.0
+      date: Thu, 25 Aug 2022 20:04:08 GMT
+      ms-cv: whuW/D+5WUWw+UERP3B1Vw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 43ms
+      x-processing-time: 44ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
+    url: https://test-petrsvihlik.ppe.communication.azure.net/identities/sanitized/:issueAccessToken?api-version=2022-10-01
 version: 1

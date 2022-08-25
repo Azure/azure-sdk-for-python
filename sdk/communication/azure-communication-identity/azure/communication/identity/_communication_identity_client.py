@@ -36,6 +36,9 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
             :language: python
             :dedent: 8
     """
+    
+    MAX_TOKEN_VALIDITY_IN_SECONDS = 86400
+    
     def __init__(
             self,
             endpoint, # type: str
@@ -118,14 +121,17 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
         """
         api_version = kwargs.pop("api_version", self._api_version)
         
-        expires_after = 0
+        expires_after_in_minutes = 0
         
         if (token_expires_after is not None):
-            expires_after = int(token_expires_after.seconds / 60)
+            
+            # timedelta counts seconds that sum up to one day and assigns them to days property, remainder is assigned to seconds property
+            # i.e. when reaching 86400 seconds, value for days property will be 1, value for seconds property will be 0
+            expires_after_in_minutes = int((token_expires_after.days * self.MAX_TOKEN_VALIDITY_IN_SECONDS + token_expires_after.seconds) / 60)
         
             body = {
                 'createTokenWithScopes': scopes,
-                'expiresInMinutes': expires_after
+                'expiresInMinutes': expires_after_in_minutes
             }
         else:
             body = {
@@ -181,14 +187,17 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
         """
         api_version = kwargs.pop("api_version", self._api_version)
         
-        expires_after = 0
+        expires_after_in_minutes = 0
         
         if (token_expires_after is not None):
-            expires_after = int(token_expires_after.seconds / 60)
+            
+            # timedelta counts seconds that sum up to one day and assigns them to days property, remainder is assigned to seconds property
+            # i.e. when reaching 86400 seconds, value for days property will be 1, value for seconds property will be 0
+            expires_after_in_minutes = int((token_expires_after.days * self.MAX_TOKEN_VALIDITY_IN_SECONDS + token_expires_after.seconds) / 60)
         
             body = {
                 'scopes': scopes,
-                'expiresInMinutes': expires_after
+                'expiresInMinutes': expires_after_in_minutes
             }
         else:
             body = {
