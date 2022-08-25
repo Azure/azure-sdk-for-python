@@ -54,7 +54,7 @@ _logger = logging.getLogger(__name__)
 
 class AMQPClientAsync(AMQPClientSync):
     """An asynchronous AMQP client.
-    
+
     :param hostname: The AMQP endpoint to connect to.
     :type hostname: str
     :keyword auth: Authentication for the connection. This should be one of the following:
@@ -333,6 +333,91 @@ class AMQPClientAsync(AMQPClientSync):
 
 
 class SendClientAsync(SendClientSync, AMQPClientAsync):
+    """An AMQP client for sending messages asynchronously.
+
+    :param hostname: The AMQP endpoint to connect to.
+    :type hostname: str
+    :param target: The target AMQP service endpoint. This can either be the URI as
+     a string or a ~pyamqp.endpoint.Target object.
+    :type target: str, bytes or ~pyamqp.endpoint.Target
+    :param auth: Authentication for the connection. This should be one of the subclasses of
+     pyamqp.authentication.AMQPAuth. Currently this includes:
+        - pyamqp.authentication.SASLAnonymous
+        - pyamqp.authentication.SASLPlain
+        - pyamqp.authentication.SASTokenAuth
+     If no authentication is supplied, SASLAnnoymous will be used by default.
+    :type auth: ~pyamqp.authentication.SASLAnonymous or pyamqp.authentication.SASLPlain
+     or pyamqp.authentication.SASTokenAuth
+    :keyword client_name: The name for the client, also known as the Container ID.
+     If no name is provided, a random GUID will be used.
+    :paramtype client_name: str or bytes
+    :keyword debug: Whether to turn on network trace logs. If `True`, trace logs
+     will be logged at INFO level. Default is `False`.
+    :paramtype debug: bool
+    :keyword auto_complete: Whether to automatically settle message received via callback
+     or via iterator. If the message has not been explicitly settled after processing
+     the message will be accepted. Alternatively, when used with batch receive, this setting
+     will determine whether the messages are pre-emptively settled during batching, or otherwise
+     let to the user to be explicitly settled.
+    :paramtype auto_complete: bool
+    :keyword retry_policy: A policy for parsing errors on link, connection and message
+     disposition to determine whether the error should be retryable.
+    :paramtype retry_policy: ~pyamqp.errors.RetryPolicy
+    :keyword keep_alive_interval: If set, a thread will be started to keep the connection
+     alive during periods of user inactivity. The value will determine how long the
+     thread will sleep (in seconds) between pinging the connection. If 0 or None, no
+     thread will be started.
+    :paramtype keep_alive_interval: int
+    :keyword send_settle_mode: The mode by which to settle message send
+     operations. If set to `Unsettled`, the client will wait for a confirmation
+     from the service that the message was successfully sent. If set to 'Settled',
+     the client will not wait for confirmation and assume success.
+    :paramtype send_settle_mode: ~pyamqp.constants.SenderSettleMode
+    :keyword receive_settle_mode: The mode by which to settle message receive
+     operations. If set to `PeekLock`, the receiver will lock a message once received until
+     the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
+     will assume successful receipt of the message and clear it from the queue. The
+     default is `PeekLock`.
+    :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keywprd desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
+    :keyword max_message_size: The maximum allowed message size negotiated for the Link.
+    :paramtype max_message_size: int
+    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
+    :paramtype link_properties: dict
+    :keyword prefetch: The receiver Link credit that determines how many
+     messages the Link will attempt to handle per connection iteration.
+     The default is 300.
+    :paramtype prefetch: int
+    :keyword max_frame_size: Maximum AMQP frame size. Default is 63488 bytes.
+    :paramtype max_frame_size: int
+    :keyword channel_max: Maximum number of Session channels in the Connection.
+    :paramtype channel_max: int
+    :keyword idle_timeout: Timeout in seconds after which the Connection will close
+     if there is no further activity.
+    :paramtype idle_timeout: int
+    :keyword properties: Connection properties.
+    :paramtype properties: dict
+    :keyword remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
+     idle time for Connections with no activity. Value must be between
+     0.0 and 1.0 inclusive. Default is 0.5.
+    :paramtype remote_idle_timeout_empty_frame_send_ratio: float
+    :keyword incoming_window: The size of the allowed window for incoming messages.
+    :paramtype incoming_window: int
+    :keyword outgoing_window: The size of the allowed window for outgoing messages.
+    :paramtype outgoing_window: int
+    :keyword handle_max: The maximum number of concurrent link handles.
+    :paramtype handle_max: int
+    :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
+     The function must take 4 arguments: source, target, properties and error.
+    :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword encoding: The encoding to use for parameters supplied as strings.
+     Default is 'UTF-8'
+    :paramtype encoding: str
+    """
 
     async def _client_ready_async(self):
         """Determine whether the client is ready to start receiving messages.
@@ -457,93 +542,90 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
 
 class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
-    """An AMQP client for receiving messages asynchronously.
+    """An AMQP client for receiving messages.
 
-    :param target: The source AMQP service endpoint. This can either be the URI as
-     a string or a ~uamqp.address.Source object.
-    :type target: str, bytes or ~uamqp.address.Source
+    :param hostname: The AMQP endpoint to connect to.
+    :type hostname: str
+    :param source: The source AMQP service endpoint. This can either be the URI as
+     a string or a ~pyamqp.endpoint.Source object.
+    :type source: str, bytes or ~pyamqp.endpoint.Source
     :param auth: Authentication for the connection. This should be one of the subclasses of
-     uamqp.authentication.AMQPAuth. Currently this includes:
-        - uamqp.authentication.SASLAnonymous
-        - uamqp.authentication.SASLPlain
-        - uamqp.authentication.SASTokenAsync
+     pyamqp.authentication.AMQPAuth. Currently this includes:
+        - pyamqp.authentication.SASLAnonymous
+        - pyamqp.authentication.SASLPlain
+        - pyamqp.authentication.SASTokenAuth
      If no authentication is supplied, SASLAnnoymous will be used by default.
-    :type auth: ~uamqp.authentication.common.AMQPAuth
-    :param client_name: The name for the client, also known as the Container ID.
+    :type auth: ~pyamqp.authentication.SASLAnonymous or pyamqp.authentication.SASLPlain
+     or pyamqp.authentication.SASTokenAuth
+    :keyword client_name: The name for the client, also known as the Container ID.
      If no name is provided, a random GUID will be used.
-    :type client_name: str or bytes
-    :param loop: A user specified event loop.
-    :type loop: ~asycnio.AbstractEventLoop
-    :param debug: Whether to turn on network trace logs. If `True`, trace logs
+    :paramtype client_name: str or bytes
+    :keyword debug: Whether to turn on network trace logs. If `True`, trace logs
      will be logged at INFO level. Default is `False`.
-    :type debug: bool
-    :param timeout: A timeout in seconds. The receiver will shut down if no
-     new messages are received after the specified timeout. If set to 0, the receiver
-     will never timeout and will continue to listen. The default is 0.
-    :type timeout: float
-    :param auto_complete: Whether to automatically settle message received via callback
+    :paramtype debug: bool
+    :keyword auto_complete: Whether to automatically settle message received via callback
      or via iterator. If the message has not been explicitly settled after processing
      the message will be accepted. Alternatively, when used with batch receive, this setting
      will determine whether the messages are pre-emptively settled during batching, or otherwise
      let to the user to be explicitly settled.
-    :type auto_complete: bool
-    :param error_policy: A policy for parsing errors on link, connection and message
+    :paramtype auto_complete: bool
+    :keyword retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
-    :type error_policy: ~uamqp.errors.ErrorPolicy
-    :param keep_alive_interval: If set, a thread will be started to keep the connection
+    :paramtype retry_policy: ~pyamqp.errors.RetryPolicy
+    :keyword keep_alive_interval: If set, a thread will be started to keep the connection
      alive during periods of user inactivity. The value will determine how long the
      thread will sleep (in seconds) between pinging the connection. If 0 or None, no
      thread will be started.
-    :type keep_alive_interval: int
-    :param send_settle_mode: The mode by which to settle message send
+    :paramtype keep_alive_interval: int
+    :keyword send_settle_mode: The mode by which to settle message send
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
      the client will not wait for confirmation and assume success.
-    :type send_settle_mode: ~uamqp.constants.SenderSettleMode
-    :param receive_settle_mode: The mode by which to settle message receive
+    :paramtype send_settle_mode: ~pyamqp.constants.SenderSettleMode
+    :keyword receive_settle_mode: The mode by which to settle message receive
      operations. If set to `PeekLock`, the receiver will lock a message once received until
      the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
-    :type receive_settle_mode: ~uamqp.constants.ReceiverSettleMode
-    :param desired_capabilities: The extension capabilities desired from the peer endpoint.
+    :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
      To create an desired_capabilities object, please do as follows:
         - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
         - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
-    :type desired_capabilities: ~uamqp.c_uamqp.AMQPValue
-    :param max_message_size: The maximum allowed message size negotiated for the Link.
-    :type max_message_size: int
-    :param link_properties: Metadata to be sent in the Link ATTACH frame.
-    :type link_properties: dict
-    :param prefetch: The receiver Link credit that determines how many
+    :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
+    :keyword max_message_size: The maximum allowed message size negotiated for the Link.
+    :paramtype max_message_size: int
+    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
+    :paramtype link_properties: dict
+    :keyword prefetch: The receiver Link credit that determines how many
      messages the Link will attempt to handle per connection iteration.
      The default is 300.
-    :type prefetch: int
-    :param max_frame_size: Maximum AMQP frame size. Default is 63488 bytes.
-    :type max_frame_size: int
-    :param channel_max: Maximum number of Session channels in the Connection.
-    :type channel_max: int
-    :param idle_timeout: Timeout in seconds after which the Connection will close
+    :paramtype prefetch: int
+    :keyword max_frame_size: Maximum AMQP frame size. Default is 63488 bytes.
+    :paramtype max_frame_size: int
+    :keyword channel_max: Maximum number of Session channels in the Connection.
+    :paramtype channel_max: int
+    :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :type idle_timeout: int
-    :param properties: Connection properties.
-    :type properties: dict
-    :param remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
+    :paramtype idle_timeout: int
+    :keyword properties: Connection properties.
+    :paramtype properties: dict
+    :keyword remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
      idle time for Connections with no activity. Value must be between
      0.0 and 1.0 inclusive. Default is 0.5.
-    :type remote_idle_timeout_empty_frame_send_ratio: float
-    :param incoming_window: The size of the allowed window for incoming messages.
-    :type incoming_window: int
-    :param outgoing_window: The size of the allowed window for outgoing messages.
-    :type outgoing_window: int
-    :param handle_max: The maximum number of concurrent link handles.
-    :type handle_max: int
-    :param on_attach: A callback function to be run on receipt of an ATTACH frame.
+    :paramtype remote_idle_timeout_empty_frame_send_ratio: float
+    :keyword incoming_window: The size of the allowed window for incoming messages.
+    :paramtype incoming_window: int
+    :keyword outgoing_window: The size of the allowed window for outgoing messages.
+    :paramtype outgoing_window: int
+    :keyword handle_max: The maximum number of concurrent link handles.
+    :paramtype handle_max: int
+    :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~uamqp.errors.AMQPConnectionError]
-    :param encoding: The encoding to use for parameters supplied as strings.
+    :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword encoding: The encoding to use for parameters supplied as strings.
      Default is 'UTF-8'
-    :type encoding: str
+    :paramtype encoding: str
     """
 
     async def _client_ready_async(self):
