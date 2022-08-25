@@ -12,12 +12,10 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 
 To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
-
-
  
 For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/batch)
 Code samples for this package can be found at [Batch Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
-Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+Additional code samples for different Azure services are available at [Samples Repo](https://github.com/Azure-Samples/azure-samples-python-management/tree/main/samples/batch)
 
 
 # Provide Feedback
