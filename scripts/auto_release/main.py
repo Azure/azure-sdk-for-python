@@ -494,7 +494,7 @@ class CodegenTestPR:
         self.pr_number = res_create.number
 
     def zero_version_policy(self):
-        if self.next_version == '0.0.0':
+        if re.match(re.compile('0\.0\.0'), self.next_version):
             api_request = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
             issue_number = int(self.issue_link.split('/')[-1])
             api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
