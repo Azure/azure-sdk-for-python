@@ -16,13 +16,25 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import ServiceBusManagementClientConfiguration
-from .operations import DisasterRecoveryConfigsOperations, MigrationConfigsOperations, NamespacesOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QueuesOperations, RulesOperations, SubscriptionsOperations, TopicsOperations
+from .operations import (
+    DisasterRecoveryConfigsOperations,
+    MigrationConfigsOperations,
+    NamespacesOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    QueuesOperations,
+    RulesOperations,
+    SubscriptionsOperations,
+    TopicsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class ServiceBusManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attributes
     """Azure Service Bus client for managing Namespace.
 
     :ivar namespaces: NamespacesOperations operations
@@ -72,50 +84,35 @@ class ServiceBusManagementClient:    # pylint: disable=too-many-instance-attribu
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ServiceBusManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ServiceBusManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.namespaces = NamespacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.migration_configs = MigrationConfigsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.queues = QueuesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.topics = TopicsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.rules = RulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.subscriptions = SubscriptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.queues = QueuesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.topics = TopicsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rules = RulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.subscriptions = SubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

@@ -9,13 +9,12 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
-from ._configuration import ServiceBusManagementClientConfiguration
+from .._serialization import Deserializer, Serializer
+from ._configuration import ServiceBusMgmtTestClientConfiguration
 from .operations import (
     DisasterRecoveryConfigsOperations,
     MigrationConfigsOperations,
@@ -34,7 +33,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attributes
+class ServiceBusMgmtTestClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Service Bus client for managing Namespace.
 
     :ivar namespaces: NamespacesOperations operations
@@ -61,10 +60,10 @@ class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attribute
     :vartype rules: azure.mgmt.servicebus.v2021_11_01.operations.RulesOperations
     :ivar subscriptions: SubscriptionsOperations operations
     :vartype subscriptions: azure.mgmt.servicebus.v2021_11_01.operations.SubscriptionsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call.
+     subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -82,7 +81,7 @@ class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attribute
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ServiceBusManagementClientConfiguration(
+        self._config = ServiceBusMgmtTestClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -119,7 +118,7 @@ class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attribute
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -137,7 +136,7 @@ class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attribute
         self._client.close()
 
     def __enter__(self):
-        # type: () -> ServiceBusManagementClient
+        # type: () -> ServiceBusMgmtTestClient
         self._client.__enter__()
         return self
 

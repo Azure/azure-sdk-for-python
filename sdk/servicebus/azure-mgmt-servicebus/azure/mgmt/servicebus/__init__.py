@@ -6,11 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._service_bus_management_client import ServiceBusManagementClient
-__all__ = ['ServiceBusManagementClient']
+from ._service_bus_mgmt_test_client import ServiceBusMgmtTestClient
+__all__ = ['ServiceBusMgmtTestClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass
+
+from ._version import VERSION
+
+__version__ = VERSION

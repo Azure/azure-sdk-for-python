@@ -1,5 +1,14 @@
 # Release History
 
+## 9.0.0 (2022-08-25)
+
+### Breaking Changes
+
+  - Client name is changed
+  - Removed operation group EventHubsOperations
+  - Removed operation group PremiumMessagingRegionsOperations
+  - Removed operation group RegionsOperations
+
 ## 8.1.0 (2022-08-10)
 
 ### Features Added
