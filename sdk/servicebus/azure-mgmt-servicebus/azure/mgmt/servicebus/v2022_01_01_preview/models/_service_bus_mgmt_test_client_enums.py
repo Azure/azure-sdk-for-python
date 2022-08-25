@@ -11,6 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessRights(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessRights."""
 
     MANAGE = "Manage"
     SEND = "Send"
@@ -27,7 +28,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Default Action for Network Rule Set"""
+    """Default Action for Network Rule Set."""
 
     ALLOW = "Allow"
     DENY = "Deny"
@@ -59,14 +60,14 @@ class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Rule filter types"""
+    """Rule filter types."""
 
     SQL_FILTER = "SqlFilter"
     CORRELATION_FILTER = "CorrelationFilter"
 
 
 class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumerates the possible value of keySource for Encryption"""
+    """Enumerates the possible value of keySource for Encryption."""
 
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
 
@@ -88,12 +89,13 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MigrationConfigurationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MigrationConfigurationName."""
 
     _DEFAULT = "$default"
 
 
 class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The IP Filter Action"""
+    """The IP Filter Action."""
 
     ALLOW = "Allow"
 
@@ -109,7 +111,7 @@ class PrivateLinkConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ProvisioningStateDR(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the Alias(Disaster Recovery configuration) - possible values 'Accepted'
-    or 'Succeeded' or 'Failed'
+    or 'Succeeded' or 'Failed'.
     """
 
     ACCEPTED = "Accepted"
@@ -134,7 +136,7 @@ class PublicNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class RoleDisasterRecovery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating' or
-    'Secondary'
+    'Secondary'.
     """
 
     PRIMARY = "Primary"
@@ -159,7 +161,7 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The minimum TLS version for the cluster to support, e.g. '1.2'"""
+    """The minimum TLS version for the cluster to support, e.g. '1.2'."""
 
     ONE0 = "1.0"
     ONE1 = "1.1"

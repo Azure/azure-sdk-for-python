@@ -7,15 +7,14 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
 
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.mgmt.core import ARMPipelineClient
-
-from . import models
-from ._configuration import ServiceBusManagementClientConfiguration
+from .. import models
+from ..._serialization import Deserializer, Serializer
+from ._configuration import ServiceBusMgmtTestClientConfiguration
 from .operations import (
     DisasterRecoveryConfigsOperations,
     MigrationConfigsOperations,
@@ -31,45 +30,47 @@ from .operations import (
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attributes
+class ServiceBusMgmtTestClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Service Bus client for managing Namespace.
 
     :ivar namespaces: NamespacesOperations operations
-    :vartype namespaces: azure.mgmt.servicebus.v2021_11_01.operations.NamespacesOperations
+    :vartype namespaces:
+     azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.NamespacesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
-     azure.mgmt.servicebus.v2021_11_01.operations.PrivateEndpointConnectionsOperations
+     azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
-     azure.mgmt.servicebus.v2021_11_01.operations.PrivateLinkResourcesOperations
+     azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.PrivateLinkResourcesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.servicebus.v2021_11_01.operations.Operations
+    :vartype operations: azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.Operations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigsOperations operations
     :vartype disaster_recovery_configs:
-     azure.mgmt.servicebus.v2021_11_01.operations.DisasterRecoveryConfigsOperations
+     azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.DisasterRecoveryConfigsOperations
     :ivar migration_configs: MigrationConfigsOperations operations
     :vartype migration_configs:
-     azure.mgmt.servicebus.v2021_11_01.operations.MigrationConfigsOperations
+     azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.MigrationConfigsOperations
     :ivar queues: QueuesOperations operations
-    :vartype queues: azure.mgmt.servicebus.v2021_11_01.operations.QueuesOperations
+    :vartype queues: azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.QueuesOperations
     :ivar topics: TopicsOperations operations
-    :vartype topics: azure.mgmt.servicebus.v2021_11_01.operations.TopicsOperations
+    :vartype topics: azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.TopicsOperations
     :ivar rules: RulesOperations operations
-    :vartype rules: azure.mgmt.servicebus.v2021_11_01.operations.RulesOperations
+    :vartype rules: azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.RulesOperations
     :ivar subscriptions: SubscriptionsOperations operations
-    :vartype subscriptions: azure.mgmt.servicebus.v2021_11_01.operations.SubscriptionsOperations
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :vartype subscriptions:
+     azure.mgmt.servicebus.v2022_01_01_preview.aio.operations.SubscriptionsOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call.
+     subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-01-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -77,15 +78,15 @@ class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attribute
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ServiceBusManagementClientConfiguration(
+        self._config = ServiceBusMgmtTestClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -110,37 +111,34 @@ class ServiceBusManagementClient:  # pylint: disable=too-many-instance-attribute
         self.rules = RulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subscriptions = SubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> ServiceBusManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "ServiceBusMgmtTestClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
