@@ -80,14 +80,6 @@ def all_files(path: str, files: List[str]):
             files.append(folder)
 
 
-def checkout_azure_default_branch():
-    usr = 'Azure'
-    branch = 'main'
-    print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
-    print_check(f'git fetch {usr} {branch}')
-    print_check(f'git checkout {usr}/{branch}')
-
-
 def modify_file(file_path: str, func: Any):
     with open(file_path, 'r') as file_in:
         content = file_in.readlines()
@@ -168,8 +160,27 @@ class CodegenTestPR:
         generate_result = self.get_autorest_result()
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
+    @staticmethod
+    def checkout_branch(env_key: str, repo: str):
+        env_var = os.getenv(env_key, "")
+        usr = env_var.split(":")[0] or "Azure"
+        branch = env_var.split(":")[-1] or "main"
+        print_exec(f'git remote add {usr} https://github.com/{usr}/{repo}.git')
+        print_check(f'git fetch {usr} {branch}')
+        print_check(f'git checkout {usr}/{branch}')
+
+    @return_origin_path
+    def checkout_azure_default_branch(self):
+        # checkout branch in sdk repo
+        self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
+
+        # checkout branch in rest repo
+        if self.spec_repo:
+            os.chdir(Path(self.spec_repo))
+            self.checkout_branch("DEBUG_REST_BRANCH", "azure-rest-api-specs")
+
     def generate_code(self):
-        checkout_azure_default_branch()
+        self.checkout_azure_default_branch()
 
         # prepare input data
         input_data = {
