@@ -247,7 +247,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-recoveryservicesbackup msrest>=0.6.21
 #override azure-mgmt-datafactory msrest>=0.6.21
 #override azure-mgmt-apimanagement msrest>=0.6.21
-#override azure-mgmt-compute msrest>=0.6.21
+#override azure-mgmt-compute msrest>=0.7.1
 #override azure-mgmt-streamanalytics msrest>=0.6.21
 #override azure-mgmt-consumption msrest>=0.6.21
 #override azure-mgmt-oep msrest>=0.6.21
@@ -362,7 +362,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-dynatrace msrest>=0.6.21
 #override azure-mgmt-dynatrace azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-appplatform azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-compute azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-compute azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-servicefabricmanagedclusters msrest>=0.6.21
 #override azure-mgmt-servicefabricmanagedclusters azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-confidentialledger msrest>=0.6.21

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,14 +10,14 @@
 import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class AccessUri(msrest.serialization.Model):
+class AccessUri(_serialization.Model):
     """A disk access SAS uri.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -26,24 +27,20 @@ class AccessUri(msrest.serialization.Model):
     """
 
     _validation = {
-        'access_sas': {'readonly': True},
+        "access_sas": {"readonly": True},
     }
 
     _attribute_map = {
-        'access_sas': {'key': 'accessSAS', 'type': 'str'},
+        "access_sas": {"key": "accessSAS", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AccessUri, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.access_sas = None
 
 
-class ApiError(msrest.serialization.Model):
+class ApiError(_serialization.Model):
     """Api error.
 
     :ivar details: The Api error details.
@@ -59,11 +56,11 @@ class ApiError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "details": {"key": "details", "type": "[ApiErrorBase]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
@@ -88,7 +85,7 @@ class ApiError(msrest.serialization.Model):
         :keyword message: The error message.
         :paramtype message: str
         """
-        super(ApiError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.details = details
         self.innererror = innererror
         self.code = code
@@ -96,7 +93,7 @@ class ApiError(msrest.serialization.Model):
         self.message = message
 
 
-class ApiErrorBase(msrest.serialization.Model):
+class ApiErrorBase(_serialization.Model):
     """Api error base.
 
     :ivar code: The error code.
@@ -108,18 +105,13 @@ class ApiErrorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        target: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
     ):
         """
         :keyword code: The error code.
@@ -129,21 +121,21 @@ class ApiErrorBase(msrest.serialization.Model):
         :keyword message: The error message.
         :paramtype message: str
         """
-        super(ApiErrorBase, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.target = target
         self.message = message
 
 
-class CreationData(msrest.serialization.Model):
+class CreationData(_serialization.Model):
     """Data used when creating a disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar create_option: Required. This enumerates the possible sources of a disk's creation. Known
-     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
+    :ivar create_option: This enumerates the possible sources of a disk's creation. Required. Known
+     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Upload".
     :vartype create_option: str or ~azure.mgmt.compute.v2020_09_30.models.DiskCreateOption
     :ivar storage_account_id: Required if createOption is Import. The Azure Resource Manager
      identifier of the storage account containing the blob to import as a disk.
@@ -166,27 +158,27 @@ class CreationData(msrest.serialization.Model):
     :ivar upload_size_bytes: If createOption is Upload, this is the size of the contents of the
      upload including the VHD footer. This value should be between 20972032 (20 MiB + 512 bytes for
      the VHD footer) and 35183298347520 bytes (32 TiB + 512 bytes for the VHD footer).
-    :vartype upload_size_bytes: long
+    :vartype upload_size_bytes: int
     :ivar logical_sector_size: Logical sector size in bytes for Ultra disks. Supported values are
      512 ad 4096. 4096 is the default.
     :vartype logical_sector_size: int
     """
 
     _validation = {
-        'create_option': {'required': True},
-        'source_unique_id': {'readonly': True},
+        "create_option": {"required": True},
+        "source_unique_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
-        'image_reference': {'key': 'imageReference', 'type': 'ImageDiskReference'},
-        'gallery_image_reference': {'key': 'galleryImageReference', 'type': 'ImageDiskReference'},
-        'source_uri': {'key': 'sourceUri', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'source_unique_id': {'key': 'sourceUniqueId', 'type': 'str'},
-        'upload_size_bytes': {'key': 'uploadSizeBytes', 'type': 'long'},
-        'logical_sector_size': {'key': 'logicalSectorSize', 'type': 'int'},
+        "create_option": {"key": "createOption", "type": "str"},
+        "storage_account_id": {"key": "storageAccountId", "type": "str"},
+        "image_reference": {"key": "imageReference", "type": "ImageDiskReference"},
+        "gallery_image_reference": {"key": "galleryImageReference", "type": "ImageDiskReference"},
+        "source_uri": {"key": "sourceUri", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "source_unique_id": {"key": "sourceUniqueId", "type": "str"},
+        "upload_size_bytes": {"key": "uploadSizeBytes", "type": "int"},
+        "logical_sector_size": {"key": "logicalSectorSize", "type": "int"},
     }
 
     def __init__(
@@ -203,8 +195,8 @@ class CreationData(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword create_option: Required. This enumerates the possible sources of a disk's creation.
-         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
+        :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
+         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Upload".
         :paramtype create_option: str or ~azure.mgmt.compute.v2020_09_30.models.DiskCreateOption
         :keyword storage_account_id: Required if createOption is Import. The Azure Resource Manager
          identifier of the storage account containing the blob to import as a disk.
@@ -224,12 +216,12 @@ class CreationData(msrest.serialization.Model):
         :keyword upload_size_bytes: If createOption is Upload, this is the size of the contents of the
          upload including the VHD footer. This value should be between 20972032 (20 MiB + 512 bytes for
          the VHD footer) and 35183298347520 bytes (32 TiB + 512 bytes for the VHD footer).
-        :paramtype upload_size_bytes: long
+        :paramtype upload_size_bytes: int
         :keyword logical_sector_size: Logical sector size in bytes for Ultra disks. Supported values
          are 512 ad 4096. 4096 is the default.
         :paramtype logical_sector_size: int
         """
-        super(CreationData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.create_option = create_option
         self.storage_account_id = storage_account_id
         self.image_reference = image_reference
@@ -241,7 +233,7 @@ class CreationData(msrest.serialization.Model):
         self.logical_sector_size = logical_sector_size
 
 
-class DiskImageEncryption(msrest.serialization.Model):
+class DiskImageEncryption(_serialization.Model):
     """This is the disk image encryption base class.
 
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
@@ -250,21 +242,16 @@ class DiskImageEncryption(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs):
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
         :paramtype disk_encryption_set_id: str
         """
-        super(DiskImageEncryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_encryption_set_id = disk_encryption_set_id
 
 
@@ -276,42 +263,36 @@ class DataDiskImageEncryption(DiskImageEncryption):
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
      set.
     :vartype disk_encryption_set_id: str
-    :ivar lun: Required. This property specifies the logical unit number of the data disk. This
-     value is used to identify data disks within the Virtual Machine and therefore must be unique
-     for each data disk attached to the Virtual Machine.
+    :ivar lun: This property specifies the logical unit number of the data disk. This value is used
+     to identify data disks within the Virtual Machine and therefore must be unique for each data
+     disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
     _validation = {
-        'lun': {'required': True},
+        "lun": {"required": True},
     }
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        lun: int,
-        disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, lun: int, disk_encryption_set_id: Optional[str] = None, **kwargs):
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
         :paramtype disk_encryption_set_id: str
-        :keyword lun: Required. This property specifies the logical unit number of the data disk. This
-         value is used to identify data disks within the Virtual Machine and therefore must be unique
-         for each data disk attached to the Virtual Machine.
+        :keyword lun: This property specifies the logical unit number of the data disk. This value is
+         used to identify data disks within the Virtual Machine and therefore must be unique for each
+         data disk attached to the Virtual Machine. Required.
         :paramtype lun: int
         """
-        super(DataDiskImageEncryption, self).__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
+        super().__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
         self.lun = lun
 
 
-class Disallowed(msrest.serialization.Model):
+class Disallowed(_serialization.Model):
     """Describes the disallowed disk types.
 
     :ivar disk_types: A list of disk types.
@@ -319,24 +300,19 @@ class Disallowed(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_types': {'key': 'diskTypes', 'type': '[str]'},
+        "disk_types": {"key": "diskTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        disk_types: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs):
         """
         :keyword disk_types: A list of disk types.
         :paramtype disk_types: list[str]
         """
-        super(Disallowed, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_types = disk_types
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -349,41 +325,35 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -391,7 +361,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class Disk(Resource):
+class Disk(Resource):  # pylint: disable=too-many-instance-attributes
     """Disk resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -404,9 +374,9 @@ class Disk(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar managed_by: A relative URI containing the ID of the VM that has the disk attached.
     :vartype managed_by: str
@@ -424,10 +394,10 @@ class Disk(Resource):
     :vartype extended_location: ~azure.mgmt.compute.v2020_09_30.models.ExtendedLocation
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :ivar os_type: The Operating System type. Known values are: "Windows", "Linux".
+    :ivar os_type: The Operating System type. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Known values are: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
     :ivar purchase_plan: Purchase plan information for the the image from which the OS disk was
      created. E.g. - {name: 2019-Datacenter, publisher: MicrosoftWindowsServer, product:
@@ -442,7 +412,7 @@ class Disk(Resource):
      running VM, and can only increase the disk's size.
     :vartype disk_size_gb: int
     :ivar disk_size_bytes: The size of the disk in bytes. This field is read only.
-    :vartype disk_size_bytes: long
+    :vartype disk_size_bytes: int
     :ivar unique_id: Unique Guid identifying the resource.
     :vartype unique_id: str
     :ivar encryption_settings_collection: Encryption settings collection used for Azure Disk
@@ -453,20 +423,20 @@ class Disk(Resource):
     :vartype provisioning_state: str
     :ivar disk_iops_read_write: The number of IOPS allowed for this disk; only settable for
      UltraSSD disks. One operation can transfer between 4k and 256k bytes.
-    :vartype disk_iops_read_write: long
+    :vartype disk_iops_read_write: int
     :ivar disk_m_bps_read_write: The bandwidth allowed for this disk; only settable for UltraSSD
      disks. MBps means millions of bytes per second - MB here uses the ISO notation, of powers of
      10.
-    :vartype disk_m_bps_read_write: long
+    :vartype disk_m_bps_read_write: int
     :ivar disk_iops_read_only: The total number of IOPS that will be allowed across all VMs
      mounting the shared disk as ReadOnly. One operation can transfer between 4k and 256k bytes.
-    :vartype disk_iops_read_only: long
+    :vartype disk_iops_read_only: int
     :ivar disk_m_bps_read_only: The total throughput (MBps) that will be allowed across all VMs
      mounting the shared disk as ReadOnly. MBps means millions of bytes per second - MB here uses
      the ISO notation, of powers of 10.
-    :vartype disk_m_bps_read_only: long
+    :vartype disk_m_bps_read_only: int
     :ivar disk_state: The state of the disk. Known values are: "Unattached", "Attached",
-     "Reserved", "ActiveSAS", "ReadyToUpload", "ActiveUpload".
+     "Reserved", "ActiveSAS", "ReadyToUpload", and "ActiveUpload".
     :vartype disk_state: str or ~azure.mgmt.compute.v2020_09_30.models.DiskState
     :ivar encryption: Encryption property can be used to encrypt data at rest with customer managed
      keys or platform managed keys.
@@ -478,7 +448,7 @@ class Disk(Resource):
      be set to a value greater than one for disks to allow attaching them to multiple VMs.
     :vartype share_info: list[~azure.mgmt.compute.v2020_09_30.models.ShareInfoElement]
     :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
-     "AllowAll", "AllowPrivate", "DenyAll".
+     "AllowAll", "AllowPrivate", and "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -493,56 +463,59 @@ class Disk(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'managed_by': {'readonly': True},
-        'managed_by_extended': {'readonly': True},
-        'time_created': {'readonly': True},
-        'disk_size_bytes': {'readonly': True},
-        'unique_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'disk_state': {'readonly': True},
-        'share_info': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "managed_by": {"readonly": True},
+        "managed_by_extended": {"readonly": True},
+        "time_created": {"readonly": True},
+        "disk_size_bytes": {"readonly": True},
+        "unique_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "disk_state": {"readonly": True},
+        "share_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'managed_by_extended': {'key': 'managedByExtended', 'type': '[str]'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'PurchasePlan'},
-        'creation_data': {'key': 'properties.creationData', 'type': 'CreationData'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'disk_size_bytes': {'key': 'properties.diskSizeBytes', 'type': 'long'},
-        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
-        'disk_m_bps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'long'},
-        'disk_iops_read_only': {'key': 'properties.diskIOPSReadOnly', 'type': 'long'},
-        'disk_m_bps_read_only': {'key': 'properties.diskMBpsReadOnly', 'type': 'long'},
-        'disk_state': {'key': 'properties.diskState', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'max_shares': {'key': 'properties.maxShares', 'type': 'int'},
-        'share_info': {'key': 'properties.shareInfo', 'type': '[ShareInfoElement]'},
-        'network_access_policy': {'key': 'properties.networkAccessPolicy', 'type': 'str'},
-        'disk_access_id': {'key': 'properties.diskAccessId', 'type': 'str'},
-        'tier': {'key': 'properties.tier', 'type': 'str'},
-        'bursting_enabled': {'key': 'properties.burstingEnabled', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "managed_by_extended": {"key": "managedByExtended", "type": "[str]"},
+        "sku": {"key": "sku", "type": "DiskSku"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
+        "creation_data": {"key": "properties.creationData", "type": "CreationData"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "disk_size_bytes": {"key": "properties.diskSizeBytes", "type": "int"},
+        "unique_id": {"key": "properties.uniqueId", "type": "str"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "disk_iops_read_write": {"key": "properties.diskIOPSReadWrite", "type": "int"},
+        "disk_m_bps_read_write": {"key": "properties.diskMBpsReadWrite", "type": "int"},
+        "disk_iops_read_only": {"key": "properties.diskIOPSReadOnly", "type": "int"},
+        "disk_m_bps_read_only": {"key": "properties.diskMBpsReadOnly", "type": "int"},
+        "disk_state": {"key": "properties.diskState", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "max_shares": {"key": "properties.maxShares", "type": "int"},
+        "share_info": {"key": "properties.shareInfo", "type": "[ShareInfoElement]"},
+        "network_access_policy": {"key": "properties.networkAccessPolicy", "type": "str"},
+        "disk_access_id": {"key": "properties.diskAccessId", "type": "str"},
+        "tier": {"key": "properties.tier", "type": "str"},
+        "bursting_enabled": {"key": "properties.burstingEnabled", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -569,9 +542,9 @@ class Disk(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
          UltraSSD_LRS.
@@ -581,10 +554,10 @@ class Disk(Resource):
         :keyword extended_location: The extended location where the disk will be created. Extended
          location cannot be changed.
         :paramtype extended_location: ~azure.mgmt.compute.v2020_09_30.models.ExtendedLocation
-        :keyword os_type: The Operating System type. Known values are: "Windows", "Linux".
+        :keyword os_type: The Operating System type. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Known values are: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
         :keyword purchase_plan: Purchase plan information for the the image from which the OS disk was
          created. E.g. - {name: 2019-Datacenter, publisher: MicrosoftWindowsServer, product:
@@ -604,18 +577,18 @@ class Disk(Resource):
          ~azure.mgmt.compute.v2020_09_30.models.EncryptionSettingsCollection
         :keyword disk_iops_read_write: The number of IOPS allowed for this disk; only settable for
          UltraSSD disks. One operation can transfer between 4k and 256k bytes.
-        :paramtype disk_iops_read_write: long
+        :paramtype disk_iops_read_write: int
         :keyword disk_m_bps_read_write: The bandwidth allowed for this disk; only settable for UltraSSD
          disks. MBps means millions of bytes per second - MB here uses the ISO notation, of powers of
          10.
-        :paramtype disk_m_bps_read_write: long
+        :paramtype disk_m_bps_read_write: int
         :keyword disk_iops_read_only: The total number of IOPS that will be allowed across all VMs
          mounting the shared disk as ReadOnly. One operation can transfer between 4k and 256k bytes.
-        :paramtype disk_iops_read_only: long
+        :paramtype disk_iops_read_only: int
         :keyword disk_m_bps_read_only: The total throughput (MBps) that will be allowed across all VMs
          mounting the shared disk as ReadOnly. MBps means millions of bytes per second - MB here uses
          the ISO notation, of powers of 10.
-        :paramtype disk_m_bps_read_only: long
+        :paramtype disk_m_bps_read_only: int
         :keyword encryption: Encryption property can be used to encrypt data at rest with customer
          managed keys or platform managed keys.
         :paramtype encryption: ~azure.mgmt.compute.v2020_09_30.models.Encryption
@@ -623,7 +596,7 @@ class Disk(Resource):
          Value greater than one indicates a disk that can be mounted on multiple VMs at the same time.
         :paramtype max_shares: int
         :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
-         "AllowAll", "AllowPrivate", "DenyAll".
+         "AllowAll", "AllowPrivate", and "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on
@@ -637,7 +610,7 @@ class Disk(Resource):
          target of the disk. Bursting is disabled by default. Does not apply to Ultra disks.
         :paramtype bursting_enabled: bool
         """
-        super(Disk, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.managed_by = None
         self.managed_by_extended = None
         self.sku = sku
@@ -680,9 +653,9 @@ class DiskAccess(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar private_endpoint_connections: A readonly collection of private endpoint connections
      created on the disk. Currently only one endpoint connection is supported.
@@ -695,51 +668,48 @@ class DiskAccess(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'private_endpoint_connections': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'time_created': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "private_endpoint_connections": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "time_created": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(DiskAccess, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.private_endpoint_connections = None
         self.provisioning_state = None
         self.time_created = None
 
 
-class DiskAccessList(msrest.serialization.Model):
+class DiskAccessList(_serialization.Model):
     """The List disk access operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of disk access resources.
+    :ivar value: A list of disk access resources. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskAccess]
     :ivar next_link: The uri to fetch the next page of disk access resources. Call ListNext() with
      this to fetch the next page of disk access resources.
@@ -747,55 +717,44 @@ class DiskAccessList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DiskAccess]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DiskAccess]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.DiskAccess"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.DiskAccess"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of disk access resources.
+        :keyword value: A list of disk access resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskAccess]
         :keyword next_link: The uri to fetch the next page of disk access resources. Call ListNext()
          with this to fetch the next page of disk access resources.
         :paramtype next_link: str
         """
-        super(DiskAccessList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class DiskAccessUpdate(msrest.serialization.Model):
+class DiskAccessUpdate(_serialization.Model):
     """Used for updating a disk access resource.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(DiskAccessUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
@@ -812,15 +771,15 @@ class DiskEncryptionSet(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed identity for the disk encryption set. It should be given permission
      on the key vault before it can be used to encrypt disks.
     :vartype identity: ~azure.mgmt.compute.v2020_09_30.models.EncryptionSetIdentity
     :ivar encryption_type: The type of key used to encrypt the data of the disk. Known values are:
-     "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+     "EncryptionAtRestWithCustomerKey" and "EncryptionAtRestWithPlatformAndCustomerKeys".
     :vartype encryption_type: str or ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSetType
     :ivar active_key: The key vault key which is currently used by this disk encryption set.
     :vartype active_key: ~azure.mgmt.compute.v2020_09_30.models.KeyForDiskEncryptionSet
@@ -833,25 +792,25 @@ class DiskEncryptionSet(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'previous_keys': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "previous_keys": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'EncryptionSetIdentity'},
-        'encryption_type': {'key': 'properties.encryptionType', 'type': 'str'},
-        'active_key': {'key': 'properties.activeKey', 'type': 'KeyForDiskEncryptionSet'},
-        'previous_keys': {'key': 'properties.previousKeys', 'type': '[KeyForDiskEncryptionSet]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "EncryptionSetIdentity"},
+        "encryption_type": {"key": "properties.encryptionType", "type": "str"},
+        "active_key": {"key": "properties.activeKey", "type": "KeyForDiskEncryptionSet"},
+        "previous_keys": {"key": "properties.previousKeys", "type": "[KeyForDiskEncryptionSet]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -865,20 +824,20 @@ class DiskEncryptionSet(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: The managed identity for the disk encryption set. It should be given
          permission on the key vault before it can be used to encrypt disks.
         :paramtype identity: ~azure.mgmt.compute.v2020_09_30.models.EncryptionSetIdentity
         :keyword encryption_type: The type of key used to encrypt the data of the disk. Known values
-         are: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+         are: "EncryptionAtRestWithCustomerKey" and "EncryptionAtRestWithPlatformAndCustomerKeys".
         :paramtype encryption_type: str or ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSetType
         :keyword active_key: The key vault key which is currently used by this disk encryption set.
         :paramtype active_key: ~azure.mgmt.compute.v2020_09_30.models.KeyForDiskEncryptionSet
         """
-        super(DiskEncryptionSet, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.encryption_type = encryption_type
         self.active_key = active_key
@@ -886,12 +845,12 @@ class DiskEncryptionSet(Resource):
         self.provisioning_state = None
 
 
-class DiskEncryptionSetList(msrest.serialization.Model):
+class DiskEncryptionSetList(_serialization.Model):
     """The List disk encryption set operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of disk encryption sets.
+    :ivar value: A list of disk encryption sets. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSet]
     :ivar next_link: The uri to fetch the next page of disk encryption sets. Call ListNext() with
      this to fetch the next page of disk encryption sets.
@@ -899,40 +858,34 @@ class DiskEncryptionSetList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DiskEncryptionSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DiskEncryptionSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.DiskEncryptionSet"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.DiskEncryptionSet"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of disk encryption sets.
+        :keyword value: A list of disk encryption sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSet]
         :keyword next_link: The uri to fetch the next page of disk encryption sets. Call ListNext()
          with this to fetch the next page of disk encryption sets.
         :paramtype next_link: str
         """
-        super(DiskEncryptionSetList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class DiskEncryptionSetUpdate(msrest.serialization.Model):
+class DiskEncryptionSetUpdate(_serialization.Model):
     """disk encryption set update resource.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar encryption_type: The type of key used to encrypt the data of the disk. Known values are:
-     "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+     "EncryptionAtRestWithCustomerKey" and "EncryptionAtRestWithPlatformAndCustomerKeys".
     :vartype encryption_type: str or ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSetType
     :ivar active_key: Key Vault Key Url to be used for server side encryption of Managed Disks and
      Snapshots.
@@ -940,9 +893,9 @@ class DiskEncryptionSetUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'encryption_type': {'key': 'properties.encryptionType', 'type': 'str'},
-        'active_key': {'key': 'properties.activeKey', 'type': 'KeyForDiskEncryptionSet'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "encryption_type": {"key": "properties.encryptionType", "type": "str"},
+        "active_key": {"key": "properties.activeKey", "type": "KeyForDiskEncryptionSet"},
     }
 
     def __init__(
@@ -954,27 +907,27 @@ class DiskEncryptionSetUpdate(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword encryption_type: The type of key used to encrypt the data of the disk. Known values
-         are: "EncryptionAtRestWithCustomerKey", "EncryptionAtRestWithPlatformAndCustomerKeys".
+         are: "EncryptionAtRestWithCustomerKey" and "EncryptionAtRestWithPlatformAndCustomerKeys".
         :paramtype encryption_type: str or ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSetType
         :keyword active_key: Key Vault Key Url to be used for server side encryption of Managed Disks
          and Snapshots.
         :paramtype active_key: ~azure.mgmt.compute.v2020_09_30.models.KeyForDiskEncryptionSet
         """
-        super(DiskEncryptionSetUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.encryption_type = encryption_type
         self.active_key = active_key
 
 
-class DiskList(msrest.serialization.Model):
+class DiskList(_serialization.Model):
     """The List Disks operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of disks.
+    :ivar value: A list of disks. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.Disk]
     :ivar next_link: The uri to fetch the next page of disks. Call ListNext() with this to fetch
      the next page of disks.
@@ -982,34 +935,28 @@ class DiskList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Disk]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Disk]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Disk"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of disks.
+        :keyword value: A list of disks. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.Disk]
         :keyword next_link: The uri to fetch the next page of disks. Call ListNext() with this to fetch
          the next page of disks.
         :paramtype next_link: str
         """
-        super(DiskList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ProxyOnlyResource(msrest.serialization.Model):
+class ProxyOnlyResource(_serialization.Model):
     """The ProxyOnly Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1023,30 +970,26 @@ class ProxyOnlyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyOnlyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class DiskRestorePoint(ProxyOnlyResource):
+class DiskRestorePoint(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
     """Properties of disk restore point.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1061,10 +1004,10 @@ class DiskRestorePoint(ProxyOnlyResource):
     :vartype time_created: ~datetime.datetime
     :ivar source_resource_id: arm id of source disk.
     :vartype source_resource_id: str
-    :ivar os_type: The Operating System type. Known values are: "Windows", "Linux".
+    :ivar os_type: The Operating System type. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Known values are: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
     :ivar purchase_plan: Purchase plan information for the the image from which the OS disk was
      created.
@@ -1079,29 +1022,29 @@ class DiskRestorePoint(ProxyOnlyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'time_created': {'readonly': True},
-        'source_resource_id': {'readonly': True},
-        'os_type': {'readonly': True},
-        'family_id': {'readonly': True},
-        'source_unique_id': {'readonly': True},
-        'encryption': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "time_created": {"readonly": True},
+        "source_resource_id": {"readonly": True},
+        "os_type": {"readonly": True},
+        "family_id": {"readonly": True},
+        "source_unique_id": {"readonly": True},
+        "encryption": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'source_resource_id': {'key': 'properties.sourceResourceId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'PurchasePlan'},
-        'family_id': {'key': 'properties.familyId', 'type': 'str'},
-        'source_unique_id': {'key': 'properties.sourceUniqueId', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
+        "family_id": {"key": "properties.familyId", "type": "str"},
+        "source_unique_id": {"key": "properties.sourceUniqueId", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
     }
 
     def __init__(
@@ -1113,13 +1056,13 @@ class DiskRestorePoint(ProxyOnlyResource):
     ):
         """
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Known values are: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
         :keyword purchase_plan: Purchase plan information for the the image from which the OS disk was
          created.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2020_09_30.models.PurchasePlan
         """
-        super(DiskRestorePoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.time_created = None
         self.source_resource_id = None
         self.os_type = None
@@ -1130,12 +1073,12 @@ class DiskRestorePoint(ProxyOnlyResource):
         self.encryption = None
 
 
-class DiskRestorePointList(msrest.serialization.Model):
+class DiskRestorePointList(_serialization.Model):
     """The List Disk Restore Points operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of disk restore points.
+    :ivar value: A list of disk restore points. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskRestorePoint]
     :ivar next_link: The uri to fetch the next page of disk restore points. Call ListNext() with
      this to fetch the next page of disk restore points.
@@ -1143,79 +1086,68 @@ class DiskRestorePointList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DiskRestorePoint]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DiskRestorePoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.DiskRestorePoint"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.DiskRestorePoint"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of disk restore points.
+        :keyword value: A list of disk restore points. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskRestorePoint]
         :keyword next_link: The uri to fetch the next page of disk restore points. Call ListNext() with
          this to fetch the next page of disk restore points.
         :paramtype next_link: str
         """
-        super(DiskRestorePointList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class DiskSku(msrest.serialization.Model):
+class DiskSku(_serialization.Model):
     """The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or UltraSSD_LRS.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS",
-     "UltraSSD_LRS".
+     and "UltraSSD_LRS".
     :vartype name: str or ~azure.mgmt.compute.v2020_09_30.models.DiskStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
     """
 
     _validation = {
-        'tier': {'readonly': True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None, **kwargs):
         """
         :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS",
-         "StandardSSD_LRS", "UltraSSD_LRS".
+         "StandardSSD_LRS", and "UltraSSD_LRS".
         :paramtype name: str or ~azure.mgmt.compute.v2020_09_30.models.DiskStorageAccountTypes
         """
-        super(DiskSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = None
 
 
-class DiskUpdate(msrest.serialization.Model):
+class DiskUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Disk update resource.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
      UltraSSD_LRS.
     :vartype sku: ~azure.mgmt.compute.v2020_09_30.models.DiskSku
-    :ivar os_type: the Operating System type. Known values are: "Windows", "Linux".
+    :ivar os_type: the Operating System type. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the disk to create. If this field is present for updates or creation with
@@ -1228,18 +1160,18 @@ class DiskUpdate(msrest.serialization.Model):
      ~azure.mgmt.compute.v2020_09_30.models.EncryptionSettingsCollection
     :ivar disk_iops_read_write: The number of IOPS allowed for this disk; only settable for
      UltraSSD disks. One operation can transfer between 4k and 256k bytes.
-    :vartype disk_iops_read_write: long
+    :vartype disk_iops_read_write: int
     :ivar disk_m_bps_read_write: The bandwidth allowed for this disk; only settable for UltraSSD
      disks. MBps means millions of bytes per second - MB here uses the ISO notation, of powers of
      10.
-    :vartype disk_m_bps_read_write: long
+    :vartype disk_m_bps_read_write: int
     :ivar disk_iops_read_only: The total number of IOPS that will be allowed across all VMs
      mounting the shared disk as ReadOnly. One operation can transfer between 4k and 256k bytes.
-    :vartype disk_iops_read_only: long
+    :vartype disk_iops_read_only: int
     :ivar disk_m_bps_read_only: The total throughput (MBps) that will be allowed across all VMs
      mounting the shared disk as ReadOnly. MBps means millions of bytes per second - MB here uses
      the ISO notation, of powers of 10.
-    :vartype disk_m_bps_read_only: long
+    :vartype disk_m_bps_read_only: int
     :ivar max_shares: The maximum number of VMs that can attach to the disk at the same time. Value
      greater than one indicates a disk that can be mounted on multiple VMs at the same time.
     :vartype max_shares: int
@@ -1247,7 +1179,7 @@ class DiskUpdate(msrest.serialization.Model):
      keys or platform managed keys.
     :vartype encryption: ~azure.mgmt.compute.v2020_09_30.models.Encryption
     :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
-     "AllowAll", "AllowPrivate", "DenyAll".
+     "AllowAll", "AllowPrivate", and "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -1264,22 +1196,25 @@ class DiskUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
-        'disk_m_bps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'long'},
-        'disk_iops_read_only': {'key': 'properties.diskIOPSReadOnly', 'type': 'long'},
-        'disk_m_bps_read_only': {'key': 'properties.diskMBpsReadOnly', 'type': 'long'},
-        'max_shares': {'key': 'properties.maxShares', 'type': 'int'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'network_access_policy': {'key': 'properties.networkAccessPolicy', 'type': 'str'},
-        'disk_access_id': {'key': 'properties.diskAccessId', 'type': 'str'},
-        'tier': {'key': 'properties.tier', 'type': 'str'},
-        'bursting_enabled': {'key': 'properties.burstingEnabled', 'type': 'bool'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'PurchasePlan'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "DiskSku"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "disk_iops_read_write": {"key": "properties.diskIOPSReadWrite", "type": "int"},
+        "disk_m_bps_read_write": {"key": "properties.diskMBpsReadWrite", "type": "int"},
+        "disk_iops_read_only": {"key": "properties.diskIOPSReadOnly", "type": "int"},
+        "disk_m_bps_read_only": {"key": "properties.diskMBpsReadOnly", "type": "int"},
+        "max_shares": {"key": "properties.maxShares", "type": "int"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "network_access_policy": {"key": "properties.networkAccessPolicy", "type": "str"},
+        "disk_access_id": {"key": "properties.diskAccessId", "type": "str"},
+        "tier": {"key": "properties.tier", "type": "str"},
+        "bursting_enabled": {"key": "properties.burstingEnabled", "type": "bool"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
     }
 
     def __init__(
@@ -1304,12 +1239,12 @@ class DiskUpdate(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
          UltraSSD_LRS.
         :paramtype sku: ~azure.mgmt.compute.v2020_09_30.models.DiskSku
-        :keyword os_type: the Operating System type. Known values are: "Windows", "Linux".
+        :keyword os_type: the Operating System type. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         :keyword disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
          indicates the size of the disk to create. If this field is present for updates or creation with
@@ -1322,18 +1257,18 @@ class DiskUpdate(msrest.serialization.Model):
          ~azure.mgmt.compute.v2020_09_30.models.EncryptionSettingsCollection
         :keyword disk_iops_read_write: The number of IOPS allowed for this disk; only settable for
          UltraSSD disks. One operation can transfer between 4k and 256k bytes.
-        :paramtype disk_iops_read_write: long
+        :paramtype disk_iops_read_write: int
         :keyword disk_m_bps_read_write: The bandwidth allowed for this disk; only settable for UltraSSD
          disks. MBps means millions of bytes per second - MB here uses the ISO notation, of powers of
          10.
-        :paramtype disk_m_bps_read_write: long
+        :paramtype disk_m_bps_read_write: int
         :keyword disk_iops_read_only: The total number of IOPS that will be allowed across all VMs
          mounting the shared disk as ReadOnly. One operation can transfer between 4k and 256k bytes.
-        :paramtype disk_iops_read_only: long
+        :paramtype disk_iops_read_only: int
         :keyword disk_m_bps_read_only: The total throughput (MBps) that will be allowed across all VMs
          mounting the shared disk as ReadOnly. MBps means millions of bytes per second - MB here uses
          the ISO notation, of powers of 10.
-        :paramtype disk_m_bps_read_only: long
+        :paramtype disk_m_bps_read_only: int
         :keyword max_shares: The maximum number of VMs that can attach to the disk at the same time.
          Value greater than one indicates a disk that can be mounted on multiple VMs at the same time.
         :paramtype max_shares: int
@@ -1341,7 +1276,7 @@ class DiskUpdate(msrest.serialization.Model):
          managed keys or platform managed keys.
         :paramtype encryption: ~azure.mgmt.compute.v2020_09_30.models.Encryption
         :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
-         "AllowAll", "AllowPrivate", "DenyAll".
+         "AllowAll", "AllowPrivate", and "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on
@@ -1357,7 +1292,7 @@ class DiskUpdate(msrest.serialization.Model):
         :keyword purchase_plan: Purchase plan information to be added on the OS disk.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2020_09_30.models.PurchasePlan
         """
-        super(DiskUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.sku = sku
         self.os_type = os_type
@@ -1376,21 +1311,21 @@ class DiskUpdate(msrest.serialization.Model):
         self.purchase_plan = purchase_plan
 
 
-class Encryption(msrest.serialization.Model):
+class Encryption(_serialization.Model):
     """Encryption at rest settings for disk or snapshot.
 
     :ivar disk_encryption_set_id: ResourceId of the disk encryption set to use for enabling
      encryption at rest.
     :vartype disk_encryption_set_id: str
     :ivar type: The type of key used to encrypt the data of the disk. Known values are:
-     "EncryptionAtRestWithPlatformKey", "EncryptionAtRestWithCustomerKey",
+     "EncryptionAtRestWithPlatformKey", "EncryptionAtRestWithCustomerKey", and
      "EncryptionAtRestWithPlatformAndCustomerKeys".
     :vartype type: str or ~azure.mgmt.compute.v2020_09_30.models.EncryptionType
     """
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -1405,16 +1340,16 @@ class Encryption(msrest.serialization.Model):
          encryption at rest.
         :paramtype disk_encryption_set_id: str
         :keyword type: The type of key used to encrypt the data of the disk. Known values are:
-         "EncryptionAtRestWithPlatformKey", "EncryptionAtRestWithCustomerKey",
+         "EncryptionAtRestWithPlatformKey", "EncryptionAtRestWithCustomerKey", and
          "EncryptionAtRestWithPlatformAndCustomerKeys".
         :paramtype type: str or ~azure.mgmt.compute.v2020_09_30.models.EncryptionType
         """
-        super(Encryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_encryption_set_id = disk_encryption_set_id
         self.type = type
 
 
-class EncryptionImages(msrest.serialization.Model):
+class EncryptionImages(_serialization.Model):
     """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in the gallery artifact.
 
     :ivar os_disk_image: Contains encryption settings for an OS disk image.
@@ -1424,8 +1359,8 @@ class EncryptionImages(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'OSDiskImageEncryption'},
-        'data_disk_images': {'key': 'dataDiskImages', 'type': '[DataDiskImageEncryption]'},
+        "os_disk_image": {"key": "osDiskImage", "type": "OSDiskImageEncryption"},
+        "data_disk_images": {"key": "dataDiskImages", "type": "[DataDiskImageEncryption]"},
     }
 
     def __init__(
@@ -1442,12 +1377,12 @@ class EncryptionImages(msrest.serialization.Model):
         :paramtype data_disk_images:
          list[~azure.mgmt.compute.v2020_09_30.models.DataDiskImageEncryption]
         """
-        super(EncryptionImages, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
 
 
-class EncryptionSetIdentity(msrest.serialization.Model):
+class EncryptionSetIdentity(_serialization.Model):
     """The managed identity for the disk encryption set. It should be given permission on the key vault before it can be used to encrypt disks.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1455,7 +1390,7 @@ class EncryptionSetIdentity(msrest.serialization.Model):
     :ivar type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is
      supported for new creations. Disk Encryption Sets can be updated with Identity type None during
      migration of subscription to a new Azure Active Directory tenant; it will cause the encrypted
-     resources to lose access to the keys. Known values are: "SystemAssigned", "None".
+     resources to lose access to the keys. Known values are: "SystemAssigned" and "None".
     :vartype type: str or ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSetIdentityType
     :ivar principal_id: The object id of the Managed Identity Resource. This will be sent to the RP
      from ARM via the x-ms-identity-principal-id header in the PUT request if the resource has a
@@ -1468,44 +1403,39 @@ class EncryptionSetIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.DiskEncryptionSetIdentityType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "_models.DiskEncryptionSetIdentityType"]] = None, **kwargs):
         """
         :keyword type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned
          is supported for new creations. Disk Encryption Sets can be updated with Identity type None
          during migration of subscription to a new Azure Active Directory tenant; it will cause the
-         encrypted resources to lose access to the keys. Known values are: "SystemAssigned", "None".
+         encrypted resources to lose access to the keys. Known values are: "SystemAssigned" and "None".
         :paramtype type: str or ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSetIdentityType
         """
-        super(EncryptionSetIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.principal_id = None
         self.tenant_id = None
 
 
-class EncryptionSettingsCollection(msrest.serialization.Model):
+class EncryptionSettingsCollection(_serialization.Model):
     """Encryption settings for disk or snapshot.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. Set this flag to true and provide DiskEncryptionKey and optional
+    :ivar enabled: Set this flag to true and provide DiskEncryptionKey and optional
      KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and
      KeyEncryptionKey to disable encryption. If EncryptionSettings is null in the request object,
-     the existing settings remain unchanged.
+     the existing settings remain unchanged. Required.
     :vartype enabled: bool
     :ivar encryption_settings: A collection of encryption settings, one for each disk volume.
     :vartype encryption_settings:
@@ -1517,13 +1447,13 @@ class EncryptionSettingsCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'encryption_settings': {'key': 'encryptionSettings', 'type': '[EncryptionSettingsElement]'},
-        'encryption_settings_version': {'key': 'encryptionSettingsVersion', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "encryption_settings": {"key": "encryptionSettings", "type": "[EncryptionSettingsElement]"},
+        "encryption_settings_version": {"key": "encryptionSettingsVersion", "type": "str"},
     }
 
     def __init__(
@@ -1535,10 +1465,10 @@ class EncryptionSettingsCollection(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword enabled: Required. Set this flag to true and provide DiskEncryptionKey and optional
+        :keyword enabled: Set this flag to true and provide DiskEncryptionKey and optional
          KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and
          KeyEncryptionKey to disable encryption. If EncryptionSettings is null in the request object,
-         the existing settings remain unchanged.
+         the existing settings remain unchanged. Required.
         :paramtype enabled: bool
         :keyword encryption_settings: A collection of encryption settings, one for each disk volume.
         :paramtype encryption_settings:
@@ -1548,13 +1478,13 @@ class EncryptionSettingsCollection(msrest.serialization.Model):
          with AAD app.'1.1' corresponds to Azure Disk Encryption.
         :paramtype encryption_settings_version: str
         """
-        super(EncryptionSettingsCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.encryption_settings = encryption_settings
         self.encryption_settings_version = encryption_settings_version
 
 
-class EncryptionSettingsElement(msrest.serialization.Model):
+class EncryptionSettingsElement(_serialization.Model):
     """Encryption settings for one disk volume.
 
     :ivar disk_encryption_key: Key Vault Secret Url and vault id of the disk encryption key.
@@ -1565,8 +1495,8 @@ class EncryptionSettingsElement(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultAndSecretReference'},
-        'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultAndKeyReference'},
+        "disk_encryption_key": {"key": "diskEncryptionKey", "type": "KeyVaultAndSecretReference"},
+        "key_encryption_key": {"key": "keyEncryptionKey", "type": "KeyVaultAndKeyReference"},
     }
 
     def __init__(
@@ -1584,23 +1514,23 @@ class EncryptionSettingsElement(msrest.serialization.Model):
          KeyEncryptionKey is optional and when provided is used to unwrap the disk encryption key.
         :paramtype key_encryption_key: ~azure.mgmt.compute.v2020_09_30.models.KeyVaultAndKeyReference
         """
-        super(EncryptionSettingsElement, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_encryption_key = disk_encryption_key
         self.key_encryption_key = key_encryption_key
 
 
-class ExtendedLocation(msrest.serialization.Model):
+class ExtendedLocation(_serialization.Model):
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
     :vartype name: str
-    :ivar type: The type of the extended location. Known values are: "EdgeZone".
+    :ivar type: The type of the extended location. "EdgeZone"
     :vartype type: str or ~azure.mgmt.compute.v2020_09_30.models.ExtendedLocationTypes
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -1613,10 +1543,10 @@ class ExtendedLocation(msrest.serialization.Model):
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
-        :keyword type: The type of the extended location. Known values are: "EdgeZone".
+        :keyword type: The type of the extended location. "EdgeZone"
         :paramtype type: str or ~azure.mgmt.compute.v2020_09_30.models.ExtendedLocationTypes
         """
-        super(ExtendedLocation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
@@ -1634,9 +1564,9 @@ class Gallery(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this Shared Image Gallery resource. This property is
      updatable.
@@ -1644,7 +1574,7 @@ class Gallery(Resource):
     :ivar identifier: Describes the gallery unique name.
     :vartype identifier: ~azure.mgmt.compute.v2020_09_30.models.GalleryIdentifier
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryPropertiesProvisioningState
     :ivar sharing_profile: Profile for gallery sharing to subscription or tenant.
@@ -1652,23 +1582,23 @@ class Gallery(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sharing_profile': {'key': 'properties.sharingProfile', 'type': 'SharingProfile'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryIdentifier"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "sharing_profile": {"key": "properties.sharingProfile", "type": "SharingProfile"},
     }
 
     def __init__(
@@ -1682,9 +1612,9 @@ class Gallery(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this Shared Image Gallery resource. This property is
          updatable.
@@ -1694,14 +1624,14 @@ class Gallery(Resource):
         :keyword sharing_profile: Profile for gallery sharing to subscription or tenant.
         :paramtype sharing_profile: ~azure.mgmt.compute.v2020_09_30.models.SharingProfile
         """
-        super(Gallery, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.identifier = identifier
         self.provisioning_state = None
         self.sharing_profile = sharing_profile
 
 
-class GalleryApplication(Resource):
+class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery Application Definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1714,9 +1644,9 @@ class GalleryApplication(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery Application Definition resource. This
      property is updatable.
@@ -1733,29 +1663,29 @@ class GalleryApplication(Resource):
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
      application is built for. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows", "Linux".
+     "Windows" and "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "properties.supportedOSType", "type": "str"},
     }
 
     def __init__(
@@ -1772,9 +1702,9 @@ class GalleryApplication(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery Application Definition resource. This
          property is updatable.
@@ -1791,11 +1721,11 @@ class GalleryApplication(Resource):
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
          that application is built for. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows", "Linux".
+         "Windows" and "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         """
-        super(GalleryApplication, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -1804,12 +1734,12 @@ class GalleryApplication(Resource):
         self.supported_os_type = supported_os_type
 
 
-class GalleryApplicationList(msrest.serialization.Model):
+class GalleryApplicationList(_serialization.Model):
     """The List Gallery Applications operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of Gallery Applications.
+    :ivar value: A list of Gallery Applications. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryApplication]
     :ivar next_link: The uri to fetch the next page of Application Definitions in the Application
      Gallery. Call ListNext() with this to fetch the next page of gallery Application Definitions.
@@ -1817,35 +1747,29 @@ class GalleryApplicationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryApplication]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryApplication]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.GalleryApplication"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of Gallery Applications.
+        :keyword value: A list of Gallery Applications. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryApplication]
         :keyword next_link: The uri to fetch the next page of Application Definitions in the
          Application Gallery. Call ListNext() with this to fetch the next page of gallery Application
          Definitions.
         :paramtype next_link: str
         """
-        super(GalleryApplicationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class UpdateResourceDefinition(msrest.serialization.Model):
+class UpdateResourceDefinition(_serialization.Model):
     """The Update Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1856,34 +1780,29 @@ class UpdateResourceDefinition(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(UpdateResourceDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1901,7 +1820,7 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery Application Definition resource. This
      property is updatable.
@@ -1918,27 +1837,27 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
      application is built for. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows", "Linux".
+     "Windows" and "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "supported_os_type": {"key": "properties.supportedOSType", "type": "str"},
     }
 
     def __init__(
@@ -1954,7 +1873,7 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery Application Definition resource. This
          property is updatable.
@@ -1971,11 +1890,11 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
          that application is built for. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows", "Linux".
+         "Windows" and "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         """
-        super(GalleryApplicationUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -1997,15 +1916,15 @@ class GalleryApplicationVersion(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersionPropertiesProvisioningState
     :ivar replication_status: This is the replication status of the gallery image version.
@@ -2013,23 +1932,26 @@ class GalleryApplicationVersion(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {
+            "key": "properties.publishingProfile",
+            "type": "GalleryApplicationVersionPublishingProfile",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
@@ -2041,26 +1963,26 @@ class GalleryApplicationVersion(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image version.
         :paramtype publishing_profile:
          ~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersionPublishingProfile
         """
-        super(GalleryApplicationVersion, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.replication_status = None
 
 
-class GalleryApplicationVersionList(msrest.serialization.Model):
+class GalleryApplicationVersionList(_serialization.Model):
     """The List Gallery Application version operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of gallery Application Versions.
+    :ivar value: A list of gallery Application Versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersion]
     :ivar next_link: The uri to fetch the next page of gallery Application Versions. Call
      ListNext() with this to fetch the next page of gallery Application Versions.
@@ -2068,34 +1990,28 @@ class GalleryApplicationVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryApplicationVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryApplicationVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.GalleryApplicationVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of gallery Application Versions.
+        :keyword value: A list of gallery Application Versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersion]
         :keyword next_link: The uri to fetch the next page of gallery Application Versions. Call
          ListNext() with this to fetch the next page of gallery Application Versions.
         :paramtype next_link: str
         """
-        super(GalleryApplicationVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
+class GalleryArtifactPublishingProfileBase(_serialization.Model):
     """Describes the basic gallery artifact publishing profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2116,22 +2032,22 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
     """
 
     _validation = {
-        'published_date': {'readonly': True},
+        "published_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
     }
 
     def __init__(
@@ -2159,12 +2075,12 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
         """
-        super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_regions = target_regions
         self.replica_count = replica_count
         self.exclude_from_latest = exclude_from_latest
@@ -2196,10 +2112,10 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
-    :ivar source: Required. The source image from which the Image Version is going to be created.
+    :ivar source: The source image from which the Image Version is going to be created. Required.
     :vartype source: ~azure.mgmt.compute.v2020_09_30.models.UserArtifactSource
     :ivar manage_actions:
     :vartype manage_actions: ~azure.mgmt.compute.v2020_09_30.models.UserArtifactManage
@@ -2208,20 +2124,20 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     """
 
     _validation = {
-        'published_date': {'readonly': True},
-        'source': {'required': True},
+        "published_date": {"readonly": True},
+        "source": {"required": True},
     }
 
     _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'UserArtifactSource'},
-        'manage_actions': {'key': 'manageActions', 'type': 'UserArtifactManage'},
-        'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "source": {"key": "source", "type": "UserArtifactSource"},
+        "manage_actions": {"key": "manageActions", "type": "UserArtifactManage"},
+        "enable_health_check": {"key": "enableHealthCheck", "type": "bool"},
     }
 
     def __init__(
@@ -2252,19 +2168,26 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
-        :keyword source: Required. The source image from which the Image Version is going to be
-         created.
+        :keyword source: The source image from which the Image Version is going to be created.
+         Required.
         :paramtype source: ~azure.mgmt.compute.v2020_09_30.models.UserArtifactSource
         :keyword manage_actions:
         :paramtype manage_actions: ~azure.mgmt.compute.v2020_09_30.models.UserArtifactManage
         :keyword enable_health_check: Optional. Whether or not this application reports health.
         :paramtype enable_health_check: bool
         """
-        super(GalleryApplicationVersionPublishingProfile, self).__init__(target_regions=target_regions, replica_count=replica_count, exclude_from_latest=exclude_from_latest, end_of_life_date=end_of_life_date, storage_account_type=storage_account_type, **kwargs)
+        super().__init__(
+            target_regions=target_regions,
+            replica_count=replica_count,
+            exclude_from_latest=exclude_from_latest,
+            end_of_life_date=end_of_life_date,
+            storage_account_type=storage_account_type,
+            **kwargs
+        )
         self.source = source
         self.manage_actions = manage_actions
         self.enable_health_check = enable_health_check
@@ -2281,13 +2204,13 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersionPropertiesProvisioningState
     :ivar replication_status: This is the replication status of the gallery image version.
@@ -2295,21 +2218,24 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {
+            "key": "properties.publishingProfile",
+            "type": "GalleryApplicationVersionPublishingProfile",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
@@ -2320,50 +2246,45 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image version.
         :paramtype publishing_profile:
          ~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersionPublishingProfile
         """
-        super(GalleryApplicationVersionUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.replication_status = None
 
 
-class GalleryArtifactSource(msrest.serialization.Model):
+class GalleryArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar managed_image: Required. The managed artifact.
+    :ivar managed_image: The managed artifact. Required.
     :vartype managed_image: ~azure.mgmt.compute.v2020_09_30.models.ManagedArtifact
     """
 
     _validation = {
-        'managed_image': {'required': True},
+        "managed_image": {"required": True},
     }
 
     _attribute_map = {
-        'managed_image': {'key': 'managedImage', 'type': 'ManagedArtifact'},
+        "managed_image": {"key": "managedImage", "type": "ManagedArtifact"},
     }
 
-    def __init__(
-        self,
-        *,
-        managed_image: "_models.ManagedArtifact",
-        **kwargs
-    ):
+    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs):
         """
-        :keyword managed_image: Required. The managed artifact.
+        :keyword managed_image: The managed artifact. Required.
         :paramtype managed_image: ~azure.mgmt.compute.v2020_09_30.models.ManagedArtifact
         """
-        super(GalleryArtifactSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.managed_image = managed_image
 
 
-class GalleryArtifactVersionSource(msrest.serialization.Model):
+class GalleryArtifactVersionSource(_serialization.Model):
     """The gallery artifact version source.
 
     :ivar id: The id of the gallery artifact version source. Can specify a disk uri, snapshot uri,
@@ -2375,16 +2296,12 @@ class GalleryArtifactVersionSource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        uri: Optional[str] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, uri: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
         """
         :keyword id: The id of the gallery artifact version source. Can specify a disk uri, snapshot
@@ -2394,12 +2311,12 @@ class GalleryArtifactVersionSource(msrest.serialization.Model):
          vhd/blob source.
         :paramtype uri: str
         """
-        super(GalleryArtifactVersionSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.uri = uri
 
 
-class GalleryDiskImage(msrest.serialization.Model):
+class GalleryDiskImage(_serialization.Model):
     """This is the disk image base class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2407,20 +2324,20 @@ class GalleryDiskImage(msrest.serialization.Model):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2020_09_30.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
     """
 
     _validation = {
-        'size_in_gb': {'readonly': True},
+        "size_in_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
+        "size_in_gb": {"key": "sizeInGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
     }
 
     def __init__(
@@ -2432,12 +2349,12 @@ class GalleryDiskImage(msrest.serialization.Model):
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2020_09_30.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
         """
-        super(GalleryDiskImage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.size_in_gb = None
         self.host_caching = host_caching
         self.source = source
@@ -2453,26 +2370,26 @@ class GalleryDataDiskImage(GalleryDiskImage):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2020_09_30.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
-    :ivar lun: Required. This property specifies the logical unit number of the data disk. This
-     value is used to identify data disks within the Virtual Machine and therefore must be unique
-     for each data disk attached to the Virtual Machine.
+    :ivar lun: This property specifies the logical unit number of the data disk. This value is used
+     to identify data disks within the Virtual Machine and therefore must be unique for each data
+     disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
     _validation = {
-        'size_in_gb': {'readonly': True},
-        'lun': {'required': True},
+        "size_in_gb": {"readonly": True},
+        "lun": {"required": True},
     }
 
     _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "size_in_gb": {"key": "sizeInGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
     def __init__(
@@ -2485,20 +2402,20 @@ class GalleryDataDiskImage(GalleryDiskImage):
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2020_09_30.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
-        :keyword lun: Required. This property specifies the logical unit number of the data disk. This
-         value is used to identify data disks within the Virtual Machine and therefore must be unique
-         for each data disk attached to the Virtual Machine.
+        :keyword lun: This property specifies the logical unit number of the data disk. This value is
+         used to identify data disks within the Virtual Machine and therefore must be unique for each
+         data disk attached to the Virtual Machine. Required.
         :paramtype lun: int
         """
-        super(GalleryDataDiskImage, self).__init__(host_caching=host_caching, source=source, **kwargs)
+        super().__init__(host_caching=host_caching, source=source, **kwargs)
         self.lun = lun
 
 
-class GalleryIdentifier(msrest.serialization.Model):
+class GalleryIdentifier(_serialization.Model):
     """Describes the gallery unique name.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2509,24 +2426,20 @@ class GalleryIdentifier(msrest.serialization.Model):
     """
 
     _validation = {
-        'unique_name': {'readonly': True},
+        "unique_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'unique_name': {'key': 'uniqueName', 'type': 'str'},
+        "unique_name": {"key": "uniqueName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GalleryIdentifier, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.unique_name = None
 
 
-class GalleryImage(Resource):
+class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2539,9 +2452,9 @@ class GalleryImage(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery image definition resource. This property is
      updatable.
@@ -2555,14 +2468,14 @@ class GalleryImage(Resource):
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows", "Linux".
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemStateTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Known values are: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageFeature]
@@ -2580,39 +2493,39 @@ class GalleryImage(Resource):
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2020_09_30.models.ImagePurchasePlan
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryImagePropertiesProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_state": {"key": "properties.osState", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "features": {"key": "properties.features", "type": "[GalleryImageFeature]"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
+        "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "ImagePurchasePlan"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2636,9 +2549,9 @@ class GalleryImage(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery image definition resource. This property
          is updatable.
@@ -2652,14 +2565,14 @@ class GalleryImage(Resource):
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows", "Linux".
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
-         "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
+         and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemStateTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Known values are: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageFeature]
@@ -2677,7 +2590,7 @@ class GalleryImage(Resource):
          marketplace images.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2020_09_30.models.ImagePurchasePlan
         """
-        super(GalleryImage, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -2694,7 +2607,7 @@ class GalleryImage(Resource):
         self.provisioning_state = None
 
 
-class GalleryImageFeature(msrest.serialization.Model):
+class GalleryImageFeature(_serialization.Model):
     """A feature for gallery image.
 
     :ivar name: The name of the gallery image feature.
@@ -2704,81 +2617,68 @@ class GalleryImageFeature(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: The name of the gallery image feature.
         :paramtype name: str
         :keyword value: The value of the gallery image feature.
         :paramtype value: str
         """
-        super(GalleryImageFeature, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class GalleryImageIdentifier(msrest.serialization.Model):
+class GalleryImageIdentifier(_serialization.Model):
     """This is the gallery image definition identifier.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar publisher: Required. The name of the gallery image definition publisher.
+    :ivar publisher: The name of the gallery image definition publisher. Required.
     :vartype publisher: str
-    :ivar offer: Required. The name of the gallery image definition offer.
+    :ivar offer: The name of the gallery image definition offer. Required.
     :vartype offer: str
-    :ivar sku: Required. The name of the gallery image definition SKU.
+    :ivar sku: The name of the gallery image definition SKU. Required.
     :vartype sku: str
     """
 
     _validation = {
-        'publisher': {'required': True},
-        'offer': {'required': True},
-        'sku': {'required': True},
+        "publisher": {"required": True},
+        "offer": {"required": True},
+        "sku": {"required": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        publisher: str,
-        offer: str,
-        sku: str,
-        **kwargs
-    ):
+    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs):
         """
-        :keyword publisher: Required. The name of the gallery image definition publisher.
+        :keyword publisher: The name of the gallery image definition publisher. Required.
         :paramtype publisher: str
-        :keyword offer: Required. The name of the gallery image definition offer.
+        :keyword offer: The name of the gallery image definition offer. Required.
         :paramtype offer: str
-        :keyword sku: Required. The name of the gallery image definition SKU.
+        :keyword sku: The name of the gallery image definition SKU. Required.
         :paramtype sku: str
         """
-        super(GalleryImageIdentifier, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
 
 
-class GalleryImageList(msrest.serialization.Model):
+class GalleryImageList(_serialization.Model):
     """The List Gallery Images operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of Shared Image Gallery images.
+    :ivar value: A list of Shared Image Gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImage]
     :ivar next_link: The uri to fetch the next page of Image Definitions in the Shared Image
      Gallery. Call ListNext() with this to fetch the next page of gallery image definitions.
@@ -2786,34 +2686,28 @@ class GalleryImageList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryImage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryImage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.GalleryImage"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of Shared Image Gallery images.
+        :keyword value: A list of Shared Image Gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImage]
         :keyword next_link: The uri to fetch the next page of Image Definitions in the Shared Image
          Gallery. Call ListNext() with this to fetch the next page of gallery image definitions.
         :paramtype next_link: str
         """
-        super(GalleryImageList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class GalleryImageUpdate(UpdateResourceDefinition):
+class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2824,7 +2718,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this gallery image definition resource. This property is
      updatable.
@@ -2838,14 +2732,14 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows", "Linux".
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemStateTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Known values are: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageFeature]
@@ -2863,37 +2757,37 @@ class GalleryImageUpdate(UpdateResourceDefinition):
      marketplace images.
     :vartype purchase_plan: ~azure.mgmt.compute.v2020_09_30.models.ImagePurchasePlan
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryImagePropertiesProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "eula": {"key": "properties.eula", "type": "str"},
+        "privacy_statement_uri": {"key": "properties.privacyStatementUri", "type": "str"},
+        "release_note_uri": {"key": "properties.releaseNoteUri", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_state": {"key": "properties.osState", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "features": {"key": "properties.features", "type": "[GalleryImageFeature]"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
+        "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "ImagePurchasePlan"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2916,7 +2810,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this gallery image definition resource. This property
          is updatable.
@@ -2930,14 +2824,14 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows", "Linux".
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
-         "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
+         and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemStateTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Known values are: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageFeature]
@@ -2955,7 +2849,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
          marketplace images.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2020_09_30.models.ImagePurchasePlan
         """
-        super(GalleryImageUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.description = description
         self.eula = eula
         self.privacy_statement_uri = privacy_statement_uri
@@ -2985,15 +2879,15 @@ class GalleryImageVersion(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image Version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionPropertiesProvisioningState
     :ivar storage_profile: This is the storage profile of a Gallery Image Version.
@@ -3004,24 +2898,24 @@ class GalleryImageVersion(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {"key": "properties.publishingProfile", "type": "GalleryImageVersionPublishingProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "GalleryImageVersionStorageProfile"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
@@ -3034,9 +2928,9 @@ class GalleryImageVersion(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image Version.
         :paramtype publishing_profile:
@@ -3045,19 +2939,19 @@ class GalleryImageVersion(Resource):
         :paramtype storage_profile:
          ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionStorageProfile
         """
-        super(GalleryImageVersion, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.storage_profile = storage_profile
         self.replication_status = None
 
 
-class GalleryImageVersionList(msrest.serialization.Model):
+class GalleryImageVersionList(_serialization.Model):
     """The List Gallery Image version operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of gallery image versions.
+    :ivar value: A list of gallery image versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersion]
     :ivar next_link: The uri to fetch the next page of gallery image versions. Call ListNext() with
      this to fetch the next page of gallery image versions.
@@ -3065,29 +2959,23 @@ class GalleryImageVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryImageVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryImageVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.GalleryImageVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of gallery image versions.
+        :keyword value: A list of gallery image versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersion]
         :keyword next_link: The uri to fetch the next page of gallery image versions. Call ListNext()
          with this to fetch the next page of gallery image versions.
         :paramtype next_link: str
         """
-        super(GalleryImageVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3113,22 +3001,22 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
     """
 
     _validation = {
-        'published_date': {'readonly': True},
+        "published_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
+        "published_date": {"key": "publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "endOfLifeDate", "type": "iso-8601"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
     }
 
     def __init__(
@@ -3156,15 +3044,22 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
         """
-        super(GalleryImageVersionPublishingProfile, self).__init__(target_regions=target_regions, replica_count=replica_count, exclude_from_latest=exclude_from_latest, end_of_life_date=end_of_life_date, storage_account_type=storage_account_type, **kwargs)
+        super().__init__(
+            target_regions=target_regions,
+            replica_count=replica_count,
+            exclude_from_latest=exclude_from_latest,
+            end_of_life_date=end_of_life_date,
+            storage_account_type=storage_account_type,
+            **kwargs
+        )
 
 
-class GalleryImageVersionStorageProfile(msrest.serialization.Model):
+class GalleryImageVersionStorageProfile(_serialization.Model):
     """This is the storage profile of a Gallery Image Version.
 
     :ivar source: The gallery artifact version source.
@@ -3176,9 +3071,9 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
-        'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
+        "os_disk_image": {"key": "osDiskImage", "type": "GalleryOSDiskImage"},
+        "data_disk_images": {"key": "dataDiskImages", "type": "[GalleryDataDiskImage]"},
     }
 
     def __init__(
@@ -3197,7 +3092,7 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
         :keyword data_disk_images: A list of data disk images.
         :paramtype data_disk_images: list[~azure.mgmt.compute.v2020_09_30.models.GalleryDataDiskImage]
         """
-        super(GalleryImageVersionStorageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source = source
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
@@ -3214,13 +3109,13 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar publishing_profile: The publishing profile of a gallery image Version.
     :vartype publishing_profile:
      ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionPropertiesProvisioningState
     :ivar storage_profile: This is the storage profile of a Gallery Image Version.
@@ -3231,22 +3126,22 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "replication_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "publishing_profile": {"key": "properties.publishingProfile", "type": "GalleryImageVersionPublishingProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "GalleryImageVersionStorageProfile"},
+        "replication_status": {"key": "properties.replicationStatus", "type": "ReplicationStatus"},
     }
 
     def __init__(
@@ -3258,7 +3153,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword publishing_profile: The publishing profile of a gallery image Version.
         :paramtype publishing_profile:
@@ -3267,19 +3162,19 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         :paramtype storage_profile:
          ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionStorageProfile
         """
-        super(GalleryImageVersionUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None
         self.storage_profile = storage_profile
         self.replication_status = None
 
 
-class GalleryList(msrest.serialization.Model):
+class GalleryList(_serialization.Model):
     """The List Galleries operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of galleries.
+    :ivar value: A list of galleries. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.Gallery]
     :ivar next_link: The uri to fetch the next page of galleries. Call ListNext() with this to
      fetch the next page of galleries.
@@ -3287,29 +3182,23 @@ class GalleryList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Gallery]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Gallery]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Gallery"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of galleries.
+        :keyword value: A list of galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.Gallery]
         :keyword next_link: The uri to fetch the next page of galleries. Call ListNext() with this to
          fetch the next page of galleries.
         :paramtype next_link: str
         """
-        super(GalleryList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3322,20 +3211,20 @@ class GalleryOSDiskImage(GalleryDiskImage):
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-     'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
+     'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype host_caching: str or ~azure.mgmt.compute.v2020_09_30.models.HostCaching
     :ivar source: The gallery artifact version source.
     :vartype source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
     """
 
     _validation = {
-        'size_in_gb': {'readonly': True},
+        "size_in_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
+        "size_in_gb": {"key": "sizeInGB", "type": "int"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
+        "source": {"key": "source", "type": "GalleryArtifactVersionSource"},
     }
 
     def __init__(
@@ -3347,12 +3236,12 @@ class GalleryOSDiskImage(GalleryDiskImage):
     ):
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
-         'ReadWrite'. Known values are: "None", "ReadOnly", "ReadWrite".
+         'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype host_caching: str or ~azure.mgmt.compute.v2020_09_30.models.HostCaching
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
         """
-        super(GalleryOSDiskImage, self).__init__(host_caching=host_caching, source=source, **kwargs)
+        super().__init__(host_caching=host_caching, source=source, **kwargs)
 
 
 class GalleryUpdate(UpdateResourceDefinition):
@@ -3366,7 +3255,7 @@ class GalleryUpdate(UpdateResourceDefinition):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar description: The description of this Shared Image Gallery resource. This property is
      updatable.
@@ -3374,7 +3263,7 @@ class GalleryUpdate(UpdateResourceDefinition):
     :ivar identifier: Describes the gallery unique name.
     :vartype identifier: ~azure.mgmt.compute.v2020_09_30.models.GalleryIdentifier
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
-     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+     values are: "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.GalleryPropertiesProvisioningState
     :ivar sharing_profile: Profile for gallery sharing to subscription or tenant.
@@ -3382,21 +3271,21 @@ class GalleryUpdate(UpdateResourceDefinition):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sharing_profile': {'key': 'properties.sharingProfile', 'type': 'SharingProfile'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryIdentifier"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "sharing_profile": {"key": "properties.sharingProfile", "type": "SharingProfile"},
     }
 
     def __init__(
@@ -3409,7 +3298,7 @@ class GalleryUpdate(UpdateResourceDefinition):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of this Shared Image Gallery resource. This property is
          updatable.
@@ -3419,59 +3308,53 @@ class GalleryUpdate(UpdateResourceDefinition):
         :keyword sharing_profile: Profile for gallery sharing to subscription or tenant.
         :paramtype sharing_profile: ~azure.mgmt.compute.v2020_09_30.models.SharingProfile
         """
-        super(GalleryUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.description = description
         self.identifier = identifier
         self.provisioning_state = None
         self.sharing_profile = sharing_profile
 
 
-class GrantAccessData(msrest.serialization.Model):
+class GrantAccessData(_serialization.Model):
     """Data used for requesting a SAS.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar access: Required. Known values are: "None", "Read", "Write".
+    :ivar access: Required. Known values are: "None", "Read", and "Write".
     :vartype access: str or ~azure.mgmt.compute.v2020_09_30.models.AccessLevel
-    :ivar duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
+    :ivar duration_in_seconds: Time duration in seconds until the SAS access expires. Required.
     :vartype duration_in_seconds: int
     """
 
     _validation = {
-        'access': {'required': True},
-        'duration_in_seconds': {'required': True},
+        "access": {"required": True},
+        "duration_in_seconds": {"required": True},
     }
 
     _attribute_map = {
-        'access': {'key': 'access', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'int'},
+        "access": {"key": "access", "type": "str"},
+        "duration_in_seconds": {"key": "durationInSeconds", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        access: Union[str, "_models.AccessLevel"],
-        duration_in_seconds: int,
-        **kwargs
-    ):
+    def __init__(self, *, access: Union[str, "_models.AccessLevel"], duration_in_seconds: int, **kwargs):
         """
-        :keyword access: Required. Known values are: "None", "Read", "Write".
+        :keyword access: Required. Known values are: "None", "Read", and "Write".
         :paramtype access: str or ~azure.mgmt.compute.v2020_09_30.models.AccessLevel
-        :keyword duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
+        :keyword duration_in_seconds: Time duration in seconds until the SAS access expires. Required.
         :paramtype duration_in_seconds: int
         """
-        super(GrantAccessData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access = access
         self.duration_in_seconds = duration_in_seconds
 
 
-class ImageDiskReference(msrest.serialization.Model):
+class ImageDiskReference(_serialization.Model):
     """The source image used for creating the disk.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. A relative uri containing either a Platform Image Repository or user image
-     reference.
+    :ivar id: A relative uri containing either a Platform Image Repository or user image reference.
+     Required.
     :vartype id: str
     :ivar lun: If the disk is created from an image's data disk, this is an index that indicates
      which of the data disks in the image to use. For OS disks, this field is null.
@@ -3479,35 +3362,29 @@ class ImageDiskReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'lun': {'key': 'lun', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        lun: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, lun: Optional[int] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. A relative uri containing either a Platform Image Repository or user
-         image reference.
+        :keyword id: A relative uri containing either a Platform Image Repository or user image
+         reference. Required.
         :paramtype id: str
         :keyword lun: If the disk is created from an image's data disk, this is an index that indicates
          which of the data disks in the image to use. For OS disks, this field is null.
         :paramtype lun: int
         """
-        super(ImageDiskReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.lun = lun
 
 
-class ImagePurchasePlan(msrest.serialization.Model):
+class ImagePurchasePlan(_serialization.Model):
     """Describes the gallery image definition purchase plan. This is used by marketplace images.
 
     :ivar name: The plan ID.
@@ -3519,18 +3396,13 @@ class ImagePurchasePlan(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        publisher: Optional[str] = None,
-        product: Optional[str] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, publisher: Optional[str] = None, product: Optional[str] = None, **kwargs
     ):
         """
         :keyword name: The plan ID.
@@ -3540,13 +3412,13 @@ class ImagePurchasePlan(msrest.serialization.Model):
         :keyword product: The product ID.
         :paramtype product: str
         """
-        super(ImagePurchasePlan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
 
 
-class InnerError(msrest.serialization.Model):
+class InnerError(_serialization.Model):
     """Inner error details.
 
     :ivar exceptiontype: The exception type.
@@ -3556,29 +3428,23 @@ class InnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        "exceptiontype": {"key": "exceptiontype", "type": "str"},
+        "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        exceptiontype: Optional[str] = None,
-        errordetail: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
         :keyword errordetail: The internal error message or exception dump.
         :paramtype errordetail: str
         """
-        super(InnerError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.exceptiontype = exceptiontype
         self.errordetail = errordetail
 
 
-class KeyForDiskEncryptionSet(msrest.serialization.Model):
+class KeyForDiskEncryptionSet(_serialization.Model):
     """Key Vault Key Url to be used for server side encryption of Managed Disks and Snapshots.
 
     All required parameters must be populated in order to send to Azure.
@@ -3587,145 +3453,122 @@ class KeyForDiskEncryptionSet(msrest.serialization.Model):
      optional and cannot be used if the KeyVault subscription is not the same as the Disk Encryption
      Set subscription.
     :vartype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
-    :ivar key_url: Required. Fully versioned Key Url pointing to a key in KeyVault.
+    :ivar key_url: Fully versioned Key Url pointing to a key in KeyVault. Required.
     :vartype key_url: str
     """
 
     _validation = {
-        'key_url': {'required': True},
+        "key_url": {"required": True},
     }
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SourceVault'},
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SourceVault"},
+        "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_url: str,
-        source_vault: Optional["_models.SourceVault"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key_url: str, source_vault: Optional["_models.SourceVault"] = None, **kwargs):
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. This property
          is optional and cannot be used if the KeyVault subscription is not the same as the Disk
          Encryption Set subscription.
         :paramtype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
-        :keyword key_url: Required. Fully versioned Key Url pointing to a key in KeyVault.
+        :keyword key_url: Fully versioned Key Url pointing to a key in KeyVault. Required.
         :paramtype key_url: str
         """
-        super(KeyForDiskEncryptionSet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_vault = source_vault
         self.key_url = key_url
 
 
-class KeyVaultAndKeyReference(msrest.serialization.Model):
+class KeyVaultAndKeyReference(_serialization.Model):
     """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar source_vault: Required. Resource id of the KeyVault containing the key or secret.
+    :ivar source_vault: Resource id of the KeyVault containing the key or secret. Required.
     :vartype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
-    :ivar key_url: Required. Url pointing to a key or secret in KeyVault.
+    :ivar key_url: Url pointing to a key or secret in KeyVault. Required.
     :vartype key_url: str
     """
 
     _validation = {
-        'source_vault': {'required': True},
-        'key_url': {'required': True},
+        "source_vault": {"required": True},
+        "key_url": {"required": True},
     }
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SourceVault'},
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SourceVault"},
+        "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source_vault: "_models.SourceVault",
-        key_url: str,
-        **kwargs
-    ):
+    def __init__(self, *, source_vault: "_models.SourceVault", key_url: str, **kwargs):
         """
-        :keyword source_vault: Required. Resource id of the KeyVault containing the key or secret.
+        :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
-        :keyword key_url: Required. Url pointing to a key or secret in KeyVault.
+        :keyword key_url: Url pointing to a key or secret in KeyVault. Required.
         :paramtype key_url: str
         """
-        super(KeyVaultAndKeyReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_vault = source_vault
         self.key_url = key_url
 
 
-class KeyVaultAndSecretReference(msrest.serialization.Model):
+class KeyVaultAndSecretReference(_serialization.Model):
     """Key Vault Secret Url and vault id of the encryption key.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar source_vault: Required. Resource id of the KeyVault containing the key or secret.
+    :ivar source_vault: Resource id of the KeyVault containing the key or secret. Required.
     :vartype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
-    :ivar secret_url: Required. Url pointing to a key or secret in KeyVault.
+    :ivar secret_url: Url pointing to a key or secret in KeyVault. Required.
     :vartype secret_url: str
     """
 
     _validation = {
-        'source_vault': {'required': True},
-        'secret_url': {'required': True},
+        "source_vault": {"required": True},
+        "secret_url": {"required": True},
     }
 
     _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SourceVault'},
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
+        "source_vault": {"key": "sourceVault", "type": "SourceVault"},
+        "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source_vault: "_models.SourceVault",
-        secret_url: str,
-        **kwargs
-    ):
+    def __init__(self, *, source_vault: "_models.SourceVault", secret_url: str, **kwargs):
         """
-        :keyword source_vault: Required. Resource id of the KeyVault containing the key or secret.
+        :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
-        :keyword secret_url: Required. Url pointing to a key or secret in KeyVault.
+        :keyword secret_url: Url pointing to a key or secret in KeyVault. Required.
         :paramtype secret_url: str
         """
-        super(KeyVaultAndSecretReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_vault = source_vault
         self.secret_url = secret_url
 
 
-class ManagedArtifact(msrest.serialization.Model):
+class ManagedArtifact(_serialization.Model):
     """The managed artifact.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. The managed artifact id.
+    :ivar id: The managed artifact id. Required.
     :vartype id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. The managed artifact id.
+        :keyword id: The managed artifact id. Required.
         :paramtype id: str
         """
-        super(ManagedArtifact, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -3738,24 +3581,19 @@ class OSDiskImageEncryption(DiskImageEncryption):
     """
 
     _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs):
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
         :paramtype disk_encryption_set_id: str
         """
-        super(OSDiskImageEncryption, self).__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
+        super().__init__(disk_encryption_set_id=disk_encryption_set_id, **kwargs)
 
 
-class PirResource(msrest.serialization.Model):
+class PirResource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3767,22 +3605,18 @@ class PirResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PirResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.location = None
 
@@ -3801,31 +3635,26 @@ class PirSharedGalleryResource(PirResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        unique_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
         """
-        super(PirSharedGalleryResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.unique_id = unique_id
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """The Private Endpoint resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3835,24 +3664,20 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PrivateEndpoint, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
-class PrivateEndpointConnection(msrest.serialization.Model):
+class PrivateEndpointConnection(_serialization.Model):
     """The Private Endpoint Connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3870,25 +3695,28 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.compute.v2020_09_30.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Known values are: "Succeeded", "Creating", "Deleting", "Failed".
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -3906,7 +3734,7 @@ class PrivateEndpointConnection(msrest.serialization.Model):
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.compute.v2020_09_30.models.PrivateLinkServiceConnectionState
         """
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -3915,7 +3743,7 @@ class PrivateEndpointConnection(msrest.serialization.Model):
         self.provisioning_state = None
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """A list of private link resources.
 
     :ivar value: Array of private endpoint connections.
@@ -3926,8 +3754,8 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -3944,12 +3772,12 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
          fetch the next page of snapshots.
         :paramtype next_link: str
         """
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PrivateLinkResource(msrest.serialization.Model):
+class PrivateLinkResource(_serialization.Model):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3969,33 +3797,28 @@ class PrivateLinkResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
         """
         :keyword required_zone_names: The private link resource DNS zone name.
         :paramtype required_zone_names: list[str]
         """
-        super(PrivateLinkResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -4004,7 +3827,7 @@ class PrivateLinkResource(msrest.serialization.Model):
         self.required_zone_names = required_zone_names
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
+class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
@@ -4012,28 +3835,23 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateLinkResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.PrivateLinkResource]
         """
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Known values are: "Pending", "Approved", "Rejected".
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
     :vartype status: str or
      ~azure.mgmt.compute.v2020_09_30.models.PrivateEndpointServiceConnectionStatus
     :ivar description: The reason for approval/rejection of the connection.
@@ -4044,9 +3862,9 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
@@ -4059,7 +3877,7 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     ):
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
-         owner of the service. Known values are: "Pending", "Approved", "Rejected".
+         owner of the service. Known values are: "Pending", "Approved", and "Rejected".
         :paramtype status: str or
          ~azure.mgmt.compute.v2020_09_30.models.PrivateEndpointServiceConnectionStatus
         :keyword description: The reason for approval/rejection of the connection.
@@ -4068,69 +3886,61 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
          updates on the consumer.
         :paramtype actions_required: str
         """
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
 
 
-class PurchasePlan(msrest.serialization.Model):
+class PurchasePlan(_serialization.Model):
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The plan ID.
+    :ivar name: The plan ID. Required.
     :vartype name: str
-    :ivar publisher: Required. The publisher ID.
+    :ivar publisher: The publisher ID. Required.
     :vartype publisher: str
-    :ivar product: Required. Specifies the product of the image from the marketplace. This is the
-     same value as Offer under the imageReference element.
+    :ivar product: Specifies the product of the image from the marketplace. This is the same value
+     as Offer under the imageReference element. Required.
     :vartype product: str
     :ivar promotion_code: The Offer Promotion Code.
     :vartype promotion_code: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'product': {'required': True},
+        "name": {"required": True},
+        "publisher": {"required": True},
+        "product": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "promotion_code": {"key": "promotionCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        publisher: str,
-        product: str,
-        promotion_code: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, publisher: str, product: str, promotion_code: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. The plan ID.
+        :keyword name: The plan ID. Required.
         :paramtype name: str
-        :keyword publisher: Required. The publisher ID.
+        :keyword publisher: The publisher ID. Required.
         :paramtype publisher: str
-        :keyword product: Required. Specifies the product of the image from the marketplace. This is
-         the same value as Offer under the imageReference element.
+        :keyword product: Specifies the product of the image from the marketplace. This is the same
+         value as Offer under the imageReference element. Required.
         :paramtype product: str
         :keyword promotion_code: The Offer Promotion Code.
         :paramtype promotion_code: str
         """
-        super(PurchasePlan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
         self.promotion_code = promotion_code
 
 
-class RecommendedMachineConfiguration(msrest.serialization.Model):
+class RecommendedMachineConfiguration(_serialization.Model):
     """The properties describe the recommended machine configuration for this Image Definition. These properties are updatable.
 
     :ivar v_cp_us: Describes the resource range.
@@ -4140,8 +3950,8 @@ class RecommendedMachineConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'v_cp_us': {'key': 'vCPUs', 'type': 'ResourceRange'},
-        'memory': {'key': 'memory', 'type': 'ResourceRange'},
+        "v_cp_us": {"key": "vCPUs", "type": "ResourceRange"},
+        "memory": {"key": "memory", "type": "ResourceRange"},
     }
 
     def __init__(
@@ -4157,12 +3967,12 @@ class RecommendedMachineConfiguration(msrest.serialization.Model):
         :keyword memory: Describes the resource range.
         :paramtype memory: ~azure.mgmt.compute.v2020_09_30.models.ResourceRange
         """
-        super(RecommendedMachineConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.v_cp_us = v_cp_us
         self.memory = memory
 
 
-class RegionalReplicationStatus(msrest.serialization.Model):
+class RegionalReplicationStatus(_serialization.Model):
     """This is the regional replication status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4170,7 +3980,7 @@ class RegionalReplicationStatus(msrest.serialization.Model):
     :ivar region: The region to which the gallery image version is being replicated to.
     :vartype region: str
     :ivar state: This is the regional replication state. Known values are: "Unknown",
-     "Replicating", "Completed", "Failed".
+     "Replicating", "Completed", and "Failed".
     :vartype state: str or ~azure.mgmt.compute.v2020_09_30.models.ReplicationState
     :ivar details: The details of the replication status.
     :vartype details: str
@@ -4179,39 +3989,35 @@ class RegionalReplicationStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'region': {'readonly': True},
-        'state': {'readonly': True},
-        'details': {'readonly': True},
-        'progress': {'readonly': True},
+        "region": {"readonly": True},
+        "state": {"readonly": True},
+        "details": {"readonly": True},
+        "progress": {"readonly": True},
     }
 
     _attribute_map = {
-        'region': {'key': 'region', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
-        'progress': {'key': 'progress', 'type': 'int'},
+        "region": {"key": "region", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "details": {"key": "details", "type": "str"},
+        "progress": {"key": "progress", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RegionalReplicationStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.region = None
         self.state = None
         self.details = None
         self.progress = None
 
 
-class ReplicationStatus(msrest.serialization.Model):
+class ReplicationStatus(_serialization.Model):
     """This is the replication status of the gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar aggregated_state: This is the aggregated replication status based on all the regional
-     replication status flags. Known values are: "Unknown", "InProgress", "Completed", "Failed".
+     replication status flags. Known values are: "Unknown", "InProgress", "Completed", and "Failed".
     :vartype aggregated_state: str or
      ~azure.mgmt.compute.v2020_09_30.models.AggregatedReplicationState
     :ivar summary: This is a summary of replication status for each region.
@@ -4219,27 +4025,23 @@ class ReplicationStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'aggregated_state': {'readonly': True},
-        'summary': {'readonly': True},
+        "aggregated_state": {"readonly": True},
+        "summary": {"readonly": True},
     }
 
     _attribute_map = {
-        'aggregated_state': {'key': 'aggregatedState', 'type': 'str'},
-        'summary': {'key': 'summary', 'type': '[RegionalReplicationStatus]'},
+        "aggregated_state": {"key": "aggregatedState", "type": "str"},
+        "summary": {"key": "summary", "type": "[RegionalReplicationStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ReplicationStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.aggregated_state = None
         self.summary = None
 
 
-class ResourceRange(msrest.serialization.Model):
+class ResourceRange(_serialization.Model):
     """Describes the resource range.
 
     :ivar min: The minimum number of the resource.
@@ -4249,15 +4051,15 @@ class ResourceRange(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'min': {'key': 'min', 'type': 'int'},
-        'max': {'key': 'max', 'type': 'int'},
+        "min": {"key": "min", "type": "int"},
+        "max": {"key": "max", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        min: Optional[int] = None,
-        max: Optional[int] = None,
+        min: Optional[int] = None,  # pylint: disable=redefined-builtin
+        max: Optional[int] = None,  # pylint: disable=redefined-builtin
         **kwargs
     ):
         """
@@ -4266,18 +4068,18 @@ class ResourceRange(msrest.serialization.Model):
         :keyword max: The maximum number of the resource.
         :paramtype max: int
         """
-        super(ResourceRange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.min = min
         self.max = max
 
 
-class ResourceUriList(msrest.serialization.Model):
+class ResourceUriList(_serialization.Model):
     """The List resources which are encrypted with the disk encryption set.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of IDs or Owner IDs of resources which are encrypted with the
-     disk encryption set.
+    :ivar value: A list of IDs or Owner IDs of resources which are encrypted with the disk
+     encryption set. Required.
     :vartype value: list[str]
     :ivar next_link: The uri to fetch the next page of encrypted resources. Call ListNext() with
      this to fetch the next page of encrypted resources.
@@ -4285,30 +4087,24 @@ class ResourceUriList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[str]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List[str],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List[str], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of IDs or Owner IDs of resources which are encrypted with the
-         disk encryption set.
+        :keyword value: A list of IDs or Owner IDs of resources which are encrypted with the disk
+         encryption set. Required.
         :paramtype value: list[str]
         :keyword next_link: The uri to fetch the next page of encrypted resources. Call ListNext() with
          this to fetch the next page of encrypted resources.
         :paramtype next_link: str
         """
-        super(ResourceUriList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -4327,30 +4123,25 @@ class SharedGallery(PirSharedGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        unique_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
         """
-        super(SharedGallery, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
 
 
-class SharedGalleryImage(PirSharedGalleryResource):
+class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-instance-attributes
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4364,10 +4155,10 @@ class SharedGalleryImage(PirSharedGalleryResource):
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows", "Linux".
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
-     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
+     under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
      "Specialized".
     :vartype os_state: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemStateTypes
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
@@ -4381,7 +4172,7 @@ class SharedGalleryImage(PirSharedGalleryResource):
     :ivar disallowed: Describes the disallowed disk types.
     :vartype disallowed: ~azure.mgmt.compute.v2020_09_30.models.Disallowed
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Known values are: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageFeature]
@@ -4391,23 +4182,23 @@ class SharedGalleryImage(PirSharedGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "os_state": {"key": "properties.osState", "type": "str"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
+        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
+        "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "features": {"key": "properties.features", "type": "[GalleryImageFeature]"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "ImagePurchasePlan"},
     }
 
     def __init__(
@@ -4431,11 +4222,11 @@ class SharedGalleryImage(PirSharedGalleryResource):
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
          :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows", "Linux".
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
-         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized",
-         "Specialized".
+         created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
+         and "Specialized".
         :paramtype os_state: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemStateTypes
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
@@ -4448,7 +4239,7 @@ class SharedGalleryImage(PirSharedGalleryResource):
         :keyword disallowed: Describes the disallowed disk types.
         :paramtype disallowed: ~azure.mgmt.compute.v2020_09_30.models.Disallowed
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Known values are: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageFeature]
@@ -4456,7 +4247,7 @@ class SharedGalleryImage(PirSharedGalleryResource):
          marketplace images.
         :paramtype purchase_plan: ~azure.mgmt.compute.v2020_09_30.models.ImagePurchasePlan
         """
-        super(SharedGalleryImage, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
         self.os_type = os_type
         self.os_state = os_state
         self.end_of_life_date = end_of_life_date
@@ -4468,12 +4259,12 @@ class SharedGalleryImage(PirSharedGalleryResource):
         self.purchase_plan = purchase_plan
 
 
-class SharedGalleryImageList(msrest.serialization.Model):
+class SharedGalleryImageList(_serialization.Model):
     """The List Shared Gallery Images operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of shared gallery images.
+    :ivar value: A list of shared gallery images. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGalleryImage]
     :ivar next_link: The uri to fetch the next page of shared gallery images. Call ListNext() with
      this to fetch the next page of shared gallery images.
@@ -4481,29 +4272,23 @@ class SharedGalleryImageList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedGalleryImage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedGalleryImage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SharedGalleryImage"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SharedGalleryImage"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of shared gallery images.
+        :keyword value: A list of shared gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGalleryImage]
         :keyword next_link: The uri to fetch the next page of shared gallery images. Call ListNext()
          with this to fetch the next page of shared gallery images.
         :paramtype next_link: str
         """
-        super(SharedGalleryImageList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -4528,16 +4313,16 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'location': {'readonly': True},
+        "name": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'unique_id': {'key': 'identifier.uniqueId', 'type': 'str'},
-        'published_date': {'key': 'properties.publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "unique_id": {"key": "identifier.uniqueId", "type": "str"},
+        "published_date": {"key": "properties.publishedDate", "type": "iso-8601"},
+        "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
     }
 
     def __init__(
@@ -4558,17 +4343,17 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
          property can be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         """
-        super(SharedGalleryImageVersion, self).__init__(unique_id=unique_id, **kwargs)
+        super().__init__(unique_id=unique_id, **kwargs)
         self.published_date = published_date
         self.end_of_life_date = end_of_life_date
 
 
-class SharedGalleryImageVersionList(msrest.serialization.Model):
+class SharedGalleryImageVersionList(_serialization.Model):
     """The List Shared Gallery Image versions operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of shared gallery images versions.
+    :ivar value: A list of shared gallery images versions. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGalleryImageVersion]
     :ivar next_link: The uri to fetch the next page of shared gallery image versions. Call
      ListNext() with this to fetch the next page of shared gallery image versions.
@@ -4576,39 +4361,33 @@ class SharedGalleryImageVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedGalleryImageVersion]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedGalleryImageVersion]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SharedGalleryImageVersion"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SharedGalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of shared gallery images versions.
+        :keyword value: A list of shared gallery images versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGalleryImageVersion]
         :keyword next_link: The uri to fetch the next page of shared gallery image versions. Call
          ListNext() with this to fetch the next page of shared gallery image versions.
         :paramtype next_link: str
         """
-        super(SharedGalleryImageVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SharedGalleryList(msrest.serialization.Model):
+class SharedGalleryList(_serialization.Model):
     """The List Shared Galleries operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of shared galleries.
+    :ivar value: A list of shared galleries. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGallery]
     :ivar next_link: The uri to fetch the next page of shared galleries. Call ListNext() with this
      to fetch the next page of shared galleries.
@@ -4616,34 +4395,28 @@ class SharedGalleryList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedGallery]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedGallery]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.SharedGallery"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.SharedGallery"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of shared galleries.
+        :keyword value: A list of shared galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGallery]
         :keyword next_link: The uri to fetch the next page of shared galleries. Call ListNext() with
          this to fetch the next page of shared galleries.
         :paramtype next_link: str
         """
-        super(SharedGalleryList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ShareInfoElement(msrest.serialization.Model):
+class ShareInfoElement(_serialization.Model):
     """ShareInfoElement.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4653,31 +4426,27 @@ class ShareInfoElement(msrest.serialization.Model):
     """
 
     _validation = {
-        'vm_uri': {'readonly': True},
+        "vm_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'vm_uri': {'key': 'vmUri', 'type': 'str'},
+        "vm_uri": {"key": "vmUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ShareInfoElement, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.vm_uri = None
 
 
-class SharingProfile(msrest.serialization.Model):
+class SharingProfile(_serialization.Model):
     """Profile for gallery sharing to subscription or tenant.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar permissions: This property allows you to specify the permission of sharing gallery.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-     :code:`<br>`:code:`<br>` **Groups**. Known values are: "Private", "Groups".
+     :code:`<br>`:code:`<br>` **Groups**. Known values are: "Private" and "Groups".
     :vartype permissions: str or
      ~azure.mgmt.compute.v2020_09_30.models.GallerySharingPermissionTypes
     :ivar groups: A list of sharing profile groups.
@@ -4685,46 +4454,41 @@ class SharingProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'groups': {'readonly': True},
+        "groups": {"readonly": True},
     }
 
     _attribute_map = {
-        'permissions': {'key': 'permissions', 'type': 'str'},
-        'groups': {'key': 'groups', 'type': '[SharingProfileGroup]'},
+        "permissions": {"key": "permissions", "type": "str"},
+        "groups": {"key": "groups", "type": "[SharingProfileGroup]"},
     }
 
-    def __init__(
-        self,
-        *,
-        permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None, **kwargs):
         """
         :keyword permissions: This property allows you to specify the permission of sharing gallery.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-         :code:`<br>`:code:`<br>` **Groups**. Known values are: "Private", "Groups".
+         :code:`<br>`:code:`<br>` **Groups**. Known values are: "Private" and "Groups".
         :paramtype permissions: str or
          ~azure.mgmt.compute.v2020_09_30.models.GallerySharingPermissionTypes
         """
-        super(SharingProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.permissions = permissions
         self.groups = None
 
 
-class SharingProfileGroup(msrest.serialization.Model):
+class SharingProfileGroup(_serialization.Model):
     """Group of the gallery sharing profile.
 
     :ivar type: This property allows you to specify the type of sharing group.
      :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-     :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions", "AADTenants".
+     :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
     :vartype type: str or ~azure.mgmt.compute.v2020_09_30.models.SharingProfileGroupTypes
     :ivar ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
     :vartype ids: list[str]
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'ids': {'key': 'ids', 'type': '[str]'},
+        "type": {"key": "type", "type": "str"},
+        "ids": {"key": "ids", "type": "[str]"},
     }
 
     def __init__(
@@ -4737,25 +4501,25 @@ class SharingProfileGroup(msrest.serialization.Model):
         """
         :keyword type: This property allows you to specify the type of sharing group.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-         :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions", "AADTenants".
+         :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
         :paramtype type: str or ~azure.mgmt.compute.v2020_09_30.models.SharingProfileGroupTypes
         :keyword ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
         :paramtype ids: list[str]
         """
-        super(SharingProfileGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.ids = ids
 
 
-class SharingUpdate(msrest.serialization.Model):
+class SharingUpdate(_serialization.Model):
     """Specifies information about the gallery sharing profile update.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operation_type: Required. This property allows you to specify the operation type of
-     gallery sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>`
-     **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Known values
-     are: "Add", "Remove", "Reset".
+    :ivar operation_type: This property allows you to specify the operation type of gallery sharing
+     update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
+     :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
+     are: "Add", "Remove", and "Reset".
     :vartype operation_type: str or
      ~azure.mgmt.compute.v2020_09_30.models.SharingUpdateOperationTypes
     :ivar groups: A list of sharing profile groups.
@@ -4763,12 +4527,12 @@ class SharingUpdate(msrest.serialization.Model):
     """
 
     _validation = {
-        'operation_type': {'required': True},
+        "operation_type": {"required": True},
     }
 
     _attribute_map = {
-        'operation_type': {'key': 'operationType', 'type': 'str'},
-        'groups': {'key': 'groups', 'type': '[SharingProfileGroup]'},
+        "operation_type": {"key": "operationType", "type": "str"},
+        "groups": {"key": "groups", "type": "[SharingProfileGroup]"},
     }
 
     def __init__(
@@ -4779,21 +4543,21 @@ class SharingUpdate(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword operation_type: Required. This property allows you to specify the operation type of
-         gallery sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>`
-         **Add** :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Known values
-         are: "Add", "Remove", "Reset".
+        :keyword operation_type: This property allows you to specify the operation type of gallery
+         sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
+         :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
+         are: "Add", "Remove", and "Reset".
         :paramtype operation_type: str or
          ~azure.mgmt.compute.v2020_09_30.models.SharingUpdateOperationTypes
         :keyword groups: A list of sharing profile groups.
         :paramtype groups: list[~azure.mgmt.compute.v2020_09_30.models.SharingProfileGroup]
         """
-        super(SharingUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation_type = operation_type
         self.groups = groups
 
 
-class Snapshot(Resource):
+class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
     """Snapshot resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4806,9 +4570,9 @@ class Snapshot(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar managed_by: Unused. Always Null.
     :vartype managed_by: str
@@ -4821,10 +4585,10 @@ class Snapshot(Resource):
     :vartype extended_location: ~azure.mgmt.compute.v2020_09_30.models.ExtendedLocation
     :ivar time_created: The time when the snapshot was created.
     :vartype time_created: ~datetime.datetime
-    :ivar os_type: The Operating System type. Known values are: "Windows", "Linux".
+    :ivar os_type: The Operating System type. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Known values are: "V1", "V2".
+     disks only. Known values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
     :ivar purchase_plan: Purchase plan information for the image from which the source disk for the
      snapshot was originally created.
@@ -4838,9 +4602,9 @@ class Snapshot(Resource):
      running VM, and can only increase the disk's size.
     :vartype disk_size_gb: int
     :ivar disk_size_bytes: The size of the disk in bytes. This field is read only.
-    :vartype disk_size_bytes: long
+    :vartype disk_size_bytes: int
     :ivar disk_state: The state of the snapshot. Known values are: "Unattached", "Attached",
-     "Reserved", "ActiveSAS", "ReadyToUpload", "ActiveUpload".
+     "Reserved", "ActiveSAS", "ReadyToUpload", and "ActiveUpload".
     :vartype disk_state: str or ~azure.mgmt.compute.v2020_09_30.models.DiskState
     :ivar unique_id: Unique Guid identifying the resource.
     :vartype unique_id: str
@@ -4857,7 +4621,7 @@ class Snapshot(Resource):
      keys or platform managed keys.
     :vartype encryption: ~azure.mgmt.compute.v2020_09_30.models.Encryption
     :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
-     "AllowAll", "AllowPrivate", "DenyAll".
+     "AllowAll", "AllowPrivate", and "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -4865,42 +4629,45 @@ class Snapshot(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'managed_by': {'readonly': True},
-        'time_created': {'readonly': True},
-        'disk_size_bytes': {'readonly': True},
-        'disk_state': {'readonly': True},
-        'unique_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "managed_by": {"readonly": True},
+        "time_created": {"readonly": True},
+        "disk_size_bytes": {"readonly": True},
+        "disk_state": {"readonly": True},
+        "unique_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
-        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'PurchasePlan'},
-        'creation_data': {'key': 'properties.creationData', 'type': 'CreationData'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'disk_size_bytes': {'key': 'properties.diskSizeBytes', 'type': 'long'},
-        'disk_state': {'key': 'properties.diskState', 'type': 'str'},
-        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'incremental': {'key': 'properties.incremental', 'type': 'bool'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'network_access_policy': {'key': 'properties.networkAccessPolicy', 'type': 'str'},
-        'disk_access_id': {'key': 'properties.diskAccessId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "sku": {"key": "sku", "type": "SnapshotSku"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
+        "purchase_plan": {"key": "properties.purchasePlan", "type": "PurchasePlan"},
+        "creation_data": {"key": "properties.creationData", "type": "CreationData"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "disk_size_bytes": {"key": "properties.diskSizeBytes", "type": "int"},
+        "disk_state": {"key": "properties.diskState", "type": "str"},
+        "unique_id": {"key": "properties.uniqueId", "type": "str"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "incremental": {"key": "properties.incremental", "type": "bool"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "network_access_policy": {"key": "properties.networkAccessPolicy", "type": "str"},
+        "disk_access_id": {"key": "properties.diskAccessId", "type": "str"},
     }
 
     def __init__(
@@ -4923,9 +4690,9 @@ class Snapshot(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This
          is an optional parameter for incremental snapshot and the default behavior is the SKU will be
@@ -4934,10 +4701,10 @@ class Snapshot(Resource):
         :keyword extended_location: The extended location where the snapshot will be created. Extended
          location cannot be changed.
         :paramtype extended_location: ~azure.mgmt.compute.v2020_09_30.models.ExtendedLocation
-        :keyword os_type: The Operating System type. Known values are: "Windows", "Linux".
+        :keyword os_type: The Operating System type. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Known values are: "V1", "V2".
+         disks only. Known values are: "V1" and "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2020_09_30.models.HyperVGeneration
         :keyword purchase_plan: Purchase plan information for the image from which the source disk for
          the snapshot was originally created.
@@ -4961,14 +4728,14 @@ class Snapshot(Resource):
          managed keys or platform managed keys.
         :paramtype encryption: ~azure.mgmt.compute.v2020_09_30.models.Encryption
         :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
-         "AllowAll", "AllowPrivate", "DenyAll".
+         "AllowAll", "AllowPrivate", and "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on
          disks.
         :paramtype disk_access_id: str
         """
-        super(Snapshot, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.managed_by = None
         self.sku = sku
         self.extended_location = extended_location
@@ -4989,12 +4756,12 @@ class Snapshot(Resource):
         self.disk_access_id = disk_access_id
 
 
-class SnapshotList(msrest.serialization.Model):
+class SnapshotList(_serialization.Model):
     """The List Snapshots operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. A list of snapshots.
+    :ivar value: A list of snapshots. Required.
     :vartype value: list[~azure.mgmt.compute.v2020_09_30.models.Snapshot]
     :ivar next_link: The uri to fetch the next page of snapshots. Call ListNext() with this to
      fetch the next page of snapshots.
@@ -5002,78 +4769,68 @@ class SnapshotList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Snapshot]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Snapshot]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Snapshot"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Snapshot"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. A list of snapshots.
+        :keyword value: A list of snapshots. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.Snapshot]
         :keyword next_link: The uri to fetch the next page of snapshots. Call ListNext() with this to
          fetch the next page of snapshots.
         :paramtype next_link: str
         """
-        super(SnapshotList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SnapshotSku(msrest.serialization.Model):
+class SnapshotSku(_serialization.Model):
     """The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This is an optional parameter for incremental snapshot and the default behavior is the SKU will be set to the same sku as the previous snapshot.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "Standard_ZRS".
+    :ivar name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", and "Standard_ZRS".
     :vartype name: str or ~azure.mgmt.compute.v2020_09_30.models.SnapshotStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
     """
 
     _validation = {
-        'tier': {'readonly': True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None, **kwargs):
         """
-        :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "Standard_ZRS".
+        :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", and
+         "Standard_ZRS".
         :paramtype name: str or ~azure.mgmt.compute.v2020_09_30.models.SnapshotStorageAccountTypes
         """
-        super(SnapshotSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = None
 
 
-class SnapshotUpdate(msrest.serialization.Model):
+class SnapshotUpdate(_serialization.Model):
     """Snapshot update resource.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This is
      an optional parameter for incremental snapshot and the default behavior is the SKU will be set
      to the same sku as the previous snapshot.
     :vartype sku: ~azure.mgmt.compute.v2020_09_30.models.SnapshotSku
-    :ivar os_type: the Operating System type. Known values are: "Windows", "Linux".
+    :ivar os_type: the Operating System type. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
     :ivar disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the disk to create. If this field is present for updates or creation with
@@ -5088,7 +4845,7 @@ class SnapshotUpdate(msrest.serialization.Model):
      keys or platform managed keys.
     :vartype encryption: ~azure.mgmt.compute.v2020_09_30.models.Encryption
     :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
-     "AllowAll", "AllowPrivate", "DenyAll".
+     "AllowAll", "AllowPrivate", and "DenyAll".
     :vartype network_access_policy: str or
      ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
     :ivar disk_access_id: ARM id of the DiskAccess resource for using private endpoints on disks.
@@ -5096,14 +4853,17 @@ class SnapshotUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'network_access_policy': {'key': 'properties.networkAccessPolicy', 'type': 'str'},
-        'disk_access_id': {'key': 'properties.diskAccessId', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "SnapshotSku"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "disk_size_gb": {"key": "properties.diskSizeGB", "type": "int"},
+        "encryption_settings_collection": {
+            "key": "properties.encryptionSettingsCollection",
+            "type": "EncryptionSettingsCollection",
+        },
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "network_access_policy": {"key": "properties.networkAccessPolicy", "type": "str"},
+        "disk_access_id": {"key": "properties.diskAccessId", "type": "str"},
     }
 
     def __init__(
@@ -5120,13 +4880,13 @@ class SnapshotUpdate(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This
          is an optional parameter for incremental snapshot and the default behavior is the SKU will be
          set to the same sku as the previous snapshot.
         :paramtype sku: ~azure.mgmt.compute.v2020_09_30.models.SnapshotSku
-        :keyword os_type: the Operating System type. Known values are: "Windows", "Linux".
+        :keyword os_type: the Operating System type. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2020_09_30.models.OperatingSystemTypes
         :keyword disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
          indicates the size of the disk to create. If this field is present for updates or creation with
@@ -5141,14 +4901,14 @@ class SnapshotUpdate(msrest.serialization.Model):
          managed keys or platform managed keys.
         :paramtype encryption: ~azure.mgmt.compute.v2020_09_30.models.Encryption
         :keyword network_access_policy: Policy for accessing the disk via network. Known values are:
-         "AllowAll", "AllowPrivate", "DenyAll".
+         "AllowAll", "AllowPrivate", and "DenyAll".
         :paramtype network_access_policy: str or
          ~azure.mgmt.compute.v2020_09_30.models.NetworkAccessPolicy
         :keyword disk_access_id: ARM id of the DiskAccess resource for using private endpoints on
          disks.
         :paramtype disk_access_id: str
         """
-        super(SnapshotUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.sku = sku
         self.os_type = os_type
@@ -5159,7 +4919,7 @@ class SnapshotUpdate(msrest.serialization.Model):
         self.disk_access_id = disk_access_id
 
 
-class SourceVault(msrest.serialization.Model):
+class SourceVault(_serialization.Model):
     """The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
     :ivar id: Resource Id.
@@ -5167,35 +4927,30 @@ class SourceVault(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
         """
-        super(SourceVault, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class TargetRegion(msrest.serialization.Model):
+class TargetRegion(_serialization.Model):
     """Describes the target region information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the region.
+    :ivar name: The name of the region. Required.
     :vartype name: str
     :ivar regional_replica_count: The number of replicas of the Image Version to be created per
      region. This property is updatable.
     :vartype regional_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
      "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
@@ -5204,14 +4959,14 @@ class TargetRegion(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'regional_replica_count': {'key': 'regionalReplicaCount', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'encryption': {'key': 'encryption', 'type': 'EncryptionImages'},
+        "name": {"key": "name", "type": "str"},
+        "regional_replica_count": {"key": "regionalReplicaCount", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "encryption": {"key": "encryption", "type": "EncryptionImages"},
     }
 
     def __init__(
@@ -5224,13 +4979,13 @@ class TargetRegion(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the region.
+        :keyword name: The name of the region. Required.
         :paramtype name: str
         :keyword regional_replica_count: The number of replicas of the Image Version to be created per
          region. This property is updatable.
         :paramtype regional_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
          "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
@@ -5238,23 +4993,23 @@ class TargetRegion(msrest.serialization.Model):
          OS and data disks in the gallery artifact.
         :paramtype encryption: ~azure.mgmt.compute.v2020_09_30.models.EncryptionImages
         """
-        super(TargetRegion, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.regional_replica_count = regional_replica_count
         self.storage_account_type = storage_account_type
         self.encryption = encryption
 
 
-class UserArtifactManage(msrest.serialization.Model):
+class UserArtifactManage(_serialization.Model):
     """UserArtifactManage.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar install: Required. Required. The path and arguments to install the gallery application.
-     This is limited to 4096 characters.
+    :ivar install: Required. The path and arguments to install the gallery application. This is
+     limited to 4096 characters. Required.
     :vartype install: str
-    :ivar remove: Required. Required. The path and arguments to remove the gallery application.
-     This is limited to 4096 characters.
+    :ivar remove: Required. The path and arguments to remove the gallery application. This is
+     limited to 4096 characters. Required.
     :vartype remove: str
     :ivar update: Optional. The path and arguments to update the gallery application. If not
      present, then update operation will invoke remove command on the previous version and install
@@ -5263,49 +5018,42 @@ class UserArtifactManage(msrest.serialization.Model):
     """
 
     _validation = {
-        'install': {'required': True},
-        'remove': {'required': True},
+        "install": {"required": True},
+        "remove": {"required": True},
     }
 
     _attribute_map = {
-        'install': {'key': 'install', 'type': 'str'},
-        'remove': {'key': 'remove', 'type': 'str'},
-        'update': {'key': 'update', 'type': 'str'},
+        "install": {"key": "install", "type": "str"},
+        "remove": {"key": "remove", "type": "str"},
+        "update": {"key": "update", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        install: str,
-        remove: str,
-        update: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs):
         """
-        :keyword install: Required. Required. The path and arguments to install the gallery
-         application. This is limited to 4096 characters.
+        :keyword install: Required. The path and arguments to install the gallery application. This is
+         limited to 4096 characters. Required.
         :paramtype install: str
-        :keyword remove: Required. Required. The path and arguments to remove the gallery application.
-         This is limited to 4096 characters.
+        :keyword remove: Required. The path and arguments to remove the gallery application. This is
+         limited to 4096 characters. Required.
         :paramtype remove: str
         :keyword update: Optional. The path and arguments to update the gallery application. If not
          present, then update operation will invoke remove command on the previous version and install
          command on the current version of the gallery application. This is limited to 4096 characters.
         :paramtype update: str
         """
-        super(UserArtifactManage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.install = install
         self.remove = remove
         self.update = update
 
 
-class UserArtifactSource(msrest.serialization.Model):
+class UserArtifactSource(_serialization.Model):
     """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar media_link: Required. Required. The mediaLink of the artifact, must be a readable storage
-     page blob.
+    :ivar media_link: Required. The mediaLink of the artifact, must be a readable storage page
+     blob. Required.
     :vartype media_link: str
     :ivar default_configuration_link: Optional. The defaultConfigurationLink of the artifact, must
      be a readable storage page blob.
@@ -5313,29 +5061,23 @@ class UserArtifactSource(msrest.serialization.Model):
     """
 
     _validation = {
-        'media_link': {'required': True},
+        "media_link": {"required": True},
     }
 
     _attribute_map = {
-        'media_link': {'key': 'mediaLink', 'type': 'str'},
-        'default_configuration_link': {'key': 'defaultConfigurationLink', 'type': 'str'},
+        "media_link": {"key": "mediaLink", "type": "str"},
+        "default_configuration_link": {"key": "defaultConfigurationLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        media_link: str,
-        default_configuration_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs):
         """
-        :keyword media_link: Required. Required. The mediaLink of the artifact, must be a readable
-         storage page blob.
+        :keyword media_link: Required. The mediaLink of the artifact, must be a readable storage page
+         blob. Required.
         :paramtype media_link: str
         :keyword default_configuration_link: Optional. The defaultConfigurationLink of the artifact,
          must be a readable storage page blob.
         :paramtype default_configuration_link: str
         """
-        super(UserArtifactSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.media_link = media_link
         self.default_configuration_link = default_configuration_link

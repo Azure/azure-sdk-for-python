@@ -7,9 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union, cast
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -22,9 +29,22 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._virtual_machine_scale_set_vms_operations import build_deallocate_request_initial, build_delete_request_initial, build_get_instance_view_request, build_get_request, build_list_request, build_power_off_request_initial, build_reimage_all_request_initial, build_reimage_request_initial, build_restart_request_initial, build_start_request_initial
-T = TypeVar('T')
+from ...operations._virtual_machine_scale_set_vms_operations import (
+    build_deallocate_request,
+    build_delete_request,
+    build_get_instance_view_request,
+    build_get_request,
+    build_list_request,
+    build_power_off_request,
+    build_reimage_all_request,
+    build_reimage_request,
+    build_restart_request,
+    build_start_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class VirtualMachineScaleSetVMsOperations:
     """
@@ -45,33 +65,25 @@ class VirtualMachineScaleSetVMsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     async def _reimage_initial(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
-        
-        request = build_reimage_request_initial(
+        request = build_reimage_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._reimage_initial.metadata['url'],
+            template_url=self._reimage_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -79,10 +91,9 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -91,31 +102,26 @@ class VirtualMachineScaleSetVMsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _reimage_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimage"}  # type: ignore
-
+    _reimage_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimage"}  # type: ignore
 
     @distributed_trace_async
     async def begin_reimage(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResponse]:
         """Reimages (upgrade the operating system) a specific virtual machine in a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -129,85 +135,74 @@ class VirtualMachineScaleSetVMsOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatusResponse]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatusResponse]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._reimage_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
-                lro_delay,
-                lro_options={'final-state-via': 'azure-async-operation'},
-                
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_reimage.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimage"}  # type: ignore
+    begin_reimage.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimage"}  # type: ignore
 
     async def _reimage_all_initial(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
-        
-        request = build_reimage_all_request_initial(
+        request = build_reimage_all_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._reimage_all_initial.metadata['url'],
+            template_url=self._reimage_all_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -215,10 +210,9 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -227,32 +221,27 @@ class VirtualMachineScaleSetVMsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _reimage_all_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimageall"}  # type: ignore
-
+    _reimage_all_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimageall"}  # type: ignore
 
     @distributed_trace_async
     async def begin_reimage_all(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResponse]:
         """Allows you to re-image all the disks ( including data disks ) in the a VM scale set instance.
         This operation is only supported for managed disks.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -266,85 +255,74 @@ class VirtualMachineScaleSetVMsOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatusResponse]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatusResponse]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._reimage_all_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
-                lro_delay,
-                lro_options={'final-state-via': 'azure-async-operation'},
-                
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_reimage_all.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimageall"}  # type: ignore
+    begin_reimage_all.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimageall"}  # type: ignore
 
     async def _deallocate_initial(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
-        
-        request = build_deallocate_request_initial(
+        request = build_deallocate_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._deallocate_initial.metadata['url'],
+            template_url=self._deallocate_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -352,10 +330,9 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -364,33 +341,28 @@ class VirtualMachineScaleSetVMsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _deallocate_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/deallocate"}  # type: ignore
-
+    _deallocate_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/deallocate"}  # type: ignore
 
     @distributed_trace_async
     async def begin_deallocate(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResponse]:
         """Deallocates a specific virtual machine in a VM scale set. Shuts down the virtual machine and
         releases the compute resources it uses. You are not billed for the compute resources of this
         virtual machine once it is deallocated.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -404,85 +376,74 @@ class VirtualMachineScaleSetVMsOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatusResponse]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatusResponse]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._deallocate_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
-                lro_delay,
-                lro_options={'final-state-via': 'azure-async-operation'},
-                
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_deallocate.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/deallocate"}  # type: ignore
+    begin_deallocate.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/deallocate"}  # type: ignore
 
     async def _delete_initial(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
-        
-        request = build_delete_request_initial(
+        request = build_delete_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata['url'],
+            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -490,10 +451,9 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
@@ -502,31 +462,26 @@ class VirtualMachineScaleSetVMsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}"}  # type: ignore
-
+    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}"}  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResponse]:
         """Deletes a virtual machine from a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -540,99 +495,85 @@ class VirtualMachineScaleSetVMsOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatusResponse]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatusResponse]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
-                lro_delay,
-                
-                
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}"}  # type: ignore
+    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> _models.VirtualMachineScaleSetVM:
         """Gets a virtual machine from a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualMachineScaleSetVM, or the result of cls(response)
+        :return: VirtualMachineScaleSetVM or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVM
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.VirtualMachineScaleSetVM]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.VirtualMachineScaleSetVM]
 
-        
         request = build_get_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -640,66 +581,57 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VirtualMachineScaleSetVM', pipeline_response)
+        deserialized = self._deserialize("VirtualMachineScaleSetVM", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}"}  # type: ignore
 
     @distributed_trace_async
     async def get_instance_view(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> _models.VirtualMachineScaleSetVMInstanceView:
         """Gets the status of a virtual machine from a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualMachineScaleSetVMInstanceView, or the result of cls(response)
+        :return: VirtualMachineScaleSetVMInstanceView or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVMInstanceView
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.VirtualMachineScaleSetVMInstanceView]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.VirtualMachineScaleSetVMInstanceView]
 
-        
         request = build_get_instance_view_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_instance_view.metadata['url'],
+            template_url=self.get_instance_view.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -707,25 +639,23 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VirtualMachineScaleSetVMInstanceView', pipeline_response)
+        deserialized = self._deserialize("VirtualMachineScaleSetVMInstanceView", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_instance_view.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/instanceView"}  # type: ignore
-
+    get_instance_view.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/instanceView"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -736,12 +666,12 @@ class VirtualMachineScaleSetVMsOperations:
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.VirtualMachineScaleSetVMListResult]:
+    ) -> AsyncIterable["_models.VirtualMachineScaleSetVM"]:
         """Gets a list of all virtual machines in a VM scale sets.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param virtual_machine_scale_set_name: The name of the VM scale set.
+        :param virtual_machine_scale_set_name: The name of the VM scale set. Required.
         :type virtual_machine_scale_set_name: str
         :param filter: The filter to apply to the operation. Default value is None.
         :type filter: str
@@ -750,34 +680,33 @@ class VirtualMachineScaleSetVMsOperations:
         :param expand: The expand expression to apply to the operation. Default value is None.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either VirtualMachineScaleSetVMListResult or the result
-         of cls(response)
+        :return: An iterator like instance of either VirtualMachineScaleSetVM or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVMListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVM]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.VirtualMachineScaleSetVMListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.VirtualMachineScaleSetVMListResult]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     resource_group_name=resource_group_name,
                     virtual_machine_scale_set_name=virtual_machine_scale_set_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
                     filter=filter,
                     select=select,
                     expand=expand,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -785,19 +714,11 @@ class VirtualMachineScaleSetVMsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    resource_group_name=resource_group_name,
-                    virtual_machine_scale_set_name=virtual_machine_scale_set_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -813,10 +734,8 @@ class VirtualMachineScaleSetVMsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -826,38 +745,29 @@ class VirtualMachineScaleSetVMsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines"}  # type: ignore
 
     async def _power_off_initial(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
-        
-        request = build_power_off_request_initial(
+        request = build_power_off_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._power_off_initial.metadata['url'],
+            template_url=self._power_off_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -865,10 +775,9 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -877,33 +786,28 @@ class VirtualMachineScaleSetVMsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _power_off_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/poweroff"}  # type: ignore
-
+    _power_off_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/poweroff"}  # type: ignore
 
     @distributed_trace_async
     async def begin_power_off(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResponse]:
         """Power off (stop) a virtual machine in a VM scale set. Note that resources are still attached
         and you are getting charged for the resources. Instead, use deallocate to release resources and
         avoid charges.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -917,85 +821,74 @@ class VirtualMachineScaleSetVMsOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatusResponse]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatusResponse]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._power_off_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
-                lro_delay,
-                lro_options={'final-state-via': 'azure-async-operation'},
-                
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_power_off.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/poweroff"}  # type: ignore
+    begin_power_off.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/poweroff"}  # type: ignore
 
     async def _restart_initial(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
-        
-        request = build_restart_request_initial(
+        request = build_restart_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._restart_initial.metadata['url'],
+            template_url=self._restart_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1003,10 +896,9 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -1015,31 +907,26 @@ class VirtualMachineScaleSetVMsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _restart_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/restart"}  # type: ignore
-
+    _restart_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/restart"}  # type: ignore
 
     @distributed_trace_async
     async def begin_restart(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResponse]:
         """Restarts a virtual machine in a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1053,85 +940,74 @@ class VirtualMachineScaleSetVMsOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatusResponse]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatusResponse]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._restart_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
-                lro_delay,
-                lro_options={'final-state-via': 'azure-async-operation'},
-                
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_restart.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/restart"}  # type: ignore
+    begin_restart.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/restart"}  # type: ignore
 
     async def _start_initial(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> Optional[_models.OperationStatusResponse]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
-        
-        request = build_start_request_initial(
+        request = build_start_request(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._start_initial.metadata['url'],
+            template_url=self._start_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1139,10 +1015,9 @@ class VirtualMachineScaleSetVMsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -1151,31 +1026,26 @@ class VirtualMachineScaleSetVMsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _start_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/start"}  # type: ignore
-
+    _start_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/start"}  # type: ignore
 
     @distributed_trace_async
     async def begin_start(
-        self,
-        resource_group_name: str,
-        vm_scale_set_name: str,
-        instance_id: str,
-        **kwargs: Any
+        self, resource_group_name: str, vm_scale_set_name: str, instance_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResponse]:
         """Starts a virtual machine in a VM scale set.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the VM scale set.
+        :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param instance_id: The instance ID of the virtual machine.
+        :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1189,55 +1059,51 @@ class VirtualMachineScaleSetVMsOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-04-30-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatusResponse]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-04-30-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatusResponse]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._start_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('OperationStatusResponse', pipeline_response)
+            deserialized = self._deserialize("OperationStatusResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(
-                lro_delay,
-                lro_options={'final-state-via': 'azure-async-operation'},
-                
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_start.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/start"}  # type: ignore
+    begin_start.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/start"}  # type: ignore
