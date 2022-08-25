@@ -5,6 +5,7 @@
 # ------------------------------------
 
 from typing import TYPE_CHECKING, Any, List, Union, Tuple
+from datetime import timedelta
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
@@ -94,13 +95,14 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
         api_version = kwargs.pop("api_version", self._api_version)
         return self._identity_service_client.communication_identity.create(
             api_version=api_version,
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
+            cls=lambda pr, u, e: CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
             **kwargs)
 
     @distributed_trace
     def create_user_and_token(
             self,
             scopes, # type: List[Union[str, CommunicationTokenScope]]
+            token_expires_after = None, #type: timedelta
             **kwargs # type: Any
         ):
         # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
@@ -108,15 +110,32 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
 
         :param scopes: List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
+        :param token_expires_after: Custom validity period of the Communication Identity access token within <60,1440> minutes range. If not provided, the default value of 1440 minutes (24 hours) will be used.
+        :type token_expires_after: timedelta
         :return: A tuple of a CommunicationUserIdentifier and a AccessToken.
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
         api_version = kwargs.pop("api_version", self._api_version)
+        
+        expires_after = 0
+        
+        if (token_expires_after is not None):
+            expires_after = int(token_expires_after.seconds / 60)
+        
+            body = {
+                'createTokenWithScopes': scopes,
+                'expiresInMinutes': expires_after
+            }
+        else:
+            body = {
+                'createTokenWithScopes': scopes
+            }
+        
         return self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
-                AccessToken(u.access_token.token, u.access_token.expires_on)),
-            create_token_with_scopes=scopes,
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
+                AccessToken(u['accessToken']['token'], u['accessToken']['expiresOn'])),
+            body=body,
             api_version=api_version,
             **kwargs)
 
@@ -144,7 +163,8 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
     def get_token(
             self,
             user, # type: CommunicationUserIdentifier
-            scopes, # List[Union[str, CommunicationTokenScope]]
+            scopes, # type: List[Union[str, CommunicationTokenScope]]
+            token_expires_after = None, #type: timedelta
             **kwargs # type: Any
         ):
         # type: (...) -> AccessToken
@@ -154,15 +174,32 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
         :type user: ~azure.communication.identity.CommunicationUserIdentifier
         :param scopes: List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
+        :param token_expires_after: Custom validity period of the Communication Identity access token within <60,1440> minutes range. If not provided, the default value of 1440 minutes (24 hours) will be used.
+        :type token_expires_after: timedelta
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         api_version = kwargs.pop("api_version", self._api_version)
+        
+        expires_after = 0
+        
+        if (token_expires_after is not None):
+            expires_after = int(token_expires_after.seconds / 60)
+        
+            body = {
+                'scopes': scopes,
+                'expiresInMinutes': expires_after
+            }
+        else:
+            body = {
+                'scopes': scopes
+            }
+        
         return self._identity_service_client.communication_identity.issue_access_token(
             user.properties['id'],
-            scopes,
+            body=body,
             api_version=api_version,
-            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
+            cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
             **kwargs)
 
     @distributed_trace
@@ -208,11 +245,16 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
         :rtype: ~azure.core.credentials.AccessToken
         """
         api_version = kwargs.pop("api_version", self._api_version)
+        
+        body = {
+            "token": aad_token,
+            "appId": client_id,
+            "userId": user_object_id
+        }
+        
         return self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            token=aad_token,
-            app_id=client_id,
-            user_id=user_object_id,
+            body=body,
             api_version=api_version,
-            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
+            cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
             **kwargs)
         
