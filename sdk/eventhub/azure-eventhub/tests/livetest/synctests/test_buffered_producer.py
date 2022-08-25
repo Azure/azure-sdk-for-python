@@ -40,25 +40,26 @@ def random_pkey_generation(partitions):
 
 
 @pytest.mark.liveTest()
-def test_producer_client_constructor(connection_str):
+def test_producer_client_constructor(connection_str, uamqp_transport):
     def on_success(events, pid):
         pass
 
     def on_error(events, error, pid):
         pass
     with pytest.raises(TypeError):
-        EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True)
+        EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True, uamqp_transport=uamqp_transport)
     with pytest.raises(TypeError):
-        EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True, on_success=on_success)
+        EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True, on_success=on_success, uamqp_transport=uamqp_transport)
     with pytest.raises(TypeError):
-        EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True, on_error=on_error)
+        EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True, on_error=on_error, uamqp_transport=uamqp_transport)
     with pytest.raises(ValueError):
         EventHubProducerClient.from_connection_string(
             connection_str,
             buffered_mode=True,
             on_success=on_success,
             on_error=on_error,
-            max_wait_time=0
+            max_wait_time=0,
+            uamqp_transport=uamqp_transport
         )
     with pytest.raises(ValueError):
         EventHubProducerClient.from_connection_string(
@@ -66,7 +67,8 @@ def test_producer_client_constructor(connection_str):
             buffered_mode=True,
             on_success=on_success,
             on_error=on_error,
-            max_buffer_length=0
+            max_buffer_length=0,
+            uamqp_transport=uamqp_transport
         )
 
 
@@ -80,13 +82,13 @@ def test_producer_client_constructor(connection_str):
     ]
 )
 @pytest.mark.liveTest
-def test_basic_send_single_events_round_robin(connection_str, flush_after_sending, close_after_sending):
+def test_basic_send_single_events_round_robin(connection_str, flush_after_sending, close_after_sending, uamqp_transport):
     received_events = defaultdict(list)
 
     def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
-    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
+    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
     receive_thread.start()
@@ -107,7 +109,8 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
         connection_str,
         buffered_mode=True,
         on_success=on_success,
-        on_error=on_error
+        on_error=on_error,
+        uamqp_transport=uamqp_transport
     )
 
     with producer:
@@ -185,13 +188,13 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
         (False, False)
     ]
 )
-def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending, close_after_sending):
+def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending, close_after_sending, uamqp_transport):
     received_events = defaultdict(list)
 
     def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
-    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
+    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
     receive_thread.start()
@@ -209,7 +212,8 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
         connection_str,
         buffered_mode=True,
         on_success=on_success,
-        on_error=on_error
+        on_error=on_error,
+        uamqp_transport=uamqp_transport
     )
 
     with producer:
@@ -292,13 +296,13 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
 
 
 @pytest.mark.liveTest
-def test_send_with_hybrid_partition_assignment(connection_str):
+def test_send_with_hybrid_partition_assignment(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 
     def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
-    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
+    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
     receive_thread.start()
@@ -316,7 +320,8 @@ def test_send_with_hybrid_partition_assignment(connection_str):
         connection_str,
         buffered_mode=True,
         on_success=on_success,
-        on_error=on_error
+        on_error=on_error,
+        uamqp_transport=uamqp_transport
     )
 
     with producer:
@@ -381,13 +386,13 @@ def test_send_with_hybrid_partition_assignment(connection_str):
     receive_thread.join()
 
 
-def test_send_with_timing_configuration(connection_str):
+def test_send_with_timing_configuration(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 
     def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
-    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
+    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
     receive_thread.start()
@@ -408,7 +413,8 @@ def test_send_with_timing_configuration(connection_str):
         buffered_mode=True,
         max_wait_time=10,
         on_success=on_success,
-        on_error=on_error
+        on_error=on_error,
+        uamqp_transport=uamqp_transport
     )
 
     with producer:
@@ -428,7 +434,8 @@ def test_send_with_timing_configuration(connection_str):
         max_wait_time=1000,
         max_buffer_length=10,
         on_success=on_success,
-        on_error=on_error
+        on_error=on_error,
+        uamqp_transport=uamqp_transport
     )
 
     sent_events.clear()
@@ -457,13 +464,13 @@ def test_send_with_timing_configuration(connection_str):
 
 
 @pytest.mark.liveTest
-def test_long_sleep(connection_str):
+def test_long_sleep(connection_str, uamqp_transport):
     received_events = defaultdict(list)
 
     def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
-    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
+    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = Thread(target=consumer.receive, args=(on_event,))
     receive_thread.daemon = True
     receive_thread.start()
@@ -481,7 +488,8 @@ def test_long_sleep(connection_str):
         connection_str,
         buffered_mode=True,
         on_success=on_success,
-        on_error=on_error
+        on_error=on_error,
+        uamqp_transport=uamqp_transport
     )
 
     with producer:
@@ -534,7 +542,6 @@ def test_long_wait_small_buffer(connection_str):
     with producer:
         for i in range(100):
             producer.send_event(EventData("test"))
-            time.sleep(.1)
 
     time.sleep(60)
 
