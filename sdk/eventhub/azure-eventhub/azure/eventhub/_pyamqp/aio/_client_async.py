@@ -54,69 +54,69 @@ _logger = logging.getLogger(__name__)
 
 class AMQPClientAsync(AMQPClientSync):
     """An asynchronous AMQP client.
-
-    :param remote_address: The AMQP endpoint to connect to. This could be a send target
-     or a receive source.
-    :type remote_address: str, bytes or ~uamqp.address.Address
-    :param auth: Authentication for the connection. This should be one of the subclasses of
-     uamqp.authentication.AMQPAuth. Currently this includes:
-        - uamqp.authentication.SASLAnonymous
-        - uamqp.authentication.SASLPlain
-        - uamqp.authentication.SASTokenAsync
+    
+    :param hostname: The AMQP endpoint to connect to.
+    :type hostname: str
+    :keyword auth: Authentication for the connection. This should be one of the following:
+        - pyamqp.authentication.SASLAnonymous
+        - pyamqp.authentication.SASLPlain
+        - pyamqp.authentication.SASTokenAuth
+        - pyamqp.authentication.JWTTokenAuth
      If no authentication is supplied, SASLAnnoymous will be used by default.
-    :type auth: ~uamqp.authentication.common.AMQPAuth
-    :param client_name: The name for the client, also known as the Container ID.
+    :paramtype auth: ~pyamqp.authentication
+    :keyword client_name: The name for the client, also known as the Container ID.
      If no name is provided, a random GUID will be used.
-    :type client_name: str or bytes
-    :param loop: A user specified event loop.
-    :type loop: ~asycnio.AbstractEventLoop
-    :param debug: Whether to turn on network trace logs. If `True`, trace logs
+    :paramtype client_name: str or bytes
+    :keyword debug: Whether to turn on network trace logs. If `True`, trace logs
      will be logged at INFO level. Default is `False`.
-    :type debug: bool
-    :param error_policy: A policy for parsing errors on link, connection and message
+    :paramtype debug: bool
+    :keyword retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
-    :type error_policy: ~uamqp.errors.ErrorPolicy
-    :param keep_alive_interval: If set, a thread will be started to keep the connection
+    :paramtype retry_policy: ~pyamqp.error.RetryPolicy
+    :keyword keep_alive_interval: If set, a thread will be started to keep the connection
      alive during periods of user inactivity. The value will determine how long the
      thread will sleep (in seconds) between pinging the connection. If 0 or None, no
      thread will be started.
-    :type keep_alive_interval: int
-    :param max_frame_size: Maximum AMQP frame size. Default is 63488 bytes.
-    :type max_frame_size: int
-    :param channel_max: Maximum number of Session channels in the Connection.
-    :type channel_max: int
-    :param idle_timeout: Timeout in seconds after which the Connection will close
+    :paramtype keep_alive_interval: int
+    :keyword max_frame_size: Maximum AMQP frame size. Default is 63488 bytes.
+    :paramtype max_frame_size: int
+    :keyword channel_max: Maximum number of Session channels in the Connection.
+    :paramtype channel_max: int
+    :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :type idle_timeout: int
-    :param properties: Connection properties.
-    :type properties: dict
-    :param remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
+    :paramtype idle_timeout: int
+    :keyword auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
+     Default value is 60s.
+    :paramtype auth_timeout: int
+    :keyword properties: Connection properties.
+    :paramtype properties: dict
+    :keyword remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
      idle time for Connections with no activity. Value must be between
      0.0 and 1.0 inclusive. Default is 0.5.
-    :type remote_idle_timeout_empty_frame_send_ratio: float
-    :param incoming_window: The size of the allowed window for incoming messages.
-    :type incoming_window: int
-    :param outgoing_window: The size of the allowed window for outgoing messages.
-    :type outgoing_window: int
-    :param handle_max: The maximum number of concurrent link handles.
-    :type handle_max: int
-    :param on_attach: A callback function to be run on receipt of an ATTACH frame.
+    :paramtype remote_idle_timeout_empty_frame_send_ratio: float
+    :keyword incoming_window: The size of the allowed window for incoming messages.
+    :paramtype incoming_window: int
+    :keyword outgoing_window: The size of the allowed window for outgoing messages.
+    :paramtype outgoing_window: int
+    :keyword handle_max: The maximum number of concurrent link handles.
+    :paramtype handle_max: int
+    :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :type on_attach: func[~uamqp.address.Source, ~uamqp.address.Target, dict, ~uamqp.errors.AMQPConnectionError]
-    :param send_settle_mode: The mode by which to settle message send
+    :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
+    :keyword send_settle_mode: The mode by which to settle message send
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
      the client will not wait for confirmation and assume success.
-    :type send_settle_mode: ~uamqp.constants.SenderSettleMode
-    :param receive_settle_mode: The mode by which to settle message receive
+    :paramtype send_settle_mode: ~pyamqp.constants.SenderSettleMode
+    :keyword receive_settle_mode: The mode by which to settle message receive
      operations. If set to `PeekLock`, the receiver will lock a message once received until
      the client accepts or rejects the message. If set to `ReceiveAndDelete`, the service
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
-    :type receive_settle_mode: ~uamqp.constants.ReceiverSettleMode
-    :param encoding: The encoding to use for parameters supplied as strings.
+    :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword encoding: The encoding to use for parameters supplied as strings.
      Default is 'UTF-8'
-    :type encoding: str
+    :paramtype encoding: str
     """
 
     async def __aenter__(self):
