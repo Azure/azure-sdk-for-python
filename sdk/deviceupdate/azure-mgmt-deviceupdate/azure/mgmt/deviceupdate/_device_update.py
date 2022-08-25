@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class DeviceUpdate(DeviceUpdateOperationsMixin):    # pylint: disable=too-many-instance-attributes
+class DeviceUpdateMgmtClient(DeviceUpdateOperationsMixin):    # pylint: disable=too-many-instance-attributes
     """Microsoft Device Update resource provider.
 
     :ivar accounts: AccountsOperations operations
