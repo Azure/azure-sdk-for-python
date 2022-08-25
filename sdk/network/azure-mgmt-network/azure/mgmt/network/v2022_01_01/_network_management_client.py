@@ -9,20 +9,151 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import NetworkManagementClientConfiguration
-from .operations import AdminRuleCollectionsOperations, AdminRulesOperations, ApplicationGatewayPrivateEndpointConnectionsOperations, ApplicationGatewayPrivateLinkResourcesOperations, ApplicationGatewaysOperations, ApplicationSecurityGroupsOperations, AvailableDelegationsOperations, AvailableEndpointServicesOperations, AvailablePrivateEndpointTypesOperations, AvailableResourceGroupDelegationsOperations, AvailableServiceAliasesOperations, AzureFirewallFqdnTagsOperations, AzureFirewallsOperations, BastionHostsOperations, BgpServiceCommunitiesOperations, ConfigurationPolicyGroupsOperations, ConnectionMonitorsOperations, ConnectivityConfigurationsOperations, CustomIPPrefixesOperations, DdosCustomPoliciesOperations, DdosProtectionPlansOperations, DefaultSecurityRulesOperations, DscpConfigurationOperations, ExpressRouteCircuitAuthorizationsOperations, ExpressRouteCircuitConnectionsOperations, ExpressRouteCircuitPeeringsOperations, ExpressRouteCircuitsOperations, ExpressRouteConnectionsOperations, ExpressRouteCrossConnectionPeeringsOperations, ExpressRouteCrossConnectionsOperations, ExpressRouteGatewaysOperations, ExpressRouteLinksOperations, ExpressRoutePortAuthorizationsOperations, ExpressRoutePortsLocationsOperations, ExpressRoutePortsOperations, ExpressRouteProviderPortsLocationOperations, ExpressRouteServiceProvidersOperations, FirewallPoliciesOperations, FirewallPolicyIdpsSignaturesFilterValuesOperations, FirewallPolicyIdpsSignaturesOperations, FirewallPolicyIdpsSignaturesOverridesOperations, FirewallPolicyRuleCollectionGroupsOperations, FlowLogsOperations, HubRouteTablesOperations, HubVirtualNetworkConnectionsOperations, InboundNatRulesOperations, InboundSecurityRuleOperations, IpAllocationsOperations, IpGroupsOperations, LoadBalancerBackendAddressPoolsOperations, LoadBalancerFrontendIPConfigurationsOperations, LoadBalancerLoadBalancingRulesOperations, LoadBalancerNetworkInterfacesOperations, LoadBalancerOutboundRulesOperations, LoadBalancerProbesOperations, LoadBalancersOperations, LocalNetworkGatewaysOperations, ManagementGroupNetworkManagerConnectionsOperations, NatGatewaysOperations, NatRulesOperations, NetworkGroupsOperations, NetworkInterfaceIPConfigurationsOperations, NetworkInterfaceLoadBalancersOperations, NetworkInterfaceTapConfigurationsOperations, NetworkInterfacesOperations, NetworkManagementClientOperationsMixin, NetworkManagerCommitsOperations, NetworkManagerDeploymentStatusOperations, NetworkManagersOperations, NetworkProfilesOperations, NetworkSecurityGroupsOperations, NetworkVirtualAppliancesOperations, NetworkWatchersOperations, Operations, P2SVpnGatewaysOperations, PacketCapturesOperations, PeerExpressRouteCircuitConnectionsOperations, PrivateDnsZoneGroupsOperations, PrivateEndpointsOperations, PrivateLinkServicesOperations, PublicIPAddressesOperations, PublicIPPrefixesOperations, ResourceNavigationLinksOperations, RouteFilterRulesOperations, RouteFiltersOperations, RouteTablesOperations, RoutesOperations, RoutingIntentOperations, ScopeConnectionsOperations, SecurityAdminConfigurationsOperations, SecurityPartnerProvidersOperations, SecurityRulesOperations, ServiceAssociationLinksOperations, ServiceEndpointPoliciesOperations, ServiceEndpointPolicyDefinitionsOperations, ServiceTagInformationOperations, ServiceTagsOperations, StaticMembersOperations, SubnetsOperations, SubscriptionNetworkManagerConnectionsOperations, UsagesOperations, VirtualApplianceSitesOperations, VirtualApplianceSkusOperations, VirtualHubBgpConnectionOperations, VirtualHubBgpConnectionsOperations, VirtualHubIpConfigurationOperations, VirtualHubRouteTableV2SOperations, VirtualHubsOperations, VirtualNetworkGatewayConnectionsOperations, VirtualNetworkGatewayNatRulesOperations, VirtualNetworkGatewaysOperations, VirtualNetworkPeeringsOperations, VirtualNetworkTapsOperations, VirtualNetworksOperations, VirtualRouterPeeringsOperations, VirtualRoutersOperations, VirtualWansOperations, VpnConnectionsOperations, VpnGatewaysOperations, VpnLinkConnectionsOperations, VpnServerConfigurationsAssociatedWithVirtualWanOperations, VpnServerConfigurationsOperations, VpnSiteLinkConnectionsOperations, VpnSiteLinksOperations, VpnSitesConfigurationOperations, VpnSitesOperations, WebApplicationFirewallPoliciesOperations, WebCategoriesOperations
+from .operations import (
+    AdminRuleCollectionsOperations,
+    AdminRulesOperations,
+    ApplicationGatewayPrivateEndpointConnectionsOperations,
+    ApplicationGatewayPrivateLinkResourcesOperations,
+    ApplicationGatewaysOperations,
+    ApplicationSecurityGroupsOperations,
+    AvailableDelegationsOperations,
+    AvailableEndpointServicesOperations,
+    AvailablePrivateEndpointTypesOperations,
+    AvailableResourceGroupDelegationsOperations,
+    AvailableServiceAliasesOperations,
+    AzureFirewallFqdnTagsOperations,
+    AzureFirewallsOperations,
+    BastionHostsOperations,
+    BgpServiceCommunitiesOperations,
+    ConfigurationPolicyGroupsOperations,
+    ConnectionMonitorsOperations,
+    ConnectivityConfigurationsOperations,
+    CustomIPPrefixesOperations,
+    DdosCustomPoliciesOperations,
+    DdosProtectionPlansOperations,
+    DefaultSecurityRulesOperations,
+    DscpConfigurationOperations,
+    ExpressRouteCircuitAuthorizationsOperations,
+    ExpressRouteCircuitConnectionsOperations,
+    ExpressRouteCircuitPeeringsOperations,
+    ExpressRouteCircuitsOperations,
+    ExpressRouteConnectionsOperations,
+    ExpressRouteCrossConnectionPeeringsOperations,
+    ExpressRouteCrossConnectionsOperations,
+    ExpressRouteGatewaysOperations,
+    ExpressRouteLinksOperations,
+    ExpressRoutePortAuthorizationsOperations,
+    ExpressRoutePortsLocationsOperations,
+    ExpressRoutePortsOperations,
+    ExpressRouteProviderPortsLocationOperations,
+    ExpressRouteServiceProvidersOperations,
+    FirewallPoliciesOperations,
+    FirewallPolicyIdpsSignaturesFilterValuesOperations,
+    FirewallPolicyIdpsSignaturesOperations,
+    FirewallPolicyIdpsSignaturesOverridesOperations,
+    FirewallPolicyRuleCollectionGroupsOperations,
+    FlowLogsOperations,
+    HubRouteTablesOperations,
+    HubVirtualNetworkConnectionsOperations,
+    InboundNatRulesOperations,
+    InboundSecurityRuleOperations,
+    IpAllocationsOperations,
+    IpGroupsOperations,
+    LoadBalancerBackendAddressPoolsOperations,
+    LoadBalancerFrontendIPConfigurationsOperations,
+    LoadBalancerLoadBalancingRulesOperations,
+    LoadBalancerNetworkInterfacesOperations,
+    LoadBalancerOutboundRulesOperations,
+    LoadBalancerProbesOperations,
+    LoadBalancersOperations,
+    LocalNetworkGatewaysOperations,
+    ManagementGroupNetworkManagerConnectionsOperations,
+    NatGatewaysOperations,
+    NatRulesOperations,
+    NetworkGroupsOperations,
+    NetworkInterfaceIPConfigurationsOperations,
+    NetworkInterfaceLoadBalancersOperations,
+    NetworkInterfaceTapConfigurationsOperations,
+    NetworkInterfacesOperations,
+    NetworkManagementClientOperationsMixin,
+    NetworkManagerCommitsOperations,
+    NetworkManagerDeploymentStatusOperations,
+    NetworkManagersOperations,
+    NetworkProfilesOperations,
+    NetworkSecurityGroupsOperations,
+    NetworkVirtualAppliancesOperations,
+    NetworkWatchersOperations,
+    Operations,
+    P2SVpnGatewaysOperations,
+    PacketCapturesOperations,
+    PeerExpressRouteCircuitConnectionsOperations,
+    PrivateDnsZoneGroupsOperations,
+    PrivateEndpointsOperations,
+    PrivateLinkServicesOperations,
+    PublicIPAddressesOperations,
+    PublicIPPrefixesOperations,
+    ResourceNavigationLinksOperations,
+    RouteFilterRulesOperations,
+    RouteFiltersOperations,
+    RouteTablesOperations,
+    RoutesOperations,
+    RoutingIntentOperations,
+    ScopeConnectionsOperations,
+    SecurityAdminConfigurationsOperations,
+    SecurityPartnerProvidersOperations,
+    SecurityRulesOperations,
+    ServiceAssociationLinksOperations,
+    ServiceEndpointPoliciesOperations,
+    ServiceEndpointPolicyDefinitionsOperations,
+    ServiceTagInformationOperations,
+    ServiceTagsOperations,
+    StaticMembersOperations,
+    SubnetsOperations,
+    SubscriptionNetworkManagerConnectionsOperations,
+    UsagesOperations,
+    VirtualApplianceSitesOperations,
+    VirtualApplianceSkusOperations,
+    VirtualHubBgpConnectionOperations,
+    VirtualHubBgpConnectionsOperations,
+    VirtualHubIpConfigurationOperations,
+    VirtualHubRouteTableV2SOperations,
+    VirtualHubsOperations,
+    VirtualNetworkGatewayConnectionsOperations,
+    VirtualNetworkGatewayNatRulesOperations,
+    VirtualNetworkGatewaysOperations,
+    VirtualNetworkPeeringsOperations,
+    VirtualNetworkTapsOperations,
+    VirtualNetworksOperations,
+    VirtualRouterPeeringsOperations,
+    VirtualRoutersOperations,
+    VirtualWansOperations,
+    VpnConnectionsOperations,
+    VpnGatewaysOperations,
+    VpnLinkConnectionsOperations,
+    VpnServerConfigurationsAssociatedWithVirtualWanOperations,
+    VpnServerConfigurationsOperations,
+    VpnSiteLinkConnectionsOperations,
+    VpnSiteLinksOperations,
+    VpnSitesConfigurationOperations,
+    VpnSitesOperations,
+    WebApplicationFirewallPoliciesOperations,
+    WebCategoriesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+
+class NetworkManagementClient(
+    NetworkManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Network Client.
 
     :ivar application_gateways: ApplicationGatewaysOperations operations
@@ -388,10 +519,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
      operations
     :vartype express_route_provider_ports_location:
      azure.mgmt.network.v2022_01_01.operations.ExpressRouteProviderPortsLocationOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft
-     Azure subscription. The subscription ID forms part of the URI for every service call.
+     Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -406,7 +537,9 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = NetworkManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = NetworkManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -434,18 +567,12 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.available_service_aliases = AvailableServiceAliasesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.azure_firewalls = AzureFirewallsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.azure_firewalls = AzureFirewallsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.azure_firewall_fqdn_tags = AzureFirewallFqdnTagsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.web_categories = WebCategoriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.bastion_hosts = BastionHostsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.web_categories = WebCategoriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.bastion_hosts = BastionHostsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.network_interfaces = NetworkInterfacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -518,15 +645,9 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.firewall_policy_idps_signatures_filter_values = FirewallPolicyIdpsSignaturesFilterValuesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.ip_allocations = IpAllocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.ip_groups = IpGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.load_balancers = LoadBalancersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.ip_allocations = IpAllocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ip_groups = IpGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.load_balancer_backend_address_pools = LoadBalancerBackendAddressPoolsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -548,9 +669,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.load_balancer_probes = LoadBalancerProbesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.nat_gateways = NatGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.nat_gateways = NatGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.network_interface_ip_configurations = NetworkInterfaceIPConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -578,12 +697,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.connectivity_configurations = ConnectivityConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.network_groups = NetworkGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.static_members = StaticMembersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.network_groups = NetworkGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.static_members = StaticMembersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scope_connections = ScopeConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -593,18 +708,14 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.admin_rule_collections = AdminRuleCollectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.admin_rules = AdminRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.admin_rules = AdminRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.network_profiles = NetworkProfilesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.network_security_groups = NetworkSecurityGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.security_rules = SecurityRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.security_rules = SecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.default_security_rules = DefaultSecurityRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -623,18 +734,12 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.network_watchers = NetworkWatchersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.packet_captures = PacketCapturesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.packet_captures = PacketCapturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connection_monitors = ConnectionMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.flow_logs = FlowLogsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.flow_logs = FlowLogsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoints = PrivateEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -650,18 +755,12 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.public_ip_prefixes = PublicIPPrefixesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.route_filters = RouteFiltersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.route_filters = RouteFiltersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.route_filter_rules = RouteFilterRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.route_tables = RouteTablesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.routes = RoutesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.route_tables = RouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.routes = RoutesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.security_partner_providers = SecurityPartnerProvidersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -674,21 +773,15 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.service_endpoint_policy_definitions = ServiceEndpointPolicyDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.service_tags = ServiceTagsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.service_tags = ServiceTagsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_tag_information = ServiceTagInformationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.usages = UsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_networks = VirtualNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.subnets = SubnetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.subnets = SubnetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_navigation_links = ResourceNavigationLinksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -713,21 +806,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.virtual_network_taps = VirtualNetworkTapsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.virtual_routers = VirtualRoutersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.virtual_routers = VirtualRoutersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_router_peerings = VirtualRouterPeeringsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.virtual_wans = VirtualWansOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.vpn_sites = VpnSitesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.vpn_site_links = VpnSiteLinksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.virtual_wans = VirtualWansOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vpn_sites = VpnSitesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vpn_site_links = VpnSiteLinksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vpn_sites_configuration = VpnSitesConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -737,32 +822,24 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.configuration_policy_groups = ConfigurationPolicyGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.virtual_hubs = VirtualHubsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.virtual_hubs = VirtualHubsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.hub_virtual_network_connections = HubVirtualNetworkConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.vpn_gateways = VpnGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.vpn_gateways = VpnGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vpn_link_connections = VpnLinkConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.vpn_connections = VpnConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.vpn_connections = VpnConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vpn_site_link_connections = VpnSiteLinkConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.nat_rules = NatRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.p2_svpn_gateways = P2SVpnGatewaysOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.vpn_server_configurations_associated_with_virtual_wan = VpnServerConfigurationsAssociatedWithVirtualWanOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.nat_rules = NatRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.p2_svpn_gateways = P2SVpnGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vpn_server_configurations_associated_with_virtual_wan = (
+            VpnServerConfigurationsAssociatedWithVirtualWanOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
         self.virtual_hub_route_table_v2_s = VirtualHubRouteTableV2SOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -782,12 +859,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         self.virtual_hub_ip_configuration = VirtualHubIpConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.hub_route_tables = HubRouteTablesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.routing_intent = RoutingIntentOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.hub_route_tables = HubRouteTablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.routing_intent = RoutingIntentOperations(self._client, self._config, self._serialize, self._deserialize)
         self.web_application_firewall_policies = WebApplicationFirewallPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -795,12 +868,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -809,7 +877,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin):    # pyli
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
