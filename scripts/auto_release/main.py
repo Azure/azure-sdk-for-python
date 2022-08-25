@@ -86,6 +86,7 @@ def checkout_azure_default_branch():
     print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
     print_check(f'git fetch {usr} {branch}')
     print_check(f'git checkout {usr}/{branch}')
+    print("*** success change branch")
 
 
 def modify_file(file_path: str, func: Any):
