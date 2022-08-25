@@ -1491,9 +1491,9 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc, 'testfind')
 
         data = b'hello world'
-        tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "tagthree"}
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         other_tags = {'tag1' : 'other'}
-        filter_expression = "tag1='tagone' and tag2='tagtwo'"
+        filter_expression = "tag1='firsttag' and tag2='secondtag'"
 
         container.get_blob_client('blob1').upload_blob(data, tags=tags)
         container.get_blob_client('blob2').upload_blob(data, tags=tags)
@@ -1501,7 +1501,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob4').upload_blob(data, tags=other_tags)
 
         if self.is_live:
-            sleep(120)
+            sleep(10)
 
         # Act
         blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
@@ -1514,8 +1514,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert 2 == len(items_on_page1)
         assert 1 == len(items_on_page2)
         assert len(items_on_page2[0]['tags']) == 2
-        assert items_on_page2[0]['tags']['tag1'] == 'tagone'
-        assert items_on_page2[0]['tags']['tag2'] == 'tagtwo'
+        assert items_on_page2[0]['tags']['tag1'] == 'firsttag'
+        assert items_on_page2[0]['tags']['tag2'] == 'secondtag'
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1534,7 +1534,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob2').upload_blob(data, tags=tags)
 
         if self.is_live:
-            sleep(60)
+            sleep(10)
 
         # Act
         sas_token = self.generate_sas(
