@@ -288,7 +288,7 @@ def _is_throttle_code(response_code: int) -> bool:
 def _update_requests_map(type_name, value=None):
     # value is either None, duration, status_code or exc_name
     with _REQUESTS_LOCK:
-        if value is None:  # success, count
+        if type_name == _REQ_SUCCESS_NAME[1] or type_name == "count":  # success, count
             _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + 1
         elif type_name == _REQ_DURATION_NAME[1]:  # duration
             _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + value
