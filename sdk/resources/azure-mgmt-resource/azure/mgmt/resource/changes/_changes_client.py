@@ -9,20 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import ChangesClientConfiguration
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
@@ -43,9 +40,9 @@ class ChangesClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
+    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -66,10 +63,10 @@ class ChangesClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
+        credential: "TokenCredential",
+        subscription_id: str,
         api_version=None, # type: Optional[str]
-        base_url="https://management.azure.com",  # type: str
+        base_url: str = "https://management.azure.com",
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):

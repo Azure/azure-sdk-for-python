@@ -9,20 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import PolicyClientConfiguration
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
@@ -43,9 +40,9 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -66,10 +63,10 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
+        credential: "TokenCredential",
+        subscription_id: str,
         api_version=None, # type: Optional[str]
-        base_url="https://management.azure.com",  # type: str
+        base_url: str = "https://management.azure.com",
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
@@ -285,6 +282,32 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from .v2021_06_01.operations import PolicySetDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_set_definitions'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def variable_values(self):
+        """Instance depends on the API version:
+
+           * 2021-06-01: :class:`VariableValuesOperations<azure.mgmt.resource.policy.v2021_06_01.operations.VariableValuesOperations>`
+        """
+        api_version = self._get_api_version('variable_values')
+        if api_version == '2021-06-01':
+            from .v2021_06_01.operations import VariableValuesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'variable_values'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def variables(self):
+        """Instance depends on the API version:
+
+           * 2021-06-01: :class:`VariablesOperations<azure.mgmt.resource.policy.v2021_06_01.operations.VariablesOperations>`
+        """
+        api_version = self._get_api_version('variables')
+        if api_version == '2021-06-01':
+            from .v2021_06_01.operations import VariablesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'variables'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):
