@@ -124,7 +124,7 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
             ed = EventData("Event")
             senders[0].send(ed)
 
-            with pytest.raises(error.error.AMQPConnectionError):
+            with pytest.raises(error.AMQPConnectionError):
                 await consumer._handler.do_work_async()
             assert consumer._handler._connection.state == constants.ConnectionState.END
 
