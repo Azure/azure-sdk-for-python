@@ -3,8 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, List, Union, Tuple
-from datetime import timedelta
+import datetime
+from typing import TYPE_CHECKING, Any, List, Optional, Union, Tuple
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AccessToken
@@ -99,7 +99,7 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
     async def create_user_and_token(
             self,
             scopes: List[Union[str, 'CommunicationTokenScope']],
-            token_expires_after = None, #type: timedelta
+            token_expires_after: Optional[datetime.timedelta] = None, #type: datetime.timedelta
             **kwargs
         ) -> Tuple['CommunicationUserIdentifier', AccessToken]:
         """create a single Communication user with an identity token.
@@ -160,7 +160,7 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
             self,
             user: CommunicationUserIdentifier,
             scopes: List[Union[str, 'CommunicationTokenScope']],
-            token_expires_after = None, #type: timedelta
+            token_expires_after: Optional[datetime.timedelta] = None, #type: datetime.timedelta
             **kwargs
         ) -> AccessToken:
         """Generates a new token for an identity.

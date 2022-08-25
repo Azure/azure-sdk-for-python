@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any, List, Union, Tuple
-from datetime import timedelta
+import datetime
+from typing import TYPE_CHECKING, Any, List, Optional, Union, Tuple
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
@@ -102,7 +102,7 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
     def create_user_and_token(
             self,
             scopes, # type: List[Union[str, CommunicationTokenScope]]
-            token_expires_after = None, #type: timedelta
+            token_expires_after: Optional[datetime.timedelta] = None, #type: datetime.timedelta
             **kwargs # type: Any
         ):
         # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
@@ -164,7 +164,7 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
             self,
             user, # type: CommunicationUserIdentifier
             scopes, # type: List[Union[str, CommunicationTokenScope]]
-            token_expires_after = None, #type: timedelta
+            token_expires_after: Optional[datetime.timedelta] = None, #type: datetime.timedelta
             **kwargs # type: Any
         ):
         # type: (...) -> AccessToken
