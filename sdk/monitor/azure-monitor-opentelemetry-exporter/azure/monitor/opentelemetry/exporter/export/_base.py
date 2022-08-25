@@ -135,6 +135,7 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-statements
     def _transmit(self, envelopes: List[TelemetryItem]) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
@@ -208,7 +209,7 @@ class BaseExporter:
                             "Error sending telemetry because of circular redirects." \
                             "Please check the integrity of your connection string."
                         )
-                    # If redirect but did not return, exception occured
+                    # If redirect but did not return, exception occurred
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
                     return ExportResult.FAILED_NOT_RETRYABLE
