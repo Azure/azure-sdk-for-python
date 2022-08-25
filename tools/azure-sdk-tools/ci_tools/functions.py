@@ -42,7 +42,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
-TEST_COMPATIBILITY_MAP = {"azure-core-tracing-opentelemetry": "<3.10"}
+TEST_COMPATIBILITY_MAP = {}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -66,13 +66,25 @@ omit_function_dict = {
 }
 
 
-def filter_for_compatibility(package_set):
+def filter_for_compatibility(package_set: List[str]) -> List[str]:
+    """
+    This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
+    If a package is unsupported by the executable, it will be omitted from the returned list.
+
+    A manual override list of these compatibilities is also supported, but requires code change to enable. Check TEST_COMPATIBILITY_MAP in this same file.
+
+    :param List[str] package_set: a list of paths to python packages. Each item can either be a package folder or a direct path to setup.py.
+    """
     collected_packages = []
     v = sys.version_info
     running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
         spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
+        pkg_specs_override = TEST_COMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+
+        if pkg_specs_override:
+            spec_set = SpecifierSet(pkg_specs_override)
 
         if running_major_version in spec_set:
             collected_packages.append(pkg)
@@ -85,14 +97,6 @@ def compare_python_version(version_spec: str):
     spec_set = SpecifierSet(version_spec)
 
     return current_sys_version in spec_set
-
-
-def filter_packages_by_compatibility_override(package_set: List[str], resolve_basename: bool = True) -> List[str]:
-    return [
-        p
-        for p in package_set
-        if compare_python_version(TEST_COMPATIBILITY_MAP.get(os.path.basename(p) if resolve_basename else p, ">=2.7"))
-    ]
 
 
 def str_to_bool(input_string: str) -> bool:
@@ -114,10 +118,17 @@ def discover_targeted_packages(
     target_root_dir: str,
     additional_contains_filter: str = "",
     filter_type: str = "Build",
+    compatibility_filter: bool = True,
 ) -> List[str]:
     """
     During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
     This function centralizes business and material requirements and outputs the set of packages that should be targeted.
+
+    :param str glob_string: The basic glob used to query packages within the repo. Defaults to "azure-*"
+    :param str target_root_dir: The root directory in which globbing will begin.
+    :param str additional_contains_filter: Additional filter option. Used when needing to provide one-off filtration that doesn't merit an additional filter_type. Defaults to empty string.
+    :param str filter_type: One a string representing a filter function as a set of options. Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
+    :param bool compatibility_filter: Enables or disables compatibility filtering of found packages. If the invoking python executable does not match a found package's specifiers, the package will be omitted. Defaults to True.
     """
     if glob_string:
         individual_globs = glob_string.split(",")
@@ -133,16 +144,20 @@ def discover_targeted_packages(
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
+    pkg_set_ci_filtered = collected_directories
 
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
-        pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
+        if compatibility_filter:
+            pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
+
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
         allowed_package_set = remove_omitted_packages(collected_directories)
-        pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
+        if compatibility_filter:
+            pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
@@ -265,7 +280,7 @@ def process_requires(setup_py_path: str):
             #            \d+         <followed by number of digits N>
             #        )?
             #       )?
-            rx = r'{}(((a|b|rc)\d+)?(\.post\d+)?)?'.format(base_version)
+            rx = r"{}(((a|b|rc)\d+)?(\.post\d+)?)?".format(base_version)
             new_req = re.sub(rx, "{}{}1".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req

@@ -17,7 +17,10 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQ_SUCCESS_NAME,
+    _REQUESTS_MAP,
+)
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryErrorDetails,
@@ -61,6 +64,9 @@ class TestBaseExporter(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(cls._base.storage._path, True)
 
+    def setUp(self) -> None:
+        _REQUESTS_MAP.clear()
+
     def tearDown(self):
         clean_folder(self._base.storage._path)
 
@@ -68,7 +74,7 @@ class TestBaseExporter(unittest.TestCase):
         """Test the constructor."""
         base = BaseExporter(
             api_version="2021-02-10_Preview",
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             enable_local_storage=True,
             storage_maintenance_period=30,
             storage_max_size=1000,
@@ -79,6 +85,10 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(
             base._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
         )
         self.assertIsNotNone(base.storage)
         self.assertEqual(base.storage._max_size, 1000)
@@ -191,6 +201,18 @@ class TestBaseExporter(unittest.TestCase):
                 errors=[],
             )
             result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.SUCCESS)
+
+    def test_statsbeat_200(self):
+        with mock.patch.object(AzureMonitorClient, 'track') as post:
+            post.return_value = TrackResponse(
+                items_received=1,
+                items_accepted=1,
+                errors=[],
+            )
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(len(_REQUESTS_MAP), 1)
+        self.assertEqual(_REQUESTS_MAP[_REQ_SUCCESS_NAME[1]], 1)
         self.assertEqual(result, ExportResult.SUCCESS)
 
     def test_transmission_206_retry(self):
