@@ -93,7 +93,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :returns: Instance of RouterAdministrationClient.
+        :return: Instance of RouterAdministrationClient.
         :rtype: ~azure.communication.jobrouter.aio.RouterAdministrationClient
 
         .. admonition:: Example:
@@ -123,15 +123,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str exception_policy_id: Id of the exception policy.
 
-        :param exception_rules: (Optional) A dictionary collection of exception rules on the exception
+        :param exception_rules: A dictionary collection of exception rules on the exception
           policy. Key is the Id of each exception rule.
-        :type exception_rules: Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]
+        :type exception_rules: Dict[str, ~azure.communication.jobrouter.ExceptionRule]
 
         :keyword Optional[str] name: The name of this policy.
 
-        :return ExceptionPolicy
-        :rtype ~azure.communication.jobrouter.ExceptionPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -172,7 +172,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
           policy. Key is the Id of each exception rule.
-        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
+        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.ExceptionRule]]
 
         :keyword Optional[str] name: The name of this policy.
 
@@ -180,9 +180,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
           class instance will not be considered if they are also specified in keyword arguments.
         :paramtype exception_policy: Optional[~azure.communication.jobrouter.ExceptionPolicy]
 
-        :return ExceptionPolicy
-        :rtype ~azure.communication.jobrouter.ExceptionPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -232,9 +232,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str exception_policy_id: Id of the policy.
 
-        :return ExceptionPolicy
-        :rtype ~azure.communication.jobrouter.ExceptionPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -262,8 +262,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         """Retrieves existing exception policies.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
-        :return: An iterator like instance of ExceptionPolicy
 
+        :return: An iterator like instance of ExceptionPolicyItem
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.ExceptionPolicyItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -345,9 +345,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword Optional[str] name: The name of this policy.
 
-        :return DistributionPolicy
-        :rtype ~azure.communication.jobrouter.DistributionPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -391,7 +391,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :param str distribution_policy_id: Id of the distribution policy.
 
         :keyword Optional[float] offer_ttl_seconds: The expiry time of any offers created under this policy will
-        be governed by the offer time to live.
+          be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
         :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
@@ -403,9 +403,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             class instance will not be considered if they are also specified in keyword arguments.
         :paramtype distribution_policy: Optional[~azure.communication.jobrouter.DistributionPolicy]
 
-        :return DistributionPolicy
-        :rtype ~azure.communication.jobrouter.DistributionPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -462,9 +462,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str distribution_policy_id: Id of the policy.
 
-        :return DistributionPolicy
-        :rtype ~azure.communication.jobrouter.DistributionPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -495,7 +495,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :return: An iterator like instance of DistributionPolicyItem
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.DistributionPolicyItem]
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
@@ -578,9 +578,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
           job escalation rules.
 
-        :return JobQueue
-        :rtype ~azure.communication.jobrouter.JobQueue
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.JobQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -638,9 +638,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
         job escalation rules.
 
-        :return JobQueue
-        :rtype ~azure.communication.jobrouter.JobQueue
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.JobQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -705,9 +705,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str queue_id: Id of the queue.
 
-        :return JobQueue
-        :rtype ~azure.communication.jobrouter.JobQueue
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.JobQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -817,26 +817,26 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :paramtype fallback_queue_id: Optional[str]
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelector,
-          ~azure.communication.jobrouter.ConditionalQueueSelector,
-          ~azure.communication.jobrouter.RuleEngineQueueSelector,
-          ~azure.communication.jobrouter.PassThroughQueueSelector,
-          ~azure.communication.jobrouter.WeightedAllocationQueueSelector]]]
+        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
         :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
-          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.AzureFunctionRule]]
+          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
-        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelector,
-          ~azure.communication.jobrouter.ConditionalWorkerSelector,
-          ~azure.communication.jobrouter.RuleEngineWorkerSelector,
-          ~azure.communication.jobrouter.PassThroughWorkerSelector,
-          ~azure.communication.jobrouter.WeightedAllocationWorkerSelector]]]
+        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
-        :return ClassificationPolicy
-        :rtype ~azure.communication.jobrouter.ClassificationPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -884,26 +884,26 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :paramtype fallback_queue_id: Optional[str]
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelector,
-          ~azure.communication.jobrouter.ConditionalQueueSelector,
-          ~azure.communication.jobrouter.RuleEngineQueueSelector,
-          ~azure.communication.jobrouter.PassThroughQueueSelector,
-          ~azure.communication.jobrouter.WeightedAllocationQueueSelector]]]
+        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
         :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
-          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.AzureFunctionRule]]
+          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
-        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelector,
-          ~azure.communication.jobrouter.ConditionalWorkerSelector,
-          ~azure.communication.jobrouter.RuleEngineWorkerSelector,
-          ~azure.communication.jobrouter.PassThroughWorkerSelector,
-          ~azure.communication.jobrouter.WeightedAllocationWorkerSelector]]]
+        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
-        :return ClassificationPolicy
-        :rtype ~azure.communication.jobrouter.ClassificationPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -973,9 +973,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :param str classification_policy_id: The id of classification policy.
 
-        :return ClassificationPolicy
-        :rtype ~azure.communication.jobrouter.ClassificationPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -1003,8 +1003,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
-        :return: An iterator like instance of ClassificationPolicy
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.PagedClassificationPolicy]
+        :return: An iterator like instance of ClassificationPolicyItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.ClassificationPolicyItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1039,7 +1039,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 

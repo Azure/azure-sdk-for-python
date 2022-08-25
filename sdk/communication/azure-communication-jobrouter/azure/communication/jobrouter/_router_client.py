@@ -93,7 +93,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :returns: Instance of RouterClient.
+        :return: Instance of RouterClient.
         :rtype: ~azure.communication.jobrouter.RouterClient
 
         .. admonition:: Example:
@@ -122,9 +122,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param str queue_id: Id of the queue.
 
-        :return QueueStatistics
-        :rtype ~azure.communication.jobrouter.QueueStatistics
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: QueueStatistics
+        :rtype: ~azure.communication.jobrouter.QueueStatistics
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -163,7 +163,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             jobs.
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
             engines to make decisions.
@@ -174,14 +174,14 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
             capacity of the worker.
-        :paramtype channel_configurations: Optional[dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
+        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
 
         :keyword available_for_offers: A flag indicating whether the worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
-        :return RouterWorker
-        :rtype ~azure.communication.jobrouter.RouterWorker
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -228,7 +228,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :param str worker_id: Id of the worker.
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
 
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
@@ -243,7 +243,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
-        :paramtype channel_configurations: Optional[dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
+        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
@@ -252,9 +252,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             class instance will not be considered if they are also specified in keyword arguments.
         :paramtype router_worker: Optional[~azure.communication.jobrouter.RouterWorker]
 
-        :return RouterWorker
-        :rtype ~azure.communication.jobrouter.RouterWorker
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -353,9 +353,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param str worker_id: Id of the worker.
 
-        :return RouterWorker
-        :rtype ~azure.communication.jobrouter.RouterWorker
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -524,9 +524,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
 
-        :return RouterJob
-        :rtype ~azure.communication.jobrouter.RouterJob
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -613,9 +613,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
 
-        :return RouterJob
-        :rtype ~azure.communication.jobrouter.RouterJob
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -724,9 +724,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param str job_id: Id of the job.
 
-        :return RouterJob
-        :rtype ~azure.communication.jobrouter.RouterJob
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
@@ -1104,8 +1104,8 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :param offer_id: Id of the offer.
         :type offer_id: str
 
-        :return: AcceptJobOfferResponse
-        :rtype: ~azure.communication.jobrouter.AcceptJobOfferResponse
+        :return: AcceptJobOfferResult
+        :rtype: ~azure.communication.jobrouter.AcceptJobOfferResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
