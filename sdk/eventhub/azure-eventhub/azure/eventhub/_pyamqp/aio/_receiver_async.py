@@ -6,18 +6,19 @@
 
 import uuid
 import logging
-from io import BytesIO
+from typing import Optional, Union
 
 from .._decode import decode_payload
-from ._link_async import Link
-from ..constants import DEFAULT_LINK_CREDIT, Role
 from ..endpoints import Target
+from ._link_async import Link
+from ..message import Message, Properties, Header
 from ..constants import (
     DEFAULT_LINK_CREDIT,
     SessionState,
     SessionTransferState,
     LinkDeliverySettleReason,
-    LinkState
+    LinkState,
+    Role
 )
 from ..performatives import (
     AttachFrame,
@@ -25,6 +26,13 @@ from ..performatives import (
     TransferFrame,
     DispositionFrame,
     FlowFrame,
+)
+from ..outcomes import (
+    Received,
+    Accepted,
+    Rejected,
+    Released,
+    Modified
 )
 
 
@@ -39,26 +47,20 @@ class ReceiverLink(Link):
         if 'target_address' not in kwargs:
             kwargs['target_address'] = "receiver-link-{}".format(name)
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
-        self.on_message_received = kwargs.get('on_message_received')
-        self.on_transfer_received = kwargs.get('on_transfer_received')
-        if not self.on_message_received and not self.on_transfer_received:
-            raise ValueError("Must specify either a message or transfer handler.")
+        self._on_transfer = kwargs.pop('on_transfer')
+        self._received_payload = bytearray()
 
     async def _process_incoming_message(self, frame, message):
         try:
-            if self.on_message_received:
-                return await self.on_message_received(message)
-            elif self.on_transfer_received:
-                return await self.on_transfer_received(frame, message)
+            return await self._on_transfer(frame, message)
         except Exception as e:
             _LOGGER.error("Handler function failed with error: %r", e)
         return None
 
     async def _incoming_attach(self, frame):
         await super(ReceiverLink, self)._incoming_attach(frame)
-        if frame[9] is None:
+        if frame[9] is None:  # initial_delivery_count
             _LOGGER.info("Cannot get initial-delivery-count. Detaching link")
-            await self._remove_pending_deliveries()
             await self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
@@ -69,10 +71,10 @@ class ReceiverLink(Link):
             _LOGGER.info("<- %r", TransferFrame(*frame), extra=self.network_trace_params)
         self.current_link_credit -= 1
         self.delivery_count += 1
-        self.received_delivery_id = frame[1]
+        self.received_delivery_id = frame[1]  # delivery_id
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
-        if self._received_payload or frame[5]:
+        if self._received_payload or frame[5]:  # more
             self._received_payload.extend(frame[11])
         if not frame[5]:
             if self._received_payload:
@@ -80,27 +82,63 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
+                if self.network_trace:
+                    _LOGGER.info("   %r", message, extra=self.network_trace_params)
             delivery_state = await self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
-                await self._outgoing_disposition(frame[1], delivery_state)
-        if self.current_link_credit <= 0:
-            self.current_link_credit = self.link_credit
-            await self._outgoing_flow()
+                await self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
 
-    async def _outgoing_disposition(self, delivery_id, delivery_state):
+    async def _wait_for_response(self, wait: Union[bool, float]) -> None:
+        if wait == True:
+            await self._session._connection.listen(wait=False)
+            if self.state == LinkState.ERROR:
+                raise self._error    
+        elif wait:
+            await self._session._connection.listen(wait=wait)
+            if self.state == LinkState.ERROR:
+                raise self._error   
+
+    async def _outgoing_disposition(
+            self,
+            first: int,
+            last: Optional[int],
+            settled: Optional[bool],
+            state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
+            batchable: Optional[bool]
+    ):
         disposition_frame = DispositionFrame(
             role=self.role,
-            first=delivery_id,
-            last=delivery_id,
-            settled=True,
-            state=delivery_state,
-            batchable=None
+            first=first,
+            last=last,
+            settled=settled,
+            state=state,
+            batchable=batchable
         )
         if self.network_trace:
             _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         await self._session._outgoing_disposition(disposition_frame)
 
-    async def send_disposition(self, delivery_id, delivery_state=None):
+    async def attach(self):
+        await super().attach()
+        self._received_payload = bytearray()
+
+    async def send_disposition(
+            self,
+            *,
+            wait: Union[bool, float] = False,
+            first_delivery_id: int,
+            last_delivery_id: Optional[int] = None,
+            settled: Optional[bool] = None,
+            delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
+            batchable: Optional[bool] = None
+        ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        await self._outgoing_disposition(delivery_id, delivery_state)
+        await self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            settled,
+            delivery_state,
+            batchable
+        )
+        await self._wait_for_response(wait)

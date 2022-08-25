@@ -121,7 +121,8 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders):
             ed = EventData("Event")
             senders[0].send(ed)
 
-            consumer._handler.do_work()
+            with pytest.raises(error.AMQPConnectionError):
+                consumer._handler.do_work()
             assert consumer._handler._connection.state == constants.ConnectionState.END
 
             duration = 10

@@ -85,9 +85,9 @@ def get_running_loop():
 
 
 class AsyncTransportMixin():
-    async def receive_frame(self, *args, **kwargs):
+    async def receive_frame(self, timeout=None, *args, **kwargs):
         try:
-            header, channel, payload = await self.read(**kwargs)
+            header, channel, payload = await asyncio.wait_for(self.read(**kwargs), timeout=timeout)
             if not payload:
                 decoded = decode_empty_frame(header)
             else:

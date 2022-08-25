@@ -6,7 +6,7 @@
 
 import uuid
 import logging
-from io import BytesIO
+from typing import Optional, Union
 
 from ._decode import decode_payload
 from .constants import DEFAULT_LINK_CREDIT, Role
@@ -27,6 +27,13 @@ from .performatives import (
     DispositionFrame,
     FlowFrame,
 )
+from .outcomes import (
+    Received,
+    Accepted,
+    Rejected,
+    Released,
+    Modified
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,17 +47,12 @@ class ReceiverLink(Link):
         if 'target_address' not in kwargs:
             kwargs['target_address'] = "receiver-link-{}".format(name)
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
-        self.on_message_received = kwargs.get('on_message_received')
-        self.on_transfer_received = kwargs.get('on_transfer_received')
-        if not self.on_message_received and not self.on_transfer_received:
-            raise ValueError("Must specify either a message or transfer handler.")
+        self._on_transfer = kwargs.pop('on_transfer')
+        self._received_payload = bytearray()
 
     def _process_incoming_message(self, frame, message):
         try:
-            if self.on_message_received:
-                return self.on_message_received(message)
-            elif self.on_transfer_received:
-                return self.on_transfer_received(frame, message)
+            return self._on_transfer(frame, message)
         except Exception as e:
             _LOGGER.error("Handler function failed with error: %r", e)
         return None
@@ -59,7 +61,6 @@ class ReceiverLink(Link):
         super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
             _LOGGER.info("Cannot get initial-delivery-count. Detaching link")
-            self._remove_pending_deliveries()
             self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
@@ -81,27 +82,63 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
+                if self.network_trace:
+                    _LOGGER.info("   %r", message, extra=self.network_trace_params)
             delivery_state = self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
-                self._outgoing_disposition(frame[1], delivery_state)
-        if self.current_link_credit <= 0:
-            self.current_link_credit = self.link_credit
-            self._outgoing_flow()
+                self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
 
-    def _outgoing_disposition(self, delivery_id, delivery_state):
+    def _wait_for_response(self, wait: Union[bool, float]) -> None:
+        if wait == True:
+            self._session._connection.listen(wait=False)
+            if self.state == LinkState.ERROR:
+                raise self._error    
+        elif wait:
+            self._session._connection.listen(wait=wait)
+            if self.state == LinkState.ERROR:
+                raise self._error   
+
+    def _outgoing_disposition(
+            self,
+            first: int,
+            last: Optional[int],
+            settled: Optional[bool],
+            state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
+            batchable: Optional[bool]
+    ):
         disposition_frame = DispositionFrame(
             role=self.role,
-            first=delivery_id,
-            last=delivery_id,
-            settled=True,
-            state=delivery_state,
-            batchable=None
+            first=first,
+            last=last,
+            settled=settled,
+            state=state,
+            batchable=batchable
         )
         if self.network_trace:
             _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame)
 
-    def send_disposition(self, delivery_id, delivery_state=None):
+    def attach(self):
+        super().attach()
+        self._received_payload = bytearray()
+
+    def send_disposition(
+            self,
+            *,
+            wait: Union[bool, float] = False,
+            first_delivery_id: int,
+            last_delivery_id: Optional[int] = None,
+            settled: Optional[bool] = None,
+            delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
+            batchable: Optional[bool] = None
+        ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        self._outgoing_disposition(delivery_id, delivery_state)
+        self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            settled,
+            delivery_state,
+            batchable
+        )
+        self._wait_for_response(wait)

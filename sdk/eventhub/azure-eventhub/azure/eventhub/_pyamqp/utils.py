@@ -3,14 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
-import six
 import datetime
 from base64 import b64encode
 from hashlib import sha256
 from hmac import HMAC
 from urllib.parse import urlencode, quote_plus
 import time
+import six
 
 from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload
@@ -86,7 +85,7 @@ def add_batch(batch, message):
     # Add a message to a batch
     output = bytearray()
     encode_payload(output, message)
-    batch.data.append(output)
+    batch[5].append(output)
 
 
 def encode_str(data, encoding='utf-8'):
@@ -132,3 +131,10 @@ def amqp_uint_value(value):
 
 def amqp_string_value(value):
     return {TYPE: AMQPTypes.string, VALUE: value}
+
+
+def amqp_symbol_value(value):
+    return {TYPE: AMQPTypes.symbol, VALUE: value}
+
+def amqp_array_value(value):
+    return {TYPE: AMQPTypes.array, VALUE: value}
