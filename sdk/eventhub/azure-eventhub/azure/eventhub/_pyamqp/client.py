@@ -66,7 +66,6 @@ _logger = logging.getLogger(__name__)
 
 class AMQPClient(object):
     """An AMQP client.
-# TODO: would it be a target or source?
     :param hostname: The AMQP endpoint to connect to.
     :type hostname: str
     :keyword auth: Authentication for the connection. This should be one of the following:
@@ -451,7 +450,6 @@ class SendClient(AMQPClient):
         - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
         - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
     :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
-# TODO: is this used by pyamqp? -- desired capabilities
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -731,7 +729,7 @@ class ReceiveClient(AMQPClient):
         states.
 
         :rtype: bool
-# TODO: uamqp error handling error here - do we want to raise anything or should this be something else 
+        # TODO: uamqp error handling error here - do we want to raise anything or should this be something else 
         :raises: ~uamqp.errors.MessageHandlerError if the MessageReceiver
          goes into an error state.
         """
