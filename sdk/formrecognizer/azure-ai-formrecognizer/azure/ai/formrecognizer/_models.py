@@ -3999,7 +3999,7 @@ class ResourceDetails:
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models),
+            custom_document_models=CustomDocumentModelsDetails._from_generated(info),
         )
 
 
