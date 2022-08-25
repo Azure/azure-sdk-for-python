@@ -389,7 +389,7 @@ class _AbstractTransport(object):
             self.sock = None
         self.connected = False
 
-    def read(self, verify_frame_type=0, **kwargs):
+    def read(self, verify_frame_type=0, **kwargs): 
         read = self._read
         read_frame_buffer = BytesIO()
         try:
@@ -507,7 +507,7 @@ class SSLTransport(_AbstractTransport):
         # Setup the right SSL version; default to optimal versions across
         # ssl implementations
         if ssl_version is None:
-            ssl_version = ssl.PROTOCOL_TLS
+                ssl_version = ssl.PROTOCOL_TLS
 
         opts = {
             'sock': sock,
@@ -713,6 +713,7 @@ class WebSocketTransport(_AbstractTransport):
             raise TimeoutError()
 
     def _shutdown_transport(self):
+        # TODO Sync and Async close functions named differently
         """Do any preliminary work in shutting down the connection."""
         self.ws.close()
 
