@@ -36,21 +36,21 @@ class DeviceUpdateMgmtClient(
     """Microsoft Device Update resource provider.
 
     :ivar accounts: AccountsOperations operations
-    :vartype accounts: deviceupdatemgmtclient.aio.operations.AccountsOperations
+    :vartype accounts: azure.mgmt.deviceupdate.aio.operations.AccountsOperations
     :ivar instances: InstancesOperations operations
-    :vartype instances: deviceupdatemgmtclient.aio.operations.InstancesOperations
+    :vartype instances: azure.mgmt.deviceupdate.aio.operations.InstancesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
-     deviceupdatemgmtclient.aio.operations.PrivateEndpointConnectionsOperations
+     azure.mgmt.deviceupdate.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
-     deviceupdatemgmtclient.aio.operations.PrivateLinkResourcesOperations
+     azure.mgmt.deviceupdate.aio.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connection_proxies: PrivateEndpointConnectionProxiesOperations
      operations
     :vartype private_endpoint_connection_proxies:
-     deviceupdatemgmtclient.aio.operations.PrivateEndpointConnectionProxiesOperations
+     azure.mgmt.deviceupdate.aio.operations.PrivateEndpointConnectionProxiesOperations
     :ivar operations: Operations operations
-    :vartype operations: deviceupdatemgmtclient.aio.operations.Operations
+    :vartype operations: azure.mgmt.deviceupdate.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription ID. Required.

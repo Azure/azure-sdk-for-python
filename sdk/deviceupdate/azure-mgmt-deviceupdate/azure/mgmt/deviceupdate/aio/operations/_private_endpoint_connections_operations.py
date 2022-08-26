@@ -47,7 +47,7 @@ class PrivateEndpointConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~deviceupdatemgmtclient.aio.DeviceUpdateMgmtClient`'s
+        :class:`~azure.mgmt.deviceupdate.aio.DeviceUpdateMgmtClient`'s
         :attr:`private_endpoint_connections` attribute.
     """
 
@@ -74,7 +74,7 @@ class PrivateEndpointConnectionsOperations:
         :return: An iterator like instance of either PrivateEndpointConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~deviceupdatemgmtclient.models.PrivateEndpointConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.deviceupdate.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -153,7 +153,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.PrivateEndpointConnection
+        :rtype: ~azure.mgmt.deviceupdate.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -283,7 +283,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The parameters for creating a private endpoint connection.
          Required.
-        :type private_endpoint_connection: ~deviceupdatemgmtclient.models.PrivateEndpointConnection
+        :type private_endpoint_connection: ~azure.mgmt.deviceupdate.models.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -298,7 +298,7 @@ class PrivateEndpointConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.PrivateEndpointConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -340,7 +340,7 @@ class PrivateEndpointConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.PrivateEndpointConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -365,7 +365,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The parameters for creating a private endpoint connection.
          Is either a model type or a IO type. Required.
-        :type private_endpoint_connection: ~deviceupdatemgmtclient.models.PrivateEndpointConnection or
+        :type private_endpoint_connection: ~azure.mgmt.deviceupdate.models.PrivateEndpointConnection or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -381,7 +381,7 @@ class PrivateEndpointConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.PrivateEndpointConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
