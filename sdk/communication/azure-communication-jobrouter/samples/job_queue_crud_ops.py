@@ -27,6 +27,25 @@ class JobQueueSamples(object):
     _job_queue_id = "sample_q_policy"
     _distribution_policy_id = "sample_dp_policy"
 
+    def setup_distribution_policy(self):
+        connection_string = self.endpoint
+        distribution_policy_id = self._distribution_policy_id
+
+        from azure.communication.jobrouter import (
+            RouterAdministrationClient,
+            LongestIdleMode
+        )
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        distribution_policy = router_admin_client.create_distribution_policy(
+            distribution_policy_id = distribution_policy_id,
+            offer_ttl_seconds = 10 * 60,
+            mode = LongestIdleMode(
+                min_concurrent_offers = 1,
+                max_concurrent_offers = 1
+            )
+        )
+        print(f"Sample setup completed: Created distribution policy")
+
     def create_queue(self):
         connection_string = self.endpoint
         job_queue_id = self._job_queue_id
@@ -118,7 +137,7 @@ class JobQueueSamples(object):
             print(f"Retrieved {len(job_queues_in_page)} queues in current page")
 
             for q in job_queues_in_page:
-                print(f"Retrieved distribution policy with id: {q.job_queue.id}")
+                print(f"Retrieved queue policy with id: {q.job_queue.id}")
 
         print(f"Successfully completed fetching job queues")
         # [END list_queues]
@@ -139,8 +158,9 @@ class JobQueueSamples(object):
 
 if __name__ == '__main__':
     sample = JobQueueSamples()
+    sample.setup_distribution_policy()
     sample.create_queue()
-    sample.update_queue()
+    # sample.update_queue()
     sample.get_queue()
     sample.get_queue_statistics()
     sample.list_queues()

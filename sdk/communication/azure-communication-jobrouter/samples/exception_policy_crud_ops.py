@@ -139,7 +139,7 @@ class ExceptionPolicySamples(object):
         )
 
         updated_exception_policy: ExceptionPolicy = router_admin_client.update_exception_policy(
-            identifier = policy_id,
+            exception_policy_id = policy_id,
             exception_rules = {
                 # adding new rule
                 "EscalateJobOnWaitTimeExceededTrigger2Min": ExceptionRule(

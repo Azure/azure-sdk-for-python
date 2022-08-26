@@ -71,7 +71,7 @@ class RouterJobSamples(object):
 
     def setup_classification_policy(self):
         connection_string = self.endpoint
-        classification_policy_id = self._distribution_policy_id
+        classification_policy_id = self._classification_policy_id
 
         from azure.communication.jobrouter import (
             RouterAdministrationClient,
@@ -114,7 +114,7 @@ class RouterJobSamples(object):
             total_capacity = 100,
             available_for_offers = True,
             channel_configurations = {
-                "general": ChannelConfiguration(capacity_cost_per_job = 100)
+                "general": ChannelConfiguration(capacity_cost_per_job = 1)
             },
             queue_assignments = {
                 queue_id: QueueAssignment()
@@ -234,10 +234,15 @@ class RouterJobSamples(object):
 
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
 
-        while any(
-                [offer for offer in (router_client.get_worker(worker_id = worker_id)).offers if
-                 offer.job_id != job_id]):
-            time.sleep(secs = 1)
+        offer_found = False
+        while not offer_found:
+            worker = router_client.get_worker(worker_id = worker_id)
+            if worker.offers and any(worker.offers):
+                for offer in worker.offers:
+                    offer_found = True if offer.job_id == job_id else False
+
+            if offer_found is False:
+                time.sleep(1)
 
         queried_worker = router_client.get_worker(worker_id = worker_id)
         issued_offer: JobOffer = [offer for offer in queried_worker.offers if offer.job_id == job_id][0]
@@ -365,10 +370,10 @@ if __name__ == '__main__':
     sample.setup_worker()
     sample.create_job()
     sample.get_job()
-    sample.get_job_position()
     sample.update_job()
     sample.reclassify_job()
     sample.accept_job_offer()
+    sample.get_job_position()
     sample.complete_and_close_job()
     sample.list_jobs()
     sample.clean_up()

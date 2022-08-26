@@ -26,6 +26,57 @@ class RouterWorkerSamplesAsync(object):
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
 
     _worker_id = "sample_worker"
+    _distribution_policy_id = "sample_dp_policy"
+
+    async def setup_distribution_policy(self):
+        connection_string = self.endpoint
+        distribution_policy_id = self._distribution_policy_id
+
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
+        from azure.communication.jobrouter import (
+            LongestIdleMode
+        )
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        async with router_admin_client:
+            distribution_policy = await router_admin_client.create_distribution_policy(
+                distribution_policy_id = distribution_policy_id,
+                offer_ttl_seconds = 10 * 60,
+                mode = LongestIdleMode(
+                    min_concurrent_offers = 1,
+                    max_concurrent_offers = 1
+                )
+            )
+            print(f"Sample setup completed: Created distribution policy")
+
+    async def setup_queues(self):
+        connection_string = self.endpoint
+        distribution_policy_id = self._distribution_policy_id
+
+        from azure.communication.jobrouter.aio import RouterAdministrationClient
+        from azure.communication.jobrouter import (
+            JobQueue
+        )
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        async with router_admin_client:
+            job_queue1: JobQueue = await router_admin_client.create_queue(
+                queue_id = "worker-q-1",
+                distribution_policy_id = distribution_policy_id,
+            )
+
+            job_queue2: JobQueue = await router_admin_client.create_queue(
+                queue_id = "worker-q-2",
+                distribution_policy_id = distribution_policy_id,
+            )
+
+            job_queue3: JobQueue = await router_admin_client.create_queue(
+                queue_id = "worker-q-3",
+                distribution_policy_id = distribution_policy_id,
+            )
+
+            print(f"Sample setup completed: Created queues")
 
     async def create_worker(self):
         connection_string = self.endpoint
@@ -198,6 +249,8 @@ class RouterWorkerSamplesAsync(object):
 
 async def main():
     sample = RouterWorkerSamplesAsync()
+    await sample.setup_distribution_policy()
+    await sample.setup_queues()
     await sample.create_worker()
     await sample.update_worker()
     await sample.get_worker()

@@ -72,7 +72,7 @@ class RouterJobSamplesAsync(object):
 
     async def setup_classification_policy(self):
         connection_string = self.endpoint
-        classification_policy_id = self._distribution_policy_id
+        classification_policy_id = self._classification_policy_id
 
         from azure.communication.jobrouter.aio import RouterAdministrationClient
         from azure.communication.jobrouter import (
@@ -118,7 +118,7 @@ class RouterJobSamplesAsync(object):
                 total_capacity = 100,
                 available_for_offers = True,
                 channel_configurations = {
-                    "general": ChannelConfiguration(capacity_cost_per_job = 100)
+                    "general": ChannelConfiguration(capacity_cost_per_job = 1)
                 },
                 queue_assignments = {
                     queue_id: QueueAssignment()
@@ -241,10 +241,16 @@ class RouterJobSamplesAsync(object):
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
 
         async with router_client:
-            while any(
-                    [offer for offer in (await router_client.get_worker(worker_id = worker_id)).offers if
-                     offer.job_id != job_id]):
-                await asyncio.sleep(delay = 1)
+
+            offer_found = False
+            while not offer_found:
+                worker = await router_client.get_worker(worker_id = worker_id)
+                if worker.offers and any(worker.offers):
+                    for offer in worker.offers:
+                        offer_found = True if offer.job_id == job_id else False
+
+                if offer_found is False:
+                    await asyncio.sleep(1)
 
             queried_worker = await router_client.get_worker(worker_id = worker_id)
             issued_offer: JobOffer = [offer for offer in queried_worker.offers if offer.job_id == job_id][0]
@@ -376,10 +382,10 @@ async def main():
     await sample.setup_worker()
     await sample.create_job()
     await sample.get_job()
-    await sample.get_job_position()
     await sample.update_job()
     await sample.reclassify_job()
     await sample.accept_job_offer()
+    await sample.get_job_position()
     await sample.complete_and_close_job()
     await sample.list_jobs()
     await sample.clean_up()

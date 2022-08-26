@@ -25,6 +25,53 @@ class RouterWorkerSamples(object):
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
 
     _worker_id = "sample_worker"
+    _distribution_policy_id = "sample_dp_policy"
+
+    def setup_distribution_policy(self):
+        connection_string = self.endpoint
+        distribution_policy_id = self._distribution_policy_id
+
+        from azure.communication.jobrouter import (
+            RouterAdministrationClient,
+            LongestIdleMode
+        )
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        distribution_policy = router_admin_client.create_distribution_policy(
+            distribution_policy_id = distribution_policy_id,
+            offer_ttl_seconds = 10 * 60,
+            mode = LongestIdleMode(
+                min_concurrent_offers = 1,
+                max_concurrent_offers = 1
+            )
+        )
+        print(f"Sample setup completed: Created distribution policy")
+
+    def setup_queues(self):
+        connection_string = self.endpoint
+        distribution_policy_id = self._distribution_policy_id
+
+        from azure.communication.jobrouter import (
+            RouterAdministrationClient,
+            JobQueue
+        )
+
+        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        job_queue1: JobQueue = router_admin_client.create_queue(
+            queue_id = "worker-q-1",
+            distribution_policy_id = distribution_policy_id,
+        )
+
+        job_queue2: JobQueue = router_admin_client.create_queue(
+            queue_id = "worker-q-2",
+            distribution_policy_id = distribution_policy_id,
+        )
+
+        job_queue3: JobQueue = router_admin_client.create_queue(
+            queue_id = "worker-q-3",
+            distribution_policy_id = distribution_policy_id,
+        )
+
+        print(f"Sample setup completed: Created queues")
 
     def create_worker(self):
         connection_string = self.endpoint
@@ -189,6 +236,8 @@ class RouterWorkerSamples(object):
 
 if __name__ == '__main__':
     sample = RouterWorkerSamples()
+    sample.setup_distribution_policy()
+    sample.setup_queues()
     sample.create_worker()
     sample.update_worker()
     sample.get_worker()
