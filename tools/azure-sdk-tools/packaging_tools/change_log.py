@@ -203,6 +203,7 @@ def build_change_log(old_report, new_report):
         elif diff_line[0][0] == "models":
             change_log.models(diff_line)
         elif diff_line[0][0] == "client":
+            print(f'*** client change: {diff_line}')
             change_log.client()
 
     return change_log
