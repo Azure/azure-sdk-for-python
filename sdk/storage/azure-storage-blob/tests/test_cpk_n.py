@@ -32,7 +32,7 @@ from settings.testcase import BlobPreparer
 TEST_ENCRYPTION_SCOPE = "testscope1"
 TEST_ENCRYPTION_SCOPE_2 = "testscope2"
 TEST_CONTAINER_ENCRYPTION_SCOPE = ContainerEncryptionScope(default_encryption_scope="testscope1")
-TEST_CONTAINER_ENCRYPTION_DENY_OVERRIDE = ContainerEncryptionScope(
+TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE = ContainerEncryptionScope(
     default_encryption_scope="testscope1",
     prevent_encryption_scope_override=True)
 # ------------------------------------------------------------------------------
@@ -1067,16 +1067,16 @@ class TestStorageCPKN(StorageRecordedTestCase):
             max_page_size=1024)
         container_client = bsc.create_container(
             'denyoverridecpkcontainer',
-            container_encryption_scope=TEST_CONTAINER_ENCRYPTION_DENY_OVERRIDE
+            container_encryption_scope=TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE
         )
         container_props = container_client.get_container_properties()
         assert container_props.encryption_scope.default_encryption_scope == \
-            TEST_CONTAINER_ENCRYPTION_DENY_OVERRIDE.default_encryption_scope
+            TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE.default_encryption_scope
         assert container_props.encryption_scope.prevent_encryption_scope_override == True
 
         for _ in bsc.list_containers(name_starts_with='denyoverridecpkcontainer'):
             assert container_props.encryption_scope.default_encryption_scope == \
-                TEST_CONTAINER_ENCRYPTION_DENY_OVERRIDE.default_encryption_scope
+                TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE.default_encryption_scope
             assert container_props.encryption_scope.prevent_encryption_scope_override == True
 
         blob_client = container_client.get_blob_client("appendblob")
@@ -1087,7 +1087,7 @@ class TestStorageCPKN(StorageRecordedTestCase):
 
         resp = blob_client.upload_blob(b'aaaa', BlobType.AppendBlob)
 
-        assert resp['encryption_scope'] == TEST_CONTAINER_ENCRYPTION_DENY_OVERRIDE.default_encryption_scope
+        assert resp['encryption_scope'] == TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE.default_encryption_scope
 
         container_client.delete_container()
 
