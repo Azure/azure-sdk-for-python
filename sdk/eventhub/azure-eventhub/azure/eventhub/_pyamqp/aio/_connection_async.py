@@ -279,7 +279,9 @@ class Connection(object):
             _LOGGER.info("<- %r", OpenFrame(*frame), extra=self.network_trace_params)
         if channel != 0:
             _LOGGER.error("OPEN frame received on a channel that is not 0.")
-            await self.close(error=None)  # TODO: not allowed
+            await self.close(error=AMQPConnectionError(
+                condition=ErrorCondition.NotAllowed, 
+                description="OPEN frame received on a channel that is not 0"))
             await self._set_state(ConnectionState.END)
         if self.state == ConnectionState.OPENED:
             _LOGGER.error("OPEN frame received in the OPENED state.")
