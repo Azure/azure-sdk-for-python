@@ -5,6 +5,7 @@ import pydash
 from typing import Dict
 import urllib3
 from zipfile import ZipFile
+from io import StringIO
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml import load_job, MLClient
@@ -76,7 +77,7 @@ def prepare_dsl_curated(
     """
     if omit_fields is None:
         omit_fields = []
-    pipeline_from_yaml = load_job(path=job_yaml)
+    pipeline_from_yaml = load_job(source=job_yaml)
     if in_rest:
         dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
         pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()
@@ -172,3 +173,85 @@ def download_dataset(download_url: str, data_file: str, retries=3) -> None:
         print("done")
     # delete zip file
     os.remove(data_file)
+
+
+# Given an entity's load function, load it using an open file input, a file path,
+# and even a deprecated 'path=' path input then run the inputted
+# entity validation function on all resulting entities.
+# After validation, dump the loaded entity using all three input types
+# and assert that the resulting dumped file is non-empty.
+# Returns both path and pointer-loaded entities to allow for additional testing
+# by the caller.
+def verify_entity_load_and_dump(
+    load_function,
+    entity_validation_function,
+    test_load_file_path: str,
+    test_dump_file_path="./dump-test.yaml",
+    **load_kwargs,
+):
+    # test loading
+    file_entity, stream_entity = None, None
+    with open(test_load_file_path, "r") as f:
+        file_entity = load_function(source=f, **load_kwargs)
+    file_contents = ""
+    with open(test_load_file_path, "r") as f:
+        file_contents = f.read()
+    with StringIO() as stream:
+        stream.write(file_contents)
+        stream.seek(0)
+        stream_entity = load_function(source=stream, relative_origin=test_load_file_path, **load_kwargs)
+
+    assert file_entity is not None
+    assert stream_entity is not None
+
+    first_input_entity = load_function(test_load_file_path, **load_kwargs)
+    assert first_input_entity is not None
+
+    old_path_entity = load_function(path=test_load_file_path, **load_kwargs)
+    assert old_path_entity is not None
+
+    # Run entity-specific validation on both loaded entities
+    entity_validation_function(file_entity)
+    entity_validation_function(stream_entity)
+    entity_validation_function(first_input_entity)
+    entity_validation_function(old_path_entity)
+
+    # test dump
+    # TODO once dump functionality audit is complete, this testing should be
+    # made more robust, like comparing it to the inputted yaml or something.
+    if test_dump_file_path is not None:
+        # delete test dump file if it still exists for some reason
+        delete_file_if_exists(test_dump_file_path)
+        # test file pointer-based dump
+        with open(test_dump_file_path, "w") as f:
+            file_entity.dump(f)
+        assert get_file_contents(test_dump_file_path) != ""
+        delete_file_if_exists(test_dump_file_path)
+
+        # test string stream dump
+        with StringIO() as outputStream:
+            stream_entity.dump(outputStream)
+            assert outputStream.tell() > 0
+        # test path-based dump
+        first_input_entity.dump(test_dump_file_path)
+        assert get_file_contents(test_dump_file_path) != ""
+        delete_file_if_exists(test_dump_file_path)
+
+        # test path-based dump using deprecated input name
+        first_input_entity.dump(path=test_dump_file_path)
+        assert get_file_contents(test_dump_file_path) != ""
+        delete_file_if_exists(test_dump_file_path)
+
+    return (old_path_entity, file_entity)
+
+
+def get_file_contents(file_path: str):
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            return f.read()
+    return ""
+
+
+def delete_file_if_exists(file_path: str):
+    if file_path is not None and os.path.exists(file_path):
+        os.remove(file_path)
