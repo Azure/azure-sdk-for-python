@@ -1200,26 +1200,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_create_blob_from_bytes_with_blob_tier_specified_cold(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        self._setup(storage_account_name, storage_account_key)
-        blob_name = self._get_blob_reference()
-        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = b'hello world'
-        blob_tier = StandardBlobTier.Cold
-
-        # Act
-        blob_client.upload_blob(data, standard_blob_tier=blob_tier)
-        blob_properties = blob_client.get_blob_properties()
-
-        # Assert
-        assert blob_properties.blob_tier == blob_tier
-
-    @BlobPreparer()
-    @recorded_by_proxy
     def test_create_blob_from_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

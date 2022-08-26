@@ -11,7 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.blob import StorageErrorCode, BlobSasPermissions, generate_blob_sas
+from azure.storage.blob import StorageErrorCode, BlobSasPermissions, generate_blob_sas, StandardBlobTier
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -220,6 +220,20 @@ class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
         # Verify content
         content = await (await dest_blob.download_blob()).readall()
         self.assertEqual(self.source_blob_data, content)
+
+    @BlobPreparer()
+    async def test_copy_blob_with_cold_tier_sync(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+        blob_tier = StandardBlobTier.Cold
+
+        # Act
+        await dest_blob.start_copy_from_url(self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True)
+        copy_blob_properties = await dest_blob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
