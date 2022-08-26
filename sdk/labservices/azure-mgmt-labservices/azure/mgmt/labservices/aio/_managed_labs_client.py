@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
-from ._configuration import LabServicesClientConfiguration
+from .._serialization import Deserializer, Serializer
+from ._configuration import ManagedLabsClientConfiguration
 from .operations import (
     ImagesOperations,
     LabPlansOperations,
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LabServicesClient:
+class ManagedLabsClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """REST API for managing Azure Lab Services images.
 
     :ivar images: ImagesOperations operations
@@ -48,20 +48,23 @@ class LabServicesClient:
     :vartype operation_results: azure.mgmt.labservices.aio.operations.OperationResultsOperations
     :ivar schedules: SchedulesOperations operations
     :vartype schedules: azure.mgmt.labservices.aio.operations.SchedulesOperations
+    :ivar skus: SkusOperations operations
+    :vartype skus: azure.mgmt.labservices.aio.operations.SkusOperations
+    :ivar usages: UsagesOperations operations
+    :vartype usages: azure.mgmt.labservices.aio.operations.UsagesOperations
     :ivar users: UsersOperations operations
     :vartype users: azure.mgmt.labservices.aio.operations.UsersOperations
     :ivar virtual_machines: VirtualMachinesOperations operations
     :vartype virtual_machines: azure.mgmt.labservices.aio.operations.VirtualMachinesOperations
-    :ivar usages: UsagesOperations operations
-    :vartype usages: azure.mgmt.labservices.aio.operations.UsagesOperations
-    :ivar skus: SkusOperations operations
-    :vartype skus: azure.mgmt.labservices.aio.operations.SkusOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-08-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -73,7 +76,7 @@ class LabServicesClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = LabServicesClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ManagedLabsClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -88,12 +91,12 @@ class LabServicesClient:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.users = UsersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
@@ -104,7 +107,7 @@ class LabServicesClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -120,7 +123,7 @@ class LabServicesClient:
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "LabServicesClient":
+    async def __aenter__(self) -> "ManagedLabsClient":
         await self._client.__aenter__()
         return self
 
