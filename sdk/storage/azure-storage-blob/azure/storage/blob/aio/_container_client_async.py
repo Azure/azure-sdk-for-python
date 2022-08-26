@@ -656,8 +656,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         The generator will lazily follow the continuation tokens returned by
         the service.
 
-        Note that no additional properties or metadta will be returned when using this API.
-        To see properties of listed blobs, use :func:`list_blobs()`.
+        Note that no additional properties or metadata will be returned when using this API.
+        Additionally this API does not have an option to include additional blobs such as snapshots,
+        versions, soft-deleted blobs, etc. To get any of this data, use :func:`list_blobs()`.
 
         :keyword str name_starts_with:
             Filters the results to return only blobs whose names
