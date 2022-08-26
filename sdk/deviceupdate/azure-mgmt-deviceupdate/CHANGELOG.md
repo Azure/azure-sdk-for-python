@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-  - Client name is changed
+  - Client name is changed from `DeviceUpdate` to `DeviceUpdateMgmtClient`
   - Removed operation group DeviceUpdateOperationsMixin
 
 ## 1.0.0b4 (2022-05-26)
