@@ -7,30 +7,29 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
 
-class AuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Authentication Type"""
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication Type."""
 
     KEY_BASED = "KeyBased"
 
 
-class CheckNameAvailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the given name is not available."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
     USER = "User"
@@ -39,7 +38,7 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KEY = "Key"
 
 
-class GroupIdProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class GroupIdProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of private link group ID."""
 
     SUCCEEDED = "Succeeded"
@@ -47,7 +46,7 @@ class GroupIdProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     CANCELED = "Canceled"
 
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
     """
@@ -58,9 +57,9 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
@@ -68,7 +67,7 @@ class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     USER_SYSTEM = "user,system"
 
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -77,7 +76,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveE
     FAILED = "Failed"
 
 
-class PrivateEndpointConnectionProxyProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProxyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -86,7 +85,7 @@ class PrivateEndpointConnectionProxyProvisioningState(with_metaclass(CaseInsensi
     FAILED = "Failed"
 
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status."""
 
     PENDING = "Pending"
@@ -94,7 +93,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     REJECTED = "Rejected"
 
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -105,22 +104,22 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CREATING = "Creating"
 
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether or not public network access is allowed for the account."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
 
-class Role(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether the location is primary or failover"""
+class Role(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the location is primary or failover."""
 
     PRIMARY = "Primary"
     FAILOVER = "Failover"
 
 
-class SKU(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Device Update Sku"""
+class SKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Device Update Sku."""
 
     FREE = "Free"
     STANDARD = "Standard"
