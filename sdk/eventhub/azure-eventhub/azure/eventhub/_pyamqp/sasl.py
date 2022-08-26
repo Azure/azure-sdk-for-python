@@ -68,6 +68,7 @@ class SASLExternalCredential(object):
     def start(self):
         return b''
 
+
 class SASLTransportMixin():
     def _negotiate(self):
         self.write(SASL_HEADER_FRAME)
@@ -76,8 +77,8 @@ class SASLTransportMixin():
             raise ValueError("Mismatching AMQP header protocol. Expected: {}, received: {}".format(
                 SASL_HEADER_FRAME, returned_header[1]))
 
-        _, supported_mechansisms = self.receive_frame(verify_frame_type=1)
-        if self.credential.mechanism not in supported_mechansisms[1][0]:  # sasl_server_mechanisms
+        _, supported_mechanisms = self.receive_frame(verify_frame_type=1)
+        if self.credential.mechanism not in supported_mechanisms[1][0]:  # sasl_server_mechanisms
             raise ValueError("Unsupported SASL credential type: {}".format(self.credential.mechanism))
         sasl_init = SASLInit(
             mechanism=self.credential.mechanism,

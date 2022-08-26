@@ -399,17 +399,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
                 mgmt_msg.application_properties["security_token"] = access_token.token
                 
-                response = mgmt_client.mgmt_request(
+                status_code, description, response = mgmt_client.mgmt_request(
                     mgmt_msg,
                     operation=READ_OPERATION.decode(),
                     operation_type=op_type.decode(),
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(
-                    MGMT_STATUS_DESC
-                )  # type: Optional[Union[str, bytes]]
+                status_code = int(status_code)
                 if description and isinstance(description, six.binary_type):
                     description = description.decode("utf-8")
                 if status_code < 400:
