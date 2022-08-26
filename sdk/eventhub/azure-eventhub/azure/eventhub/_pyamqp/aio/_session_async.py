@@ -10,6 +10,8 @@ import time
 import asyncio
 from typing import Optional, Union
 
+from azure.eventhub._pyamqp.error import AMQPSessionError, ErrorCondition
+
 from ..constants import (
     INCOMING_WINDOW,
     OUTGOING_WIDNOW,
@@ -288,7 +290,11 @@ class Session(object):
         try:
             await self._input_handles[frame[0]]._incoming_transfer(frame)
         except KeyError:
-            pass  #TODO: "unattached handle"
+            await self._set_state(SessionState.DISCARDING)
+            await self._connection.close(error=AMQPSessionError(
+                condition=ErrorCondition.SessionUnattachedHandle,
+                description="Invalid handle reference in received frame: Handle is not currently associated with an attached link"))
+        
         if self.incoming_window == 0:
             self.incoming_window = self.target_incoming_window
             await self._outgoing_flow()
@@ -314,7 +320,10 @@ class Session(object):
             #     self._input_handles.pop(link.remote_handle, None)
             #     self._output_handles.pop(link.handle, None)
         except KeyError:
-            pass  # TODO: close session with unattached-handle
+            await self._set_state(SessionState.DISCARDING)
+            await self._connection.close(error=AMQPSessionError(
+                condition=ErrorCondition.SessionUnattachedHandle,
+                description="Invalid handle reference in received frame: Handle is not currently associated with an attached link"))
 
     async def _wait_for_response(self, wait, end_state):
         # type: (Union[bool, float], SessionState) -> None

@@ -31,6 +31,7 @@ from .performatives import (
     DispositionFrame
 )
 from ._encode import encode_frame
+from azure.eventhub._pyamqp.error import AMQPSessionError, ErrorCondition
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -282,7 +283,10 @@ class Session(object):
         try:
             self._input_handles[frame[0]]._incoming_transfer(frame)  # handle
         except KeyError:
-            pass  #TODO: "unattached handle"
+            self._set_state(SessionState.DISCARDING)
+            self._connection.close(error=AMQPSessionError(
+                condition=ErrorCondition.SessionUnattachedHandle,
+                description="Invalid handle reference in received frame: Handle is not currently associated with an attached link"))
         if self.incoming_window == 0:
             self.incoming_window = self.target_incoming_window
             self._outgoing_flow()
@@ -308,7 +312,10 @@ class Session(object):
             #     self._input_handles.pop(link.remote_handle, None)
             #     self._output_handles.pop(link.handle, None)
         except KeyError:
-            pass  # TODO: close session with unattached-handle
+            self._set_state(SessionState.DISCARDING)
+            self._connection.close(error=AMQPSessionError(
+                condition=ErrorCondition.SessionUnattachedHandle,
+                description="Invalid handle reference in received frame: Handle is not currently associated with an attached link"))
 
     def _wait_for_response(self, wait, end_state):
         # type: (Union[bool, float], SessionState) -> None
