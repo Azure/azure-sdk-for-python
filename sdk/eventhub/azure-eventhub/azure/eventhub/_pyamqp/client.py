@@ -427,6 +427,10 @@ class SendClient(AMQPClient):
      will determine whether the messages are pre-emptively settled during batching, or otherwise
      let to the user to be explicitly settled.
     :paramtype auto_complete: bool
+    :keyword msg_timeout: A timeout in milliseconds for messages from when they have been
+     added to the send queue to when the message is actually sent. This prevents potentially
+     expired data from being sent. If set to 0, messages will not expire. Default is 0.
+    :paramtype msg_timeout: int
     :keyword retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
     :paramtype retry_policy: ~pyamqp.errors.RetryPolicy
@@ -492,6 +496,7 @@ class SendClient(AMQPClient):
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', None)
+        self._msg_timeout = kwargs.pop("msg_timeout", 0)
         super(SendClient, self).__init__(hostname, auth=auth, **kwargs)
 
     def _client_ready(self):
@@ -658,6 +663,14 @@ class ReceiveClient(AMQPClient):
      will determine whether the messages are pre-emptively settled during batching, or otherwise
      let to the user to be explicitly settled.
     :paramtype auto_complete: bool
+    :keyword timeout: A timeout in milliseconds. The receiver will shut down if no
+     new messages are received after the specified timeout. If set to 0, the receiver
+     will never timeout and will continue to listen. The default is 0.
+     Set `shutdown_after_timeout` to `False` if keeping the receiver open after timeout is needed.
+    :paramtype timeout: float
+    :keyword shutdown_after_timeout: Whether to automatically shutdown the receiver
+     if no new messages are received after the specified timeout. Default is `True`.
+    :paramtype shutdown_after_timeout: bool
     :keyword retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
     :paramtype retry_policy: ~pyamqp.errors.RetryPolicy
@@ -722,6 +735,8 @@ class ReceiveClient(AMQPClient):
         self.streaming_receive = kwargs.pop("streaming_receive", False) 
         self._received_messages = queue.Queue()
         self.message_received_callback = kwargs.pop("message_received_callback", None) 
+        self._timeout = kwargs.pop("timeout", 0)
+        self._shutdown_after_timeout = kwargs.pop("shutdown_after_timeout", True)
 
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
