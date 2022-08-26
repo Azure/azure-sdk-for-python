@@ -419,7 +419,6 @@ class Connection(object):
         if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (
         await self._get_remote_timeout(now)):
             await self.close(
-                # TODO: check error condition
                 error=AMQPError(
                     condition=ErrorCondition.ConnectionCloseForced,
                     description="No frame received for the idle timeout."
