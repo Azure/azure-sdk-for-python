@@ -262,7 +262,7 @@ class AccountsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~deviceupdatemgmtclient.DeviceUpdateMgmtClient`'s
+        :class:`~azure.mgmt.deviceupdate.DeviceUpdateMgmtClient`'s
         :attr:`accounts` attribute.
     """
 
@@ -281,7 +281,7 @@ class AccountsOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Account or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -351,7 +351,7 @@ class AccountsOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Account or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -424,7 +424,7 @@ class AccountsOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Account or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.Account
+        :rtype: ~azure.mgmt.deviceupdate.models.Account
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -592,7 +592,7 @@ class AccountsOperations:
         :param account_name: Account name. Required.
         :type account_name: str
         :param account: Account details. Required.
-        :type account: ~deviceupdatemgmtclient.models.Account
+        :type account: ~azure.mgmt.deviceupdate.models.Account
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -605,7 +605,7 @@ class AccountsOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Account or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -639,7 +639,7 @@ class AccountsOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Account or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -654,7 +654,7 @@ class AccountsOperations:
         :param account_name: Account name. Required.
         :type account_name: str
         :param account: Account details. Is either a model type or a IO type. Required.
-        :type account: ~deviceupdatemgmtclient.models.Account or IO
+        :type account: ~azure.mgmt.deviceupdate.models.Account or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -667,7 +667,7 @@ class AccountsOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Account or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -902,7 +902,7 @@ class AccountsOperations:
         :param account_name: Account name. Required.
         :type account_name: str
         :param account_update_payload: Updated Account. Required.
-        :type account_update_payload: ~deviceupdatemgmtclient.models.AccountUpdate
+        :type account_update_payload: ~azure.mgmt.deviceupdate.models.AccountUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -915,7 +915,7 @@ class AccountsOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Account or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -949,7 +949,7 @@ class AccountsOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Account or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -968,7 +968,7 @@ class AccountsOperations:
         :param account_name: Account name. Required.
         :type account_name: str
         :param account_update_payload: Updated Account. Is either a model type or a IO type. Required.
-        :type account_update_payload: ~deviceupdatemgmtclient.models.AccountUpdate or IO
+        :type account_update_payload: ~azure.mgmt.deviceupdate.models.AccountUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -981,7 +981,7 @@ class AccountsOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Account or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~deviceupdatemgmtclient.models.Account]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.deviceupdate.models.Account]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
