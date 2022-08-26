@@ -43,7 +43,7 @@ class QuestionAnsweringProjectsClientConfiguration(Configuration):  # pylint: di
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "ai-language-questionanswering/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", f"ai-language-questionanswering/{VERSION}")
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
