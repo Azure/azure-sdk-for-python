@@ -165,11 +165,11 @@ class TestRouterJob(RouterTestCase):
 
         distribution_policy_id = self.get_distribution_policy_id()
         distribution_policy = client.create_distribution_policy(
-            distribution_policy_id = distribution_policy_id,
+            distribution_policy_id,
+            10.0,
+            RoundRobinMode(min_concurrent_offers = 1,
+                           max_concurrent_offers = 1),
             name = distribution_policy_id,
-            offer_ttl_seconds = 10.0,
-            mode = RoundRobinMode(min_concurrent_offers = 1,
-                                  max_concurrent_offers = 1)
         )
 
         # add for cleanup later
@@ -186,10 +186,10 @@ class TestRouterJob(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
         job_queue = client.create_queue(
-            queue_id = job_queue_id,
+            job_queue_id,
+            self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
-            distribution_policy_id = self.get_distribution_policy_id()
         )
 
         # add for cleanup later
@@ -205,10 +205,10 @@ class TestRouterJob(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_fallback_queue_id()
         job_queue = client.create_queue(
-            queue_id = job_queue_id,
+            job_queue_id,
+            self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
-            distribution_policy_id = self.get_distribution_policy_id()
         )
 
         # add for cleanup later
@@ -233,7 +233,7 @@ class TestRouterJob(RouterTestCase):
 
         cp_id = self.get_classification_policy_id()
         job_queue = client.create_classification_policy(
-            classification_policy_id = cp_id,
+            cp_id,
             name = cp_id,
             fallback_queue_id = self.get_fallback_queue_id(),
             queue_selectors = cp_queue_selectors,

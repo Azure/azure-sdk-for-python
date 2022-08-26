@@ -62,10 +62,10 @@ class TestDistributionPolicy(RouterTestCase):
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id = dp_identifier,
+                dp_identifier,
+                10.0,
+                mode,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
-                mode = mode
             )
 
             # add for cleanup
@@ -90,10 +90,10 @@ class TestDistributionPolicy(RouterTestCase):
         for mode in distribution_modes:
             # Arrange
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id = dp_identifier,
+                dp_identifier,
+                10.0,
+                mode,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
-                mode = mode
             )
 
             # add for cleanup
@@ -135,10 +135,10 @@ class TestDistributionPolicy(RouterTestCase):
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id = dp_identifier,
+                dp_identifier,
+                10.0,
+                mode,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
-                mode = mode
             )
 
             # add for cleanup
@@ -171,10 +171,10 @@ class TestDistributionPolicy(RouterTestCase):
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id = dp_identifier,
+                dp_identifier,
+                10.0,
+                mode,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
-                mode = mode
             )
 
             assert distribution_policy_response is not None
@@ -201,10 +201,10 @@ class TestDistributionPolicy(RouterTestCase):
 
         for identifier in dp_identifiers:
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id = identifier,
+                identifier,
+                10.0,
+                distribution_modes[0],
                 name = identifier,
-                offer_ttl_seconds = 10.0,
-                mode = distribution_modes[0]
             )
 
             # add for cleanup

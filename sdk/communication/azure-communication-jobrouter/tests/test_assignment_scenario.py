@@ -102,11 +102,11 @@ class TestAssignmentScenario(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         distribution_policy_id = self.get_distribution_policy_id()
         distribution_policy = client.create_distribution_policy(
-            distribution_policy_id = distribution_policy_id,
-            name = "test",
-            offer_ttl_seconds = 10.0 * 60,
-            mode = LongestIdleMode(min_concurrent_offers = 1,
-                                  max_concurrent_offers = 1)
+            distribution_policy_id,
+            10.0 * 60,
+            LongestIdleMode(min_concurrent_offers = 1,
+                            max_concurrent_offers = 1),
+            name = "test"
         )
 
         # add for cleanup later
@@ -123,9 +123,9 @@ class TestAssignmentScenario(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
         job_queue = client.create_queue(
-            queue_id = job_queue_id,
-            name = "test",
-            distribution_policy_id = self.get_distribution_policy_id()
+            job_queue_id,
+            self.get_distribution_policy_id(),
+            name = "test"
         )
 
         # add for cleanup later
