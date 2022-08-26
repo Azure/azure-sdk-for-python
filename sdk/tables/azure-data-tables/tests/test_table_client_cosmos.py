@@ -114,7 +114,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
         
-        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
+        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', trailing space, and less than 255 chars.
         invalid_table_names = ["\\", "//", "#", "?", "- "]
         for invalid_name in invalid_table_names:
             client = TableClient(

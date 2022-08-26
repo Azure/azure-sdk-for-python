@@ -218,7 +218,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         with open(self.receipt_png, "rb") as receipt:
             with pytest.raises(ValueError) as e:
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
-                assert str(e) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a stream."
+            assert str(e.value) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -355,7 +355,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
         initial_poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         cont_token = initial_poller.continuation_token()
-        poller = client.begin_analyze_document_from_url("prebuilt-receipt", None, continuation_token=cont_token)
+        poller = client.begin_analyze_document_from_url(None, None, continuation_token=cont_token)
         result = poller.result()
         assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

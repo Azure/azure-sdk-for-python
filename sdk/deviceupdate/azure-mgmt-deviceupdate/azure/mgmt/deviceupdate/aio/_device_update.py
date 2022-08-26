@@ -16,13 +16,22 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import DeviceUpdateConfiguration
-from .operations import AccountsOperations, DeviceUpdateOperationsMixin, InstancesOperations, Operations, PrivateEndpointConnectionProxiesOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations
+from .operations import (
+    AccountsOperations,
+    DeviceUpdateOperationsMixin,
+    InstancesOperations,
+    Operations,
+    PrivateEndpointConnectionProxiesOperations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class DeviceUpdate(DeviceUpdateOperationsMixin):    # pylint: disable=too-many-instance-attributes
+
+class DeviceUpdate(DeviceUpdateOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Microsoft Device Update resource provider.
 
     :ivar accounts: AccountsOperations operations
@@ -69,17 +78,18 @@ class DeviceUpdate(DeviceUpdateOperationsMixin):    # pylint: disable=too-many-i
         self._serialize.client_side_validation = False
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.instances = InstancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connection_proxies = PrivateEndpointConnectionProxiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connection_proxies = PrivateEndpointConnectionProxiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
