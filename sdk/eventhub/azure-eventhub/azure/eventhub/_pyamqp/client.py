@@ -7,7 +7,6 @@
 # pylint: disable=too-many-lines
 
 import logging
-from msilib.schema import Error
 import time
 import uuid
 import certifi
