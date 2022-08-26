@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 17 Aug 2022 22:23:58 GMT",
+        "x-ms-date": "Fri, 26 Aug 2022 23:01:02 GMT",
         "x-ms-default-encryption-scope": "hnstestscope1",
         "x-ms-deny-encryption-scope-override": "false",
         "x-ms-version": "2021-08-06"
@@ -18,9 +18,9 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 17 Aug 2022 22:23:58 GMT",
-        "ETag": "\u00220x8DA809F2E0EF43F\u0022",
-        "Last-Modified": "Wed, 17 Aug 2022 22:23:58 GMT",
+        "Date": "Fri, 26 Aug 2022 23:01:01 GMT",
+        "ETag": "\u00220x8DA87B6D8E0B605\u0022",
+        "Last-Modified": "Fri, 26 Aug 2022 23:01:01 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -38,16 +38,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 17 Aug 2022 22:23:58 GMT",
+        "x-ms-date": "Fri, 26 Aug 2022 23:01:02 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 17 Aug 2022 22:23:58 GMT",
-        "ETag": "\u00220x8DA809F2E4B8D7A\u0022",
-        "Last-Modified": "Wed, 17 Aug 2022 22:23:59 GMT",
+        "Date": "Fri, 26 Aug 2022 23:01:02 GMT",
+        "ETag": "\u00220x8DA87B6D9739B32\u0022",
+        "Last-Modified": "Fri, 26 Aug 2022 23:01:02 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -66,7 +66,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 17 Aug 2022 22:23:59 GMT",
+        "x-ms-date": "Fri, 26 Aug 2022 23:01:03 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -75,9 +75,9 @@
         "Accept-Ranges": "bytes",
         "Content-Length": "0",
         "Content-Type": "application/octet-stream",
-        "Date": "Wed, 17 Aug 2022 22:23:59 GMT",
-        "ETag": "\u00220x8DA809F2E4B8D7A\u0022",
-        "Last-Modified": "Wed, 17 Aug 2022 22:23:59 GMT",
+        "Date": "Fri, 26 Aug 2022 23:01:02 GMT",
+        "ETag": "\u00220x8DA87B6D9739B32\u0022",
+        "Last-Modified": "Fri, 26 Aug 2022 23:01:02 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -85,7 +85,7 @@
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Wed, 17 Aug 2022 22:23:59 GMT",
+        "x-ms-creation-time": "Fri, 26 Aug 2022 23:01:02 GMT",
         "x-ms-encryption-scope": "hnstestscope1",
         "x-ms-group": "$superuser",
         "x-ms-lease-state": "available",

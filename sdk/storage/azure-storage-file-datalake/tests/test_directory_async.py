@@ -112,8 +112,10 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_create_directory_owner_group_acl_async(self, datalake_storage_account_name,
-                                                          datalake_storage_account_key):
+    async def test_create_directory_owner_group_acl_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_string_acl = 'user::rwx,group::r-x,other::rwx'
@@ -133,8 +135,10 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_create_directory_proposed_lease_id_async(self, datalake_storage_account_name,
-                                                            datalake_storage_account_key):
+    async def test_create_directory_proposed_lease_id_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_duration = 15
@@ -152,8 +156,10 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_create_sub_directory_proposed_lease_id_async(self, datalake_storage_account_name,
-                                                                datalake_storage_account_key):
+    async def test_create_sub_directory_proposed_lease_id_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_duration = 15
@@ -586,14 +592,16 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = await owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             time.sleep(10)
@@ -780,14 +788,16 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = await owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             time.sleep(10)
@@ -853,14 +863,16 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = await owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             time.sleep(10)
@@ -998,14 +1010,16 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = await owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             time.sleep(10)
@@ -1330,8 +1344,10 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_directory_encryption_scope_from_file_system_async(self, datalake_storage_account_name,
-                                                                     datalake_storage_account_key):
+    async def test_directory_encryption_scope_from_file_system_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)

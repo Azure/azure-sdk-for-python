@@ -592,15 +592,16 @@ class TestDirectory(StorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = self.generate_sas(generate_directory_sas,
-                                      datalake_storage_account_name,
-                                      self.file_system_name,
-                                      directory_name,
-                                      user_delegation_key,
-                                      permission='racwdlmeop',
-                                      expiry=expiry_time,
-                                      agent_object_id=test_guid
-                                      )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             sleep(10)
@@ -659,14 +660,16 @@ class TestDirectory(StorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             sleep(10)
@@ -728,14 +731,16 @@ class TestDirectory(StorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             sleep(10)
@@ -926,14 +931,16 @@ class TestDirectory(StorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             sleep(10)
@@ -1073,14 +1080,16 @@ class TestDirectory(StorageRecordedTestCase):
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
         user_delegation_key = owner_dsc.get_user_delegation_key(start_time, expiry_time)
-        sas_token = generate_directory_sas(datalake_storage_account_name,
-                                           self.file_system_name,
-                                           directory_name,
-                                           user_delegation_key,
-                                           permission='racwdlmeop',
-                                           expiry=expiry_time,
-                                           agent_object_id=test_guid
-                                           )
+        sas_token = self.generate_sas(
+            generate_directory_sas,
+            datalake_storage_account_name,
+            self.file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission='racwdlmeop',
+            expiry=expiry_time,
+            agent_object_id=test_guid
+        )
 
         if self.is_live:
             sleep(10)
@@ -1359,8 +1368,10 @@ class TestDirectory(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
-    def test_directory_encryption_scope_from_file_system(self, datalake_storage_account_name,
-                                                         datalake_storage_account_key):
+    def test_directory_encryption_scope_from_file_system(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
