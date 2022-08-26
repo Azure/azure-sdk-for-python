@@ -108,7 +108,7 @@ class PrivateLinkResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~deviceupdatemgmtclient.DeviceUpdateMgmtClient`'s
+        :class:`~azure.mgmt.deviceupdate.DeviceUpdateMgmtClient`'s
         :attr:`private_link_resources` attribute.
     """
 
@@ -133,7 +133,7 @@ class PrivateLinkResourcesOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GroupInformation or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~deviceupdatemgmtclient.models.GroupInformation]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.deviceupdate.models.GroupInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -211,7 +211,7 @@ class PrivateLinkResourcesOperations:
         :type group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GroupInformation or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.GroupInformation
+        :rtype: ~azure.mgmt.deviceupdate.models.GroupInformation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
