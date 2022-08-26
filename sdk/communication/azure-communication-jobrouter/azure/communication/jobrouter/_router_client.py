@@ -183,7 +183,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             *,
             queue_assignments: Optional[Dict[str, QueueAssignment]],
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
-            tags: Optional[dict[str, Union[int, float, str, bool]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool]]],
             channel_configurations: Optional[Dict[str, ChannelConfiguration]],
             available_for_offers: Optional[bool],
             **kwargs: Any
@@ -319,7 +319,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             queue_assignments: Optional[Dict[str, QueueAssignment]],
             total_capacity: Optional[int],
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
-            tags: Optional[dict[str, Union[int, float, str, bool]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool]]],
             channel_configurations: Optional[Dict[str, ChannelConfiguration]],
             available_for_offers: Optional[bool],
             **kwargs: Any
