@@ -95,7 +95,7 @@ def sample_conv_pii_transcript_input():
         result = poller.result()
         task_result = result["tasks"]["items"][0]
         print("... view task status ...")
-        print("status: {}".format(task_result["status"]))
+        print(f"status: {task_result['status']}")
         conv_pii_result = task_result["results"]
         if conv_pii_result["errors"]:
             print("... errors occured ...")
@@ -110,14 +110,14 @@ def sample_conv_pii_transcript_input():
             else:
                 print("... view task result ...")
                 for conversation in conversation_result["conversationItems"]:
-                    print("conversation id: {}".format(conversation["id"]))
+                    print(f"conversation id: {conversation['id']}")
                     print("... entities ...")
                     for entity in conversation["entities"]:
-                        print("text: {}".format(entity["text"]))
-                        print("category: {}".format(entity["category"]))
-                        print("confidence: {}".format(entity["confidenceScore"]))
-                        print("offset: {}".format(entity["offset"]))
-                        print("length: {}".format(entity["length"]))
+                        print(f"text: {entity['text']}")
+                        print(f"category: {entity['category']}")
+                        print(f"confidence: {entity['confidenceScore']}")
+                        print(f"offset: {entity['offset']}")
+                        print(f"length: {entity['length']}")
 
 
     # [END analyze_conversation_app]

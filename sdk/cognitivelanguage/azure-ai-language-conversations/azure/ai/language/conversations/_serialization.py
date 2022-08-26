@@ -97,17 +97,9 @@ class RawDeserializer:
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
-                raise DeserializationError("JSON is invalid: {}".format(err), err)
+                raise DeserializationError(f"JSON is invalid: {err}", err)
         elif "xml" in (content_type or []):
             try:
-
-                try:
-                    if isinstance(data, unicode):  # type: ignore
-                        # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
-                        data_as_str = data_as_str.encode(encoding="utf-8")  # type: ignore
-                except NameError:
-                    pass
-
                 return ET.fromstring(data_as_str)  # nosec
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with
@@ -129,7 +121,7 @@ class RawDeserializer:
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise_with_traceback(DeserializationError, "XML is invalid")
-        raise DeserializationError("Cannot deserialize content-type: {}".format(content_type))
+        raise DeserializationError(f"Cannot deserialize content-type: {content_type}")
 
     @classmethod
     def deserialize_from_http_generics(cls, body_bytes, headers):
@@ -154,14 +146,6 @@ class RawDeserializer:
         if body_bytes:
             return cls.deserialize_from_text(body_bytes, content_type)
         return None
-
-
-try:
-    basestring  # type: ignore
-    unicode_str = unicode  # type: ignore
-except NameError:
-    basestring = str  # type: ignore
-    unicode_str = str  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -207,7 +191,7 @@ except ImportError:  # Python 2.7
             return str(self.__offset.total_seconds() / 3600)
 
         def __repr__(self):
-            return "<FixedOffset {}>".format(self.tzname(None))
+            return f"<FixedOffset {self.tzname(None)}>"
 
         def dst(self, dt):
             return datetime.timedelta(0)
@@ -605,7 +589,7 @@ class Serializer(object):
                         if xml_desc.get("attr", False):
                             if xml_ns:
                                 ET.register_namespace(xml_prefix, xml_ns)
-                                xml_name = "{}{}".format(xml_ns, xml_name)
+                                xml_name = f"{xml_ns}{xml_name}"
                             serialized.set(xml_name, new_attr)
                             continue
                         if xml_desc.get("text", False):
@@ -625,7 +609,7 @@ class Serializer(object):
                         else:  # That's a basic type
                             # Integrate namespace if necessary
                             local_node = _create_xml_node(xml_name, xml_prefix, xml_ns)
-                            local_node.text = unicode_str(new_attr)
+                            local_node.text = str(new_attr)
                             serialized.append(local_node)
                     else:  # JSON
                         for k in reversed(keys):
@@ -643,7 +627,7 @@ class Serializer(object):
                     continue
 
         except (AttributeError, KeyError, TypeError) as err:
-            msg = "Attribute {} in object {} cannot be serialized.\n{}".format(attr_name, class_name, str(target_obj))
+            msg = f"Attribute {attr_name} in object {class_name} cannot be serialized.\n{str(target_obj)}"
             raise_with_traceback(SerializationError, msg, err)
         else:
             return serialized
@@ -709,7 +693,7 @@ class Serializer(object):
             else:
                 output = quote(str(output), safe="")
         except SerializationError:
-            raise TypeError("{} must be type {}.".format(name, data_type))
+            raise TypeError(f"{name} must be type {data_type}.")
         else:
             return output
 
@@ -740,7 +724,7 @@ class Serializer(object):
             else:
                 output = quote(str(output), safe="")
         except SerializationError:
-            raise TypeError("{} must be type {}.".format(name, data_type))
+            raise TypeError(f"{name} must be type {data_type}.")
         else:
             return str(output)
 
@@ -761,7 +745,7 @@ class Serializer(object):
             if data_type == "bool":
                 output = json.dumps(output)
         except SerializationError:
-            raise TypeError("{} must be type {}.".format(name, data_type))
+            raise TypeError(f"{name} must be type {data_type}.")
         else:
             return str(output)
 
@@ -826,31 +810,11 @@ class Serializer(object):
         if custom_serializer:
             return custom_serializer(data)
         if data_type == "str":
-            return cls.serialize_unicode(data)
+            try:  # If I received an enum, return its value
+                return data.value
+            except AttributeError:
+                return str(data)
         return eval(data_type)(data)  # nosec
-
-    @classmethod
-    def serialize_unicode(cls, data):
-        """Special handling for serializing unicode strings in Py2.
-        Encode to UTF-8 if unicode, otherwise handle as a str.
-
-        :param data: Object to be serialized.
-        :rtype: str
-        """
-        try:  # If I received an enum, return its value
-            return data.value
-        except AttributeError:
-            pass
-
-        try:
-            if isinstance(data, unicode):
-                # Don't change it, JSON and XML ElementTree are totally able
-                # to serialize correctly u'' strings
-                return data
-        except NameError:
-            return str(data)
-        else:
-            return str(data)
 
     def serialize_iter(self, data, iter_type, div=None, **kwargs):
         """Serialize iterable.
@@ -924,9 +888,9 @@ class Serializer(object):
         serialized = {}
         for key, value in attr.items():
             try:
-                serialized[self.serialize_unicode(key)] = self.serialize_data(value, dict_type, **kwargs)
+                serialized[self.serialize_basic(key, "str")] = self.serialize_data(value, dict_type, **kwargs)
             except ValueError:
-                serialized[self.serialize_unicode(key)] = None
+                serialized[self.serialize_basic(key, "str")] = None
 
         if "xml" in serialization_ctxt:
             # XML serialization is more complicated
@@ -958,8 +922,8 @@ class Serializer(object):
             return self.serialize_basic(attr, self.basic_types[obj_type], **kwargs)
         if obj_type is _long_type:
             return self.serialize_long(attr)
-        if obj_type is unicode_str:
-            return self.serialize_unicode(attr)
+        if obj_type is str:
+            return self.serialize_basic(attr, "str")
         if obj_type is datetime.datetime:
             return self.serialize_iso(attr)
         if obj_type is datetime.date:
@@ -979,9 +943,9 @@ class Serializer(object):
             serialized = {}
             for key, value in attr.items():
                 try:
-                    serialized[self.serialize_unicode(key)] = self.serialize_object(value, **kwargs)
+                    serialized[self.serialize_basic(key, "str")] = self.serialize_object(value, **kwargs)
                 except ValueError:
-                    serialized[self.serialize_unicode(key)] = None
+                    serialized[self.serialize_basic(key, "str")] = None
             return serialized
 
         if obj_type == list:
@@ -1056,7 +1020,7 @@ class Serializer(object):
         """
         if isinstance(attr, str):
             attr = isodate.parse_date(attr)
-        t = "{:04}-{:02}-{:02}".format(attr.year, attr.month, attr.day)
+        t = f"{attr.year:04}-{attr.month:02}-{attr.day:02}"
         return t
 
     @staticmethod
@@ -1068,9 +1032,9 @@ class Serializer(object):
         """
         if isinstance(attr, str):
             attr = isodate.parse_time(attr)
-        t = "{:02}:{:02}:{:02}".format(attr.hour, attr.minute, attr.second)
+        t = f"{attr.hour:02}:{attr.minute:02}:{attr.second:02}"
         if attr.microsecond:
-            t += ".{:02}".format(attr.microsecond)
+            t += f".{attr.microsecond:02}"
         return t
 
     @staticmethod
@@ -1099,15 +1063,9 @@ class Serializer(object):
         except AttributeError:
             raise TypeError("RFC1123 object must be valid Datetime object.")
 
-        return "{}, {:02} {} {:04} {:02}:{:02}:{:02} GMT".format(
-            Serializer.days[utc.tm_wday],
-            utc.tm_mday,
-            Serializer.months[utc.tm_mon],
-            utc.tm_year,
-            utc.tm_hour,
-            utc.tm_min,
-            utc.tm_sec,
-        )
+        return (f"{Serializer.days[utc.tm_wday]}, {utc.tm_mday:02} "
+                f"{Serializer.months[utc.tm_mon]} {utc.tm_year:04} "
+                f"{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02} GMT")
 
     @staticmethod
     def serialize_iso(attr, **kwargs):
@@ -1129,9 +1087,8 @@ class Serializer(object):
             microseconds = str(attr.microsecond).rjust(6, "0").rstrip("0").ljust(3, "0")
             if microseconds:
                 microseconds = "." + microseconds
-            date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
-                utc.tm_year, utc.tm_mon, utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec
-            )
+            date = (f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}"
+                    f"T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}")
             return date + microseconds + "Z"
         except (ValueError, OverflowError) as err:
             msg = "Unable to serialize datetime object."
@@ -1245,7 +1202,7 @@ def _extract_name_from_internal_type(internal_type):
     xml_name = internal_type_xml_map.get("name", internal_type.__name__)
     xml_ns = internal_type_xml_map.get("ns", None)
     if xml_ns:
-        xml_name = "{}{}".format(xml_ns, xml_name)
+        xml_name = f"{xml_ns}{xml_name}"
     return xml_name
 
 
@@ -1269,7 +1226,7 @@ def xml_key_extractor(attr, attr_desc, data):
     # Integrate namespace if necessary
     xml_ns = xml_desc.get("ns", internal_type_xml_map.get("ns", None))
     if xml_ns:
-        xml_name = "{}{}".format(xml_ns, xml_name)
+        xml_name = f"{xml_ns}{xml_name}"
 
     # If it's an attribute, that's simple
     if xml_desc.get("attr", False):
@@ -1312,15 +1269,14 @@ def xml_key_extractor(attr, attr_desc, data):
         else:  # Iter and wrapped, should have found one node only (the wrap one)
             if len(children) != 1:
                 raise DeserializationError(
-                    "Tried to deserialize an array not wrapped, and found several nodes '{}'. Maybe you should declare this array as wrapped?".format(
-                        xml_name
-                    )
+                    f"Tried to deserialize an array not wrapped, and found several nodes '{xml_name}'. "
+                    "Maybe you should declare this array as wrapped?"
                 )
             return list(children[0])  # Might be empty list and that's ok.
 
     # Here it's not a itertype, we should have found one element only or empty
     if len(children) > 1:
-        raise DeserializationError("Find several XML '{}' where it was not expected".format(xml_name))
+        raise DeserializationError(f"Find several XML '{xml_name}' where it was not expected")
     return children[0]
 
 
@@ -1408,7 +1364,7 @@ class Deserializer(object):
 
         response, class_name = self._classify_target(target_obj, data)
 
-        if isinstance(response, basestring):
+        if isinstance(response, str):
             return self.deserialize_data(data, response)
         elif isinstance(response, type) and issubclass(response, Enum):
             return self.deserialize_enum(data, response)
@@ -1479,7 +1435,7 @@ class Deserializer(object):
         if target is None:
             return None, None
 
-        if isinstance(target, basestring):
+        if isinstance(target, str):
             try:
                 target = self.dependencies[target]
             except KeyError:
@@ -1542,7 +1498,7 @@ class Deserializer(object):
         if hasattr(raw_data, "_content_consumed"):
             return RawDeserializer.deserialize_from_http_generics(raw_data.text, raw_data.headers)
 
-        if isinstance(raw_data, (basestring, bytes)) or hasattr(raw_data, "read"):
+        if isinstance(raw_data, (str, bytes)) or hasattr(raw_data, "read"):
             return RawDeserializer.deserialize_from_text(raw_data, content_type)
         return raw_data
 
@@ -1565,7 +1521,7 @@ class Deserializer(object):
                     response_obj.additional_properties = additional_properties
                 return response_obj
             except TypeError as err:
-                msg = "Unable to deserialize {} into model {}. ".format(kwargs, response)
+                msg = f"Unable to deserialize {kwargs} into model {response}. "
                 raise DeserializationError(msg + str(err))
         else:
             try:
@@ -1574,7 +1530,7 @@ class Deserializer(object):
                 return response
             except Exception as exp:
                 msg = "Unable to populate response model. "
-                msg += "Type: {}, Error: {}".format(type(response), exp)
+                msg += f"Type: {type(response)}, Error: {exp}"
                 raise DeserializationError(msg)
 
     def deserialize_data(self, data, data_type):
@@ -1615,7 +1571,7 @@ class Deserializer(object):
 
         except (ValueError, TypeError, AttributeError) as err:
             msg = "Unable to deserialize response data."
-            msg += " Data: {}, {}".format(data, data_type)
+            msg += f" Data: {data}, {data_type}"
             raise_with_traceback(DeserializationError, msg, err)
         else:
             return self._deserialize(obj_type, data)
@@ -1632,7 +1588,7 @@ class Deserializer(object):
         if isinstance(attr, ET.Element):  # If I receive an element here, get the children
             attr = list(attr)
         if not isinstance(attr, (list, set)):
-            raise DeserializationError("Cannot deserialize as [{}] an object of type {}".format(iter_type, type(attr)))
+            raise DeserializationError(f"Cannot deserialize as [{iter_type}] an object of type {type(attr)}")
         return [self.deserialize_data(a, iter_type) for a in attr]
 
     def deserialize_dict(self, attr, dict_type):
@@ -1664,7 +1620,7 @@ class Deserializer(object):
         if isinstance(attr, ET.Element):
             # Do no recurse on XML, just return the tree as-is
             return attr
-        if isinstance(attr, basestring):
+        if isinstance(attr, str):
             return self.deserialize_basic(attr, "str")
         obj_type = type(attr)
         if obj_type in self.basic_types:
@@ -1721,21 +1677,21 @@ class Deserializer(object):
         if data_type == "bool":
             if attr in [True, False, 1, 0]:
                 return bool(attr)
-            elif isinstance(attr, basestring):
+            elif isinstance(attr, str):
                 if attr.lower() in ["true", "1"]:
                     return True
                 elif attr.lower() in ["false", "0"]:
                     return False
-            raise TypeError("Invalid boolean value: {}".format(attr))
+            raise TypeError(f"Invalid boolean value: {attr}")
 
         if data_type == "str":
-            return self.deserialize_unicode(attr)
+            return self.deserialize_str(attr)
         return eval(data_type)(attr)  # nosec
 
     @staticmethod
-    def deserialize_unicode(data):
-        """Preserve unicode objects in Python 2, otherwise return data
-        as a string.
+    def deserialize_str(data):
+        """Return data as a string if not Enum. Otherwise,
+        pass on data.
 
         :param str data: response string to be deserialized.
         :rtype: str or unicode
@@ -1744,14 +1700,7 @@ class Deserializer(object):
         # and we try to deserialize a partial dict with enum inside
         if isinstance(data, Enum):
             return data
-
-        # Consider this is real string
-        try:
-            if isinstance(data, unicode):
-                return data
-        except NameError:
-            return str(data)
-        else:
+        else: # Consider this is real string
             return str(data)
 
     @staticmethod
@@ -1786,7 +1735,7 @@ class Deserializer(object):
                     return enum_value
             # We don't fail anymore for unknown value, we deserialize as a string
             _LOGGER.warning("Deserializer is not able to find %s as valid enum in %s", data, enum_obj)
-            return Deserializer.deserialize_unicode(data)
+            return Deserializer.deserialize_str(data)
 
     @staticmethod
     def deserialize_bytearray(attr):
@@ -1828,7 +1777,7 @@ class Deserializer(object):
         try:
             return decimal.Decimal(attr)
         except decimal.DecimalException as err:
-            msg = "Invalid decimal {}".format(attr)
+            msg = f"Invalid decimal {attr}"
             raise_with_traceback(DeserializationError, msg, err)
 
     @staticmethod

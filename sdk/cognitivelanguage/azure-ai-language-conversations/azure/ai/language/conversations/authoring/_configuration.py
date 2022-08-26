@@ -47,7 +47,7 @@ class ConversationAuthoringClientConfiguration(Configuration):  # pylint: disabl
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "ai-language-conversations/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", f"ai-language-conversations/{VERSION}")
         self._configure(**kwargs)
 
     def _configure(
