@@ -227,6 +227,39 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_upload_blob_from_url_with_cold_tier_specified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key, container_name="testcontainer")
+        blob = await self._create_blob()
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            container_name=self.container_name,
+            blob_name=blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob.blob_name, sas)
+
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_tier = StandardBlobTier.Cold
+        await new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
+
+        new_blob_properties = await new_blob.get_blob_properties()
+
+        # Assert
+        assert new_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_upload_blob_with_destination_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -729,7 +762,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def _test_put_block_list_with_blob_tier_specified(self, storage_account_name, storage_account_key):
+    async def test_put_block_list_with_blob_tier_specified(self, storage_account_name, storage_account_key):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -738,6 +771,27 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await blob_client.stage_block('2', b'BBB')
         await blob_client.stage_block('3', b'CCC')
         blob_tier = StandardBlobTier.Cool
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        await blob_client.commit_block_list(block_list,
+                                            standard_blob_tier=blob_tier)
+
+        # Assert
+        blob_properties = await blob_client.get_blob_properties()
+        assert blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_put_block_list_with_blob_tier_specified_cold(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.stage_block('1', b'AAA')
+        await blob_client.stage_block('2', b'BBB')
+        await blob_client.stage_block('3', b'CCC')
+        blob_tier = StandardBlobTier.Cold
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -1218,13 +1272,30 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def _test_create_blob_from_bytes_with_blob_tier_specified(self, storage_account_name, storage_account_key):
+    async def test_create_blob_from_bytes_with_blob_tier_specified(self, storage_account_name, storage_account_key):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
         blob_tier = StandardBlobTier.Cool
+
+        # Act
+        await blob_client.upload_blob(data, standard_blob_tier=blob_tier)
+        blob_properties = await blob_client.get_blob_properties()
+
+        # Assert
+        assert blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_create_blob_from_bytes_with_blob_tier_specified_cold(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        data = b'hello world'
+        blob_tier = StandardBlobTier.Cold
 
         # Act
         await blob_client.upload_blob(data, standard_blob_tier=blob_tier)

@@ -74,6 +74,46 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
+    async def _sync_setup(self, storage_account_name, key):
+        # test chunking functionality by reducing the size of each chunk,
+        # otherwise the tests would take too long to execute
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=key,
+            connection_data_block_size=4 * 1024,
+            max_single_put_size=32 * 1024,
+            max_block_size=4 * 1024
+            )
+        self.config = self.bsc._config
+        self.container_name = self.get_resource_name('utcontainer')
+
+        # create source blob to be copied from
+        self.source_blob_name = self.get_resource_name('srcblob')
+        self.source_blob_data = self.get_random_bytes(8 * 1024)
+
+        blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
+
+        if self.is_live:
+            try:
+                await self.bsc.create_container(self.container_name)
+            except:
+                pass
+            await blob.upload_blob(self.source_blob_data, overwrite=True)
+
+        # generate a SAS so that it is accessible with a URL
+        sas_token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
+        self.source_blob_url_without_sas = blob.url
+
     async def _create_source_blob(self, data):
         blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
         await blob_client.upload_blob(data, overwrite=True)
@@ -603,6 +643,22 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                 async for text, _ in data.content.iter_chunks():
                     resp = await blob.upload_blob(data=text, overwrite=True)
                     assert resp.get('etag') is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_upload_block_blob_with_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob(standard_blob_tier=StandardBlobTier.Cold, overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        props = await blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1660,6 +1716,48 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         copy_content = await (await copyblob.download_blob()).readall()
         assert copy_content == self.byte_data
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_copy_blob_with_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
+        self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Cold
+        await copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
+
+        copy_blob_properties = await copyblob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_copy_blob_with_cold_tier_sync(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._sync_setup(storage_account_name, storage_account_key)
+        dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+        blob_tier = StandardBlobTier.Cold
+
+        # Act
+        await dest_blob.start_copy_from_url(self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True)
+        copy_blob_properties = await dest_blob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -3097,5 +3195,22 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         assert await blob_client.exists()
         assert (await blob_client.get_blob_properties()).size == 0
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_set_blob_tier_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob(standard_blob_tier=StandardBlobTier.Hot, overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.set_standard_blob_tier(StandardBlobTier.Cold)
+
+        # Act
+        props = await blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
 
 # ------------------------------------------------------------------------------

@@ -73,6 +73,62 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 pass
         self.byte_data = self.get_random_bytes(1024)
 
+    def _sync_setup(self, storage_account_name, key, container_prefix='utcontainer'):
+        account_url = self.account_url(storage_account_name, "blob")
+        if not isinstance(account_url, str):
+            account_url = account_url.encode('utf-8')
+            key = key.encode('utf-8')
+        self.bsc = BlobServiceClient(
+            account_url,
+            credential=key,
+            connection_data_block_size=4 * 1024,
+            max_single_put_size=32 * 1024,
+            max_block_size=4 * 1024)
+        self.config = self.bsc._config
+        self.container_name = self.get_resource_name(container_prefix)
+
+        # create source blob to be copied from
+        self.source_blob_name = self.get_resource_name('srcblob')
+        self.source_blob_name_with_special_chars = 'भारत¥test/testsubÐirÍ/' + self.get_resource_name('srcÆblob')
+        self.source_blob_data = self.get_random_bytes(8 * 1024)
+        self.source_blob_with_special_chars_data = self.get_random_bytes(8 * 1024)
+
+        blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
+        blob_with_special_chars = self.bsc.get_blob_client(self.container_name,
+                                                           self.source_blob_name_with_special_chars)
+
+        if self.is_live:
+            self.bsc.create_container(self.container_name)
+            blob.upload_blob(self.source_blob_data)
+            blob_with_special_chars.upload_blob(self.source_blob_with_special_chars_data)
+
+        # generate a SAS so that it is accessible with a URL
+        sas_token = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        # generate a SAS so that it is accessible with a URL
+        sas_token_for_special_chars = self.generate_sas(
+            generate_blob_sas,
+            blob_with_special_chars.account_name,
+            blob_with_special_chars.container_name,
+            blob_with_special_chars.blob_name,
+            snapshot=blob_with_special_chars.snapshot,
+            account_key=blob_with_special_chars.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        self.source_blob_url_without_sas = blob.url
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
+        self.source_blob_url_with_special_chars = BlobClient.from_blob_url(
+            blob_with_special_chars.url, credential=sas_token_for_special_chars).url
+
     def _create_blob(self, tags=None, data=b'', **kwargs):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -482,6 +538,22 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Assert
         assert data == blob_data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_block_blob_with_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._create_block_blob(standard_blob_tier=StandardBlobTier.Cold, overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1595,6 +1667,24 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
 
         copy_blob_properties = copyblob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_blob_with_cold_tier_sync(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._sync_setup(storage_account_name, storage_account_key)
+        dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+        blob_tier = StandardBlobTier.Cold
+
+        # Act
+        dest_blob.start_copy_from_url(self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True)
+        copy_blob_properties = dest_blob.get_blob_properties()
 
         # Assert
         assert copy_blob_properties.blob_tier == blob_tier
@@ -3047,6 +3137,23 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert props.size == len(data_for_the_first_version)
         assert props.blob_tier == 'Hot'
         assert origin_props.blob_tier == 'Cool'
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_tier_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._create_block_blob(standard_blob_tier=StandardBlobTier.Hot, overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.set_standard_blob_tier(StandardBlobTier.Cold)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
 
     @BlobPreparer()
     @recorded_by_proxy
