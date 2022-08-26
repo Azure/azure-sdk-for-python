@@ -1504,12 +1504,12 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container = await self._create_container(bsc)
+        container = await self._create_container(bsc, 'testfind')
 
         data = b'hello world'
-        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "tagthree"}
         other_tags = {'tag1': 'other'}
-        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+        filter_expression = "tag1='tagone' and tag2='tagtwo'"
 
         c1 = container.get_blob_client('blob1')
         await c1.upload_blob(data, tags=tags)
@@ -1521,7 +1521,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await c4.upload_blob(data, tags=other_tags)
 
         if self.is_live:
-            sleep(15)
+            sleep(10)
 
         # Act
         blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
@@ -1538,8 +1538,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert 2 == len(items_on_page1)
         assert 1 == len(items_on_page2)
         assert len(items_on_page2[0]['tags']) == 2
-        assert items_on_page2[0]['tags']['tag1'] == 'firsttag'
-        assert items_on_page2[0]['tags']['tag2'] == 'secondtag'
+        assert items_on_page2[0]['tags']['tag1'] == 'tagone'
+        assert items_on_page2[0]['tags']['tag2'] == 'tagtwo'
 
     def test_batch_delete_empty_blob_list(self):
         container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
