@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.blob.preprod.core.windows.net/utcontainerefae18b0?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerefae18b0?restype=container
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.blob.preprod.core.windows.net/utcontainerefae18b0/srcblobefae18b0
+    uri: https://storagename.blob.core.windows.net/utcontainerefae18b0/srcblobefae18b0
   response:
     body:
       string: ''
@@ -107,7 +107,7 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.blob.preprod.core.windows.net/utcontainerefae18b0/%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%C2%A5test/testsub%C3%90ir%C3%8D/src%C3%86blobefae18b0
+    uri: https://storagename.blob.core.windows.net/utcontainerefae18b0/%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%C2%A5test/testsub%C3%90ir%C3%8D/src%C3%86blobefae18b0
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-access-tier:
       - Cold
       x-ms-copy-source:
-      - https://f67xscnapby3pev24a.blob.preprod.core.windows.net/utcontainerefae18b0/srcblobefae18b0?se=2022-08-26T21%3A45%3A09Z&sp=r&sv=2021-12-02&sr=b&sig=GyRhgVPTFMenNxQV1Wln7MtNEkKJuWl2VV6AiQANYpg%3D
+      - https://f67xscnapby3pev24a.blob.core.windows.net/utcontainerefae18b0/srcblobefae18b0?se=2022-08-26T21%3A45%3A09Z&sp=r&sv=2021-12-02&sr=b&sig=GyRhgVPTFMenNxQV1Wln7MtNEkKJuWl2VV6AiQANYpg%3D
       x-ms-date:
       - Fri, 26 Aug 2022 20:45:09 GMT
       x-ms-requires-sync:
@@ -155,7 +155,7 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://storagename.blob.preprod.core.windows.net/utcontainerefae18b0/destblobefae18b0
+    uri: https://storagename.blob.core.windows.net/utcontainerefae18b0/destblobefae18b0
   response:
     body:
       string: ''
@@ -197,7 +197,7 @@ interactions:
       x-ms-version:
       - '2021-12-02'
     method: HEAD
-    uri: https://storagename.blob.preprod.core.windows.net/utcontainerefae18b0/destblobefae18b0
+    uri: https://storagename.blob.core.windows.net/utcontainerefae18b0/destblobefae18b0
   response:
     body:
       string: ''
@@ -229,7 +229,7 @@ interactions:
       x-ms-copy-progress:
       - 8192/8192
       x-ms-copy-source:
-      - https://f67xscnapby3pev24a.blob.preprod.core.windows.net/utcontainerefae18b0/srcblobefae18b0?se=2022-08-26T21%3A45%3A09Z&sp=r&sv=2021-12-02&sr=b&sig=GyRhgVPTFMenNxQV1Wln7MtNEkKJuWl2VV6AiQANYpg%3D
+      - https://f67xscnapby3pev24a.blob.core.windows.net/utcontainerefae18b0/srcblobefae18b0?se=2022-08-26T21%3A45%3A09Z&sp=r&sv=2021-12-02&sr=b&sig=GyRhgVPTFMenNxQV1Wln7MtNEkKJuWl2VV6AiQANYpg%3D
       x-ms-copy-status:
       - success
       x-ms-creation-time:
