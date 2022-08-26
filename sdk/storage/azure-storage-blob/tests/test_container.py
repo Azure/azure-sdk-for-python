@@ -1488,7 +1488,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container = self._create_container(bsc)
+        container = self._create_container(bsc, 'testfind')
 
         data = b'hello world'
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -1501,7 +1501,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob4').upload_blob(data, tags=other_tags)
 
         if self.is_live:
-            sleep(15)
+            sleep(10)
 
         # Act
         blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
@@ -1527,14 +1527,14 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         data = b'hello world'
-        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+        tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "thirdtag"}
+        filter_expression = "tag1='tagone' and tag2='tagtwo'"
 
         container.get_blob_client('blob1').upload_blob(data, tags=tags)
         container.get_blob_client('blob2').upload_blob(data, tags=tags)
 
         if self.is_live:
-            sleep(15)
+            sleep(10)
 
         # Act
         sas_token = self.generate_sas(

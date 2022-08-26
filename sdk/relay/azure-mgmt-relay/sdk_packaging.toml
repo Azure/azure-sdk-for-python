@@ -5,3 +5,4 @@ package_pprint_name = "Relay"
 package_doc_id = "relay"
 is_stable = false
 is_arm = true
+sample_link = "relay"
