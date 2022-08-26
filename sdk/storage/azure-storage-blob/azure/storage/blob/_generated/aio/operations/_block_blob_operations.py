@@ -105,8 +105,8 @@ class BlockBlobOperations:
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -324,8 +324,8 @@ class BlockBlobOperations:
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -863,8 +863,8 @@ class BlockBlobOperations:
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default

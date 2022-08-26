@@ -28,6 +28,7 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
     PREMIUM = "Premium"
+    COLD = "Cold"
 
 
 class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -47,6 +48,7 @@ class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HOT = "Hot"
     COOL = "Cool"
     ARCHIVE = "Archive"
+    COLD = "Cold"
 
 
 class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -66,6 +68,7 @@ class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HOT = "Hot"
     COOL = "Cool"
     ARCHIVE = "Archive"
+    COLD = "Cold"
 
 
 class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

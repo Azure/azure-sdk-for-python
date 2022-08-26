@@ -71,7 +71,7 @@ def build_upload_request(
 
     blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -205,7 +205,7 @@ def build_put_blob_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -330,7 +330,7 @@ def build_stage_block_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -406,7 +406,7 @@ def build_stage_block_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -507,7 +507,7 @@ def build_commit_block_list_request(
 
     comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -613,7 +613,7 @@ def build_get_block_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -713,8 +713,8 @@ class BlockBlobOperations:
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -932,8 +932,8 @@ class BlockBlobOperations:
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -1471,8 +1471,8 @@ class BlockBlobOperations:
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", and "Archive".
-         Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
+         "Cold". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
