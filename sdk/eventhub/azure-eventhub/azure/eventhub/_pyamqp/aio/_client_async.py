@@ -4,9 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-# TODO: check this
-# pylint: disable=super-init-not-called,too-many-lines
-
 import asyncio
 import collections.abc
 import logging
