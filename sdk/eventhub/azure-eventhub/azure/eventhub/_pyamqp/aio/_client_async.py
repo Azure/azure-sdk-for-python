@@ -698,9 +698,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :param message: Received message.
         :type message: ~uamqp.message.Message
         """
-        if self._message_received_callback:
-            await self._message_received_callback(message)
-        if not self._streaming_receive:
+        if self.message_received_callback:
+            await self.message_received_callback(message)
+        if not self.streaming_receive:
             self._received_messages.put((frame, message))
         # TODO: do we need settled property for a message?
         # elif not message.settled:
@@ -708,7 +708,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         #    _logger.info("Message was not settled.")
 
     async def _receive_message_batch_impl_async(self, max_batch_size=None, on_message_received=None, timeout=0):
-        self._message_received_callback = on_message_received
+        self.message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout_time = time.time() + timeout if timeout else 0
         receiving = True

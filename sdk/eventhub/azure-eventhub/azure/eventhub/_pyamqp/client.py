@@ -719,9 +719,9 @@ class ReceiveClient(AMQPClient):
 
     def __init__(self, hostname, source, auth=None, **kwargs):
         self.source = source
-        self._streaming_receive = kwargs.pop("streaming_receive", False)  # TODO: whether public?
+        self.streaming_receive = kwargs.pop("streaming_receive", False) 
         self._received_messages = queue.Queue()
-        self._message_received_callback = kwargs.pop("message_received_callback", None)  # TODO: whether public?
+        self.message_received_callback = kwargs.pop("message_received_callback", None) 
 
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
@@ -791,13 +791,13 @@ class ReceiveClient(AMQPClient):
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
-        if self._message_received_callback:
-            self._message_received_callback(message)
-        if not self._streaming_receive:
+        if self.message_received_callback:
+            self.message_received_callback(message)
+        if not self.streaming_receive:
             self._received_messages.put((frame, message))
 
     def _receive_message_batch_impl(self, max_batch_size=None, on_message_received=None, timeout=0):
-        self._message_received_callback = on_message_received
+        self.message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
         receiving = True
