@@ -426,7 +426,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         states.
 
         :rtype: bool
-        :raises: ~uamqp.errors.MessageHandlerError if the MessageReceiver
+        :raises: ~pyamqp.error.InternalError if the MessageReceiver
          goes into an error state.
         """
         # pylint: disable=protected-access
@@ -441,6 +441,14 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
             await self._link.attach()
             return False
         if self._link.get_state() != LinkState.ATTACHED:  # ATTACHED
+            if self._link.get_state().value == 6:
+                raise ErrorCondition.InternalError(
+                    "The receiver link is in an error state. " 
+                    "Please confirm credentials and access permissions."
+                    "\nSee debug trace for more details."
+                )
+                # TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
+                # Fix docstring raises needed too
             return False
         return True
 
@@ -635,7 +643,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         states.
 
         :rtype: bool
-        :raises: ~uamqp.errors.MessageHandlerError if the MessageReceiver
+        :raises: ~pyamqp.error.InternalError if the MessageReceiver
          goes into an error state.
         """
         # pylint: disable=protected-access
@@ -653,7 +661,15 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             )
             await self._link.attach()
             return False
-        if self._link.get_state() != LinkState.ATTACHED:  # ATTACHED
+        if self._link.get_state().value != 3:  # ATTACHED
+            if self._link.get_state().value == 6:
+                raise ErrorCondition.InternalError(
+                    "The receiver link is in an error state. " 
+                    "Please confirm credentials and access permissions."
+                    "\nSee debug trace for more details."
+                )
+                # TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
+                # Fix docstring raises needed too
             return False
         return True
 

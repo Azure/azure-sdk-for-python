@@ -7,6 +7,7 @@
 # pylint: disable=too-many-lines
 
 import logging
+from msilib.schema import Error
 import time
 import uuid
 import certifi
@@ -500,8 +501,7 @@ class SendClient(AMQPClient):
         states.
 
         :rtype: bool
-# TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
-        :raises: ~uamqp.errors.MessageHandlerError if the MessageReceiver
+        :raises: ~pyamqp.error.InternalError if the MessageReceiver
          goes into an error state.
         """
         # pylint: disable=protected-access
@@ -516,6 +516,14 @@ class SendClient(AMQPClient):
             self._link.attach()
             return False
         if self._link.get_state().value != 3:  # ATTACHED
+            if self._link.get_state().value == 6:
+                raise ErrorCondition.InternalError(
+                    "The receiver link is in an error state. " 
+                    "Please confirm credentials and access permissions."
+                    "\nSee debug trace for more details."
+                )
+                # TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
+                # Fix docstring raises needed too
             return False
         return True
 
@@ -728,8 +736,7 @@ class ReceiveClient(AMQPClient):
         states.
 
         :rtype: bool
-        # TODO: uamqp error handling error here - do we want to raise anything or should this be something else 
-        :raises: ~uamqp.errors.MessageHandlerError if the MessageReceiver
+        :raises: ~pyamqp.error.InternalError if the MessageReceiver
          goes into an error state.
         """
         # pylint: disable=protected-access
@@ -748,6 +755,14 @@ class ReceiveClient(AMQPClient):
             self._link.attach()
             return False
         if self._link.get_state().value != 3:  # ATTACHED
+            if self._link.get_state().value == 6:
+                raise ErrorCondition.InternalError(
+                    "The receiver link is in an error state. " 
+                    "Please confirm credentials and access permissions."
+                    "\nSee debug trace for more details."
+                )
+                # TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
+                # Fix docstring raises needed too
             return False
         return True
 
