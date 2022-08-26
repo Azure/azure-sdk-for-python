@@ -49,7 +49,7 @@ class PrivateEndpointConnectionProxiesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~deviceupdatemgmtclient.aio.DeviceUpdateMgmtClient`'s
+        :class:`~azure.mgmt.deviceupdate.aio.DeviceUpdateMgmtClient`'s
         :attr:`private_endpoint_connection_proxies` attribute.
     """
 
@@ -77,7 +77,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :return: An iterator like instance of either PrivateEndpointConnectionProxy or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -164,7 +164,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
          connection proxy. Required.
         :type private_endpoint_connection_proxy:
-         ~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy
+         ~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -227,7 +227,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
          connection proxy. Is either a model type or a IO type. Required.
         :type private_endpoint_connection_proxy:
-         ~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy or IO
+         ~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -309,7 +309,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :type private_endpoint_connection_proxy_id: str
         :param private_endpoint_update: The parameters for updating a private endpoint connection
          proxy. Required.
-        :type private_endpoint_update: ~deviceupdatemgmtclient.models.PrivateEndpointUpdate
+        :type private_endpoint_update: ~azure.mgmt.deviceupdate.models.PrivateEndpointUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -373,7 +373,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :type private_endpoint_connection_proxy_id: str
         :param private_endpoint_update: The parameters for updating a private endpoint connection
          proxy. Is either a model type or a IO type. Required.
-        :type private_endpoint_update: ~deviceupdatemgmtclient.models.PrivateEndpointUpdate or IO
+        :type private_endpoint_update: ~azure.mgmt.deviceupdate.models.PrivateEndpointUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -448,7 +448,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :type private_endpoint_connection_proxy_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnectionProxy or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy
+        :rtype: ~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -579,7 +579,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
          connection proxy. Required.
         :type private_endpoint_connection_proxy:
-         ~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy
+         ~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -594,7 +594,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnectionProxy or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -636,7 +636,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnectionProxy or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -662,7 +662,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
          connection proxy. Is either a model type or a IO type. Required.
         :type private_endpoint_connection_proxy:
-         ~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy or IO
+         ~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -677,7 +677,7 @@ class PrivateEndpointConnectionProxiesOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnectionProxy or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~deviceupdatemgmtclient.models.PrivateEndpointConnectionProxy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceupdate.models.PrivateEndpointConnectionProxy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
