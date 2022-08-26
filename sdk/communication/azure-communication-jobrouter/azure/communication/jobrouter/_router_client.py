@@ -66,10 +66,10 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     def __init__(
             self,
-            endpoint,  # type: str
-            credential,  # type: CommunicationTokenCredential
-            **kwargs  # type: Any
-    ):
+            endpoint: str,
+            credential: CommunicationTokenCredential,
+            **kwargs: Any
+    ) -> None:
         # type: (...) -> None
         if not credential:
             raise ValueError("credential can not be None")
@@ -223,7 +223,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             worker_id: str,
             router_worker: RouterWorker = RouterWorker(),
             total_capacity: int = None,
-            **kwargs  # type: Any
+            **kwargs: Any
     ) -> RouterWorker:
         """ Create a new worker.
 
@@ -445,10 +445,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def get_worker(
             self,
-            worker_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> RouterWorker
+            worker_id: str,
+            **kwargs: Any
+    ) -> RouterWorker:
         """Retrieves an existing worker by Id.
 
         :param str worker_id: Id of the worker.
@@ -480,9 +479,8 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def list_workers(
             self,
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ItemPaged[RouterWorkerItem]
+            **kwargs: Any
+    ) -> ItemPaged[RouterWorkerItem]:
         """Retrieves existing workers.
 
         :keyword status: If specified, select workers by worker status. Default value is "all".
@@ -550,10 +548,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def delete_worker(
             self,
-            worker_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            worker_id: str,
+            **kwargs: Any
+    ) -> None:
         """Delete a worker by Id.
 
         :param str worker_id: Id of the worker to delete.
@@ -975,10 +972,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def get_job(
             self,
-            job_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> RouterJob
+            job_id: str,
+            **kwargs: Any
+    ) -> RouterJob:
         """Retrieves an existing worker by Id.
 
         :param str job_id: Id of the job.
@@ -1010,9 +1006,8 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def list_jobs(
             self,
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ItemPaged[RouterJobItem]
+            **kwargs: Any
+    ) -> ItemPaged[RouterJobItem]:
         """Retrieves list of jobs based on filter parameters.
 
         :keyword status: If specified, filter jobs by status. Default value is "all".
@@ -1078,10 +1073,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def delete_job(
             self,
-            job_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            job_id: str,
+            **kwargs: Any
+    ) -> None:
         """Delete a job by Id.
 
         :param str job_id: Id of the job to delete.
@@ -1110,10 +1104,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def get_queue_position(
             self,
-            job_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobPositionDetails
+            job_id: str,
+            **kwargs: Any
+    ) -> JobPositionDetails:
         """Gets a job's position details.
 
         :param str job_id: Id of the job.
@@ -1142,11 +1135,10 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def close_job(
             self,
-            job_id,  # type: str
-            assignment_id,  # type: str
-            **kwargs,  # type: Any
-    ):
-        #  type: (...) -> CloseJobResult
+            job_id: str,
+            assignment_id: str,
+            **kwargs: Any
+    ) -> CloseJobResult:
         """Closes a completed job.
 
         :param str job_id: Id of the job.
@@ -1207,11 +1199,10 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def complete_job(
             self,
-            job_id,  # type: str
-            assignment_id,  # type: str
-            **kwargs,  # type: Any
-    ):
-        #  type: (...) -> CompleteJobResult
+            job_id: str,
+            assignment_id: str,
+            **kwargs: Any
+    ) -> CompleteJobResult:
         """Completes an assigned job.
 
         :param str job_id: Id of the job.
@@ -1259,10 +1250,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def cancel_job(
             self,
-            job_id,  # type: str
-            **kwargs,  # type: Any
-    ):
-        #  type: (...) -> CancelJobResult
+            job_id: str,
+            **kwargs: Any
+    ) -> CancelJobResult:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param str job_id: Id of the job.
@@ -1312,10 +1302,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def reclassify_job(
             self,
-            job_id,  # type: str
-            **kwargs,  # type: Any
-    ):
-        #  type: (...) -> ReclassifyJobResult
+            job_id: str,
+            **kwargs: Any
+    ) -> ReclassifyJobResult:
         """Reclassify a job.
 
         :param str job_id: Id of the job.
@@ -1350,11 +1339,10 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def accept_job_offer(
             self,
-            worker_id,  # type: str
-            offer_id,  # type: str
-            **kwargs,  # type: Any
-    ):
-        #  type: (...) -> AcceptJobOfferResult
+            worker_id: str,
+            offer_id: str,
+            **kwargs: Any
+    ) -> AcceptJobOfferResult:
         """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 
@@ -1391,11 +1379,10 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def decline_job_offer(
             self,
-            worker_id,  # type: str
-            offer_id,  # type: str
-            **kwargs,  # type: Any
-    ):
-        #  type: (...) -> DeclineJobOfferResult
+            worker_id: str,
+            offer_id: str,
+            **kwargs: Any
+    ) -> DeclineJobOfferResult:
         """Declines an offer to work on a job.
 
         :param worker_id: Id of the worker.
@@ -1432,15 +1419,12 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     # endregion Offer
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> RouterClient
+    def __enter__(self) -> "RouterClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

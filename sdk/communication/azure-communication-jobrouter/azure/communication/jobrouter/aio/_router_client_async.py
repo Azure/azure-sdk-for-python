@@ -5,7 +5,15 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports
-from typing import Any
+from datetime import datetime
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Union,
+    overload
+)
 from urllib.parse import urlparse
 
 from azure.core.async_paging import AsyncItemPaged
@@ -23,6 +31,8 @@ from .._generated.models import (
     CancelJobRequest,
     CompleteJobRequest,
     CloseJobRequest,
+    WorkerSelector,
+    ChannelConfiguration
 )
 from .._models import (
     RouterWorker,
@@ -34,6 +44,7 @@ from .._models import (
     CancelJobResult,
     CompleteJobResult,
     CloseJobResult,
+    QueueAssignment,
 )
 from .._shared.user_credential_async import CommunicationTokenCredential
 from .._shared.utils import parse_connection_str, get_authentication_policy
@@ -148,14 +159,76 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     # region WorkerAio
 
+    @overload
+    def create_worker(
+            self,
+            worker_id: str,
+            router_worker: RouterWorker,
+            **kwargs: Any
+    ) -> RouterWorker:
+        """ Create a new worker.
+
+        :param str worker_id: Id of the worker.
+
+        :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_worker: ~azure.communication.jobrouter.RouterWorker
+
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+    @overload
+    def create_worker(
+            self,
+            worker_id: str,
+            total_capacity: int,
+            *,
+            queue_assignments: Optional[Dict[str, QueueAssignment]],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            tags: Optional[dict[str, Union[int, float, str, bool]]],
+            channel_configurations: Optional[Dict[str, ChannelConfiguration]],
+            available_for_offers: Optional[bool],
+            **kwargs: Any
+    ) -> RouterWorker:
+        """ Create a new worker.
+
+        :param str worker_id: Id of the worker.
+
+        :param int total_capacity: The total capacity score this worker has to manage multiple concurrent
+            jobs.
+
+        :keyword queue_assignments: The queue(s) that this worker can receive work from.
+        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+            engines to make decisions.
+        :paramtype labels: Optional[dict[str, Union[int, float, str, bool]]]
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :paramtype tags: Optional[dict[str, Union[int, float, str, bool]]]
+
+        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
+            capacity of the worker.
+        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
+
+        :keyword available_for_offers: A flag indicating whether the worker is open to receive offers or not.
+        :paramtype available_for_offers: Optional[bool]
+
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
     @distributed_trace_async
     async def create_worker(
             self,
             worker_id: str,
-            total_capacity: int,
+            router_worker: RouterWorker = RouterWorker(),
+            total_capacity: int = None,
             **kwargs: Any
     ) -> RouterWorker:
-        #  type: (...) -> RouterWorker
         """Create a new worker.
 
         :param str worker_id: Id of the worker.
@@ -196,16 +269,17 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
+        total_capacity = total_capacity if total_capacity is not None else router_worker.total_capacity
         if not total_capacity:
             raise ValueError("total_capacity cannot be None")
 
         router_worker = RouterWorker(
-            queue_assignments = kwargs.pop('queue_assignments', None),
+            queue_assignments = kwargs.pop('queue_assignments', router_worker.queue_assignments),
             total_capacity = total_capacity,
-            labels = kwargs.pop('labels', None),
-            tags = kwargs.pop('tags', None),
-            channel_configurations = kwargs.pop('channel_configurations', None),
-            available_for_offers = kwargs.pop('available_for_offers', None)
+            labels = kwargs.pop('labels', router_worker.labels),
+            tags = kwargs.pop('tags', router_worker.tags),
+            channel_configurations = kwargs.pop('channel_configurations', router_worker.channel_configurations),
+            available_for_offers = kwargs.pop('available_for_offers', router_worker.available_for_offers)
         )
 
         return await self._client.job_router.upsert_worker(
@@ -217,16 +291,83 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             **kwargs
         )
 
+    @overload
+    def update_worker(
+            self,
+            worker_id: str,
+            router_worker: RouterWorker,
+            **kwargs: Any
+    ) -> RouterWorker:
+        """ Update a router worker.
+
+        :param str worker_id: Id of the worker.
+
+        :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_worker: ~azure.communication.jobrouter.RouterWorker
+
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+    @overload
+    def update_worker(
+            self,
+            worker_id: str,
+            *,
+            queue_assignments: Optional[Dict[str, QueueAssignment]],
+            total_capacity: Optional[int],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            tags: Optional[dict[str, Union[int, float, str, bool]]],
+            channel_configurations: Optional[Dict[str, ChannelConfiguration]],
+            available_for_offers: Optional[bool],
+            **kwargs: Any
+    ) -> RouterWorker:
+        """ Update a router worker.
+
+        :param str worker_id: Id of the worker.
+
+        :keyword queue_assignments: The queue(s) that this worker can receive work from.
+        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+
+        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
+         jobs.
+        :paramtype total_capacity: Optional[int]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
+         workers capacity.
+        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
+
+        :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
+        :paramtype available_for_offers: Optional[bool]
+
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
     @distributed_trace_async
     async def update_worker(
             self,
             worker_id: str,
+            router_worker: RouterWorker = RouterWorker(),
             **kwargs: Any
     ) -> RouterWorker:
-        #  type: (...) -> RouterWorker
         """Update a router worker.
 
         :param str worker_id: Id of the worker.
+
+        :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
         :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
@@ -287,51 +428,13 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
-        router_worker = kwargs.pop("router_worker", None)
-
-        # pylint:disable=protected-access
-        queue_assignments = _get_value(
-            kwargs.pop('queue_assignments', None),
-            getattr(router_worker, 'queue_assignments', None)
-        )
-
-        # pylint:disable=protected-access
-        total_capacity = _get_value(
-            kwargs.pop('total_capacity', None),
-            getattr(router_worker, 'total_capacity', None)
-        )
-
-        # pylint:disable=protected-access
-        labels = _get_value(
-            kwargs.pop('labels', None),
-            getattr(router_worker, 'labels', None)
-        )
-
-        # pylint:disable=protected-access
-        tags = _get_value(
-            kwargs.pop('tags', None),
-            getattr(router_worker, 'tags', None)
-        )
-
-        # pylint:disable=protected-access
-        channel_configurations = _get_value(
-            kwargs.pop('channel_configurations', None),
-            getattr(router_worker, 'channel_configurations', None)
-        )
-
-        # pylint:disable=protected-access
-        available_for_offers = _get_value(
-            kwargs.pop('available_for_offers', None),
-            getattr(router_worker, 'available_for_offers', None)
-        )
-
         patch = RouterWorker(
-            queue_assignments = queue_assignments,
-            total_capacity = total_capacity,
-            labels = labels,
-            tags = tags,
-            channel_configurations = channel_configurations,
-            available_for_offers = available_for_offers
+            queue_assignments = kwargs.pop('queue_assignments', router_worker.queue_assignments),
+            total_capacity = kwargs.pop('total_capacity', router_worker.total_capacity),
+            labels = kwargs.pop('labels', router_worker.labels),
+            tags = kwargs.pop('tags', router_worker.tags),
+            channel_configurations = kwargs.pop('channel_configurations', router_worker.channel_configurations),
+            available_for_offers = kwargs.pop('available_for_offers', router_worker.available_for_offers)
         )
 
         return await self._client.job_router.upsert_worker(
@@ -451,10 +554,9 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace_async
     async def delete_worker(
             self,
-            worker_id,  # type: str
-            **kwargs  # type: Any
+            worker_id: str,
+            **kwargs: Any
     ) -> None:
-        # type: (...) -> None
         """Delete a worker by Id.
 
         :param str worker_id: Id of the worker to delete.
@@ -484,19 +586,97 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     # region JobAio
 
+    @overload
+    def create_job(
+            self,
+            job_id: str,
+            router_job: RouterJob,
+            **kwargs: Any
+    ) -> RouterJob:
+        """ Create a job.
+
+        :param str job_id: Id of the job.
+
+        :param router_job: An instance of RouterJob. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_job: ~azure.communication.jobrouter.RouterJob
+
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+    @overload
+    def create_job(
+            self,
+            job_id: str,
+            channel_id: str = None,
+            *,
+            channel_reference: Optional[str],
+            classification_policy_id: Optional[str],
+            queue_id: Optional[str],
+            priority: Optional[int],
+            requested_worker_selectors: Optional[List[WorkerSelector]],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool]]],
+            notes: Optional[Dict[datetime, str]],
+            **kwargs: Any
+    ) -> RouterJob:
+        """ Create a job.
+
+        :param str job_id: Id of the job.
+
+        :param str channel_id: The channel identifier. eg. voice, chat, etc.
+
+        :keyword channel_reference: Reference to an external parent context, eg. call ID.
+        :paramtype channel_reference: Optional[str]
+
+        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
+         job.
+        :paramtype classification_policy_id: Optional[str]
+
+        :keyword queue_id: The Id of the Queue that this job is queued to.
+        :paramtype queue_id: Optional[str]
+
+        :keyword priority: The priority of this job.
+        :paramtype priority: Optional[int]
+
+        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
+         a worker must satisfy in order to process this job.
+        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword notes: Notes attached to a job, sorted by timestamp.
+        :paramtype notes: Optional[Dict[~datetime.datetime, str]]
+
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
     @distributed_trace_async
     async def create_job(
             self,
             job_id: str,
-            channel_id: str,
+            channel_id: str = None,
+            router_job: RouterJob = RouterJob(),
             **kwargs: Any
     ) -> RouterJob:
-        #  type: (...) -> RouterJob
         """Create a job.
 
         :param str job_id: Id of the job.
 
         :param str channel_id: The channel identifier. eg. voice, chat, etc.
+
+        :param router_job: An instance of RouterJob. This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_job: ~azure.communication.jobrouter.RouterJob
 
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: Optional[str]
@@ -542,19 +722,21 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
+        channel_id = channel_id if channel_id is not None else router_job.channel_id
         if not channel_id:
             raise ValueError("channel_id cannot be None")
 
         router_job = RouterJob(
-            channel_reference = kwargs.pop('channel_reference', None),
+            channel_reference = kwargs.pop('channel_reference', router_job.channel_reference),
             channel_id = channel_id,
-            classification_policy_id = kwargs.pop('classification_policy_id', None),
-            queue_id = kwargs.pop('queue_id', None),
-            priority = kwargs.pop('priority', None),
-            requested_worker_selectors = kwargs.pop('requested_worker_selectors', None),
-            labels = kwargs.pop('labels', None),
-            tags = kwargs.pop('tags', None),
-            notes = kwargs.pop('notes', None)
+            classification_policy_id = kwargs.pop('classification_policy_id', router_job.classification_policy_id),
+            queue_id = kwargs.pop('queue_id', router_job.queue_id),
+            priority = kwargs.pop('priority', router_job.priority),
+            requested_worker_selectors = kwargs.pop('requested_worker_selectors',
+                                                    router_job.requested_worker_selectors),
+            labels = kwargs.pop('labels', router_job.labels),
+            tags = kwargs.pop('tags', router_job.tags),
+            notes = kwargs.pop('notes', router_job.notes)
         )
 
         return await self._client.job_router.upsert_job(
@@ -566,20 +748,99 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             **kwargs
         )
 
+    @overload
+    def update_job(
+            self,
+            job_id: str,
+            router_job: RouterJob,
+            **kwargs: Any
+    ) -> RouterJob:
+        """ Update a job.
+
+        :param str job_id: Id of the job.
+
+        :param router_job: An instance of RouterJob.  This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_job: ~azure.communication.jobrouter.RouterJob
+
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+    @overload
+    def update_job(
+            self,
+            job_id: str,
+            *,
+            channel_reference: Optional[str],
+            channel_id: Optional[str],
+            classification_policy_id: Optional[str],
+            queue_id: Optional[str],
+            priority: Optional[int],
+            disposition_code: Optional[str],
+            requested_worker_selectors: Optional[List[WorkerSelector]],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool]]],
+            notes: Optional[Dict[datetime, str]],
+            **kwargs: Any
+    ) -> RouterJob:
+        """ Update a job.
+
+        :param str job_id: Id of the job.
+
+        :keyword channel_reference: Reference to an external parent context, eg. call ID.
+        :paramtype channel_reference: Optional[str]
+
+        :keyword channel_id: The channel identifier. eg. voice, chat, etc.
+        :paramtype channel_id: Optional[str]
+
+        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
+         job.
+        :paramtype classification_policy_id: Optional[str]
+
+        :keyword queue_id: The Id of the Queue that this job is queued to.
+        :paramtype queue_id: Optional[str]
+
+        :keyword priority: The priority of this job.
+        :paramtype priority: Optional[int]
+
+        :keyword disposition_code: Reason code for cancelled or closed jobs.
+        :paramtype disposition_code: Optional[str]
+
+        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
+         a worker must satisfy in order to process this job.
+        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword notes: Notes attached to a job, sorted by timestamp.
+        :paramtype notes: Optional[Dict[~datetime.datetime, str]]
+
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
     @distributed_trace_async
     async def update_job(
             self,
             job_id: str,
+            router_job: RouterJob = RouterJob(),
             **kwargs: Any
     ) -> RouterJob:
-        #  type: (...) -> RouterJob
         """Update a job.
 
         :param str job_id: Id of the job.
 
-        :keyword router_job: An instance of RouterJob. Properties defined in
-          class instance will not be considered if they are also specified in keyword arguments.
-        :paramtype router_job: Optional[~azure.communication.jobrouter.RouterJob]
+        :param router_job: An instance of RouterJob.  This is a positional-only parameter.
+          Please provide either this or individual keyword parameters.
+        :type router_job: ~azure.communication.jobrouter.RouterJob
 
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: Optional[str]
@@ -753,7 +1014,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def list_jobs(
             self,
-            **kwargs  # type: Any
+            **kwargs  : Any
     ) -> AsyncItemPaged[RouterJobItem]:
         #  type: (...) -> AsyncItemPaged[RouterJobItem]
         """Retrieves list of jobs based on filter parameters.
@@ -824,7 +1085,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             job_id: str,
             **kwargs: Any
     ) -> None:
-        # type: (...) -> None
         """Delete a job by Id.
 
         :param str job_id: Id of the job to delete.

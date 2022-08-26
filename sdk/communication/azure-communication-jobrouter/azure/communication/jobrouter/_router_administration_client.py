@@ -71,9 +71,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
     def __init__(
             self,
-            endpoint,  # type: str
-            credential,  # type: CommunicationTokenCredential
-            **kwargs  # type: Any
+            endpoint: str,
+            credential: CommunicationTokenCredential,
+            **kwargs: Any
     ) -> "None":
         # type: (...) -> None
         if not credential:
@@ -100,8 +100,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @classmethod
     def from_connection_string(
             cls,
-            conn_str,  # type: str
-            **kwargs  # type: Any
+            conn_str: str,
+            **kwargs: Any
     ) -> "RouterAdministrationClient":
         # type: (...) -> RouterAdministrationClient
         """Create RouterClient from a Connection String.
@@ -320,8 +320,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def get_exception_policy(
             self,
-            exception_policy_id,  # type: str
-            **kwargs  # type: Any
+            exception_policy_id: str,
+            **kwargs: Any
     ):
         #  type: (...) -> ExceptionPolicy
         """Retrieves an existing distribution policy by Id.
@@ -352,9 +352,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def list_exception_policies(
             self,
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ItemPaged[ExceptionPolicyItem]
+            **kwargs: Any
+    ) -> ItemPaged[ExceptionPolicyItem]:
         """Retrieves existing exception policies.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -387,10 +386,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def delete_exception_policy(
             self,
-            exception_policy_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            exception_policy_id: str,
+            **kwargs: Any
+    ) -> None:
         """Delete an exception policy by Id.
 
         :param str exception_policy_id: Id of the policy to delete.
@@ -583,7 +581,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             self,
             distribution_policy_id: str,
             distribution_policy: DistributionPolicy = DistributionPolicy(),
-            **kwargs  # type: Any
+            **kwargs: Any
     ) -> DistributionPolicy:
         """ Update a distribution policy.
 
@@ -633,10 +631,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def get_distribution_policy(
             self,
-            distribution_policy_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> DistributionPolicy
+            distribution_policy_id: str,
+            **kwargs: Any
+    ) -> DistributionPolicy:
         """Retrieves an existing distribution policy by Id.
 
         :param str distribution_policy_id: Id of the policy.
@@ -665,9 +662,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def list_distribution_policies(
             self,
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ItemPaged[DistributionPolicyItem]
+            **kwargs: Any
+    ) -> ItemPaged[DistributionPolicyItem]:
         """Retrieves existing distribution policies.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -700,10 +696,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def delete_distribution_policy(
             self,
-            distribution_policy_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            distribution_policy_id: str,
+            **kwargs: Any
+    ) -> None:
         """Delete a distribution policy by Id.
 
         :param str distribution_policy_id: Id of the policy to delete.
@@ -791,7 +786,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             queue_id: str,
             distribution_policy_id: str = None,
             queue: JobQueue = JobQueue(),
-            **kwargs  # type: Any
+            **kwargs: Any
     ) -> JobQueue:
         """ Create a job queue
 
@@ -905,7 +900,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             self,
             queue_id: str,
             queue: JobQueue = JobQueue(),
-            **kwargs  # type: Any
+            **kwargs: Any
     ) -> JobQueue:
         """ Update a job queue
 
@@ -960,10 +955,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def get_queue(
             self,
-            queue_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobQueue
+            queue_id: str,
+            **kwargs: Any
+    ) -> JobQueue:
         """Retrieves an existing queue by Id.
 
         :param str queue_id: Id of the queue.
@@ -994,9 +988,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def list_queues(
             self,
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ItemPaged[JobQueueItem]
+            **kwargs: Any
+    ) -> ItemPaged[JobQueueItem]:
         """Retrieves existing queues.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -1030,10 +1023,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def delete_queue(
             self,
-            queue_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            queue_id: str,
+            **kwargs: Any
+    ) -> None:
         """Deletes a queue by Id.
 
         :param str queue_id: Id of the queue to delete.
@@ -1093,7 +1085,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             queue_selectors: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]],  # pylint: disable=line-too-long
             prioritization_rule: Optional[Union[StaticRule, ExpressionRule, FunctionRule]],
             worker_selectors: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]],  # pylint: disable=line-too-long
-            **kwargs  # type: Any
+            **kwargs: Any
     ) -> ClassificationPolicy:
         """ Create a classification policy
 
@@ -1328,10 +1320,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def get_classification_policy(
             self,
-            classification_policy_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ClassificationPolicy
+            classification_policy_id: str,
+            **kwargs: Any
+    ) -> ClassificationPolicy:
         """Retrieves an existing classification policy by Id.
 
         :param str classification_policy_id: The id of classification policy.
@@ -1359,9 +1350,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def list_classification_policies(
             self,
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[ClassificationPolicyItem]
+            **kwargs: Any
+    ) -> ItemPaged[ClassificationPolicyItem]:
         """Retrieves existing classification policies.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -1392,10 +1382,9 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def delete_classification_policy(
             self,
-            classification_policy_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            classification_policy_id: str,
+            **kwargs: Any
+    ) -> None:
         """Delete a classification policy by Id.
 
         :param str classification_policy_id: The id of classification policy.
@@ -1422,15 +1411,12 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
     # endregion ClassificationPolicy
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> RouterAdministrationClient
+    def __enter__(self) -> "RouterAdministrationClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member
