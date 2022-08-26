@@ -110,10 +110,8 @@ class TableEntitySamples(object):
                 # [START list_entities]
                 # Query the entities in the table
                 entities = list(table.list_entities())
-                i = 0
                 for i, entity in enumerate(entities):
                     print("Entity #{}: {}".format(entity, i))
-                    i += 1
                 # [END list_entities]
 
             finally:
