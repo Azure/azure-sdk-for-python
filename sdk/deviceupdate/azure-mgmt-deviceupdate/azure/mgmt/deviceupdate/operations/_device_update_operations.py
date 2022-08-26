@@ -10,7 +10,13 @@ from typing import Any, Callable, Dict, Optional, TypeVar
 
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -19,41 +25,41 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_check_name_availability_request(
-    subscription_id: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
-    **kwargs: Any
+    subscription_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    api_version = kwargs.pop("api_version", "2022-04-01-preview")  # type: str
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.DeviceUpdate/checknameavailability")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.DeviceUpdate/checknameavailability"
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
         method="POST",
@@ -65,13 +71,11 @@ def build_check_name_availability_request(
         **kwargs
     )
 
-class DeviceUpdateOperationsMixin(object):
 
+class DeviceUpdateOperationsMixin(object):
     @distributed_trace
     def check_name_availability(
-        self,
-        request: "_models.CheckNameAvailabilityRequest",
-        **kwargs: Any
+        self, request: "_models.CheckNameAvailabilityRequest", **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResponse":
         """Checks ADU resource name availability.
 
@@ -82,31 +86,27 @@ class DeviceUpdateOperationsMixin(object):
         :rtype: ~device_update.models.CheckNameAvailabilityResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.CheckNameAvailabilityResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2022-04-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(request, 'CheckNameAvailabilityRequest')
+        _json = self._serialize.body(request, "CheckNameAvailabilityRequest")
 
         request = build_check_name_availability_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.check_name_availability.metadata['url'],
+            template_url=self.check_name_availability.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -115,12 +115,11 @@ class DeviceUpdateOperationsMixin(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CheckNameAvailabilityResponse', pipeline_response)
+        deserialized = self._deserialize("CheckNameAvailabilityResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DeviceUpdate/checknameavailability"}  # type: ignore
-
+    check_name_availability.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DeviceUpdate/checknameavailability"}  # type: ignore

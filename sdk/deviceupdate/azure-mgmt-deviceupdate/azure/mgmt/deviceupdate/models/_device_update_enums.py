@@ -12,40 +12,40 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
+
 class AuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Authentication Type
-    """
+    """Authentication Type"""
 
     KEY_BASED = "KeyBased"
 
+
 class CheckNameAvailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason why the given name is not available.
-    """
+    """The reason why the given name is not available."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+
 class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class GroupIdProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of private link group ID.
-    """
+    """The provisioning state of private link group ID."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
+
 
 class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
@@ -57,6 +57,7 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
+
 class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system"
@@ -66,35 +67,35 @@ class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
+
 class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
+
 
 class PrivateEndpointConnectionProxyProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
+
 class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
+
 class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state.
-    """
+    """Provisioning state."""
 
     SUCCEEDED = "Succeeded"
     DELETED = "Deleted"
@@ -103,23 +104,23 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCEPTED = "Accepted"
     CREATING = "Creating"
 
+
 class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not public network access is allowed for the account.
-    """
+    """Whether or not public network access is allowed for the account."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class Role(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether the location is primary or failover
-    """
+    """Whether the location is primary or failover"""
 
     PRIMARY = "Primary"
     FAILOVER = "Failover"
 
+
 class SKU(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Device Update Sku
-    """
+    """Device Update Sku"""
 
     FREE = "Free"
     STANDARD = "Standard"
