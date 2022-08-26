@@ -39,13 +39,13 @@ class DeviceUpdateMgmtClientOperationsMixin(MixinABC):
         """Checks ADU resource name availability.
 
         :param request: Check Name Availability Request. Required.
-        :type request: ~deviceupdatemgmtclient.models.CheckNameAvailabilityRequest
+        :type request: ~azure.mgmt.deviceupdate.models.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.CheckNameAvailabilityResponse
+        :rtype: ~azure.mgmt.deviceupdate.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -62,7 +62,7 @@ class DeviceUpdateMgmtClientOperationsMixin(MixinABC):
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.CheckNameAvailabilityResponse
+        :rtype: ~azure.mgmt.deviceupdate.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -73,13 +73,13 @@ class DeviceUpdateMgmtClientOperationsMixin(MixinABC):
         """Checks ADU resource name availability.
 
         :param request: Check Name Availability Request. Is either a model type or a IO type. Required.
-        :type request: ~deviceupdatemgmtclient.models.CheckNameAvailabilityRequest or IO
+        :type request: ~azure.mgmt.deviceupdate.models.CheckNameAvailabilityRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResponse or the result of cls(response)
-        :rtype: ~deviceupdatemgmtclient.models.CheckNameAvailabilityResponse
+        :rtype: ~azure.mgmt.deviceupdate.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
