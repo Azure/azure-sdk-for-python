@@ -801,6 +801,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         The generator will lazily follow the continuation tokens returned by
         the service.
 
+        Note that no additional properties or metadta will be returned when using this API.
+        To see properties of listed blobs, use :func:`list_blobs()`.
+
         :keyword str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
