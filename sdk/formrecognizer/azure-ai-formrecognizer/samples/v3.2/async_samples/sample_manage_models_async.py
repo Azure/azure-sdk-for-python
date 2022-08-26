@@ -40,9 +40,9 @@ async def sample_manage_models_async():
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_model_admin_client:
-        account_info = await document_model_admin_client.get_resource_details()
+        account_details = await document_model_admin_client.get_resource_details()
         print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
-            account_info.document_model_count, account_info.document_model_limit
+            account_details.custom_document_models.count, account_details.custom_document_models.limit
         ))
         # [END get_resource_details_async]
 

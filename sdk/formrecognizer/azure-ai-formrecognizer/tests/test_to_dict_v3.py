@@ -1945,12 +1945,12 @@ class TestToDict(FormRecognizerTest):
 
         assert d == final
 
-    def test_account_info_to_dict(self):
-        model = _models.ResourceDetails(document_model_limit=5000, document_model_count=10)
+    def test_resource_details_to_dict(self):
+        model = _models.ResourceDetails(custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10))
 
         d = model.to_dict()
 
-        final = {"document_model_limit": 5000, "document_model_count": 10}
+        final = {"custom_document_models": {"limit": 5000, "count": 10}}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):
