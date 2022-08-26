@@ -12,6 +12,7 @@ def get_pypi_xmlrpc_client():
 class PyPIClient:
     def __init__(self, host="https://pypi.org"):
         import requests
+
         self._host = host
         self._session = requests.Session()
 
