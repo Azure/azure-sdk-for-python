@@ -46,7 +46,6 @@ from ._models import (
 from ._shared.user_credential import CommunicationTokenCredential
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
-from ._utils import _get_value  # pylint:disable=protected-access
 
 
 _SERIALIZER = Serializer()
@@ -887,77 +886,18 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        # pylint:disable=protected-access
-        channel_reference = _get_value(
-            kwargs.pop('channel_reference', None),
-            router_job.channel_reference
-        )
-
-        # pylint:disable=protected-access
-        channel_id = _get_value(
-            kwargs.pop('channel_id', None),
-            router_job.channel_id
-        )
-
-        # pylint:disable=protected-access
-        classification_policy_id = _get_value(
-            kwargs.pop('classification_policy_id', None),
-            router_job.classification_policy_id
-        )
-
-        # pylint:disable=protected-access
-        queue_id = _get_value(
-            kwargs.pop('queue_id', None),
-            router_job.queue_id
-        )
-
-        # pylint:disable=protected-access
-        priority = _get_value(
-            kwargs.pop('priority', None),
-            router_job.priority
-        )
-
-        # pylint:disable=protected-access
-        disposition_code = _get_value(
-            kwargs.pop('disposition_code', None),
-            router_job.disposition_code
-        )
-
-        # pylint:disable=protected-access
-        requested_worker_selectors = _get_value(
-            kwargs.pop('requested_worker_selectors', None),
-            router_job.requested_worker_selectors
-        )
-
-        # pylint:disable=protected-access
-        labels = _get_value(
-            kwargs.pop('labels', None),
-            router_job.labels
-        )
-
-        # pylint:disable=protected-access
-        tags = _get_value(
-            kwargs.pop('tags', None),
-            router_job.tags
-        )
-
-        # pylint:disable=protected-access
-        notes = _get_value(
-            kwargs.pop('notes', None),
-            router_job.notes
-        )
-
         patch = RouterJob(
-            channel_reference = channel_reference,
-            channel_id = channel_id,
-            classification_policy_id = classification_policy_id,
-            queue_id = queue_id,
-            priority = priority,
-            disposition_code = disposition_code,
-            requested_worker_selectors = requested_worker_selectors,
-            labels = labels,
-            tags = tags,
-            notes = notes
+            channel_reference = kwargs.pop('channel_reference', router_job.channel_reference),
+            channel_id = kwargs.pop('channel_id', router_job.channel_id),
+            classification_policy_id = kwargs.pop('classification_policy_id', router_job.classification_policy_id),
+            queue_id = kwargs.pop('queue_id', router_job.queue_id),
+            priority = kwargs.pop('priority', router_job.priority),
+            disposition_code = kwargs.pop('disposition_code', router_job.disposition_code),
+            requested_worker_selectors = kwargs.pop('requested_worker_selectors',
+                                                    router_job.requested_worker_selectors),
+            labels = kwargs.pop('labels', router_job.labels),
+            tags = kwargs.pop('tags', router_job.tags),
+            notes = kwargs.pop('notes', router_job.notes)
         )
 
         return self._client.job_router.upsert_job(
