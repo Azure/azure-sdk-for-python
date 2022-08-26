@@ -81,12 +81,12 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     def force_flush(
         self,
         timeout_millis: float = 10_000,
-    ) -> None:
+    ) -> bool:
         """
         Ensure that export of any metrics currently received by the exporter
         are completed as soon as possible.
         """
-        # TODO
+        return True
 
     def shutdown(
         self,
