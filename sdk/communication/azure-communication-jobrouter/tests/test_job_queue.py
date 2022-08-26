@@ -70,10 +70,10 @@ class TestJobQueue(RouterTestCase):
 
         distribution_policy_id = self.get_distribution_policy_id()
         distribution_policy = client.create_distribution_policy(
-            distribution_policy_id,
-            10.0,
-            RoundRobinMode(min_concurrent_offers = 1,
-                           max_concurrent_offers = 1),
+            distribution_policy_id = distribution_policy_id,
+            offer_ttl_seconds = 10.0,
+            mode = RoundRobinMode(min_concurrent_offers = 1,
+                                  max_concurrent_offers = 1),
             name = distribution_policy_id,
         )
 
@@ -90,8 +90,8 @@ class TestJobQueue(RouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            dp_identifier,
-            self.get_distribution_policy_id(),
+            queue_id = dp_identifier,
+            distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels,
         )
@@ -115,8 +115,8 @@ class TestJobQueue(RouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            dp_identifier,
-            self.get_distribution_policy_id(),
+            queue_id = dp_identifier,
+            distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels,
         )
@@ -141,8 +141,8 @@ class TestJobQueue(RouterTestCase):
         job_queue.labels = updated_queue_labels
 
         update_job_queue = router_client.update_queue(
-            dp_identifier,
-            job_queue
+            queue_id = dp_identifier,
+            queue = job_queue
         )
 
         assert update_job_queue is not None
@@ -160,8 +160,8 @@ class TestJobQueue(RouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            dp_identifier,
-            self.get_distribution_policy_id(),
+            queue_id = dp_identifier,
+            distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels
         )
@@ -196,8 +196,8 @@ class TestJobQueue(RouterTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         job_queue = router_client.create_queue(
-            dp_identifier,
-            self.get_distribution_policy_id(),
+            queue_id = dp_identifier,
+            distribution_policy_id = self.get_distribution_policy_id(),
             name = dp_identifier,
             labels = queue_labels
         )
@@ -227,8 +227,8 @@ class TestJobQueue(RouterTestCase):
 
         for identifier in dp_identifiers:
             job_queue = router_client.create_queue(
-                identifier,
-                self.get_distribution_policy_id(),
+                queue_id = identifier,
+                distribution_policy_id = self.get_distribution_policy_id(),
                 name = identifier,
                 labels = queue_labels
             )

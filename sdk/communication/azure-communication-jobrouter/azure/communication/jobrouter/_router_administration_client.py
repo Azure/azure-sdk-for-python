@@ -4,13 +4,22 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, overload
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Union,
+    overload
+)
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
 
 from ._generated._serialization import Serializer  # pylint:disable=protected-access
 from ._generated import AzureCommunicationJobRouterService
+# pylint: disable=unused-import,ungrouped-imports
 from ._generated.models import (
     ClassificationPolicy,
     DistributionPolicy,
@@ -32,6 +41,9 @@ from ._generated.models import (
     RuleEngineWorkerSelectorAttachment,
     PassThroughWorkerSelectorAttachment,
     WeightedAllocationWorkerSelectorAttachment,
+    StaticRule,
+    ExpressionRule,
+    FunctionRule,
 )
 from ._models import (
     JobQueue,
@@ -40,18 +52,12 @@ from ._models import (
 from ._shared.user_credential import CommunicationTokenCredential
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
-from ._utils import _get_value # pylint:disable=protected-access
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
-    from azure.core.paging import ItemPaged
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods,too-many-lines,line-too-long
+class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods,too-many-lines
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create, update, list and delete the following entities: classification policy,
@@ -68,7 +74,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             endpoint,  # type: str
             credential,  # type: CommunicationTokenCredential
             **kwargs  # type: Any
-    ):
+    ) -> "None":
         # type: (...) -> None
         if not credential:
             raise ValueError("credential can not be None")
@@ -96,7 +102,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             cls,
             conn_str,  # type: str
             **kwargs  # type: Any
-    ):
+    ) -> "RouterAdministrationClient":
         # type: (...) -> RouterAdministrationClient
         """Create RouterClient from a Connection String.
 
@@ -123,11 +129,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_exception_policy(
             self,
-            exception_policy_id,  # type: str
-            exception_policy,  # type: ExceptionPolicy
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ExceptionPolicy
+            exception_policy_id: str,
+            exception_policy: ExceptionPolicy,
+            **kwargs: Any
+    ) -> ExceptionPolicy:
         """ Create a new exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
@@ -144,13 +149,12 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_exception_policy(
             self,
-            exception_policy_id,  # type: str
-            exception_rules,  # type: Dict[str, ExceptionRule]
+            exception_policy_id: str,
+            exception_rules: Dict[str, ExceptionRule],
             *,
-            name,  # type: Optional[str]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ExceptionPolicy
+            name: Optional[str],
+            **kwargs: Any
+    ) -> ExceptionPolicy:
         """ Create a new exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
@@ -169,10 +173,11 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def create_exception_policy(
             self,
-            *args,  # type: Union[str, Optional[Dict[str, ExceptionRule]], ExceptionPolicy]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ExceptionPolicy
+            exception_policy_id: str,
+            exception_rules: Dict[str, ExceptionRule] = None,
+            exception_policy: ExceptionPolicy = ExceptionPolicy(),
+            **kwargs: Any
+    ) -> ExceptionPolicy:
         """ Create a new exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
@@ -201,25 +206,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Using a RouterAdministrationClient to create an exception policy
         """
-        exception_policy_id = args[0]
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
 
-        exception_rules = None
-        exception_policy = ExceptionPolicy()
-        if len(args) == 3:
-            exception_rules = args[1]
-            exception_policy = args[2]
-        elif len(args) == 2:
-            elem = args[1]
-            if isinstance(elem, ExceptionPolicy):
-                exception_policy = elem
-                exception_rules = exception_policy.exception_rules
-            elif isinstance(elem, dict):
-                exception_rules = elem
-            else:
-                raise ValueError("Unsupported argument type.")
-
+        exception_rules = exception_rules if exception_rules is not None else exception_policy.exception_rules
         if not exception_rules or any(exception_rules) is False:
             raise ValueError("exception_rules cannot be None or empty.")
 
@@ -237,11 +227,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_exception_policy(
             self,
-            exception_policy_id,  # type: str
-            exception_policy,  # type: ExceptionPolicy
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ExceptionPolicy
+            exception_policy_id: str,
+            exception_policy: ExceptionPolicy,
+            **kwargs: Any
+    ) -> ExceptionPolicy:
         """ Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
@@ -258,13 +247,12 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_exception_policy(
             self,
-            exception_policy_id,  # type: str
+            exception_policy_id: str,
             *,
-            exception_rules,  # type: Optional[Dict[str, ExceptionRule]]
-            name,  # type: Optional[str]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ExceptionPolicy
+            exception_rules: Optional[Dict[str, ExceptionRule]],
+            name: Optional[str],
+            **kwargs: Any
+    ) -> ExceptionPolicy:
         """ Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
@@ -283,10 +271,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def update_exception_policy(
             self,
-            *args,  # type: Union[str, ExceptionPolicy]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> ExceptionPolicy
+            exception_policy_id: str,
+            exception_policy: ExceptionPolicy = ExceptionPolicy(),
+            **kwargs: Any
+    ) -> ExceptionPolicy:
         """ Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
@@ -315,13 +303,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Using a RouterAdministrationClient to update an exception policy
         """
-        exception_policy_id = args[0]
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
-
-        exception_policy = ExceptionPolicy()
-        if len(args) == 2:
-            exception_policy = args[1]
 
         patch = ExceptionPolicy(
             name = kwargs.pop('name', exception_policy.name),
@@ -440,11 +423,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_distribution_policy(
             self,
-            distribution_policy_id,  # type: str
-            distribution_policy,  # type: DistributionPolicy
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> DistributionPolicy
+            distribution_policy_id: str,
+            distribution_policy: DistributionPolicy,
+            **kwargs: Any
+    ) -> DistributionPolicy:
         """ Create a new distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
@@ -461,12 +443,13 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_distribution_policy(
             self,
-            distribution_policy_id,  # type: str
-            offer_ttl_seconds,  # type: float
-            mode,  # type: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> DistributionPolicy
+            distribution_policy_id: str,
+            offer_ttl_seconds: float,
+            mode: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode],
+            *,
+            name: Optional[str],
+            **kwargs: Any
+    ) -> DistributionPolicy:
         """ Create a new distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
@@ -477,6 +460,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         :type mode: Union[~azure.communication.jobrouter.BestWorkerMode,
             ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]
 
+        :keyword Optional[str] name: The name of this policy.
+
         :return: DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -485,10 +470,12 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def create_distribution_policy(
             self,
-            *args,  # type: Union[str, float, Union[BestWorkerMode, LongestIdleMode, RoundRobinMode], DistributionPolicy]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> DistributionPolicy
+            distribution_policy_id: str,
+            distribution_policy: DistributionPolicy = DistributionPolicy(),
+            offer_ttl_seconds: float = None,
+            mode: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode] = None,
+            **kwargs: Any
+    ) -> DistributionPolicy:
         """ Create a new distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
@@ -518,28 +505,12 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to create a distribution policy
         """
-        distribution_policy_id = args[0]
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
-        offer_ttl_seconds = None
-        mode = None
-        distribution_policy = DistributionPolicy()
-        if len(args) == 4:
-            offer_ttl_seconds = args[1]
-            mode = args[2]
-            distribution_policy = args[3]
-        elif len(args) == 3:
-            offer_ttl_seconds = args[1]
-            mode = args[2]
-        elif len(args) == 2:
-            elem = args[1]
-            if isinstance(elem, DistributionPolicy):
-                distribution_policy = elem
-                offer_ttl_seconds = distribution_policy.offer_ttl_seconds
-                mode = distribution_policy.mode
-            else:
-                raise ValueError("Unsupported argument type.")
+        offer_ttl_seconds = \
+            offer_ttl_seconds if offer_ttl_seconds is not None else distribution_policy.offer_ttl_seconds
+        mode = mode if mode is not None else distribution_policy.mode
 
         if not offer_ttl_seconds:
             raise ValueError("offer_ttl_seconds cannot be None.")
@@ -562,11 +533,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_distribution_policy(
             self,
-            distribution_policy_id,  # type: str
-            distribution_policy,  # type: DistributionPolicy
-            **kwargs  # type: Any
-    ):
-        #  type: (str, DistributionPolicy, **Any) -> DistributionPolicy
+            distribution_policy_id: str,
+            distribution_policy: DistributionPolicy,
+            **kwargs: Any
+    ) -> DistributionPolicy:
         """ Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
@@ -583,14 +553,13 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_distribution_policy(
             self,
-            distribution_policy_id,  # type: str
+            distribution_policy_id: str,
             *,
-            name,  # type: Optional[str]
-            offer_ttl_seconds,  # type: Optional[float]
-            mode,  # type: Optional[Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> DistributionPolicy
+            name: Optional[str],
+            offer_ttl_seconds: Optional[float],
+            mode: Optional[Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]],
+            **kwargs: Any
+    ) -> DistributionPolicy:
         """ Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
@@ -612,10 +581,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def update_distribution_policy(
             self,
-            *args,  # type: Union[str, DistributionPolicy]
+            distribution_policy_id: str,
+            distribution_policy: DistributionPolicy = DistributionPolicy(),
             **kwargs  # type: Any
-    ):
-        #  type: (...) -> DistributionPolicy
+    ) -> DistributionPolicy:
         """ Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
@@ -646,13 +615,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to update a distribution policy
         """
-        distribution_policy_id = args[0]
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
-
-        distribution_policy = DistributionPolicy()
-        if len(args) == 2:
-            distribution_policy = args[1]
 
         patch = DistributionPolicy(
             name = kwargs.pop("name", distribution_policy.name),
@@ -772,11 +736,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_queue(
             self,
-            queue_id,  # type: str
-            queue,  # type: JobQueue
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobQueue
+            queue_id: str,
+            queue: JobQueue,
+            **kwargs: Any
+    ) -> JobQueue:
         """ Create a job queue
 
         :param str queue_id: Id of the queue.
@@ -793,15 +756,14 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_queue(
             self,
-            queue_id,  # type: str
-            distribution_policy_id,  # type: str
+            queue_id: str,
+            distribution_policy_id: str,
             *,
-            name,  # type: Optional[str]
-            labels,  # type: Optional[Dict[str, Union[int, float, str, bool]]]
-            exception_policy_id,  # type: Optional[str]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobQueue
+            name: Optional[str],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            exception_policy_id: Optional[str],
+            **kwargs: Any
+    ) -> JobQueue:
         """ Create a job queue
 
         :param str queue_id: Id of the queue.
@@ -826,10 +788,11 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def create_queue(
             self,
-            *args,  # type: Union[str, JobQueue]
+            queue_id: str,
+            distribution_policy_id: str = None,
+            queue: JobQueue = JobQueue(),
             **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobQueue
+    ) -> JobQueue:
         """ Create a job queue
 
         :param str queue_id: Id of the queue.
@@ -863,25 +826,11 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to create a queue
         """
-        queue_id = args[0]
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
-        distribution_policy_id = None
-        queue = JobQueue()
-        if len(args) == 3:
-            distribution_policy_id = args[1]
-            queue = args[2]
-        elif len(args) == 2:
-            elem = args[1]
-            if isinstance(elem, str):
-                distribution_policy_id = elem
-            elif isinstance(elem, JobQueue):
-                queue = elem
-                distribution_policy_id = queue.distribution_policy_id
-            else:
-                raise ValueError("Unsupported argument type.")
-
+        distribution_policy_id = \
+            distribution_policy_id if distribution_policy_id is not None else queue.distribution_policy_id
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
@@ -902,11 +851,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_queue(
             self,
-            queue_id,  # type: str
-            queue,  # type: JobQueue
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobQueue
+            queue_id: str,
+            queue: JobQueue,
+            **kwargs: Any
+    ) -> JobQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
@@ -923,15 +871,14 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_queue(
             self,
-            queue_id,  # type: str
+            queue_id: str,
             *,
-            distribution_policy_id,  # type: Optional[str]
-            name,  # type: Optional[str]
-            labels,  # type: Optional[Dict[str, Union[int, float, str, bool]]]
-            exception_policy_id,  # type: Optional[str]
-            **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobQueue
+            distribution_policy_id: Optional[str],
+            name: Optional[str],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            exception_policy_id: Optional[str],
+            **kwargs: Any
+    ) -> JobQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
@@ -956,10 +903,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def update_queue(
             self,
-            *args,  # type: Union[str, JobQueue]
+            queue_id: str,
+            queue: JobQueue = JobQueue(),
             **kwargs  # type: Any
-    ):
-        #  type: (...) -> JobQueue
+    ) -> JobQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
@@ -993,13 +940,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to update a queue
         """
-        queue_id = args[0]
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
-
-        queue = JobQueue()
-        if len(args) == 2:
-            queue = args[1]
 
         patch = JobQueue(
             name = kwargs.pop('name', queue.name),
@@ -1124,11 +1066,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_classification_policy(
             self,
-            classification_policy_id,  # type: str
-            classification_policy,  # type: ClassificationPolicy
-            **kwargs  # type: Any
-    ):
-        # type: (str, ClassificationPolicy, **Any) -> ClassificationPolicy
+            classification_policy_id: str,
+            classification_policy: ClassificationPolicy,
+            **kwargs: Any
+    ) -> ClassificationPolicy:
         """ Create a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
@@ -1145,16 +1086,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def create_classification_policy(
             self,
-            classification_policy_id,  # type: str
+            classification_policy_id: str,
             *,
-            name,  # type: Optional[str]
-            fallback_queue_id,  # type: Optional[str]
-            queue_selectors,  # type: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]]  # pylint: disable=line-too-long
-            prioritization_rule,  # type: Optional[StaticRule, ExpressionRule, FunctionRule]
-            worker_selectors,  # type: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]]  # pylint: disable=line-too-long
+            name: Optional[str],
+            fallback_queue_id: Optional[str],
+            queue_selectors: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]],  # pylint: disable=line-too-long
+            prioritization_rule: Optional[Union[StaticRule, ExpressionRule, FunctionRule]],
+            worker_selectors: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]],  # pylint: disable=line-too-long
             **kwargs  # type: Any
-    ):
-        # type: (str, **Any) -> ClassificationPolicy
+    ) -> ClassificationPolicy:
         """ Create a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
@@ -1166,7 +1106,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
         :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
         :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
@@ -1174,7 +1117,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
         :return: ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -1184,10 +1130,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def create_classification_policy(
             self,
-            *args,  # type: Union[str, ClassificationPolicy]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ClassificationPolicy
+            classification_policy_id: str,
+            classification_policy: ClassificationPolicy = ClassificationPolicy(),
+            **kwargs: Any
+    ) -> ClassificationPolicy:
         """ Create a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
@@ -1203,7 +1149,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
         :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
         :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
@@ -1211,7 +1160,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
         :return: ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -1226,12 +1178,6 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to create a classification policy
         """
-        classification_policy_id = args[0]
-        classification_policy = ClassificationPolicy()
-
-        if len(args) == 2:
-            classification_policy = args[1]
-
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
 
@@ -1251,11 +1197,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_classification_policy(
             self,
-            classification_policy_id,  # type: str
-            classification_policy,  # type: ClassificationPolicy
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ClassificationPolicy
+            classification_policy_id: str,
+            classification_policy: ClassificationPolicy,
+            **kwargs: Any
+    ) -> ClassificationPolicy:
         """ Update a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
@@ -1272,16 +1217,15 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @overload
     def update_classification_policy(
             self,
-            classification_policy_id,  # type: str
+            classification_policy_id: str,
             *,
-            name,  # type: Optional[str]
-            fallback_queue_id,  # type: Optional[str]
-            queue_selectors,  # type: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]]  # pylint: disable=line-too-long
-            prioritization_rule,  # type: Optional[StaticRule, ExpressionRule, FunctionRule]
-            worker_selectors,  # type: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]]  # pylint: disable=line-too-long
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ClassificationPolicy
+            name: Optional[str],
+            fallback_queue_id: Optional[str],
+            queue_selectors: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]],  # pylint: disable=line-too-long
+            prioritization_rule: Optional[Union[StaticRule, ExpressionRule, FunctionRule]],
+            worker_selectors: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]],  # pylint: disable=line-too-long
+            **kwargs: Any
+    ) -> ClassificationPolicy:
         """ Update a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
@@ -1293,7 +1237,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
         :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
         :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
@@ -1301,7 +1248,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
         :return: ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -1311,10 +1261,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
     @distributed_trace
     def update_classification_policy(
             self,
-            *args,  # type: Union[str, ClassificationPolicy]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ClassificationPolicy
+            classification_policy_id: str,
+            classification_policy: ClassificationPolicy = ClassificationPolicy(),
+            **kwargs: Any
+    ) -> ClassificationPolicy:
         """ Update a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
@@ -1330,7 +1280,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
         :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment, ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment, ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment, ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
         :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
@@ -1338,7 +1291,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment, ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment, ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment, ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
         :return: ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -1353,13 +1309,8 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
                 :dedent: 8
                 :caption: Use a RouterAdministrationClient to update a classification policy
         """
-        classification_policy_id = args[0]
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
-
-        classification_policy = ClassificationPolicy()
-        if len(args) == 2:
-            classification_policy = args[1]
 
         patch = ClassificationPolicy(
             name = kwargs.pop("name", classification_policy.name),

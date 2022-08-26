@@ -165,10 +165,10 @@ class TestRouterJob(RouterTestCase):
 
         distribution_policy_id = self.get_distribution_policy_id()
         distribution_policy = client.create_distribution_policy(
-            distribution_policy_id,
-            10.0,
-            RoundRobinMode(min_concurrent_offers = 1,
-                           max_concurrent_offers = 1),
+            distribution_policy_id = distribution_policy_id,
+            offer_ttl_seconds = 10.0,
+            mode = RoundRobinMode(min_concurrent_offers = 1,
+                                  max_concurrent_offers = 1),
             name = distribution_policy_id,
         )
 
@@ -186,8 +186,8 @@ class TestRouterJob(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
         job_queue = client.create_queue(
-            job_queue_id,
-            self.get_distribution_policy_id(),
+            queue_id = job_queue_id,
+            distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
         )
@@ -205,8 +205,8 @@ class TestRouterJob(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_fallback_queue_id()
         job_queue = client.create_queue(
-            job_queue_id,
-            self.get_distribution_policy_id(),
+            queue_id = job_queue_id,
+            distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
         )
@@ -233,7 +233,7 @@ class TestRouterJob(RouterTestCase):
 
         cp_id = self.get_classification_policy_id()
         job_queue = client.create_classification_policy(
-            cp_id,
+            classification_policy_id = cp_id,
             name = cp_id,
             fallback_queue_id = self.get_fallback_queue_id(),
             queue_selectors = cp_queue_selectors,
@@ -273,8 +273,8 @@ class TestRouterJob(RouterTestCase):
 
         router_job = router_client.create_job(
             job_id = job_identifier,
-            channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
             priority = job_priority,
             requested_worker_selectors = job_requested_worker_selectors,
@@ -316,8 +316,8 @@ class TestRouterJob(RouterTestCase):
 
         router_job = router_client.create_job(
             job_id = job_identifier,
-            channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
             priority = job_priority,
             requested_worker_selectors = job_requested_worker_selectors,
@@ -382,8 +382,8 @@ class TestRouterJob(RouterTestCase):
 
         router_job = router_client.create_job(
             job_id = job_identifier,
-            channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
             priority = job_priority,
             requested_worker_selectors = job_requested_worker_selectors,
@@ -443,8 +443,8 @@ class TestRouterJob(RouterTestCase):
 
         router_job = router_client.create_job(
             job_id = job_identifier,
-            channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
             classification_policy_id = self.get_classification_policy_id(),
             requested_worker_selectors = job_requested_worker_selectors,
             labels = job_labels,
@@ -485,8 +485,8 @@ class TestRouterJob(RouterTestCase):
 
         router_job = router_client.create_job(
             job_id = job_identifier,
-            channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
             classification_policy_id = self.get_classification_policy_id(),
             requested_worker_selectors = job_requested_worker_selectors,
             labels = job_labels,
@@ -557,8 +557,8 @@ class TestRouterJob(RouterTestCase):
 
         router_job = router_client.create_job(
             job_id = job_identifier,
-            channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
             classification_policy_id = self.get_classification_policy_id(),
             requested_worker_selectors = job_requested_worker_selectors,
             labels = job_labels,
@@ -617,8 +617,8 @@ class TestRouterJob(RouterTestCase):
 
         router_job = router_client.create_job(
             job_id = job_identifier,
-            channel_reference = job_channel_references[0],
             channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
             queue_id = self.get_job_queue_id(),
             priority = job_priority,
             requested_worker_selectors = job_requested_worker_selectors,
@@ -670,8 +670,8 @@ class TestRouterJob(RouterTestCase):
         for identifier in job_identifiers:
             router_job = router_client.create_job(
                 job_id = identifier,
-                channel_reference = job_channel_references[0],
                 channel_id = job_channel_ids[0],
+                channel_reference = job_channel_references[0],
                 queue_id = self.get_job_queue_id(),
                 priority = job_priority,
                 requested_worker_selectors = job_requested_worker_selectors,

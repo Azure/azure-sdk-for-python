@@ -62,9 +62,9 @@ class TestDistributionPolicy(RouterTestCase):
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                dp_identifier,
-                10.0,
-                mode,
+                distribution_policy_id = dp_identifier,
+                offer_ttl_seconds = 10.0,
+                mode = mode,
                 name = dp_identifier,
             )
 
@@ -90,9 +90,9 @@ class TestDistributionPolicy(RouterTestCase):
         for mode in distribution_modes:
             # Arrange
             distribution_policy_response = router_client.create_distribution_policy(
-                dp_identifier,
-                10.0,
-                mode,
+                distribution_policy_id = dp_identifier,
+                offer_ttl_seconds = 10.0,
+                mode = mode,
                 name = dp_identifier,
             )
 
@@ -114,8 +114,8 @@ class TestDistributionPolicy(RouterTestCase):
             distribution_policy_response.mode = mode
 
             updated_distribution_policy = router_client.update_distribution_policy(
-                dp_identifier,
-                distribution_policy_response
+                distribution_policy_id = dp_identifier,
+                distribution_policy = distribution_policy_response
             )
 
             DistributionPolicyValidator.validate_distribution_policy(
@@ -135,9 +135,9 @@ class TestDistributionPolicy(RouterTestCase):
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                dp_identifier,
-                10.0,
-                mode,
+                distribution_policy_id = dp_identifier,
+                offer_ttl_seconds = 10.0,
+                mode = mode,
                 name = dp_identifier,
             )
 
@@ -171,9 +171,9 @@ class TestDistributionPolicy(RouterTestCase):
 
         for mode in distribution_modes:
             distribution_policy_response = router_client.create_distribution_policy(
-                dp_identifier,
-                10.0,
-                mode,
+                distribution_policy_id = dp_identifier,
+                offer_ttl_seconds = 10.0,
+                mode = mode,
                 name = dp_identifier,
             )
 
@@ -201,9 +201,9 @@ class TestDistributionPolicy(RouterTestCase):
 
         for identifier in dp_identifiers:
             distribution_policy_response = router_client.create_distribution_policy(
-                identifier,
-                10.0,
-                distribution_modes[0],
+                distribution_policy_id = identifier,
+                offer_ttl_seconds = 10.0,
+                mode = distribution_modes[0],
                 name = identifier,
             )
 

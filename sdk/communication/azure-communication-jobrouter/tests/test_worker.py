@@ -88,10 +88,10 @@ class TestRouterWorker(RouterTestCase):
 
         distribution_policy_id = self.get_distribution_policy_id()
         distribution_policy = client.create_distribution_policy(
-            distribution_policy_id,
-            10.0,
-            RoundRobinMode(min_concurrent_offers = 1,
-                           max_concurrent_offers = 1),
+            distribution_policy_id = distribution_policy_id,
+            offer_ttl_seconds = 10.0,
+            mode = RoundRobinMode(min_concurrent_offers = 1,
+                                  max_concurrent_offers = 1),
             name = distribution_policy_id
         )
 
@@ -109,8 +109,8 @@ class TestRouterWorker(RouterTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
         job_queue = client.create_queue(
-            job_queue_id,
-            self.get_distribution_policy_id(),
+            queue_id = job_queue_id,
+            distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = worker_labels
         )
