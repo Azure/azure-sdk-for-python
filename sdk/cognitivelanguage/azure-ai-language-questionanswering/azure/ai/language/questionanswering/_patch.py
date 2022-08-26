@@ -23,8 +23,8 @@ def _authentication_policy(credential, **kwargs):
         )
     else:
         raise TypeError(
-            f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity"
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
         )
     return authentication_policy
 

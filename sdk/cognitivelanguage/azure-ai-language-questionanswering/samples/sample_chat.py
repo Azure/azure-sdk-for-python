@@ -48,8 +48,8 @@ def sample_chit_chat():
             deployment_name="test"
         )
         best_candidate = [a for a in output.answers if a.confidence > 0.7][0]
-        print(f"Q: {first_question}")
-        print(f"A: {best_candidate.answer}")
+        print(u"Q: {}".format(first_question))
+        print(u"A: {}".format(best_candidate.answer))
 
         followup_question = "How long it takes to charge Surface?"
 
@@ -69,8 +69,8 @@ def sample_chit_chat():
             project_name=knowledge_base_project,
             deployment_name="test"
         )
-        print(f"Q: {followup_question}")
-        print(f"A: {output.answers[0].answer}")
+        print(u"Q: {}".format(followup_question))
+        print(u"A: {}".format(output.answers[0].answer))
 
     # [END chit_chat]
 

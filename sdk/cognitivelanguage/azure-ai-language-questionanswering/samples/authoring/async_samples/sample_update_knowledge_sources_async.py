@@ -68,10 +68,10 @@ async def sample_update_knowledge_sources_async():
             project_name=project_name
         )
         async for item in sources:
-            print(f"source name: {item.get('displayName', 'N/A')}")
-            print(f"\tsource: {item['source']}")
-            print(f"\tsource uri: {item.get('sourceUri', 'N/A')}")
-            print(f"\tsource kind: {item['sourceKind']}")
+            print("source name: {}".format(item.get("displayName", "N/A")))
+            print("\tsource: {}".format(item["source"]))
+            print("\tsource uri: {}".format(item.get("sourceUri", "N/A")))
+            print("\tsource kind: {}".format(item["sourceKind"]))
 
         # qnas
         qna_poller = await client.begin_update_qnas(
@@ -92,11 +92,11 @@ async def sample_update_knowledge_sources_async():
             project_name=project_name
         )
         async for item in qnas:
-            print(f"qna: {item['id']}")
+            print("qna: {}".format(item["id"]))
             print("\tquestions:")
             for question in item["questions"]:
-                print(f"\t\t{question}")
-            print(f"\tanswer: {item['answer']}")
+                print("\t\t{}".format(question))
+            print("\tanswer: {}".format(item["answer"]))
 
         # synonyms
         await client.update_synonyms(
@@ -125,7 +125,7 @@ async def sample_update_knowledge_sources_async():
             print("synonyms:")
             print("\talterations:")
             for alt in item["alterations"]:
-                print(f"\t\t{alt}")
+                print("\t\t{}".format(alt))
             print('')
 
     # [END update_knowledge_sources]

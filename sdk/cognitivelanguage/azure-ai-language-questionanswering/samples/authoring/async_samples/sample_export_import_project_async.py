@@ -84,9 +84,9 @@ async def sample_export_import_project_async():
         qna_projects = client.list_projects()
         async for p in qna_projects:
             if p["projectName"] == project_name:
-                print(f"project: {p['projectName']}")
-                print(f"\tlanguage: {p['language']}")
-                print(f"\tdescription: {p['description']}")
+                print("project: {}".format(p["projectName"]))
+                print("\tlanguage: {}".format(p["language"]))
+                print("\tdescription: {}".format(p["description"]))
 
     # [END export_import_project]
 
