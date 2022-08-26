@@ -1,26 +1,10 @@
 # Release History
 
-## 1.0.0b5 (2022-08-26)
-
-### Features Added
-
-  - Added operation group DeviceUpdateMgmtClientOperationsMixin
-
-### Breaking Changes
-
-  - Client name is changed
-  - Removed operation group DeviceUpdateOperationsMixin
-
-## 1.0.0b5 (2022-08-26)
-
-### Features Added
-
-  - Added operation group DeviceUpdateMgmtClientOperationsMixin
+## 1.0.0 (2022-08-26)
 
 ### Breaking Changes
 
   - Client name is changed from `DeviceUpdate` to `DeviceUpdateMgmtClient`
-  - Removed operation group DeviceUpdateOperationsMixin
 
 ## 1.0.0b4 (2022-05-26)
 
