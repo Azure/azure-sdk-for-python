@@ -7,7 +7,6 @@
 
 from enum import Enum, EnumMeta
 import msrest.serialization
-from six import with_metaclass
 
 
 class Attributes(msrest.serialization.Model):
@@ -584,7 +583,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DeletionRecoveryLevel(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
     """Reflects the deletion recovery level currently in effect for secrets in the current vault. If
     it contains 'Purgeable', the secret can be permanently deleted by a privileged user; otherwise,
     only the system can purge the secret, at the end of the retention interval.

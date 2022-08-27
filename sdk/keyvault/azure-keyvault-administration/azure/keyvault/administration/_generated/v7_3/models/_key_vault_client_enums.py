@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported permissions for data actions.
     """
 
@@ -84,13 +83,13 @@ class DataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Generate random numbers.
     RANDOM_NUMBERS_GENERATE = "Microsoft.KeyVault/managedHsm/rng/action"
 
-class RoleDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The role definition type.
     """
 
     MICROSOFT_AUTHORIZATION_ROLE_DEFINITIONS = "Microsoft.Authorization/roleDefinitions"
 
-class RoleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RoleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The role scope.
     """
 
@@ -99,7 +98,7 @@ class RoleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Keys scope.
     KEYS = "/keys"
 
-class RoleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The role type.
     """
 

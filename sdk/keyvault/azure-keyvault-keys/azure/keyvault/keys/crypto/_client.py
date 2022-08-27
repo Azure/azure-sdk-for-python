@@ -5,7 +5,6 @@
 import logging
 from typing import TYPE_CHECKING, cast
 
-import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -115,7 +114,7 @@ class CryptographyClient(KeyVaultClientBase):
             if key.properties._attributes:  # pylint:disable=protected-access
                 self._not_before = key.properties.not_before
                 self._expires_on = key.properties.expires_on
-        elif isinstance(key, six.string_types):
+        elif isinstance(key, str):
             self._key = None
             self._key_id = parse_key_vault_id(key)
             if self._key_id.version is None:
@@ -131,7 +130,7 @@ class CryptographyClient(KeyVaultClientBase):
                 self._local_provider = get_local_cryptography_provider(cast(JsonWebKey, self._key))
                 self._initialized = True
             except Exception as ex:  # pylint:disable=broad-except
-                six.raise_from(ValueError("The provided jwk is not valid for local cryptography"), ex)
+                raise ValueError("The provided jwk is not valid for local cryptography") from ex
         else:
             self._local_provider = NoLocalCryptography()
             self._initialized = False
