@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# This script is used to execute mypy within a tox environment. Packages can opt in to fail CI job if mypy fails.
+# This script is used to execute mypy within a tox environment. Packages can opt in to fail CI job if pyright fails.
 
 from subprocess import check_call, CalledProcessError
 import argparse
@@ -20,13 +20,13 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run mypy against target folder. ")
+    parser = argparse.ArgumentParser(description="Run pyright against target folder. ")
 
     parser.add_argument(
         "-t",
         "--target",
         dest="target_package",
-        help="The target package directory on disk. The target module passed to run mypy will be <target_package>/azure.",
+        help="The target package directory on disk. The target module passed to run pyright will be <target_package>/azure.",
         required=True,
     )
 
@@ -34,23 +34,12 @@ if __name__ == "__main__":
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
     if package_name not in TYPE_CHECKING_OPT_OUT:
-        logging.info("Package {} has opted to run mypy".format(package_name))
         check_call(
             [
                 sys.executable,
                 "-m",
-                "mypy",
-                "--python-version",
-                "3.10",
-                "--check-untyped-defs",
-                "--no-implicit-optional",
-                "--show-error-codes",
-                "--warn-redundant-casts",
-                "--warn-unused-ignores",
-                "--warn-return-any",
-                "--ignore-missing-imports",
-                "--strict-optional",
+                "pyright",
                 os.path.join(args.target_package, "azure"),
-                os.path.join(args.target_package, "samples")
+                os.path.join(args.target_package, "samples"),
             ]
         )
