@@ -6,6 +6,7 @@
 import time
 import six
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline import PipelineRequest
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 
 
@@ -33,6 +34,8 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
             )
             self._token = access_token.decode("utf-8")
 
-    async def on_request(self, request):  # pylint: disable=invalid-overridden-method
+    async def on_request(
+        self, request: PipelineRequest
+    ):  # pylint: disable=invalid-overridden-method
         await self._update_token()
         request.http_request.headers[self._name] = self._token

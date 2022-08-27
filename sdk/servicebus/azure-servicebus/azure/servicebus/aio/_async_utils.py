@@ -9,11 +9,12 @@ import sys
 import asyncio
 import logging
 import functools
+from typing import Dict, Optional
 
 from uamqp import authentication
 
 from .._common.constants import JWT_TOKEN_SCOPE, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
-
+from .._servicebus_client import ServiceBusClient
 
 _log = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ def get_running_loop():
         return asyncio.get_event_loop()
 
 
-async def create_authentication(client):
+async def create_authentication(client: ServiceBusClient):
     # pylint: disable=protected-access
     try:
         # ignore mypy's warning because token_type is Optional
@@ -70,10 +71,14 @@ async def create_authentication(client):
     )
 
 
-def get_dict_with_loop_if_needed(loop):
+def get_dict_with_loop_if_needed(
+    loop: Optional[asyncio.AbstractEventLoop],
+) -> Dict[str, asyncio.AbstractEventLoop]:
     if sys.version_info >= (3, 10):
         if loop:
-            raise ValueError("Starting Python 3.10, asyncio no longer supports loop as a parameter.")
+            raise ValueError(
+                "Starting Python 3.10, asyncio no longer supports loop as a parameter."
+            )
     elif loop:
-        return {'loop': loop}
+        return {"loop": loop}
     return {}

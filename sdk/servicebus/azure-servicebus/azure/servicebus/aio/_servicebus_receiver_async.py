@@ -139,9 +139,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         prefetch_count: int = 0,
         **kwargs: Any
     ) -> None:
-        self._message_iter = (
+        self._message_iter: Optional[AsyncIterator[ServiceBusReceivedMessage]] = (
             None
-        )  # type: Optional[AsyncIterator[ServiceBusReceivedMessage]]
+        )
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -372,9 +372,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
 
-    async def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
-        # pylint: disable=protected-access
+    async def _receive(self, max_message_count: Optional[int]=None, timeout:Optional[float]=None)-> List[ServiceBusReceivedMessage]: # pylint: disable=protected-access
         try:
             self._receive_context.set()
             await self._open()
@@ -393,7 +391,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 else 0
             )
 
-            batch = []  # type: List[Message]
+            batch: List[Message] = [] 
             while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
