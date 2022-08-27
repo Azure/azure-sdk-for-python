@@ -5,12 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
-import itertools
 from collections import Counter
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 from azure.communication.jobrouter import (
     BestWorkerMode,
@@ -190,7 +186,11 @@ class WorkerSelectorValidator(object):
         assert actual.label_operator == expected.label_operator
         assert actual.value == expected.value
         assert actual.ttl_seconds == expected.ttl_seconds
-        assert actual.expedite == expected.expedite
+
+        if expected.expedite is None:
+            assert actual.expedite is False
+        else:
+            assert actual.expedite == expected.expedite
 
 
 class ClassificationPolicyValidator(object):
@@ -523,8 +523,112 @@ class RouterWorkerValidator(object):
 
 class RouterJobValidator(object):
     @staticmethod
-    def validate_job(
-            router_job,  # type: RouterJob
-            **kwargs,  # type: Any
+    def validate_id(
+            entity: RouterJob,
+            identifier,
+            **kwargs
     ):
-        pass
+        assert entity.id == identifier
+
+    @staticmethod
+    def validate_channel_reference(
+            entity: RouterJob,
+            channel_reference,
+            **kwargs
+    ):
+        assert entity.channel_reference == channel_reference
+
+    @staticmethod
+    def validate_channel_id(
+            entity: RouterJob,
+            channel_id,
+            **kwargs
+    ):
+        assert entity.channel_id == channel_id
+
+    @staticmethod
+    def validate_queue_id(
+            entity: RouterJob,
+            queue_id,
+            **kwargs
+    ):
+        assert entity.queue_id == queue_id
+
+    @staticmethod
+    def validate_job_priority(
+            entity: RouterJob,
+            job_priority,
+            **kwargs
+    ):
+        assert entity.priority == job_priority
+
+    @staticmethod
+    def validate_requested_worker_selectors(
+            entity: RouterJob,
+            requested_worker_selectors,
+            **kwargs
+    ):
+        assert len(entity.requested_worker_selectors) == len(requested_worker_selectors)
+
+        for actual, expected in zip(entity.requested_worker_selectors, requested_worker_selectors):
+            assert type(actual) == type(expected)
+            WorkerSelectorValidator.validate_worker_selector(actual, expected)
+
+    @staticmethod
+    def validate_labels(
+            entity: RouterJob,
+            label_collection,
+            **kwargs
+    ):
+        assert isinstance(entity.labels, dict) is True
+        assert entity.labels == label_collection
+
+    @staticmethod
+    def validate_tags(
+            entity: RouterJob,
+            tag_collection,
+            **kwargs
+    ):
+        assert isinstance(entity.tags, dict) is True
+        assert entity.tags == tag_collection
+
+    @staticmethod
+    def validate_notes(
+            entity: RouterJob,
+            note_collection,
+            **kwargs
+    ):
+        assert isinstance(entity.notes, dict) is True
+        assert entity.notes == note_collection
+
+    @staticmethod
+    def validate_job(
+            router_job: RouterJob,
+            **kwargs: Any
+    ):
+        if 'identifier' in kwargs:
+            RouterJobValidator.validate_id(router_job, kwargs.pop("identifier"))
+
+        if 'channel_reference' in kwargs:
+            RouterJobValidator.validate_channel_reference(router_job, kwargs.pop("channel_reference"))
+
+        if 'channel_id' in kwargs:
+            RouterJobValidator.validate_channel_id(router_job, kwargs.pop("channel_id"))
+
+        if 'queue_id' in kwargs:
+            RouterJobValidator.validate_queue_id(router_job, kwargs.pop("queue_id"))
+
+        if 'priority' in kwargs:
+            RouterJobValidator.validate_job_priority(router_job, kwargs.pop("priority"))
+
+        if 'requested_worker_selectors' in kwargs:
+            RouterJobValidator.validate_requested_worker_selectors(router_job, kwargs.pop("requested_worker_selectors"))
+
+        if 'labels' in kwargs:
+            RouterJobValidator.validate_labels(router_job, kwargs.pop("labels"))
+
+        if 'tags' in kwargs:
+            RouterJobValidator.validate_tags(router_job, kwargs.pop("tags"))
+
+        if 'notes' in kwargs:
+            RouterJobValidator.validate_notes(router_job, kwargs.pop("notes"))
