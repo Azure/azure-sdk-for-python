@@ -485,22 +485,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_upload_blob_with_tier_specified_cold(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        blob_name = self._create_block_blob(standard_blob_tier=StandardBlobTier.Cold, overwrite=True)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-
-        # Act
-        props = blob.get_blob_properties()
-
-        # Assert
-        assert props.blob_tier == StandardBlobTier.Cold
-
-    @BlobPreparer()
-    @recorded_by_proxy
     def test_get_blob_with_existing_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1584,30 +1568,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         blob_tier = StandardBlobTier.Cool
-        copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
-
-        copy_blob_properties = copyblob.get_blob_properties()
-
-        # Assert
-        assert copy_blob_properties.blob_tier == blob_tier
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_copy_blob_with_cold_tier(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        self._setup(storage_account_name, storage_account_key)
-        blob_name = self._create_block_blob()
-        self.bsc.get_blob_client(self.container_name, blob_name)
-
-        # Act
-        sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_name)
-
-        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        blob_tier = StandardBlobTier.Cold
         copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
 
         copy_blob_properties = copyblob.get_blob_properties()
@@ -3063,23 +3023,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert props.size == len(data_for_the_first_version)
         assert props.blob_tier == 'Hot'
         assert origin_props.blob_tier == 'Cool'
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_set_blob_tier_cold_tier(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        blob_name = self._create_block_blob(standard_blob_tier=StandardBlobTier.Hot, overwrite=True)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.set_standard_blob_tier(StandardBlobTier.Cold)
-
-        # Act
-        props = blob.get_blob_properties()
-
-        # Assert
-        assert props.blob_tier == StandardBlobTier.Cold
 
     @BlobPreparer()
     @recorded_by_proxy

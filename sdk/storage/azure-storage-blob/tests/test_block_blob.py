@@ -1780,4 +1780,64 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         # Assert
         progress.assert_complete()
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_with_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        self._create_blob(standard_blob_tier=StandardBlobTier.Cold)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_blob_with_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        self._create_blob(standard_blob_tier=StandardBlobTier.Cold)
+        blob_name = self._get_blob_reference()
+        self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Cold
+        copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
+
+        copy_blob_properties = copyblob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_tier_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.set_standard_blob_tier(StandardBlobTier.Cold)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
+
 #------------------------------------------------------------------------------
