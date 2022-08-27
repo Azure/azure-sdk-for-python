@@ -68,7 +68,7 @@ class AutoLockRenewer:
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._shutdown = asyncio.Event()
-        self._futures: List[asyncio.Future[Any]] = []
+        self._futures: List[asyncio.Future] = []
         self._sleep_time = 1
         self._renew_period = 10
         self._on_lock_renew_failure = on_lock_renew_failure
