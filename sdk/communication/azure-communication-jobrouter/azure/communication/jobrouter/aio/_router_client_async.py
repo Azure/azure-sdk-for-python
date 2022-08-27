@@ -891,9 +891,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        if not job_id:
-            raise ValueError("job_id cannot be None.")
-
         patch = RouterJob(
             channel_reference = kwargs.pop('channel_reference', router_job.channel_reference),
             channel_id = kwargs.pop('channel_id', router_job.channel_id),
