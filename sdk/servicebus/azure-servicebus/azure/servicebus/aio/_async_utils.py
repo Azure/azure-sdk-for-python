@@ -53,7 +53,8 @@ async def create_authentication(client: "ServiceBusClient"):
         auth = authentication.JWTTokenAsync(
             client._auth_uri,
             client._auth_uri,
-            functools.partial(client._credential.get_token, client._auth_uri),
+            # Since we have handled the token type, the type is already narrowed.
+            functools.partial(client._credential.get_token, client._auth_uri),  # type: ignore
             token_type=token_type,
             timeout=client._config.auth_timeout,
             http_proxy=client._config.http_proxy,
@@ -64,7 +65,8 @@ async def create_authentication(client: "ServiceBusClient"):
     return authentication.JWTTokenAsync(
         client._auth_uri,
         client._auth_uri,
-        functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
+        # Same as mentioned above.
+        functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),  # type: ignore
         token_type=token_type,
         timeout=client._config.auth_timeout,
         http_proxy=client._config.http_proxy,
