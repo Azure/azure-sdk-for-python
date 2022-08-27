@@ -14,7 +14,7 @@ from typing import Dict, Optional
 from uamqp import authentication
 
 from .._common.constants import JWT_TOKEN_SCOPE, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
-from .._servicebus_client import ServiceBusClient
+from ..aio._servicebus_client_async import ServiceBusClient
 
 _log = logging.getLogger(__name__)
 
