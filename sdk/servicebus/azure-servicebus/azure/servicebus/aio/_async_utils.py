@@ -9,12 +9,14 @@ import sys
 import asyncio
 import logging
 import functools
-from typing import Dict, Optional
+from typing import Dict, Optional, TYPE_CHECKING
 
 from uamqp import authentication
 
 from .._common.constants import JWT_TOKEN_SCOPE, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
-from ..aio._servicebus_client_async import ServiceBusClient
+
+if TYPE_CHECKING:
+    from ..aio._servicebus_client_async import ServiceBusClient
 
 _log = logging.getLogger(__name__)
 
@@ -40,7 +42,7 @@ def get_running_loop():
         return asyncio.get_event_loop()
 
 
-async def create_authentication(client: ServiceBusClient):
+async def create_authentication(client: "ServiceBusClient"):
     # pylint: disable=protected-access
     try:
         # ignore mypy's warning because token_type is Optional
