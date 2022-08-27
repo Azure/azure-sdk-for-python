@@ -32,21 +32,6 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=azure_attestation_uri,value="https://fakeattestation.azurewebsites.net")
     add_oauth_response_sanitizer()
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--all-api-versions", action="store_true", default=False, help="run with all api versions"
-    )
-
-def pytest_configure(config):
-    config.addinivalue_line("markers", "all: mark test as with all ")
-
-def pytest_collection_modifyitems(config, items):
-    if config.getoption("--all-api-versions"):
-        return
-    skip_other_versions = pytest.mark.skip(reason="need --all-api-versions option to run")
-    for item in items:
-        if "all" in item.keywords:
-            item.add_marker(skip_other_versions)
 
 @pytest.fixture(scope="session", autouse=True)
 def patch_async_sleep():
