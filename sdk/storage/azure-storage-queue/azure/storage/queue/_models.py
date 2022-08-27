@@ -32,7 +32,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
@@ -65,7 +65,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
@@ -395,7 +395,7 @@ class QueueSasPermissions(object):
         self.process = process
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
-                     ('u' if self.update else '') +
+                     ('' if self.update else '') +
                      ('p' if self.process else ''))
 
     def __str__(self):
@@ -416,7 +416,7 @@ class QueueSasPermissions(object):
         """
         p_read = 'r' in permission
         p_add = 'a' in permission
-        p_update = 'u' in permission
+        p_update = '' in permission
         p_process = 'p' in permission
 
         parsed = cls(p_read, p_add, p_update, p_process)
