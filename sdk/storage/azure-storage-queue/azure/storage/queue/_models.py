@@ -395,7 +395,7 @@ class QueueSasPermissions(object):
         self.process = process
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
-                     ('' if self.update else '') +
+                     ('u' if self.update else '') +
                      ('p' if self.process else ''))
 
     def __str__(self):
@@ -416,7 +416,7 @@ class QueueSasPermissions(object):
         """
         p_read = 'r' in permission
         p_add = 'a' in permission
-        p_update = '' in permission
+        p_update = 'u' in permission
         p_process = 'p' in permission
 
         parsed = cls(p_read, p_add, p_update, p_process)
