@@ -90,7 +90,6 @@
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
-    "sdk/synapse/azure-synapse-spark/**",
     "sdk/storage/azure-storage-file-share/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
@@ -502,6 +501,14 @@
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
       "words": [
         "undoc"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-spark/azure/synapse/spark/models/*.py",
+      "words": [
+        "pyspark",
+        "ename",
+        "evalue"
       ]
     },
     {
