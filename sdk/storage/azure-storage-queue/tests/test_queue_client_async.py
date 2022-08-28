@@ -241,7 +241,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
                     f'http://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn/'))
             self.assertTrue(
                 service.secondary_endpoint.startswith(
-                    f'http://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn'.format))
+                    f'http://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn'))
             self.assertEqual(service.scheme, 'http')
 
     @QueuePreparer()
@@ -261,7 +261,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             conn_string = (
                 f'AccountName={storage_account_name};'
                 f'AccountKey={storage_account_key};'
-                f'QueueEndpoint=www.mydomain.com;')
+                'QueueEndpoint=www.mydomain.com;')
 
             # Act
             service = service_type[0].from_connection_string(conn_string, queue_name="foo")
