@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
-
+# spell-checker:ignore unsubscriptable
 class MixedRealityStsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """ A client to interact with the Mixed Reality STS service.
 

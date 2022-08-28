@@ -8,7 +8,7 @@ import pytest
 
 from azure.mixedreality.authentication._utils import generate_cv_base, retrieve_jwt_expiration_timestamp
 
-
+# spell-checker:ignore Iiwid, Ijoi
 class TestUtils:
     def test_generate_cv_base(self):
         cv = generate_cv_base()

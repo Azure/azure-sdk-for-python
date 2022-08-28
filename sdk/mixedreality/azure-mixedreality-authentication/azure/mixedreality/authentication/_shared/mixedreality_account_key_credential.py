@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 ACCOUNT_KEY_VALID_YEARS = 10
 
+# spell-checker:ignore mktime
 class MixedRealityAccountKeyCredential(object):
     """ Represents an object used for Mixed Reality account key authentication.
 
