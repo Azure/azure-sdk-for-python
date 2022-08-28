@@ -249,8 +249,8 @@ class TestCommon(unittest.TestCase):
                 'password'
             ))
 
-            client = get_client_from_auth_file(FakeClient, temp_auth_file.name, subscription_id='fakesubid')
-            self.assertEqual('fakesubid', client.subscription_id)
+            client = get_client_from_auth_file(FakeClient, temp_auth_file.name, subscription_id='fakeSubId')
+            self.assertEqual('fakeSubId', client.subscription_id)
             self.assertEqual('https://management.azure.com/', client.base_url)
             self.assertTupleEqual(client.credentials._args, (
                 'https://management.azure.com/',

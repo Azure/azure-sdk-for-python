@@ -13,7 +13,7 @@ def test_profile_from_string():
     assert profile_from_string is KnownProfiles.v2017_03_09_profile
 
     with pytest.raises(ValueError):
-        KnownProfiles.from_name("blablabla")
+        KnownProfiles.from_name("blablabla") # cspell:disable-line
 
 def test_default_profile():
     with pytest.raises(ValueError):
@@ -63,7 +63,7 @@ def test_multiapi_client():
     # Bring back default to latest for next tests
     KnownProfiles.default.use(KnownProfiles.latest)
 
-    # I asked explicily a specific profile, must not be latest
+    # I asked explicitly a specific profile, must not be latest
     client = TestClient(profile=KnownProfiles.v2017_03_09_profile)
     assert client.operations() == "2016-03-30"
 

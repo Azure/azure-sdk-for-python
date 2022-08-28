@@ -57,7 +57,6 @@
     "sdk/communication/azure-communication-sms/**",
     "sdk/confidentialledger/azure-confidentialledger/**",
     "sdk/core/azure/**",
-    "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-core/**",
     "sdk/cosmos/azure-cosmos/**",
@@ -355,6 +354,9 @@
     "prnumber"
   ],
   "overrides": [
+    {
+      "filename": "sdk/core/azure-common/client_factory.py"
+    },
     {
       "filename": "sdk/remoterendering/**",
       "words": [

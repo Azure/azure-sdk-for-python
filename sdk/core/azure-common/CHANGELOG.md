@@ -65,6 +65,8 @@
 
 Thanks to patrikn for the contribution
 
+[comment]: # ( cspell:ignore patrikn )
+
 ## 1.1.16 (2018-09-26)
 
 - azure-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)

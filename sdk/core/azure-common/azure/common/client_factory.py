@@ -19,6 +19,7 @@ from .credentials import get_azure_cli_credentials
 from .cloud import get_cli_active_cloud
 
 
+# cspell:ignore adla adal Adal ADAL
 def _instantiate_client(client_class, **kwargs):
     """Instantiate a client from kwargs, filtering kwargs to match client signature.
     """
@@ -132,7 +133,7 @@ def get_client_from_cli_profile(client_class, **kwargs):
 
 
 def _is_autorest_v3(client_class):
-    """Is this client a autorestv3/track2 one?.
+    """Is this client a autorest_v3/track2 one?.
     Could be refined later if necessary.
     """
     args = get_arg_spec(client_class.__init__).args
