@@ -50,7 +50,7 @@ def _to_str(value):
 
 
 def _to_utc_datetime(value):
-    try:
+    try: # cspell:disable-next-line
         value = value.astimezone(TZ_UTC)
     except ValueError:
         # Before Python 3.8, this raised for a naive datetime.

@@ -10,7 +10,7 @@
 FILE: sample_create_delete_table.py
 
 DESCRIPTION:
-    These samples demonstrate creating a table and deleting a table ffrom a storage account
+    These samples demonstrate creating a table and deleting a table from a storage account
 
 USAGE:
     python sample_create_delete_table.py
