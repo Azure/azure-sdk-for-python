@@ -1393,7 +1393,7 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            local_tz = tzoffset('BRST', -10800) # cspell:disable-line
+            local_tz = tzoffset('BRST', -10800)
             local_date = datetime(2003, 9, 27, 9, 52, 43, tzinfo=local_tz)
             entity = self._create_random_base_entity_dict()
             entity.update({'date': local_date})

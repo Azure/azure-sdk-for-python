@@ -366,6 +366,7 @@
         "tzutc",
         "tzoffset",
         "astimezone",
+        "BRST",
         "uttable",
         "pytablesync",
         "pytableasync",
