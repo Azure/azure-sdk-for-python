@@ -32,7 +32,6 @@
     "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
-    "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
     "sdk/cognitivelanguage/azure-ai-language-conversations/**",
     "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
@@ -413,6 +412,14 @@
         "fhir",
         "FHIR"
       ]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
+      "words": [
+        "qnas",
+        "qnamaker"
+      ],
+      "caseSensitive": false
     },
     {
       "filename": "sdk/communication/azure-communication-identity/tests/**",
