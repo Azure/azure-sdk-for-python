@@ -34,7 +34,6 @@
     "sdk/batch/azure-batch/**",
     "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
     "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",

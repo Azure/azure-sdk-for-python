@@ -20,6 +20,7 @@ from devtools_testutils import mgmt_settings_fake as fake_settings
 
 
 class SpellCheckTest(ReplayableTest):
+    # spell-checker:ignore Apim
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
@@ -50,9 +51,9 @@ class SpellCheckTest(ReplayableTest):
         )
         text_analytics = SpellCheckClient(credentials=credentials)
         response = text_analytics.spell_checker(
-            "cognituve services"
+            "cognitive services"
         )
-        self.assertEqual(response.flagged_tokens[0].token, "cognituve")
+        self.assertEqual(response.flagged_tokens[0].token, "cognitive")
         self.assertEqual(response.flagged_tokens[0].suggestions[0].suggestion, "cognitive")
 
 
