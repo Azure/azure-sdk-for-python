@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 # pylint: skip-file
+# cspell:ignore ctxt wday mday astimezone
 
 from base64 import b64decode, b64encode
 import calendar
@@ -340,7 +341,7 @@ class Model(object):
         return serializer._serialize(self, keep_readonly=keep_readonly, **kwargs)
 
     def as_dict(self, keep_readonly=True, key_transformer=attribute_transformer, **kwargs):
-        """Return a dict that can be JSONify using json.dump.
+        """Return a dict that can be JSON-ify using json.dump.
 
         Advanced usage might optionally use a callback as parameter:
 
@@ -629,8 +630,8 @@ class Serializer(object):
                             serialized.append(local_node)
                     else:  # JSON
                         for k in reversed(keys):
-                            unflattened = {k: new_attr}
-                            new_attr = unflattened
+                            stacked = {k: new_attr}
+                            new_attr = stacked
 
                         _new_attr = new_attr
                         _serialized = serialized
@@ -1474,7 +1475,7 @@ class Deserializer(object):
         Once classification has been determined, initialize object.
 
         :param str target: The target object type to deserialize to.
-        :param str/dict data: The response data to deseralize.
+        :param str/dict data: The response data to deserialize.
         """
         if target is None:
             return None, None
@@ -1499,7 +1500,7 @@ class Deserializer(object):
         a deserialization error.
 
         :param str target_obj: The target object type to deserialize to.
-        :param str/dict data: The response data to deseralize.
+        :param str/dict data: The response data to deserialize.
         :param str content_type: Swagger "produces" if available.
         """
         try:

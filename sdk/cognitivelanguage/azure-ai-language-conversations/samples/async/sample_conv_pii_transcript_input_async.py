@@ -100,7 +100,7 @@ async def sample_conv_pii_transcript_input_async():
         print("status: {}".format(task_result["status"]))
         conv_pii_result = task_result["results"]
         if conv_pii_result["errors"]:
-            print("... errors occured ...")
+            print("... errors occurred ...")
             for error in conv_pii_result["errors"]:
                 print(error)
         else:

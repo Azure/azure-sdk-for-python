@@ -33,7 +33,6 @@
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-    "sdk/cognitivelanguage/azure-ai-language-conversations/**",
     "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -413,6 +412,15 @@
         "fhir",
         "FHIR"
       ]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
+      "words": ["conv"],
+      "caseSensitive": false
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
+      "words": ["undoc"]
     },
     {
       "filename": "sdk/communication/azure-communication-identity/tests/**",
