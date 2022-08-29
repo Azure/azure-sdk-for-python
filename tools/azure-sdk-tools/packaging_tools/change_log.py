@@ -33,9 +33,13 @@ class ChangeLog:
         if self.features:
             _build_md(sorted(set(self.features), key=self.features.index), "### Features Added", buffer)
         if self.breaking_changes:
-            _build_md(sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer)
+            _build_md(
+                sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer
+            )
         if not (self.features or self.breaking_changes) and self.optional_features:
-            _build_md(sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer)
+            _build_md(
+                sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer
+            )
 
         return "\n".join(buffer).strip()
 
@@ -162,8 +166,13 @@ class ChangeLog:
             self.breaking_changes.append(_MODEL_PARAM_CHANGE_REQUIRED.format(parameter_name, model_name))
             return
 
-    def client(self):
-        self.breaking_changes.append(_CLIENT_SIGNATURE_CHANGE)
+    def client(self, old_report, new_report):
+        if new_report.get('client'):
+            if old_report.get('client'):
+                msg = _CLIENT_SIGNATURE_CHANGE.format(old_report['client'][0], new_report['client'][0])
+            else:
+                msg = _CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD.format(new_report['client'][0])
+            self.breaking_changes.append(msg)
         return
 
 
@@ -178,7 +187,8 @@ _MODEL_ADD = "Added model {}"
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
 _REMOVE_OPERATION_PARAM = "Operation {}.{} no longer has parameter {}"
-_CLIENT_SIGNATURE_CHANGE = "Client name is changed"
+_CLIENT_SIGNATURE_CHANGE = "Client name is changed from `{}` to `{}`"
+_CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD = "Client name is changed to `{}`"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
@@ -199,7 +209,7 @@ def build_change_log(old_report, new_report):
         elif diff_line[0][0] == "models":
             change_log.models(diff_line)
         elif diff_line[0][0] == "client":
-            change_log.client()
+            change_log.client(old_report, new_report)
 
     return change_log
 

@@ -14,7 +14,6 @@ from devtools_testutils import (
     FakeResource,
     ResourceGroupPreparer,
 )
-from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
 

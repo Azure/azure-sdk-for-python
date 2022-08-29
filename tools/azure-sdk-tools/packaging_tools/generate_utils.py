@@ -188,9 +188,11 @@ def gen_general_namespace(package_name: str) -> str:
 def gen_dpg_config_single_client(origin_config: Dict[str, Any], spec_folder: str) -> str:
     package_name = Path(origin_config["output-folder"]).parts[-1]
     readme_config = gen_basic_config(origin_config, spec_folder)
-    readme_config.update({
-        "namespace": gen_general_namespace(package_name),
-    })
+    readme_config.update(
+        {
+            "namespace": gen_general_namespace(package_name),
+        }
+    )
     readme_content = yaml_block(yaml.safe_dump(readme_config), "### Settings")
     return add_config_title(readme_content)
 
