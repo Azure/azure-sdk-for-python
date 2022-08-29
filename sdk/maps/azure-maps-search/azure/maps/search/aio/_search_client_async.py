@@ -742,11 +742,19 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         return result
 
     @overload
-    async def begin_fuzzy_search_batch(self, search_queries, **kwargs)-> AsyncLROPoller[SearchAddressBatchResult]:
+    async def begin_fuzzy_search_batch(
+        self,
+        search_queries: List[str],
+        **kwargs: Any
+    )-> AsyncLROPoller[SearchAddressBatchResult]:
         pass
 
     @overload
-    async def begin_fuzzy_search_batch(self, batch_id, **kwargs) -> AsyncLROPoller[SearchAddressBatchResult]:
+    async def begin_fuzzy_search_batch(
+        self,
+        batch_id: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[SearchAddressBatchResult]:
         pass
 
     @distributed_trace_async
@@ -820,11 +828,19 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
 
 
     @overload
-    async def begin_search_address_batch(self, search_queries, **kwargs) -> AsyncLROPoller[SearchAddressBatchResult]:
+    async def begin_search_address_batch(
+        self,
+        search_queries: List[str],
+        **kwargs: Any
+    ) -> AsyncLROPoller[SearchAddressBatchResult]:
         pass
 
     @overload
-    async def begin_search_address_batch(self, batch_id, **kwargs) -> AsyncLROPoller[SearchAddressBatchResult]:
+    async def begin_search_address_batch(
+        self,
+        batch_id: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[SearchAddressBatchResult]:
         pass
 
     @distributed_trace_async

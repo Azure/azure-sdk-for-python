@@ -38,17 +38,17 @@ def reformat_coordinates(item, style):
         return [reformat_coordinates(x, style) for x in item]
     if style == 'geojson':
         return list(item)
+    elif style == 'geo_interface':
+        return tuple(item)
     raise ValueError('Unknown style')
 
-def geo_interface_to_geojson(geo_interface):
-    # type: (dict) -> dict
+def geo_interface_to_geojson(geo_interface) -> dict:
     """Converts a geo_interface dictionary into a raw GeoJSON dictionary."""
     coords = reformat_coordinates(geo_interface['coordinates'], 'geojson')
 
     return {'type': geo_interface['type'], 'coordinates': coords}
 
-def wkt_to_geo_interface(wkt):
-    # type: (str) -> dict
+def wkt_to_geo_interface(wkt) -> dict:
     """Converts a WKT string to a geo_interface dictionary."""
     try:
         wkt_type, coords = re.split(r'(?<=[A-Z])\s', wkt)
@@ -84,17 +84,21 @@ def wkt_to_geo_interface(wkt):
 
     return {'type': geo_type, 'coordinates': coords}
 
-def wkt_to_geojson(wkt):
-    # type: (str) -> str
+def wkt_to_geojson(wkt) -> str:
     """Converts a WKT string to serialized GeoJSON."""
     return json.dumps(geo_interface_to_geojson(wkt_to_geo_interface(wkt)))
 
-def parse_geometry_input(geo_thing):
-    # type: (...) -> dict
+def parse_geometry_input(geo_thing) -> dict:
     """Checks to see if the string is geojson or WKT or geo_interface property"""
     error_msg = 'Strings must be valid GeoJSON or WKT or geo_interface property'
     geometry={}
-    if isinstance(geo_thing, object):
+    # Input might be WKT
+    if isinstance(geo_thing, str):
+        wkt_type = geo_thing.split(' ')[0]
+        if wkt_type not in wkt_types:
+            raise ValueError(error_msg)
+        geom = wkt_to_geojson(geo_thing)
+    elif isinstance(geo_thing, dict):
         try:
             # geo_interface property contains coordinates as tuple type
             if isinstance(geo_thing.get("coordinates"), tuple):
@@ -105,26 +109,12 @@ def parse_geometry_input(geo_thing):
         except ValueError:
             raise ValueError(error_msg)
     else:
-        wkt_type = geo_thing.split(' ')[0]
-        if wkt_type not in wkt_types:
-            raise ValueError(error_msg)
-        geom = wkt_to_geojson(geo_thing)
-    geometry['geometry'] = geom
-    return geometry
-
-def _get_geo_interface(self, geo_thing):
-    # type: (Any) -> dict
-    """Attempts to get an object's geo_interface."""
-    # Input might be GeoJSON or WKT
-    if isinstance(geo_thing, str):
-        geo_interface = self._parse_string(geo_thing)
-    # Input might be raw GeoJSON or a geo_interface dictionary
-    elif isinstance(geo_thing, dict):
-        geo_interface = dict_to_geo_interface(geo_thing)
-    # Input might be an object with a geo_interface
-    else:
+        # Input might be an object with a geo_interface
         try:
-            geo_interface = dict_to_geo_interface(
-                geo_thing.__geo_interface__)
+            geo_interface = geo_thing.__geo_interface__
+            geom = geo_interface_to_geojson(geo_interface)
         except AttributeError:
             raise AttributeError('Object has no geo_interface.')
+
+    geometry['geometry'] = geom
+    return geometry

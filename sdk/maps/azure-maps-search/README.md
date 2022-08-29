@@ -109,6 +109,8 @@ The following sections provide several code snippets covering some of the most c
 - [Fail to get fuzzy search batch sync](#fail-to-get-fuzzy-search-batch-sync)
 - [Search inside Geometry](#search-inside-geometry)
 
+- [Working with exist library for Search](#working-with-exist-library-for-search)
+
 ### Request latitude and longitude coordinates for an address
 
 You can use an authenticated client to convert an address into latitude and longitude coordinates. This process is also called geocoding. In addition to returning the coordinates, the response will also return detailed address properties such as street, postal code, municipality, and country/region information.
@@ -257,7 +259,9 @@ print("Search inside geometry with standard GeoJson object as input, FeatureColl
 print(result1)
 ```
 
-This sample demonstrates how to perform search inside geometry by given target such as `pizza` and  geo_interface property from other existing packages such as `shapely`.
+### Working with exist library for Search
+
+This sample demonstrates how to working with other existing packages such as `shapely` to perform search inside geometry by given target such as `pizza`.
 
 ```python
 maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
@@ -269,7 +273,7 @@ geo_interface_obj = Polygon([
     [-122.43301391601562, 37.70660472542312],
     [-122.36434936523438, 37.712059855877314],
     [-122.43576049804686, 37.7524152343544]
-]).__geo_interface__
+])
 
 result3 = maps_search_client.search_inside_geometry(
     query="pizza",
