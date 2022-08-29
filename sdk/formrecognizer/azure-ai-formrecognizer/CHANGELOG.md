@@ -7,6 +7,7 @@
 ### Breaking Changes
 - This library will default to service API version `2022-08-31` going forward.
 - Removed `kind` property on `DocumentPage`.
+- Renamed `DocumentModelOperationDetails` to `OperationDetails`.
 
 ### Bugs Fixed
 

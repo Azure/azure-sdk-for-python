@@ -28,7 +28,7 @@ from .._models import (
     ModelBuildMode,
     DocumentModelDetails,
     DocumentModelSummary,
-    DocumentModelOperationDetails,
+    OperationDetails,
     DocumentModelOperationSummary,
     ResourceDetails,
     TargetAuthorization,
@@ -459,7 +459,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def get_operation(self, operation_id: str, **kwargs: Any) -> DocumentModelOperationDetails:
+    async def get_operation(self, operation_id: str, **kwargs: Any) -> OperationDetails:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.
@@ -467,8 +467,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
         :param str operation_id: The operation ID.
-        :return: DocumentModelOperationDetails
-        :rtype: ~azure.ai.formrecognizer.DocumentModelOperationDetails
+        :return: OperationDetails
+        :rtype: ~azure.ai.formrecognizer.OperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -484,7 +484,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
-        return DocumentModelOperationDetails._from_generated(
+        return OperationDetails._from_generated(
             await self._client.get_operation(operation_id, **kwargs),
             api_version=self._api_version,
         )

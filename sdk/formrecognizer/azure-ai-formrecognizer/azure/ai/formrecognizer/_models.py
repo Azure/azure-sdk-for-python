@@ -3366,8 +3366,8 @@ class DocumentModelOperationSummary:
         )
 
 
-class DocumentModelOperationDetails(DocumentModelOperationSummary):
-    """DocumentModelOperationDetails consists of information about the model operation, including the result or
+class OperationDetails(DocumentModelOperationSummary):
+    """OperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
@@ -3412,7 +3412,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
 
     def __repr__(self):
         return (
-            f"DocumentModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
+            f"OperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, result={repr(self.result)}, "
@@ -3420,7 +3420,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelOperationDetails.
+        """Returns a dict representation of OperationDetails.
 
         :return: dict
         :rtype: dict
@@ -3440,12 +3440,12 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelOperationDetails":
-        """Converts a dict in the shape of a DocumentModelOperationDetails to the model itself.
+    def from_dict(cls, data: dict) -> "OperationDetails":
+        """Converts a dict in the shape of a OperationDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelOperationDetails.
-        :return: DocumentModelOperationDetails
-        :rtype: DocumentModelOperationDetails
+        :param dict data: A dictionary in the shape of OperationDetails.
+        :return: OperationDetails
+        :rtype: OperationDetails
         """
         return cls(
             operation_id=data.get("operation_id", None),

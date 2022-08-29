@@ -1499,7 +1499,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_model_operation_to_dict(self):
-        model = _models.DocumentModelOperationDetails(
+        model = _models.OperationDetails(
             api_version="2022-08-31",
             tags={},
             operation_id="id123",
