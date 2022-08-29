@@ -6,7 +6,6 @@
 
 import pytest
 import functools
-from io import BytesIO
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
@@ -23,9 +22,6 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 
 class TestContentFromStreamAsync(AsyncFormRecognizerTest):
-
-    def teardown(self):
-        self.sleep(4)
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
@@ -281,6 +277,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @pytest.mark.skip()
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})

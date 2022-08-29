@@ -10,22 +10,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d?api-version=2022-05-31
   response:
     body:
-      string: '{"$dtId":"digitalTwin-d3f3138d","$etag":"W/\"e3c88ed7-a796-4fa6-8b3b-623379dcc5cf\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2020-11-24T21:07:32.8928160Z"}}}'
+      string: '{"$dtId":"digitalTwin-d3f3138d","$etag":"W/\"371defa4-7ed4-4112-8e40-45c08cf24b04\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","$lastUpdateTime":"2022-05-26T07:28:09.8159047Z","AverageTemperature":{"lastUpdateTime":"2022-05-26T07:28:09.8159047Z"}}}'
     headers:
-      content-length: '235'
+      content-length: '284'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:07:32 GMT
-      etag: W/"e3c88ed7-a796-4fa6-8b3b-623379dcc5cf"
+      date: Thu, 26 May 2022 07:28:09 GMT
+      etag: W/"371defa4-7ed4-4112-8e40-45c08cf24b04"
       strict-transport-security: max-age=2592000
+      traceresponse: 00-671c154b49a50547adbbda376779b766-ae75417492a5ca44-01
     status:
       code: 200
       message: OK
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d?api-version=2022-05-31
 - request:
     body: '{"ComponentTelemetry1": 5}'
     headers:
@@ -36,22 +37,23 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - cf4409ef-f05c-49e5-a8b6-eca1570bd0d4
+      - 48fc0eeb-9d0f-4e3e-b106-e706d905bc24
       Telemetry-Source-Time:
-      - '2020-11-25 10:07:33.036363'
+      - '2022-05-26T07:28:08.844963Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d/telemetry?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d/telemetry?api-version=2022-05-31
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 24 Nov 2020 21:07:32 GMT
+      date: Thu, 26 May 2022 07:28:09 GMT
       strict-transport-security: max-age=2592000
+      traceresponse: 00-20d63cf69990ae44abe22fc1e68a283e-60c144645ae4b144-01
     status:
       code: 204
       message: No Content
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d/telemetry?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-d3f3138d/telemetry?api-version=2022-05-31
 version: 1

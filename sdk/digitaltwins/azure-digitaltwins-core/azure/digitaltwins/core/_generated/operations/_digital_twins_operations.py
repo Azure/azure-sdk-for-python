@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,51 +7,672 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
-
+    from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+# fmt: off
+
+def build_get_by_id_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_add_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if if_none_match is not None:
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if if_match is not None:
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if if_match is not None:
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_relationship_by_id_request(
+    id,  # type: str
+    relationship_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/relationships/{relationshipId}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+        "relationshipId": _SERIALIZER.url("relationship_id", relationship_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_add_relationship_request(
+    id,  # type: str
+    relationship_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/relationships/{relationshipId}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+        "relationshipId": _SERIALIZER.url("relationship_id", relationship_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if if_none_match is not None:
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_relationship_request(
+    id,  # type: str
+    relationship_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/relationships/{relationshipId}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+        "relationshipId": _SERIALIZER.url("relationship_id", relationship_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if if_match is not None:
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_relationship_request(
+    id,  # type: str
+    relationship_id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/relationships/{relationshipId}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+        "relationshipId": _SERIALIZER.url("relationship_id", relationship_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if if_match is not None:
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_list_relationships_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    relationship_name = kwargs.pop('relationship_name', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/relationships")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if relationship_name is not None:
+        _query_parameters['relationshipName'] = _SERIALIZER.query("relationship_name", relationship_name, 'str')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_list_incoming_relationships_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/incomingrelationships")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_send_telemetry_request(
+    id,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    message_id = kwargs.pop('message_id')  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    telemetry_source_time = kwargs.pop('telemetry_source_time', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/telemetry")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Message-Id'] = _SERIALIZER.header("message_id", message_id, 'str')
+    if telemetry_source_time is not None:
+        _header_parameters['Telemetry-Source-Time'] = _SERIALIZER.header("telemetry_source_time", telemetry_source_time, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_send_component_telemetry_request(
+    id,  # type: str
+    component_path,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    message_id = kwargs.pop('message_id')  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    telemetry_source_time = kwargs.pop('telemetry_source_time', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/components/{componentPath}/telemetry")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+        "componentPath": _SERIALIZER.url("component_path", component_path, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Message-Id'] = _SERIALIZER.header("message_id", message_id, 'str')
+    if telemetry_source_time is not None:
+        _header_parameters['Telemetry-Source-Time'] = _SERIALIZER.header("telemetry_source_time", telemetry_source_time, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_get_component_request(
+    id,  # type: str
+    component_path,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/components/{componentPath}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+        "componentPath": _SERIALIZER.url("component_path", component_path, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
+def build_update_component_request(
+    id,  # type: str
+    component_path,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    traceparent = kwargs.pop('traceparent', None)  # type: Optional[str]
+    tracestate = kwargs.pop('tracestate', None)  # type: Optional[str]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/digitaltwins/{id}/components/{componentPath}")
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, 'str'),
+        "componentPath": _SERIALIZER.url("component_path", component_path, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if traceparent is not None:
+        _header_parameters['traceparent'] = _SERIALIZER.header("traceparent", traceparent, 'str')
+    if tracestate is not None:
+        _header_parameters['tracestate'] = _SERIALIZER.header("tracestate", tracestate, 'str')
+    if if_match is not None:
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+# fmt: on
 class DigitalTwinsOperations(object):
-    """DigitalTwinsOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.digitaltwins.core.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.digitaltwins.core.AzureDigitalTwinsAPI`'s
+        :attr:`digital_twins` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
+
+    @distributed_trace
     def get_by_id(
         self,
         id,  # type: str
         digital_twins_get_by_id_options=None,  # type: Optional["_models.DigitalTwinsGetByIdOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
+        # type: (...) -> Any
         """Retrieves a digital twin.
         Status codes:
 
@@ -66,73 +688,72 @@ class DigitalTwinsOperations(object):
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
-        :param digital_twins_get_by_id_options: Parameter group.
-        :type digital_twins_get_by_id_options: ~azure.digitaltwins.core.models.DigitalTwinsGetByIdOptions
+        :param digital_twins_get_by_id_options: Parameter group. Default value is None.
+        :type digital_twins_get_by_id_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsGetByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         _traceparent = None
         _tracestate = None
         if digital_twins_get_by_id_options is not None:
             _traceparent = digital_twins_get_by_id_options.traceparent
             _tracestate = digital_twins_get_by_id_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_by_id.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_get_by_id_request(
+            id=id,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.get_by_id.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+
         deserialized = self._deserialize('object', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_by_id.metadata = {'url': '/digitaltwins/{id}'}  # type: ignore
 
+    get_by_id.metadata = {'url': "/digitaltwins/{id}"}  # type: ignore
+
+
+    @distributed_trace
     def add(
         self,
         id,  # type: str
-        twin,  # type: object
+        twin,  # type: Any
         digital_twins_add_options=None,  # type: Optional["_models.DigitalTwinsAddOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[object]
+        # type: (...) -> Optional[Any]
         """Adds or replaces a digital twin.
         Status codes:
 
@@ -152,20 +773,23 @@ class DigitalTwinsOperations(object):
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param twin: The digital twin instance being added. If provided, the $dtId property is ignored.
-        :type twin: object
-        :param digital_twins_add_options: Parameter group.
+        :type twin: any
+        :param digital_twins_add_options: Parameter group. Default value is None.
         :type digital_twins_add_options: ~azure.digitaltwins.core.models.DigitalTwinsAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object or None
+        :return: any, or the result of cls(response)
+        :rtype: any or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[object]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         _if_none_match = None
@@ -173,57 +797,50 @@ class DigitalTwinsOperations(object):
             _traceparent = digital_twins_add_options.traceparent
             _tracestate = digital_twins_add_options.tracestate
             _if_none_match = digital_twins_add_options.if_none_match
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(twin, 'object')
 
-        # Construct URL
-        url = self.add.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_add_request(
+            id=id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            if_none_match=_if_none_match,
+            template_url=self.add.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(twin, 'object')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        response_headers = {}
         deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+            
             deserialized = self._deserialize('object', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    add.metadata = {'url': '/digitaltwins/{id}'}  # type: ignore
 
-    def delete(
+    add.metadata = {'url': "/digitaltwins/{id}"}  # type: ignore
+
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
         digital_twins_delete_options=None,  # type: Optional["_models.DigitalTwinsDeleteOptions"]
@@ -250,7 +867,7 @@ class DigitalTwinsOperations(object):
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
-        :param digital_twins_delete_options: Parameter group.
+        :param digital_twins_delete_options: Parameter group. Default value is None.
         :type digital_twins_delete_options: ~azure.digitaltwins.core.models.DigitalTwinsDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -262,7 +879,9 @@ class DigitalTwinsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         _traceparent = None
         _tracestate = None
         _if_match = None
@@ -270,48 +889,41 @@ class DigitalTwinsOperations(object):
             _traceparent = digital_twins_delete_options.traceparent
             _tracestate = digital_twins_delete_options.tracestate
             _if_match = digital_twins_delete_options.if_match
-        api_version = "2020-10-31"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_delete_request(
+            id=id,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            if_match=_if_match,
+            template_url=self.delete.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/digitaltwins/{id}'}  # type: ignore
+    delete.metadata = {'url': "/digitaltwins/{id}"}  # type: ignore
 
-    def update(
+
+    @distributed_trace
+    def update(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
-        patch_document,  # type: List[object]
+        patch_document,  # type: List[Any]
         digital_twins_update_options=None,  # type: Optional["_models.DigitalTwinsUpdateOptions"]
         **kwargs  # type: Any
     ):
@@ -340,8 +952,8 @@ class DigitalTwinsOperations(object):
         :param patch_document: An update specification described by JSON Patch. Updates to property
          values and $model elements may happen in the same request. Operations are limited to add,
          replace and remove.
-        :type patch_document: list[object]
-        :param digital_twins_update_options: Parameter group.
+        :type patch_document: list[any]
+        :param digital_twins_update_options: Parameter group. Default value is None.
         :type digital_twins_update_options: ~azure.digitaltwins.core.models.DigitalTwinsUpdateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -353,7 +965,10 @@ class DigitalTwinsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         _if_match = None
@@ -361,53 +976,45 @@ class DigitalTwinsOperations(object):
             _traceparent = digital_twins_update_options.traceparent
             _tracestate = digital_twins_update_options.tracestate
             _if_match = digital_twins_update_options.if_match
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json-patch+json")
-        accept = "application/json"
+        _json = self._serialize.body(patch_document, '[object]')
 
-        # Construct URL
-        url = self.update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_update_request(
+            id=id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            if_match=_if_match,
+            template_url=self.update.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(patch_document, '[object]')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 204:
             response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+            
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update.metadata = {'url': '/digitaltwins/{id}'}  # type: ignore
+    update.metadata = {'url': "/digitaltwins/{id}"}  # type: ignore
 
+
+    @distributed_trace
     def get_relationship_by_id(
         self,
         id,  # type: str
@@ -415,7 +1022,7 @@ class DigitalTwinsOperations(object):
         digital_twins_get_relationship_by_id_options=None,  # type: Optional["_models.DigitalTwinsGetRelationshipByIdOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
+        # type: (...) -> Any
         """Retrieves a relationship between two digital twins.
         Status codes:
 
@@ -435,75 +1042,74 @@ class DigitalTwinsOperations(object):
         :param relationship_id: The id of the relationship. The id is unique within the digital twin
          and case sensitive.
         :type relationship_id: str
-        :param digital_twins_get_relationship_by_id_options: Parameter group.
-        :type digital_twins_get_relationship_by_id_options: ~azure.digitaltwins.core.models.DigitalTwinsGetRelationshipByIdOptions
+        :param digital_twins_get_relationship_by_id_options: Parameter group. Default value is None.
+        :type digital_twins_get_relationship_by_id_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsGetRelationshipByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         _traceparent = None
         _tracestate = None
         if digital_twins_get_relationship_by_id_options is not None:
             _traceparent = digital_twins_get_relationship_by_id_options.traceparent
             _tracestate = digital_twins_get_relationship_by_id_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_relationship_by_id.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-            'relationshipId': self._serialize.url("relationship_id", relationship_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_get_relationship_by_id_request(
+            id=id,
+            relationship_id=relationship_id,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.get_relationship_by_id.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+
         deserialized = self._deserialize('object', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_relationship_by_id.metadata = {'url': '/digitaltwins/{id}/relationships/{relationshipId}'}  # type: ignore
 
+    get_relationship_by_id.metadata = {'url': "/digitaltwins/{id}/relationships/{relationshipId}"}  # type: ignore
+
+
+    @distributed_trace
     def add_relationship(
         self,
         id,  # type: str
         relationship_id,  # type: str
-        relationship,  # type: object
+        relationship,  # type: Any
         digital_twins_add_relationship_options=None,  # type: Optional["_models.DigitalTwinsAddRelationshipOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
+        # type: (...) -> Any
         """Adds a relationship between two digital twins.
         Status codes:
 
@@ -531,20 +1137,24 @@ class DigitalTwinsOperations(object):
          and case sensitive.
         :type relationship_id: str
         :param relationship: The data for the relationship.
-        :type relationship: object
-        :param digital_twins_add_relationship_options: Parameter group.
-        :type digital_twins_add_relationship_options: ~azure.digitaltwins.core.models.DigitalTwinsAddRelationshipOptions
+        :type relationship: any
+        :param digital_twins_add_relationship_options: Parameter group. Default value is None.
+        :type digital_twins_add_relationship_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsAddRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         _if_none_match = None
@@ -552,56 +1162,49 @@ class DigitalTwinsOperations(object):
             _traceparent = digital_twins_add_relationship_options.traceparent
             _tracestate = digital_twins_add_relationship_options.tracestate
             _if_none_match = digital_twins_add_relationship_options.if_none_match
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(relationship, 'object')
 
-        # Construct URL
-        url = self.add_relationship.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-            'relationshipId': self._serialize.url("relationship_id", relationship_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_add_relationship_request(
+            id=id,
+            relationship_id=relationship_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            if_none_match=_if_none_match,
+            template_url=self.add_relationship.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(relationship, 'object')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+
         deserialized = self._deserialize('object', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    add_relationship.metadata = {'url': '/digitaltwins/{id}/relationships/{relationshipId}'}  # type: ignore
 
-    def delete_relationship(
+    add_relationship.metadata = {'url': "/digitaltwins/{id}/relationships/{relationshipId}"}  # type: ignore
+
+
+    @distributed_trace
+    def delete_relationship(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
         relationship_id,  # type: str
@@ -632,8 +1235,9 @@ class DigitalTwinsOperations(object):
         :param relationship_id: The id of the relationship. The id is unique within the digital twin
          and case sensitive.
         :type relationship_id: str
-        :param digital_twins_delete_relationship_options: Parameter group.
-        :type digital_twins_delete_relationship_options: ~azure.digitaltwins.core.models.DigitalTwinsDeleteRelationshipOptions
+        :param digital_twins_delete_relationship_options: Parameter group. Default value is None.
+        :type digital_twins_delete_relationship_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsDeleteRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -644,7 +1248,9 @@ class DigitalTwinsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         _traceparent = None
         _tracestate = None
         _if_match = None
@@ -652,50 +1258,43 @@ class DigitalTwinsOperations(object):
             _traceparent = digital_twins_delete_relationship_options.traceparent
             _tracestate = digital_twins_delete_relationship_options.tracestate
             _if_match = digital_twins_delete_relationship_options.if_match
-        api_version = "2020-10-31"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.delete_relationship.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-            'relationshipId': self._serialize.url("relationship_id", relationship_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_delete_relationship_request(
+            id=id,
+            relationship_id=relationship_id,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            if_match=_if_match,
+            template_url=self.delete_relationship.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_relationship.metadata = {'url': '/digitaltwins/{id}/relationships/{relationshipId}'}  # type: ignore
+    delete_relationship.metadata = {'url': "/digitaltwins/{id}/relationships/{relationshipId}"}  # type: ignore
 
-    def update_relationship(
+
+    @distributed_trace
+    def update_relationship(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
         relationship_id,  # type: str
-        patch_document,  # type: List[object]
+        patch_document,  # type: List[Any]
         digital_twins_update_relationship_options=None,  # type: Optional["_models.DigitalTwinsUpdateRelationshipOptions"]
         **kwargs  # type: Any
     ):
@@ -731,9 +1330,10 @@ class DigitalTwinsOperations(object):
          and case sensitive.
         :type relationship_id: str
         :param patch_document: JSON Patch description of the update to the relationship properties.
-        :type patch_document: list[object]
-        :param digital_twins_update_relationship_options: Parameter group.
-        :type digital_twins_update_relationship_options: ~azure.digitaltwins.core.models.DigitalTwinsUpdateRelationshipOptions
+        :type patch_document: list[any]
+        :param digital_twins_update_relationship_options: Parameter group. Default value is None.
+        :type digital_twins_update_relationship_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsUpdateRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -744,7 +1344,10 @@ class DigitalTwinsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         _if_match = None
@@ -752,53 +1355,45 @@ class DigitalTwinsOperations(object):
             _traceparent = digital_twins_update_relationship_options.traceparent
             _tracestate = digital_twins_update_relationship_options.tracestate
             _if_match = digital_twins_update_relationship_options.if_match
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json-patch+json")
-        accept = "application/json"
+        _json = self._serialize.body(patch_document, '[object]')
 
-        # Construct URL
-        url = self.update_relationship.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-            'relationshipId': self._serialize.url("relationship_id", relationship_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_update_relationship_request(
+            id=id,
+            relationship_id=relationship_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            if_match=_if_match,
+            template_url=self.update_relationship.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(patch_document, '[object]')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
 
+
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_relationship.metadata = {'url': '/digitaltwins/{id}/relationships/{relationshipId}'}  # type: ignore
+    update_relationship.metadata = {'url': "/digitaltwins/{id}/relationships/{relationshipId}"}  # type: ignore
 
+
+    @distributed_trace
     def list_relationships(
         self,
         id,  # type: str
@@ -822,60 +1417,65 @@ class DigitalTwinsOperations(object):
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
-        :param relationship_name: The name of the relationship.
+        :param relationship_name: The name of the relationship. Default value is None.
         :type relationship_name: str
-        :param digital_twins_list_relationships_options: Parameter group.
-        :type digital_twins_list_relationships_options: ~azure.digitaltwins.core.models.DigitalTwinsListRelationshipsOptions
+        :param digital_twins_list_relationships_options: Parameter group. Default value is None.
+        :type digital_twins_list_relationships_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsListRelationshipsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RelationshipCollection or the result of cls(response)
+        :return: An iterator like instance of either RelationshipCollection or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.RelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelationshipCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
-        _traceparent = None
-        _tracestate = None
-        if digital_twins_list_relationships_options is not None:
-            _traceparent = digital_twins_list_relationships_options.traceparent
-            _tracestate = digital_twins_list_relationships_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            if _traceparent is not None:
-                header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-            if _tracestate is not None:
-                header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_relationships.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'id': self._serialize.url("id", id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if relationship_name is not None:
-                    query_parameters['relationshipName'] = self._serialize.query("relationship_name", relationship_name, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                _traceparent = None
+                _tracestate = None
+                if digital_twins_list_relationships_options is not None:
+                    _traceparent = digital_twins_list_relationships_options.traceparent
+                    _tracestate = digital_twins_list_relationships_options.tracestate
+                
+                request = build_list_relationships_request(
+                    id=id,
+                    api_version=api_version,
+                    traceparent=_traceparent,
+                    tracestate=_tracestate,
+                    relationship_name=relationship_name,
+                    template_url=self.list_relationships.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                _traceparent = None
+                _tracestate = None
+                if digital_twins_list_relationships_options is not None:
+                    _traceparent = digital_twins_list_relationships_options.traceparent
+                    _tracestate = digital_twins_list_relationships_options.tracestate
+                
+                request = build_list_relationships_request(
+                    id=id,
+                    api_version=api_version,
+                    traceparent=_traceparent,
+                    tracestate=_tracestate,
+                    relationship_name=relationship_name,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('RelationshipCollection', pipeline_response)
+            deserialized = self._deserialize("RelationshipCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -884,21 +1484,27 @@ class DigitalTwinsOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    list_relationships.metadata = {'url': '/digitaltwins/{id}/relationships'}  # type: ignore
+    list_relationships.metadata = {'url': "/digitaltwins/{id}/relationships"}  # type: ignore
 
+    @distributed_trace
     def list_incoming_relationships(
         self,
         id,  # type: str
@@ -921,56 +1527,63 @@ class DigitalTwinsOperations(object):
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
-        :param digital_twins_list_incoming_relationships_options: Parameter group.
-        :type digital_twins_list_incoming_relationships_options: ~azure.digitaltwins.core.models.DigitalTwinsListIncomingRelationshipsOptions
+        :param digital_twins_list_incoming_relationships_options: Parameter group. Default value is
+         None.
+        :type digital_twins_list_incoming_relationships_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsListIncomingRelationshipsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either IncomingRelationshipCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.IncomingRelationshipCollection]
+        :return: An iterator like instance of either IncomingRelationshipCollection or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.IncomingRelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.IncomingRelationshipCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
-        _traceparent = None
-        _tracestate = None
-        if digital_twins_list_incoming_relationships_options is not None:
-            _traceparent = digital_twins_list_incoming_relationships_options.traceparent
-            _tracestate = digital_twins_list_incoming_relationships_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            if _traceparent is not None:
-                header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-            if _tracestate is not None:
-                header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_incoming_relationships.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'id': self._serialize.url("id", id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                _traceparent = None
+                _tracestate = None
+                if digital_twins_list_incoming_relationships_options is not None:
+                    _traceparent = digital_twins_list_incoming_relationships_options.traceparent
+                    _tracestate = digital_twins_list_incoming_relationships_options.tracestate
+                
+                request = build_list_incoming_relationships_request(
+                    id=id,
+                    api_version=api_version,
+                    traceparent=_traceparent,
+                    tracestate=_tracestate,
+                    template_url=self.list_incoming_relationships.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                _traceparent = None
+                _tracestate = None
+                if digital_twins_list_incoming_relationships_options is not None:
+                    _traceparent = digital_twins_list_incoming_relationships_options.traceparent
+                    _tracestate = digital_twins_list_incoming_relationships_options.tracestate
+                
+                request = build_list_incoming_relationships_request(
+                    id=id,
+                    api_version=api_version,
+                    traceparent=_traceparent,
+                    tracestate=_tracestate,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('IncomingRelationshipCollection', pipeline_response)
+            deserialized = self._deserialize("IncomingRelationshipCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -979,26 +1592,32 @@ class DigitalTwinsOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
-    list_incoming_relationships.metadata = {'url': '/digitaltwins/{id}/incomingrelationships'}  # type: ignore
+    list_incoming_relationships.metadata = {'url': "/digitaltwins/{id}/incomingrelationships"}  # type: ignore
 
-    def send_telemetry(
+    @distributed_trace
+    def send_telemetry(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
         message_id,  # type: str
-        telemetry,  # type: object
+        telemetry,  # type: Any
         telemetry_source_time=None,  # type: Optional[str]
         digital_twins_send_telemetry_options=None,  # type: Optional["_models.DigitalTwinsSendTelemetryOptions"]
         **kwargs  # type: Any
@@ -1024,12 +1643,13 @@ class DigitalTwinsOperations(object):
          commonly used for de-duplicating messages.
         :type message_id: str
         :param telemetry: The telemetry measurements to send from the digital twin.
-        :type telemetry: object
+        :type telemetry: any
         :param telemetry_source_time: An RFC 3339 timestamp that identifies the time the telemetry was
-         measured.
+         measured. Default value is None.
         :type telemetry_source_time: str
-        :param digital_twins_send_telemetry_options: Parameter group.
-        :type digital_twins_send_telemetry_options: ~azure.digitaltwins.core.models.DigitalTwinsSendTelemetryOptions
+        :param digital_twins_send_telemetry_options: Parameter group. Default value is None.
+        :type digital_twins_send_telemetry_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsSendTelemetryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1040,62 +1660,56 @@ class DigitalTwinsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         if digital_twins_send_telemetry_options is not None:
             _traceparent = digital_twins_send_telemetry_options.traceparent
             _tracestate = digital_twins_send_telemetry_options.tracestate
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(telemetry, 'object')
 
-        # Construct URL
-        url = self.send_telemetry.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_send_telemetry_request(
+            id=id,
+            api_version=api_version,
+            content_type=content_type,
+            message_id=message_id,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            telemetry_source_time=telemetry_source_time,
+            template_url=self.send_telemetry.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Message-Id'] = self._serialize.header("message_id", message_id, 'str')
-        if telemetry_source_time is not None:
-            header_parameters['Telemetry-Source-Time'] = self._serialize.header("telemetry_source_time", telemetry_source_time, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(telemetry, 'object')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    send_telemetry.metadata = {'url': '/digitaltwins/{id}/telemetry'}  # type: ignore
+    send_telemetry.metadata = {'url': "/digitaltwins/{id}/telemetry"}  # type: ignore
 
-    def send_component_telemetry(
+
+    @distributed_trace
+    def send_component_telemetry(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
         component_path,  # type: str
         message_id,  # type: str
-        telemetry,  # type: object
+        telemetry,  # type: Any
         telemetry_source_time=None,  # type: Optional[str]
         digital_twins_send_component_telemetry_options=None,  # type: Optional["_models.DigitalTwinsSendComponentTelemetryOptions"]
         **kwargs  # type: Any
@@ -1124,12 +1738,13 @@ class DigitalTwinsOperations(object):
          commonly used for de-duplicating messages.
         :type message_id: str
         :param telemetry: The telemetry measurements to send from the digital twin's component.
-        :type telemetry: object
+        :type telemetry: any
         :param telemetry_source_time: An RFC 3339 timestamp that identifies the time the telemetry was
-         measured.
+         measured. Default value is None.
         :type telemetry_source_time: str
-        :param digital_twins_send_component_telemetry_options: Parameter group.
-        :type digital_twins_send_component_telemetry_options: ~azure.digitaltwins.core.models.DigitalTwinsSendComponentTelemetryOptions
+        :param digital_twins_send_component_telemetry_options: Parameter group. Default value is None.
+        :type digital_twins_send_component_telemetry_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsSendComponentTelemetryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1140,57 +1755,51 @@ class DigitalTwinsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         if digital_twins_send_component_telemetry_options is not None:
             _traceparent = digital_twins_send_component_telemetry_options.traceparent
             _tracestate = digital_twins_send_component_telemetry_options.tracestate
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        _json = self._serialize.body(telemetry, 'object')
 
-        # Construct URL
-        url = self.send_component_telemetry.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-            'componentPath': self._serialize.url("component_path", component_path, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_send_component_telemetry_request(
+            id=id,
+            component_path=component_path,
+            api_version=api_version,
+            content_type=content_type,
+            message_id=message_id,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            telemetry_source_time=telemetry_source_time,
+            template_url=self.send_component_telemetry.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Message-Id'] = self._serialize.header("message_id", message_id, 'str')
-        if telemetry_source_time is not None:
-            header_parameters['Telemetry-Source-Time'] = self._serialize.header("telemetry_source_time", telemetry_source_time, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(telemetry, 'object')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    send_component_telemetry.metadata = {'url': '/digitaltwins/{id}/components/{componentPath}/telemetry'}  # type: ignore
+    send_component_telemetry.metadata = {'url': "/digitaltwins/{id}/components/{componentPath}/telemetry"}  # type: ignore
 
+
+    @distributed_trace
     def get_component(
         self,
         id,  # type: str
@@ -1198,7 +1807,7 @@ class DigitalTwinsOperations(object):
         digital_twins_get_component_options=None,  # type: Optional["_models.DigitalTwinsGetComponentOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
+        # type: (...) -> Any
         """Retrieves a component from a digital twin.
         Status codes:
 
@@ -1217,71 +1826,70 @@ class DigitalTwinsOperations(object):
         :type id: str
         :param component_path: The name of the DTDL component.
         :type component_path: str
-        :param digital_twins_get_component_options: Parameter group.
-        :type digital_twins_get_component_options: ~azure.digitaltwins.core.models.DigitalTwinsGetComponentOptions
+        :param digital_twins_get_component_options: Parameter group. Default value is None.
+        :type digital_twins_get_component_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsGetComponentOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+
         _traceparent = None
         _tracestate = None
         if digital_twins_get_component_options is not None:
             _traceparent = digital_twins_get_component_options.traceparent
             _tracestate = digital_twins_get_component_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get_component.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-            'componentPath': self._serialize.url("component_path", component_path, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_get_component_request(
+            id=id,
+            component_path=component_path,
+            api_version=api_version,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            template_url=self.get_component.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+
         deserialized = self._deserialize('object', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_component.metadata = {'url': '/digitaltwins/{id}/components/{componentPath}'}  # type: ignore
 
-    def update_component(
+    get_component.metadata = {'url': "/digitaltwins/{id}/components/{componentPath}"}  # type: ignore
+
+
+    @distributed_trace
+    def update_component(  # pylint: disable=inconsistent-return-statements
         self,
         id,  # type: str
         component_path,  # type: str
-        patch_document,  # type: List[object]
+        patch_document,  # type: List[Any]
         digital_twins_update_component_options=None,  # type: Optional["_models.DigitalTwinsUpdateComponentOptions"]
         **kwargs  # type: Any
     ):
@@ -1312,9 +1920,10 @@ class DigitalTwinsOperations(object):
         :param patch_document: An update specification described by JSON Patch. Updates to property
          values and $model elements may happen in the same request. Operations are limited to add,
          replace and remove.
-        :type patch_document: list[object]
-        :param digital_twins_update_component_options: Parameter group.
-        :type digital_twins_update_component_options: ~azure.digitaltwins.core.models.DigitalTwinsUpdateComponentOptions
+        :type patch_document: list[any]
+        :param digital_twins_update_component_options: Parameter group. Default value is None.
+        :type digital_twins_update_component_options:
+         ~azure.digitaltwins.core.models.DigitalTwinsUpdateComponentOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1325,7 +1934,10 @@ class DigitalTwinsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
+        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+
         _traceparent = None
         _tracestate = None
         _if_match = None
@@ -1333,50 +1945,41 @@ class DigitalTwinsOperations(object):
             _traceparent = digital_twins_update_component_options.traceparent
             _tracestate = digital_twins_update_component_options.tracestate
             _if_match = digital_twins_update_component_options.if_match
-        api_version = "2020-10-31"
-        content_type = kwargs.pop("content_type", "application/json-patch+json")
-        accept = "application/json"
+        _json = self._serialize.body(patch_document, '[object]')
 
-        # Construct URL
-        url = self.update_component.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'id': self._serialize.url("id", id, 'str'),
-            'componentPath': self._serialize.url("component_path", component_path, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        request = build_update_component_request(
+            id=id,
+            component_path=component_path,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            traceparent=_traceparent,
+            tracestate=_tracestate,
+            if_match=_if_match,
+            template_url=self.update_component.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if _if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(patch_document, '[object]')
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 204:
             response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+            
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_component.metadata = {'url': '/digitaltwins/{id}/components/{componentPath}'}  # type: ignore
+    update_component.metadata = {'url': "/digitaltwins/{id}/components/{componentPath}"}  # type: ignore
+

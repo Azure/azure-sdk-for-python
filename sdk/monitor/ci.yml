@@ -36,3 +36,5 @@ extends:
       safeName: azuremonitoropentelemetryexporter
     - name: azure-monitor-query
       safeName: azuremonitorquery
+    - name: azure-monitor-ingestion
+      safeName: azuremonitoringestion

@@ -51,12 +51,13 @@ class LocationCacheTest(unittest.TestCase):
     def create_spy_client(self, use_multiple_write_locations, enable_endpoint_discovery, is_preferred_locations_list_empty):
         self.preferred_locations = ["location1", "location2", "location3", "location4"]
         connectionPolicy = documents.ConnectionPolicy()
+        connectionPolicy.ConnectionRetryConfiguration = 5
         connectionPolicy.DisableSSLVerification = True
         connectionPolicy.PreferredLocations = [] if is_preferred_locations_list_empty else self.preferred_locations
         connectionPolicy.EnableEndpointDiscovery = enable_endpoint_discovery
         connectionPolicy.UseMultipleWriteLocations = use_multiple_write_locations
 
-        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': "SomeKeyValue"}, connection_policy=connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': "SomeKeyValue"}, consistency_level="Session", connection_policy=connectionPolicy)
         return client
 
     def test_validate_retry_on_session_not_availabe_with_disable_multiple_write_locations_and_endpoint_discovery_disabled(self):
@@ -188,7 +189,7 @@ class LocationCacheTest(unittest.TestCase):
         self.assertEqual(self.location_cache.get_write_endpoints()[2], self.LOCATION_3_ENDPOINT)
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
 
-    def mock_get_database_account(self, url_connection = None):
+    def mock_get_database_account(self, url_connection=None):
         self.get_database_account_hit_counter += 1
         return self.create_database_account(True)
 
@@ -220,12 +221,13 @@ class LocationCacheTest(unittest.TestCase):
         self.location_cache.perform_on_database_account_read(self.database_account)
         connectionPolicy = documents.ConnectionPolicy()
         connectionPolicy.PreferredLocations = self.preferred_locations
-        client = cosmos_client_connection.CosmosClientConnection("", {}, connection_policy=connectionPolicy)
+        connectionPolicy.ConnectionRetryConfiguration = 5
+        client = cosmos_client_connection.CosmosClientConnection("", {}, consistency_level="Session", connection_policy=connectionPolicy)
         self.global_endpoint_manager = client._global_endpoint_manager
 
     def validate_location_cache(self, use_multiple_write_locations, endpoint_discovery_enabled, is_preferred_list_empty):
-        for write_location_index in range(0,3):
-            for read_location_index in range(0,2):
+        for write_location_index in range(3):
+            for read_location_index in range(2):
                 self.initialize(use_multiple_write_locations, endpoint_discovery_enabled, is_preferred_list_empty)
 
                 current_write_endpoints = self.location_cache.get_write_endpoints()
@@ -285,7 +287,7 @@ class LocationCacheTest(unittest.TestCase):
         self.assertTrue(self.get_database_account_hit_counter <= 1)
 
         for i in range(10):
-            refresh_thread = RefreshThread(kwargs={'endpoint_manager':self.global_endpoint_manager})
+            refresh_thread = RefreshThread(kwargs={'endpoint_manager': self.global_endpoint_manager})
             refresh_thread.start()
             refresh_thread.join()
 
@@ -298,7 +300,7 @@ class LocationCacheTest(unittest.TestCase):
         is_most_preferred_location_unavailable_for_read = False
         is_most_preferred_location_unavailable_for_write = False if use_multiple_write_locations else is_first_write_endpoint_unavailable
 
-        if (len(self.preferred_locations) > 0):
+        if len(self.preferred_locations) > 0:
             most_preferred_read_location_name = None
             for preferred_location in self.preferred_locations:
                 for read_location in self.database_account._ReadableLocations:

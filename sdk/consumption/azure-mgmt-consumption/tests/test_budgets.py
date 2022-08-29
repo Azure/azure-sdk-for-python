@@ -26,14 +26,17 @@ class TestMgmtConsumption(AzureMgmtRecordedTestCase):
         SUBSCRIPTION_ID = self.get_settings_value('SUBSCRIPTION_ID')
         SCOPE = '/subscriptions/{}/resourceGroups/{}'.format(SUBSCRIPTION_ID, resource_group.name)
         BUDGET_NAME = self.get_resource_name('budget')
+        TODAY = datetime.datetime.now()
+        start_date = TODAY.strftime('%Y-%m-01T00:00:00Z')
+        end_date = (TODAY+datetime.timedelta(180)).strftime('%Y-%m-01T00:00:00Z')
         # create
         BODY = {
             "category": "Cost",
             "amount": '100',
             "timeGrain": "Monthly",
             "timePeriod": {
-                "startDate": "2022-01-01T00:00:00Z",
-                "endDate": "2022-10-31T00:00:00Z"
+                "startDate": start_date,
+                "endDate": end_date
             }
         }
         self.consumption_client.budgets.create_or_update(SCOPE, BUDGET_NAME, BODY)

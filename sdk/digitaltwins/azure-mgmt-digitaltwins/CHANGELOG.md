@@ -1,5 +1,11 @@
 # Release History
 
+## 6.2.0 (2022-06-28)
+
+**Features**
+
+  - Model DigitalTwinsEndpointResourceProperties.provisioning_state has a new state `Updating`
+
 ## 6.1.0 (2022-03-21)
 
 **Features**

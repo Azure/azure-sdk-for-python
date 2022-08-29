@@ -38,7 +38,7 @@ from azure.keyvault.keys.crypto import CryptographyClient, KeyWrapAlgorithm
 from azure.keyvault.keys import KeyVaultKey, KeyType
 from azure.keyvault.secrets import SecretClient
 
-from azure.storage.blob import BlobServiceClient, BlobType
+from azure.storage.blob import BlobServiceClient
 
 # Environment variable keys which must be set to run this sample
 STORAGE_URL = 'AZURE_STORAGE_ACCOUNT_URL'
@@ -95,11 +95,11 @@ tenant_id = get_env_var(TENANT_ID)
 client_id = get_env_var(CLIENT_ID)  # aka appId in AzureCLI
 client_secret = get_env_var(CLIENT_SECRET)  # aka password in AzureCLI
 
-# construct a token credential for use by Storage and KeyVault clients.
+# Construct a token credential for use by Storage and KeyVault clients.
 credential = ClientSecretCredential(tenant_id, client_id, client_secret)
 secret_client = SecretClient(keyvault_url, credential=credential)
 
-# the secret is url-safe base64 encoded bytes, content type 'application/octet-stream'
+# The secret is url-safe base64 encoded bytes, content type 'application/octet-stream'
 secret = secret_client.get_secret('symmetric-key')
 key_bytes = base64.urlsafe_b64decode(secret.value)
 kvk = KeyVaultKey(key_id=secret.id, key_ops=['unwrapKey', 'wrapKey'], k=key_bytes, kty=KeyType.oct)
@@ -111,20 +111,21 @@ blob_name = make_resource_name('blob')
 
 container_client = storage_client.get_container_client(container_name)
 container_client.key_encryption_key = kek
+container_client.encryption_version = '2.0'
 container_client.create_container()
 try:
     container_client.upload_blob(blob_name, 'This is my blob.')
 
-    # download without decrypting
+    # Download without decrypting
     container_client.key_encryption_key = None
-    result = container_client.get_blob_client(blob_name).download_blob().content_as_bytes()
+    result = container_client.get_blob_client(blob_name).download_blob().readall()
     print(result)
 
-    # download and decrypt
+    # Download and decrypt
     container_client.key_encryption_key = kek
-    result = container_client.get_blob_client(blob_name).download_blob().content_as_bytes()
+    result = container_client.get_blob_client(blob_name).download_blob().readall()
     print(result)
 
 finally:
-    # clean up the container
+    # Clean up the container
     container_client.delete_container()

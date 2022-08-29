@@ -952,7 +952,6 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             identity=search_indexer_data_source.identity
         )
 
-
 def pack_analyzer(analyzer):
     if not analyzer:
         return None

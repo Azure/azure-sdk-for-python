@@ -28,7 +28,7 @@ multiapi: true
 batch:
   - tag: release_2_0
   - tag: release_2_1
-  - tag: release_2022_01_30_preview
+  - tag: release_2022_06_30_preview
   - multiapiscript: true
 ```
 
@@ -64,24 +64,24 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 
 ## Release 3.1-preview
 
-These settings apply only when `--tag=release_2022_01_30_preview` is specified on the command line.
+These settings apply only when `--tag=release_2022_06_30_preview` is specified on the command line.
 
-``` yaml $(tag) == 'release_2022_01_30_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/c3ca13e3eb250957c493993f300cb8137fe55aa4/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-01-30-preview/FormRecognizer.json?token=GHSAT0AAAAAABQHUPDYQQC5RLDS5LZXG4BKYP4QZ6Q
-namespace: azure.ai.formrecognizer.v2022_01_30_preview
-output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2022_01_30_preview
+``` yaml $(tag) == 'release_2022_06_30_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-06-30-preview/FormRecognizer.json
+namespace: azure.ai.formrecognizer.v2022_06_30_preview
+output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2022_06_30_preview
 ```
 
 
-### Override with DocumentModelAdministrationLROPoller
+### Override with DocumentModelAdministrationClientLROPoller
 
 ``` yaml
 directive:
     -   from: swagger-document
         where: '$.paths["/documentModels:build"].post'
         transform: >
-            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationLROPoller";
-            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationLROPoller";
+            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
+            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
 ```
 
 ``` yaml
@@ -89,8 +89,8 @@ directive:
     -   from: swagger-document
         where: '$.paths["/documentModels:compose"].post'
         transform: >
-            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationLROPoller";
-            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationLROPoller";
+            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
+            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
 ```
 
 ``` yaml
@@ -98,6 +98,6 @@ directive:
     -   from: swagger-document
         where: '$.paths["/documentModels/{modelId}:copyTo"].post'
         transform: >
-            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationLROPoller";
-            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationLROPoller";
+            $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
+            $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
 ```

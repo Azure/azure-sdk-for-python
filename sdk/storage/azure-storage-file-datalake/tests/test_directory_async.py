@@ -14,13 +14,25 @@ from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ResourceModifiedError, ServiceRequestError, AzureError
-from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, generate_file_system_sas, \
-    FileSystemSasPermissions
-from azure.storage.filedatalake import generate_directory_sas
-from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
-from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
+from azure.core.exceptions import (
+    AzureError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+    ServiceRequestError
+)
+from azure.storage.filedatalake import (
+    AccessControlChangeCounters,
+    AccessControlChangeResult,
+    ContentSettings,
+    DirectorySasPermissions,
+    EncryptionScopeOptions,
+    FileSystemSasPermissions,
+    generate_directory_sas,
+    generate_file_system_sas
+)
+from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeServiceClient
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
@@ -111,6 +123,64 @@ class DirectoryTest(StorageTestCase):
 
         # Assert
         self.assertTrue(created)
+
+    @DataLakePreparer()
+    async def test_create_directory_owner_group_acl_async(self, datalake_storage_account_name,
+                                                          datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_string_acl = 'user::rwx,group::r-x,other::rwx'
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory(owner=test_string, group=test_string, acl=test_string_acl)
+
+        # Assert
+        acl_properties = await directory_client.get_access_control()
+        self.assertIsNotNone(acl_properties)
+        self.assertEqual(acl_properties['owner'], test_string)
+        self.assertEqual(acl_properties['group'], test_string)
+        self.assertEqual(acl_properties['acl'], test_string_acl)
+
+    @DataLakePreparer()
+    async def test_create_directory_proposed_lease_id_async(self, datalake_storage_account_name,
+                                                            datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_duration = 15
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory(lease_id=test_string, lease_duration=test_duration)
+
+        # Assert
+        properties = await directory_client.get_directory_properties()
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.lease['status'], 'locked')
+        self.assertEqual(properties.lease['state'], 'leased')
+        self.assertEqual(properties.lease['duration'], 'fixed')
+
+    @DataLakePreparer()
+    async def test_create_sub_directory_proposed_lease_id_async(self, datalake_storage_account_name,
+                                                                datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_duration = 15
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client = await directory_client.create_sub_directory(sub_directory='sub1',
+                                                                       lease_id=test_string,
+                                                                       lease_duration=test_duration)
+
+        # Assert
+        properties = await directory_client.get_directory_properties()
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.lease['status'], 'locked')
+        self.assertEqual(properties.lease['state'], 'leased')
+        self.assertEqual(properties.lease['duration'], 'fixed')
 
     @DataLakePreparer()
     async def test_directory_exists(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -804,11 +874,10 @@ class DirectoryTest(StorageTestCase):
         self.assertIsNotNone(properties)
         self.assertIsNone(properties.get('content_settings'))
 
+    @pytest.mark.skip(reason="Investigate why renaming from shorter path to longer path does not work")
     @DataLakePreparer()
     async def test_rename_from_a_shorter_directory_to_longer_directory_async(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # TODO: investigate why rename shorter path to a longer one does not work
-        pytest.skip("")
         directory_name = self._get_directory_reference()
         await self._create_directory_and_get_directory_client(directory_name="old")
 
@@ -957,11 +1026,10 @@ class DirectoryTest(StorageTestCase):
 
         self.assertEqual(non_existing_dir_name, res.path_name)
 
+    @pytest.mark.skip(reason="Investigate why renaming non-empty directory doesn't work")
     @DataLakePreparer()
     async def test_rename_directory_to_non_empty_directory_async(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # TODO: investigate why rename non empty dir doesn't work
-        pytest.skip("")
         dir1 = await self._create_directory_and_get_directory_client("dir1")
         await dir1.create_sub_directory("subdir")
 
@@ -1036,6 +1104,29 @@ class DirectoryTest(StorageTestCase):
         self.assertTrue(properties)
         self.assertIsNotNone(properties.metadata)
         self.assertEqual(properties.metadata['hello'], metadata['hello'])
+
+    @DataLakePreparer()
+    async def test_directory_encryption_scope_from_file_system_async(self, datalake_storage_account_name,
+                                                                     datalake_storage_account_key):
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
+        self.config = self.dsc._config
+        self.file_system_name = self.get_resource_name('filesystem')
+        dir_name = 'testdir'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
+
+        await file_system.create_file_system(encryption_scope_options=encryption_scope)
+        await file_system.create_directory(dir_name)
+
+        directory_client = file_system.get_directory_client(dir_name)
+        props = await directory_client.get_directory_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'], encryption_scope.default_encryption_scope)
 
     @pytest.mark.live_test_only
     @DataLakePreparer()

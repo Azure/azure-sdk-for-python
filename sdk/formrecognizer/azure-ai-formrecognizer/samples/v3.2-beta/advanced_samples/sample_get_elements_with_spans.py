@@ -105,20 +105,20 @@ def get_elements_with_spans():
         print("Found # {} lines in the table".format(len(lines)))
         for line in lines:
             print(
-                "...Line '{}' is within bounding box: '{}'".format(
+                "...Line '{}' is within bounding polygon: '{}'".format(
                     line.content,
-                    line.bounding_box,
+                    line.polygon,
                 )
             )
 
     # Below is a method to search for the style of a particular element by using spans.
-    # This example uses DocumentEntity, but other elements that also have a `spans` or `span`
+    # This example uses DocumentLine, but other elements that also have a `spans` or `span`
     # field can also be used to search for document text style.
-    for entity in result.entities:
-        styles = get_styles(entity.spans, result.styles)
+    for line in result.pages[0].lines:
+        styles = get_styles(line.spans, result.styles)
         print(
-            "Found entity '{}' of type '{}' with style:".format(
-                entity.content, entity.category,
+            "Found line '{}' with style:".format(
+                line.content
             )
         )
         if not styles:

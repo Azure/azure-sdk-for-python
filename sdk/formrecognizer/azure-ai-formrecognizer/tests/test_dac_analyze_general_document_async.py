@@ -20,9 +20,6 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -53,7 +50,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -89,12 +85,12 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -125,7 +121,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
         self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
-        self.assertDocumentEntitiesTransformCorrect(returned_model.entities, raw_analyze_result.entities)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -147,7 +142,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         assert document.tables[0].column_count == 5
         assert document.tables[1].row_count == 6
         assert document.tables[1].column_count == 5
-        assert document.tables[2].row_count == 23
+        assert document.tables[2].row_count == 24
         assert document.tables[2].column_count == 5
 
     @FormRecognizerPreparer()

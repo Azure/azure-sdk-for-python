@@ -24,10 +24,15 @@ USAGE:
 import os
 import asyncio
 
-def format_bounding_box(bounding_box):
-    if not bounding_box:
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
+    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+
+def format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
 
 async def analyze_read():
     path_to_sample_documents = os.path.abspath(
@@ -59,7 +64,7 @@ async def analyze_read():
 
     print("----Languages detected in the document----")
     for language in result.languages:
-        print("Language code: '{}' with confidence {}".format(language.language_code, language.confidence))
+        print("Language code: '{}' with confidence {}".format(language.locale, language.confidence))
 
     for page in result.pages:
         print("----Analyzing document from page #{}----".format(page.page_number))
@@ -72,11 +77,11 @@ async def analyze_read():
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
             print(
-                "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
+                "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
                     line_idx,
                     len(words),
                     line.content,
-                    format_bounding_box(line.bounding_box),
+                    format_polygon(line.polygon),
                 )
             )
 
@@ -89,12 +94,18 @@ async def analyze_read():
 
         for selection_mark in page.selection_marks:
             print(
-                "...Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                     selection_mark.state,
-                    format_bounding_box(selection_mark.bounding_box),
+                    format_polygon(selection_mark.polygon),
                     selection_mark.confidence,
                 )
             )
+
+    if len(result.paragraphs) > 0:
+        print("----Detected #{} paragraphs in the document----".format(len(result.paragraphs)))
+        for paragraph in result.paragraphs:
+            print("Found paragraph with role: '{}' within {} bounding region".format(paragraph.role, format_bounding_region(paragraph.bounding_regions)))
+            print("...with content: '{}'".format(paragraph.content))
 
     print("----------------------------------------")
 

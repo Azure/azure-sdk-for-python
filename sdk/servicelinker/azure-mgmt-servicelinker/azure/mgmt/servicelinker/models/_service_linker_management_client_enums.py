@@ -27,6 +27,12 @@ class AuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_PRINCIPAL_CERTIFICATE = "servicePrincipalCertificate"
     SECRET = "secret"
 
+class AzureResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The azure resource type.
+    """
+
+    KEY_VAULT = "KeyVault"
+
 class ClientType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The application client type
     """
@@ -68,21 +74,20 @@ class SecretType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KEY_VAULT_SECRET_URI = "keyVaultSecretUri"
     KEY_VAULT_SECRET_REFERENCE = "keyVaultSecretReference"
 
-class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TargetServiceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The target service type.
     """
 
     AZURE_RESOURCE = "AzureResource"
     CONFLUENT_BOOTSTRAP_SERVER = "ConfluentBootstrapServer"
     CONFLUENT_SCHEMA_REGISTRY = "ConfluentSchemaRegistry"
-    KEY_VAULT = "KeyVault"
 
 class ValidationResultStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The result of validation
     """
 
     SUCCESS = "success"
-    FAILED = "failed"
+    FAILURE = "failure"
     WARNING = "warning"
 
 class VNetSolutionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):

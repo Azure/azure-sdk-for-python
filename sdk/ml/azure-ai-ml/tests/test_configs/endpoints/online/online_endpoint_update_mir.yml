@@ -1,0 +1,9 @@
+name: march-1
+auth_mode: Key
+identity:
+  type: system_assigned
+traffic:
+    green: 50
+    not-green: 50
+tags:
+    endpointkey1: value1

@@ -1,0 +1,62 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/HemeraComponent.json
+name: AdsLRDNNRawKeys_Dummy
+version: 0.0.2
+display_name: Ads LR DNN Raw Keys
+type: HemeraComponent
+description: Ads LR DNN Raw Keys Dummy sample.
+tags:
+  category: Component Tutorial
+  contact: amldesigner@microsoft.com
+inputs:
+  TrainingDataDir:
+    type: path
+    optional: true
+    is_resource: true
+  ValidationDataDir:
+    type: path
+    optional: true
+    is_resource: true
+  InitialModelDir:
+    type: path
+    optional: true
+    is_resource: true
+  YarnCluster:
+    type: string
+    optional: false
+    default: mtprime-bn2-0
+  JobQueue:
+    type: string
+    optional: false
+    default: default
+  WorkerCount:
+    type: string
+    optional: false
+    default: 2.0
+  Cpu:
+    type: string
+    optional: false
+    default: 2.0
+  Memory:
+    type: string
+    optional: false
+    default: 10g
+  HdfsRootDir:
+    type: string
+    optional: false
+    default: /projects/default/
+  CosmosRootDir:
+    type: string
+    optional: false
+    default: https://cosmos09.osdinfra.net/cosmos/dummy/local/root/
+outputs:
+  output1:
+    type: AnyFile
+  output2:
+    type: AnyFile
+command: >-
+  run.bat [-_TrainingDataDir {inputs.TrainingDataDir}] [-_ValidationDataDir {inputs.ValidationDataDir}] [-_InitialModelDir {inputs.InitialModelDir}] -_CosmosRootDir {inputs.CosmosRootDir} -_PsCount 0
+  %CLUSTER%={inputs.YarnCluster} -JobQueue {inputs.JobQueue} -_WorkerCount {inputs.WorkerCount} -_Cpu {inputs.Cpu} -_Memory {inputs.Memory} -_HdfsRootDir {inputs.HdfsRootDir}
+  -_ExposedPort "3200-3210,3300-3321" -_NodeLostBlocker -_UsePhysicalIP -_SyncWorker -_EntranceFileName run.py -_StartupArguments "" -_PythonZipPath "https://dummy/foo/bar.zip"
+  -_ModelOutputDir {outputs.output1} -_ValidationOutputDir {outputs.output2}
+hemera:
+  ref_id: 1bd1525c-082e-4652-a9b2-9c60783ec551

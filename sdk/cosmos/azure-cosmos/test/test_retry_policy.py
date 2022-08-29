@@ -20,19 +20,17 @@
 #SOFTWARE.
 
 import unittest
-import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import pytest
-import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import azure.cosmos._retry_options as retry_options
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-from azure.cosmos import _retry_utility
+from azure.cosmos import _retry_utility, PartitionKey
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 
-#IMPORTANT NOTES:
+# IMPORTANT NOTES:
 
 #  	Most test cases in this file create collections in your Azure Cosmos account.
 #  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
@@ -70,8 +68,10 @@ class Test_retry_policy_tests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
-        cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
+        cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_database.create_container_if_not_exists(
+            test_config._test_config.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"))
         cls.retry_after_in_milliseconds = 1000
 
     def test_resource_throttle_retry_policy_default_retry_after(self):
@@ -91,7 +91,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryCount])
-                self.assertGreaterEqual( self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
+                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
         finally:
             _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
@@ -159,7 +159,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 {
                     'query': 'SELECT * FROM root r WHERE r.id=@id',
                     'parameters': [
-                        { 'name':'@id', 'value':document_definition['id'] }
+                        {'name': '@id', 'value': document_definition['id']}
                     ]
                 }))
             except exceptions.CosmosHttpResponseError as e:
@@ -237,7 +237,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
 
             created_document = {}
-            try :
+            try:
                 created_document = self.created_collection.create_item(body=document_definition)
             except exceptions.CosmosHttpResponseError as err:
                 self.assertEqual(err.status_code, 10054)
@@ -245,7 +245,12 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertDictEqual(created_document, {})
 
             # 3 retries for readCollection. No retry for createDocument.
-            self.assertEqual(mf.counter, 1) # TODO: The comment above implies that there should be a read in the test. But there isn't...
+            # Counter ends up in three additional calls while doing create_item,
+            # which are reads to the database and container before creating the item.
+            # As such, even though the retry_utility does not retry for the create, the counter is affected by these.
+            # TODO: Figure out a way to make the counter only take in the POST call it is looking for.
+            mf.counter = mf.counter - 3
+            self.assertEqual(mf.counter, 1)
         finally:
             _retry_utility.ExecuteFunction = original_execute_function
 

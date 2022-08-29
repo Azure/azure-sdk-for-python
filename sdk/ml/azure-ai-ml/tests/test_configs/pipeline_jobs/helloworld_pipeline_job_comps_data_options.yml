@@ -1,0 +1,30 @@
+type: pipeline
+
+name: simplePipelineJobMultipleDataforComps
+description: The hello world pipeline job with multiple data options
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+jobs:
+  multiple_data_component:
+    component: azureml:microsoftsamplesCommandComponentMultipleData:1
+    type: command
+    inputs:
+      # Hard coding input dataset, not mapping to job level input
+      component_in_1:
+        path: azureml:fakeData:1
+
+    outputs:
+      # Hard coding input dataset, not mapping to job level output
+      component_out_1:
+        data:
+          name: fakedata
+
+      # Hard-coding input path here instead of mapping to output
+      component_out_2:
+        data:
+          path: /data_path
+          datastore: azureml:workspaceblobstore

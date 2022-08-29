@@ -1,0 +1,33 @@
+type: pipeline
+description: "Example of using data from a Dataset as pipeline input"
+inputs:
+  pipeline_sample_input_data:
+    path: azureml:sampledata1235:2
+    type: uri_file
+  pipeline_sample_input_string: 'Hello_Pipeline_World'
+
+outputs:
+  pipeline_sample_output_data:
+    mode: upload
+
+jobs:
+  hello_python_world_job:
+    type: command
+    component: file:./component.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      sample_input_data: ${{parent.inputs.pipeline_sample_input_data}}
+      sample_input_string: ${{parent.inputs.pipeline_sample_input_string}}
+    outputs:
+      sample_output_data: ${{parent.outputs.pipeline_sample_output_data}}
+
+  mltable_job:
+    type: command
+    component: file:./component.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      sample_input_data:
+        path: azureml:sampledata1235:2
+        type: mltable
+        mode: eval_mount
+      sample_input_string: ${{parent.inputs.pipeline_sample_input_string}}

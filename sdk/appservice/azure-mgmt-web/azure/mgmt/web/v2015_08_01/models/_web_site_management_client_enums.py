@@ -7,23 +7,22 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGISTRATION_STATUS_NOT_SUPPORTED_FOR_RENEWAL = "RegistrationStatusNotSupportedForRenewal"
     EXPIRATION_NOT_IN_RENEWAL_TIME_RANGE = "ExpirationNotInRenewalTimeRange"
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
 
-class AppServiceCertificateOrderPropertiesAppServiceCertificateNotRenewableReasonsItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AppServiceCertificateOrderPropertiesAppServiceCertificateNotRenewableReasonsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGISTRATION_STATUS_NOT_SUPPORTED_FOR_RENEWAL = "RegistrationStatusNotSupportedForRenewal"
     EXPIRATION_NOT_IN_RENEWAL_TIME_RANGE = "ExpirationNotInRenewalTimeRange"
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
 
-class CertificateOrderActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateOrderActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Action type.
     """
 
@@ -42,7 +41,7 @@ class CertificateOrderActionType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     FRAUD_DOCUMENTATION_REQUIRED = "FraudDocumentationRequired"
     UNKNOWN = "Unknown"
 
-class CertificateOrderStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateOrderStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current order status.
     """
 
@@ -57,14 +56,14 @@ class CertificateOrderStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     EXPIRED = "Expired"
     NOT_SUBMITTED = "NotSubmitted"
 
-class CertificateProductType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateProductType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Certificate product type.
     """
 
     STANDARD_DOMAIN_VALIDATED_SSL = "StandardDomainValidatedSsl"
     STANDARD_DOMAIN_VALIDATED_WILD_CARD_SSL = "StandardDomainValidatedWildCardSsl"
 
-class KeyVaultSecretStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyVaultSecretStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the Key Vault secret.
     """
 
@@ -80,7 +79,7 @@ class KeyVaultSecretStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EXTERNAL_PRIVATE_KEY = "ExternalPrivateKey"
     UNKNOWN = "Unknown"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of certificate order.
     """
 

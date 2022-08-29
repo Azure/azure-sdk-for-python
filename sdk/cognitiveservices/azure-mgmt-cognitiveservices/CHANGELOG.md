@@ -1,5 +1,11 @@
 # Release History
 
+## 13.2.0 (2022-06-08)
+
+**Features**
+
+  - `scale_type` of Model DeploymentScaleType has a new Enum type STANDARD
+
 ## 13.1.0 (2022-03-25)
 
 **Features**

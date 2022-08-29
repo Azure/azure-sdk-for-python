@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0 (2022-05-16)
+
+**Features**
+
+  - Added model AzureResourceType
+  - Added model TargetServiceType
+  - Added model ValidateOperationResult
+
 ## 1.0.0 (2022-04-22)
 
 **Features**

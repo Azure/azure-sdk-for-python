@@ -1,0 +1,16 @@
+command: pip freeze
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+name: "test1"
+display_name: "test_display_name"
+compute: "azureml:cpu-cluster"
+experiment_name: mfe-test1
+identity:
+  type: AMLToken
+tags:
+  empty_tag:
+properties:
+  empty_property:
+inputs:
+  hello_input:
+    type: uri_folder
+    path: ../data

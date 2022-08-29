@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._container_service_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ContainerServiceDiagnosticsProfile(msrest.serialization.Model):
@@ -34,7 +36,7 @@ class ContainerServiceDiagnosticsProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        vm_diagnostics: "ContainerServiceVMDiagnostics",
+        vm_diagnostics: "_models.ContainerServiceVMDiagnostics",
         **kwargs
     ):
         """
@@ -71,7 +73,7 @@ class ContainerServiceLinuxProfile(msrest.serialization.Model):
         self,
         *,
         admin_username: str,
-        ssh: "ContainerServiceSshConfiguration",
+        ssh: "_models.ContainerServiceSshConfiguration",
         **kwargs
     ):
         """
@@ -94,17 +96,17 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar count: Number of masters (VMs) in the container service cluster. Allowed values are 1, 3,
-     and 5. The default value is 1. Possible values include: 1, 3, 5. Default value: "1".
+     and 5. The default value is 1. Known values are: 1, 3, 5. Default value: "1".
     :vartype count: int or ~azure.mgmt.containerservice.v2018_03_31.models.Count
     :ivar dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
     :vartype dns_prefix: str
-    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
-     "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
-     "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
-     "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
-     "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
-     "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
-     "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+    :ivar vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+     "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
+     "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
+     "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
+     "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms", "Standard_B8ms",
+     "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo", "Standard_D12",
+     "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
      "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
      "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
      "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
@@ -149,7 +151,7 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
     :vartype first_consecutive_static_ip: str
     :ivar storage_profile: Storage profile specifies what kind of storage used. Choose from
      StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
-     orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
+     orchestrator choice. Known values are: "StorageAccount", "ManagedDisks".
     :vartype storage_profile: str or
      ~azure.mgmt.containerservice.v2018_03_31.models.ContainerServiceStorageProfileTypes
     :ivar fqdn: FQDN for the master pool.
@@ -178,27 +180,27 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         self,
         *,
         dns_prefix: str,
-        vm_size: Union[str, "ContainerServiceVMSizeTypes"],
-        count: Optional[Union[int, "Count"]] = 1,
+        vm_size: Union[str, "_models.ContainerServiceVMSizeTypes"],
+        count: Optional[Union[int, "_models.Count"]] = 1,
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
         first_consecutive_static_ip: Optional[str] = "10.240.255.5",
-        storage_profile: Optional[Union[str, "ContainerServiceStorageProfileTypes"]] = None,
+        storage_profile: Optional[Union[str, "_models.ContainerServiceStorageProfileTypes"]] = None,
         **kwargs
     ):
         """
         :keyword count: Number of masters (VMs) in the container service cluster. Allowed values are 1,
-         3, and 5. The default value is 1. Possible values include: 1, 3, 5. Default value: "1".
+         3, and 5. The default value is 1. Known values are: 1, 3, 5. Default value: "1".
         :paramtype count: int or ~azure.mgmt.containerservice.v2018_03_31.models.Count
         :keyword dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
         :paramtype dns_prefix: str
-        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
-         "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
-         "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
-         "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
-         "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
-         "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
-         "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+        :keyword vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+         "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
+         "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
+         "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
+         "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms", "Standard_B8ms",
+         "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo", "Standard_D12",
+         "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
          "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
          "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
          "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
@@ -243,7 +245,7 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         :paramtype first_consecutive_static_ip: str
         :keyword storage_profile: Storage profile specifies what kind of storage used. Choose from
          StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
-         orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
+         orchestrator choice. Known values are: "StorageAccount", "ManagedDisks".
         :paramtype storage_profile: str or
          ~azure.mgmt.containerservice.v2018_03_31.models.ContainerServiceStorageProfileTypes
         """
@@ -261,11 +263,11 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
 class ContainerServiceNetworkProfile(msrest.serialization.Model):
     """Profile of network configuration.
 
-    :ivar network_plugin: Network plugin used for building Kubernetes network. Possible values
-     include: "azure", "kubenet". Default value: "kubenet".
+    :ivar network_plugin: Network plugin used for building Kubernetes network. Known values are:
+     "azure", "kubenet". Default value: "kubenet".
     :vartype network_plugin: str or ~azure.mgmt.containerservice.v2018_03_31.models.NetworkPlugin
-    :ivar network_policy: Network policy used for building Kubernetes network. Possible values
-     include: "calico".
+    :ivar network_policy: Network policy used for building Kubernetes network. Known values are:
+     "calico".
     :vartype network_policy: str or ~azure.mgmt.containerservice.v2018_03_31.models.NetworkPolicy
     :ivar pod_cidr: A CIDR notation IP range from which to assign pod IPs when kubenet is used.
     :vartype pod_cidr: str
@@ -299,8 +301,8 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        network_plugin: Optional[Union[str, "NetworkPlugin"]] = "kubenet",
-        network_policy: Optional[Union[str, "NetworkPolicy"]] = None,
+        network_plugin: Optional[Union[str, "_models.NetworkPlugin"]] = "kubenet",
+        network_policy: Optional[Union[str, "_models.NetworkPolicy"]] = None,
         pod_cidr: Optional[str] = "10.244.0.0/16",
         service_cidr: Optional[str] = "10.0.0.0/16",
         dns_service_ip: Optional[str] = "10.0.0.10",
@@ -308,11 +310,11 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword network_plugin: Network plugin used for building Kubernetes network. Possible values
-         include: "azure", "kubenet". Default value: "kubenet".
+        :keyword network_plugin: Network plugin used for building Kubernetes network. Known values are:
+         "azure", "kubenet". Default value: "kubenet".
         :paramtype network_plugin: str or ~azure.mgmt.containerservice.v2018_03_31.models.NetworkPlugin
-        :keyword network_policy: Network policy used for building Kubernetes network. Possible values
-         include: "calico".
+        :keyword network_policy: Network policy used for building Kubernetes network. Known values are:
+         "calico".
         :paramtype network_policy: str or ~azure.mgmt.containerservice.v2018_03_31.models.NetworkPolicy
         :keyword pod_cidr: A CIDR notation IP range from which to assign pod IPs when kubenet is used.
         :paramtype pod_cidr: str
@@ -357,7 +359,7 @@ class ContainerServiceSshConfiguration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        public_keys: List["ContainerServiceSshPublicKey"],
+        public_keys: List["_models.ContainerServiceSshPublicKey"],
         **kwargs
     ):
         """
@@ -682,13 +684,13 @@ class ManagedCluster(Resource):
         tags: Optional[Dict[str, str]] = None,
         kubernetes_version: Optional[str] = None,
         dns_prefix: Optional[str] = None,
-        agent_pool_profiles: Optional[List["ManagedClusterAgentPoolProfile"]] = None,
-        linux_profile: Optional["ContainerServiceLinuxProfile"] = None,
-        service_principal_profile: Optional["ManagedClusterServicePrincipalProfile"] = None,
-        addon_profiles: Optional[Dict[str, "ManagedClusterAddonProfile"]] = None,
+        agent_pool_profiles: Optional[List["_models.ManagedClusterAgentPoolProfile"]] = None,
+        linux_profile: Optional["_models.ContainerServiceLinuxProfile"] = None,
+        service_principal_profile: Optional["_models.ManagedClusterServicePrincipalProfile"] = None,
+        addon_profiles: Optional[Dict[str, "_models.ManagedClusterAddonProfile"]] = None,
         enable_rbac: Optional[bool] = None,
-        network_profile: Optional["ContainerServiceNetworkProfile"] = None,
-        aad_profile: Optional["ManagedClusterAADProfile"] = None,
+        network_profile: Optional["_models.ContainerServiceNetworkProfile"] = None,
+        aad_profile: Optional["_models.ManagedClusterAADProfile"] = None,
         **kwargs
     ):
         """
@@ -901,13 +903,13 @@ class ManagedClusterAgentPoolProfile(msrest.serialization.Model):
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
      range of 1 to 100 (inclusive). The default value is 1.
     :vartype count: int
-    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
-     "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
-     "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
-     "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
-     "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
-     "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
-     "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+    :ivar vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+     "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
+     "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
+     "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
+     "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms", "Standard_B8ms",
+     "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo", "Standard_D12",
+     "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
      "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
      "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
      "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
@@ -946,7 +948,7 @@ class ManagedClusterAgentPoolProfile(msrest.serialization.Model):
      the vmSize specified.
     :vartype os_disk_size_gb: int
     :ivar storage_profile: Storage profile specifies what kind of storage used. Defaults to
-     ManagedDisks. Possible values include: "StorageAccount", "ManagedDisks".
+     ManagedDisks. Known values are: "StorageAccount", "ManagedDisks".
     :vartype storage_profile: str or
      ~azure.mgmt.containerservice.v2018_03_31.models.ContainerServiceStorageProfileTypes
     :ivar vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
@@ -954,7 +956,7 @@ class ManagedClusterAgentPoolProfile(msrest.serialization.Model):
     :ivar max_pods: Maximum number of pods that can run on a node.
     :vartype max_pods: int
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2018_03_31.models.OSType
     """
 
@@ -981,12 +983,12 @@ class ManagedClusterAgentPoolProfile(msrest.serialization.Model):
         self,
         *,
         name: str,
-        vm_size: Union[str, "ContainerServiceVMSizeTypes"],
+        vm_size: Union[str, "_models.ContainerServiceVMSizeTypes"],
         count: Optional[int] = 1,
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
         max_pods: Optional[int] = None,
-        os_type: Optional[Union[str, "OSType"]] = "Linux",
+        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
         **kwargs
     ):
         """
@@ -996,13 +998,13 @@ class ManagedClusterAgentPoolProfile(msrest.serialization.Model):
         :keyword count: Number of agents (VMs) to host docker containers. Allowed values must be in the
          range of 1 to 100 (inclusive). The default value is 1.
         :paramtype count: int
-        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
-         "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
-         "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
-         "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
-         "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
-         "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
-         "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+        :keyword vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+         "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
+         "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
+         "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
+         "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms", "Standard_B8ms",
+         "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo", "Standard_D12",
+         "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
          "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
          "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
          "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
@@ -1045,7 +1047,7 @@ class ManagedClusterAgentPoolProfile(msrest.serialization.Model):
         :keyword max_pods: Maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2018_03_31.models.OSType
         """
         super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
@@ -1082,7 +1084,7 @@ class ManagedClusterListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ManagedCluster"]] = None,
+        value: Optional[List["_models.ManagedCluster"]] = None,
         **kwargs
     ):
         """
@@ -1104,7 +1106,7 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
     :ivar name: Pool name.
     :vartype name: str
     :ivar os_type: Required. OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+     Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2018_03_31.models.OSType
     :ivar upgrades: List of orchestrator types and versions available for upgrade.
     :vartype upgrades: list[str]
@@ -1126,7 +1128,7 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
         self,
         *,
         kubernetes_version: str,
-        os_type: Union[str, "OSType"] = "Linux",
+        os_type: Union[str, "_models.OSType"] = "Linux",
         name: Optional[str] = None,
         upgrades: Optional[List[str]] = None,
         **kwargs
@@ -1137,7 +1139,7 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
         :keyword name: Pool name.
         :paramtype name: str
         :keyword os_type: Required. OsType to be used to specify os type. Choose from Linux and
-         Windows. Default to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+         Windows. Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2018_03_31.models.OSType
         :keyword upgrades: List of orchestrator types and versions available for upgrade.
         :paramtype upgrades: list[str]
@@ -1228,8 +1230,8 @@ class ManagedClusterUpgradeProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        control_plane_profile: "ManagedClusterPoolUpgradeProfile",
-        agent_pool_profiles: List["ManagedClusterPoolUpgradeProfile"],
+        control_plane_profile: "_models.ManagedClusterPoolUpgradeProfile",
+        agent_pool_profiles: List["_models.ManagedClusterPoolUpgradeProfile"],
         **kwargs
     ):
         """

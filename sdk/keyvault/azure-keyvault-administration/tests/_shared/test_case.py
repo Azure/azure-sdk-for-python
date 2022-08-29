@@ -4,22 +4,12 @@
 # ------------------------------------
 import time
 
-from azure_devtools.scenario_tests.patches import patch_time_sleep_api
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureRecordedTestCase
+
+from azure.keyvault.administration._internal import HttpChallengeCache
 
 
-class KeyVaultTestCase(AzureMgmtTestCase):
-    def __init__(self, *args, **kwargs):
-        if "match_body" not in kwargs:
-            kwargs["match_body"] = True
-
-        super(KeyVaultTestCase, self).__init__(*args, **kwargs)
-        self.replay_patches.append(patch_time_sleep_api)
-
-    def setUp(self):
-        self.list_test_size = 7
-        super(KeyVaultTestCase, self).setUp()
-
+class KeyVaultTestCase(AzureRecordedTestCase):
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
 
@@ -44,3 +34,7 @@ class KeyVaultTestCase(AzureMgmtTestCase):
                 return
 
         self.fail("expected exception {expected_exception} was not raised")
+
+    def teardown_method(self, method):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0

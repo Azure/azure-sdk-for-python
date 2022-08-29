@@ -26,6 +26,10 @@ class DeviceUpdateTest(AzureTestCase):
 DeviceUpdatePowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "deviceupdate",
-    deviceupdate_endpoint="https://fake_account.account.purview.azure.com",
-    deviceupdate_instance_id="instance"
+    deviceupdate_endpoint="foo.api.adu.microsoft.com",
+    deviceupdate_instance_id="bar",
+    deviceupdate_update_provider="foo",
+    deviceupdate_update_name="bar",
+    deviceupdate_update_version="1.2",
+    deviceupdate_device_group="foo"
 )
