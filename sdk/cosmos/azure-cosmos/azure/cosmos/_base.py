@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -678,8 +678,7 @@ def validate_cache_staleness_value(max_integrated_cache_staleness):
                          "integer greater than or equal to zero")
 
 
-def _stringify_auto_scale(offer):
-    # type: (Dict[str, Any]) -> Any
+def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
     auto_scale_params = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
@@ -692,26 +691,27 @@ def _stringify_auto_scale(offer):
     return auto_scale_settings
 
 
-def _set_throughput_options(offer, options):
-    # type: (int, Dict[str, Any]) -> Any
+def _set_throughput_options(offer: int, options: Dict[str, Any]) -> Any:
     offer_throughput = offer
     request_options = options
 
-    if offer is not None:
-        if isinstance(offer, int):
-            request_options["offerThroughput"] = offer_throughput
+    if offer is None:
+        return
 
-        max_throughput = offer.auto_scale_max_throughput
-        increment_percent = offer.auto_scale_increment_percent
+    if isinstance(offer, int):
+        request_options["offerThroughput"] = offer_throughput
 
-        if max_throughput:
-            request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
-        elif increment_percent:
-            raise ValueError("auto_scale_max_throughput must be supplied in "
-                             "conjunction with auto_scale_increment_percent")
+    max_throughput = offer.auto_scale_max_throughput
+    increment_percent = offer.auto_scale_increment_percent
 
-def _deserialize_throughput(throughput):
-    # type: (list) -> Any
+    if max_throughput:
+        request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
+    elif increment_percent:
+        raise ValueError("auto_scale_max_throughput must be supplied in "
+                         "conjunction with auto_scale_increment_percent")
+
+
+def _deserialize_throughput(throughput: list) -> Any:
     throughput_properties = throughput
     try:
         max_throughput = throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput']
@@ -719,8 +719,8 @@ def _deserialize_throughput(throughput):
         max_throughput = None
     try:
         increment_percent = \
-        throughput_properties[0]['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-            'incrementPercent']
+            throughput_properties[0]['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                'incrementPercent']
     except (KeyError, TypeError):
         increment_percent = None
     try:
