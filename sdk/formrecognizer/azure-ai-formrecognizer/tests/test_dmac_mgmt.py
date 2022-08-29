@@ -75,8 +75,8 @@ class TestManagement(FormRecognizerTest):
     def test_account_info(self, client):
         info = client.get_resource_details()
 
-        assert info.document_model_limit
-        assert info.document_model_count
+        assert info.custom_document_models.limit
+        assert info.custom_document_models.count
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()

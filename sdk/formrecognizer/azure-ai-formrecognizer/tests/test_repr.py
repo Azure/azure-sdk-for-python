@@ -600,12 +600,14 @@ class TestRepr():
         )
         assert repr(model) == model_repr
 
-    def test_account_info(self):
+    def test_resource_details(self):
         model = _models.ResourceDetails(
-            document_model_limit=5000, document_model_count=10
+            custom_document_models=_models.CustomDocumentModelsDetails(
+                limit=5000, count=10
+            )
         )
-        model_repr = "ResourceDetails(document_model_count={}, document_model_limit={})".format(
-            10, 5000
+        model_repr = "ResourceDetails(custom_document_models={})".format(
+            "CustomDocumentModelsDetails(count=10, limit=5000)"
         )
         assert repr(model) == model_repr
 
