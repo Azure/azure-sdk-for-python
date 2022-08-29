@@ -9,7 +9,7 @@ import os.path
 import six
 import sys
 import time
-from typing import TYPE_CHECKING
+from typing import Dict
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -21,28 +21,20 @@ from .azure_testcase import (
     get_resource_name,
     get_qualified_method_name,
 )
+from .fake_credentials_async import AsyncFakeCredential
 from .helpers import is_live
-from .sanitizers import add_general_regex_sanitizer
-
-try:
-    # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
-    from .fake_credentials_async import AsyncFakeCredential
-except SyntaxError:
-    pass
-
-if TYPE_CHECKING:
-    from typing import Any
+from .sanitizers import add_general_string_sanitizer
 
 
 load_dotenv(find_dotenv())
 
 
 def _sanitize_token(token, fake_token):
-    add_general_regex_sanitizer(value=fake_token, regex=token)
+    add_general_string_sanitizer(value=fake_token, target=token)
     url_safe_token = token.replace("/", "%2F")
-    add_general_regex_sanitizer(value=fake_token, regex=url_safe_token)
+    add_general_string_sanitizer(value=fake_token, target=url_safe_token)
     async_token = token.replace("%3A", ":")
-    add_general_regex_sanitizer(value=fake_token, regex=async_token)
+    add_general_string_sanitizer(value=fake_token, target=async_token)
 
 
 class AzureRecordedTestCase(object):
@@ -202,34 +194,45 @@ class AzureRecordedTestCase(object):
             time.sleep(seconds)
 
     def generate_sas(self, *args, **kwargs):
+        """Generates a SAS token using a generation function and arguments, and sanitizes token params in recordings.
+
+        By default, this sanitizes the values of the `sig`, `st`, and `se` parameters to "fake_token_value", "start",
+        and "end", respectively. By providing a dictionary of `fake_parameters` mapping parameter names to values they
+        should be sanitized with, you can customize this sanitization and include other parameters.
+
+        :keyword fake_parameters: A dictionary with token parameter names as keys, and the values to sanitize these keys
+            with as values. For example: {"sktid": "00000000-0000-0000-0000-000000000000", "sig": "sanitized"}
+        :paramtype fake_parameters: Dict[str, str]
+        :keyword str fake_value: The value used to sanitize `sig`. Defaults to "fake_token_value".
+        """
         sas_func = args[0]
         sas_func_pos_args = args[1:]
 
         fake_value = kwargs.pop("fake_value", "fake_token_value")
+        fake_parameters = kwargs.pop("fake_parameters", {})
         token = sas_func(*sas_func_pos_args, **kwargs)
 
-        fake_token = self._create_fake_token(token, fake_value)
+        fake_token = self._create_fake_token(token, fake_value, fake_parameters)
         _sanitize_token(token, fake_token)
 
         if self.is_live:
             return token
         return fake_token
 
-    def _create_fake_token(self, token, fake_value):
-        parts = token.split("&")
+    def _create_fake_token(self, token: str, fake_sig_value: str, fake_parameters: Dict[str, str]) -> str:
+        """Returns a replacement value for sanitizing `sig`, `st`, `se`, and provided params of a given SAS token."""
+        parameters = token.split("&")
 
-        for idx, part in enumerate(parts):
-            if part.startswith("sig"):
-                key = part.split("=")
-                key[1] = fake_value
-                parts[idx] = "=".join(key)
-            elif part.startswith("st"):
-                key = part.split("=")
-                key[1] = "start"
-                parts[idx] = "=".join(key)
-            elif part.startswith("se"):
-                key = part.split("=")
-                key[1] = "end"
-                parts[idx] = "=".join(key)
+        for idx, parameter in enumerate(parameters):
+            key = parameter.split("=")[0]
+            fake_value = fake_parameters.get(key)
+            if fake_value is not None:
+                parameters[idx] = "=".join([key, fake_value])
+            elif key == "sig":
+                parameters[idx] = "=".join([key, fake_sig_value])
+            elif key == "st":
+                parameters[idx] = "=".join([key, "start"])
+            elif key == "se":
+                parameters[idx] = "=".join([key, "end"])
 
-        return "&".join(parts)
+        return "&".join(parameters)
