@@ -1,12 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=unused-argument,no-self-use
+
 import copy
 import logging
 
-from azure.ai.ml.constants import DistributionType
-from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from marshmallow import fields, post_load, pre_dump
+
+from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml.constants import DistributionType
 
 from ..core.schema import PatchedSchemaMeta
 

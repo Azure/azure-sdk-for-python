@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ActivityLogAlertActionGroup(msrest.serialization.Model):
@@ -69,7 +73,7 @@ class ActivityLogAlertActionList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action_groups: Optional[List["ActivityLogAlertActionGroup"]] = None,
+        action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None,
         **kwargs
     ):
         """
@@ -102,7 +106,7 @@ class ActivityLogAlertAllOfCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        all_of: List["ActivityLogAlertLeafCondition"],
+        all_of: List["_models.ActivityLogAlertLeafCondition"],
         **kwargs
     ):
         """
@@ -176,7 +180,7 @@ class ActivityLogAlertList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ActivityLogAlertResource"]] = None,
+        value: Optional[List["_models.ActivityLogAlertResource"]] = None,
         **kwargs
     ):
         """
@@ -304,8 +308,8 @@ class ActivityLogAlertResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         scopes: Optional[List[str]] = None,
         enabled: Optional[bool] = True,
-        condition: Optional["ActivityLogAlertAllOfCondition"] = None,
-        actions: Optional["ActivityLogAlertActionList"] = None,
+        condition: Optional["_models.ActivityLogAlertAllOfCondition"] = None,
+        actions: Optional["_models.ActivityLogAlertActionList"] = None,
         description: Optional[str] = None,
         **kwargs
     ):

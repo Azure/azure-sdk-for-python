@@ -182,6 +182,7 @@ class QnATests(QuestionAnsweringTest):
             assert len(confident_answers) == 2
             assert confident_answers[0].short_answer.text == "two to four hours"
 
+    @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_text_overload_positional_and_kwarg(self):
         async with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):

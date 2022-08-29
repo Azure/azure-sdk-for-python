@@ -4,4 +4,3 @@ properties:
   p1: v1
   p2: v2
 auth_mode: aad_token # required
-  

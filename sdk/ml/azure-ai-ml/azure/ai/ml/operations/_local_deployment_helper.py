@@ -2,35 +2,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
 
 import json
 import logging
 import shutil
-from docker.models.containers import Container
 from pathlib import Path
 from typing import Iterable
 
-from azure.ai.ml.entities import OnlineDeployment
+from docker.models.containers import Container
 
-from azure.ai.ml.constants import LocalEndpointConstants, AzureMLResourceType
+from azure.ai.ml._local_endpoints import AzureMlImageContext, DockerClient, DockerfileResolver, LocalEndpointMode
+from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
+from azure.ai.ml._local_endpoints.validators import CodeValidator, EnvironmentValidator, ModelValidator
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
-from azure.ai.ml._local_endpoints import (
-    DockerClient,
-    DockerfileResolver,
-    AzureMlImageContext,
-    LocalEndpointMode,
-)
-from azure.ai.ml._local_endpoints.validators import (
-    CodeValidator,
-    EnvironmentValidator,
-    ModelValidator,
-)
-from azure.ai.ml._local_endpoints.errors import (
-    InvalidLocalEndpointError,
-    LocalEndpointNotFoundError,
-)
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
-
+from azure.ai.ml.constants import AzureMLResourceType, LocalEndpointConstants
+from azure.ai.ml.entities import OnlineDeployment
 
 module_logger = logging.getLogger(__name__)
 
@@ -38,7 +26,8 @@ module_logger = logging.getLogger(__name__)
 class _LocalDeploymentHelper(object):
     """A helper class to interact with Azure ML endpoints locally.
 
-    Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.
+    Use this helper to manage Azure ML endpoints locally, e.g. create,
+    invoke, show, list, delete.
     """
 
     def __init__(
@@ -115,7 +104,9 @@ class _LocalDeploymentHelper(object):
         :return OnlineDeployment:
         """
         container = self._docker_client.get_endpoint_container(
-            endpoint_name=endpoint_name, deployment_name=deployment_name, include_stopped=True
+            endpoint_name=endpoint_name,
+            deployment_name=deployment_name,
+            include_stopped=True,
         )
         if container is None:
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
@@ -180,7 +171,7 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (model_name, model_version, model_directory_path) = self._model_validator.get_model_artifacts(
+        (model_name, model_version, model_directory_path,) = self._model_validator.get_model_artifacts(
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,
@@ -253,7 +244,10 @@ class _LocalDeploymentHelper(object):
 
         # Merge AzureML environment variables and user environment variables
         user_environment_variables = deployment.environment_variables
-        environment_variables = {**image_context.environment, **user_environment_variables}
+        environment_variables = {
+            **image_context.environment,
+            **user_environment_variables,
+        }
         # Determine whether we need to use local context or downloaded context
         build_directory = downloaded_build_context if downloaded_build_context else deployment_directory
         self._docker_client.create_deployment(
@@ -273,7 +267,7 @@ class _LocalDeploymentHelper(object):
         )
 
     def _write_conda_file(self, conda_contents: str, directory_path: str, conda_file_name: str):
-        """Writes out conda file to provided directory
+        """Writes out conda file to provided directory.
 
         :param conda_contents: contents of conda yaml file provided by user
         :type conda_contents: str
@@ -285,7 +279,8 @@ class _LocalDeploymentHelper(object):
         p.write_text(conda_contents)
 
     def _convert_container_to_deployment(self, container: Container) -> OnlineDeployment:
-        """Converts provided Container for local deployment to OnlineDeployment entity.
+        """Converts provided Container for local deployment to OnlineDeployment
+        entity.
 
         :param container: Container for a local deployment.
         :type container: docker.models.containers.Container

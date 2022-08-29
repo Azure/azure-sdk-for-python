@@ -1,0 +1,21 @@
+$schema: https://azuremlschemas.azureedge.net/latest/autoMLJob.schema.json
+type: automl
+
+experiment_name: automl-image-instance-segmentation-e2e-cli-test
+compute: azureml:gpu-cluster
+
+log_verbosity: debug
+task: image_instance_segmentation
+primary_metric: mean_average_precision
+
+limits:
+  max_trials: 2
+  max_concurrent_trials: 1
+
+target_column_name: label
+training_data:
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/image_instance_segmentation/train
+  type: mltable
+validation_data:
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/image_instance_segmentation/valid
+  type: mltable

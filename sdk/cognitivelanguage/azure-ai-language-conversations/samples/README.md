@@ -31,7 +31,7 @@ These sample programs show common scenarios for the Conversational Language Unde
 
 ## Prerequisites
 
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and an
   [Azure CLU account][azure_clu_account] to run these samples.
 

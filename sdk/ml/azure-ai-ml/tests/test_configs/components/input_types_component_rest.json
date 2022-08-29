@@ -10,6 +10,7 @@
         "componentSpec": {
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
             "name": "microsoft_samples_command_component_basic_inputs",
+            "_source": "CLASS",
             "version": "1",
             "type": "command",
             "display_name": "CommandComponentBasicInputs",

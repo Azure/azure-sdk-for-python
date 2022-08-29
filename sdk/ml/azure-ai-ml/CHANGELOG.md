@@ -1,5 +1,23 @@
 # Release History
 
+## 0.1.0b6
+
+### Features Added
+
+- Support for AutoML Component
+- Added skip_validation for Job/Component create_or_update
+
+### Breaking Changes
+
+- Dataset removed from public interface.
+
+### Bugs Fixed
+
+- Fixed mismatch errors when updating scale_settings for KubernetesOnlineDeployment.
+- Removed az CLI command that was printed when deleting OnlineEndpoint
+
+### Other Changes
+
 ## 0.1.0b5 (2022-07-15)
 
 ### Features Added

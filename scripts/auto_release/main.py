@@ -54,9 +54,9 @@ def preview_version_plus(preview_label: str, last_version: str) -> str:
 
 def stable_version_plus(changelog: str, last_version: str):
     flag = [False, False, False]  # breaking, feature, bugfix
-    flag[0] = '**Breaking changes**' in changelog
-    flag[1] = '**Features**' in changelog
-    flag[2] = '**Bugfixes**' in changelog
+    flag[0] = '### Breaking Changes' in changelog
+    flag[1] = '### Features Added' in changelog
+    flag[2] = '### Bugs Fixed' in changelog
 
     num = last_version.split('.')
     if flag[0]:
@@ -78,14 +78,6 @@ def all_files(path: str, files: List[str]):
             all_files(folder, files)
         else:
             files.append(folder)
-
-
-def checkout_azure_default_branch():
-    usr = 'Azure'
-    branch = 'main'
-    print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
-    print_check(f'git fetch {usr} {branch}')
-    print_check(f'git checkout {usr}/{branch}')
 
 
 def modify_file(file_path: str, func: Any):
@@ -168,8 +160,27 @@ class CodegenTestPR:
         generate_result = self.get_autorest_result()
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
+    @staticmethod
+    def checkout_branch(env_key: str, repo: str):
+        env_var = os.getenv(env_key, "")
+        usr = env_var.split(":")[0] or "Azure"
+        branch = env_var.split(":")[-1] or "main"
+        print_exec(f'git remote add {usr} https://github.com/{usr}/{repo}.git')
+        print_check(f'git fetch {usr} {branch}')
+        print_check(f'git checkout {usr}/{branch}')
+
+    @return_origin_path
+    def checkout_azure_default_branch(self):
+        # checkout branch in sdk repo
+        self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
+
+        # checkout branch in rest repo
+        if self.spec_repo:
+            os.chdir(Path(self.spec_repo))
+            self.checkout_branch("DEBUG_REST_BRANCH", "azure-rest-api-specs")
+
     def generate_code(self):
-        checkout_azure_default_branch()
+        self.checkout_azure_default_branch()
 
         # prepare input data
         input_data = {
@@ -198,7 +209,7 @@ class CodegenTestPR:
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
-        self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
+        self.package_name = generate_result["packages"][0]["packageName"].split('-', 2)[-1]
 
     def prepare_branch_with_readme(self):
         self.generate_code()
@@ -380,6 +391,16 @@ class CodegenTestPR:
                     target_mgmt_core = line.strip().strip(',').strip('\'')
                     yield target_mgmt_core
 
+    @staticmethod
+    def insert_line_num(content: List[str]) -> int:
+        start_num = 0
+        end_num = len(content)
+        for i in range(end_num):
+            if content[i].find("#override azure-mgmt-") > -1:
+                start_num = i
+                break
+        return (int(str(time.time()).split('.')[-1]) % max(end_num - start_num, 1)) + start_num
+
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
@@ -391,7 +412,7 @@ class CodegenTestPR:
                     content[i] = new_line + '\n'
                     return
             prefix = '' if '\n' in content[-1] else '\n'
-            content.append(prefix + new_line + '\n')
+            content.insert(self.insert_line_num(content), prefix + new_line + '\n')
 
         modify_file(str(Path('shared_requirements.txt')), edit_ci_file)
         print_exec('git add shared_requirements.txt')
@@ -473,7 +494,7 @@ class CodegenTestPR:
         self.pr_number = res_create.number
 
     def zero_version_policy(self):
-        if self.next_version == '0.0.0':
+        if re.match(re.compile('0\.0\.0'), self.next_version):
             api_request = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
             issue_number = int(self.issue_link.split('/')[-1])
             api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])

@@ -2,15 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from functools import singledispatch
 from pathlib import Path
-from azure.ai.ml.constants import DEFAULT_EXPERIMENT_NAME
 
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml.constants import DEFAULT_EXPERIMENT_NAME
 from azure.ai.ml.entities._builders.command import Command
 from azure.ai.ml.entities._builders.sweep import Sweep
-from .job import Job
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+
+from .job import Job
 
 
 def generate_defaults(job: Job, rest_job: JobBaseData) -> None:

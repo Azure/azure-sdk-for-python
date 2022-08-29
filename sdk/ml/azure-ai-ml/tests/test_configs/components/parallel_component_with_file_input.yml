@@ -30,10 +30,9 @@ resources:
   instance_count: 2
 
 task:
-  type: function
+  type: run_function
   code: ../script_parallel/
   entry_script: pass_through.py
-  args: >-
+  program_arguments: >-
     --job_output_path ${{outputs.job_output_path}}
   environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
-

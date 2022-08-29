@@ -2,19 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    ImageLimitSettings as RestImageLimitSettings,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageLimitSettings as RestImageLimitSettings
+from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-
-from azure.ai.ml._utils.utils import (
-    to_iso_duration_format_mins,
-    from_iso_duration_format_mins,
-)
 
 
 class ImageLimitSettings(RestTranslatableMixin):
-    """Limit settings for all AutoML Image Verticals."""
+    """Limit settings for all AutoML Image Verticals.
+
+    :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
+    :type max_concurrent_trials: int
+    :param max_trials: Maximum number of AutoML iterations.
+    :type max_trials: int
+    :param timeout: AutoML job timeout.
+    :type timeout: ~datetime.timedelta
+    """
 
     def __init__(
         self,

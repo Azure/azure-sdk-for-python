@@ -1,7 +1,5 @@
 import argparse
 from pathlib import Path
-from uuid import uuid4
-from datetime import datetime
 import os
 import pandas as pd
 import numpy as np
@@ -14,8 +12,8 @@ args = parser.parse_args()
 
 
 lines = [
-    f'Clean data path: {args.clean_data}',
-    f'Transformed data output path: {args.transformed_data}',
+    f"Clean data path: {args.clean_data}",
+    f"Transformed data output path: {args.transformed_data}",
 ]
 
 for line in lines:
@@ -27,11 +25,11 @@ print(arr)
 
 df_list = []
 for filename in arr:
-    print ("reading file: %s ..." % filename)
-    with open(os.path.join(args.clean_data, filename), 'r') as handle:
+    print("reading file: %s ..." % filename)
+    with open(os.path.join(args.clean_data, filename), "r") as handle:
         # print (handle.read())
-        #('input_df_%s' % filename) = pd.read_csv((Path(args.training_data) / filename)) 
-        input_df = pd.read_csv((Path(args.clean_data) / filename)) 
+        # ('input_df_%s' % filename) = pd.read_csv((Path(args.training_data) / filename))
+        input_df = pd.read_csv((Path(args.clean_data) / filename))
         df_list.append(input_df)
 
 
@@ -43,28 +41,36 @@ combined_df = df_list[1]
 # Chain the column filter commands within the filter() function
 # and define the minimum and maximum bounds for each field
 
-combined_df = combined_df.astype({"pickup_longitude": 'float64', "pickup_latitude": 'float64',
-                                  "dropoff_longitude": 'float64', "dropoff_latitude": 'float64'})
+combined_df = combined_df.astype(
+    {
+        "pickup_longitude": "float64",
+        "pickup_latitude": "float64",
+        "dropoff_longitude": "float64",
+        "dropoff_latitude": "float64",
+    }
+)
 
-latlong_filtered_df = combined_df[(combined_df.pickup_longitude <= -73.72) &
-                                  (combined_df.pickup_longitude >= -74.09) &
-                                  (combined_df.pickup_latitude <= 40.88) &
-                                  (combined_df.pickup_latitude >= 40.53) &
-                                  (combined_df.dropoff_longitude <= -73.72) &
-                                  (combined_df.dropoff_longitude >= -74.72) &
-                                  (combined_df.dropoff_latitude <= 40.88) &
-                                  (combined_df.dropoff_latitude >= 40.53)]
+latlong_filtered_df = combined_df[
+    (combined_df.pickup_longitude <= -73.72)
+    & (combined_df.pickup_longitude >= -74.09)
+    & (combined_df.pickup_latitude <= 40.88)
+    & (combined_df.pickup_latitude >= 40.53)
+    & (combined_df.dropoff_longitude <= -73.72)
+    & (combined_df.dropoff_longitude >= -74.72)
+    & (combined_df.dropoff_latitude <= 40.88)
+    & (combined_df.dropoff_latitude >= 40.53)
+]
 
 latlong_filtered_df.reset_index(inplace=True, drop=True)
 
 # These functions replace undefined values and rename to use meaningful names.
-replaced_stfor_vals_df = (latlong_filtered_df.replace({"store_forward": "0"}, {"store_forward": "N"})
-                          .fillna({"store_forward": "N"}))
+replaced_stfor_vals_df = latlong_filtered_df.replace({"store_forward": "0"}, {"store_forward": "N"}).fillna(
+    {"store_forward": "N"}
+)
 
-replaced_distance_vals_df = (replaced_stfor_vals_df.replace({"distance": ".00"}, {"distance": 0})
-                             .fillna({"distance": 0}))
+replaced_distance_vals_df = replaced_stfor_vals_df.replace({"distance": ".00"}, {"distance": 0}).fillna({"distance": 0})
 
-normalized_df = replaced_distance_vals_df.astype({"distance": 'float64'})
+normalized_df = replaced_distance_vals_df.astype({"distance": "float64"})
 
 # These functions transform the renamed data to be used finally for training.
 
@@ -77,7 +83,7 @@ normalized_df = replaced_distance_vals_df.astype({"distance": 'float64'})
 # use the drop_columns() function to delete the original fields as the newly generated features are preferred.
 # Rename the rest of the fields to use meaningful descriptions.
 
-temp = pd.DatetimeIndex(normalized_df["pickup_datetime"], dtype='datetime64[ns]')
+temp = pd.DatetimeIndex(normalized_df["pickup_datetime"], dtype="datetime64[ns]")
 normalized_df["pickup_date"] = temp.date
 normalized_df["pickup_weekday"] = temp.dayofweek
 normalized_df["pickup_month"] = temp.month
@@ -87,7 +93,7 @@ normalized_df["pickup_hour"] = temp.hour
 normalized_df["pickup_minute"] = temp.minute
 normalized_df["pickup_second"] = temp.second
 
-temp = pd.DatetimeIndex(normalized_df["dropoff_datetime"], dtype='datetime64[ns]')
+temp = pd.DatetimeIndex(normalized_df["dropoff_datetime"], dtype="datetime64[ns]")
 normalized_df["dropoff_date"] = temp.date
 normalized_df["dropoff_weekday"] = temp.dayofweek
 normalized_df["dropoff_month"] = temp.month
@@ -115,8 +121,8 @@ del normalized_df["dropoff_date"]
 del normalized_df["pickup_time"]
 del normalized_df["dropoff_time"]
 
-# Change the store_forward column to binary values 
-normalized_df['store_forward'] = np.where((normalized_df.store_forward == 'N'), 0, 1)
+# Change the store_forward column to binary values
+normalized_df["store_forward"] = np.where((normalized_df.store_forward == "N"), 0, 1)
 
 # Before you package the dataset, run two final filters on the dataset.
 # To eliminate incorrectly captured data points,
@@ -129,8 +135,4 @@ final_df.reset_index(inplace=True, drop=True)
 print(final_df.head)
 
 # Output data
-transformed_data = final_df.to_csv((Path(args.transformed_data) / 'transformed_data.csv'))
-
-
-
-
+transformed_data = final_df.to_csv((Path(args.transformed_data) / "transformed_data.csv"))

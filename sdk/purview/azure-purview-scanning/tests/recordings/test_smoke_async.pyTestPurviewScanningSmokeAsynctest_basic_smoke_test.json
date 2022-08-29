@@ -1,0 +1,87 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "176",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.11.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fpurview.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "93",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 06:06:17 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13418.9 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 3599,
+        "ext_expires_in": 3599,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake_account.scan.purview.azure.com/datasources?api-version=2018-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-purview-scanning/1.0.0b3 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2018-12-01-preview, 2021-10-01-preview, 2022-02-01-preview",
+        "Content-Length": "627",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 04 Aug 2022 06:06:18 GMT",
+        "Request-Context": "appId=cid-v1:caaf2286-a721-4ba8-a2bd-9a1b7993b4fd",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "edaa078b-b2ab-4b8c-8694-1110a6e4dd32"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "properties": {
+              "endpoint": "https://storageyyc.blob.core.windows.net/",
+              "resourceGroup": "python-sdk-test",
+              "subscriptionId": "00000000-0000-0000-0000-000000000000",
+              "location": "westus",
+              "resourceName": "storageyyc",
+              "resourceId": null,
+              "dataUseGovernance": "Disabled",
+              "createdAt": "2021-09-29T03:35:39.2638722Z",
+              "lastModifiedAt": "2021-09-29T03:35:39.2638722Z",
+              "parentCollection": null,
+              "collection": {
+                "lastModifiedAt": "2021-09-29T03:35:39.2638722Z",
+                "referenceName": "purview-msyyc",
+                "type": "CollectionReference"
+              },
+              "dataSourceCollectionMovingState": 0
+            },
+            "kind": "AzureStorage",
+            "id": "datasources/storageyyc",
+            "name": "storageyyc"
+          }
+        ],
+        "count": 1
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -2,22 +2,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import logging
-from typing import Union, List, Dict
+# pylint: disable=protected-access
 
+import logging
+from typing import Dict, List, Union
+
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ColumnTransformer as RestColumnTransformer
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
-    ColumnTransformer as RestColumnTransformer,
 )
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings
-
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 
 
 class ColumnTransformer(RestTranslatableMixin):
-    """Column transformer settings
+    """Column transformer settings.
 
     :param fields: The fields on which to perform custom featurization
     :type field: List[str]
@@ -25,7 +26,13 @@ class ColumnTransformer(RestTranslatableMixin):
     :type parameters: Dict[str, Optional[str, float]]
     """
 
-    def __init__(self, *, fields: List[str] = None, parameters: Dict[str, Union[str, float]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        fields: List[str] = None,
+        parameters: Dict[str, Union[str, float]] = None,
+        **kwargs,
+    ):
         self.fields = fields
         self.parameters = parameters
 
@@ -49,7 +56,7 @@ class ColumnTransformer(RestTranslatableMixin):
 
 
 class TabularFeaturizationSettings(FeaturizationSettings):
-    """Featurization settings for an AutoML Job"""
+    """Featurization settings for an AutoML Job."""
 
     def __init__(
         self,

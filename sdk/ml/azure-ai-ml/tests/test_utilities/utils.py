@@ -1,8 +1,19 @@
+import os
 import copy
+import time
 import pydash
+from typing import Dict
+import urllib3
+from zipfile import ZipFile
+
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml import load_job, MLClient
 from azure.ai.ml.entities import Job, PipelineJob
-from azure.ai.ml import load_job
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+
+
+DEFAULT_TASK_TIMEOUT = 30 * 60  # 30mins
+THREAD_WAIT_TIME_BEFORE_POLL = 60  # 1min
 
 
 def write_script(script_path: str, content: str) -> str:
@@ -81,6 +92,8 @@ def prepare_dsl_curated(
                     "properties.jobs.*.trial.properties.componentSpec.$schema",
                     "properties.jobs.*.trial.properties.componentSpec.schema",
                     "properties.jobs.*.trial.properties.isAnonymous",
+                    "properties.jobs.*.trial.properties.componentSpec._source",
+                    "properties.settings",
                 ]
             )
     else:
@@ -101,3 +114,61 @@ def prepare_dsl_curated(
     pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
 
     return dsl_pipeline_job_dict, pipeline_job_dict
+
+
+def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = "Completed") -> PipelineJob:
+    created_job = ml_client.jobs.create_or_update(pipeline_job)
+    terminal_states = ["Completed", "Failed", "Canceled", "NotResponding"]
+    assert created_job is not None
+    assert expected_state in terminal_states
+
+    while created_job.status not in terminal_states:
+        time.sleep(30)
+        created_job = ml_client.jobs.get(created_job.name)
+        print("Latest status : {0}".format(created_job.status))
+    if created_job.status != expected_state:
+        raise Exception(
+            f"Job finished with unexpected status. Got {created_job.status!r} while expecting {expected_state!r}"
+        )
+    else:
+        print(f"Job finished: {expected_state!r}")
+    assert created_job.status == expected_state
+    return created_job
+
+
+def assert_final_job_status(
+    job, client: MLClient, job_type: Job, expected_terminal_status: str, deadline: int = DEFAULT_TASK_TIMEOUT
+) -> None:
+    assert isinstance(job, job_type)
+
+    poll_start_time = time.time()
+    while job.status not in RunHistoryConstants.TERMINAL_STATUSES and time.time() < (poll_start_time + deadline):
+        time.sleep(THREAD_WAIT_TIME_BEFORE_POLL)
+        job = client.jobs.get(job.name)
+
+    if job.status not in RunHistoryConstants.TERMINAL_STATUSES:
+        client.jobs.cancel(job.name)
+
+    assert job.status == expected_terminal_status, f"Job status mismatch. Job created: {job}"
+
+
+def get_automl_job_properties() -> Dict:
+    return {}
+
+
+def download_dataset(download_url: str, data_file: str, retries=3) -> None:
+    # download data
+    http = urllib3.PoolManager()
+    resp = http.request("GET", download_url, preload_content=False, retries=retries)
+    with open(data_file, "wb") as f:
+        for chunk in resp.stream(1024):
+            f.write(chunk)
+    resp.release_conn()
+
+    # extract files
+    with ZipFile(data_file, "r") as zip:
+        print("extracting files...")
+        zip.extractall()
+        print("done")
+    # delete zip file
+    os.remove(data_file)

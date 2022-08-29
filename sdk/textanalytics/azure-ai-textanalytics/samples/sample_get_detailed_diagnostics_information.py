@@ -26,7 +26,7 @@ import json
 _LOGGER = logging.getLogger(__name__)
 
 
-def sample_get_detailed_diagnostics_information():
+def sample_get_detailed_diagnostics_information() -> None:
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
