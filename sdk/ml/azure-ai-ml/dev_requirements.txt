@@ -16,7 +16,6 @@ pytest
 pydash
 pytest-vcr
 azure-mgmt-storage~=19.1.0
-azure-devtools==1.2.0
 numpy
 scikit-image
 simplification
