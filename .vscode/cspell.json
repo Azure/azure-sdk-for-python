@@ -29,7 +29,6 @@
     "sdk/anomalydetector/azure-ai-anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
-    "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
@@ -379,7 +378,7 @@
         "dont",
         "UMLS",
         "nach",
-        "año",
+        "año",
         "BRCPF",
         "abril",
         "zalgo",
@@ -617,6 +616,14 @@
       "filename": "sdk/confidentialledger/test-resources.bicep",
       "words": [
         "pysdkci"
+      ]
+    },
+    {
+      "filename": "sdk/agrifood/azure-agrifood-farming/**",
+      "words": [
+        "NDVI",
+        "ndvi",
+        "Unhandleable"
       ]
     }
   ],
