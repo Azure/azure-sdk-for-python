@@ -654,7 +654,6 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
             if self.state not in _CLOSING_STATES:
                 now = time.time()
                 if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or self._get_remote_timeout(now): # pylint:disable=line-too-long
-                    # TODO: check error condition
                     self.close(
                         error=AMQPError(
                             condition=ErrorCondition.ConnectionCloseForced,
@@ -664,7 +663,6 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
                     )
                     return
             if self.state == ConnectionState.END:
-                # TODO: check error condition
                 self._error = AMQPConnectionError(
                     condition=ErrorCondition.ConnectionCloseForced,
                     description="Connection was already closed."
