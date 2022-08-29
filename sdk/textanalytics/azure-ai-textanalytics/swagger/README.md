@@ -3,8 +3,10 @@
 To generate this file, simply type
 
 ```
-autorest swagger/README.md --python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>
+autorest --use=@autorest/python@5.19.0 swagger/README.md --python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>
 ```
+
+> Note that we pin autorest version 5.19.0 because this is the latest version to support multiapi generation.
 
 We automatically hardcode in that this is `python` and `multiapi`.
 
