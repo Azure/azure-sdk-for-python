@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Added @runtime_checkable to TokenCredential protocol definitions  #25187
+- Added @runtime_checkable to `TokenCredential` protocol definitions  #25187
 
 ## 1.25.0 (2022-08-04)
 
