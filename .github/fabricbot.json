@@ -1910,6 +1910,18 @@
           },
           {
             "labels": [
+              "Service Attention",
+              "Cosmos"
+            ],
+            "mentionees": [
+              "simorenoh",
+              "gahl-levy",
+              "pjohari-ms",
+              "JericHunter"
+            ]
+          },
+          {
+            "labels": [
               "Client",
               "Cosmos"
             ],
