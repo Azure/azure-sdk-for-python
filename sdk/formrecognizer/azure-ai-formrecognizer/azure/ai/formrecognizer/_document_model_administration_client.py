@@ -97,7 +97,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         configured, see more about configuring managed identities to work with Form Recognizer here:
         https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are built using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff', 'image/bmp', or 'image/heif. Other types of content in the container
+        'image/jpeg', 'image/png', 'image/tiff', 'image/bmp', or 'image/heif'. Other types of content in the container
         is ignored.
 
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
