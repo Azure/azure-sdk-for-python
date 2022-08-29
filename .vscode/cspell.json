@@ -365,7 +365,6 @@
       "words": [
         "tzutc",
         "tzoffset",
-        "astimezone",
         "BRST",
         "uttable",
         "pytablesync",
@@ -381,6 +380,7 @@
     {
       "filename": "sdk/tables/azure-data-tables/**/*.py",
       "words": [
+        "astimezone",
         "myasynctable",
         "mytableasync",
         "mytable",
