@@ -51,7 +51,7 @@ from .constants import (
     AUTH_TYPE_CBS,
     MAX_FRAME_SIZE_BYTES,
     INCOMING_WINDOW,
-    OUTGOING_WIDNOW,
+    OUTGOING_WINDOW,
     DEFAULT_AUTH_TIMEOUT,
     MESSAGE_DELIVERY_DONE_STATES,
 )
@@ -124,6 +124,25 @@ class AMQPClient(object):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~pyamqp.constants.TransportType
+    :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
+    :paramtype http_proxy: Dict
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :paramtype custom_endpoint_address: str
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: str
     """
 
     def __init__(self, hostname, **kwargs):
@@ -141,11 +160,11 @@ class AMQPClient(object):
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
-        self._keep_alive_interval = int(kwargs.pop("keep_alive_interval", None) or 0)
+        self._keep_alive_interval = int(kwargs.pop("keep_alive_interval", 0))
 
         # Connection settings
-        self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
-        self._channel_max = kwargs.pop('channel_max', None) or 65535
+        self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)
+        self._channel_max = kwargs.pop('channel_max', 65535)
         self._idle_timeout = kwargs.pop('idle_timeout', None)
         self._properties = kwargs.pop('properties', None)
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.pop(
@@ -153,15 +172,13 @@ class AMQPClient(object):
         self._network_trace = kwargs.pop("network_trace", False)
 
         # Session settings
-        self._outgoing_window = kwargs.pop('outgoing_window', None) or OUTGOING_WIDNOW
-        self._incoming_window = kwargs.pop('incoming_window', None) or INCOMING_WINDOW
+        self._outgoing_window = kwargs.pop('outgoing_window', OUTGOING_WINDOW)
+        self._incoming_window = kwargs.pop('incoming_window', INCOMING_WINDOW)
         self._handle_max = kwargs.pop('handle_max', None)
-        self._on_attach = kwargs.pop('on_attach', None)
 
         # Link settings
         self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
         self._receive_settle_mode = kwargs.pop('receive_settle_mode', ReceiverSettleMode.Second)
-        self._desired_capabilities = kwargs.pop('desired_capabilities', None)
         self._on_attach = kwargs.pop('on_attach', None)
 
         # transport
@@ -435,11 +452,6 @@ class SendClient(AMQPClient):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
-    :keywprd desired_capabilities: The extension capabilities desired from the peer endpoint.
-     To create an desired_capabilities object, please do as follows:
-        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
-        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
-    :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -469,12 +481,31 @@ class SendClient(AMQPClient):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~pyamqp.constants.TransportType
+    :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
+    :paramtype http_proxy: Dict
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :paramtype custom_endpoint_address: str
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: str
     """
 
     def __init__(self, hostname, target, auth=None, **kwargs):
         self.target = target
         # Sender and Link settings
-        self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
+        self._max_message_size = kwargs.pop('max_message_size', MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', None)
         super(SendClient, self).__init__(hostname, auth=auth, **kwargs)
@@ -646,11 +677,6 @@ class ReceiveClient(AMQPClient):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
-    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
-     To create an desired_capabilities object, please do as follows:
-        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
-        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
-    :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -680,6 +706,25 @@ class ReceiveClient(AMQPClient):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~pyamqp.constants.TransportType
+    :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
+    :paramtype http_proxy: Dict
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :paramtype custom_endpoint_address: str
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: str
     """
 
     def __init__(self, hostname, source, auth=None, **kwargs):
@@ -689,7 +734,7 @@ class ReceiveClient(AMQPClient):
         self._message_received_callback = kwargs.pop("message_received_callback", None) 
 
         # Sender and Link settings
-        self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
+        self._max_message_size = kwargs.pop('max_message_size', MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', 300)
         super(ReceiveClient, self).__init__(hostname, auth=auth, **kwargs)
@@ -714,7 +759,6 @@ class ReceiveClient(AMQPClient):
                 max_message_size=self._max_message_size,
                 on_transfer=self._message_received,
                 properties=self._link_properties,
-                desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
             )
             self._link.attach()

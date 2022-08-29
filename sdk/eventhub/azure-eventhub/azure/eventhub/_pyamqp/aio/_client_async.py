@@ -111,6 +111,25 @@ class AMQPClientAsync(AMQPClientSync):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~pyamqp.constants.TransportType
+    :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
+    :paramtype http_proxy: Dict
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :paramtype custom_endpoint_address: str
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: str
     """
 
     async def __aenter__(self):
@@ -367,11 +386,6 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
-    :keywprd desired_capabilities: The extension capabilities desired from the peer endpoint.
-     To create an desired_capabilities object, please do as follows:
-        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
-        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
-    :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -402,6 +416,25 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~pyamqp.constants.TransportType
+    :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
+    :paramtype http_proxy: Dict
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :paramtype custom_endpoint_address: str
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: str
     """
 
     async def _client_ready_async(self):
@@ -565,11 +598,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
-    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
-     To create an desired_capabilities object, please do as follows:
-        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
-        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
-    :paramtype desired_capabilities: ~uamqp.c_uamqp.AMQPValue
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -600,6 +628,25 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~pyamqp.constants.TransportType
+    :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
+    :paramtype http_proxy: Dict
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :paramtype custom_endpoint_address: str
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: str
     """
 
     async def _client_ready_async(self):
@@ -620,7 +667,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 max_message_size=self._max_message_size,
                 on_transfer=self._message_received_async,
                 properties=self._link_properties,
-                desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
             )
             await self._link.attach()
