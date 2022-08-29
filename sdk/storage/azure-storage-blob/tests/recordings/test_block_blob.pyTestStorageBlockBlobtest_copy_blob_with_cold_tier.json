@@ -85,7 +85,7 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-access-tier": "Cold",
-        "x-ms-copy-source": "https://storagename.blob.preprod.core.windows.net/utcontainer1d322c56/blob1d322c56",
+        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainer1d322c56/blob1d322c56",
         "x-ms-date": "Sat, 27 Aug 2022 00:50:16 GMT",
         "x-ms-version": "2021-12-02"
       },
@@ -129,7 +129,7 @@
         "x-ms-copy-completion-time": "Sat, 27 Aug 2022 00:50:15 GMT",
         "x-ms-copy-id": "cf462601-7621-4a22-a9a2-5672953cd225",
         "x-ms-copy-progress": "0/0",
-        "x-ms-copy-source": "https://storagename.blob.preprod.core.windows.net/utcontainer1d322c56/blob1d322c56",
+        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainer1d322c56/blob1d322c56",
         "x-ms-copy-status": "success",
         "x-ms-creation-time": "Sat, 27 Aug 2022 00:50:15 GMT",
         "x-ms-lease-state": "available",
