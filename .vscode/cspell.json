@@ -91,7 +91,6 @@
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
     "sdk/synapse/azure-synapse-spark/**",
-    "sdk/storage/azure-storage-file-share/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
     "sdk/synapse/azure-synapse-artifacts/**",
@@ -227,6 +226,7 @@
     "LPCWSTR",
     "Lucene",
     "mbps",
+    "mibps",
     "mgmt",
     "mhsm",
     "mipsle",
@@ -352,7 +352,10 @@
     "ispkg",
     "openpyxl",
     "deps",
-    "prnumber"
+    "prnumber",
+    "yarl",
+    "SDDL",
+    "dacl"
   ],
   "overrides": [
     {
@@ -379,7 +382,7 @@
         "dont",
         "UMLS",
         "nach",
-        "año",
+        "año",
         "BRCPF",
         "abril",
         "zalgo",
@@ -617,6 +620,45 @@
       "filename": "sdk/confidentialledger/test-resources.bicep",
       "words": [
         "pysdkci"
+      ]
+    },
+    {
+      "filename": "sdk/storage/azure-storage-file-share/**",
+      "words": [
+        "XSMB",
+        "rcwd",
+        "rcwdl",
+        "prevsharesnapshot",
+        "rscc",
+        "rscd",
+        "rsce",
+        "rscl",
+        "rsct",
+        "skoid",
+        "sktid",
+        "saoid",
+        "suoid",
+        "scid",
+        "mydirectory",
+        "myfile",
+        "mydir",
+        "amet",
+        "consectetur",
+        "elit",
+        "adipiscing",
+        "pyacrstoragestorname",
+        "pyrmtstoragestorname",
+        "vhds",
+        "mday",
+        "abcdefghijklmnop",
+        "filetoupdate",
+        "mydomain",
+        "vhds",
+        "utdir",
+        "myaccount",
+        "testid",
+        "filea",
+        "fileb"
       ]
     }
   ],
