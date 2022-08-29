@@ -33,10 +33,33 @@ class BoundingBox(NamedTuple):
 
 # pylint: disable=too-many-instance-attributes
 class StructuredAddress(object):
+    """The Structured address as the search input.
 
+    :param country_code: Country (Note: This is a two-letter code, not a country name.).
+    :type country_code: str
+    :keyword cross_street: The name of the street being crossed.
+    :paramtype cross_street: str
+    :keyword street_number: The building number on the street.
+    :paramtype street_number: str
+    :keyword street_name: The street name.
+    :paramtype street_name: str
+    :keyword municipality: City / Town.
+    :paramtype municipality: str
+    :keyword municipality_subdivision: Sub / Super City.
+    :paramtype municipality_subdivision: str
+    :keyword country_tertiary_subdivision: Named Area.
+    :paramtype country_tertiary_subdivision: str
+    :keyword country_secondary_subdivision: County.
+    :paramtype country_secondary_subdivision: str
+    :keyword country_subdivision: State or Province.
+    :paramtype country_subdivision: str
+    :keyword postal_code: Postal Code / Zip Code.
+    :paramtype postal_code: str
+    """
     def __init__(
         self,
         country_code: str,
+        *,
         cross_street: Optional[str] = None,
         street_number: Optional[str] = None,
         street_name: Optional[str] = None,
@@ -47,7 +70,7 @@ class StructuredAddress(object):
         country_subdivision: Optional[str] = None,
         postal_code: Optional[str] = None
     ):
-        self._country_code = country_code
+        self.country_code = country_code
         self.cross_street = cross_street
         self.street_number = street_number
         self.street_name = street_name
@@ -58,91 +81,35 @@ class StructuredAddress(object):
         self.country_subdivision = country_subdivision
         self.postal_code = postal_code
 
-    @property
-    def country_code(self) -> str:
-        return self._country_code
-
-    @country_code.setter
-    def country_code(self, value: str) -> None:
-        self._country_code = value
-
-    @property
-    def cross_street(self) -> str:
-        return self._cross_street
-
-    @cross_street.setter
-    def cross_street(self, value: str) -> None:
-        self._cross_street = value
-
-    @property
-    def street_number(self) -> str:
-        return self._street_number
-
-    @street_number.setter
-    def street_number(self, value) -> None:
-        self._street_number = value
-
-    @property
-    def street_name(self) -> str:
-        return self._street_name
-
-    @street_name.setter
-    def street_name(self, value: str) -> None:
-        self._street_name = value
-
-    @property
-    def municipality(self) -> str:
-        return self._municipality
-
-    @municipality.setter
-    def municipality(self, value: str) -> None:
-        self._municipality = value
-
-    @property
-    def municipality_subdivision(self) -> str:
-        return self._municipality_subdivision
-
-    @municipality_subdivision.setter
-    def municipality_subdivision(self, value: str) -> None:
-        self._municipality_subdivision = value
-
-    @property
-    def country_tertiary_subdivision(self) -> str:
-        return self._country_tertiary_subdivision
-
-    @country_tertiary_subdivision.setter
-    def country_tertiary_subdivision(self, value: str) -> None:
-        self._country_tertiary_subdivision = value
-
-    @property
-    def country_secondary_subdivision(self) -> str:
-        return self._country_secondary_subdivision
-
-    @country_secondary_subdivision.setter
-    def country_secondary_subdivision(self, value: str) -> None:
-        self._country_secondary_subdivision = value
-
-    @property
-    def country_subdivision(self) -> str:
-        return self._country_subdivision
-
-    @country_subdivision.setter
-    def country_subdivision(self, value: str) -> None:
-        self._country_subdivision = value
-
-    @property
-    def postal_code(self) -> str:
-        return self._postal_code
-
-    @postal_code.setter
-    def postal_code(self, value: str) -> None:
-        self._postal_code = value
-
 
 class SearchSummary(object):
+    """Summary object for a Search API response.
+
+    :keyword query: The query parameter that was used to produce these search results.
+    :paramtype query: str
+    :keyword query_type: The type of query being returned: NEARBY or NON_NEAR. Possible values
+     include: "NEARBY", "NON_NEAR".
+    :paramtype query_type: str or ~azure.maps.search.models.QueryType
+    :keyword query_time: Time spent resolving the query, in milliseconds.
+    :paramtype query_time: int
+    :keyword num_results: Number of results in the response.
+    :paramtype num_results: int
+    :keyword top: Maximum number of responses that will be returned.
+    :paramtype top: int
+    :keyword skip: The starting offset of the returned Results within the full Result set.
+    :paramtype skip: int
+    :keyword total_results: The total number of Results found.
+    :paramtype total_results: int
+    :keyword fuzzy_level: The maximum fuzzy level required to provide Results.
+    :paramtype fuzzy_level: int
+    :keyword geo_bias: Indication when the internal search engine has applied a geospatial bias to
+     improve the ranking of results.
+    :paramtype geo_bias: ~azure.maps.search.models.LatLongPairAbbreviated
+    """
 
     def __init__(
         self,
+        *,
         query: str = None,
         query_type: str = None,
         query_time: int = None,
@@ -165,42 +132,114 @@ class SearchSummary(object):
 
 
 class AddressRanges(object):
+    """Describes the address range on both sides of the street for a search result.
+    Coordinates for the start and end locations of the address range are included.
+
+    :keyword range_start: Address range on the left(start) side of the street.
+    :paramtype range_start: str
+    :keyword range_end: Address range on the right(end) side of the street.
+    :paramtype range_end: str
+    :keyword range_from: A location represented as a latitude and longitude using short names
+     'lat' & 'lon'.
+    :paramtype range_from: ~azure.maps.search.models.LatLon
+    :keyword range_to: A location represented as a latitude and longitude using short names 'lat' & 'lon'.
+    :paramtype range_to: ~azure.maps.search.models.LatLon
+    """
     def __init__(
         self,
-        range_left: str = None,
-        range_right: str = None,
-        from_property: LatLon = None,
-        to_: LatLon = None
+        *,
+        range_start: str = None,
+        range_end: str = None,
+        range_from: LatLon = None,
+        range_to: LatLon = None
     ):
-        self.range_left = range_left
-        self.range_right = range_right
-        self.from_property = LatLon() if not from_property else LatLon(
-            from_property.lat, from_property.lon
+        self.range_left = range_start
+        self.range_right = range_end
+        self.from_property = None if not range_from else LatLon(
+            range_from.lat, range_from.lon
         )
-        self.to = LatLon() if not to_ else LatLon(
-            to_.lat, to_.lon
+        self.to = None if not range_to else LatLon(
+            range_to.lat, range_to.lon
         )
 
 
 class EntryPoint(object):
+    """The entry point for the POI being returned.
+
+    :keyword entry_point_type: The type of entry point.
+    :paramtype entry_point_type: str or ~azure.maps.search.models.EntryPointType
+    :keyword position: A location represented as a latitude and longitude using short names 'lat' &
+     'lon'.
+    :paramtype position: ~azure.maps.search.models.LatLon
+    """
     def __init__(
         self,
-        type_: str = None,
+        entry_point_type: str = None,
         position: LatLon = None
     ):
-        self.type = type_
-        self.position = LatLon() if not position else LatLon(
+        self.type = entry_point_type
+        self.position = None if not position else LatLon(
             position.lat, position.lon
         )
 
 
 # pylint: disable=too-many-instance-attributes
 class Address(object):
+    """The address of the result.
 
+    :keyword building_number: The building number on the street.
+    :paramtype building_number: str
+    :keyword street: The street name.
+    :paramtype street: str
+    :keyword cross_street: The name of the street being crossed.
+    :paramtype cross_street: str
+    :keyword street_number: The building number on the street.
+    :paramtype street_number: str
+    :keyword route_numbers: The codes used to unambiguously identify the street.
+    :paramtype route_numbers: list[int]
+    :keyword street_name: The street name.
+    :paramtype street_name: str
+    :keyword street_name_and_number: The street name and number.
+    :paramtype street_name_and_number: str
+    :keyword municipality: City / Town.
+    :paramtype municipality: str
+    :keyword municipality_subdivision: Sub / Super City.
+    :paramtype municipality_subdivision: str
+    :keyword country_tertiary_subdivision: Named Area.
+    :paramtype country_tertiary_subdivision: str
+    :keyword country_secondary_subdivision: County.
+    :paramtype country_secondary_subdivision: str
+    :keyword country_subdivision: State or Province.
+    :paramtype country_subdivision: str
+    :keyword postal_code: Postal Code / Zip Code.
+    :paramtype postal_code: str
+    :keyword extended_postal_code: Extended postal code (availability is dependent on the region).
+    :paramtype extended_postal_code: str
+    :keyword country_code: Country (Note: This is a two-letter code, not a country name.).
+    :paramtype country_code: str
+    :keyword country: Country name.
+    :paramtype country: str
+    :keyword country_code_iso3: ISO alpha-3 country code.
+    :paramtype country_code_iso3: str
+    :keyword freeform_address: An address line formatted according to the formatting rules of a
+     Result's country of origin, or in the case of a country, its full country name.
+    :paramtype freeform_address: str
+    :keyword country_subdivision_name: The full name of a first level of country administrative
+     hierarchy. This field appears only in case countrySubdivision is presented in an abbreviated
+     form. Only supported for USA, Canada, and Great Britain.
+    :paramtype country_subdivision_name: str
+    :keyword local_name: An address component which represents the name of a geographic area or
+     locality that groups a number of addressable objects for addressing purposes, without being an
+     administrative unit. This field is used to build the ``freeformAddress`` property.
+    :paramtype local_name: str
+    :keyword bounding_box: Bounding box coordinates.
+    :paramtype bounding_box: ~azure.maps.search.models.BoundingBox
+    """
     def __init__(
         self,
-        building_number: str,
-        street: str,
+        *,
+        building_number: str = None,
+        street: str = None,
         cross_street: str = None,
         street_number: str = None,
         route_numbers: List[int] = None,
@@ -246,9 +285,54 @@ class Address(object):
 
 # pylint: disable=too-many-instance-attributes
 class SearchAddressResultItem(object):
+    """Result object for a Search API response..
 
+    :keyword type: Possible values include: "POI", "Street", "Geography", "Point Address",
+     "Address Range", "Cross Street".
+    :paramtype type: str or ~azure.maps.search.models.SearchAddressResultType
+    :keyword id: Id property.
+    :paramtype id: str
+    :keyword score: The value within a result set to indicate the relative matching score between
+     results.
+    :paramtype score: float
+    :keyword distance_in_meters: Straight line distance between the result and geobias location in
+     meters.
+    :paramtype distance_in_meters: float
+    :keyword info: Information about the original data source of the Result. Used for support
+     requests.
+    :paramtype info: str
+    :param entity_type: Possible values include: "Country", "CountrySubdivision",
+     "CountrySecondarySubdivision", "CountryTertiarySubdivision", "Municipality",
+     "MunicipalitySubdivision", "Neighbourhood", "PostalCodeArea".
+    :type entity_type: str or ~azure.maps.search.models.GeographicEntityType
+    :keyword point_of_interest: Details of the returned POI including information such as the name,
+     phone, url address, and classifications.
+    :paramtype point_of_interest: ~azure.maps.search.models.PointOfInterest
+    :keyword address: The address of the result.
+    :paramtype address: ~azure.maps.search.models.Address
+    :param position: A location represented as a latitude and longitude using short names 'lat' &
+     'lon'.
+    :type position: ~azure.maps.search.models.LatLon
+    :keyword viewport: The viewport that covers the result represented by the top-left and bottom-
+     right coordinates as BoundingBox.
+    :paramtype viewport: ~azure.maps.search.models.BoundingBox
+    :keyword entry_points: Array of EntryPoints. Those describe the types of entrances available at
+     the location. The type can be "main" for main entrances such as a front door, or a lobby, and
+     "minor", for side and back doors.
+    :paramtype entry_points: list[~azure.maps.search.models.EntryPoint]
+    :keyword address_ranges: Describes the address range on both sides of the street for a search
+     result. Coordinates for the start and end locations of the address range are included.
+    :paramtype address_ranges: ~azure.maps.search.models.AddressRanges
+    :keyword data_sources: Optional section. Reference geometry id.
+    :paramtype data_sources: ~azure.maps.search.models.DataSource
+    :keyword match_type: Information on the type of match.
+    :paramtype match_type: str or ~azure.maps.search.models.MatchType
+    :keyword detour_time: Detour time in seconds.
+    :paramtype detour_time: int
+    """
     def __init__(
         self,
+        *,
         type_: str = None,
         id_: str = None,
         score: float = None,
@@ -273,12 +357,12 @@ class SearchAddressResultItem(object):
         self.entity_type = entity_type
         self.point_of_interest = point_of_interest
         self.address = address
-        self.position = LatLon() if not position else LatLon(
+        self.position = None if not position else LatLon(
             position.lat, position.lon
         )
         self.viewport = viewport
         self.entry_points = entry_points
-        self.address_ranges = LatLon() if not position else LatLon(
+        self.address_ranges = None if not position else LatLon(
             address_ranges.range_left, address_ranges.range_right
         )
         self.data_sources = data_sources
@@ -310,7 +394,7 @@ class SearchAddressResult(object):
         self.skip = summary.skip
         self.total_results = summary.total_results
         self.fuzzy_level = summary.fuzzy_level
-        self.geo_bias = LatLon() if not summary.geo_bias else LatLon(
+        self.geo_bias = None if not summary.geo_bias else LatLon(
             summary.geo_bias.lat, summary.geo_bias.lon
         )
         self.results = results
@@ -324,7 +408,7 @@ class ReverseSearchAddressResultItem(object):
     :keyword address: The address of the result.
     :paramtype address: ~azure.maps.search.models.Address
     :keyword position: Position property in the form of "latitude,longitude".
-    :paramtype position: LatLon
+    :paramtype position: ~azure.maps.search.models.LatLon
     :keyword road_use:
     :paramtype road_use: list[str]
     :keyword match_type: Information on the type of match.
@@ -333,13 +417,14 @@ class ReverseSearchAddressResultItem(object):
 
     def __init__(
         self,
+        *,
         address: Address = None,
         position: LatLon = None,
         road_use: List[str] = None,
         match_type: str = None
     ):
         self.address = address
-        self.position = LatLon() if not position else LatLon(
+        self.position = None if not position else LatLon(
             float(position.split(',')[0]), float(position.split(',')[1])
         )
         self.road_use = road_use
@@ -359,6 +444,7 @@ class ReverseSearchAddressResult(object):
 
     def __init__(
         self,
+        *,
         summary: SearchSummary = None,
         results: List[ReverseSearchAddressResultItem] = None
     ):
@@ -398,6 +484,7 @@ class ReverseSearchAddressBatchProcessResult(object):
 
     def __init__(
         self,
+        *,
         summary: BatchResultSummary = None,
         items: List[ReverseSearchAddressBatchItem] = None
     ):
@@ -476,8 +563,8 @@ class GeoJsonFeatureData(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
         geometry: "GeoJsonObject",
+        *,
         properties: Optional[object] = None,
         feature_type: Optional[str] = None,
         **kwargs
@@ -512,8 +599,8 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
 
     def __init__(
         self,
-        *,
         geometry: GeoJsonObject,
+        *,
         properties: Optional[object] = None,
         feature_type: Optional[str] = None,
         **kwargs
@@ -1082,7 +1169,6 @@ class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
     ):
         super(GeoJsonPolygon, self).__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
-        self.type = 'Polygon'  # type: str
         self.type = 'Polygon'  # type: str
 
 

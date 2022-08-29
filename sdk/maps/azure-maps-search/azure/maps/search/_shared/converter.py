@@ -111,3 +111,20 @@ def parse_geometry_input(geo_thing):
         geom = wkt_to_geojson(geo_thing)
     geometry['geometry'] = geom
     return geometry
+
+def _get_geo_interface(self, geo_thing):
+    # type: (Any) -> dict
+    """Attempts to get an object's geo_interface."""
+    # Input might be GeoJSON or WKT
+    if isinstance(geo_thing, str):
+        geo_interface = self._parse_string(geo_thing)
+    # Input might be raw GeoJSON or a geo_interface dictionary
+    elif isinstance(geo_thing, dict):
+        geo_interface = dict_to_geo_interface(geo_thing)
+    # Input might be an object with a geo_interface
+    else:
+        try:
+            geo_interface = dict_to_geo_interface(
+                geo_thing.__geo_interface__)
+        except AttributeError:
+            raise AttributeError('Object has no geo_interface.')

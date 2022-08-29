@@ -4,13 +4,12 @@
 # ------------------------------------
 
 # pylint: disable=unused-import
-from typing import Union, TYPE_CHECKING, Any
+from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from .._generated.aio import SearchClient as _MapsSearchClient
 from .._version import VERSION
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -30,10 +29,9 @@ def _authentication_policy(credential):
 class AsyncMapsSearchClientBase:
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, AsyncTokenCredential]
-        **kwargs # type: Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs: Any
+    ) -> None:
 
         self._maps_client = _MapsSearchClient(
             credential=credential,  # type: ignore

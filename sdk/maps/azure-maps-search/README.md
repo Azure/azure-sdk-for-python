@@ -126,7 +126,7 @@ You can use Fuzzy Search to search an address or a point of interest (POI). The 
 ```python
 from azure.maps.search import MapsSearchClient
 
-fuzzy_search_result = client.fuzzy_search({ query: "pizza", country_filter: "fr" });
+fuzzy_search_result = client.fuzzy_search(query: "pizza", country_filter: "fr" );
 
 result_address = fuzzy_search_result.results[0].address
 ```
@@ -178,7 +178,7 @@ async with maps_search_client:
 batch_id = result.batch_id
 ```
 
-This is the same method which accepting `batch_id` as the parameter.
+The method `begin_fuzzy_search_batch()` also accepts `batch_id` as the parameter. The `batch_id` here can be use to retrieve the LRO object later which last 14 days.
 
 ```python
 maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
@@ -188,7 +188,7 @@ async with maps_search_client:
         batch_id=batch_id
     )
 
-result = result.polling_method().response
+result = result.response
 ```
 
 ### Fail to get fuzzy search batch sync
@@ -253,7 +253,7 @@ result1 = maps_search_client.search_inside_geometry(
     query="pizza",
     geometry=geo_json_obj1
 )
-print("Search inside geometry with standard GeoJson obejct as input, FeatureCollection:")
+print("Search inside geometry with standard GeoJson object as input, FeatureCollection:")
 print(result1)
 ```
 

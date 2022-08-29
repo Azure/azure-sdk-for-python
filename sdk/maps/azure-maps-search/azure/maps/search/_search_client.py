@@ -4,11 +4,12 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import TYPE_CHECKING, Union, Any, List, Tuple
+from typing import Union, Any, List, Tuple
 from collections import namedtuple
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.polling import LROPoller
 
 from ._base_client import MapsSearchClientBase
 from ._generated.models import (
@@ -30,10 +31,6 @@ from ._shared import (
     parse_geometry_input
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from azure.core.polling import LROPoller
-
 
 # By default, use the latest supported API version
 class MapsSearchClient(MapsSearchClientBase):
@@ -53,10 +50,9 @@ class MapsSearchClient(MapsSearchClientBase):
 
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, TokenCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    )-> None:
 
         super().__init__(
             credential=credential, **kwargs
@@ -65,10 +61,10 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def get_geometries(
         self,
-        geometry_ids,  # type: List[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Polygon]
+        geometry_ids: List[str],
+        **kwargs: Any
+    )-> List[Polygon]:
+
         """**Get Geometries**
         The Get Geometries service allows you to request the geometry data such as a city or country
         outline for a set of entities, previously retrieved from an Online Search request in GeoJSON
@@ -91,10 +87,10 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def fuzzy_search(
         self,
-        query,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        query: str,
+        **kwargs: Any
+    )-> SearchAddressResult:
+
         """**Free Form Search**
 
         The basic default API is Free Form Search which handles the most fuzzy of inputs handling any
@@ -190,9 +186,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def get_point_of_interest_categories(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[PointOfInterestCategory]
+        **kwargs: Any
+    ) -> List[PointOfInterestCategory]:
+
         """**Get POI Category Tree**
 
         POI Category API provides a full list of supported Points of Interest (POI) categories and
@@ -215,10 +211,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def reverse_search_address(
         self,
-        coordinates,  # type: Tuple
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "ReverseSearchAddressResult"
+        coordinates: Tuple,
+        **kwargs: Any
+    ) -> ReverseSearchAddressResult:
         """**Search Address Reverse Batch API**
 
         There may be times when you need to translate a  coordinate (example: 37.786505, -122.3862)
@@ -262,10 +257,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def reverse_search_cross_street_address(
         self,
-        coordinates,  # type: Tuple
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "ReverseSearchCrossStreetAddressResult"
+        coordinates: Tuple,
+        **kwargs: Any
+    )-> ReverseSearchCrossStreetAddressResult:
         """**Reverse Geocode to a Cross Street**
 
         There may be times when you need to translate a  coordinate (example: 37.786505, -122.3862)
@@ -308,12 +302,11 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_along_route(
         self,
-        query,  # type: str
-        max_detour_time,  # type: int
-        route,  # type: "SearchAlongRouteOptions"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        query: str,
+        max_detour_time: int,
+        route: SearchAlongRouteOptions,
+        **kwargs: Any
+    ) -> SearchAddressResult:
         """
         The Search Along Route endpoint allows you to perform a fuzzy search for POIs along a specified
         route.
@@ -372,11 +365,10 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_inside_geometry(
         self,
-        query,  # type: str
-        geometry,  # type: Union[object, str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        query: str,
+        geometry: Union[object, str],
+        **kwargs: Any
+    ) -> SearchAddressResult:
         """
         The Search Geometry endpoint allows you to perform a free form search inside a single geometry
         or many of them.
@@ -432,10 +424,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_point_of_interest(
         self,
-        query,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        query: str,
+        **kwargs: Any
+    ) -> SearchAddressResult:
         """**Get POI by Name**
 
         Points of Interest (POI) Search allows you to request POI results by name.  Search supports
@@ -494,10 +485,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_nearby_point_of_interest(
         self,
-        coordinates,  # type: Tuple
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        coordinates: Tuple,
+        **kwargs: Any
+    ) -> SearchAddressResult:
         """**Search Nearby Point of Interest **
 
          If you have a use case for only retrieving POI results around a specific location, the nearby
@@ -545,10 +535,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_point_of_interest_category(
         self,
-        query,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        query: str,
+        **kwargs: Any
+    ) -> SearchAddressResult:
         """**Get POI by Category**
 
         Points of Interest (POI) Category Search allows you to request POI results from given category.
@@ -613,10 +602,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_address(
         self,
-        query,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        query: str,
+        **kwargs: Any
+    ) -> SearchAddressResult:
         """**Address Geocoding**
 
         In many cases, the complete search service might be too much, for instance if you are only
@@ -674,10 +662,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_structured_address(
         self,
-        structured_address,  # type: "StructuredAddress"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressResult"
+        structured_address: StructuredAddress,
+        **kwargs: Any
+    ) -> SearchAddressResult:
         """**Structured Address Geocoding**
 
         Azure Address Geocoding can also be accessed for structured address look up exclusively. The
@@ -715,15 +702,14 @@ class MapsSearchClient(MapsSearchClientBase):
             country_subdivision=structured_address.country_subdivision,
             postal_code=structured_address.postal_code,
             **kwargs)
-        return SearchAddressResult(result.summary, result.results)
+        return SearchAddressResult(summary=result.summary, results=result.results)
 
     @distributed_trace
     def fuzzy_search_batch(
         self,
-        search_queries,  # type: List[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SearchAddressBatchResult"
+        search_queries: List[str],
+        **kwargs: Any
+    ) -> SearchAddressBatchResult:
         """**Search Fuzzy Batch API**
 
         The Search Address Batch API sends batches of queries to `Search Fuzzy API`.
@@ -753,10 +739,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def begin_fuzzy_search_batch(
         self,
-        search_queries,  # type: List[str]
+        search_queries: List[str],
         **kwargs
-    ):
-        # type: (...) -> LROPoller["SearchAddressBatchResult"]
+    ) -> LROPoller[SearchAddressBatchResult]:
         """**Begin Search Fuzzy Batch API Request**
 
         Sends batches of fuzzy search requests.
@@ -785,10 +770,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def search_address_batch(
         self,
-        search_queries,  # type: List[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "SearchAddressBatchResult"
+        search_queries: List[str],
+        **kwargs: Any
+    ) -> SearchAddressBatchResult:
         """**Search Address Batch API**
 
         :param search_queries: The list of search fuzzy queries/requests to process. The list can
@@ -808,10 +792,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def begin_search_address_batch(
         self,
-        search_queries,  # type: List[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["SearchAddressBatchResult"]
+        search_queries: List[str],
+        **kwargs: Any
+    ) -> LROPoller[SearchAddressBatchResult]:
         """**Begin Search Address Batch API**
 
         Sends batches of geocoding requests.
@@ -843,10 +826,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def reverse_search_address_batch(
         self,
-        search_queries,  # type: List[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "ReverseSearchAddressBatchProcessResult"
+        search_queries: List[str],
+        **kwargs: Any
+    ) -> ReverseSearchAddressBatchProcessResult:
         """**Search Address Reverse Batch API**
 
         The Search Address Batch API sends batches of queries to `Search Address Reverse API`.
@@ -873,10 +855,9 @@ class MapsSearchClient(MapsSearchClientBase):
     @distributed_trace
     def begin_reverse_search_address_batch(
         self,
-        search_queries,  # type: List[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["ReverseSearchAddressBatchProcessResult"]
+        search_queries: List[str],
+        **kwargs: Any
+    ) -> LROPoller[ReverseSearchAddressBatchProcessResult]:
         """*Begin Search Address Reverse Batch API Request**
 
         Sends batches of reverse geocoding requests.
