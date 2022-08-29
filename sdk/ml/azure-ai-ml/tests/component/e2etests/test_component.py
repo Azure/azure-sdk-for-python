@@ -1,0 +1,716 @@
+import uuid
+
+import pydash
+import pytest
+from pathlib import Path
+from itertools import tee
+from typing import Callable
+from time import sleep
+import re
+
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.paging import ItemPaged
+
+from azure.ai.ml import MLClient, load_component
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ListViewType
+from azure.ai.ml import MpiDistribution, load_environment
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml.constants import ARM_ID_PREFIX, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
+from azure.ai.ml.entities import Component, CommandComponent
+from azure.ai.ml.constants import AzureMLResourceType, PROVIDER_RESOURCE_ID_WITH_VERSION
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml.entities._load_functions import load_code
+
+from ..unittests.test_component_schema import load_component_entity_from_rest_json
+from .._util import _COMPONENT_TIMEOUT_SECOND
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
+
+
+def create_component(
+    client: MLClient,
+    component_name: str,
+    path="./tests/test_configs/components/helloworld_component.yml",
+    params_override=None,
+    is_anonymous=False,
+):
+    default_param_override = [{"name": component_name}]
+    if params_override is None:
+        params_override = default_param_override
+    else:
+        params_override += default_param_override
+
+    command_component = load_component(
+        source=path,
+        params_override=params_override,
+    )
+    return client.components.create_or_update(command_component, is_anonymous=is_anonymous)
+
+
+@pytest.fixture
+def torch_distribution():
+    def create_torch_distribution(has_strs: bool = False):
+        # service returns component with stringified integer values
+        # need to do comparison with object returned by service with strings
+        # comparison with object in SDK is done with integer values
+        if not has_strs:
+            return {"type": "pytorch", "process_count_per_instance": 4}
+        return {"type": "pytorch", "process_count_per_instance": "4"}
+
+    return create_torch_distribution
+
+
+@pytest.fixture
+def tensorflow_distribution():
+    def create_tensorflow_distribution(has_strs: bool = False):
+        # service returns component with stringified integer values
+        # need to do comparison with object returned by service with strings
+        # comparison with object in SDK is done with integer values
+        if not has_strs:
+            return {
+                "type": "tensorflow",
+                "parameter_server_count": 1,
+                "worker_count": 2,
+            }
+        return {
+            "type": "tensorflow",
+            "parameter_server_count": "1",
+            "worker_count": "2",
+        }
+
+    return create_tensorflow_distribution
+
+
+def assert_component_basic_workflow(
+    client: MLClient, randstr: Callable[[], str], path: str, expected_dict: dict, omit_fields: list
+):
+    component_name = randstr()
+
+    # create a component
+    component_resource = create_component(client, component_name, path=path)
+    actual_dict = pydash.omit(dict(component_resource._to_dict()), omit_fields)
+    assert actual_dict == expected_dict
+    assert component_resource.name == component_name
+    assert component_resource.creation_context
+
+    # get back
+    component = client.components.get(component_name, component_resource.version)
+    assert component_resource._to_dict() == component._to_dict()
+    assert component_resource.creation_context
+
+    # create a new version
+    params_override = [{"name": component_name}, {"version": 2}]
+    command_component = load_component(
+        source=path,
+        params_override=params_override,
+    )
+    component_resource = client.components.create_or_update(command_component)
+    assert component_resource.version == "2"
+
+
+@pytest.mark.e2etest
+@pytest.mark.timeout(timeout=_COMPONENT_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
+@pytest.mark.usefixtures("mock_code_hash")
+class TestComponent:
+    def test_command_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
+            "command": "echo Hello World & echo [${{inputs.component_in_number}}] & echo "
+            "${{inputs.component_in_path}} & echo "
+            "${{outputs.component_out_path}} > "
+            "${{outputs.component_out_path}}/component_in_number",
+            "description": "This is the basic command component",
+            "display_name": "CommandComponentBasic",
+            "inputs": {
+                "component_in_number": {
+                    "default": "10.99",
+                    "description": "A number",
+                    "optional": True,
+                    "type": "number",
+                },
+                "component_in_path": {"description": "A path", "type": "uri_folder"},
+            },
+            "is_deterministic": True,
+            "outputs": {"component_out_path": {"type": "uri_folder"}},
+            "resources": {"instance_count": 1, "properties": {}},
+            "tags": {"owner": "sdkteam", "tag": "tagvalue"},
+            "type": "command",
+            "version": "0.0.1",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/helloworld_component.yml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id", "code", "environment"],
+        )
+
+    def test_parallel_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
+            "description": "parallel component for batch score",
+            "display_name": "BatchScore",
+            "error_threshold": 10,
+            "input_data": "${{inputs.score_input}}",
+            "inputs": {
+                "label": {"description": "Other reference data for batch scoring, " "e.g. labels.", "type": "uri_file"},
+                "score_input": {"description": "The data to be split and scored in " "parallel.", "type": "mltable"},
+                "score_model": {"description": "The model for batch score.", "type": "custom_model"},
+            },
+            "is_deterministic": True,
+            "max_concurrency_per_instance": 12,
+            "mini_batch_error_threshold": 5,
+            "mini_batch_size": "10240",
+            "outputs": {"scored_result": {"type": "mltable"}, "scoring_summary": {"type": "uri_file"}},
+            "retry_settings": {"max_retries": 10, "timeout": 3},
+            "tags": {},
+            "type": "parallel",
+            "version": "1.0.0",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/basic_parallel_component_score.yml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id", "task"],
+        )
+
+    def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_component_dict = {
+            "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+            "tags": {},
+            "version": "1.0",
+            "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
+            "display_name": "AutoML Classification",
+            "type": "automl",
+            "task": "classification",
+        }
+        omit_fields = [
+            "name",
+            "creation_context",
+            "id",
+            # still passing these fields to backend and let backend decide if they want to respect that
+            "inputs",
+            "outputs",
+            "is_deterministic",
+        ]
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/automl/classification.yaml",
+            expected_dict=expected_component_dict,
+            omit_fields=omit_fields,
+        )
+
+        assert_component_basic_workflow(
+            client=registry_client,
+            randstr=randstr,
+            path="./tests/test_configs/components/automl/classification.yaml",
+            expected_dict=expected_component_dict,
+            omit_fields=omit_fields,
+        )
+
+    @pytest.mark.skip("Skip for compute resource not ready.")
+    def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "entry": {"file": "entry.py"},
+            "jars": ["scalaproj.jar"],
+            "py_files": ["utils.zip"],
+            "files": ["my_files.txt"],
+            "conf": {
+                "spark.driver.cores": 2,
+                "spark.driver.memory": "1g",
+                "spark.executor.cores": 1,
+                "spark.executor.instances": 1,
+                "spark.executor.memory": "1g",
+            },
+            "args": "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
+            "description": "Aml Spark dataset test module",
+            "tags": {},
+            "version": "1",
+            "$schema": "http://azureml/sdk-2-0/SparkComponent.json",
+            "display_name": "Aml Spark dataset test module",
+            "is_deterministic": True,
+            "inputs": {"file_input1": {"type": "uri_file"}, "file_input2": {"type": "uri_file"}},
+            "outputs": {"output": {"type": "uri_folder"}},
+            "type": "spark",
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/basic_spark_component.yml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id", "code", "environment"],
+        )
+
+    @pytest.mark.parametrize(
+        "component_path",
+        [
+            "type_contract/mltable.yml",
+            "type_contract/mlflow_model.yml",
+            "type_contract/custom_model.yml",
+            "type_contract/path.yml",
+            "input_types_component.yml",
+        ],
+    )
+    def test_command_component_create_input_output_types(
+        self, client: MLClient, randstr: Callable[[], str], component_path: str
+    ) -> None:
+        component_name = randstr()
+        params_override = [{"name": component_name}]
+        component_entity = load_component(
+            source="./tests/test_configs/components/{}".format(component_path),
+            params_override=params_override,
+        )
+        target_entity = client.components.create_or_update(component_entity)
+        target_entity._creation_context = None
+        target_entity.resources = None
+        component_entity._creation_context = None
+        assert target_entity.id
+        # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
+        omit_fields = ["id", "command"]
+        assert pydash.omit(component_entity._to_dict(), *omit_fields) == pydash.omit(
+            target_entity._to_dict(), *omit_fields
+        )
+
+    def test_command_component_with_code(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        component_name = randstr()
+
+        component_resource = create_component(
+            client,
+            component_name,
+            path="./tests/test_configs/components/basic_component_code_local_path.yml",
+        )
+        assert component_resource.name == component_name
+        # make sure code is created
+        assert component_resource.code
+        assert is_ARM_id_for_resource(component_resource.code)
+
+    def test_component_list(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        component_name = randstr()
+
+        component_resource = create_component(client, component_name)
+        assert component_resource.name == component_name
+
+        # list component containers
+        component_containers = client.components.list()
+        assert isinstance(component_containers.next(), ComponentContainerData)
+
+        # there might be delay so getting latest version immediately after creation might get wrong result
+        sleep(5)
+
+        # list component versions
+        components = client.components.list(name=component_name)
+        # creating a copy of iterator
+        components, components_copy = tee(components)
+        # iterating the whole iterable object to find the number of elements. Not using list.
+        assert sum(1 for e in components_copy) == 1
+        component = next(iter(components), None)
+        assert isinstance(component, Component)
+
+    def test_component_update(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        # create a component
+        component_name = randstr()
+
+        component_resource = create_component(client, component_name)
+        assert component_resource.id
+        rest_path = "./tests/test_configs/components/helloworld_component_rest.json"
+        target_entity = load_component_entity_from_rest_json(rest_path)
+        assert target_entity._source == "REMOTE.WORKSPACE.COMPONENT"
+        component_dict = pydash.omit(
+            dict(component_resource._to_dict()),
+            "code",
+            "environment",
+            "name",
+            "creation_context",
+            "resources",
+            "id",
+        )
+        expected_dict = pydash.omit(
+            dict(target_entity._to_dict()),
+            "code",
+            "environment",
+            "name",
+            "creation_context",
+            "id",
+        )
+        assert component_dict == expected_dict
+
+        # create component again with new description and display name
+        # TODO: test update tags when supported
+        description = "Updated description"
+        display_name = "UpdatedComponent"
+        params_override = [{"description": description}, {"display_name": display_name}]
+        component_entity = Component._load(
+            data=component_resource._to_dict(),
+            yaml_path="./tests/test_configs/components/helloworld_component.yml",
+            params_override=params_override,
+        )
+        component_resource = client.components.create_or_update(component_entity)
+        assert component_resource.description == description
+        assert component_resource.display_name == display_name
+
+    def test_component_create_twice_same_code_arm_id(
+        self, client: MLClient, randstr: Callable[[], str], tmp_path: Path
+    ) -> None:
+        component_name = randstr()
+        # create new component to prevent the issue when same component code got created at the same time
+        component_path = tmp_path / "component.yml"
+        component_path.write_text(
+            f"""
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+name: {component_name}
+version: 1
+type: command
+name: SampleCommandComponentBasic
+command: echo Hello World
+code: "."
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
+        )
+        # create a component
+        component_resource1 = create_component(client, component_name, path=component_path)
+        # create again
+        component_resource2 = create_component(client, component_name, path=component_path)
+        # the code arm id should be the same
+        assert component_resource1.code == component_resource2.code
+
+    def test_component_update_code(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
+        component_name = randstr()
+        path = "./tests/test_configs/components/basic_component_code_local_path.yml"
+
+        # create a component
+        create_component(client, component_name, path=path)
+
+        # create again with different code and check error msg
+        code_path = tmp_path / "code.yml"
+        code_path.write_text(
+            f"""
+        name: {component_name}
+        version: 1
+        path: ."""
+        )
+        new_code = load_code(source=code_path)
+        code_resource = client._code.create_or_update(new_code)
+        params_override = [{"name": component_name, "code": ARM_ID_PREFIX + code_resource.id}]
+        command_component = load_component(
+            source=path,
+            params_override=params_override,
+        )
+        with pytest.raises(HttpResponseError):
+            client.components.create_or_update(command_component)
+
+    def test_component_create_default_code(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        # step2: test component without code
+        component_name = randstr()
+        component_resource1 = create_component(client, component_name)
+
+        # create again with updated tags
+        description = "Updated description"
+        display_name = "UpdatedComponent"
+        params_override = [{"description": description}, {"display_name": display_name}]
+        component_resource2 = create_component(client, component_name, params_override=params_override)
+
+        # the code arm id should be the same
+        assert component_resource1.code == component_resource2.code
+        assert component_resource2.description == description
+        assert component_resource2.display_name == display_name
+
+    def test_mpi_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        component_name = randstr()
+        # Test mpi distribution
+        params_override = [{"name": component_name}]
+        component_entity = load_component(
+            source="./tests/test_configs/components/helloworld_component_mpi.yml",
+            params_override=params_override,
+        )
+        # additional fields added_property in distribution and resources are removed.
+        mpi_distribution = {"type": "mpi", "process_count_per_instance": 1}
+        assert mpi_distribution == component_entity.distribution.__dict__
+        mpi_component_resource = client.components.create_or_update(component_entity)
+        assert isinstance(mpi_component_resource.distribution, MpiDistribution)
+        component_entity = CommandComponent(
+            name=randstr(),
+            display_name="CommandComponentMpi",
+            description="This is the mpi command component",
+            tags={"tag": "tagvalue", "owner": "sdkteam"},
+            inputs={
+                "component_in_number": {
+                    "description": "A number",
+                    "type": "number",
+                    "default": 10.99,
+                },
+                "component_in_path": {"description": "A path", "type": "uri_folder"},
+            },
+            outputs={"component_out_path": {"type": "uri_folder"}},
+            command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
+            "& echo ${{outputs.component_out_path}}",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            distribution=MpiDistribution(
+                process_count_per_instance=1,
+                # No affect because Mpi object does not allow extra fields
+                added_property=7,
+            ),
+            instance_count=2,
+        )
+        mpi_entity = client.components.create_or_update(component_entity)
+
+        component_dict = pydash.omit(
+            mpi_entity._to_dict(),
+            "$schema",
+            "id",
+            "name",
+            "creation_context",
+        )
+        yaml_component_dict = pydash.omit(
+            mpi_component_resource._to_dict(),
+            "$schema",
+            "id",
+            "name",
+            "creation_context",
+        )
+        assert component_dict == yaml_component_dict
+
+    def test_pytorch_component(
+        self, client: MLClient, randstr: Callable[[], str], torch_distribution: Callable[[bool], dict]
+    ) -> None:
+        component_name = randstr()
+        # Test mpi distribution
+        params_override = [{"name": component_name}]
+        # Test torch distribution
+        component_entity = load_component(
+            source="./tests/test_configs/components/helloworld_component_pytorch.yml",
+            params_override=params_override,
+        )
+        # additional fields added_property in distribution and resources are removed.
+        torch_resources = {"instance_count": 2, "properties": {}}
+        assert component_entity.distribution.__dict__ == torch_distribution()
+        assert component_entity.resources._to_rest_object().as_dict() == torch_resources
+        torch_component_resource = client.components.create_or_update(component_entity)
+        assert torch_component_resource.resources._to_rest_object().as_dict() == torch_resources
+        assert torch_component_resource.distribution.__dict__ == torch_distribution(has_strs=True)
+
+    def test_tensorflow_component(
+        self, client: MLClient, randstr: Callable[[], str], tensorflow_distribution: Callable[[bool], dict]
+    ) -> None:
+        component_name = randstr()
+        # Test mpi distribution
+        params_override = [{"name": component_name}]
+        # Test tensorflow distribution
+        component_entity = load_component(
+            source="./tests/test_configs/components/helloworld_component_tensorflow.yml",
+            params_override=params_override,
+        )
+        assert component_entity.distribution.__dict__ == tensorflow_distribution()
+        tensorflow_component_resource = client.components.create_or_update(component_entity)
+        assert tensorflow_component_resource.distribution.__dict__ == tensorflow_distribution(has_strs=True)
+
+    def test_command_component_create_autoincrement(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        component_name = randstr()
+        params_override = [{"name": component_name}]
+        path = "./tests/test_configs/components/component_no_version.yml"
+        command_component = load_component(source=path, params_override=params_override)
+
+        assert command_component.version is None
+        assert command_component._auto_increment_version
+
+        created_command_component = client.components.create_or_update(command_component)
+        assert created_command_component.version == "1"
+        assert created_command_component._auto_increment_version is False
+
+        next_component_asset = client.components.create_or_update(command_component)
+        next_version_regex = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{7}")
+        assert next_version_regex.match(next_component_asset.version)
+        assert next_component_asset._auto_increment_version is False
+
+    def test_anonymous_component_reuse(self, client: MLClient) -> None:
+        # component without code
+        component_resource1 = create_component(
+            client, _sanitize_python_variable_name(str(uuid.uuid4())), is_anonymous=True
+        )
+        component_resource2 = create_component(
+            client, _sanitize_python_variable_name(str(uuid.uuid4())), is_anonymous=True
+        )
+        assert component_resource1.id == component_resource2.id
+        assert component_resource1.environment == component_resource2.environment
+        assert component_resource1.code == component_resource2.code
+
+        # component with inline code and inline environment
+        path = "./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_resource1 = create_component(
+            client,
+            _sanitize_python_variable_name(str(uuid.uuid4())),
+            path=path,
+            is_anonymous=True,
+        )
+        component_resource2 = create_component(
+            client,
+            _sanitize_python_variable_name(str(uuid.uuid4())),
+            path=path,
+            is_anonymous=True,
+        )
+        # TODO: enable this check when environment reuse is enabled
+        # assert component_resource1.id == component_resource2.id
+        # assert component_resource1.environment == component_resource2.environment
+        assert component_resource1.code == component_resource2.code
+
+    def test_command_component_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        """Checks that dependencies of the form azureml:name@label are resolved to a version"""
+        environment_name = randstr()
+        environment_versions = ["foo", "bar"]
+
+        for version in environment_versions:
+            client.environments.create_or_update(
+                load_environment(
+                    "./tests/test_configs/environment/environment_conda_inline.yml",
+                    params_override=[{"name": environment_name}, {"version": version}],
+                )
+            )
+        sleep(10)
+
+        created_component = create_component(
+            client,
+            randstr(),
+            params_override=[{"environment": f"azureml:{environment_name}@latest"}],
+        )
+        expected = PROVIDER_RESOURCE_ID_WITH_VERSION.format(
+            client._operation_scope._subscription_id,
+            client._operation_scope._resource_group_name,
+            client._operation_scope.workspace_name,
+            AzureMLResourceType.ENVIRONMENT,
+            environment_name,
+            environment_versions[-1],
+        )
+
+        assert created_component.environment == expected
+
+    def test_command_component_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        name = randstr()
+        versions = ["foo", "bar", "baz", "foobar"]
+
+        for version in versions:
+            create_component(client, name, params_override=[{"version": version}])
+            sleep(1)
+            assert client.components.get(name, label="latest").version == version
+
+    @pytest.mark.skip(reason="Test fails because MFE index service consistency bug")
+    def test_command_component_delete_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        name = randstr()
+        versions = ["foo", "bar", "baz", "foobar"]
+        for version in versions:
+            created_component = create_component(client, name, params_override=[{"version": version}])
+            assert created_component.version == version
+            assert created_component.name == name
+            sleep(3)
+
+        for version in reversed(versions):
+            assert client.components.get(name, label=version).version == version
+            client.components.delete(name, label="latest")
+            with pytest.raises(ResourceNotFoundError):
+                client.components.get(name=name, version=version)
+            sleep(10)
+
+    def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_resource = client.components.create_or_update(command_component, is_anonymous=True)
+        assert component_resource.name == ANONYMOUS_COMPONENT_NAME
+        # version calculation has been moved to the server side
+        # assert component_resource.version == command_component.version
+        component = client.components.get(component_resource.name, component_resource.version)
+        # TODO 1807731: enable this check after server-side fix
+        omit_fields = ["creation_context"]
+        assert pydash.omit(component_resource._to_dict(), *omit_fields) == pydash.omit(
+            component._to_dict(), *omit_fields
+        )
+        assert component._source == "REMOTE.WORKSPACE.COMPONENT"
+
+    def test_component_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        name = randstr()
+        versions = ["1", "2"]
+        version_archived = versions[0]
+        for version in versions:
+            params_override = [{"version": version}]
+            create_component(client, name, params_override=params_override)
+
+        def get_component_list():
+            # Wait for list index to update before calling list
+            sleep(30)
+            component_list = client.components.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
+            return [c.version for c in component_list]
+
+        assert version_archived in get_component_list()
+        client.components.archive(name=name, version=version_archived)
+        assert version_archived not in get_component_list()
+        client.components.restore(name=name, version=version_archived)
+        assert version_archived in get_component_list()
+
+    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
+    def test_component_archive_restore_container(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        name = randstr()
+        create_component(client, name)
+
+        def get_component_list():
+            # Wait for list index to update before calling list
+            sleep(30)
+            component_list = client.components.list(list_view_type=ListViewType.ACTIVE_ONLY)
+            return [c.name for c in component_list]
+
+        assert name in get_component_list()
+        client.components.archive(name=name)
+        assert name not in get_component_list()
+        client.components.restore(name=name)
+        assert name in get_component_list()
+
+    def test_entity_command_component_create(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        component_name = randstr()
+        component = CommandComponent(
+            name=component_name,
+            display_name="CommandComponentBasic",
+            description="This is the basic command component",
+            version="3",
+            tags={"tag": "tagvalue", "owner": "sdkteam"},
+            outputs={"component_out_path": {"type": "path"}},
+            command="echo Hello World",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            code="./tests/test_configs/components/helloworld_components_with_env",
+        )
+        component_resource = client.components.create_or_update(component)
+        assert component_resource.version == "3"
+
+    def test_component_validate_via_schema(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        component_path = "./tests/test_configs/components/helloworld_component.yml"
+        component: CommandComponent = load_component(source=component_path)
+        component.name = None
+        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
+        validation_result = client.components.validate(component)
+        assert validation_result.passed is False
+        assert validation_result.messages == {
+            "name": "Missing data for required field.",
+            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
+        }
+
+    def test_component_create_get_list_from_registry(
+        self, registry_client: MLClient, only_registry_client: MLClient, randstr: Callable[[], str]
+    ) -> None:
+        component_name = randstr()
+
+        component_resource = create_component(only_registry_client, component_name)
+        assert component_resource.name == component_name
+        assert component_resource.code
+        assert component_resource.creation_context
+
+        component_get = only_registry_client.components.get(component_name, component_resource.version)
+        assert component_resource._to_dict() == component_get._to_dict()
+        assert component_resource.creation_context
+        assert component_resource._source == "REMOTE.REGISTRY"
+
+        components = only_registry_client.components.list(name=component_name)
+        assert isinstance(components, ItemPaged)
+        test_component = next(iter(components), None)
+        assert isinstance(test_component, Component)
+
+    @pytest.mark.skip("Skip pipeline component register for not ready.")
+    def test_simple_pipeline_component_create(self, client: MLClient) -> None:
+        component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
+        component: PipelineComponent = load_component(source=component_path)
+        rest_pipeline_component = client.components.create_or_update(component)
+        assert rest_pipeline_component is not None
