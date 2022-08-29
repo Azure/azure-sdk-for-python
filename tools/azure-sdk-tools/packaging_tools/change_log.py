@@ -166,8 +166,13 @@ class ChangeLog:
             self.breaking_changes.append(_MODEL_PARAM_CHANGE_REQUIRED.format(parameter_name, model_name))
             return
 
-    def client(self):
-        self.breaking_changes.append(_CLIENT_SIGNATURE_CHANGE)
+    def client(self, old_report, new_report):
+        if new_report.get('client'):
+            if old_report.get('client'):
+                msg = _CLIENT_SIGNATURE_CHANGE.format(old_report['client'][0], new_report['client'][0])
+            else:
+                msg = _CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD.format(new_report['client'][0])
+            self.breaking_changes.append(msg)
         return
 
 
@@ -182,7 +187,8 @@ _MODEL_ADD = "Added model {}"
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
 _REMOVE_OPERATION_PARAM = "Operation {}.{} no longer has parameter {}"
-_CLIENT_SIGNATURE_CHANGE = "Client name is changed"
+_CLIENT_SIGNATURE_CHANGE = "Client name is changed from `{}` to `{}`"
+_CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD = "Client name is changed to `{}`"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
@@ -195,7 +201,7 @@ def build_change_log(old_report, new_report):
 
     # when diff result is large,  compare_lengths=True may cause wrong result
     result = diff(old_report, new_report, compare_lengths=False)
-
+    print(f'result: {result}')
     for diff_line in result:
         # Operations
         if diff_line[0][0] == "operations":
@@ -203,7 +209,7 @@ def build_change_log(old_report, new_report):
         elif diff_line[0][0] == "models":
             change_log.models(diff_line)
         elif diff_line[0][0] == "client":
-            change_log.client()
+            change_log.client(old_report, new_report)
 
     return change_log
 
