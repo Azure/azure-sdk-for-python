@@ -1,0 +1,59 @@
+trigger: none
+
+parameters:
+  - name: Services
+    type: object
+    default:
+      - azure-communication-chat
+      - azure-communication-email
+      - azure-communication-identity
+      - azure-communication-networktraversal
+      - azure-communication-phonenumbers
+      - azure-communication-rooms
+      - azure-communication-sms
+
+stages:
+  - ${{ each service in parameters.Services }}:
+    - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+      parameters:
+        JobName: ${{ replace(service, '-', '_') }}
+        BuildTargetingString: ${{ service }}
+
+          # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
+        MaxParallel: 2
+        ServiceDirectory: communication
+
+        ${{ if contains(service, 'phonenumbers') }}:
+          CloudConfig:
+            Public:
+              SubscriptionConfigurations:
+                - $(sub-config-azure-cloud-test-resources)
+                - $(sub-config-communication-services-cloud-test-resources-common)
+                - $(sub-config-communication-services-cloud-test-resources-python)
+              MatrixReplace:
+                - TestSamples=.*/true
+            Int:
+              SubscriptionConfigurations:
+                - $(sub-config-communication-int-test-resources-common)
+                - $(sub-config-communication-int-test-resources-python)
+              MatrixReplace:
+                - COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST=false/true
+          MatrixConfigs:
+            - Name: PhoneNumbers_python_livetest_matrix
+              Path: sdk/communication/azure-communication-phonenumbers/phonenumbers-livetest-matrix.json
+              Selection: sparse
+              GenerateVMJobs: true
+        ${{ if not(contains(service, 'phonenumbers')) }}:
+          CloudConfig:
+            Public:
+              SubscriptionConfigurations:
+                - $(sub-config-azure-cloud-test-resources)
+                - $(sub-config-communication-services-cloud-test-resources-common)
+                - $(sub-config-communication-services-cloud-test-resources-python)
+              MatrixReplace:
+                - TestSamples=.*/true
+            Int:
+              SubscriptionConfigurations:
+                - $(sub-config-communication-int-test-resources-common)
+                - $(sub-config-communication-int-test-resources-python)
+        Clouds: Public,Int
