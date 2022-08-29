@@ -29,7 +29,7 @@ from .._models import (
     DocumentModelDetails,
     DocumentModelSummary,
     OperationDetails,
-    DocumentModelOperationSummary,
+    OperationSummary,
     ResourceDetails,
     TargetAuthorization,
 )
@@ -99,7 +99,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         configured, see more about configuring managed identities to work with Form Recognizer here:
         https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are built using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
+        'image/jpeg', 'image/png', 'image/tiff', 'image/bmp', or 'image/heif'. Other types of content in the container is ignored.
 
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -429,15 +429,15 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelOperationSummary]:
+    def list_operations(self, **kwargs: Any) -> AsyncItemPaged[OperationSummary]:
         """List information for each document model operation.
 
         Lists all document model operations associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
-        :return: A pageable of DocumentModelOperationSummary.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentModelOperationSummary]
+        :return: A pageable of OperationSummary.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[OperationSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -453,7 +453,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return self._client.get_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [DocumentModelOperationSummary._from_generated(x) for x in objs],
+                lambda objs: [OperationSummary._from_generated(x) for x in objs],
             ),
             **kwargs
         )

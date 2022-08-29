@@ -3,12 +3,13 @@
 ## 3.2.0b7 (Unreleased)
 
 ### Features Added
-- Content type `image/heif` is supported in `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Content type `image/heif` is supported for document analysis and building models.
 
 ### Breaking Changes
 - This library will default to service API version `2022-08-31` going forward.
 - Removed `kind` property on `DocumentPage`.
 - Renamed `DocumentModelOperationDetails` to `OperationDetails`.
+- Renamed `DocumentModelOperationSummary` to `OperationSummary`.
 
 ### Bugs Fixed
 

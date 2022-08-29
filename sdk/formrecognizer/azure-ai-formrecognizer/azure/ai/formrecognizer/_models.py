@@ -3261,7 +3261,7 @@ class DocumentTableCell:
         )
 
 
-class DocumentModelOperationSummary:
+class OperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
@@ -3307,14 +3307,14 @@ class DocumentModelOperationSummary:
 
     def __repr__(self):
         return (
-            f"DocumentModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
+            f"OperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelOperationSummary.
+        """Returns a dict representation of OperationSummary.
 
         :return: dict
         :rtype: dict
@@ -3332,12 +3332,12 @@ class DocumentModelOperationSummary:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelOperationSummary":
-        """Converts a dict in the shape of a DocumentModelOperationSummary to the model itself.
+    def from_dict(cls, data: dict) -> "OperationSummary":
+        """Converts a dict in the shape of a OperationSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelOperationSummary.
-        :return: DocumentModelOperationSummary
-        :rtype: DocumentModelOperationSummary
+        :param dict data: A dictionary in the shape of OperationSummary.
+        :return: OperationSummary
+        :rtype: OperationSummary
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3366,7 +3366,7 @@ class DocumentModelOperationSummary:
         )
 
 
-class OperationDetails(DocumentModelOperationSummary):
+class OperationDetails(OperationSummary):
     """OperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 

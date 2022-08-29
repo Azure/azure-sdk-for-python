@@ -538,7 +538,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation_info(self):
-        model = _models.DocumentModelOperationSummary(
+        model = _models.OperationSummary(
                 operation_id="id",
                 status="succeeded",
                 percent_completed=100,
@@ -549,7 +549,7 @@ class TestRepr():
                 api_version="2022-08-31",
                 tags={"test": "value"},
             )
-        model_repr = "DocumentModelOperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
+        model_repr = "OperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     100,
