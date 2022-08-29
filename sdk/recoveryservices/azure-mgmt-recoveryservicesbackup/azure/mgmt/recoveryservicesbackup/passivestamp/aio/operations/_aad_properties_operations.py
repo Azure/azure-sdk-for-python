@@ -8,13 +8,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -25,10 +19,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._aad_properties_operations import build_get_request
-
-T = TypeVar("T")
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-
 
 class AadPropertiesOperations:
     """
@@ -49,38 +41,45 @@ class AadPropertiesOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace_async
     async def get(
-        self, azure_region: str, filter: Optional[str] = None, **kwargs: Any
+        self,
+        azure_region: str,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.AADPropertiesResource:
         """Fetches the AAD properties from target region BCM stamp.
 
         Fetches the AAD properties from target region BCM stamp.
 
-        :param azure_region: Azure region to hit Api. Required.
+        :param azure_region: Azure region to hit Api.
         :type azure_region: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AADPropertiesResource or the result of cls(response)
+        :return: AADPropertiesResource, or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AADPropertiesResource
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AADPropertiesResource]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-11-15"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AADPropertiesResource]
 
+        
         request = build_get_request(
             azure_region=azure_region,
             subscription_id=self._config.subscription_id,
-            filter=filter,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
+            filter=filter,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -88,9 +87,10 @@ class AadPropertiesOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -98,11 +98,12 @@ class AadPropertiesOperations:
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AADPropertiesResource", pipeline_response)
+        deserialized = self._deserialize('AADPropertiesResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupAadProperties"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupAadProperties"}  # type: ignore
+

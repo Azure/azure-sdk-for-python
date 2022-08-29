@@ -11,7 +11,8 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class BackupManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Backup management type to execute the current job."""
+    """Backup management type to execute the current job.
+    """
 
     INVALID = "Invalid"
     AZURE_IAAS_VM = "AzureIaasVM"
@@ -23,16 +24,15 @@ class BackupManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_WORKLOAD = "AzureWorkload"
     DEFAULT_BACKUP = "DefaultBackup"
 
-
 class CopyOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Options to resolve copy conflicts."""
+    """Options to resolve copy conflicts.
+    """
 
     INVALID = "Invalid"
     CREATE_COPY = "CreateCopy"
     SKIP = "Skip"
     OVERWRITE = "Overwrite"
     FAIL_ON_CONFLICT = "FailOnConflict"
-
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Create mode to indicate recovery of existing soft deleted data source or creation of new data
@@ -43,9 +43,9 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEFAULT = "Default"
     RECOVER = "Recover"
 
-
 class DataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of workload this item represents."""
+    """Type of workload this item represents.
+    """
 
     INVALID = "Invalid"
     VM = "VM"
@@ -63,27 +63,27 @@ class DataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SAP_HANA_DATABASE = "SAPHanaDatabase"
     SAP_ASE_DATABASE = "SAPAseDatabase"
 
-
 class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Health State for the backed up item."""
+    """Health State for the backed up item.
+    """
 
     PASSED = "Passed"
     ACTION_REQUIRED = "ActionRequired"
     ACTION_SUGGESTED = "ActionSuggested"
     INVALID = "Invalid"
-
 
 class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """backups running status for this backup item."""
+    """backups running status for this backup item.
+    """
 
     PASSED = "Passed"
     ACTION_REQUIRED = "ActionRequired"
     ACTION_SUGGESTED = "ActionSuggested"
     INVALID = "Invalid"
 
-
 class JobOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of operation."""
+    """Type of operation.
+    """
 
     INVALID = "Invalid"
     REGISTER = "Register"
@@ -97,9 +97,9 @@ class JobOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNDELETE = "Undelete"
     UPDATE_CUSTOMER_MANAGED_KEY = "UpdateCustomerManagedKey"
 
-
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the job."""
+    """Status of the job.
+    """
 
     INVALID = "Invalid"
     IN_PROGRESS = "InProgress"
@@ -109,26 +109,24 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "Cancelled"
     CANCELLING = "Cancelling"
 
-
 class JobSupportedAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobSupportedAction."""
 
     INVALID = "Invalid"
     CANCELLABLE = "Cancellable"
     RETRIABLE = "Retriable"
 
-
 class LastBackupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Last backup operation status. Possible values: Healthy, Unhealthy."""
+    """Last backup operation status. Possible values: Healthy, Unhealthy.
+    """
 
     INVALID = "Invalid"
     HEALTHY = "Healthy"
     UNHEALTHY = "Unhealthy"
     IR_PENDING = "IRPending"
 
-
 class MabServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Server type of MAB container."""
+    """Server type of MAB container.
+    """
 
     INVALID = "Invalid"
     UNKNOWN = "Unknown"
@@ -146,9 +144,9 @@ class MabServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STORAGE_CONTAINER = "StorageContainer"
     GENERIC_CONTAINER = "GenericContainer"
 
-
 class OperationStatusValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operation status."""
+    """Operation status.
+    """
 
     INVALID = "Invalid"
     IN_PROGRESS = "InProgress"
@@ -156,17 +154,17 @@ class OperationStatusValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-
 class OverwriteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Can Overwrite if Target DataBase already exists."""
+    """Can Overwrite if Target DataBase already exists
+    """
 
     INVALID = "Invalid"
     FAIL_ON_CONFLICT = "FailOnConflict"
     OVERWRITE = "Overwrite"
 
-
 class ProtectedItemHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Health status of the backup item, evaluated based on last heartbeat received."""
+    """Health status of the backup item, evaluated based on last heartbeat received
+    """
 
     INVALID = "Invalid"
     HEALTHY = "Healthy"
@@ -174,9 +172,9 @@ class ProtectedItemHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_REACHABLE = "NotReachable"
     IR_PENDING = "IRPending"
 
-
 class ProtectedItemState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Backup state of the backed up item."""
+    """Backup state of the backed up item.
+    """
 
     INVALID = "Invalid"
     IR_PENDING = "IRPending"
@@ -184,10 +182,10 @@ class ProtectedItemState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_ERROR = "ProtectionError"
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
-
 
 class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Backup state of this backup item."""
+    """Backup state of this backup item.
+    """
 
     INVALID = "Invalid"
     IR_PENDING = "IRPending"
@@ -196,17 +194,17 @@ class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
 
-
 class RecoveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines whether the current recovery mode is file restore or database restore."""
+    """Defines whether the current recovery mode is file restore or database restore
+    """
 
     INVALID = "Invalid"
     FILE_RECOVERY = "FileRecovery"
     WORKLOAD_RECOVERY = "WorkloadRecovery"
 
-
 class RecoveryPointTierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recovery point tier status."""
+    """Recovery point tier status.
+    """
 
     INVALID = "Invalid"
     VALID = "Valid"
@@ -214,18 +212,18 @@ class RecoveryPointTierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETED = "Deleted"
     REHYDRATED = "Rehydrated"
 
-
 class RecoveryPointTierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recovery point tier type."""
+    """Recovery point tier type.
+    """
 
     INVALID = "Invalid"
     INSTANT_RP = "InstantRP"
     HARDENED_RP = "HardenedRP"
     ARCHIVED_RP = "ArchivedRP"
 
-
 class RecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of this recovery."""
+    """Type of this recovery.
+    """
 
     INVALID = "Invalid"
     ORIGINAL_LOCATION = "OriginalLocation"
@@ -233,9 +231,9 @@ class RecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORE_DISKS = "RestoreDisks"
     OFFLINE = "Offline"
 
-
 class ResourceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Resource Health Status."""
+    """Resource Health Status
+    """
 
     HEALTHY = "Healthy"
     TRANSIENT_DEGRADED = "TransientDegraded"
@@ -244,9 +242,9 @@ class ResourceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERSISTENT_UNHEALTHY = "PersistentUnhealthy"
     INVALID = "Invalid"
 
-
 class RestorePointQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RestorePoint type."""
+    """RestorePoint type
+    """
 
     INVALID = "Invalid"
     FULL = "Full"
@@ -256,9 +254,9 @@ class RestorePointQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "All"
     INCREMENTAL = "Incremental"
 
-
 class RestorePointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of restore point."""
+    """Type of restore point
+    """
 
     INVALID = "Invalid"
     FULL = "Full"
@@ -266,32 +264,31 @@ class RestorePointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DIFFERENTIAL = "Differential"
     INCREMENTAL = "Incremental"
 
-
 class RestoreRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Restore Type (FullShareRestore or ItemLevelRestore)."""
+    """Restore Type (FullShareRestore or ItemLevelRestore)
+    """
 
     INVALID = "Invalid"
     FULL_SHARE_RESTORE = "FullShareRestore"
     ITEM_LEVEL_RESTORE = "ItemLevelRestore"
 
-
 class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of data directory mapping."""
+    """Type of data directory mapping
+    """
 
     INVALID = "Invalid"
     DATA = "Data"
     LOG = "Log"
 
-
 class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Storage type."""
+    """Storage type
+    """
 
     INVALID = "Invalid"
     GEO_REDUNDANT = "GeoRedundant"
     LOCALLY_REDUNDANT = "LocallyRedundant"
     ZONE_REDUNDANT = "ZoneRedundant"
     READ_ACCESS_GEO_ZONE_REDUNDANT = "ReadAccessGeoZoneRedundant"
-
 
 class StorageTypeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Locked or Unlocked. Once a machine is registered against a resource, the storageTypeState is
@@ -302,17 +299,17 @@ class StorageTypeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOCKED = "Locked"
     UNLOCKED = "Unlocked"
 
-
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Backup management type for this container."""
+    """Backup management type for this container.
+    """
 
     INVALID = "Invalid"
     BACKUP_PROTECTED_ITEM_COUNT_SUMMARY = "BackupProtectedItemCountSummary"
     BACKUP_PROTECTION_CONTAINER_COUNT_SUMMARY = "BackupProtectionContainerCountSummary"
 
-
 class UsagesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Unit of the usage."""
+    """Unit of the usage.
+    """
 
     COUNT = "Count"
     BYTES = "Bytes"
@@ -321,9 +318,9 @@ class UsagesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
 
-
 class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Workload type of backup item."""
+    """Workload type of backup item.
+    """
 
     INVALID = "Invalid"
     VM = "VM"

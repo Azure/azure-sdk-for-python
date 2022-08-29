@@ -7,16 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -27,10 +20,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._recovery_points_crr_operations import build_list_request
-
-T = TypeVar("T")
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-
 
 class RecoveryPointsCrrOperations:
     """
@@ -51,6 +42,7 @@ class RecoveryPointsCrrOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace
     def list(
         self,
@@ -61,51 +53,52 @@ class RecoveryPointsCrrOperations:
         protected_item_name: str,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RecoveryPointResource"]:
+    ) -> AsyncIterable[_models.RecoveryPointResourceList]:
         """Lists the backup copies for the backed up item.
 
-        :param vault_name: The name of the recovery services vault. Required.
+        :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
-         present. Required.
+         present.
         :type resource_group_name: str
-        :param fabric_name: Fabric name associated with the backed up item. Required.
+        :param fabric_name: Fabric name associated with the backed up item.
         :type fabric_name: str
-        :param container_name: Container name associated with the backed up item. Required.
+        :param container_name: Container name associated with the backed up item.
         :type container_name: str
-        :param protected_item_name: Backed up item whose backup copies are to be fetched. Required.
+        :param protected_item_name: Backed up item whose backup copies are to be fetched.
         :type protected_item_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RecoveryPointResource or the result of
+        :return: An iterator like instance of either RecoveryPointResourceList or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointResourceList]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RecoveryPointResourceList]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-11-15"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RecoveryPointResourceList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_list_request(
                     vault_name=vault_name,
                     resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
                     fabric_name=fabric_name,
                     container_name=container_name,
                     protected_item_name=protected_item_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
+                    filter=filter,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -113,11 +106,20 @@ class RecoveryPointsCrrOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                
+                request = build_list_request(
+                    vault_name=vault_name,
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    fabric_name=fabric_name,
+                    container_name=container_name,
+                    protected_item_name=protected_item_name,
+                    api_version=api_version,
+                    filter=filter,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -133,8 +135,10 @@ class RecoveryPointsCrrOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -145,6 +149,8 @@ class RecoveryPointsCrrOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/"}  # type: ignore
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/"}  # type: ignore

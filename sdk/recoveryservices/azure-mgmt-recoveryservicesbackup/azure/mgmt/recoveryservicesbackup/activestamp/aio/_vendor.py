@@ -14,14 +14,13 @@ from ._configuration import RecoveryServicesBackupClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core import AsyncPipelineClient
+    from msrest import Deserializer, Serializer
 
-    from .._serialization import Deserializer, Serializer
+    from azure.core import AsyncPipelineClient
 
 
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
-
     _client: "AsyncPipelineClient"
     _config: RecoveryServicesBackupClientConfiguration
     _serialize: "Serializer"

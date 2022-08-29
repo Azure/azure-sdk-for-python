@@ -7,16 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -27,10 +20,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._backup_protected_items_crr_operations import build_list_request
-
-T = TypeVar("T")
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-
 
 class BackupProtectedItemsCrrOperations:
     """
@@ -51,6 +42,7 @@ class BackupProtectedItemsCrrOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace
     def list(
         self,
@@ -59,45 +51,46 @@ class BackupProtectedItemsCrrOperations:
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ProtectedItemResource"]:
+    ) -> AsyncIterable[_models.ProtectedItemResourceList]:
         """Provides a pageable list of all items that are backed up within a vault.
 
-        :param vault_name: The name of the recovery services vault. Required.
+        :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
-         present. Required.
+         present.
         :type resource_group_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
         :param skip_token: skipToken Filter. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ProtectedItemResource or the result of
+        :return: An iterator like instance of either ProtectedItemResourceList or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemResourceList]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ProtectedItemResourceList]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-11-15"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ProtectedItemResourceList]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_list_request(
                     vault_name=vault_name,
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    api_version=api_version,
                     filter=filter,
                     skip_token=skip_token,
-                    api_version=api_version,
-                    template_url=self.list.metadata["url"],
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -105,11 +98,18 @@ class BackupProtectedItemsCrrOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                
+                request = build_list_request(
+                    vault_name=vault_name,
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    filter=filter,
+                    skip_token=skip_token,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -125,8 +125,10 @@ class BackupProtectedItemsCrrOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -137,6 +139,8 @@ class BackupProtectedItemsCrrOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectedItems/"}  # type: ignore
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectedItems/"}  # type: ignore
