@@ -57,7 +57,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_3_1` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_1'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/0de25e2a040e1257b3a90faea868ad93c3435e48/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/1646226d874de6e8d36ebd3ad088c6c5f6cc6ed0/specification/cognitiveservices/data-plane/TextAnalytics/stable/v3.1/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_1
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_1
 ```
@@ -67,7 +67,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_2022_05_01` is specified on the command line.
 
 ```yaml $(tag) == 'release_2022_05_01'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/0de25e2a040e1257b3a90faea868ad93c3435e48/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/textanalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/1646226d874de6e8d36ebd3ad088c6c5f6cc6ed0/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/analyzetext.json
 namespace: azure.ai.textanalytics.v2022_05_01
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_05_01
 ```
