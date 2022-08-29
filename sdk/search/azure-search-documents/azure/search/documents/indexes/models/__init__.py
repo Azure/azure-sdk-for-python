@@ -31,16 +31,16 @@ from ._index import (
     SimpleField,
     SearchIndex,
 )
-from . import _edm as SearchFieldDataType
+from . import _edm
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
-    BM25Similarity as BM25SimilarityAlgorithm,
+    BM25Similarity,
     CharFilter,
     CjkBigramTokenFilter,
-    ClassicSimilarity as ClassicSimilarityAlgorithm,
+    ClassicSimilarity,
     ClassicTokenizer,
     CognitiveServicesAccount,
     CognitiveServicesAccountKey,
