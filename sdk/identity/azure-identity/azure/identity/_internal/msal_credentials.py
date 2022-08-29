@@ -36,6 +36,7 @@ class MsalCredential(object):
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
         self._client_id = client_id
+        self._allow_broker = kwargs.pop("allow_broker", False)
 
         self._cache = kwargs.pop("_cache", None)
         if not self._cache:
@@ -73,7 +74,8 @@ class MsalCredential(object):
                 azure_region=self._regional_authority,
                 token_cache=self._cache,
                 http_client=self._client,
-                validate_authority=self._validate_authority
+                validate_authority=self._validate_authority,
+                allow_broker=self._allow_broker
             )
 
         return self._client_applications[tenant_id]

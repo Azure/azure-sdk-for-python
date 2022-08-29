@@ -45,10 +45,22 @@ class CertificateCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool allow_broker:  
+        Brokers provide Single-Sign-On, device identification,
+        and application identification verification.
+        If this parameter is set to True,
+        the broker will be used when possible. Default to False.
     """
 
-    def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
-        # type: (str, str, Optional[str], **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            certificate_path: str = None,
+            *,
+            allow_broker: bool = False,
+            **kwargs
+    ) -> None:
         validate_tenant_id(tenant_id)
 
         client_credential = get_client_credential(certificate_path, **kwargs)

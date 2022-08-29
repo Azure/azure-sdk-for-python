@@ -8,7 +8,7 @@ from .._internal.client_credential_base import ClientCredentialBase
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
 
 class ClientSecretCredential(ClientCredentialBase):
@@ -24,10 +24,22 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool allow_broker:  
+        Brokers provide Single-Sign-On, device identification,
+        and application identification verification.
+        If this parameter is set to True,
+        the broker will be used when possible. Default to False.
     """
 
-    def __init__(self, tenant_id, client_id, client_secret, **kwargs):
-        # type: (str, str, str, **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            client_secret: str,
+            *,
+            allow_broker: bool = False,
+            **kwargs
+    ) -> None:
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")
         if not client_secret:
