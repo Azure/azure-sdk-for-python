@@ -78,9 +78,9 @@ class AMQPClient(object):
     :keyword client_name: The name for the client, also known as the Container ID.
      If no name is provided, a random GUID will be used.
     :paramtype client_name: str or bytes
-    :keyword debug: Whether to turn on network trace logs. If `True`, trace logs
+    :keyword network_trace: Whether to turn on network trace logs. If `True`, trace logs
      will be logged at INFO level. Default is `False`.
-    :paramtype debug: bool
+    :paramtype network_trace: bool
     :keyword retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
     :paramtype retry_policy: ~pyamqp.error.RetryPolicy
@@ -101,9 +101,8 @@ class AMQPClient(object):
     :paramtype auth_timeout: int
     :keyword properties: Connection properties.
     :paramtype properties: dict
-    :keyword remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
-     idle time for Connections with no activity. Value must be between
-     0.0 and 1.0 inclusive. Default is 0.5.
+    :keyword remote_idle_timeout_empty_frame_send_ratio: Portion of the idle timeout time to wait before sending an
+     empty frame. The default portion is 50% of the idle timeout value (i.e. `0.5`).
     :paramtype remote_idle_timeout_empty_frame_send_ratio: float
     :keyword incoming_window: The size of the allowed window for incoming messages.
     :paramtype incoming_window: int
@@ -125,9 +124,6 @@ class AMQPClient(object):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
-    :keyword encoding: The encoding to use for parameters supplied as strings.
-     Default is 'UTF-8'
-    :paramtype encoding: str
     """
 
     def __init__(self, hostname, **kwargs):
@@ -417,15 +413,9 @@ class SendClient(AMQPClient):
     :keyword client_name: The name for the client, also known as the Container ID.
      If no name is provided, a random GUID will be used.
     :paramtype client_name: str or bytes
-    :keyword debug: Whether to turn on network trace logs. If `True`, trace logs
+    :keyword network_trace: Whether to turn on network trace logs. If `True`, trace logs
      will be logged at INFO level. Default is `False`.
-    :paramtype debug: bool
-    :keyword auto_complete: Whether to automatically settle message received via callback
-     or via iterator. If the message has not been explicitly settled after processing
-     the message will be accepted. Alternatively, when used with batch receive, this setting
-     will determine whether the messages are pre-emptively settled during batching, or otherwise
-     let to the user to be explicitly settled.
-    :paramtype auto_complete: bool
+    :paramtype network_trace: bool
     :keyword retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
     :paramtype retry_policy: ~pyamqp.errors.RetryPolicy
@@ -467,9 +457,8 @@ class SendClient(AMQPClient):
     :paramtype idle_timeout: int
     :keyword properties: Connection properties.
     :paramtype properties: dict
-    :keyword remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
-     idle time for Connections with no activity. Value must be between
-     0.0 and 1.0 inclusive. Default is 0.5.
+    :keyword remote_idle_timeout_empty_frame_send_ratio: Portion of the idle timeout time to wait before sending an
+     empty frame. The default portion is 50% of the idle timeout value (i.e. `0.5`).
     :paramtype remote_idle_timeout_empty_frame_send_ratio: float
     :keyword incoming_window: The size of the allowed window for incoming messages.
     :paramtype incoming_window: int
@@ -480,9 +469,6 @@ class SendClient(AMQPClient):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
-    :keyword encoding: The encoding to use for parameters supplied as strings.
-     Default is 'UTF-8'
-    :paramtype encoding: str
     """
 
     def __init__(self, hostname, target, auth=None, **kwargs):
@@ -500,8 +486,6 @@ class SendClient(AMQPClient):
         states.
 
         :rtype: bool
-        :raises: ~pyamqp.error.InternalError if the MessageReceiver
-         goes into an error state.
         """
         # pylint: disable=protected-access
         if not self._link:
@@ -515,14 +499,6 @@ class SendClient(AMQPClient):
             self._link.attach()
             return False
         if self._link.get_state().value != 3:  # ATTACHED
-            if self._link.get_state().value == 6:
-                raise ErrorCondition.InternalError(
-                    "The receiver link is in an error state. " 
-                    "Please confirm credentials and access permissions."
-                    "\nSee debug trace for more details."
-                )
-                # TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
-                # Fix docstring raises needed too
             return False
         return True
 
@@ -648,15 +624,9 @@ class ReceiveClient(AMQPClient):
     :keyword client_name: The name for the client, also known as the Container ID.
      If no name is provided, a random GUID will be used.
     :paramtype client_name: str or bytes
-    :keyword debug: Whether to turn on network trace logs. If `True`, trace logs
+    :keyword network_trace: Whether to turn on network trace logs. If `True`, trace logs
      will be logged at INFO level. Default is `False`.
-    :paramtype debug: bool
-    :keyword auto_complete: Whether to automatically settle message received via callback
-     or via iterator. If the message has not been explicitly settled after processing
-     the message will be accepted. Alternatively, when used with batch receive, this setting
-     will determine whether the messages are pre-emptively settled during batching, or otherwise
-     let to the user to be explicitly settled.
-    :paramtype auto_complete: bool
+    :paramtype network_trace: bool
     :keyword retry_policy: A policy for parsing errors on link, connection and message
      disposition to determine whether the error should be retryable.
     :paramtype retry_policy: ~pyamqp.errors.RetryPolicy
@@ -698,9 +668,8 @@ class ReceiveClient(AMQPClient):
     :paramtype idle_timeout: int
     :keyword properties: Connection properties.
     :paramtype properties: dict
-    :keyword remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
-     idle time for Connections with no activity. Value must be between
-     0.0 and 1.0 inclusive. Default is 0.5.
+    :keyword remote_idle_timeout_empty_frame_send_ratio: Portion of the idle timeout time to wait before sending an
+     empty frame. The default portion is 50% of the idle timeout value (i.e. `0.5`).
     :paramtype remote_idle_timeout_empty_frame_send_ratio: float
     :keyword incoming_window: The size of the allowed window for incoming messages.
     :paramtype incoming_window: int
@@ -711,16 +680,13 @@ class ReceiveClient(AMQPClient):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
-    :keyword encoding: The encoding to use for parameters supplied as strings.
-     Default is 'UTF-8'
-    :paramtype encoding: str
     """
 
     def __init__(self, hostname, source, auth=None, **kwargs):
         self.source = source
-        self.streaming_receive = kwargs.pop("streaming_receive", False) 
+        self._streaming_receive = kwargs.pop("streaming_receive", False) 
         self._received_messages = queue.Queue()
-        self.message_received_callback = kwargs.pop("message_received_callback", None) 
+        self._message_received_callback = kwargs.pop("message_received_callback", None) 
 
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
@@ -735,7 +701,7 @@ class ReceiveClient(AMQPClient):
         states.
 
         :rtype: bool
-        :raises: ~pyamqp.error.InternalError if the MessageReceiver
+        :raises: ~pyamqp.error. if the MessageReceiver
          goes into an error state.
         """
         # pylint: disable=protected-access
@@ -755,7 +721,7 @@ class ReceiveClient(AMQPClient):
             return False
         if self._link.get_state().value != 3:  # ATTACHED
             if self._link.get_state().value == 6:
-                raise ErrorCondition.InternalError(
+                raise AMQPLinkError(
                     "The receiver link is in an error state. " 
                     "Please confirm credentials and access permissions."
                     "\nSee debug trace for more details."
@@ -790,13 +756,13 @@ class ReceiveClient(AMQPClient):
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
-        if self.message_received_callback:
-            self.message_received_callback(message)
-        if not self.streaming_receive:
+        if self._message_received_callback:
+            self._message_received_callback(message)
+        if not self._streaming_receive:
             self._received_messages.put((frame, message))
 
     def _receive_message_batch_impl(self, max_batch_size=None, on_message_received=None, timeout=0):
-        self.message_received_callback = on_message_received
+        self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
         receiving = True
@@ -851,11 +817,6 @@ class ReceiveClient(AMQPClient):
         criteria, pass in a callback. This method will return as soon as some messages are
         available rather than waiting to achieve a specific batch size, and therefore the
         number of messages returned per call will vary up to the maximum allowed.
-
-        If the receive client is configured with `auto_complete=True` then the messages received
-        in the batch returned by this function will already be settled. Alternatively, if
-        `auto_complete=False`, then each message will need to be explicitly settled before
-        it expires and is released.
 
         :param max_batch_size: The maximum number of messages that can be returned in
          one call. This value cannot be larger than the prefetch value, and if not specified,
