@@ -124,6 +124,11 @@ class AMQPClient(object):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :paramtype desired_capabilities: List
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
@@ -179,6 +184,7 @@ class AMQPClient(object):
         # Link settings
         self._send_settle_mode = kwargs.pop('send_settle_mode', SenderSettleMode.Unsettled)
         self._receive_settle_mode = kwargs.pop('receive_settle_mode', ReceiverSettleMode.Second)
+        self._desired_capabilities = kwargs.pop('desired_capabilities', None)
         self._on_attach = kwargs.pop('on_attach', None)
 
         # transport
@@ -452,6 +458,11 @@ class SendClient(AMQPClient):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :paramtype desired_capabilities: List
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -677,6 +688,11 @@ class ReceiveClient(AMQPClient):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :paramtype desired_capabilities: List
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.
     :paramtype max_message_size: int
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
@@ -759,19 +775,12 @@ class ReceiveClient(AMQPClient):
                 max_message_size=self._max_message_size,
                 on_transfer=self._message_received,
                 properties=self._link_properties,
+                desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
             )
             self._link.attach()
             return False
         if self._link.get_state().value != 3:  # ATTACHED
-            if self._link.get_state().value == 6:
-                raise AMQPLinkError(
-                    "The receiver link is in an error state. " 
-                    "Please confirm credentials and access permissions."
-                    "\nSee debug trace for more details."
-                )
-                # TODO: MessageHandlerError in uamqp - do we have an equivalent in pyamqp yet, rn it is commented out - we don't raise anything
-                # Fix docstring raises needed too
             return False
         return True
 

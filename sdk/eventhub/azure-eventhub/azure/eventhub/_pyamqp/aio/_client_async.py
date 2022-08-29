@@ -111,6 +111,11 @@ class AMQPClientAsync(AMQPClientSync):
      will assume successful receipt of the message and clear it from the queue. The
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
+    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :paramtype desired_capabilities: List
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
@@ -416,6 +421,11 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :paramtype desired_capabilities: List
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
@@ -628,6 +638,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
     :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.errors.AMQPConnectionError]
+    :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
+     To create an desired_capabilities object, please do as follows:
+        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
+        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
+    :paramtype desired_capabilities: List
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
@@ -667,6 +682,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 max_message_size=self._max_message_size,
                 on_transfer=self._message_received_async,
                 properties=self._link_properties,
+                desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
             )
             await self._link.attach()
