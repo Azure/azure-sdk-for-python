@@ -3,6 +3,7 @@
 ## 3.2.0b7 (Unreleased)
 
 ### Features Added
+- Content type `image/heif` is supported in `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 
 ### Breaking Changes
 - This library will default to service API version `2022-08-31` going forward.
