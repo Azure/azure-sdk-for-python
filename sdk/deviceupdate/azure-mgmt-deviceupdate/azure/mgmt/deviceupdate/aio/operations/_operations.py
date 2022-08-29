@@ -39,7 +39,7 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~deviceupdatemgmtclient.aio.DeviceUpdateMgmtClient`'s
+        :class:`~azure.mgmt.deviceupdate.aio.DeviceUpdateMgmtClient`'s
         :attr:`operations` attribute.
     """
 
@@ -58,7 +58,7 @@ class Operations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Operation or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~deviceupdatemgmtclient.models.Operation]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.deviceupdate.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
