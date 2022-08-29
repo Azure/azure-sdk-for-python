@@ -7,8 +7,14 @@ from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE
 from .generate_sdk import generate
-from .generate_utils import (get_package_names, init_new_service, update_servicemetadata, judge_tag_preview,
-                             format_samples, gen_dpg)
+from .generate_utils import (
+    get_package_names,
+    init_new_service,
+    update_servicemetadata,
+    judge_tag_preview,
+    format_samples,
+    gen_dpg,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,20 +24,22 @@ def main(generate_input, generate_output):
         data = json.load(reader)
         _LOGGER.info(f"auto_package input: {data}")
 
-    spec_folder = re.sub('specification', '', data["specFolder"])
+    spec_folder = re.sub("specification", "", data["specFolder"])
     sdk_folder = "."
     result = {}
-    python_tag = data.get('python_tag')
+    python_tag = data.get("python_tag")
     package_total = set()
-    
+
     input_readme = data["relatedReadmeMdFile"]
     relative_path_readme = str(Path(spec_folder, input_readme))
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-    if 'resource-manager' in input_readme:
-        config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True,
-                          python_tag=python_tag)
+
+    if "resource-manager" in input_readme:
+        config = generate(
+            CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True, python_tag=python_tag
+        )
     else:
-        config = gen_dpg(input_readme, data.get('autorestConfig', ''), spec_folder)
+        config = gen_dpg(input_readme, data.get("autorestConfig", ""), spec_folder)
     package_names = get_package_names(sdk_folder)
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -58,7 +66,15 @@ def main(generate_input, generate_output):
 
         # Update metadata
         try:
-            update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme)
+            update_servicemetadata(
+                sdk_folder,
+                data,
+                config,
+                folder_name,
+                package_name,
+                spec_folder,
+                input_readme,
+            )
         except Exception as e:
             _LOGGER.info(f"fail to update meta: {str(e)}")
 
@@ -81,13 +97,26 @@ def generate_main():
     """Main method"""
 
     parser = argparse.ArgumentParser(
-        description="Build SDK using Autorest, offline version.", formatter_class=argparse.RawTextHelpFormatter
+        description="Build SDK using Autorest, offline version.",
+        formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument("generate_input", help="Generate input file path")
     parser.add_argument("generate_output", help="Generate output file path")
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Verbosity in INFO mode",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
-    parser.add_argument("-c", "--codegen", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
+    parser.add_argument(
+        "-c",
+        "--codegen",
+        dest="debug",
+        action="store_true",
+        help="Verbosity in DEBUG mode",
+    )
 
     args = parser.parse_args()
     main_logger = logging.getLogger()

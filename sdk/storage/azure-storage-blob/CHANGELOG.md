@@ -1,6 +1,16 @@
 # Release History
 
-## 12.14.0b1 (2022-08-09)
+## 12.14.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.14.0b1 (2022-08-23)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
@@ -13,6 +23,7 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 - Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`.
 - Updated exception catching of `azure.storage.blob.StorageStreamDownloader`'s retry mechanism.
 - Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
+- Fixed a bug where uploading an empty blob via `upload_blob` would fail with `validate_content=True`.
 
 ## 12.13.1 (2022-08-04)
 

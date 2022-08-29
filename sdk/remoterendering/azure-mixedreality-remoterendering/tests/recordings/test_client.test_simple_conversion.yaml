@@ -484,6 +484,42 @@ interactions:
       User-Agent:
       - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
     method: GET
+    uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions/11b5d55d-b228-4291-8883-df3865a32088?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"11b5d55d-b228-4291-8883-df3865a32088","creationTime":"2021-03-22T19:46:49.6665492Z","settings":{"inputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"Input/","relativeInputAssetPath":"testBox.fbx"},"outputLocation":{"storageContainerUri":"https://arrstorageaccount.blob.core.windows.net/test","blobPrefix":"11b5d55d-b228-4291-8883-df3865a32088/","outputAssetFilename":"testBox.arrAsset"}},"output":{"outputAssetUri":"https://arrstorageaccount.blob.core.windows.net/test/11b5d55d-b228-4291-8883-df3865a32088/testBox.arrAsset"},"error":null,"status":"Succeeded"}'
+    headers:
+      api-supported-versions:
+      - 2021-01-01-preview, 2021-01-01
+      cache-control:
+      - no-store,no-cache
+      content-length:
+      - '615'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 22 Mar 2021 19:47:45 GMT
+      ms-cv:
+      - 1SGpcqRTHUqxmSbnjZBo0Q.0
+      pragma:
+      - no-cache
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mixedreality-remoterendering/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
     uri: https://remoterendering.eastus.mixedreality.azure.com/accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/conversions?api-version=2021-01-01
   response:
     body:
