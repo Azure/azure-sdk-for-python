@@ -74,6 +74,7 @@ class KubernetesCompute(Compute):
         )
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return KubernetesComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod

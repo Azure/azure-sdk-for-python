@@ -23,10 +23,9 @@ def experimental(wrapped):
     """Add experimental tag to a class or a method."""
     if inspect.isclass(wrapped):
         return _add_class_docstring(wrapped)
-    elif inspect.isfunction(wrapped):
+    if inspect.isfunction(wrapped):
         return _add_method_docstring(wrapped)
-    else:
-        return wrapped
+    return wrapped
 
 
 def _add_class_docstring(cls):
@@ -111,6 +110,5 @@ def _is_warning_cached(warning_msg):
     # this prevents duplicated warnings got printed when user does a loop call on a method or a class
     if warning_msg in _warning_cache:
         return True
-    else:
-        _warning_cache.add(warning_msg)
-        return False
+    _warning_cache.add(warning_msg)
+    return False

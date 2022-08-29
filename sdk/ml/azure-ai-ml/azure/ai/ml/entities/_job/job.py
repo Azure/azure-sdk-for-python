@@ -11,26 +11,40 @@ from abc import abstractclassmethod, abstractmethod
 from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Type, Union
+from typing import Dict, Optional, Type, Union, IO, AnyStr
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException, ValidationException
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    JobException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData, JobService
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, JobService
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobType as RestJobType
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields, JobServices, JobType
+from azure.ai.ml.constants import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    CommonYamlFields,
+    JobServices,
+    JobType,
+    ComputeType,
+)
 from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJobError
 from azure.ai.ml.entities._mixins import TelemetryMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
 
 from .pipeline._component_translatable import ComponentTranslatableMixin
+from ._studio_url_from_job_id import studio_url_from_job_id
 
 module_logger = logging.getLogger(__name__)
 
 
-def _is_pipeline_child_job(job: JobBaseData) -> bool:
+def _is_pipeline_child_job(job: JobBase) -> bool:
     # pipeline child job has no properties, so we can check through testing job.properties
     # if backend has spec changes, this method need to be updated
     return job.properties is None
@@ -145,17 +159,30 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         """
         if self.services and (JobServices.STUDIO in self.services.keys()):
             return self.services[JobServices.STUDIO].endpoint
-        return None
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+        return studio_url_from_job_id(self.id)
+
+    def dump(
+        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
+    ) -> None:
         """Dump the job content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this job's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :param path: Deprecated path to a local file as the target, a new file
+            will be created, raises exception if the file exists.
+            It's recommended what you change 'path=' inputs to 'dest='.
+            The first unnamed input of this function will also be treated like
+            a path input.
+        :type path: Union[str, Pathlike]
         """
-
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
 
     def _get_base_info_dict(self):
         return OrderedDict(
@@ -180,6 +207,41 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     @abstractmethod
     def _to_dict(self) -> Dict:
         pass
+
+    @classmethod
+    def _resolve_cls_and_type(cls, data, params_override):
+        from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
+        from azure.ai.ml.entities._builders.command import Command
+        from azure.ai.ml.entities._builders.spark import Spark
+        from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+        from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+        from azure.ai.ml.entities._job.import_job import ImportJob
+
+        job_type: Optional[Type["Job"]] = None
+        type_in_override = find_type_in_override(params_override)
+        type_str = type_in_override or data.get(CommonYamlFields.TYPE, JobType.COMMAND)  # override takes the priority
+        if type_str == JobType.COMMAND:
+            job_type = Command
+        elif type_str == JobType.SPARK:
+            job_type = Spark
+        elif type_str == JobType.IMPORT:
+            job_type = ImportJob
+        elif type_str == JobType.SWEEP:
+            job_type = SweepJob
+        elif type_str == JobType.AUTOML:
+            job_type = AutoMLJob
+        elif type_str == JobType.PIPELINE:
+            job_type = PipelineJob
+        else:
+            msg = f"Unsupported job type: {type_str}."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        return job_type, type_str
 
     @classmethod
     def _load(
@@ -211,35 +273,12 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-
-        from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
-        from azure.ai.ml.entities._builders.command import Command
-        from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-        from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
-
-        job_type: Optional[Type["Job"]] = None
-        type_in_override = find_type_in_override(params_override)
-        type = type_in_override or data.get(CommonYamlFields.TYPE, JobType.COMMAND)  # override takes the priority
-        if type == JobType.COMMAND:
-            job_type = Command
-        elif type == JobType.SWEEP:
-            job_type = SweepJob
-        elif type == JobType.AUTOML:
-            job_type = AutoMLJob
-        elif type == JobType.PIPELINE:
-            job_type = PipelineJob
-        else:
-            msg = f"Unsupported job type: {type}."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+        job_type, type_str = cls._resolve_cls_and_type(data, params_override)
         job = job_type._load_from_dict(
             data=data,
             context=context,
-            additional_message=f"If you are trying to configure a job that is not of type {type}, please specify the correct job type in the 'type' property.",
+            additional_message=f"If you are trying to configure a job that is not of type {type_str}, please specify "
+            f"the correct job type in the 'type' property.",
             **kwargs,
         )
         if yaml_path:
@@ -247,41 +286,50 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return job
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: Union[JobBaseData, Run]) -> "Job":
+    def _from_rest_object(cls, obj: Union[JobBase, Run]) -> "Job":
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
+        from azure.ai.ml.entities._builders.spark import Spark
+        from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
 
         try:
-            if isinstance(job_rest_object, Run):
+            if isinstance(obj, Run):
                 # special handling for child jobs
-                return _BaseJob._load_from_rest(job_rest_object)
-            elif _is_pipeline_child_job(job_rest_object):
-                raise PipelineChildJobError(job_id=job_rest_object.id)
-            elif job_rest_object.properties.job_type == RestJobType.COMMAND:
-                return Command._load_from_rest_job(job_rest_object)
-            elif job_rest_object.properties.job_type == RestJobType.SWEEP:
-                return SweepJob._load_from_rest(job_rest_object)
-            elif job_rest_object.properties.job_type == RestJobType.AUTO_ML:
-                return AutoMLJob._load_from_rest(job_rest_object)
-            elif job_rest_object.properties.job_type == RestJobType.PIPELINE:
-                return PipelineJob._load_from_rest(job_rest_object)
+                return _BaseJob._load_from_rest(obj)
+            elif _is_pipeline_child_job(obj):
+                raise PipelineChildJobError(job_id=obj.id)
+            elif obj.properties.job_type == RestJobType.COMMAND:
+                # PrP only until new import job type is ready on MFE in PuP
+                # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
+                if obj.properties.compute_id.endswith("/" + ComputeType.ADF):
+                    return ImportJob._load_from_rest(obj)
+                else:
+                    return Command._load_from_rest_job(obj)
+            elif obj.properties.job_type == RestJobType.SPARK:
+                return Spark._load_from_rest_job(obj)
+            elif obj.properties.job_type == RestJobType.SWEEP:
+                return SweepJob._load_from_rest(obj)
+            elif obj.properties.job_type == RestJobType.AUTO_ML:
+                return AutoMLJob._load_from_rest(obj)
+            elif obj.properties.job_type == RestJobType.PIPELINE:
+                return PipelineJob._load_from_rest(obj)
         except PipelineChildJobError as ex:
             raise ex
         except Exception as ex:
-            error_message = json.dumps(job_rest_object.as_dict(), indent=2) if job_rest_object else None
+            error_message = json.dumps(obj.as_dict(), indent=2) if obj else None
             module_logger.info(
                 f"Exception: {ex}.\n{traceback.format_exc()}\n" f"Unable to parse the job resource: {error_message}.\n"
             )
             raise JobParsingError(
                 message=str(ex),
-                no_personal_data_message=f"Unable to parse a job resource of type:{type(job_rest_object).__name__}",
+                no_personal_data_message=f"Unable to parse a job resource of type:{type(obj).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
         else:
-            msg = f"Unsupported job type {job_rest_object.properties.job_type}"
+            msg = f"Unsupported job type {obj.properties.job_type}"
             raise JobException(
                 message=msg,
                 no_personal_data_message=msg,

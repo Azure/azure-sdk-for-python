@@ -16,12 +16,11 @@ from azure.ai.ml.sweep import (
 )
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities._builders.command_func import command
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, UserIdentity
-from azure.ai.ml import MpiDistribution
+from azure.ai.ml import MpiDistribution, UserIdentity
 
 
 @pytest.mark.unittest
@@ -119,17 +118,17 @@ class TestSweepJob:
         assert rest.properties.sampling_algorithm.sampling_algorithm_type == expected_rest_type
 
     @pytest.mark.parametrize(
-        "sampling_algorithm, expected_rest_type",
+        "sampling_algorithm, expected_from_rest_type",
         [
-            ("random", "Random"),
-            ("grid", "Grid"),
-            ("bayesian", "Bayesian"),
-            (RandomSamplingAlgorithm(), "Random"),
-            (GridSamplingAlgorithm(), "Grid"),
-            (BayesianSamplingAlgorithm(), "Bayesian"),
+            ("random", "random"),
+            ("grid", "grid"),
+            ("bayesian", "bayesian"),
+            (RandomSamplingAlgorithm(), "random"),
+            (GridSamplingAlgorithm(), "grid"),
+            (BayesianSamplingAlgorithm(), "bayesian"),
         ],
     )
-    def test_sampling_algorithm_from_rest(self, sampling_algorithm, expected_rest_type):
+    def test_sampling_algorithm_from_rest(self, sampling_algorithm, expected_from_rest_type):
         command_job = CommandJob(
             code=Code(base_path="./src"),
             command="python train.py --ss {search_space.ss}",
@@ -151,7 +150,7 @@ class TestSweepJob:
 
         rest = sweep._to_rest_object()
         sweep: SweepJob = Job._from_rest_object(rest)
-        assert sweep.sampling_algorithm.sampling_algorithm_type == expected_rest_type
+        assert sweep.sampling_algorithm.type == expected_from_rest_type
 
     @pytest.mark.parametrize(
         "properties_dict",
@@ -187,7 +186,7 @@ class TestSweepJob:
         assert rest.properties.sampling_algorithm.rule == expected_rule
 
         sweep: SweepJob = Job._from_rest_object(rest)
-        assert sweep.sampling_algorithm.sampling_algorithm_type == "Random"
+        assert sweep.sampling_algorithm.type == "random"
         assert sweep.sampling_algorithm.seed == expected_seed
         assert sweep.sampling_algorithm.rule == expected_rule
 
@@ -247,7 +246,7 @@ class TestSweepJob:
             command="echo ${{inputs.uri}} ${{search_space.lr}} ${{search_space.lr2}}",
             distribution=MpiDistribution(),
             environment_variables={"EVN1": "VAR1"},
-            resources=ResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
             code="./",
         )
 

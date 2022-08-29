@@ -11,7 +11,7 @@ base_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    basic_func = load_component(path=base_dir + "/../../components/helloworld_component_for_sweep.yml")
+    basic_func = load_component(source=base_dir + "/../../components/helloworld_component_for_sweep.yml")
     uri_file_input = Input(type="uri_file", path="../../data/sample1.csv")
     uri_folder_input = Input(type="uri_folder", path="../../data")
     # 2. Construct pipeline

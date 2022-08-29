@@ -13,13 +13,11 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData, ManagedIdentity
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ResourceConfiguration as RestResourceConfiguration
-from azure.ai.ml._restclient.v2022_02_01_preview.models import UserIdentity
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml.constants import (
@@ -42,13 +40,14 @@ from azure.ai.ml.entities._job.distribution import (
     PyTorchDistribution,
     TensorFlowDistribution,
 )
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
+from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from .._job.pipeline._io import PipelineInput, PipelineOutputBase
 from .._job.pipeline._pipeline_expression import PipelineExpression
 from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
@@ -78,14 +77,15 @@ class Command(BaseNode):
     :type properties: dict[str, str]
     :param display_name: Display name of the job.
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, default will be set to current directory name.
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name.
     :type experiment_name: str
     :param command: Command to be executed in training.
     :type command: str
     :param compute: The compute target the job runs on.
     :type compute: str
     :param resources: Compute Resource configuration for the command.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.ResourceConfiguration]
+    :type resources: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     :param code: A local path or http:, https:, azureml: url pointing to a remote location.
     :type code: str
     :param distribution: Distribution configuration for distributed training.
@@ -98,6 +98,7 @@ class Command(BaseNode):
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
@@ -123,7 +124,7 @@ class Command(BaseNode):
         distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
         environment: Union[Environment, str] = None,
         environment_variables: Dict = None,
-        resources: ResourceConfiguration = None,
+        resources: JobResourceConfiguration = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -210,13 +211,13 @@ class Command(BaseNode):
         self._distribution = value
 
     @property
-    def resources(self) -> ResourceConfiguration:
+    def resources(self) -> JobResourceConfiguration:
         return self._resources
 
     @resources.setter
-    def resources(self, value: Union[Dict, ResourceConfiguration]):
+    def resources(self, value: Union[Dict, JobResourceConfiguration]):
         if isinstance(value, dict):
-            value = ResourceConfiguration(**value)
+            value = JobResourceConfiguration(**value)
         self._resources = value
 
     @property
@@ -235,10 +236,11 @@ class Command(BaseNode):
         else:
             msg = "Can't set command property for a registered component {}"
             raise ValidationException(
-                msg=msg.format(self.component),
+                message=msg.format(self.component),
                 no_personal_data_message=msg.format(self.component),
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     @property
@@ -259,10 +261,11 @@ class Command(BaseNode):
         else:
             msg = "Can't set code property for a registered component {}"
             raise ValidationException(
-                msg=msg.format(self.component),
+                message=msg.format(self.component),
                 no_personal_data_message=msg.format(self.component),
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def set_resources(
@@ -271,11 +274,13 @@ class Command(BaseNode):
         instance_type: Union[str, List[str]] = None,
         instance_count: int = None,
         properties: Dict = None,
-        **kwargs,
+        docker_args: str = None,
+        shm_size: str = None,
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Set resources for Command."""
         if self.resources is None:
-            self.resources = ResourceConfiguration()
+            self.resources = JobResourceConfiguration()
 
         if instance_type is not None:
             self.resources.instance_type = instance_type
@@ -283,12 +288,16 @@ class Command(BaseNode):
             self.resources.instance_count = instance_count
         if properties is not None:
             self.resources.properties = properties
+        if docker_args is not None:
+            self.resources.docker_args = docker_args
+        if shm_size is not None:
+            self.resources.shm_size = shm_size
 
         # Save the resources to internal component as well, otherwise calling sweep() will loose the settings
         if isinstance(self.component, Component):
             self.component.resources = self.resources
 
-    def set_limits(self, *, timeout: int, **kwargs):
+    def set_limits(self, *, timeout: int, **kwargs):  # pylint: disable=unused-argument
         """Set limits for Command."""
         if isinstance(self.limits, CommandJobLimits):
             self.limits.timeout = timeout
@@ -344,6 +353,7 @@ class Command(BaseNode):
         """
         self._swept = True
         # inputs & outputs are already built in source Command obj
+        # pylint: disable=abstract-class-instantiated
         inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(self.inputs)
         if search_space:
             inputs_search_space.update(search_space)
@@ -382,13 +392,12 @@ class Command(BaseNode):
             "component": (str, CommandComponent),
             "environment": (str, Environment),
             "environment_variables": dict,
-            "resources": (dict, ResourceConfiguration),
+            "resources": (dict, JobResourceConfiguration),
             "limits": (dict, CommandJobLimits),
             "code": (str, os.PathLike),
         }
 
     def _to_job(self) -> CommandJob:
-
         return CommandJob(
             id=self.id,
             name=self.name,
@@ -420,12 +429,14 @@ class Command(BaseNode):
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
+        distribution = self.distribution._to_rest_object() if self.distribution else None
+        limits = self.limits._to_rest_object() if self.limits else None
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 dict(
                     componentId=self._get_component_id(),
-                    distribution=get_rest_dict(self.distribution),
-                    limits=get_rest_dict(self.limits),
+                    distribution=get_rest_dict(distribution),
+                    limits=get_rest_dict(limits),
                     resources=get_rest_dict(self.resources, clear_empty_value=True),
                 )
             )
@@ -454,8 +465,8 @@ class Command(BaseNode):
 
         # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
-            resources = RestResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = ResourceConfiguration._from_rest_object(resources)
+            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
+            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 
         # Change componentId -> component
         component_id = obj.pop("componentId", None)
@@ -473,7 +484,7 @@ class Command(BaseNode):
         return Command(**obj)
 
     @classmethod
-    def _load_from_rest_job(cls, obj: JobBaseData) -> "Command":
+    def _load_from_rest_job(cls, obj: JobBase) -> "Command":
         from .command_func import command
 
         rest_command_job: RestCommandJob = obj.properties
@@ -494,13 +505,13 @@ class Command(BaseNode):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=rest_command_job.identity,
+            identity=Identity._from_rest_object(rest_command_job.identity) if rest_command_job.identity else None,
             environment_variables=rest_command_job.environment_variables,
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
         )
         command_job._id = obj.id
-        command_job.resources = ResourceConfiguration._from_rest_object(rest_command_job.resources)
+        command_job.resources = JobResourceConfiguration._from_rest_object(rest_command_job.resources)
         command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
         command_job.component._source = (
             ComponentSource.REMOTE_WORKSPACE_JOB
@@ -560,10 +571,10 @@ class Command(BaseNode):
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
             return node
-        else:
-            msg = "Command can be called as a function only when referenced component is {}, currently got {}."
-            raise ValidationException(
-                message=msg.format(type(Component), self._component),
-                no_personal_data_message=msg.format(type(Component), self._component),
-                target=ErrorTarget.COMMAND_JOB,
-            )
+        msg = "Command can be called as a function only when referenced component is {}, currently got {}."
+        raise ValidationException(
+            message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), self._component),
+            target=ErrorTarget.COMMAND_JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )

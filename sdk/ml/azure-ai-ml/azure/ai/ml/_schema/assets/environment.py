@@ -73,9 +73,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         allowed_values=[OperatingSystemType.Linux, OperatingSystemType.Windows],
         required=False,
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
 
     @pre_load
     def pre_load(self, data, **kwargs):
@@ -134,6 +132,6 @@ class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
         # CliV2AnonymousEnvironment is a default name for anonymous environment
         if name is not None and name != ANONYMOUS_ENV_NAME:
             module_logger.warning(
-                f"Warning: the provided asset name '{name}' will not be used for anonymous " f"registration"
+                "Warning: the provided asset name '%s' will not be used for anonymous registration", name
             )
         return super(AnonymousEnvironmentSchema, self).trim_dump_only(data, **kwargs)

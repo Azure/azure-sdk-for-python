@@ -61,6 +61,7 @@ class ModelInputSchema(InputSchema):
         ]
     )
     path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.MODEL)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
 class DataInputSchema(InputSchema):
@@ -79,6 +80,7 @@ class DataInputSchema(InputSchema):
         ]
     )
     path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
 class MLTableInputSchema(InputSchema):
@@ -94,6 +96,7 @@ class MLTableInputSchema(InputSchema):
     )
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
     path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
 
 
 class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):

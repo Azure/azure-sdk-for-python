@@ -8,15 +8,19 @@ from marshmallow.exceptions import ValidationError
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml import load_model
+from test_utilities.utils import verify_entity_load_and_dump
 
 
 @pytest.mark.unittest
 class TestModelSchema:
-    def test_deserialize(self) -> None:
+    def test_deserialize_and_serialize(self) -> None:
         path = Path("./tests/test_configs/model/model_full.yml")
-        model = load_model(path)
-        assert str(model.path).endswith("lightgbm_mlflow_model")
-        assert model.type == AssetTypes.MLFLOW_MODEL
+
+        def simple_model_validation(model):
+            assert str(model.path).endswith("lightgbm_mlflow_model")
+            assert model.type == AssetTypes.MLFLOW_MODEL
+
+        verify_entity_load_and_dump(load_model, simple_model_validation, path)
 
     def test_deserialize_no_version(self) -> None:
         path = Path("./tests/test_configs/model/model_no_version.yml")

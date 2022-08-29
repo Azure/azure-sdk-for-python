@@ -9,20 +9,24 @@ from azure.ai.ml._schema.compute.aml_compute_node_info import AmlComputeNodeInfo
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
 
 
-class AmlComputeNodeInfo(AmlComputeNodeInformation):
+class AmlComputeNodeInfo:
     def __init__(self, **kwargs):
         """Compute node information related to a AmlCompute Variables are only
         populated by the server, and will be ignored when sending a request."""
 
-        super().__init__(**kwargs)
+        self.node_id = None
+        self.private_ip_address = None
+        self.port = None
+        self.node_state = None
+        self.run_id = None
 
     @property
     def current_job_name(self) -> str:
-        return self.__dict__["run_id"]
+        return self.run_id
 
     @current_job_name.setter
     def current_job_name(self, value: str) -> None:
-        self.__dict__["run_id"] = value
+        self.run_id = value
 
     @classmethod
     def _from_rest_object(cls, rest_obj: AmlComputeNodeInformation) -> "AmlComputeNodeInfo":
@@ -31,4 +35,5 @@ class AmlComputeNodeInfo(AmlComputeNodeInformation):
         return result
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return AmlComputeNodeInfoSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

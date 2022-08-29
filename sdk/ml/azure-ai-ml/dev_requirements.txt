@@ -2,9 +2,12 @@
 ../../core/azure-core
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
+pre-commit
+nox
 marshmallow-jsonschema==0.10.0
 mock
 pytest-cov
+coverage==6.0.1
 pytest-forked
 pytest-xdist
 pytest-timeout
@@ -13,4 +16,7 @@ pytest
 pydash
 pytest-vcr
 azure-mgmt-storage~=19.1.0
-pywin32==227 ; sys_platform == 'win32'
+azure-devtools==1.2.0
+numpy
+scikit-image
+simplification

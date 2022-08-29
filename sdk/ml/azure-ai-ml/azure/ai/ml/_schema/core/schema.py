@@ -65,7 +65,7 @@ class PathAwareSchema(metaclass=PatchedSchemaMeta):
         """
         if isinstance(data, str) or data is None:
             return data
-        for key, value in self.fields.items():
+        for key, value in self.fields.items():  # pylint: disable=no-member
             if value.dump_only:
                 schema_key = value.data_key or key
                 if data.get(schema_key, None) is not None:
@@ -96,8 +96,7 @@ class YamlFileSchema(PathAwareSchema):
                 path = Path(base_path) / path
                 path.resolve()
             return path
-        else:
-            return None
+        return None
 
     @pre_load
     def load_from_file(self, data, **kwargs):

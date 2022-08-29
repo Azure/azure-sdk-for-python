@@ -128,6 +128,7 @@ class AmlCompute(Compute):
         self.ssh_settings = ssh_settings
         self.network_settings = network_settings
         self.tier = tier
+        self.subnet = None
 
     @classmethod
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "AmlCompute":
@@ -179,6 +180,7 @@ class AmlCompute(Compute):
             )
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return AmlComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod

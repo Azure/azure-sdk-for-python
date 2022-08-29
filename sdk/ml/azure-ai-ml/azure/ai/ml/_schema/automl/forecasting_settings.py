@@ -6,16 +6,17 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import FeatureLags as FeatureLagsMode
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+    FeatureLags as FeatureLagsMode,
     ForecastHorizonMode,
     SeasonalityMode,
     ShortSeriesHandlingConfiguration,
     TargetAggregationFunction,
     TargetLagsMode,
     TargetRollingWindowSizeMode,
+    UseStl as STLMode,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import UseStl as STLMode
+
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 

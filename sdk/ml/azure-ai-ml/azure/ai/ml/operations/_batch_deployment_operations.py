@@ -16,12 +16,13 @@ from azure.ai.ml._scope_dependent_operations import OperationsContainer, Operati
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
 from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
+from azure.core.credentials import TokenCredential
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -44,7 +45,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope)
@@ -56,6 +57,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
+
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, deployment: BatchDeployment, **kwargs: Any) -> Union[BatchDeployment, LROPoller]:
@@ -206,7 +209,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        mfe_base_uri = _get_mfe_base_url_from_discovery_service(workspace_operations, self._workspace_name)
+        mfe_base_uri = _get_mfe_base_url_from_discovery_service(
+            workspace_operations, self._workspace_name, self._requests_pipeline
+        )
 
         with modified_operation_client(self._batch_job_deployment, mfe_base_uri):
             result = self._batch_job_deployment.list(

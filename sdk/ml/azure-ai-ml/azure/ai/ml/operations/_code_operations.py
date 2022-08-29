@@ -13,11 +13,17 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._ml_exceptions import AssetPathException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import (
+    AssetPathException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationException,
+    ValidationErrorType,
+)
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022
 from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
@@ -40,7 +46,7 @@ class CodeOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient062022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -75,7 +81,9 @@ class CodeOperations(_ScopeDependentOperations):
                 registry=self._registry_name,
                 body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
             )
-        code, _ = _check_and_upload_path(artifact=code, asset_operations=self, sas_uri=sas_uri)
+        code, _ = _check_and_upload_path(
+            artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+        )
 
         # For anonymous code, if the code already exists in storage, we reuse the name, version stored in the storage
         # metadata so the same anonymous code won't be created again.
@@ -136,6 +144,7 @@ class CodeOperations(_ScopeDependentOperations):
                 target=ErrorTarget.CODE,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
         code_version_resource = (
             self._version_operation.get(

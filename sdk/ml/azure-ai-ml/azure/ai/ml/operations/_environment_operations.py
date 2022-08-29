@@ -8,7 +8,7 @@ import logging
 from typing import Any, Iterable, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -72,7 +72,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
         sas_uri = None
 
         if not environment.version and self._registry_name:
-            raise Exception("Environment version is required for registry")
+            msg = "Environment version is required for registry"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.ENVIRONMENT,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
+            )
 
         if self._registry_name:
             sas_uri = get_sas_uri_for_registry_asset(
@@ -187,6 +194,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if label:
@@ -199,6 +207,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         name = _preprocess_environment_name(name)
         env_version_resource = self._get(name, version)

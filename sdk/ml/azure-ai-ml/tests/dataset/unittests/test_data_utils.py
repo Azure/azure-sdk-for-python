@@ -1,7 +1,7 @@
 import pytest
-import requests
 from pathlib import Path
 from azure.ai.ml._utils._data_utils import read_local_mltable_metadata_contents, read_remote_mltable_metadata_contents
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -19,12 +19,22 @@ def mock_datastore_operations(
     )
 
 
+@pytest.fixture
+def mock_requests_pipeline(mock_machinelearning_client) -> HttpPipeline:
+    yield mock_machinelearning_client._requests_pipeline
+
+
 @pytest.mark.unittest
 class TestDataUtils:
     @patch("azure.ai.ml._utils._data_utils.get_datastore_info")
     @patch("azure.ai.ml._utils._data_utils.get_storage_client")
     def test_read_mltable_metadata_contents(
-        self, _mock_get_storage_click, _mock_get_datastore_info, tmp_path: Path, mock_datastore_operations
+        self,
+        _mock_get_storage_click,
+        _mock_get_datastore_info,
+        tmp_path: Path,
+        mock_datastore_operations,
+        mock_requests_pipeline,
     ):
         mltable_folder = tmp_path / "mltable_folder"
         mltable_folder.mkdir()
@@ -41,9 +51,13 @@ class TestDataUtils:
         tmp_metadata_file.write_text(file_contents)
 
         # remote https accessible
-        with patch.object(requests, "get", return_value=Mock(content=file_contents.encode(encoding="UTF-8"))):
+        with patch.object(
+            mock_requests_pipeline, "get", return_value=Mock(content=file_contents.encode(encoding="UTF-8"))
+        ):
             contents = read_remote_mltable_metadata_contents(
-                datastore_operations=mock_datastore_operations, path="https://fake.localhost/file.yaml"
+                datastore_operations=mock_datastore_operations,
+                path="https://fake.localhost/file.yaml",
+                requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
 
@@ -52,6 +66,7 @@ class TestDataUtils:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
                 path="https://fake.localhost/file.yaml",
+                requests_pipeline=mock_requests_pipeline,
             )
         assert "Invalid URL" in str(ex)
 
@@ -60,6 +75,7 @@ class TestDataUtils:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
                 path="azureml://datastores/mydatastore/paths/images/dogs",
+                requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
 
@@ -68,6 +84,7 @@ class TestDataUtils:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
                 path="azureml://datastores/mydatastore/paths/images/dogs",
+                requests_pipeline=mock_requests_pipeline,
             )
         assert "No such file or directory" in str(ex)
 

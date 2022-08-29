@@ -6,7 +6,7 @@
 
 import logging
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, pre_dump, ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EarlyTerminationPolicyType
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
@@ -17,8 +17,8 @@ module_logger = logging.getLogger(__name__)
 
 
 class EarlyTerminationPolicySchema(metaclass=PatchedSchemaMeta):
-    evaluation_interval = fields.Int()
-    delay_evaluation = fields.Int()
+    evaluation_interval = fields.Int(allow_none=True)
+    delay_evaluation = fields.Int(allow_none=True)
 
 
 class BanditPolicySchema(EarlyTerminationPolicySchema):
@@ -27,8 +27,8 @@ class BanditPolicySchema(EarlyTerminationPolicySchema):
         allowed_values=EarlyTerminationPolicyType.BANDIT,
         casing_transform=camel_to_snake,
     )
-    slack_factor = fields.Float()
-    slack_amount = fields.Float()
+    slack_factor = fields.Float(allow_none=True)
+    slack_amount = fields.Float(allow_none=True)
 
     @post_load
     def make(self, data, **kwargs):
@@ -36,6 +36,14 @@ class BanditPolicySchema(EarlyTerminationPolicySchema):
 
         data.pop("type", None)
         return BanditPolicy(**data)
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.sweep import BanditPolicy
+
+        if not isinstance(data, BanditPolicy):
+            raise ValidationError("Cannot dump non-BanditPolicy object into BanditPolicySchema")
+        return data
 
 
 class MedianStoppingPolicySchema(EarlyTerminationPolicySchema):
@@ -52,6 +60,14 @@ class MedianStoppingPolicySchema(EarlyTerminationPolicySchema):
         data.pop("type", None)
         return MedianStoppingPolicy(**data)
 
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.sweep import MedianStoppingPolicy
+
+        if not isinstance(data, MedianStoppingPolicy):
+            raise ValidationError("Cannot dump non-MedicanStoppingPolicy object into MedianStoppingPolicySchema")
+        return data
+
 
 class TruncationSelectionPolicySchema(EarlyTerminationPolicySchema):
     type = StringTransformedEnum(
@@ -67,3 +83,13 @@ class TruncationSelectionPolicySchema(EarlyTerminationPolicySchema):
 
         data.pop("type", None)
         return TruncationSelectionPolicy(**data)
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.sweep import TruncationSelectionPolicy
+
+        if not isinstance(data, TruncationSelectionPolicy):
+            raise ValidationError(
+                "Cannot dump non-TruncationSelectionPolicy object into TruncationSelectionPolicySchema"
+            )
+        return data

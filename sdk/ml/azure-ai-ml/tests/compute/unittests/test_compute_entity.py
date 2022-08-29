@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.v2021_10_01.models import ComputeResource
 from typing import List, Union
 import pytest
 from azure.ai.ml import load_compute
+from test_utilities.utils import verify_entity_load_and_dump
 
 
 @pytest.mark.unittest
@@ -43,11 +44,15 @@ class TestComputeEntity:
         assert compute.identity.type == "user_assigned"
         assert compute.identity.user_assigned_identities[0].resource_id == uai_resource_id
 
-    def test_compute_from_yaml(self):
-        compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml.yaml")
+    def _test_loaded_compute(self, compute: AmlCompute):
         assert compute.name == "banchaml"
         assert compute.ssh_settings.admin_username == "azureuser"
         assert compute.identity.type == "user_assigned"
+
+    def test_compute_from_yaml(self):
+        compute: AmlCompute = verify_entity_load_and_dump(
+            load_compute, self._test_loaded_compute, "tests/test_configs/compute/compute-aml.yaml"
+        )[0]
 
         rest_intermediate = compute._to_rest_object()
         assert rest_intermediate.properties.compute_type == "AmlCompute"
@@ -130,3 +135,50 @@ class TestComputeEntity:
         assert compute_instance2.schedules.compute_start_stop[1].trigger.frequency == "week"
         assert compute_instance2.schedules.compute_start_stop[1].trigger.interval == 1
         assert compute_instance2.schedules.compute_start_stop[1].trigger.schedule is not None
+
+    def test_compute_instance_uai_from_yaml(self):
+        compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-uai.yaml")
+        assert compute.name == "banchci"
+        assert compute.type == "computeinstance"
+        assert compute.identity.type == "user_assigned"
+        assert compute.identity.user_assigned_identities
+        assert len(compute.identity.user_assigned_identities) == 1
+        assert (
+            compute.identity.user_assigned_identities[0].resource_id
+            == "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W35"
+            "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/x"
+        )
+
+        compute_resource = compute._to_rest_object()
+        assert compute_resource.identity.type == "UserAssigned"
+        assert len(compute_resource.identity.user_assigned_identities) == 1
+        for k in compute_resource.identity.user_assigned_identities.keys():
+            assert (
+                k == "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg"
+                "-centraluseuap-v2-t-2021W35/providers/Microsoft.ManagedIdentity"
+                "/userAssignedIdentities/x"
+            )
+
+        compute_from_rest = Compute._from_rest_object(compute_resource)
+        assert compute_from_rest.type == "computeinstance"
+        assert compute_from_rest.identity.type == "user_assigned"
+        assert compute_from_rest.identity.user_assigned_identities
+        assert len(compute_from_rest.identity.user_assigned_identities) == 1
+        assert (
+            compute_from_rest.identity.user_assigned_identities[0].resource_id
+            == "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W35"
+            "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/x"
+        )
+
+    def test_compute_instance_sai_from_yaml(self):
+        compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci.yaml")
+        assert compute.name == "banchci"
+        assert compute.type == "computeinstance"
+        assert compute.identity.type == "system_assigned"
+
+        compute_resource = compute._to_rest_object()
+        assert compute_resource.identity.type == "SystemAssigned"
+
+        compute_from_rest = Compute._from_rest_object(compute_resource)
+        assert compute_from_rest.type == "computeinstance"
+        assert compute_from_rest.identity.type == "system_assigned"

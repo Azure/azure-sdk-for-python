@@ -29,7 +29,7 @@ class CodeAssetSchema(ArtifactSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._assets import Code
 
-        return Code(**data)
+        return Code(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
 
 
 class AnonymousCodeAssetSchema(CodeAssetSchema, AnonymousAssetSchema):

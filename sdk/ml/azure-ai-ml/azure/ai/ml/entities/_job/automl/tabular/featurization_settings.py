@@ -7,12 +7,14 @@
 import logging
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
+    BlockedTransformers,
 )
 from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._utils.utils import camel_to_snake
 
 module_logger = logging.getLogger(__name__)
 
@@ -31,7 +33,6 @@ class ColumnTransformer(RestTranslatableMixin):
         *,
         fields: List[str] = None,
         parameters: Dict[str, Union[str, float]] = None,
-        **kwargs,
     ):
         self.fields = fields
         self.parameters = parameters
@@ -88,6 +89,18 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self.transformer_params = transformer_params
         self.mode = mode
         self.enable_dnn_featurization = enable_dnn_featurization
+
+    @property
+    def blocked_transformers(self) -> List[BlockedTransformers]:
+        return self._blocked_transformers
+
+    @blocked_transformers.setter
+    def blocked_transformers(self, blocked_transformers_list):
+        self._blocked_transformers = (
+            None
+            if blocked_transformers_list is None
+            else [BlockedTransformers[camel_to_snake(o)] for o in blocked_transformers_list]
+        )
 
     def _to_rest_object(self) -> RestTabularFeaturizationSettings:
         transformer_dict = {}

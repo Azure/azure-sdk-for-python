@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
     TaskType,
@@ -25,7 +25,7 @@ from azure.ai.ml.constants import AutoMLConstants
 
 
 class ImageClassificationBaseSchema(ImageVerticalSchema):
-    image_model = NestedField(ImageModelSettingsClassificationSchema())
+    training_parameters = NestedField(ImageModelSettingsClassificationSchema())
     search_space = fields.List(NestedField(ImageModelDistributionSettingsClassificationSchema()))
 
 

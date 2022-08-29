@@ -9,13 +9,13 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline(client: MLClient) -> PipelineJob:
     # 1. Load component funcs
-    basic_func = load_component(path=parent_dir + "/component.yml")
+    basic_func = load_component(source=parent_dir + "/component.yml")
 
     try:
         dataset = client.data.get(name="sampledata1235", version="2")
     except ResourceNotFoundError:
         # Create the data version if not exits
-        data = load_data(path=parent_dir + "/data.yml")
+        data = load_data(source=parent_dir + "/data.yml")
         dataset = client.data.create_or_update(data)
 
     data_input = Input(type="uri_file", path="azureml:sampledata1235:2")

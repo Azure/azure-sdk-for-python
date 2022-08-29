@@ -1,9 +1,16 @@
 import pytest
 from unittest.mock import Mock, patch
+from pytest_mock import MockFixture
+from azure.core.exceptions import HttpResponseError
+from azure.ai.ml._ml_exceptions import ValidationException
 
 from azure.ai.ml.operations import ComponentOperations
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.core.exceptions import HttpResponseError
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml.constants import AzureMLResourceType
+
+from azure.ai.ml.entities._assets import Code
 
 
 class MockResponse:
@@ -26,6 +33,27 @@ def mock_component_operation(
     )
 
 
+@pytest.fixture
+def code_operations(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml.operations._code_operations.CodeOperations")
+
+
+@pytest.fixture
+def operation_container(
+    code_operations: CodeOperations,
+) -> OperationsContainer:
+    container = OperationsContainer()
+    container.add(AzureMLResourceType.CODE, code_operations)
+    yield container
+
+
+@pytest.fixture
+def operation_orchestrator(
+    mock_workspace_scope: OperationScope, operation_container: OperationsContainer
+) -> OperationOrchestrator:
+    yield OperationOrchestrator(operation_container=operation_container, operation_scope=mock_workspace_scope)
+
+
 @pytest.mark.unittest
 class TestExceptions:
     def test_error_preprocess(self, mock_component_operation: ComponentOperations):
@@ -39,3 +67,12 @@ class TestExceptions:
             with pytest.raises(BaseException) as context:
                 mock_component_operation.get("mock_component", "0.0.1")
             assert context.type.__name__ == "KeyboardInterrupt"
+
+    def test_get_code_asset_arm_id(self, operation_orchestrator: OperationOrchestrator):
+        with patch.object(operation_orchestrator, "_validate_datastore_name") as mock_client:
+            mock_client.side_effect = ValidationException(
+                message="raise ValidationException error", no_personal_data_message="raise ValidationException error"
+            )
+            with pytest.raises(ValidationException) as context:
+                operation_orchestrator.get_asset_arm_id(asset=Code(), azureml_type=AzureMLResourceType.CODE)
+            assert context.type.__name__ == "ValidationException"

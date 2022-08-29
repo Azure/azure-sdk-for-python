@@ -10,7 +10,7 @@ from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException, ValidationErrorType
 from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
 from azure.ai.ml.constants import (
     FILE_PREFIX,
@@ -92,6 +92,7 @@ class AzureMLDatastorePathUri:
                 message=msg.format(uri),
                 no_personal_data_message=msg.format("[uri]"),
                 target=ErrorTarget.DATASTORE,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def to_short_uri(self) -> str:
@@ -115,13 +116,13 @@ class AzureMLDatastorePathUri:
 
         if self.uri[0 : self.uri.find(":")] == "runs":
             return "MLFlow"
-        else:
-            msg = "Invalid uri format for {}. URI must start with 'azureml://' or 'runs:/'"
-            raise ValidationException(
-                message=msg.format(self.uri),
-                no_personal_data_message=msg.format("[self.uri]"),
-                target=ErrorTarget.DATASTORE,
-            )
+        msg = "Invalid uri format for {}. URI must start with 'azureml://' or 'runs:/'"
+        raise ValidationException(
+            message=msg.format(self.uri),
+            no_personal_data_message=msg.format("[self.uri]"),
+            target=ErrorTarget.DATASTORE,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
 
 
 def get_storage_client(
@@ -134,9 +135,16 @@ def get_storage_client(
     """Return a storage client class instance based on the storage account
     type."""
     if storage_type not in SUPPORTED_STORAGE_TYPES:
-        msg = f"Datastore type {storage_type} is not supported. Supported storage"
-        f"types for artifact upload include: {*SUPPORTED_STORAGE_TYPES,}"
-        raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.DATASTORE)
+        msg = (
+            f"Datastore type {storage_type} is not supported. Supported storage"
+            f"types for artifact upload include: {*SUPPORTED_STORAGE_TYPES,}"
+        )
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.DATASTORE,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
     if not account_url and storage_endpoint:
@@ -148,9 +156,9 @@ def get_storage_client(
             container_name=container_name,
             account_url=account_url,
         )
-    elif storage_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
+    if storage_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
         return Gen2StorageClient(credential=credential, file_system=container_name, account_url=account_url)
-    elif storage_type == DatastoreType.AZURE_FILE:
+    if storage_type == DatastoreType.AZURE_FILE:
         return FileStorageClient(
             credential=credential,
             file_share_name=container_name,

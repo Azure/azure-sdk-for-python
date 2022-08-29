@@ -215,6 +215,7 @@ def mock_online_endpoint_operations(
         service_client_09_2020_dataplanepreview=mock_aml_services_2020_09_01_dataplanepreview,
         all_operations=mock_machinelearning_client._operation_container,
         local_endpoint_helper=mock_local_endpoint_helper,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -393,7 +394,8 @@ class TestOnlineEndpointsOperations:
         mockresponse = Mock()
         mockresponse.text = '{"key": "value"}'
         mockresponse.status_code = 200
-        mocker.patch("requests.post", return_value=mockresponse)
+
+        mocker.patch.object(mock_online_endpoint_operations._requests_pipeline, "post", return_value=mockresponse)
         assert mock_online_endpoint_operations.invoke(endpoint_name=random_name, request_file=request_file)
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()

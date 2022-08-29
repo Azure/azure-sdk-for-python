@@ -27,10 +27,12 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import (
     AzureMLResourceType,
     EndpointYamlFields,
+    AssetTypes,
 )
 
 from pytest_mock import MockFixture
 from azure.ai.ml import load_batch_endpoint
+from azure.ai.ml.entities._inputs_outputs import Input
 
 
 @pytest.fixture()
@@ -148,6 +150,7 @@ def mock_batch_endpoint_operations(
         service_client_05_2022=mock_aml_services_2022_05_01,
         service_client_09_2020_dataplanepreview=mock_aml_services_2020_09_01_dataplanepreview,
         all_operations=mock_machinelearning_client._operation_container,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -217,17 +220,14 @@ class TestBatchEndpointOperations:
         assert mock_batch_endpoint_operations._batch_operation.get.call_count == 2
 
     @patch.object(BatchEndpoint, "_from_rest_object")
-    @pytest.mark.skip("TODO (1907973): To re-enable once it's fixed")
     def test_batch_invoke_failed(
         self,
         mock_from_rest,
         mock_batch_endpoint_operations: BatchEndpointOperations,
         mocker: MockFixture,
-        randstr: Callable[[], str],
-        randint: Callable[[], int],
     ) -> None:
-        data_name = randstr()
-        data_version = randint()
+
+        input_path = "https://foo/bar/train.csv"
         endpoint_name = "myBatchEndpoint"
         deployment_name = "myDeployment"
         mock_batch_endpoint_operations._credentials = Mock(spec_set=DefaultAzureCredential)
@@ -251,7 +251,7 @@ class TestBatchEndpointOperations:
             mock_batch_endpoint_operations.invoke(
                 endpoint_name=endpoint_name,
                 deployment_name=deployment_name,
-                input=(":".join((data_name, str(data_version)))),
+                input=Input(path=input_path, type=AssetTypes.URI_FILE),
             )
 
         error_message = "Bad bad request."
@@ -261,7 +261,7 @@ class TestBatchEndpointOperations:
             mock_batch_endpoint_operations.invoke(
                 endpoint_name=endpoint_name,
                 deployment_name=deployment_name,
-                input=(":".join((data_name, str(data_version)))),
+                input=Input(path=input_path, type=AssetTypes.URI_FILE),
             )
 
     def test_batch_list(self, mock_batch_endpoint_operations: BatchEndpointOperations) -> None:

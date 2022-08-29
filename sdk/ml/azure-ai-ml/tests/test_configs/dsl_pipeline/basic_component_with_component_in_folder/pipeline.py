@@ -7,8 +7,7 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    basic_func = load_component(path=parent_dir + "/components/component.yml")
-
+    basic_func = load_component(source=parent_dir + "/components/component.yml")
     # 2. Construct pipeline
     @dsl.pipeline(
         description="Hello World component example",

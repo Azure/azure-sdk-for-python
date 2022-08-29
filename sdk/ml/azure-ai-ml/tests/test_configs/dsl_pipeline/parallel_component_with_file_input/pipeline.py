@@ -8,10 +8,9 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    file_batch_inference = load_component(path=parent_dir + "/score.yml")
-    file_batch_inference_duplicate = load_component(path=parent_dir + "/score.yml")
-    convert_data = load_component(path=parent_dir + "/convert_data.yml")
-
+    file_batch_inference = load_component(source=parent_dir + "/score.yml")
+    file_batch_inference_duplicate = load_component(source=parent_dir + "/score.yml")
+    convert_data = load_component(source=parent_dir + "/convert_data.yml")
     # Construct pipeline
     @dsl.pipeline(compute="cpu-cluster")
     def parallel_in_pipeline(pipeline_job_data_path):

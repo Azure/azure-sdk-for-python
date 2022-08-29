@@ -164,7 +164,7 @@ name: {data_name}
 version: 3.12
 path: ./bla"""
         )
-        asset = load_data(path=p)
+        asset = load_data(source=p)
         assert asset.version == "3.12"
 
         p = tmp_path / "version_int.yml"
@@ -174,7 +174,7 @@ name: {data_name}
 version: 3
 path: ./bla"""
         )
-        asset = load_data(path=p)
+        asset = load_data(source=p)
         assert asset.version == "3"
 
         p = tmp_path / "version_str.yml"
@@ -184,5 +184,5 @@ name: {data_name}
 version: foobar
 path: ./bla"""
         )
-        asset = load_data(path=p)
+        asset = load_data(source=p)
         assert asset.version == "foobar"

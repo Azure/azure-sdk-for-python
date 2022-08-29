@@ -7,6 +7,7 @@ import re
 from io import open
 from typing import Any, Match, cast
 
+import pkg_resources
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
@@ -65,7 +66,6 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml<7.0.0,>=5.1.0",
-        "azure-identity",
         "msrest>=0.6.18",
         "azure-core<2.0.0,>=1.8.0, !=1.22.0",
         "azure-mgmt-core<2.0.0,>=1.2.0",

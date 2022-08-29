@@ -10,10 +10,9 @@ from functools import wraps
 from inspect import Parameter, signature
 from typing import Any, Callable, Dict, TypeVar
 
-from azure.ai.ml.dsl._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
 from azure.ai.ml.entities._job.pipeline._exceptions import (
     MissingPositionalArgsError,
     MultipleValueError,
@@ -23,6 +22,8 @@ from azure.ai.ml.entities._job.pipeline._exceptions import (
     UserErrorException,
 )
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutputBase
+from ._settings import _dsl_settings_stack
+from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
@@ -30,6 +31,7 @@ SUPPORTED_INPUT_TYPES = (
     PipelineInput,
     PipelineOutputBase,
     Input,
+    Pipeline,  # For the case use a pipeline node as the input, we use its only one output as the real input.
     str,
     bool,
     int,
@@ -46,7 +48,6 @@ def pipeline(
     description: str = None,
     experiment_name: str = None,
     tags: Dict[str, str] = None,
-    continue_on_step_failure: bool = None,
     **kwargs,
 ):
     """Build a pipeline which contains all component nodes defined in this
@@ -87,12 +88,11 @@ def pipeline(
     :type display_name: str
     :param description: The description of the built pipeline.
     :type description: str
-    :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
+    :param experiment_name: Name of the experiment the job will be created under, \
+                if None is provided, experiment will be set to current directory.
     :type experiment_name: str
     :param tags: The tags of pipeline component.
     :type tags: dict[str, str]
-    :param continue_on_step_failure: Flag when set, continue pipeline execution if a step fails.
-    :type continue_on_step_failure: bool
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -102,7 +102,10 @@ def pipeline(
         # to support legacy usage, we support them with priority.
         compute = kwargs.get("compute", None)
         default_compute_target = kwargs.get("default_compute_target", None)
-        actual_compute = kwargs.get("default_compute", None) or compute or default_compute_target
+        default_compute_target = kwargs.get("default_compute", None) or default_compute_target
+        continue_on_step_failure = kwargs.get("continue_on_step_failure", None)
+        on_init = kwargs.get("on_init", None)
+        on_finalize = kwargs.get("on_finalize", None)
 
         default_datastore = kwargs.get("default_datastore", None)
         force_rerun = kwargs.get("force_rerun", None)
@@ -110,6 +113,9 @@ def pipeline(
             "default_datastore": default_datastore,
             "continue_on_step_failure": continue_on_step_failure,
             "force_rerun": force_rerun,
+            "default_compute": default_compute_target,
+            "on_init": on_init,
+            "on_finalize": on_finalize,
         }
         job_settings = {k: v for k, v in job_settings.items() if v is not None}
         pipeline_builder = PipelineComponentBuilder(
@@ -118,7 +124,7 @@ def pipeline(
             version=version,
             display_name=display_name,
             description=description,
-            compute=actual_compute,
+            compute=compute,
             default_datastore=default_datastore,
             tags=tags,
         )
@@ -126,12 +132,21 @@ def pipeline(
         @wraps(func)
         def wrapper(*args, **kwargs) -> PipelineJob:
             # Default args will be added here.
+            # pylint: disable=abstract-class-instantiated
+            _dsl_settings_stack.push()  # use this stack to track on_init/on_finalize settings
             provided_positional_args = _validate_args(func, args, kwargs)
             # Convert args to kwargs
             kwargs.update(provided_positional_args)
 
             # TODO: cache built pipeline component
             pipeline_component = pipeline_builder.build()
+
+            # pop from the stack, update on_init/on_finalize settings if init/finalize job is set
+            dsl_settings = _dsl_settings_stack.pop()
+            if dsl_settings.init_job_set:
+                job_settings["on_init"] = dsl_settings.init_job_name(pipeline_component.jobs)
+            if dsl_settings.finalize_job_set:
+                job_settings["on_finalize"] = dsl_settings.finalize_job_name(pipeline_component.jobs)
 
             # TODO: pass compute & default_compute separately?
             common_init_args = {
@@ -145,12 +160,14 @@ def pipeline(
                 built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
                 if job_settings:
                     module_logger.warning(
-                        f"Job settings {job_settings} on pipeline function {func.__name__!r} are ignored when using inside PipelineJob."
+                        ("Job settings %s on pipeline function %r are ignored " "when using inside PipelineJob."),
+                        job_settings,
+                        func.__name__,
                     )
             else:
                 built_pipeline = PipelineJob(
                     jobs=pipeline_component.jobs,
-                    compute=actual_compute,
+                    compute=compute,
                     settings=PipelineJobSettings(**job_settings),
                     **common_init_args,
                 )
@@ -192,9 +209,12 @@ def _validate_args(func, args, kwargs):
         missing_keys = empty_parameters.keys() - provided_args.keys()
         raise MissingPositionalArgsError(func.__name__, missing_keys)
 
+    def _is_supported_data_type(_data):
+        return isinstance(_data, SUPPORTED_INPUT_TYPES) or is_parameter_group(_data)
+
     for pipeline_input_name in provided_args:
         data = provided_args[pipeline_input_name]
-        if data is not None and not isinstance(data, SUPPORTED_INPUT_TYPES):
+        if data is not None and not _is_supported_data_type(data):
             msg = (
                 "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), "
                 "but got type {}."

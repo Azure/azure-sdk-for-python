@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
 import os
 import re
 from typing import Any, Dict, Union
@@ -15,14 +16,14 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 
 from ..._schema import PathAwareSchema
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .component import Component
 
 
-class ParallelComponent(Component, ParameterizedParallel):
+class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=too-many-instance-attributes
     """Parallel component version, used to define a parallel component.
 
     :param name: Name of the component.
@@ -56,7 +57,7 @@ class ParallelComponent(Component, ParameterizedParallel):
     :param input_data: The input data.
     :type input_data: str
     :param resources: Compute Resource configuration for the component.
-    :type resources: Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]
+    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     :param inputs: Inputs of the component.
     :type inputs: dict
     :param outputs: Outputs of the component.
@@ -85,7 +86,7 @@ class ParallelComponent(Component, ParameterizedParallel):
         task: ParallelTask = None,
         mini_batch_size: str = None,
         input_data: str = None,
-        resources: ResourceConfiguration = None,
+        resources: JobResourceConfiguration = None,
         inputs: Dict = None,
         outputs: Dict = None,
         code: str = None,  # promoted property from task.code
@@ -135,7 +136,7 @@ class ParallelComponent(Component, ParameterizedParallel):
         self.code = code
 
         if self.mini_batch_size is not None:
-            """Convert str to int."""
+            # Convert str to int.
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(self.mini_batch_size):
                 raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
@@ -167,7 +168,7 @@ class ParallelComponent(Component, ParameterizedParallel):
         if not value:
             return
         if not self.resources:
-            self.resources = ResourceConfiguration(instance_count=value)
+            self.resources = JobResourceConfiguration(instance_count=value)
         else:
             self.resources.instance_count = value
 
@@ -220,7 +221,7 @@ class ParallelComponent(Component, ParameterizedParallel):
             "error_threshold": int,
             "mini_batch_error_threshold": int,
             "code": (str, os.PathLike),
-            "resources": (dict, ResourceConfiguration),
+            "resources": (dict, JobResourceConfiguration),
         }
 
     def _to_dict(self) -> Dict:
@@ -242,7 +243,7 @@ class ParallelComponent(Component, ParameterizedParallel):
             creation_context=obj.system_data,
             inputs=inputs,
             outputs=outputs,
-            **RestParallelComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).load(
+            **RestParallelComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).load(  # pylint: disable=no-member
                 rest_component_version.component_spec, unknown=INCLUDE
             ),
         )
@@ -255,5 +256,5 @@ class ParallelComponent(Component, ParameterizedParallel):
     def __str__(self):
         try:
             return self._to_yaml()
-        except BaseException:
+        except BaseException:  # pylint: disable=broad-except
             return super(ParallelComponent, self).__str__()

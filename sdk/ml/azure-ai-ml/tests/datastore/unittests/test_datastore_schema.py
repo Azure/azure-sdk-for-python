@@ -1,5 +1,6 @@
 import pytest
 
+import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._datastore.credentials import (
     AccountKeyCredentials,
@@ -28,7 +29,8 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml import load_datastore
-
+from test_utilities.utils import verify_entity_load_and_dump
+from azure.ai.ml.constants import DATASTORE_SCHEMA_TYPES
 
 kerberos_pw_yml = "hdfs_kerberos_pw.yml"
 kerberos_keytab_yml = "hdfs_kerberos_keytab.yml"
@@ -54,15 +56,18 @@ class TestHdfsDatastore:
     def test_kerberos_schema(self, path, cred_type, is_key_tab):
         test_path = f"./tests/test_configs/datastore/{path}"
         cfg = load_yaml(test_path)
-        internal_ds = load_datastore(test_path)
-        assert isinstance(internal_ds, HdfsDatastore)
-        assert cfg["hdfs_server_certificate"] == internal_ds.hdfs_server_certificate
-        assert cfg["name_node_address"] == internal_ds.name_node_address
-        assert cfg["protocol"] == internal_ds.protocol
-        assert isinstance(internal_ds.credentials, cred_type)
-        assert cfg["credentials"]["kerberos_realm"] == internal_ds.credentials.kerberos_realm
-        assert cfg["credentials"]["kerberos_kdc_address"] == internal_ds.credentials.kerberos_kdc_address
-        assert cfg["credentials"]["kerberos_principal"] == internal_ds.credentials.kerberos_principal
+
+        def simple_datastore_validation(internal_ds):
+            assert isinstance(internal_ds, HdfsDatastore)
+            assert cfg["hdfs_server_certificate"] == internal_ds.hdfs_server_certificate
+            assert cfg["name_node_address"] == internal_ds.name_node_address
+            assert cfg["protocol"] == internal_ds.protocol
+            assert isinstance(internal_ds.credentials, cred_type)
+            assert cfg["credentials"]["kerberos_realm"] == internal_ds.credentials.kerberos_realm
+            assert cfg["credentials"]["kerberos_kdc_address"] == internal_ds.credentials.kerberos_kdc_address
+            assert cfg["credentials"]["kerberos_principal"] == internal_ds.credentials.kerberos_principal
+
+        internal_ds = verify_entity_load_and_dump(load_datastore, simple_datastore_validation, test_path)[0]
 
         # test REST translation
         datastore_resource = internal_ds._to_rest_object()
@@ -258,3 +263,14 @@ class TestDatastore:
         assert rest_service_principal.client_id == internal_credential.client_id
         assert rest_service_principal.secrets
         assert rest_service_principal.secrets.client_secret == internal_credential.client_secret
+
+    def test_all_datastore_schemas_included(self):
+        """Test that all DatastoreSchemas are included in the DATASTORE_SCHEMA_TYPES constant"""
+        import inspect
+
+        clsmembers = [
+            x[0]
+            for x in inspect.getmembers(DatastoreSchemaDir, inspect.isclass)
+            if x[0].endswith("Schema") and x[0].startswith("Azure")
+        ]
+        assert set(clsmembers) == set(DATASTORE_SCHEMA_TYPES)

@@ -3,19 +3,20 @@ import pytest
 from unittest.mock import patch
 from io import StringIO
 
-from azure.ai.ml import command, MpiDistribution, Input, Output, load_component
-from azure.ai.ml._restclient.v2022_05_01.models import TensorFlow
+from azure.ai.ml import command, MpiDistribution, Input, Output, load_component, TensorFlowDistribution
+from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import (
     Component,
     CommandComponent,
-    ResourceConfiguration,
+    JobResourceConfiguration,
     CommandJobLimits,
 )
 from azure.ai.ml.sweep import Choice
 from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._builders import Command, Sweep
+from test_utilities.utils import verify_entity_load_and_dump
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -26,13 +27,14 @@ class TestCommandComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        command_component = load_component(
-            path=component_yaml,
-        )
-        assert command_component.code == "./helloworld_components_with_env"
+
+        def simple_component_validation(command_component):
+            assert command_component.code == "./helloworld_components_with_env"
+
+        command_component = verify_entity_load_and_dump(load_component, simple_component_validation, component_yaml)[0]
         component_yaml = "./tests/test_configs/components/basic_component_code_arm_id.yml"
         command_component = load_component(
-            path=component_yaml,
+            source=component_yaml,
         )
         expected_code = (
             "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/"
@@ -77,7 +79,7 @@ class TestCommandComponentEntity:
         component_dict = pydash.omit(component_dict, *omits)
 
         yaml_path = "./tests/test_configs/components/basic_component_code_arm_id.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(source=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
         yaml_component_dict = pydash.omit(yaml_component_dict, *omits)
 
@@ -137,7 +139,7 @@ class TestCommandComponentEntity:
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-            distribution=TensorFlow(
+            distribution=TensorFlowDistribution(
                 parameter_server_count=1,
                 worker_count=2,
                 # No affect because TensorFlow object does not allow extra fields
@@ -148,7 +150,7 @@ class TestCommandComponentEntity:
         component_dict = component._to_rest_object().as_dict()
 
         yaml_path = "./tests/test_configs/components/helloworld_component_tensorflow.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(source=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
 
         component_dict = pydash.omit(
@@ -181,7 +183,7 @@ class TestCommandComponentEntity:
         )
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
 
     def test_command_component_version_as_a_function(self):
@@ -197,11 +199,11 @@ class TestCommandComponentEntity:
             "outputs": {},
             "resources": None,
             "tags": {},
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
         }
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        yaml_component_version = load_component(path=yaml_path)
+        yaml_component_version = load_component(source=yaml_path)
         assert isinstance(yaml_component_version, CommandComponent)
 
         yaml_component = yaml_component_version()
@@ -229,19 +231,19 @@ class TestCommandComponentEntity:
             "distribution": None,
             "environment_variables": {},
             "inputs": {
-                "component_in_number": {"job_input_type": "Literal", "value": "10"},
-                "component_in_path": {"job_input_type": "Literal", "value": "${{parent.inputs.pipeline_input}}"},
+                "component_in_number": {"job_input_type": "literal", "value": "10"},
+                "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
             "limits": None,
             "name": None,
             "outputs": {},
             "resources": None,
             "tags": {},
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "YAML.COMPONENT",
         }
 
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
-        yaml_component_version = load_component(path=yaml_path)
+        yaml_component_version = load_component(source=yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(component_in_number=10, component_in_path=pipeline_input)
 
@@ -269,8 +271,8 @@ class TestCommandComponentEntity:
             # we're using a curated environment
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:9",
         )
-        basic_component = load_component(path="./tests/test_configs/components/basic_component_code_local_path.yml")
-        sweep_component = load_component(path="./tests/test_configs/components/helloworld_component_for_sweep.yml")
+        basic_component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
+        sweep_component = load_component(source="./tests/test_configs/components/helloworld_component_for_sweep.yml")
 
         with patch("sys.stdout", new=StringIO()) as std_out:
             help(download_unzip_component._func)
@@ -307,7 +309,7 @@ class TestCommandComponentEntity:
             distribution=MpiDistribution(process_count_per_instance=4),
             environment_variables=dict(foo="bar"),
             # Customers can still do this:
-            resources=ResourceConfiguration(instance_count=2, instance_type="STANDARD_D2"),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_D2"),
             limits=CommandJobLimits(timeout=300),
             inputs={
                 "float": 0.01,
@@ -331,7 +333,7 @@ class TestCommandComponentEntity:
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
-        component_to_sweep: CommandComponent = load_component(path=yaml_file)
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
         cmd_node1: Command = component_to_sweep(
             component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
         )
@@ -348,3 +350,24 @@ class TestCommandComponentEntity:
                 "name: microsoftsamples_command_component_basic\n  version: 0.0.1\n  display_name: CommandComponentBasi"
                 in std_out.getvalue()
             )
+
+    def test_invalid_component_inputs(self) -> None:
+        yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
+        # directly load illegal YAML component will get validation exception to prevent user init entity
+        with pytest.raises(ValidationException) as e:
+            load_component(path=yaml_path)
+        assert "Invalid component input names 'COMPONENT_IN_NUMBER' and 'component_in_number'" in str(e.value)
+        component = load_component(
+            path=yaml_path,
+            params_override=[
+                {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
+            ],
+        )
+        validation_result = component._customized_validate()
+        assert validation_result.passed
+
+        # user can still overwrite input name to illegal
+        component.inputs["COMPONENT_IN_NUMBER"] = Input(description="1", type="number")
+        validation_result = component._customized_validate()
+        assert not validation_result.passed
+        assert validation_result.invalid_fields[0] == "inputs.COMPONENT_IN_NUMBER"

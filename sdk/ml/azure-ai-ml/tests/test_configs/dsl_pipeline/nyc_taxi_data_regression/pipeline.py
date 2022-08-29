@@ -7,11 +7,11 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    prep_func = load_component(path=parent_dir + "/prep.yml")
-    transform_func = load_component(path=parent_dir + "/transform.yml")
-    train_func = load_component(path=parent_dir + "/train.yml")
-    predict_func = load_component(path=parent_dir + "/predict.yml")
-    score_func = load_component(path=parent_dir + "/score.yml")
+    prep_func = load_component(source=parent_dir + "/prep.yml")
+    transform_func = load_component(source=parent_dir + "/transform.yml")
+    train_func = load_component(source=parent_dir + "/train.yml")
+    predict_func = load_component(source=parent_dir + "/predict.yml")
+    score_func = load_component(source=parent_dir + "/score.yml")
 
     # 2. Construct pipeline
     @dsl.pipeline(compute="cpu-cluster", default_datastore="workspaceblobstore")

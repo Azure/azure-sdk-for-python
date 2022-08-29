@@ -269,8 +269,8 @@ def regression(
             This should be between 0.0 and 1.0 non-inclusive.
             If ``test_data_size`` is specified at the same time as ``validation_data_size``,
             then the test data is split from ``training_data`` before the validation data is split.
-            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data has 1000 rows,
-            then the test data will have 100 rows, the validation data will contain 90 rows
+            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data has
+            1000 rows, then the test data will have 100 rows, the validation data will contain 90 rows
             and the training data will have 810 rows.
 
             For regression based tasks, random sampling is used. For classification
@@ -412,8 +412,8 @@ def forecasting(
             This should be between 0.0 and 1.0 non-inclusive.
             If ``test_data_size`` is specified at the same time as ``validation_data_size``,
             then the test data is split from ``training_data`` before the validation data is split.
-            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data has 1000 rows,
-            then the test data will have 100 rows, the validation data will contain 90 rows
+            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data
+            has 1000 rows, then the test data will have 100 rows, the validation data will contain 90 rows
             and the training data will have 810 rows.
 
             For regression based tasks, random sampling is used. For classification

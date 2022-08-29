@@ -89,7 +89,7 @@ class BatchEndpoint(Endpoint):
         return BatchEndpointData(location=location, tags=self.tags, properties=batch_endpoint)
 
     @classmethod
-    def _from_rest_object(cls, endpoint: BatchEndpointData):
+    def _from_rest_object(cls, endpoint: BatchEndpointData):  # pylint: disable=arguments-renamed
         return BatchEndpoint(
             id=endpoint.id,
             name=endpoint.name,
@@ -104,18 +104,19 @@ class BatchEndpoint(Endpoint):
             swagger_uri=endpoint.properties.swagger_uri,
         )
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(self, path: Union[PathLike, str] = None) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return BatchEndpointSchema(context=context).dump(self)  # type: ignore
+        return BatchEndpointSchema(context=context).dump(self)  # type: ignore # pylint: disable=no-member
 
     @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "BatchEndpoint":
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
@@ -124,4 +125,4 @@ class BatchEndpoint(Endpoint):
         return load_from_dict(BatchEndpointSchema, data, context)
 
     def _to_dict(self) -> Dict:
-        return BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member

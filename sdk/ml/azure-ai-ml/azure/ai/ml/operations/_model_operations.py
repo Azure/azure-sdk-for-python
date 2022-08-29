@@ -18,7 +18,15 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._ml_exceptions import AssetPathException, ErrorCategory, ErrorTarget, ValidationException
+
+from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml._ml_exceptions import (
+    AssetPathException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -32,8 +40,15 @@ from azure.ai.ml._utils._asset_utils import (
     _get_latest,
     _resolve_label_to_asset,
 )
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
+from azure.ai.ml._utils._registry_utils import (
+    get_asset_body_for_registry_storage,
+    get_sas_uri_for_registry_asset,
+    get_storage_details_for_registry_assets,
+)
+from azure.ai.ml._utils._storage_utils import (
+    get_ds_name_and_path_prefix,
+    get_storage_client,
+)
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
@@ -73,9 +88,23 @@ class ModelOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, model: Model) -> Model:  # TODO: Are we going to implement job_name?
+        """Returns created or updated model asset.
+
+        :param model: Model asset object.
+        :type model: Model
+        :return: Model asset object.
+        :raises AssetPathException: Raised when the code asset is already linked to another asset
+        """
         name = model.name
         if not model.version and self._registry_name:
-            raise Exception("Model version is required for registry")
+            msg = "Model version is required for registry"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.MODEL,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
+            )
         version = model.version
 
         sas_uri = None
@@ -90,10 +119,12 @@ class ModelOperations(_ScopeDependentOperations):
                 body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
             )
             if not sas_uri:
-                module_logger.debug(f"Getting the existing asset name: {model.name}, version: {model.version}")
+                module_logger.debug("Getting the existing asset name: %s, version: %s", model.name, model.version)
                 return self.get(name=model.name, version=model.version)
 
-        model, indicator_file = _check_and_upload_path(artifact=model, asset_operations=self, sas_uri=sas_uri)
+        model, indicator_file = _check_and_upload_path(
+            artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL
+        )
 
         model.path = resolve_short_datastore_url(model.path, self._operation_scope)
         validate_ml_flow_folder(model.path, model.type)
@@ -131,7 +162,7 @@ class ModelOperations(_ScopeDependentOperations):
             if not result and self._registry_name:
                 result = self._get(name=model.name, version=model.version)
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             # service side raises an exception if we attempt to update an existing asset's path
             if str(e) == ASSET_PATH_ERROR:
                 raise AssetPathException(
@@ -140,8 +171,7 @@ class ModelOperations(_ScopeDependentOperations):
                     no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            else:
-                raise e
+            raise e
 
         model = Model._from_rest_object(result)
         if auto_increment_version and indicator_file:
@@ -167,14 +197,14 @@ class ModelOperations(_ScopeDependentOperations):
                     **self._scope_kwargs,
                 )
             )
-        else:
-            return (
-                self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
-                if self._registry_name
-                else self._model_container_operation.get(
-                    name=name, workspace_name=self._workspace_name, **self._scope_kwargs
-                )
+
+        return (
+            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
+            if self._registry_name
+            else self._model_container_operation.get(
+                name=name, workspace_name=self._workspace_name, **self._scope_kwargs
             )
+        )
 
     @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str = None, label: str = None) -> Model:
@@ -194,6 +224,7 @@ class ModelOperations(_ScopeDependentOperations):
                 target=ErrorTarget.MODEL,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if label:
@@ -206,6 +237,7 @@ class ModelOperations(_ScopeDependentOperations):
                 target=ErrorTarget.MODEL,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         # TODO: We should consider adding an exception trigger for internal_model=None
         model_version_resource = self._get(name, version)
@@ -218,40 +250,56 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param str name: Name of the model.
         :param str version: Version of the model.
-        :param Union[PathLike, str] download_path: Local path as download destination, defaults to current working directory of the current user. Contents will be overwritten.
+        :param Union[PathLike, str] download_path: Local path as download destination,
+            defaults to current working directory of the current user. Contents will be overwritten.
         :raise: ResourceNotFoundError if can't find a model matching provided name.
         """
+
         model_uri = self.get(name=name, version=version).path
-        ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri)
-        ds = self._datastore_operation.get(ds_name, include_secrets=True)
-        acc_name = ds.account_name
+        if self._registry_name:
+            sas_uri = get_storage_details_for_registry_assets(
+                service_client=self._service_client,
+                asset_name=name,
+                asset_version=version,
+                reg_name=self._registry_name,
+                asset_type=AzureMLResourceType.MODEL,
+                rg_name=self._resource_group_name,
+                uri=model_uri,
+            )
+            storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
+            path_prefix = model_uri.split("/")[-1]
 
-        if isinstance(ds.credentials, AccountKeyCredentials):
-            credential = ds.credentials.account_key
         else:
-            try:
-                credential = ds.credentials.sas_token
-            except Exception as e:
-                if not hasattr(ds.credentials, "sas_token"):
-                    credential = self._datastore_operation._credential
-                else:
-                    raise e
+            ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri)
+            ds = self._datastore_operation.get(ds_name, include_secrets=True)
+            acc_name = ds.account_name
 
-        container = ds.container_name
-        datastore_type = ds.type
+            if isinstance(ds.credentials, AccountKeyCredentials):
+                credential = ds.credentials.account_key
+            else:
+                try:
+                    credential = ds.credentials.sas_token
+                except Exception as e:  # pylint: disable=broad-except
+                    if not hasattr(ds.credentials, "sas_token"):
+                        credential = self._datastore_operation._credential
+                    else:
+                        raise e
 
-        storage_client = get_storage_client(
-            credential=credential,
-            container_name=container,
-            storage_account=acc_name,
-            storage_type=datastore_type,
-        )
+            container = ds.container_name
+            datastore_type = ds.type
+
+            storage_client = get_storage_client(
+                credential=credential,
+                container_name=container,
+                storage_account=acc_name,
+                storage_type=datastore_type,
+            )
 
         path_file = "{}{}{}".format(download_path, path.sep, name)
         is_directory = storage_client.exists(f"{path_prefix.rstrip('/')}/")
         if is_directory:
             path_file = path.join(path_file, path.basename(path_prefix.rstrip("/")))
-        module_logger.info(f"Downloading the model {path_prefix} at {path_file}\n")
+        module_logger.info("Downloading the model %s at %s\n", path_prefix, path_file)
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
     @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
@@ -329,22 +377,22 @@ class ModelOperations(_ScopeDependentOperations):
                     **self._scope_kwargs,
                 )
             )
-        else:
-            return (
-                self._model_container_operation.list(
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
-                    list_view_type=list_view_type,
-                    **self._scope_kwargs,
-                )
-                if self._registry_name
-                else self._model_container_operation.list(
-                    workspace_name=self._workspace_name,
-                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
-                    list_view_type=list_view_type,
-                    **self._scope_kwargs,
-                )
+
+        return (
+            self._model_container_operation.list(
+                registry_name=self._registry_name,
+                cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+                list_view_type=list_view_type,
+                **self._scope_kwargs,
             )
+            if self._registry_name
+            else self._model_container_operation.list(
+                workspace_name=self._workspace_name,
+                cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+                list_view_type=list_view_type,
+                **self._scope_kwargs,
+            )
+        )
 
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.

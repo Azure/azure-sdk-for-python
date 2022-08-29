@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import re
 import json
 import logging
 import os
@@ -13,7 +14,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException, MlException
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
@@ -25,7 +26,8 @@ from azure.ai.ml._scope_dependent_operations import OperationsContainer, Operati
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
+from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
 from azure.ai.ml.constants import (
     ARM_ID_FULL_PREFIX,
@@ -37,11 +39,14 @@ from azure.ai.ml.constants import (
     EndpointInvokeFields,
     EndpointYamlFields,
     LROConfigurations,
+    SHORT_URI_REGEX_FORMAT,
+    LONG_URI_REGEX_FORMAT,
 )
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
+from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import TokenCredential
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -67,7 +72,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         service_client_09_2020_dataplanepreview: ServiceClient092020DataplanePreview,
         all_operations: OperationsContainer,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
 
@@ -80,6 +85,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
+
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @property
     def _datastore_operations(self) -> "DatastoreOperations":
@@ -204,7 +211,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         deployment_name: str = None,
         input: Input = None,  # pylint: disable=redefined-builtin
         params_override=None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> BatchJobResource:
         """Invokes the batch endpoint with the provided payload.
 
@@ -274,13 +281,13 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        response = post_and_validate_response(
-            url=endpoint.properties.scoring_uri,
+        response = self._requests_pipeline.post(
+            endpoint.properties.scoring_uri,
             json=BatchJobResource(properties=batch_job).serialize(),
             headers=headers,
-            **kwargs,
         )
-        batch_job = json.loads(response.text)
+        validate_response(response)
+        batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
 
     @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
@@ -293,7 +300,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        mfe_base_uri = _get_mfe_base_url_from_discovery_service(workspace_operations, self._workspace_name)
+        mfe_base_uri = _get_mfe_base_url_from_discovery_service(
+            workspace_operations, self._workspace_name, self._requests_pipeline
+        )
 
         with modified_operation_client(self._batch_job_endpoint, mfe_base_uri):
             result = self._batch_job_endpoint.list(
@@ -374,6 +383,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
             elif ":" in entry.path or "@" in entry.path:  # Check registered file or folder datastore
+                # If we receive a datastore path in long/short form we don't need
+                # to get the arm asset id
+                if re.match(SHORT_URI_REGEX_FORMAT, entry.path) or re.match(LONG_URI_REGEX_FORMAT, entry.path):
+                    return
                 asset_type = AzureMLResourceType.DATASTORE
                 entry.path = remove_datastore_prefix(entry.path)
                 orchestrator = OperationOrchestrator(self._all_operations, self._operation_scope)
@@ -387,6 +400,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 )
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
+        except (MlException, HttpResponseError) as e:
+            raise e
         except Exception as e:
             raise ValidationException(
                 message=f"Supported input path value are: path on the datastore, public URI, "

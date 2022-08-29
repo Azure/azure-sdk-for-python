@@ -97,7 +97,7 @@ class TestMachineLearningClient:
 
         assert ml_client.workspaces._operation._client._base_url == mock_url
         assert ml_client.compute._operation._client._base_url == mock_url
-        assert ml_client.jobs._operation_2022_02_preview._client._base_url == mock_url
+        assert ml_client.jobs._operation_2022_06_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
     @patch("azure.ai.ml._ml_client.ComputeOperations", Mock())
@@ -179,6 +179,14 @@ class TestMachineLearningClient:
         else:
             ml_client.create_or_update(*args, **kwargs)
             ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+        # trying to change this whole file to use assertRaises caused half the existing test to fail
+        no_second_impl = False
+        try:
+            ml_client.begin_create_or_update(*args, **kwargs)
+        except TypeError:
+            no_second_impl = True
+        finally:
+            assert no_second_impl
 
     @patch("azure.ai.ml._ml_client.ComputeOperations", Mock())
     @patch("azure.ai.ml._ml_client.DatastoreOperations", Mock())
@@ -266,6 +274,14 @@ class TestMachineLearningClient:
         else:
             ml_client.begin_create_or_update(*args, **kwargs)
             ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+        # trying to change this whole file to use assertRaises caused half the existing test to fail
+        no_second_impl = False
+        try:
+            ml_client.create_or_update(*args, **kwargs)
+        except TypeError:
+            no_second_impl = True
+        finally:
+            assert no_second_impl
 
     def test_load_config(self, tmp_path, mock_credential):
         root = tmp_path
