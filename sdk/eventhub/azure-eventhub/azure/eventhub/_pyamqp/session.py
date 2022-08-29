@@ -174,7 +174,7 @@ class Session(object):
             self._input_handles[frame[1]]._incoming_attach(frame)
         except KeyError:
             try:
-                outgoing_handle = self._get_next_output_handle()  # TODO: catch max-handles error
+                outgoing_handle = self._get_next_output_handle()
             except ValueError:
                 self._connection.close(error=AMQPSessionError(
                     condition=ErrorCondition.ResourceLimitExceeded, 
