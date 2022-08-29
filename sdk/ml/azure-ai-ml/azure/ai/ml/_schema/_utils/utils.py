@@ -4,10 +4,10 @@
 
 import logging
 import re
+from collections import OrderedDict
+from typing import Any, Dict
 
 from marshmallow.exceptions import ValidationError
-from typing import Any, Dict
-from collections import OrderedDict
 
 module_logger = logging.getLogger(__name__)
 

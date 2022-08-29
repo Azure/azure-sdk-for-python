@@ -1,22 +1,22 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Dict, Any
-from ._identity import IdentityConfiguration
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComputeType, TYPE
-from azure.ai.ml.entities import Compute
-from azure.ai.ml.entities._util import load_from_dict
+
+# pylint: disable=protected-access
+
+from typing import Any, Dict, Optional
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource, Kubernetes, KubernetesProperties
 from azure.ai.ml._schema.compute.kubernetes_compute import KubernetesComputeSchema
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ComputeResource,
-    KubernetesProperties,
-    Kubernetes,
-)
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, ComputeType
+from azure.ai.ml.entities._compute.compute import Compute
+from azure.ai.ml.entities._util import load_from_dict
+
+from ._identity import IdentityConfiguration
 
 
 class KubernetesCompute(Compute):
-    """Kubernetes Compute resource
+    """Kubernetes Compute resource.
 
     :param name: Name of the compute
     :type name: str

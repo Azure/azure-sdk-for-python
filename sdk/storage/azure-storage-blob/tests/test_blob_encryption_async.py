@@ -6,6 +6,7 @@
 
 from io import StringIO, BytesIO
 from json import loads
+from math import ceil
 from os import (
     urandom,
     path,
@@ -539,6 +540,24 @@ class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
         self.assertEqual(content[22:42], blob_content)
 
     @BlobPreparer()
+    async def test_get_blob_range_cross_chunk(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+
+        data = b'12345' * 205 * 3  # 3075 bytes
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(data, overwrite=True)
+
+        # Act
+        offset, length = 501, 2500
+        blob_content = await (await blob.download_blob(offset=offset, length=length)).readall()
+
+        # Assert
+        self.assertEqual(data[offset:offset + length], blob_content)
+
+    @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_strict_mode_async(self, storage_account_name, storage_account_key):
         await self._setup(storage_account_name, storage_account_key)
@@ -749,6 +768,68 @@ class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
         self.assertEqual(self.bytes, bytes_blob)
         self.assertEqual(self.bytes, stream_blob.read())
         self.assertEqual(self.bytes.decode(), text_blob)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_read(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+
+        data = b'12345' * 205 * 25  # 25625 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        await blob.upload_blob(data, overwrite=True)
+        stream = await blob.download_blob(max_concurrency=3)
+
+        # Act
+        result = bytearray()
+        read_size = 3000
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = await stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    async def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        await blob.upload_blob(data, overwrite=True)
+        offset, length = 501, 5000
+
+        # Act / Assert
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(100)  # Read in first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + 100]
+        assert second == data[offset + 100:offset + length]
+
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(3000)  # Read past first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+        assert read_size == len(second)
 
 
 # ------------------------------------------------------------------------------

@@ -4,6 +4,10 @@
 
 from enum import Enum
 
+from six import with_metaclass
+
+from azure.core import CaseInsensitiveEnumMeta
+
 
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
@@ -16,8 +20,8 @@ PARAMS_OVERRIDE_KEY = "params_override"
 TYPE = "type"
 JOBLIMITSTYPE = "JobLimitsType"
 DATA_ARM_TYPE = "data"
-DATASET_ARM_TYPE = "datasets"
 ARM_ID_PREFIX = "azureml:"
+CURATED_ENV_PREFIX = "AzureML-"
 FILE_PREFIX = "file:"
 FOLDER_PREFIX = "folder:"
 HTTP_PREFIX = "http"
@@ -29,10 +33,10 @@ NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/wor
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
 DATASTORE_RESOURCE_ID = (
-    "/subscriptions/{}/resourceGroups/{}/providers/" "Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
+    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
 )
 PROVIDER_RESOURCE_ID_WITH_VERSION = (
-    "/subscriptions/{}/resourceGroups/{}/providers/" "Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
+    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
@@ -44,8 +48,13 @@ DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
 AZUREML_PRIVATE_FEATURES_ENV_VAR = "AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"
+AZUREML_INTERNAL_COMPONENTS_ENV_VAR = "AZURE_ML_INTERNAL_COMPONENTS_ENABLED"
+AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX = "https://componentsdk.azureedge.net/jsonschema/"
 COMMON_RUNTIME_ENV_VAR = "AZUREML_COMPUTE_USE_COMMON_RUNTIME"
-ENDPOINT_DEPLOYMENT_START_MSG = "{}/#blade/HubsExtension/DeploymentDetailsBlade/overview/id/%2Fsubscriptions%2F{}%2FresourceGroups%2F{}%2Fproviders%2FMicrosoft.Resources%2Fdeployments%2F{}\n"
+ENDPOINT_DEPLOYMENT_START_MSG = (
+    "{}/#blade/HubsExtension/DeploymentDetailsBlade/overview/id/"
+    "%2Fsubscriptions%2F{}%2FresourceGroups%2F{}%2Fproviders%2FMicrosoft.Resources%2Fdeployments%2F{}\n"
+)
 AZUREML_LOCAL_ENDPOINTS_NOT_IMPLEMENTED_ERROR = "This operation for local endpoints is not supported yet."
 BATCH_JOB_NOT_SUPPORTED_ERROR_CODE = "BatchJobNotSupported"
 ENVIRONMENT_VARIABLES = "environment_variables"
@@ -78,13 +87,13 @@ LONG_URI_REGEX_FORMAT = (
 )
 ASSET_ID_URI_REGEX_FORMAT = "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 AZUREML_CLI_SYSTEM_EXECUTED_ENV_VAR = "AZUREML_CLI_SYSTEM_EXECUTED"
-DOCSTRING_TEMPLATE = ".. note::" "    {0} {1}\n\n"
+DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
 DOCSTRING_DEFAULT_INDENTATION = 8
 EXPERIMENTAL_CLASS_MESSAGE = "This is an experimental class,"
 EXPERIMENTAL_METHOD_MESSAGE = "This is an experimental method,"
 EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
 EXPERIMENTAL_LINK_MESSAGE = (
-    "and may change at any time. " "Please see https://aka.ms/azuremlexperimental for more information."
+    "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 )
 REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "For a more detailed breakdown of the {} schema, please see: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
@@ -94,7 +103,11 @@ BATCH_JOB_CHILD_RUN_OUTPUT_NAME = "score"
 DEFAULT_ARTIFACT_STORE_OUTPUT_NAME = "default"
 DEFAULT_EXPERIMENT_NAME = "Default"
 
-CREATE_ENVIRONMENT_ERROR_MESSAGE = "It looks like you are trying to specify a conda file for the --file/-f argument. --file/-f is reserved for the Azure ML Environment definition (see schema here: {}). To specify a conda file via command-line argument, please use --conda-file/-c argument."
+CREATE_ENVIRONMENT_ERROR_MESSAGE = (
+    "It looks like you are trying to specify a conda file for the --file/-f argument. "
+    "--file/-f is reserved for the Azure ML Environment definition (see schema here: {}). "
+    "To specify a conda file via command-line argument, please use --conda-file/-c argument."
+)
 API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
@@ -114,6 +127,7 @@ STORAGE_ACCOUNT_URLS = {
 
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
+LOCAL_PATH = "local_path"
 
 
 class SearchSpace:
@@ -207,7 +221,6 @@ class AzureMLResourceType(object):
     CODE = "codes"
     COMPUTE = "computes"
     DATA = "data"
-    DATASET = "datasets"
     DATASTORE = "datastores"
     ONLINE_ENDPOINT = "online_endpoints"
     BATCH_ENDPOINT = "batch_endpoints"
@@ -221,6 +234,7 @@ class AzureMLResourceType(object):
     WORKSPACE = "workspaces"
     WORKSPACE_CONNECTION = "workspace_connections"
     COMPONENT = "components"
+    SCHEDULE = "schedules"
 
     NAMED_TYPES = {
         JOB,
@@ -229,8 +243,9 @@ class AzureMLResourceType(object):
         ONLINE_ENDPOINT,
         ONLINE_DEPLOYMENT,
         DATASTORE,
+        SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, DATASET, CODE, ENVIRONMENT, COMPONENT}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT}
 
 
 class ArmConstants(object):
@@ -331,6 +346,7 @@ class EndpointGetLogsFields(object):
 class CommonYamlFields(object):
     TYPE = "type"
     NAME = "name"
+    SCHEMA = "$schema"
 
 
 class JobComputePropertyFields(object):
@@ -364,7 +380,6 @@ class EndpointYamlFields(object):
     BATCH_JOB_INSTANCE_COUNT = "compute.instance_count"
     BATCH_JOB_OUTPUT_PATH = "output_dataset.path"
     BATCH_JOB_OUTPUT_DATSTORE = "output_dataset.datastore_id"
-    BATCH_JOB_DATASET = "dataset"
     BATCH_JOB_NAME = "job_name"
 
 
@@ -395,7 +410,6 @@ class AutoMLConstants:
     FORECASTING_YAML = "forecasting"
     TRAINING_YAML = "training"
     MAX_TRIALS_YAML = "max_trials"
-    DATASET_YAML = "dataset"
     VALIDATION_DATASET_SIZE_YAML = "validation_dataset_size"
     TRAINING_DATA_SETTINGS_YAML = "training"
     TEST_DATA_SETTINGS_YAML = "test"
@@ -551,7 +565,6 @@ class ModelType:
 class YAMLRefDocLinks:
     WORKSPACE = "https://aka.ms/ml-cli-v2-workspace-yaml-reference"
     ENVIRONMENT = "https://aka.ms/ml-cli-v2-environment-yaml-reference"
-    DATASET = "https://aka.ms/ml-cli-v2-dataset-yaml-reference"
     DATA = "https://aka.ms/ml-cli-v2-data-yaml-reference"
     MODEL = "https://aka.ms/ml-cli-v2-model-yaml-reference"
     AML_COMPUTE = "https://aka.ms/ml-cli-v2-compute-aml-yaml-reference"
@@ -572,13 +585,13 @@ class YAMLRefDocLinks:
     BATCH_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-batch-yaml-reference"
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
+    SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
     WORKSPACE = "Workspace"
     ENVIRONMENT = "Environment"
     DATA = "Data"
-    DATASET = "Dataset"
     MODEL = "Model"
     AML_COMPUTE = "AMLCompute"
     COMPUTE_INSTANCE = "ComputeInstance"
@@ -598,6 +611,7 @@ class YAMLRefDocSchemaNames:
     BATCH_DEPLOYMENT = "BatchDeployment"
     COMMAND_COMPONENT = "CommandComponent"
     PARALLEL_COMPONENT = "ParallelComponent"
+    SCHEDULE = "Schedule"
 
 
 class NodeType(object):
@@ -605,6 +619,7 @@ class NodeType(object):
     SWEEP = "sweep"
     PARALLEL = "parallel"
     AUTOML = "automl"
+    PIPELINE = "pipeline"
 
 
 class ComponentSource:
@@ -612,9 +627,12 @@ class ComponentSource:
 
     BUILDER = "BUILDER"
     DSL = "DSL"
-    SDK = "SDK"
-    REST = "REST"
-    YAML = "YAML"
+    CLASS = "CLASS"
+    REMOTE_WORKSPACE_JOB = "REMOTE.WORKSPACE.JOB"
+    REMOTE_WORKSPACE_COMPONENT = "REMOTE.WORKSPACE.COMPONENT"
+    REMOTE_REGISTRY = "REMOTE.REGISTRY"
+    YAML_JOB = "YAML.JOB"
+    YAML_COMPONENT = "YAML.COMPONENT"
 
 
 class LoggingLevel:
@@ -624,12 +642,13 @@ class LoggingLevel:
 
 
 class ParallelTaskType:
+    RUN_FUNCTION = "run_function"
     FUNCTION = "function"
     MODEL = "model"
 
 
 class TimeZone(str, Enum):
-    "Time zones that a job or compute instance schedule accepts"
+    """Time zones that a job or compute instance schedule accepts."""
 
     DATELINE_STANDARD_TIME = "Dateline Standard Time"
     UTC_11 = "UTC-11"
@@ -657,7 +676,7 @@ class TimeZone(str, Enum):
     US_EASTERN_STANDARD_TIME = "US Eastern Standard Time"
     PARAGUAY_STANDARD_TIME = "Paraguay Standard Time"
     ATLANTIC_STANDARD_TIME = "Atlantic Standard Time"
-    VenezuelaStandardTime = "Venezuela Standard Time"
+    VENEZUELA_STANDARD_TIME = "Venezuela Standard Time"
     CENTRAL_BRAZILIAN_STANDARD_TIME = "Central Brazilian Standard Time"
     SA_WESTERN_STANDARD_TIME = "SA Western Standard Time"
     PACIFIC_SA_STANDARD_TIME = "Pacific SA Standard Time"
@@ -764,20 +783,36 @@ class TimeZone(str, Enum):
     LINE_ISLANDS_STANDARD_TIME = "Line Islands Standard Time"
 
 
-class IO_CONSTANTS:
-    PRIMITIVE_STR_2_TYPE = {"integer": int, "string": str, "number": float, "boolean": bool}
-    PRIMITIVE_TYPE_2_STR = {int: "integer", str: "string", float: "number", bool: "boolean"}
+class ComponentParameterTypes:
+    NUMBER = "number"
+    INTEGER = "integer"
+    BOOLEAN = "boolean"
+    STRING = "string"
+
+
+class IOConstants:
+    PRIMITIVE_STR_2_TYPE = {
+        ComponentParameterTypes.INTEGER: int,
+        ComponentParameterTypes.STRING: str,
+        ComponentParameterTypes.NUMBER: float,
+        ComponentParameterTypes.BOOLEAN: bool,
+    }
+    PRIMITIVE_TYPE_2_STR = {
+        int: ComponentParameterTypes.INTEGER,
+        str: ComponentParameterTypes.STRING,
+        float: ComponentParameterTypes.NUMBER,
+        bool: ComponentParameterTypes.BOOLEAN,
+    }
     TYPE_MAPPING_YAML_2_REST = {
-        "string": "String",
-        "integer": "Integer",
-        "number": "Number",
-        "boolean": "Boolean",
+        ComponentParameterTypes.STRING: "String",
+        ComponentParameterTypes.INTEGER: "Integer",
+        ComponentParameterTypes.NUMBER: "Number",
+        ComponentParameterTypes.BOOLEAN: "Boolean",
     }
     PARAM_PARSERS = {
-        "float": float,
-        "integer": lambda v: int(float(v)),  # backend returns 10.0 for integer, parse it to float before int
-        "boolean": lambda v: str(v).lower() == "true",
-        "number": float,
+        ComponentParameterTypes.INTEGER: lambda v: int(float(v)),  # parse case like 10.0 -> 10
+        ComponentParameterTypes.BOOLEAN: lambda v: str(v).lower() == "true",
+        ComponentParameterTypes.NUMBER: float,
     }
     # For validation, indicates specific parameters combination for each type
     INPUT_TYPE_COMBINATION = {

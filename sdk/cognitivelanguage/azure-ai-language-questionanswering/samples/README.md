@@ -31,7 +31,7 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 
 ### Prerequisites
 
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
 * An existing Question Answering resource
 

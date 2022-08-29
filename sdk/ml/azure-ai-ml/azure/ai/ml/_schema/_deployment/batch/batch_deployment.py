@@ -1,24 +1,22 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 from typing import Any
 
-from azure.ai.ml._schema.core.fields import StringTransformedEnum, ComputeField
-from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
-from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
-from azure.ai.ml._schema import NestedField
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    BatchDeploymentOutputAction,
-)
 from marshmallow import fields, post_load
 
-from .batch_deployment_settings import (
-    BatchRetrySettingsSchema,
-)
-
+from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema._utils.utils import exit_if_registry_assets
+from azure.ai.ml._schema.core.fields import ComputeField, StringTransformedEnum
+from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, BatchDeploymentOutputAction
+
+from .batch_deployment_settings import BatchRetrySettingsSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -38,9 +36,12 @@ class BatchDeploymentSchema(DeploymentSchema):
         }
     )
     output_action = StringTransformedEnum(
-        allowed_values=[BatchDeploymentOutputAction.APPEND_ROW, BatchDeploymentOutputAction.SUMMARY_ONLY],
+        allowed_values=[
+            BatchDeploymentOutputAction.APPEND_ROW,
+            BatchDeploymentOutputAction.SUMMARY_ONLY,
+        ],
         metadata={"description": "Indicates how batch inferencing will handle output."},
-        default=BatchDeploymentOutputAction.APPEND_ROW,
+        dump_default=BatchDeploymentOutputAction.APPEND_ROW,
     )
     output_file_name = fields.Str(metadata={"description": "Customized output file name for append_row output action."})
     max_concurrency_per_instance = fields.Int(

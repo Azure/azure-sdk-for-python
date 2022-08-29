@@ -1,0 +1,16 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/DataTransferComponent.json
+name: data_transfer
+version: 0.0.1
+display_name: Data Transfer
+type: DataTransferComponent
+description: transfer data between common storage types such as Azure Blob Storage and Azure Data Lake.
+tags: {category: Component Tutorial, contact: amldesigner@microsoft.com}
+is_deterministic: True
+inputs:
+  source_data:
+    type: path
+    description: Source data
+outputs:
+  destination_data:
+    type: path
+    description: Destination data

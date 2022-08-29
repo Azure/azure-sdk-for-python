@@ -9,7 +9,7 @@ import os
 from . import AzureMgmtPreparer
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 from dotenv import load_dotenv, find_dotenv
-from .sanitizers import add_general_regex_sanitizer
+from .sanitizers import add_general_string_sanitizer
 
 
 class EnvironmentVariableLoader(AzureMgmtPreparer):
@@ -76,7 +76,10 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                         # test proxy tests have no scrubber, and instead register sanitizers using fake values
                         else:
                             try:
-                                add_general_regex_sanitizer(value=scrubbed_value, regex=self.real_values[key.lower()])
+                                add_general_string_sanitizer(
+                                    value=scrubbed_value,
+                                    target=self.real_values[key.lower()],
+                                )
                             except:
                                 logger = logging.getLogger()
                                 logger.info(

@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
-from azure.ai.ml._schema._utils.utils import replace_key_in_odict
 from typing import Any
 
-from azure.ai.ml._schema import PatchedSchemaMeta
 from marshmallow import fields, post_load, pre_load
+
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._schema._utils.utils import replace_key_in_odict
 
 module_logger = logging.getLogger(__name__)
 

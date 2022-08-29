@@ -26,7 +26,7 @@ import os
 import asyncio
 
 
-async def sample_recognize_pii_entities_async():
+async def sample_recognize_pii_entities_async() -> None:
     print(
         "In this sample we will be going through our customer's loan payment information and redacting "
         "all PII (personally identifiable information) before storing this information on our public website. "

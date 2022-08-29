@@ -6,7 +6,7 @@ import logging
 
 from marshmallow import fields
 
-from azure.ai.ml._schema import PatchedSchemaMeta
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import ArmStr
 from azure.ai.ml.constants import AzureMLResourceType
 

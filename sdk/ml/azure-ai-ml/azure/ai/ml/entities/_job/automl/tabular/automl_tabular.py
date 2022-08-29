@@ -5,16 +5,19 @@
 from abc import ABC
 from typing import Dict, List, Union
 
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    AutoNCrossValidations,
+    CustomNCrossValidations,
     LogVerbosity,
     StackEnsembleSettings,
     TableVerticalDataSettings,
     TableVerticalValidationDataSettings,
     TestDataSettings,
     TrainingDataSettings,
-    CustomNCrossValidations,
-    AutoNCrossValidations,
 )
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
@@ -22,12 +25,7 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     TabularFeaturizationSettings,
 )
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import (
-    TrainingSettings,
-)
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 
 
 class AutoMLTabular(AutoMLVertical, ABC):
@@ -393,7 +391,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         self._training.blocked_training_algorithms = blocked_training_algorithms
 
     def _validation_data_to_rest(self):
-        """validation data serialization"""
+        """validation data serialization."""
         validation_data = self._data.validation_data
         if validation_data and validation_data.n_cross_validations:
             n_cross_val = self._data.validation_data.n_cross_validations
@@ -405,7 +403,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
                 self._data.validation_data.n_cross_validations = AutoNCrossValidations()
 
     def _validation_data_from_rest(self):
-        """validation data deserialization"""
+        """validation data deserialization."""
         validation_data = self._data.validation_data
         if validation_data and validation_data.n_cross_validations:
             n_cross_val = self._data.validation_data.n_cross_validations

@@ -26,12 +26,7 @@ def mnist_dataset(batch_size):
     # We need to convert them to float32 with values in the range [0, 1]
     x_train = x_train / np.float32(255)
     y_train = y_train.astype(np.int64)
-    train_dataset = (
-        tf.data.Dataset.from_tensor_slices((x_train, y_train))
-        .shuffle(60000)
-        .repeat()
-        .batch(batch_size)
-    )
+    train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(60000).repeat().batch(batch_size)
     return train_dataset
 
 
@@ -57,11 +52,7 @@ def build_and_compile_cnn_model():
 def _is_chief(task_type, task_id):
     # If `task_type` is None, this may be operating as single worker, which works
     # effectively as chief.
-    return (
-        task_type is None
-        or task_type == "chief"
-        or (task_type == "worker" and task_id == 0)
-    )
+    return task_type is None or task_type == "chief" or (task_type == "worker" and task_id == 0)
 
 
 def _get_temp_dir(dirpath, task_id):
@@ -109,9 +100,7 @@ def main():
 
     # Keras' `model.fit()` trains the model with specified number of epochs and
     # number of steps per epoch.
-    multi_worker_model.fit(
-        multi_worker_dataset, epochs=args.epochs, steps_per_epoch=args.steps_per_epoch
-    )
+    multi_worker_model.fit(multi_worker_dataset, epochs=args.epochs, steps_per_epoch=args.steps_per_epoch)
 
     # Save the model
     task_type, task_id = (tf_config["task"]["type"], tf_config["task"]["index"])

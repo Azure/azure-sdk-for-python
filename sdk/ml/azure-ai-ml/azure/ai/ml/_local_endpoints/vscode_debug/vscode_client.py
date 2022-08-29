@@ -5,10 +5,11 @@
 
 import binascii
 import re
-from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevContainerResolver
-from azure.ai.ml._local_endpoints.utilities.entry_script_utility import EntryScriptUtility
-from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_command
+
 from azure.ai.ml._local_endpoints.errors import VSCodeCommandNotFound
+from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_command
+from azure.ai.ml._local_endpoints.utilities.entry_script_utility import EntryScriptUtility
+from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevContainerResolver
 
 
 class VSCodeClient(object):
@@ -47,7 +48,11 @@ class VSCodeClient(object):
 
     def invoke_dev_container(self, devcontainer_path: str, app_path: str):
         hex_encoded_devcontainer_path = self._encode_hex(devcontainer_path)
-        command = ["code", "--folder-uri", f"vscode-remote://dev-container+{hex_encoded_devcontainer_path}{app_path}"]
+        command = [
+            "code",
+            "--folder-uri",
+            f"vscode-remote://dev-container+{hex_encoded_devcontainer_path}{app_path}",
+        ]
         try:
             run_cli_command(command)
         except Exception as e:

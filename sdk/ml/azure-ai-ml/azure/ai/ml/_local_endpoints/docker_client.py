@@ -3,25 +3,26 @@
 # ---------------------------------------------------------
 
 
-import docker
-from docker.errors import DockerException, NotFound, BuildError, ImageNotFound
-from docker.models.containers import Container
 import json
 import logging
 import time
 
-from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
+import docker
+from docker.errors import BuildError, DockerException, ImageNotFound, NotFound
+from docker.models.containers import Container
+
 from azure.ai.ml._local_endpoints.errors import (
-    InvalidLocalEndpointError,
-    LocalEndpointNotFoundError,
-    LocalEndpointInFailedStateError,
     DockerEngineNotAvailableError,
-    MultipleLocalDeploymentsFoundError,
-    LocalEndpointImageBuildError,
+    InvalidLocalEndpointError,
     LocalEndpointImageBuildCondaError,
+    LocalEndpointImageBuildError,
+    LocalEndpointInFailedStateError,
+    LocalEndpointNotFoundError,
+    MultipleLocalDeploymentsFoundError,
 )
-from azure.ai.ml._utils.utils import initialize_logger_info
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
+from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
+from azure.ai.ml._utils.utils import initialize_logger_info
 from azure.ai.ml.constants import LocalEndpointConstants
 
 module_logger = logging.getLogger(__name__)
@@ -38,7 +39,8 @@ DEFAULT_LABELS = {
 
 
 class DockerClient(object):
-    """Client for interacting with User's Docker environment for local endpoints."""
+    """Client for interacting with User's Docker environment for local
+    endpoints."""
 
     def __init__(
         self,
@@ -213,12 +215,19 @@ class DockerClient(object):
             time.sleep(LocalEndpointConstants.DEFAULT_STARTUP_WAIT_TIME_SECONDS)
             container.reload()
             self._validate_container_state(
-                endpoint_name=endpoint_name, deployment_name=deployment_name, container=container
+                endpoint_name=endpoint_name,
+                deployment_name=deployment_name,
+                container=container,
             )
             scoring_uri = self.get_scoring_uri(endpoint_name=endpoint_name, deployment_name=deployment_name)
             module_logger.debug(f"Container [{container_name}] is up and running at {scoring_uri}\n")
 
-    def delete(self, endpoint_name: str, deployment_name: str = None, verify_exists: bool = True) -> None:
+    def delete(
+        self,
+        endpoint_name: str,
+        deployment_name: str = None,
+        verify_exists: bool = True,
+    ) -> None:
         """Deletes local endpoint / deployment.
 
         :param endpoint_name: name of local endpoint
@@ -275,12 +284,16 @@ class DockerClient(object):
         :raises: azure.ai.ml._local_endpoints.errors.MultipleLocalDeploymentsFoundError
         """
         container = self.get_endpoint_container(
-            endpoint_name=endpoint_name, deployment_name=deployment_name, verify_single_deployment=True
+            endpoint_name=endpoint_name,
+            deployment_name=deployment_name,
+            verify_single_deployment=True,
         )
         if container is None:
             return
         self._validate_container_state(
-            endpoint_name=endpoint_name, deployment_name=deployment_name, container=container
+            endpoint_name=endpoint_name,
+            deployment_name=deployment_name,
+            container=container,
         )
         return self.get_scoring_uri_from_container(container=container)
 
@@ -301,7 +314,12 @@ class DockerClient(object):
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
         return container.logs(tail=int(lines)).decode()
 
-    def list_containers(self, endpoint_name: str = None, deployment_name: str = None, include_stopped: bool = True):
+    def list_containers(
+        self,
+        endpoint_name: str = None,
+        deployment_name: str = None,
+        include_stopped: bool = True,
+    ):
         """Returns a list of local endpoints.
 
         :param endpoint_name: Name of local endpoint. If none, all local endpoints will be returned.
@@ -356,7 +374,9 @@ class DockerClient(object):
         :returns docker.models.containers.Container:
         """
         containers = self.list_containers(
-            endpoint_name=endpoint_name, deployment_name=deployment_name, include_stopped=include_stopped
+            endpoint_name=endpoint_name,
+            deployment_name=deployment_name,
+            include_stopped=include_stopped,
         )
         if len(containers) == 0:
             return
@@ -418,7 +438,12 @@ class DockerClient(object):
             module_logger.info("\nBuilding Docker image from Dockerfile")
             first_line = True
             for status in self._client.api.build(
-                path=build_directory, tag=image_name, dockerfile=dockerfile_path, pull=True, decode=True, quiet=False
+                path=build_directory,
+                tag=image_name,
+                dockerfile=dockerfile_path,
+                pull=True,
+                decode=True,
+                quiet=False,
             ):
                 if first_line:
                     module_logger.info("\n")

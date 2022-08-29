@@ -4,19 +4,113 @@
 
 from typing import Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    ImageModelDistributionSettingsClassification,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageModelDistributionSettingsClassification
 from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
-    _convert_to_rest_object,
     _convert_from_rest_object,
+    _convert_to_rest_object,
 )
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class ImageClassificationSearchSpace(RestTranslatableMixin):
-    """Search space for AutoML Image Classification and Image Classification Multilabel tasks."""
+    """Search space for AutoML Image Classification and Image Classification
+    Multilabel tasks.
+
+    :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
+    :type ams_gradient: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param augmentations: Settings for using Augmentations.
+    :type augmentations: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
+        range [0, 1].
+    :type beta1: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the
+        range [0, 1].
+    :type beta2: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param distributed: Whether to use distributer training.
+    :type distributed: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param early_stopping: Enable early stopping logic during training.
+    :type early_stopping: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param early_stopping_delay: Minimum number of epochs or validation evaluations to wait
+        before primary metric improvement
+        is tracked for early stopping. Must be a positive integer.
+    :type early_stopping_delay: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param early_stopping_patience: Minimum number of epochs or validation evaluations with no
+        primary metric improvement before
+        the run is stopped. Must be a positive integer.
+    :type early_stopping_patience: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param enable_onnx_normalization: Enable normalization when exporting ONNX model.
+    :type enable_onnx_normalization: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param evaluation_frequency: Frequency to evaluate validation dataset to get metric scores.
+        Must be a positive integer.
+    :type evaluation_frequency: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param gradient_accumulation_step: Gradient accumulation means running a configured number of
+        "GradAccumulationStep" steps without
+        updating the model weights while accumulating the gradients of those steps, and then using
+        the accumulated gradients to compute the weight updates. Must be a positive integer.
+    :type gradient_accumulation_step: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param layers_to_freeze: Number of layers to freeze for the model. Must be a positive
+        integer.
+        For instance, passing 2 as value for 'seresnext' means
+        freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
+        please
+        see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.
+    :type layers_to_freeze: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
+    :type learning_rate: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
+        'step'.
+    :type learning_rate_scheduler: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param model_name: Name of the model to use for training.
+        For more information on the available models please visit the official documentation:
+        https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+    :type model_name: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
+        1].
+    :type momentum: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param nesterov: Enable nesterov when optimizer is 'sgd'.
+    :type nesterov: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param number_of_epochs: Number of training epochs. Must be a positive integer.
+    :type number_of_epochs: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param number_of_workers: Number of data loader workers. Must be a non-negative integer.
+    :type number_of_workers: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param optimizer: Type of optimizer. Must be either 'sgd', 'adam', or 'adamw'.
+    :type optimizer: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param random_seed: Random seed to be used when using deterministic training.
+    :type random_seed: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float
+        in the range [0, 1].
+    :type step_lr_gamma: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be
+        a positive integer.
+    :type step_lr_step_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param training_batch_size: Training batch size. Must be a positive integer.
+    :type training_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param validation_batch_size: Validation batch size. Must be a positive integer.
+    :type validation_batch_size: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
+        'warmup_cosine'. Must be a float in the range [0, 1].
+    :type warmup_cosine_lr_cycles: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
+        'warmup_cosine'. Must be a positive integer.
+    :type warmup_cosine_lr_warmup_epochs: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must
+        be a float in the range[0, 1].
+    :type weight_decay: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param training_crop_size: Image crop size that is input to the neural network for the
+        training dataset. Must be a positive integer.
+    :type training_crop_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param validation_crop_size: Image crop size that is input to the neural network for the
+        validation dataset. Must be a positive integer.
+    :type validation_crop_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param validation_resize_size: Image size to which to resize before cropping for validation
+        dataset. Must be a positive integer.
+    :type validation_resize_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :param weighted_loss: Weighted loss. The accepted values are 0 for no weighted loss.
+        1 for weighted loss with sqrt.(class_weights). 2 for weighted loss with class_weights. Must be
+        0 or 1 or 2.
+    :type weighted_loss: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    """
 
     def __init__(
         self,

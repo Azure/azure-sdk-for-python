@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AzureMonitorMetricsDestination(msrest.serialization.Model):
@@ -49,8 +51,8 @@ class ColumnDefinition(msrest.serialization.Model):
 
     :ivar name: The name of the column.
     :vartype name: str
-    :ivar type: The type of the column data. Possible values include: "string", "int", "long",
-     "real", "boolean", "datetime", "dynamic".
+    :ivar type: The type of the column data. Known values are: "string", "int", "long", "real",
+     "boolean", "datetime", "dynamic".
     :vartype type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownColumnDefinitionType
     """
@@ -64,14 +66,14 @@ class ColumnDefinition(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "KnownColumnDefinitionType"]] = None,
+        type: Optional[Union[str, "_models.KnownColumnDefinitionType"]] = None,
         **kwargs
     ):
         """
         :keyword name: The name of the column.
         :paramtype name: str
-        :keyword type: The type of the column data. Possible values include: "string", "int", "long",
-         "real", "boolean", "datetime", "dynamic".
+        :keyword type: The type of the column data. Known values are: "string", "int", "long", "real",
+         "boolean", "datetime", "dynamic".
         :paramtype type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownColumnDefinitionType
         """
@@ -126,8 +128,8 @@ class DataCollectionEndpoint(msrest.serialization.Model):
     :ivar network_acls: Network access control rules for the endpoints.
     :vartype network_acls:
      ~$(python-base-namespace).v2022_02_01_preview.models.DataCollectionEndpointNetworkAcls
-    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Possible
-     values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
+    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionEndpointProvisioningState
     """
@@ -150,9 +152,9 @@ class DataCollectionEndpoint(msrest.serialization.Model):
         *,
         description: Optional[str] = None,
         immutable_id: Optional[str] = None,
-        configuration_access: Optional["DataCollectionEndpointConfigurationAccess"] = None,
-        logs_ingestion: Optional["DataCollectionEndpointLogsIngestion"] = None,
-        network_acls: Optional["DataCollectionEndpointNetworkAcls"] = None,
+        configuration_access: Optional["_models.DataCollectionEndpointConfigurationAccess"] = None,
+        logs_ingestion: Optional["_models.DataCollectionEndpointLogsIngestion"] = None,
+        network_acls: Optional["_models.DataCollectionEndpointNetworkAcls"] = None,
         **kwargs
     ):
         """
@@ -263,7 +265,7 @@ class NetworkRuleSet(msrest.serialization.Model):
     """Definition of the network rules.
 
     :ivar public_network_access: The configuration to set whether network access from public
-     internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
+     internet to the endpoints are allowed. Known values are: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownPublicNetworkAccessOptions
     """
@@ -275,12 +277,12 @@ class NetworkRuleSet(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        public_network_access: Optional[Union[str, "KnownPublicNetworkAccessOptions"]] = None,
+        public_network_access: Optional[Union[str, "_models.KnownPublicNetworkAccessOptions"]] = None,
         **kwargs
     ):
         """
         :keyword public_network_access: The configuration to set whether network access from public
-         internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
+         internet to the endpoints are allowed. Known values are: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownPublicNetworkAccessOptions
         """
@@ -292,7 +294,7 @@ class DataCollectionEndpointNetworkAcls(NetworkRuleSet):
     """Network access control rules for the endpoints.
 
     :ivar public_network_access: The configuration to set whether network access from public
-     internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
+     internet to the endpoints are allowed. Known values are: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownPublicNetworkAccessOptions
     """
@@ -304,12 +306,12 @@ class DataCollectionEndpointNetworkAcls(NetworkRuleSet):
     def __init__(
         self,
         *,
-        public_network_access: Optional[Union[str, "KnownPublicNetworkAccessOptions"]] = None,
+        public_network_access: Optional[Union[str, "_models.KnownPublicNetworkAccessOptions"]] = None,
         **kwargs
     ):
         """
         :keyword public_network_access: The configuration to set whether network access from public
-         internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
+         internet to the endpoints are allowed. Known values are: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownPublicNetworkAccessOptions
         """
@@ -327,7 +329,7 @@ class DataCollectionEndpointResource(msrest.serialization.Model):
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: The kind of the resource. Possible values include: "Linux", "Windows".
+    :ivar kind: The kind of the resource. Known values are: "Linux", "Windows".
     :vartype kind: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionEndpointResourceKind
     :ivar id: Fully qualified ID of the resource.
@@ -355,8 +357,8 @@ class DataCollectionEndpointResource(msrest.serialization.Model):
     :ivar network_acls: Network access control rules for the endpoints.
     :vartype network_acls:
      ~$(python-base-namespace).v2022_02_01_preview.models.DataCollectionEndpointNetworkAcls
-    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Possible
-     values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
+    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionEndpointProvisioningState
     """
@@ -393,12 +395,12 @@ class DataCollectionEndpointResource(msrest.serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "KnownDataCollectionEndpointResourceKind"]] = None,
+        kind: Optional[Union[str, "_models.KnownDataCollectionEndpointResourceKind"]] = None,
         description: Optional[str] = None,
         immutable_id: Optional[str] = None,
-        configuration_access: Optional["DataCollectionEndpointConfigurationAccess"] = None,
-        logs_ingestion: Optional["DataCollectionEndpointLogsIngestion"] = None,
-        network_acls: Optional["DataCollectionEndpointNetworkAcls"] = None,
+        configuration_access: Optional["_models.DataCollectionEndpointConfigurationAccess"] = None,
+        logs_ingestion: Optional["_models.DataCollectionEndpointLogsIngestion"] = None,
+        network_acls: Optional["_models.DataCollectionEndpointNetworkAcls"] = None,
         **kwargs
     ):
         """
@@ -406,7 +408,7 @@ class DataCollectionEndpointResource(msrest.serialization.Model):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: The kind of the resource. Possible values include: "Linux", "Windows".
+        :keyword kind: The kind of the resource. Known values are: "Linux", "Windows".
         :paramtype kind: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionEndpointResourceKind
         :keyword description: Description of the data collection endpoint.
@@ -465,7 +467,7 @@ class DataCollectionEndpointResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DataCollectionEndpointResource"],
+        value: List["_models.DataCollectionEndpointResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -500,8 +502,8 @@ class DataCollectionEndpointResourceProperties(DataCollectionEndpoint):
     :ivar network_acls: Network access control rules for the endpoints.
     :vartype network_acls:
      ~$(python-base-namespace).v2022_02_01_preview.models.DataCollectionEndpointNetworkAcls
-    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Possible
-     values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
+    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionEndpointProvisioningState
     """
@@ -524,9 +526,9 @@ class DataCollectionEndpointResourceProperties(DataCollectionEndpoint):
         *,
         description: Optional[str] = None,
         immutable_id: Optional[str] = None,
-        configuration_access: Optional["DataCollectionEndpointConfigurationAccess"] = None,
-        logs_ingestion: Optional["DataCollectionEndpointLogsIngestion"] = None,
-        network_acls: Optional["DataCollectionEndpointNetworkAcls"] = None,
+        configuration_access: Optional["_models.DataCollectionEndpointConfigurationAccess"] = None,
+        logs_ingestion: Optional["_models.DataCollectionEndpointLogsIngestion"] = None,
+        network_acls: Optional["_models.DataCollectionEndpointNetworkAcls"] = None,
         **kwargs
     ):
         """
@@ -553,7 +555,7 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
@@ -561,8 +563,8 @@ class SystemData(msrest.serialization.Model):
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -582,26 +584,26 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
@@ -621,7 +623,7 @@ class DataCollectionEndpointResourceSystemData(SystemData):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
@@ -629,8 +631,8 @@ class DataCollectionEndpointResourceSystemData(SystemData):
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -650,26 +652,26 @@ class DataCollectionEndpointResourceSystemData(SystemData):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
@@ -706,7 +708,7 @@ class DataCollectionRule(msrest.serialization.Model):
      ~$(python-base-namespace).v2022_02_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
     :vartype data_flows: list[~$(python-base-namespace).v2022_02_01_preview.models.DataFlow]
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleProvisioningState
@@ -735,10 +737,10 @@ class DataCollectionRule(msrest.serialization.Model):
         *,
         description: Optional[str] = None,
         data_collection_endpoint_id: Optional[str] = None,
-        stream_declarations: Optional[Dict[str, "StreamDeclaration"]] = None,
-        data_sources: Optional["DataCollectionRuleDataSources"] = None,
-        destinations: Optional["DataCollectionRuleDestinations"] = None,
-        data_flows: Optional[List["DataFlow"]] = None,
+        stream_declarations: Optional[Dict[str, "_models.StreamDeclaration"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
         **kwargs
     ):
         """
@@ -786,7 +788,7 @@ class DataCollectionRuleAssociation(msrest.serialization.Model):
     :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
      be associated.
     :vartype data_collection_endpoint_id: str
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
@@ -911,7 +913,7 @@ class DataCollectionRuleAssociationProxyOnlyResource(msrest.serialization.Model)
     :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
      be associated.
     :vartype data_collection_endpoint_id: str
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
@@ -998,7 +1000,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceListResult(msrest.serializat
     def __init__(
         self,
         *,
-        value: List["DataCollectionRuleAssociationProxyOnlyResource"],
+        value: List["_models.DataCollectionRuleAssociationProxyOnlyResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1027,7 +1029,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceProperties(DataCollectionRul
     :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
      be associated.
     :vartype data_collection_endpoint_id: str
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleAssociationProvisioningState
@@ -1075,7 +1077,7 @@ class DataCollectionRuleAssociationProxyOnlyResourceSystemData(SystemData):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
@@ -1083,8 +1085,8 @@ class DataCollectionRuleAssociationProxyOnlyResourceSystemData(SystemData):
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -1104,26 +1106,26 @@ class DataCollectionRuleAssociationProxyOnlyResourceSystemData(SystemData):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
@@ -1165,12 +1167,12 @@ class DataSourcesSpec(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        performance_counters: Optional[List["PerfCounterDataSource"]] = None,
-        windows_event_logs: Optional[List["WindowsEventLogDataSource"]] = None,
-        syslog: Optional[List["SyslogDataSource"]] = None,
-        extensions: Optional[List["ExtensionDataSource"]] = None,
-        log_files: Optional[List["LogFilesDataSource"]] = None,
-        iis_logs: Optional[List["IisLogsDataSource"]] = None,
+        performance_counters: Optional[List["_models.PerfCounterDataSource"]] = None,
+        windows_event_logs: Optional[List["_models.WindowsEventLogDataSource"]] = None,
+        syslog: Optional[List["_models.SyslogDataSource"]] = None,
+        extensions: Optional[List["_models.ExtensionDataSource"]] = None,
+        log_files: Optional[List["_models.LogFilesDataSource"]] = None,
+        iis_logs: Optional[List["_models.IisLogsDataSource"]] = None,
         **kwargs
     ):
         """
@@ -1235,12 +1237,12 @@ This property is optional and can be omitted if the rule is meant to be used via
     def __init__(
         self,
         *,
-        performance_counters: Optional[List["PerfCounterDataSource"]] = None,
-        windows_event_logs: Optional[List["WindowsEventLogDataSource"]] = None,
-        syslog: Optional[List["SyslogDataSource"]] = None,
-        extensions: Optional[List["ExtensionDataSource"]] = None,
-        log_files: Optional[List["LogFilesDataSource"]] = None,
-        iis_logs: Optional[List["IisLogsDataSource"]] = None,
+        performance_counters: Optional[List["_models.PerfCounterDataSource"]] = None,
+        windows_event_logs: Optional[List["_models.WindowsEventLogDataSource"]] = None,
+        syslog: Optional[List["_models.SyslogDataSource"]] = None,
+        extensions: Optional[List["_models.ExtensionDataSource"]] = None,
+        log_files: Optional[List["_models.LogFilesDataSource"]] = None,
+        iis_logs: Optional[List["_models.IisLogsDataSource"]] = None,
         **kwargs
     ):
         """
@@ -1284,8 +1286,8 @@ class DestinationsSpec(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_analytics: Optional[List["LogAnalyticsDestination"]] = None,
-        azure_monitor_metrics: Optional["DestinationsSpecAzureMonitorMetrics"] = None,
+        log_analytics: Optional[List["_models.LogAnalyticsDestination"]] = None,
+        azure_monitor_metrics: Optional["_models.DestinationsSpecAzureMonitorMetrics"] = None,
         **kwargs
     ):
         """
@@ -1320,8 +1322,8 @@ class DataCollectionRuleDestinations(DestinationsSpec):
     def __init__(
         self,
         *,
-        log_analytics: Optional[List["LogAnalyticsDestination"]] = None,
-        azure_monitor_metrics: Optional["DestinationsSpecAzureMonitorMetrics"] = None,
+        log_analytics: Optional[List["_models.LogAnalyticsDestination"]] = None,
+        azure_monitor_metrics: Optional["_models.DestinationsSpecAzureMonitorMetrics"] = None,
         **kwargs
     ):
         """
@@ -1372,7 +1374,7 @@ class DataCollectionRuleResource(msrest.serialization.Model):
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: The kind of the resource. Possible values include: "Linux", "Windows".
+    :ivar kind: The kind of the resource. Known values are: "Linux", "Windows".
     :vartype kind: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleResourceKind
     :ivar id: Fully qualified ID of the resource.
@@ -1409,7 +1411,7 @@ class DataCollectionRuleResource(msrest.serialization.Model):
      ~$(python-base-namespace).v2022_02_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
     :vartype data_flows: list[~$(python-base-namespace).v2022_02_01_preview.models.DataFlow]
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleProvisioningState
@@ -1452,13 +1454,13 @@ class DataCollectionRuleResource(msrest.serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "KnownDataCollectionRuleResourceKind"]] = None,
+        kind: Optional[Union[str, "_models.KnownDataCollectionRuleResourceKind"]] = None,
         description: Optional[str] = None,
         data_collection_endpoint_id: Optional[str] = None,
-        stream_declarations: Optional[Dict[str, "StreamDeclaration"]] = None,
-        data_sources: Optional["DataCollectionRuleDataSources"] = None,
-        destinations: Optional["DataCollectionRuleDestinations"] = None,
-        data_flows: Optional[List["DataFlow"]] = None,
+        stream_declarations: Optional[Dict[str, "_models.StreamDeclaration"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
         **kwargs
     ):
         """
@@ -1466,7 +1468,7 @@ class DataCollectionRuleResource(msrest.serialization.Model):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: The kind of the resource. Possible values include: "Linux", "Windows".
+        :keyword kind: The kind of the resource. Known values are: "Linux", "Windows".
         :paramtype kind: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleResourceKind
         :keyword description: Description of the data collection rule.
@@ -1532,7 +1534,7 @@ class DataCollectionRuleResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["DataCollectionRuleResource"],
+        value: List["_models.DataCollectionRuleResource"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1576,7 +1578,7 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
      ~$(python-base-namespace).v2022_02_01_preview.models.DataCollectionRuleDestinations
     :ivar data_flows: The specification of data flows.
     :vartype data_flows: list[~$(python-base-namespace).v2022_02_01_preview.models.DataFlow]
-    :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownDataCollectionRuleProvisioningState
@@ -1605,10 +1607,10 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
         *,
         description: Optional[str] = None,
         data_collection_endpoint_id: Optional[str] = None,
-        stream_declarations: Optional[Dict[str, "StreamDeclaration"]] = None,
-        data_sources: Optional["DataCollectionRuleDataSources"] = None,
-        destinations: Optional["DataCollectionRuleDestinations"] = None,
-        data_flows: Optional[List["DataFlow"]] = None,
+        stream_declarations: Optional[Dict[str, "_models.StreamDeclaration"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
         **kwargs
     ):
         """
@@ -1639,7 +1641,7 @@ class DataCollectionRuleResourceSystemData(SystemData):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
@@ -1647,8 +1649,8 @@ class DataCollectionRuleResourceSystemData(SystemData):
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -1668,26 +1670,26 @@ class DataCollectionRuleResourceSystemData(SystemData):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
@@ -1721,7 +1723,7 @@ class DataFlow(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownDataFlowStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownDataFlowStreams"]]] = None,
         destinations: Optional[List[str]] = None,
         transform_kql: Optional[str] = None,
         output_stream: Optional[str] = None,
@@ -1868,7 +1870,7 @@ class ErrorResponseCommonV2(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
@@ -1919,7 +1921,7 @@ Collected from either Windows and Linux machines, depending on which extension i
         self,
         *,
         extension_name: str,
-        streams: Optional[List[Union[str, "KnownExtensionDataSourceStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownExtensionDataSourceStreams"]]] = None,
         extension_settings: Optional[Any] = None,
         input_data_sources: Optional[List[str]] = None,
         name: Optional[str] = None,
@@ -2056,7 +2058,7 @@ class LogFilesDataSource(msrest.serialization.Model):
     :vartype streams: list[str]
     :ivar file_patterns: Required. File Patterns where the log files are located.
     :vartype file_patterns: list[str]
-    :ivar format: Required. The data format of the log files. Possible values include: "text".
+    :ivar format: Required. The data format of the log files. Known values are: "text".
     :vartype format: str or
      ~$(python-base-namespace).v2022_02_01_preview.models.KnownLogFilesDataSourceFormat
     :ivar settings: The log files specific settings.
@@ -2087,8 +2089,8 @@ class LogFilesDataSource(msrest.serialization.Model):
         *,
         streams: List[str],
         file_patterns: List[str],
-        format: Union[str, "KnownLogFilesDataSourceFormat"],
-        settings: Optional["LogFilesDataSourceSettings"] = None,
+        format: Union[str, "_models.KnownLogFilesDataSourceFormat"],
+        settings: Optional["_models.LogFilesDataSourceSettings"] = None,
         name: Optional[str] = None,
         **kwargs
     ):
@@ -2098,7 +2100,7 @@ class LogFilesDataSource(msrest.serialization.Model):
         :paramtype streams: list[str]
         :keyword file_patterns: Required. File Patterns where the log files are located.
         :paramtype file_patterns: list[str]
-        :keyword format: Required. The data format of the log files. Possible values include: "text".
+        :keyword format: Required. The data format of the log files. Known values are: "text".
         :paramtype format: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownLogFilesDataSourceFormat
         :keyword settings: The log files specific settings.
@@ -2131,7 +2133,7 @@ class LogFileSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        text: Optional["LogFileSettingsText"] = None,
+        text: Optional["_models.LogFileSettingsText"] = None,
         **kwargs
     ):
         """
@@ -2156,7 +2158,7 @@ class LogFilesDataSourceSettings(LogFileSettings):
     def __init__(
         self,
         *,
-        text: Optional["LogFileSettingsText"] = None,
+        text: Optional["_models.LogFileSettingsText"] = None,
         **kwargs
     ):
         """
@@ -2171,8 +2173,8 @@ class LogFileTextSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar record_start_timestamp_format: Required. One of the supported timestamp formats. Possible
-     values include: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
+    :ivar record_start_timestamp_format: Required. One of the supported timestamp formats. Known
+     values are: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
      HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss zzz",
      "yyyy-MM-ddTHH:mm:ssK".
     :vartype record_start_timestamp_format: str or
@@ -2190,14 +2192,14 @@ class LogFileTextSettings(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        record_start_timestamp_format: Union[str, "KnownLogFileTextSettingsRecordStartTimestampFormat"],
+        record_start_timestamp_format: Union[str, "_models.KnownLogFileTextSettingsRecordStartTimestampFormat"],
         **kwargs
     ):
         """
-        :keyword record_start_timestamp_format: Required. One of the supported timestamp formats.
-         Possible values include: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD,
-         YYYY HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss
-         zzz", "yyyy-MM-ddTHH:mm:ssK".
+        :keyword record_start_timestamp_format: Required. One of the supported timestamp formats. Known
+         values are: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
+         HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss zzz",
+         "yyyy-MM-ddTHH:mm:ssK".
         :paramtype record_start_timestamp_format: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownLogFileTextSettingsRecordStartTimestampFormat
         """
@@ -2210,8 +2212,8 @@ class LogFileSettingsText(LogFileTextSettings):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar record_start_timestamp_format: Required. One of the supported timestamp formats. Possible
-     values include: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
+    :ivar record_start_timestamp_format: Required. One of the supported timestamp formats. Known
+     values are: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
      HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss zzz",
      "yyyy-MM-ddTHH:mm:ssK".
     :vartype record_start_timestamp_format: str or
@@ -2229,14 +2231,14 @@ class LogFileSettingsText(LogFileTextSettings):
     def __init__(
         self,
         *,
-        record_start_timestamp_format: Union[str, "KnownLogFileTextSettingsRecordStartTimestampFormat"],
+        record_start_timestamp_format: Union[str, "_models.KnownLogFileTextSettingsRecordStartTimestampFormat"],
         **kwargs
     ):
         """
-        :keyword record_start_timestamp_format: Required. One of the supported timestamp formats.
-         Possible values include: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD,
-         YYYY HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss
-         zzz", "yyyy-MM-ddTHH:mm:ssK".
+        :keyword record_start_timestamp_format: Required. One of the supported timestamp formats. Known
+         values are: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
+         HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss zzz",
+         "yyyy-MM-ddTHH:mm:ssK".
         :paramtype record_start_timestamp_format: str or
          ~$(python-base-namespace).v2022_02_01_preview.models.KnownLogFileTextSettingsRecordStartTimestampFormat
         """
@@ -2276,7 +2278,7 @@ Collected from both Windows and Linux machines where the counter is present.
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownPerfCounterDataSourceStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownPerfCounterDataSourceStreams"]]] = None,
         sampling_frequency_in_seconds: Optional[int] = None,
         counter_specifiers: Optional[List[str]] = None,
         name: Optional[str] = None,
@@ -2347,7 +2349,7 @@ class StreamDeclaration(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        columns: Optional[List["ColumnDefinition"]] = None,
+        columns: Optional[List["_models.ColumnDefinition"]] = None,
         **kwargs
     ):
         """
@@ -2389,9 +2391,9 @@ Only collected from Linux machines.
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownSyslogDataSourceStreams"]]] = None,
-        facility_names: Optional[List[Union[str, "KnownSyslogDataSourceFacilityNames"]]] = None,
-        log_levels: Optional[List[Union[str, "KnownSyslogDataSourceLogLevels"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownSyslogDataSourceStreams"]]] = None,
+        facility_names: Optional[List[Union[str, "_models.KnownSyslogDataSourceFacilityNames"]]] = None,
+        log_levels: Optional[List[Union[str, "_models.KnownSyslogDataSourceLogLevels"]]] = None,
         name: Optional[str] = None,
         **kwargs
     ):
@@ -2445,7 +2447,7 @@ Only collected from Windows machines.
     def __init__(
         self,
         *,
-        streams: Optional[List[Union[str, "KnownWindowsEventLogDataSourceStreams"]]] = None,
+        streams: Optional[List[Union[str, "_models.KnownWindowsEventLogDataSourceStreams"]]] = None,
         x_path_queries: Optional[List[str]] = None,
         name: Optional[str] = None,
         **kwargs

@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-"""Entrypoints for creating AutoML tasks"""
+"""Entrypoints for creating AutoML tasks."""
 from typing import List, Union
 
-from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular import (
     ClassificationJob,
     ForecastingJob,
@@ -31,8 +31,7 @@ def classification(
     test_data_size: float = None,
     **kwargs,
 ) -> ClassificationJob:
-    """
-    Function to create a ClassificationJob.
+    """Function to create a ClassificationJob.
 
     A classification job is used to train a model that best predict the class of a data sample.
     Various models are trained using the training data. The model with the best performance on the validation data
@@ -431,7 +430,11 @@ def forecasting(
     :return: A job object that can be submitted to an Azure ML compute for execution.
     :rtype: ForecastingJob
     """
-    forecast_job = ForecastingJob(primary_metric=primary_metric, forecasting_settings=forecasting_settings, **kwargs)
+    forecast_job = ForecastingJob(
+        primary_metric=primary_metric,
+        forecasting_settings=forecasting_settings,
+        **kwargs,
+    )
     forecast_job.set_data(
         training_data=training_data,
         target_column_name=target_column_name,

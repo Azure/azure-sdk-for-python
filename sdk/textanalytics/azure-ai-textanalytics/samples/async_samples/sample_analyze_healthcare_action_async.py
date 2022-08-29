@@ -26,7 +26,7 @@ import os
 import asyncio
 
 
-async def sample_analyze_healthcare_action():
+async def sample_analyze_healthcare_action() -> None:
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
     from azure.ai.textanalytics import (
@@ -74,48 +74,42 @@ async def sample_analyze_healthcare_action():
 
         for doc, action_results in zip(documents, document_results):
             print(f"\nDocument text: {doc}")
-            healthcare_entities_result = action_results[0]
-            print("...Results of Analyze Healthcare Entities Action:")
-            if healthcare_entities_result.is_error:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    healthcare_entities_result.code, healthcare_entities_result.message
-                ))
-            else:
-                for entity in healthcare_entities_result.entities:
-                    print(f"Entity: {entity.text}")
-                    print(f"...Normalized Text: {entity.normalized_text}")
-                    print(f"...Category: {entity.category}")
-                    print(f"...Subcategory: {entity.subcategory}")
-                    print(f"...Offset: {entity.offset}")
-                    print(f"...Confidence score: {entity.confidence_score}")
-                    if entity.data_sources is not None:
-                        print("...Data Sources:")
-                        for data_source in entity.data_sources:
-                            print(f"......Entity ID: {data_source.entity_id}")
-                            print(f"......Name: {data_source.name}")
-                    if entity.assertion is not None:
-                        print("...Assertion:")
-                        print(f"......Conditionality: {entity.assertion.conditionality}")
-                        print(f"......Certainty: {entity.assertion.certainty}")
-                        print(f"......Association: {entity.assertion.association}")
-                for relation in healthcare_entities_result.entity_relations:
-                    print(f"Relation of type: {relation.relation_type} has the following roles")
-                    for role in relation.roles:
-                        print(f"...Role '{role.name}' with entity '{role.entity.text}'")
-            recognize_pii_entities_result = action_results[1]
+            for result in action_results:
+                if result.kind == "Healthcare":
+                    print("...Results of Analyze Healthcare Entities Action:")
+                    for entity in result.entities:
+                        print(f"Entity: {entity.text}")
+                        print(f"...Normalized Text: {entity.normalized_text}")
+                        print(f"...Category: {entity.category}")
+                        print(f"...Subcategory: {entity.subcategory}")
+                        print(f"...Offset: {entity.offset}")
+                        print(f"...Confidence score: {entity.confidence_score}")
+                        if entity.data_sources is not None:
+                            print("...Data Sources:")
+                            for data_source in entity.data_sources:
+                                print(f"......Entity ID: {data_source.entity_id}")
+                                print(f"......Name: {data_source.name}")
+                        if entity.assertion is not None:
+                            print("...Assertion:")
+                            print(f"......Conditionality: {entity.assertion.conditionality}")
+                            print(f"......Certainty: {entity.assertion.certainty}")
+                            print(f"......Association: {entity.assertion.association}")
+                    for relation in result.entity_relations:
+                        print(f"Relation of type: {relation.relation_type} has the following roles")
+                        for role in relation.roles:
+                            print(f"...Role '{role.name}' with entity '{role.entity.text}'")
 
-            print("Results of Recognize PII Entities action:")
-            if recognize_pii_entities_result.is_error:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    recognize_pii_entities_result.code, recognize_pii_entities_result.message
-                ))
-            else:
-                for entity in recognize_pii_entities_result.entities:
-                    print(f"......Entity: {entity.text}")
-                    print(f".........Category: {entity.category}")
-                    print(f".........Confidence Score: {entity.confidence_score}")
+                elif result.kind == "PiiEntityRecognition":
+                    print("Results of Recognize PII Entities action:")
+                    for entity in result.entities:
+                        print(f"......Entity: {entity.text}")
+                        print(f".........Category: {entity.category}")
+                        print(f".........Confidence Score: {entity.confidence_score}")
 
-        print("------------------------------------------")
+                elif result.is_error is True:
+                    print(f"...Is an error with code '{result.code}' and message '{result.message}'")
+
+                print("------------------------------------------")
 
 
 async def main():

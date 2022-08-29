@@ -3,23 +3,23 @@ display_name: Train
 version: 10
 type: command
 inputs:
-  training_data: 
+  training_data:
     type: uri_folder
   max_epocs:
     type: integer
-  learning_rate: 
+  learning_rate:
     type: number
     default: 0.01
-  learning_rate_schedule: 
+  learning_rate_schedule:
     type: string
-    default: time-based 
+    default: time-based
 outputs:
   model_output:
     type: uri_folder
 code: ./train_src
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
 command: >-
-  python train.py 
+  python train.py
   --training_data ${{inputs.training_data}}
   --max_epocs ${{inputs.max_epocs}}
   --learning_rate ${{inputs.learning_rate}}

@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationTypeEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AggregationTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the criteria time aggregation types.
     """
 
@@ -21,14 +20,14 @@ class AggregationTypeEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
-class CriterionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CriterionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the type of threshold criteria
     """
 
     STATIC_THRESHOLD_CRITERION = "StaticThresholdCriterion"
     DYNAMIC_THRESHOLD_CRITERION = "DynamicThresholdCriterion"
 
-class DynamicThresholdOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DynamicThresholdOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operator used to compare the metric value against the threshold.
     """
 
@@ -36,7 +35,7 @@ class DynamicThresholdOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     LESS_THAN = "LessThan"
     GREATER_OR_LESS_THAN = "GreaterOrLessThan"
 
-class DynamicThresholdSensitivity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DynamicThresholdSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extent of deviation required to trigger an alert. This will affect how tight the threshold
     is to the metric series pattern.
     """
@@ -45,7 +44,7 @@ class DynamicThresholdSensitivity(with_metaclass(CaseInsensitiveEnumMeta, str, E
     MEDIUM = "Medium"
     HIGH = "High"
 
-class Odatatype(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """specifies the type of the alert criteria.
     """
 
@@ -53,7 +52,7 @@ class Odatatype(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MICROSOFT_AZURE_MONITOR_MULTIPLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
     MICROSOFT_AZURE_MONITOR_WEBTEST_LOCATION_AVAILABILITY_CRITERIA = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
 
-class Operator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the criteria operator.
     """
 
@@ -63,7 +62,7 @@ class Operator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class ReceiverStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ReceiverStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
     communications.
     """

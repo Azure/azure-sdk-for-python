@@ -7,6 +7,7 @@
 import tempfile
 from io import StringIO, BytesIO
 from json import loads
+from math import ceil
 from os import (
     urandom,
     path,
@@ -63,7 +64,10 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
-            container.create_container()
+            try:
+                container.create_container()
+            except:
+                pass
 
     def _teardown(self, file_name):
         if path.isfile(file_name):
@@ -494,6 +498,24 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.assertEqual(content[22:42], blob_content)
 
     @BlobPreparer()
+    def test_get_blob_range_cross_chunk(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+
+        data = b'12345' * 205 * 3  # 3075 bytes
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        offset, length = 501, 2500
+        blob_content = blob.download_blob(offset=offset, length=length).readall()
+
+        # Assert
+        self.assertEqual(data[offset:offset + length], blob_content)
+
+    @BlobPreparer()
     def test_put_blob_strict_mode(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
@@ -696,5 +718,66 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.assertEqual(self.bytes, stream_blob.read())
         self.assertEqual(self.bytes.decode(), text_blob)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_read(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+
+        data = b'12345' * 205 * 25  # 25625 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob(max_concurrency=3)
+
+        # Act
+        result = bytearray()
+        read_size = 3000
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @BlobPreparer()
+    def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+
+        data = b'12345' * 205 * 10  # 10250 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        blob.upload_blob(data, overwrite=True)
+        offset, length = 501, 5000
+
+        # Act / Assert
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(100)  # Read in first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + 100]
+        assert second == data[offset + 100:offset + length]
+
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(3000)  # Read past first chunk
+        second = stream.readall()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+
+        stream = blob.download_blob(offset=offset, length=length)
+        first = stream.read(3000)  # Read past first chunk
+        second_stream = BytesIO()
+        read_size = stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
+        assert read_size == len(second)
 
 # ------------------------------------------------------------------------------

@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import MonitorManagementClientConfiguration
@@ -37,8 +38,11 @@ class MonitorManagementClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2018-03-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -55,9 +59,15 @@ class MonitorManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.action_groups = ActionGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.metric_alerts = MetricAlertsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.metric_alerts_status = MetricAlertsStatusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.action_groups = ActionGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.metric_alerts = MetricAlertsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.metric_alerts_status = MetricAlertsStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

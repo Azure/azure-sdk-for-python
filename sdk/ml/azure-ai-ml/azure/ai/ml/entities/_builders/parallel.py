@@ -1,37 +1,40 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import copy
 import logging
-from typing import Dict, List, Union
-from enum import Enum
 import re
+from enum import Enum
+from typing import Dict, List, Union
 
 from marshmallow import Schema
 
-from .base_node import BaseNode
-from azure.ai.ml.constants import NodeType, ARM_ID_PREFIX
-from azure.ai.ml.entities import (
-    Component,
-    ParallelComponent,
-    ParallelJob,
-    ResourceConfiguration,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ResourceConfiguration as RestResourceConfiguration
+from azure.ai.ml.constants import ARM_ID_PREFIX, NodeType
+from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from .._job.distribution import DistributionConfiguration
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
-from .._util import validate_attribute_type, convert_ordered_dict_to_dict, get_rest_dict
+
 from ..._schema import PathAwareSchema
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ResourceConfiguration as RestResourceConfiguration
+from .._job.distribution import DistributionConfiguration
+from .._job.pipeline._io import PipelineInput, PipelineOutputBase
+from .._job.pipeline._pipeline_expression import PipelineExpression
+from .._util import convert_ordered_dict_to_dict, get_rest_dict, validate_attribute_type
+from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
 class Parallel(BaseNode):
-    """Base class for parallel node, used for parallel component version consumption.
+    """Base class for parallel node, used for parallel component version
+    consumption.
 
     :param component: Id or instance of the parallel component/job to be run for the step
     :type component: parallelComponent
@@ -76,7 +79,20 @@ class Parallel(BaseNode):
         *,
         component: Union[ParallelComponent, str],
         compute: str = None,
-        inputs: Dict[str, Union[PipelineInput, PipelineOutputBase, Input, str, bool, int, float, Enum, "Input"]] = None,
+        inputs: Dict[
+            str,
+            Union[
+                PipelineInput,
+                PipelineOutputBase,
+                Input,
+                str,
+                bool,
+                int,
+                float,
+                Enum,
+                "Input",
+            ],
+        ] = None,
         outputs: Dict[str, Union[str, Output, "Output"]] = None,
         retry_settings: Dict[str, Union[RetrySettings, str]] = None,
         logging_level: str = None,
@@ -95,7 +111,13 @@ class Parallel(BaseNode):
         kwargs.pop("type", None)
 
         BaseNode.__init__(
-            self, type=NodeType.PARALLEL, component=component, inputs=inputs, outputs=outputs, compute=compute, **kwargs
+            self,
+            type=NodeType.PARALLEL,
+            component=component,
+            inputs=inputs,
+            outputs=outputs,
+            compute=compute,
+            **kwargs,
         )
         # init mark for _AttrDict
         self._init = True
@@ -157,6 +179,7 @@ class Parallel(BaseNode):
             int,
             float,
             Enum,
+            PipelineExpression,
         )
 
     @classmethod
@@ -380,10 +403,3 @@ class Parallel(BaseNode):
                 f"Parallel can be called as a function only when referenced component is {type(Component)}, "
                 f"currently got {self._component}."
             )
-
-    @property
-    def _extra_skip_fields_in_validation(self) -> List[str]:
-        """
-        Extra fields that should be skipped in validation.
-        """
-        return ["component"]

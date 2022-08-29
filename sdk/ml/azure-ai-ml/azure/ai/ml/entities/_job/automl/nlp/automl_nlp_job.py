@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     LogVerbosity,
     NlpVerticalDataSettings,
-    TrainingDataSettings,
     NlpVerticalValidationDataSettings,
+    TrainingDataSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -124,11 +124,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def _restore_data_inputs(self):
-        """
-        Restore MLTableJobInputs to Inputs within data_settings.
+        """Restore MLTableJobInputs to Inputs within data_settings.
 
-        self.training_data and self.validation_data should reflect what user passed in (Input)
-        Once we get response back from service (as MLTableJobInput), we should set responsible ones back to Input
+        self.training_data and self.validation_data should reflect what
+        user passed in (Input) Once we get response back from service
+        (as MLTableJobInput), we should set responsible ones back to
+        Input
         """
         super()._restore_data_inputs()
         self.training_data = (
