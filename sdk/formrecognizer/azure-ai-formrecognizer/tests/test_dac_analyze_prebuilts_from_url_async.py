@@ -236,16 +236,16 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy_async
-    async def test_receipt_url_pass_stream(self, client):
+    async def test_receipt_url_pass_stream(self, **kwargs):
+        client = kwargs.get("client", None)
         
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
-                result = await poller.result()
+        assert str(e.value) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

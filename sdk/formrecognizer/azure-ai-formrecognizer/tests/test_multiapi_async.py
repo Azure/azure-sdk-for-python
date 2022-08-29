@@ -133,6 +133,7 @@ class TestMultiapi(AsyncFormRecognizerTest):
                "only available for FormRecognizerClient and FormTrainingClient.".format(
             ", ".join(v.value for v in DocumentAnalysisApiVersion)) == str(excinfo.value)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy_async
