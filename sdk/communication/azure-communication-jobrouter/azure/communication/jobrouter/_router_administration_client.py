@@ -54,7 +54,6 @@ from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 
 _SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
 
 
 class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods,too-many-lines
@@ -75,7 +74,6 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             credential: CommunicationTokenCredential,
             **kwargs: Any
     ) -> "None":
-        # type: (...) -> None
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -103,7 +101,6 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             conn_str: str,
             **kwargs: Any
     ) -> "RouterAdministrationClient":
-        # type: (...) -> RouterAdministrationClient
         """Create RouterClient from a Connection String.
 
         :param str conn_str:
@@ -322,8 +319,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
             self,
             exception_policy_id: str,
             **kwargs: Any
-    ):
-        #  type: (...) -> ExceptionPolicy
+    ) -> ExceptionPolicy:
         """Retrieves an existing distribution policy by Id.
 
         :param str exception_policy_id: Id of the policy.

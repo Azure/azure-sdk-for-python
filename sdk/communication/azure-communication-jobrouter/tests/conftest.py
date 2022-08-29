@@ -23,12 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import platform
 import sys
 
 # fixture needs to be visible from conftest
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
-if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
+if sys.version_info < (3, 5):
     collect_ignore_glob.append("*_async.py")

@@ -50,6 +50,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     packages = find_packages(exclude = [
@@ -65,7 +67,6 @@ setup(
     python_requires = ">=3.7",
     install_requires = [
         'azure-core<2.0.0,>=1.25.0',
-        'msrest>=0.6.21',
         'six>=1.11.0',
         'python-dateutil>=2.8.0'
     ],
