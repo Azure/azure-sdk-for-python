@@ -7,7 +7,7 @@ nox
 marshmallow-jsonschema==0.10.0
 mock
 pytest-cov
-coverage==6.0.1
+coverage
 pytest-forked
 pytest-xdist
 pytest-timeout
