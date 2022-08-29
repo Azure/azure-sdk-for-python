@@ -9,7 +9,7 @@ from typing import Dict, Iterable, List, NewType
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2022_06_30_preview.models import ModelInfo, Error
+from ._generated.v2022_08_31.models import DocumentModelDetails as ModelDetails, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -2810,9 +2810,6 @@ class DocumentParagraph:
 class DocumentPage:
     """Content and layout elements extracted from a page of the input.
 
-    :ivar kind: Kind of document page. Known values are: "document", "sheet", "slide",
-     "image".
-    :vartype kind: str
     :ivar page_number: 1-based page number in the input document.
     :vartype page_number: int
     :ivar angle: The general orientation of the content in clockwise direction, measured
@@ -2839,7 +2836,6 @@ class DocumentPage:
     """
 
     def __init__(self, **kwargs):
-        self.kind = kwargs.get("kind", None)
         self.page_number = kwargs.get("page_number", None)
         self.angle = kwargs.get("angle", None)
         self.width = kwargs.get("width", None)
@@ -2853,7 +2849,6 @@ class DocumentPage:
     @classmethod
     def _from_generated(cls, page):
         return cls(
-            kind=page.kind,
             page_number=page.page_number,
             angle=adjust_text_angle(page.angle)
             if page.angle else None,
@@ -2877,7 +2872,7 @@ class DocumentPage:
 
     def __repr__(self):
         return (
-            f"DocumentPage(kind={self.kind}, page_number={self.page_number}, angle={self.angle}, "
+            f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
             f"spans={repr(self.spans)})"
@@ -2890,7 +2885,6 @@ class DocumentPage:
         :rtype: dict
         """
         return {
-            "kind": self.kind,
             "page_number": self.page_number,
             "angle": self.angle,
             "width": self.width,
@@ -2919,7 +2913,6 @@ class DocumentPage:
         :rtype: DocumentPage
         """
         return cls(
-            kind=data.get("kind", None),
             page_number=data.get("page_number", None),
             angle=data.get("angle", None),
             width=data.get("width", None),
@@ -3479,7 +3472,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelDetails._from_generated(deserialize(ModelInfo, op.result))
+            result=DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result))
             if op.result else None,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
@@ -3561,7 +3554,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     """Document analysis result.
 
     :ivar api_version: API version used to produce this result. Possible values include:
-     "2022-06-30-preview".
+     "2022-08-31".
     :vartype api_version: str
     :ivar model_id: Model ID used to produce this result.
     :vartype model_id: str
@@ -3937,31 +3930,76 @@ class DocumentTypeDetails:
         )
 
 
-class ResourceDetails:
-    """Details regarding models under the Form Recognizer resource.
+class CustomDocumentModelsDetails:
+    """Details regarding the custom models under the Form Recognizer resource.
 
-    :ivar int document_model_count: Number of custom models in the current resource.
-    :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
+    :ivar int count: Number of custom models in the current resource.
+    :ivar int limit: Maximum number of custom models supported in the current resource.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.document_model_count = kwargs.get("document_model_count", None)
-        self.document_model_limit = kwargs.get("document_model_limit", None)
+        self.count = kwargs.get("count", None)
+        self.limit = kwargs.get("limit", None)
 
     def __repr__(self):
-        return (
-            f"ResourceDetails(document_model_count={self.document_model_count}, "
-            f"document_model_limit={self.document_model_limit})"
-        )
+        return f"CustomDocumentModelsDetails(count={self.count}, limit={self.limit})"
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            document_model_count=info.count,
-            document_model_limit=info.limit,
+            count=info.count,
+            limit=info.limit,
+        )
+
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of CustomDocumentModelsDetails.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "count": self.count,
+            "limit": self.limit,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "CustomDocumentModelsDetails":
+        """Converts a dict in the shape of a CustomDocumentModelsDetails to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomDocumentModelsDetails.
+        :return: CustomDocumentModelsDetails
+        :rtype: CustomDocumentModelsDetails
+        """
+        return cls(
+            count=data.get("count", None),
+            limit=data.get("limit", None),
+        )
+
+
+class ResourceDetails:
+    """Details regarding the Form Recognizer resource.
+
+    :ivar CustomDocumentModelsDetails custom_document_models: Details regarding the custom models
+    under the Form Recognizer resource.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.custom_document_models = kwargs.get("custom_document_models", None)
+
+    def __repr__(self):
+        return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)})"
+
+    @classmethod
+    def _from_generated(cls, info):
+        return cls(
+            custom_document_models=CustomDocumentModelsDetails._from_generated(info),
         )
 
 
@@ -3971,10 +4009,7 @@ class ResourceDetails:
         :return: dict
         :rtype: dict
         """
-        return {
-            "document_model_count": self.document_model_count,
-            "document_model_limit": self.document_model_limit,
-        }
+        return {"custom_document_models": self.custom_document_models.to_dict()}
 
     @classmethod
     def from_dict(cls, data: dict) -> "ResourceDetails":
@@ -3985,8 +4020,7 @@ class ResourceDetails:
         :rtype: ResourceDetails
         """
         return cls(
-            document_model_count=data.get("document_model_count", None),
-            document_model_limit=data.get("document_model_limit", None),
+            custom_document_models=CustomDocumentModelsDetails.from_dict(data.get("custom_document_models", None)),
         )
 
 

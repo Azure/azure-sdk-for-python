@@ -142,7 +142,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         # Upload a blob that can be downloaded to test read timeout
         service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
         container = await service.create_container(container_name)
-        await container.upload_blob(blob_name, b'a' * 5 * 1025, overwrite=True)
+        await container.upload_blob(blob_name, b'a' * 1024 * 1024, overwrite=True)
 
         retry = LinearRetry(backoff=1, random_jitter_range=1)
         retry_transport = AiohttpRetryTestTransport(connection_timeout=11, read_timeout=0.000000000001)

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import asyncio
 import logging
 import queue
@@ -14,6 +15,7 @@ from ..._common import EventDataBatch
 from ...exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
+    from .._transport._base_async import AmqpTransportAsync
     from ..._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)

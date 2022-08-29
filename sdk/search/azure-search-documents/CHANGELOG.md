@@ -3,6 +3,7 @@
 ## 11.3.0b9 (Unreleased)
 
 ### Features Added
+- Added support for other national clouds.
 
 ### Breaking Changes
 

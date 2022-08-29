@@ -33,9 +33,13 @@ class ChangeLog:
         if self.features:
             _build_md(sorted(set(self.features), key=self.features.index), "### Features Added", buffer)
         if self.breaking_changes:
-            _build_md(sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer)
+            _build_md(
+                sorted(set(self.breaking_changes), key=self.breaking_changes.index), "### Breaking Changes", buffer
+            )
         if not (self.features or self.breaking_changes) and self.optional_features:
-            _build_md(sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer)
+            _build_md(
+                sorted(set(self.optional_features), key=self.optional_features.index), "### Features Added", buffer
+            )
 
         return "\n".join(buffer).strip()
 
@@ -80,20 +84,33 @@ class ChangeLog:
             return
 
         if remaining_path[0] == "parameters":
-            old_parameters_list = self._old_report["operations"][operation_name]["functions"][function_name]['parameters']
-            new_parameters_list = self._new_report["operations"][operation_name]["functions"][function_name]['parameters']
-            old_parameters = {param_name['name']: param_name for param_name in old_parameters_list}
-            new_parameters = {param_name['name']: param_name for param_name in new_parameters_list}
+            old_parameters_list = self._old_report["operations"][operation_name]["functions"][function_name][
+                "parameters"
+            ]
+            new_parameters_list = self._new_report["operations"][operation_name]["functions"][function_name][
+                "parameters"
+            ]
+            old_parameters = {param_name["name"]: param_name for param_name in old_parameters_list}
+            new_parameters = {param_name["name"]: param_name for param_name in new_parameters_list}
             old_parameters_set = set(old_parameters.keys())
             new_parameters_set = set(new_parameters.keys())
             # The new parameter is optional or not. Be breaking change for now.
-            for removed_parameter in (old_parameters_set - new_parameters_set):
-                self.breaking_changes.append(_REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter))
-            for added_parameter in (new_parameters_set - old_parameters_set):
-                if new_parameters[added_parameter]['type'] == 'KEYWORD_ONLY' and new_parameters[added_parameter]['has_default_value']:
-                    self.features.append(_ADD_OPERATION_PARAM_FEATURE.format(operation_name, function_name, added_parameter))
+            for removed_parameter in old_parameters_set - new_parameters_set:
+                self.breaking_changes.append(
+                    _REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter)
+                )
+            for added_parameter in new_parameters_set - old_parameters_set:
+                if (
+                    new_parameters[added_parameter]["type"] == "KEYWORD_ONLY"
+                    and new_parameters[added_parameter]["has_default_value"]
+                ):
+                    self.features.append(
+                        _ADD_OPERATION_PARAM_FEATURE.format(operation_name, function_name, added_parameter)
+                    )
                 else:
-                    self.breaking_changes.append(_ADD_OPERATION_PARAM.format(operation_name, function_name, added_parameter))
+                    self.breaking_changes.append(
+                        _ADD_OPERATION_PARAM.format(operation_name, function_name, added_parameter)
+                    )
             return
         raise NotImplementedError(f"Other situations. Be err for now: {str(remaining_path)}")
 
@@ -149,9 +166,15 @@ class ChangeLog:
             self.breaking_changes.append(_MODEL_PARAM_CHANGE_REQUIRED.format(parameter_name, model_name))
             return
 
-    def client(self):
-        self.breaking_changes.append(_CLIENT_SIGNATURE_CHANGE)
+    def client(self, old_report, new_report):
+        if new_report.get('client'):
+            if old_report.get('client'):
+                msg = _CLIENT_SIGNATURE_CHANGE.format(old_report['client'][0], new_report['client'][0])
+            else:
+                msg = _CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD.format(new_report['client'][0])
+            self.breaking_changes.append(msg)
         return
+
 
 ## Features
 _ADD_OPERATION_GROUP = "Added operation group {}"
@@ -164,7 +187,8 @@ _MODEL_ADD = "Added model {}"
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
 _REMOVE_OPERATION_PARAM = "Operation {}.{} no longer has parameter {}"
-_CLIENT_SIGNATURE_CHANGE = "Client name is changed"
+_CLIENT_SIGNATURE_CHANGE = "Client name is changed from `{}` to `{}`"
+_CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD = "Client name is changed to `{}`"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
@@ -184,8 +208,8 @@ def build_change_log(old_report, new_report):
             change_log.operation(diff_line)
         elif diff_line[0][0] == "models":
             change_log.models(diff_line)
-        elif diff_line[0][0] == 'client':
-            change_log.client()
+        elif diff_line[0][0] == "client":
+            change_log.client(old_report, new_report)
 
     return change_log
 
@@ -197,8 +221,10 @@ def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
 
         # if tag is preview, just find last version on pypi to create report
         result = main(
-            package_name, version=version if version not in ["pypi", "latest"] else None, last_pypi=version == "pypi",
-            last_pypi_stable=tag_is_stable
+            package_name,
+            version=version if version not in ["pypi", "latest"] else None,
+            last_pypi=version == "pypi",
+            last_pypi_stable=tag_is_stable,
         )
         if not result:
             raise ValueError("Was not able to build a report")
