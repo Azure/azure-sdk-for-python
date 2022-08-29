@@ -17,7 +17,6 @@ stages:
     - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
       parameters:
         JobName: ${{ replace(service, '-', '_') }}
-        BuildTargetingString: ${{ service }}
 
           # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
         MaxParallel: 2
