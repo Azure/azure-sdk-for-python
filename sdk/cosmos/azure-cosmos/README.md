@@ -298,7 +298,7 @@ container = database.get_container_client(CONTAINER_NAME)
 
 ### Insert data
 
-To insert items into a container, pass a dictionary containing your data to [ContainerProxy.upsert_item][ref_container_upsert_item]. Each item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
+To insert items into a container, pass a dictionary containing your data to [ContainerProxy.create_item][ref_container_create_item]. Each item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
 
 This example inserts several items into the container, each with a unique `id`:
 
