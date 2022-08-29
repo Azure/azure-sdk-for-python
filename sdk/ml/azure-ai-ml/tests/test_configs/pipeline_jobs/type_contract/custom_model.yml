@@ -1,0 +1,40 @@
+type: pipeline
+
+name: simplePipelineJobWithPathInputOutput
+description: The hello world pipeline job with input/output type of custom model
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_in_custom_model:
+    type: custom_model
+    path: azureml:great_model:2
+  job_in_trition_model:
+    type: triton_model
+    path: https://azuremlexamples.blob.core.windows.net/datasets/
+outputs:
+  job_out_custom_model:
+    type: custom_model
+  job_out_trition_model:
+    type: triton_model
+
+jobs:
+  hello_world_component:
+    type: command
+    component: file:../../components/type_contract/custom_model.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_custom_model:
+        type: custom_model
+        path: azureml:great_model:2
+      component_in_trition_model:
+        type: triton_model
+        path: https://azuremlexamples.blob.core.windows.net/datasets/
+    outputs:
+      component_out_custom_model:
+        type: custom_model
+      component_out_trition_model:
+        type: triton_model

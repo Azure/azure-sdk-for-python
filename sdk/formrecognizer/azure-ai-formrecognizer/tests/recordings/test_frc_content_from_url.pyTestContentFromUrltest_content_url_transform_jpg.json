@@ -9,49 +9,47 @@
         "Connection": "keep-alive",
         "Content-Length": "33",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f482aec8-5eb2-11ec-897b-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "source": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "efc76c45-f758-4ac1-ac38-c3932a66dc9b",
+        "apim-request-id": "2fd650c8-f895-45a2-b79a-db96e219c708",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 20:58:43 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/layout/analyzeResults/efc76c45-f758-4ac1-ac38-c3932a66dc9b",
+        "Date": "Fri, 24 Jun 2022 00:11:57 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/layout/analyzeResults/2fd650c8-f895-45a2-b79a-db96e219c708",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "635"
+        "x-envoy-upstream-service-time": "135"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/layout/analyzeResults/efc76c45-f758-4ac1-ac38-c3932a66dc9b",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/layout/analyzeResults/2fd650c8-f895-45a2-b79a-db96e219c708",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f482aec8-5eb2-11ec-897b-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "5aa7706c-f1c5-4dee-a6d0-5e1f433c8f12",
+        "apim-request-id": "e53fa171-7525-44be-864c-3dfd4187e343",
         "Content-Length": "24828",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 20:58:48 GMT",
+        "Date": "Fri, 24 Jun 2022 00:12:03 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "18"
+        "x-envoy-upstream-service-time": "17"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2021-12-16T20:58:43Z",
-        "lastUpdatedDateTime": "2021-12-16T20:58:45Z",
+        "createdDateTime": "2022-06-24T00:11:58Z",
+        "lastUpdatedDateTime": "2022-06-24T00:11:59Z",
         "analyzeResult": {
           "version": "2.1.0",
           "readResults": [

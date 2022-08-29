@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AlertSeverity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity Level of Alert
     """
 
@@ -21,7 +20,7 @@ class AlertSeverity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     THREE = "3"
     FOUR = "4"
 
-class ConditionalOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ConditionalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Result Condition Evaluation criteria.
     """
 
@@ -31,27 +30,27 @@ class ConditionalOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     EQUAL = "Equal"
 
-class Enabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Enabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The flag which indicates whether the Log Search rule is enabled. Value should be true or false
     """
 
     TRUE = "true"
     FALSE = "false"
 
-class MetricTriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MetricTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Metric Trigger Evaluation Type
     """
 
     CONSECUTIVE = "Consecutive"
     TOTAL = "Total"
 
-class Operator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operator for dimension values
     """
 
     INCLUDE = "Include"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the scheduled query rule
     """
 
@@ -60,7 +59,7 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CANCELED = "Canceled"
     FAILED = "Failed"
 
-class QueryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Set value to 'ResultAccount'
     """
 

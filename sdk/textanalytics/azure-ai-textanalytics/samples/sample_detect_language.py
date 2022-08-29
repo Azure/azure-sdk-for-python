@@ -19,14 +19,14 @@ USAGE:
     python sample_detect_language.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
-    2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+    1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
+    2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
 import os
 
 
-def sample_detect_language():
+def sample_detect_language() -> None:
     print(
         "In this sample we own a hotel with customers from all around the globe. We want to eventually "
         "translate these reviews into English so our manager can read them. However, we first need to know which language "
@@ -36,8 +36,8 @@ def sample_detect_language():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     documents = [
@@ -60,8 +60,6 @@ def sample_detect_language():
         print("Review #{} is in '{}', which has ISO639-1 name '{}'\n".format(
             idx, doc.primary_language.name, doc.primary_language.iso6391_name
         ))
-        if doc.is_error:
-            print(doc.id, doc.error)
     # [END detect_language]
     print(
         "When actually storing the reviews, we want to map the review to their ISO639-1 name "

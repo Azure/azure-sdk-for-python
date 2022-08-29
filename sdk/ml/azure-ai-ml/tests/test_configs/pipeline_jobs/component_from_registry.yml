@@ -1,0 +1,19 @@
+type: pipeline
+
+# name: microsoft.samples.PipelineJobSampleToDefineScope #follow up on schema validation error
+name: simplepipelinejob
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+# Check if supported ...
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+jobs:
+  component_1:
+    type: command
+    component: azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1
+    compute: azureml:cpu-cluster

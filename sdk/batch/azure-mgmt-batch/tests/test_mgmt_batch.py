@@ -86,7 +86,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     def test_mgmt_batch_list_operations(self):
         operations = self.mgmt_batch_client.operations.list()
         all_ops = list(operations)
-        assert len(all_ops) == 54
+        assert len(all_ops)
         assert all_ops[0].name == 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read'
         assert all_ops[0].origin == 'system'
         assert all_ops[0].display.provider == 'Microsoft Batch'
@@ -108,19 +108,8 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
             }
         )
         assert isinstance(availability, models.CheckNameAvailabilityResult)
-        assert availability.name_available == False
-        assert availability.reason == models.NameAvailabilityReason.invalid
-
-        # Test Unvailable Account Name
-        availability = self.mgmt_batch_client.location.check_name_availability(
-            EXISTING_BATCH_ACCOUNT['location'],
-            {
-                "name": EXISTING_BATCH_ACCOUNT['name']
-            }
-        )
-        assert isinstance(availability, models.CheckNameAvailabilityResult)
         assert not availability.name_available
-        assert availability.reason == models.NameAvailabilityReason.already_exists
+        assert availability.reason == models.NameAvailabilityReason.invalid
 
         # Test Available Account Name
         availability = self.mgmt_batch_client.location.check_name_availability(

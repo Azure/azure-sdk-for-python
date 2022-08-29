@@ -25,6 +25,7 @@ from unittest.mock import MagicMock
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import PartitionKey
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -38,13 +39,14 @@ class HeadersTest(unittest.TestCase):
 
     dedicated_gateway_max_age_thousand = 1000
     dedicated_gateway_max_age_million = 1000000
-    dedicated_gateway_max_age_zero = 0
+    dedicated_gateway_max_age_negative = -1
 
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.container = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
+        cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.container = cls.database.create_container(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_ID,
+                                                      partition_key=PartitionKey(path="/id"))
 
     def side_effect_dedicated_gateway_max_age_thousand(self, *args, **kwargs):
         # Extract request headers from args
@@ -74,10 +76,10 @@ class HeadersTest(unittest.TestCase):
         except StopIteration:
             pass
 
-    def test_zero_max_integrated_cache_staleness(self):
+    def test_negative_max_integrated_cache_staleness(self):
         try:
             self.container.read_item(item="id-1", partition_key="pk-1",
-                                     max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_zero)
+                                     max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_negative)
         except Exception as exception:
             assert isinstance(exception, ValueError)
 

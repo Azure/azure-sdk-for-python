@@ -31,7 +31,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api-version-keyword
+class EventHubConsumerClient(
+    ClientBase
+):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -136,6 +138,7 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
@@ -200,6 +203,7 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            amqp_transport=self._amqp_transport,
         )
         return handler
 

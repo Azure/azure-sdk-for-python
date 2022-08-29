@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
+T = TypeVar("T", bound="ImdsCredential")
+
 
 class ImdsCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: "Any") -> None:
@@ -31,7 +33,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         self._error_message = None  # type: Optional[str]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    async def __aenter__(self):
+    async def __aenter__(self:T) -> T:
         await self._client.__aenter__()
         return self
 

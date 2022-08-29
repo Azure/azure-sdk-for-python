@@ -20,7 +20,8 @@ skip_pkgs = [
     'azure-servicemanagement-legacy', # legacy (not officially deprecated)
     'azure-common',
     'azure',
-    'azure-keyvault'
+    'azure-keyvault',
+    'azure-ai-ml'
 ]
 
 def report_should_skip_lib(lib_name):

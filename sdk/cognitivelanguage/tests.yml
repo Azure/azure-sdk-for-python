@@ -10,7 +10,7 @@ stages:
       MaxParallel: 1
       EnvVars:
         AZURE_QUESTIONANSWERING_KEY: $(qna-key)
-        AZURE_QUESTIONANSWERING_PROJECT: 190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c
+        AZURE_QUESTIONANSWERING_PROJECT: $(qna-project)
         AZURE_QUESTIONANSWERING_ENDPOINT: $(qna-uri)
         AZURE_CONVERSATIONS_ENDPOINT: $(clu-uri)
         AZURE_CONVERSATIONS_KEY: $(clu-key)

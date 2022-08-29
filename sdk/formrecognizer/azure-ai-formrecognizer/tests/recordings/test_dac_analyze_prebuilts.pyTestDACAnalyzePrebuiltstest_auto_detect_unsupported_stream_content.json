@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-06-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,20 +9,18 @@
         "Connection": "keep-alive",
         "Content-Length": "1824",
         "Content-Type": "application/octet-stream",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2a4124a3-901a-11ec-af38-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": "DQojIGNvZGluZzogdXRmLTgNCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIyBDb3B5cmlnaHQgKGMpIE1pY3Jvc29mdCBDb3Jwb3JhdGlvbi4gQWxsIHJpZ2h0cyByZXNlcnZlZC4NCiMgTGljZW5zZWQgdW5kZXIgdGhlIE1JVCBMaWNlbnNlLiBTZWUgTGljZW5zZS50eHQgaW4gdGhlIHByb2plY3Qgcm9vdCBmb3INCiMgbGljZW5zZSBpbmZvcm1hdGlvbi4NCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KaW1wb3J0IHB5dGVzdA0KaW1wb3J0IHN5cw0KZnJvbSBkZXZ0b29sc190ZXN0dXRpbHMgaW1wb3J0IGFkZF9yZW1vdmVfaGVhZGVyX3Nhbml0aXplciwgYWRkX2dlbmVyYWxfcmVnZXhfc2FuaXRpemVyLCBhZGRfb2F1dGhfcmVzcG9uc2Vfc2FuaXRpemVyLCBhZGRfYm9keV9rZXlfc2FuaXRpemVyLCB0ZXN0X3Byb3h5DQoNCiMgSWdub3JlIGFzeW5jIHRlc3RzIGZvciBQeXRob24gPCAzLjYNCmNvbGxlY3RfaWdub3JlX2dsb2IgPSBbXQ0KaWYgc3lzLnZlcnNpb25faW5mbyA8ICgzLCA2KToNCiAgICBjb2xsZWN0X2lnbm9yZV9nbG9iLmFwcGVuZCgiKl9hc3luYy5weSIpDQoNCkBweXRlc3QuZml4dHVyZShzY29wZT0ic2Vzc2lvbiIsIGF1dG91c2U9VHJ1ZSkNCmRlZiBhZGRfc2FuaXRpemVycyh0ZXN0X3Byb3h5KToNCiAgICBhZGRfcmVtb3ZlX2hlYWRlcl9zYW5pdGl6ZXIoaGVhZGVycz0iT2NwLUFwaW0tU3Vic2NyaXB0aW9uLUtleSIpDQogICAgYWRkX2dlbmVyYWxfcmVnZXhfc2FuaXRpemVyKA0KICAgICAgICB2YWx1ZT0iZmFrZWVuZHBvaW50IiwNCiAgICAgICAgcmVnZXg9Iig/PD1cXC9cXC8pW2Etei1dKyg/PVxcLmNvZ25pdGl2ZXNlcnZpY2VzXFwuYXp1cmVcXC5jb20pIg0KICAgICkNCiAgICBhZGRfb2F1dGhfcmVzcG9uc2Vfc2FuaXRpemVyKCkNCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9InVybFNvdXJjZSIsDQogICAgICAgIHZhbHVlPSJibG9iX3Nhc191cmwiLA0KICAgICAgICByZWdleD0iKD88PVxcL1xcLylbYS16LV0rKD89XFwuYmxvYlxcLmNvcmVcXC53aW5kb3dzXFwubmV0KSguKikkIiwNCiAgICApDQogICAgYWRkX2JvZHlfa2V5X3Nhbml0aXplcigNCiAgICAgICAganNvbl9wYXRoPSJhenVyZUJsb2JTb3VyY2UuY29udGFpbmVyVXJsIiwNCiAgICAgICAgdmFsdWU9ImJsb2Jfc2FzX3VybCIsDQogICAgICAgIHJlZ2V4PSIoPzw9XFwvXFwvKVthLXotXSsoPz1cXC5ibG9iXFwuY29yZVxcLndpbmRvd3NcXC5uZXQpKC4qKSQiLA0KICAgICkNCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9InNvdXJjZSIsDQogICAgICAgIHZhbHVlPSJibG9iX3Nhc191cmwiLA0KICAgICAgICByZWdleD0iKD88PVxcL1xcLylbYS16LV0rKD89XFwuYmxvYlxcLmNvcmVcXC53aW5kb3dzXFwubmV0KSguKikkIiwNCiAgICApDQogICAgYWRkX2JvZHlfa2V5X3Nhbml0aXplcigNCiAgICAgICAganNvbl9wYXRoPSJhY2Nlc3NUb2tlbiIsDQogICAgICAgIHZhbHVlPSJyZWRhY3RlZCIsDQogICAgICAgIHJlZ2V4PSIoWzAtOWEtZi1dezM2fSkiLA0KICAgICkNCiAgICANCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9ImNvcHlBdXRob3JpemF0aW9uLmFjY2Vzc1Rva2VuIiwNCiAgICAgICAgdmFsdWU9InJlZGFjdGVkIiwNCiAgICAgICAgcmVnZXg9IihbMC05YS1mLV17MzZ9KSIsDQogICAgKQ0K",
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "41176a26-ab86-4880-9364-83e6ca19d15e",
+        "apim-request-id": "2355e157-4460-4dde-ba21-f5e56c082b3c",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 17 Feb 2022 17:50:59 GMT",
-        "Server": "istio-envoy",
+        "Date": "Wed, 25 May 2022 21:59:41 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "4"
       },
       "ResponseBody": {
         "error": {

@@ -1,0 +1,84 @@
+type: pipeline
+
+name: simplePipelineJobWithCommandJobInputs
+description: The hello world pipeline job with inline command job having inputs
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_data:
+    type: uri_file
+    path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    mode: ro_mount
+  job_data_uri:
+    type: uri_file
+    path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    mode: ro_mount
+  job_literal_input: 5
+
+outputs:
+  job_out_path_1:
+    mode: mount
+
+
+jobs:
+
+  hello_world_inline_commandjob_1:
+    type: command
+
+    command: pip freeze && echo ${{inputs.literal_input}}
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    code: ./
+    experiment_name: test-iris-example-1
+    description: Train a model on the Iris dataset-1.
+    inputs:
+      "test1":
+        type: uri_file
+        path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+        mode: ro_mount
+      "test2":
+        type: uri_file
+        path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+        mode: ro_mount
+      "literal_input": 7
+    outputs:
+      test1:
+        type: uri_file
+
+  hello_world_inline_commandjob_2:
+    type: command
+
+    command: echo Hello World
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    name: "test2"
+    compute: "azureml:cpu-cluster"
+    experiment_name: test-iris-example-2
+    description: Train a model on the Iris dataset-2.
+    properties:
+      test_property: test_value
+    identity:
+      type: AMLToken
+    inputs:
+      "test1": "${{parent.inputs.job_data}}"
+      "test2": "${{parent.jobs.hello_world_inline_commandjob_1.outputs.test1}}"
+      "test3": "${{parent.jobs.hello_world_inline_commandjob_3.outputs.test1}}"
+
+  hello_world_inline_commandjob_3:
+    type: command
+
+    command: pip freeze && echo ${{inputs.test1}}
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    code: ./
+    experiment_name: test-iris-example-1
+    description: Train a model on the Iris dataset-1.
+    inputs:
+      "test1":
+        type: uri_file
+        path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+        mode: ro_mount
+    outputs:
+      test1:
+        type: uri_folder

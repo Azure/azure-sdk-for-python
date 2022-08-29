@@ -1,0 +1,22 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+name: microsoftsamplescommandcomponentbasic_nopaths_test
+version: 1
+display_name: CommandComponentBasic
+is_deterministic: True
+type: command
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+inputs:
+  component_in_number:
+    type: number
+    optional: False
+    default: 10.99
+    description: A number
+environment:
+  conda_file: ../environment/endpoint_conda.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+command: echo Hello World & echo ${{inputs.component_in_number}}
+code: "./"
+...

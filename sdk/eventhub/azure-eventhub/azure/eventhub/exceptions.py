@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import logging
 import six
 
+<<<<<<< HEAD
 from ._constants import NO_RETRY_ERRORS
 from ._pyamqp import error as errors
 
 _LOGGER = logging.getLogger(__name__)
 
 
+=======
+>>>>>>> main
 class EventHubError(Exception):
     """Represents an error occurred in the client.
 
@@ -100,6 +102,7 @@ class OperationTimeoutError(EventHubError):
 
 class OwnershipLostError(Exception):
     """Raised when `update_checkpoint` detects the ownership to a partition has been lost."""
+<<<<<<< HEAD
 
 
 def _create_eventhub_exception(exception):
@@ -171,3 +174,5 @@ def _handle_exception(
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access
         return _create_eventhub_exception(exception)
+=======
+>>>>>>> main

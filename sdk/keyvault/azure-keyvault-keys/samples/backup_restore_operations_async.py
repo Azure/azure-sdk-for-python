@@ -15,9 +15,8 @@ from azure.keyvault.keys.aio import KeyClient
 #
 # 3. Set environment variable VAULT_URL with the URL of your key vault
 #
-# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
-#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # 5. Key create, backup, delete, purge, and restore permissions for your service principal in your vault
 #
@@ -45,7 +44,7 @@ async def run_sample():
     # Let's create a Key of type RSA.
     # if the key already exists in the Key Vault, then a new version of the key is created.
     print("\n.. Create Key")
-    key = await client.create_key("keyName", "RSA")
+    key = await client.create_key("keyNameAsync", "RSA")
     print("Key with name '{0}' created with key type '{1}'".format(key.name, key.key_type))
 
     # Backups are good to have, if in case keys gets deleted accidentally.

@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._form_recognizer_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AnalyzeOperationResult(msrest.serialization.Model):
@@ -20,7 +22,7 @@ class AnalyzeOperationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Operation status. Possible values include: "notStarted", "running",
+    :ivar status: Required. Operation status. Known values are: "notStarted", "running",
      "succeeded", "failed".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
     :ivar created_date_time: Required. Date and time (UTC) when the analyze operation was
@@ -48,14 +50,14 @@ class AnalyzeOperationResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "OperationStatus"],
+        status: Union[str, "_models.OperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
-        analyze_result: Optional["AnalyzeResult"] = None,
+        analyze_result: Optional["_models.AnalyzeResult"] = None,
         **kwargs
     ):
         """
-        :keyword status: Required. Operation status. Possible values include: "notStarted", "running",
+        :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "succeeded", "failed".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
         :keyword created_date_time: Required. Date and time (UTC) when the analyze operation was
@@ -108,10 +110,10 @@ class AnalyzeResult(msrest.serialization.Model):
         self,
         *,
         version: str,
-        read_results: List["ReadResult"],
-        page_results: Optional[List["PageResult"]] = None,
-        document_results: Optional[List["DocumentResult"]] = None,
-        errors: Optional[List["ErrorInformation"]] = None,
+        read_results: List["_models.ReadResult"],
+        page_results: Optional[List["_models.PageResult"]] = None,
+        document_results: Optional[List["_models.DocumentResult"]] = None,
+        errors: Optional[List["_models.ErrorInformation"]] = None,
         **kwargs
     ):
         """
@@ -154,7 +156,7 @@ class Appearance(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        style: "Style",
+        style: "_models.Style",
         **kwargs
     ):
         """
@@ -282,7 +284,7 @@ class CopyOperationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Operation status. Possible values include: "notStarted", "running",
+    :ivar status: Required. Operation status. Known values are: "notStarted", "running",
      "succeeded", "failed".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
     :ivar created_date_time: Required. Date and time (UTC) when the copy operation was submitted.
@@ -309,14 +311,14 @@ class CopyOperationResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "OperationStatus"],
+        status: Union[str, "_models.OperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
-        copy_result: Optional["CopyResult"] = None,
+        copy_result: Optional["_models.CopyResult"] = None,
         **kwargs
     ):
         """
-        :keyword status: Required. Operation status. Possible values include: "notStarted", "running",
+        :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "succeeded", "failed".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.OperationStatus
         :keyword created_date_time: Required. Date and time (UTC) when the copy operation was
@@ -367,7 +369,7 @@ class CopyRequest(msrest.serialization.Model):
         *,
         target_resource_id: str,
         target_resource_region: str,
-        copy_authorization: "CopyAuthorizationResult",
+        copy_authorization: "_models.CopyAuthorizationResult",
         **kwargs
     ):
         """
@@ -411,7 +413,7 @@ class CopyResult(msrest.serialization.Model):
         self,
         *,
         model_id: str,
-        errors: Optional[List["ErrorInformation"]] = None,
+        errors: Optional[List["_models.ErrorInformation"]] = None,
         **kwargs
     ):
         """
@@ -459,7 +461,7 @@ class DataTable(msrest.serialization.Model):
         *,
         rows: int,
         columns: int,
-        cells: List["DataTableCell"],
+        cells: List["_models.DataTableCell"],
         bounding_box: List[float],
         **kwargs
     ):
@@ -619,7 +621,7 @@ class DocumentResult(msrest.serialization.Model):
         *,
         doc_type: str,
         page_range: List[int],
-        fields: Dict[str, "FieldValue"],
+        fields: Dict[str, "_models.FieldValue"],
         model_id: Optional[str] = None,
         doc_type_confidence: Optional[float] = None,
         **kwargs
@@ -703,7 +705,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: "ErrorInformation",
+        error: "_models.ErrorInformation",
         **kwargs
     ):
         """
@@ -719,7 +721,7 @@ class FieldValue(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of field value. Possible values include: "string", "date", "time",
+    :ivar type: Required. Type of field value. Known values are: "string", "date", "time",
      "phoneNumber", "number", "integer", "array", "object", "selectionMark", "countryRegion".
     :vartype type: str or ~azure.ai.formrecognizer.v2_1.models.FieldValueType
     :ivar value_string: String value.
@@ -738,8 +740,7 @@ class FieldValue(msrest.serialization.Model):
     :vartype value_array: list[~azure.ai.formrecognizer.v2_1.models.FieldValue]
     :ivar value_object: Dictionary of named field values.
     :vartype value_object: dict[str, ~azure.ai.formrecognizer.v2_1.models.FieldValue]
-    :ivar value_selection_mark: Selection mark value. Possible values include: "selected",
-     "unselected".
+    :ivar value_selection_mark: Selection mark value. Known values are: "selected", "unselected".
     :vartype value_selection_mark: str or
      ~azure.ai.formrecognizer.v2_1.models.FieldValueSelectionMark
     :ivar value_country_region: 3-letter country code (ISO 3166-1 alpha-3).
@@ -786,16 +787,16 @@ class FieldValue(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "FieldValueType"],
+        type: Union[str, "_models.FieldValueType"],
         value_string: Optional[str] = None,
         value_date: Optional[datetime.date] = None,
         value_time: Optional[datetime.time] = None,
         value_phone_number: Optional[str] = None,
         value_number: Optional[float] = None,
         value_integer: Optional[int] = None,
-        value_array: Optional[List["FieldValue"]] = None,
-        value_object: Optional[Dict[str, "FieldValue"]] = None,
-        value_selection_mark: Optional[Union[str, "FieldValueSelectionMark"]] = None,
+        value_array: Optional[List["_models.FieldValue"]] = None,
+        value_object: Optional[Dict[str, "_models.FieldValue"]] = None,
+        value_selection_mark: Optional[Union[str, "_models.FieldValueSelectionMark"]] = None,
         value_country_region: Optional[str] = None,
         text: Optional[str] = None,
         bounding_box: Optional[List[float]] = None,
@@ -805,9 +806,8 @@ class FieldValue(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. Type of field value. Possible values include: "string", "date",
-         "time", "phoneNumber", "number", "integer", "array", "object", "selectionMark",
-         "countryRegion".
+        :keyword type: Required. Type of field value. Known values are: "string", "date", "time",
+         "phoneNumber", "number", "integer", "array", "object", "selectionMark", "countryRegion".
         :paramtype type: str or ~azure.ai.formrecognizer.v2_1.models.FieldValueType
         :keyword value_string: String value.
         :paramtype value_string: str
@@ -825,7 +825,7 @@ class FieldValue(msrest.serialization.Model):
         :paramtype value_array: list[~azure.ai.formrecognizer.v2_1.models.FieldValue]
         :keyword value_object: Dictionary of named field values.
         :paramtype value_object: dict[str, ~azure.ai.formrecognizer.v2_1.models.FieldValue]
-        :keyword value_selection_mark: Selection mark value. Possible values include: "selected",
+        :keyword value_selection_mark: Selection mark value. Known values are: "selected",
          "unselected".
         :paramtype value_selection_mark: str or
          ~azure.ai.formrecognizer.v2_1.models.FieldValueSelectionMark
@@ -937,7 +937,7 @@ class KeyValueElement(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Semantic data type of the key value element. Possible values include: "string",
+    :ivar type: Semantic data type of the key value element. Known values are: "string",
      "selectionMark".
     :vartype type: str or ~azure.ai.formrecognizer.v2_1.models.KeyValueType
     :ivar text: Required. The text content of the key or value.
@@ -965,13 +965,13 @@ class KeyValueElement(msrest.serialization.Model):
         self,
         *,
         text: str,
-        type: Optional[Union[str, "KeyValueType"]] = None,
+        type: Optional[Union[str, "_models.KeyValueType"]] = None,
         bounding_box: Optional[List[float]] = None,
         elements: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword type: Semantic data type of the key value element. Possible values include: "string",
+        :keyword type: Semantic data type of the key value element. Known values are: "string",
          "selectionMark".
         :paramtype type: str or ~azure.ai.formrecognizer.v2_1.models.KeyValueType
         :keyword text: Required. The text content of the key or value.
@@ -1020,8 +1020,8 @@ class KeyValuePair(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        key: "KeyValueElement",
-        value: "KeyValueElement",
+        key: "_models.KeyValueElement",
+        value: "_models.KeyValueElement",
         confidence: float,
         label: Optional[str] = None,
         **kwargs
@@ -1072,10 +1072,10 @@ class Model(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        model_info: "ModelInfo",
-        keys: Optional["KeysResult"] = None,
-        train_result: Optional["TrainResult"] = None,
-        composed_train_results: Optional[List["TrainResult"]] = None,
+        model_info: "_models.ModelInfo",
+        keys: Optional["_models.KeysResult"] = None,
+        train_result: Optional["_models.TrainResult"] = None,
+        composed_train_results: Optional[List["_models.TrainResult"]] = None,
         **kwargs
     ):
         """
@@ -1102,8 +1102,7 @@ class ModelInfo(msrest.serialization.Model):
 
     :ivar model_id: Required. Model identifier.
     :vartype model_id: str
-    :ivar status: Required. Status of the model. Possible values include: "creating", "ready",
-     "invalid".
+    :ivar status: Required. Status of the model. Known values are: "creating", "ready", "invalid".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.ModelStatus
     :ivar created_date_time: Required. Date and time (UTC) when the model was created.
     :vartype created_date_time: ~datetime.datetime
@@ -1135,17 +1134,17 @@ class ModelInfo(msrest.serialization.Model):
         self,
         *,
         model_id: str,
-        status: Union[str, "ModelStatus"],
+        status: Union[str, "_models.ModelStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         model_name: Optional[str] = None,
-        attributes: Optional["Attributes"] = None,
+        attributes: Optional["_models.Attributes"] = None,
         **kwargs
     ):
         """
         :keyword model_id: Required. Model identifier.
         :paramtype model_id: str
-        :keyword status: Required. Status of the model. Possible values include: "creating", "ready",
+        :keyword status: Required. Status of the model. Known values are: "creating", "ready",
          "invalid".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.ModelStatus
         :keyword created_date_time: Required. Date and time (UTC) when the model was created.
@@ -1187,8 +1186,8 @@ class Models(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        summary: Optional["ModelsSummary"] = None,
-        model_list: Optional[List["ModelInfo"]] = None,
+        summary: Optional["_models.ModelsSummary"] = None,
+        model_list: Optional[List["_models.ModelInfo"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1286,8 +1285,8 @@ class PageResult(msrest.serialization.Model):
         *,
         page: int,
         cluster_id: Optional[int] = None,
-        key_value_pairs: Optional[List["KeyValuePair"]] = None,
-        tables: Optional[List["DataTable"]] = None,
+        key_value_pairs: Optional[List["_models.KeyValuePair"]] = None,
+        tables: Optional[List["_models.DataTable"]] = None,
         **kwargs
     ):
         """
@@ -1322,8 +1321,7 @@ class ReadResult(msrest.serialization.Model):
     :ivar height: Required. The height of the image/PDF in pixels/inches, respectively.
     :vartype height: float
     :ivar unit: Required. The unit used by the width, height and boundingBox properties. For
-     images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
-     "inch".
+     images, the unit is "pixel". For PDF, the unit is "inch". Known values are: "pixel", "inch".
     :vartype unit: str or ~azure.ai.formrecognizer.v2_1.models.LengthUnit
     :ivar lines: When includeTextDetails is set to true, a list of recognized text lines. The
      maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
@@ -1360,9 +1358,9 @@ class ReadResult(msrest.serialization.Model):
         angle: float,
         width: float,
         height: float,
-        unit: Union[str, "LengthUnit"],
-        lines: Optional[List["TextLine"]] = None,
-        selection_marks: Optional[List["SelectionMark"]] = None,
+        unit: Union[str, "_models.LengthUnit"],
+        lines: Optional[List["_models.TextLine"]] = None,
+        selection_marks: Optional[List["_models.SelectionMark"]] = None,
         **kwargs
     ):
         """
@@ -1376,8 +1374,7 @@ class ReadResult(msrest.serialization.Model):
         :keyword height: Required. The height of the image/PDF in pixels/inches, respectively.
         :paramtype height: float
         :keyword unit: Required. The unit used by the width, height and boundingBox properties. For
-         images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
-         "inch".
+         images, the unit is "pixel". For PDF, the unit is "inch". Known values are: "pixel", "inch".
         :paramtype unit: str or ~azure.ai.formrecognizer.v2_1.models.LengthUnit
         :keyword lines: When includeTextDetails is set to true, a list of recognized text lines. The
          maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
@@ -1407,8 +1404,7 @@ class SelectionMark(msrest.serialization.Model):
     :vartype bounding_box: list[float]
     :ivar confidence: Required. Confidence value.
     :vartype confidence: float
-    :ivar state: Required. State of the selection mark. Possible values include: "selected",
-     "unselected".
+    :ivar state: Required. State of the selection mark. Known values are: "selected", "unselected".
     :vartype state: str or ~azure.ai.formrecognizer.v2_1.models.SelectionMarkState
     """
 
@@ -1429,7 +1425,7 @@ class SelectionMark(msrest.serialization.Model):
         *,
         bounding_box: List[float],
         confidence: float,
-        state: Union[str, "SelectionMarkState"],
+        state: Union[str, "_models.SelectionMarkState"],
         **kwargs
     ):
         """
@@ -1437,7 +1433,7 @@ class SelectionMark(msrest.serialization.Model):
         :paramtype bounding_box: list[float]
         :keyword confidence: Required. Confidence value.
         :paramtype confidence: float
-        :keyword state: Required. State of the selection mark. Possible values include: "selected",
+        :keyword state: Required. State of the selection mark. Known values are: "selected",
          "unselected".
         :paramtype state: str or ~azure.ai.formrecognizer.v2_1.models.SelectionMarkState
         """
@@ -1481,8 +1477,8 @@ class Style(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The text line style name, including handwriting and other. Possible
-     values include: "other", "handwriting".
+    :ivar name: Required. The text line style name, including handwriting and other. Known values
+     are: "other", "handwriting".
     :vartype name: str or ~azure.ai.formrecognizer.v2_1.models.TextStyle
     :ivar confidence: Required. The confidence of text line style.
     :vartype confidence: float
@@ -1501,13 +1497,13 @@ class Style(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Union[str, "TextStyle"],
+        name: Union[str, "_models.TextStyle"],
         confidence: float,
         **kwargs
     ):
         """
-        :keyword name: Required. The text line style name, including handwriting and other. Possible
-         values include: "other", "handwriting".
+        :keyword name: Required. The text line style name, including handwriting and other. Known
+         values are: "other", "handwriting".
         :paramtype name: str or ~azure.ai.formrecognizer.v2_1.models.TextStyle
         :keyword confidence: Required. The confidence of text line style.
         :paramtype confidence: float
@@ -1550,8 +1546,8 @@ class TextLine(msrest.serialization.Model):
         *,
         text: str,
         bounding_box: List[float],
-        words: List["TextWord"],
-        appearance: Optional["Appearance"] = None,
+        words: List["_models.TextWord"],
+        appearance: Optional["_models.Appearance"] = None,
         **kwargs
     ):
         """
@@ -1629,7 +1625,7 @@ class TrainingDocumentInfo(msrest.serialization.Model):
     :vartype pages: int
     :ivar errors: Required. List of errors.
     :vartype errors: list[~azure.ai.formrecognizer.v2_1.models.ErrorInformation]
-    :ivar status: Required. Status of the training operation. Possible values include: "succeeded",
+    :ivar status: Required. Status of the training operation. Known values are: "succeeded",
      "partiallySucceeded", "failed".
     :vartype status: str or ~azure.ai.formrecognizer.v2_1.models.TrainStatus
     """
@@ -1653,8 +1649,8 @@ class TrainingDocumentInfo(msrest.serialization.Model):
         *,
         document_name: str,
         pages: int,
-        errors: List["ErrorInformation"],
-        status: Union[str, "TrainStatus"],
+        errors: List["_models.ErrorInformation"],
+        status: Union[str, "_models.TrainStatus"],
         **kwargs
     ):
         """
@@ -1664,8 +1660,8 @@ class TrainingDocumentInfo(msrest.serialization.Model):
         :paramtype pages: int
         :keyword errors: Required. List of errors.
         :paramtype errors: list[~azure.ai.formrecognizer.v2_1.models.ErrorInformation]
-        :keyword status: Required. Status of the training operation. Possible values include:
-         "succeeded", "partiallySucceeded", "failed".
+        :keyword status: Required. Status of the training operation. Known values are: "succeeded",
+         "partiallySucceeded", "failed".
         :paramtype status: str or ~azure.ai.formrecognizer.v2_1.models.TrainStatus
         """
         super(TrainingDocumentInfo, self).__init__(**kwargs)
@@ -1705,7 +1701,7 @@ class TrainRequest(msrest.serialization.Model):
         self,
         *,
         source: str,
-        source_filter: Optional["TrainSourceFilter"] = None,
+        source_filter: Optional["_models.TrainSourceFilter"] = None,
         use_label_file: Optional[bool] = False,
         model_name: Optional[str] = None,
         **kwargs
@@ -1761,11 +1757,11 @@ class TrainResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        training_documents: List["TrainingDocumentInfo"],
-        fields: Optional[List["FormFieldsReport"]] = None,
+        training_documents: List["_models.TrainingDocumentInfo"],
+        fields: Optional[List["_models.FormFieldsReport"]] = None,
         average_model_accuracy: Optional[float] = None,
         model_id: Optional[str] = None,
-        errors: Optional[List["ErrorInformation"]] = None,
+        errors: Optional[List["_models.ErrorInformation"]] = None,
         **kwargs
     ):
         """

@@ -9,23 +9,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component3?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component3?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ComponentNotFound","message":"DTComponentTestsTempTwin
         does not have component Component3 Please verify that the component path is
-        correct. You can get components by getting the twin, See example http://aka.ms/TwinGetSwSmpl."}}'
+        correct. You can get components by getting the twin, See example https://aka.ms/TwinGetSwSmpl."}}'
     headers:
       content-length:
-      - '245'
+      - '246'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:03:49 GMT
+      - Thu, 26 May 2022 07:27:15 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-fd2d67b5b5a5ff49a40cfa41d9a9f8b2-8e5150465e2d5040-01
     status:
       code: 404
       message: Not Found
@@ -39,24 +41,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1?api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
         twin instance that exists with the ID foo. Please verify that the twin id
         is valid and ensure that the twin is not deleted. See section on querying
-        the twins http://aka.ms/adtv2query."}}'
+        the twins https://aka.ms/adtv2query."}}'
     headers:
       content-length:
-      - '256'
+      - '257'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:03:49 GMT
+      - Thu, 26 May 2022 07:27:15 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-a9827c13fdbb7f4b8f9daa6b8865b53a-9bfb070ef9e88f49-01
     status:
       code: 404
       message: Not Found

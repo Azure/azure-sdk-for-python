@@ -766,6 +766,9 @@ class BatchAccount(Resource):
     :vartype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
     :ivar account_endpoint: The account endpoint used to interact with the Batch service.
     :vartype account_endpoint: str
+    :ivar node_management_endpoint: The endpoint used by compute node to connect to the Batch node
+     management service.
+    :vartype node_management_endpoint: str
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Invalid", "Creating", "Deleting", "Succeeded", "Failed", "Cancelled".
     :vartype provisioning_state: str or ~azure.mgmt.batch.models.ProvisioningState
@@ -777,6 +780,9 @@ class BatchAccount(Resource):
     :ivar public_network_access: If not specified, the default value is 'enabled'. Possible values
      include: "Enabled", "Disabled". Default value: "Enabled".
     :vartype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :ivar network_profile: The network profile only takes effect when publicNetworkAccess is
+     enabled.
+    :vartype network_profile: ~azure.mgmt.batch.models.NetworkProfile
     :ivar private_endpoint_connections: List of private endpoint connections associated with the
      Batch account.
     :vartype private_endpoint_connections: list[~azure.mgmt.batch.models.PrivateEndpointConnection]
@@ -798,13 +804,10 @@ class BatchAccount(Resource):
      UserSubscription, quota is managed on the subscription so this value is not returned.
     :vartype dedicated_core_quota_per_vm_family:
      list[~azure.mgmt.batch.models.VirtualMachineFamilyCoreQuota]
-    :ivar dedicated_core_quota_per_vm_family_enforced: Batch is transitioning its core quota system
-     for dedicated cores to be enforced per Virtual Machine family. During this transitional phase,
-     the dedicated core quota per Virtual Machine family may not yet be enforced. If this flag is
-     false, dedicated core quota is enforced via the old dedicatedCoreQuota property on the account
-     and does not consider Virtual Machine family. If this flag is true, dedicated core quota is
-     enforced via the dedicatedCoreQuotaPerVMFamily property on the account, and the old
-     dedicatedCoreQuota does not apply.
+    :ivar dedicated_core_quota_per_vm_family_enforced: If this flag is true, dedicated core quota
+     is enforced via both the dedicatedCoreQuotaPerVMFamily and dedicatedCoreQuota properties on the
+     account. If this flag is false, dedicated core quota is enforced only via the
+     dedicatedCoreQuota property on the account and does not consider Virtual Machine family.
     :vartype dedicated_core_quota_per_vm_family_enforced: bool
     :ivar pool_quota: The pool quota for the Batch account.
     :vartype pool_quota: int
@@ -824,10 +827,10 @@ class BatchAccount(Resource):
         'location': {'readonly': True},
         'tags': {'readonly': True},
         'account_endpoint': {'readonly': True},
+        'node_management_endpoint': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'pool_allocation_mode': {'readonly': True},
         'key_vault_reference': {'readonly': True},
-        'public_network_access': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
         'auto_storage': {'readonly': True},
         'encryption': {'readonly': True},
@@ -848,10 +851,12 @@ class BatchAccount(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'BatchAccountIdentity'},
         'account_endpoint': {'key': 'properties.accountEndpoint', 'type': 'str'},
+        'node_management_endpoint': {'key': 'properties.nodeManagementEndpoint', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'str'},
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageProperties'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
@@ -868,19 +873,29 @@ class BatchAccount(Resource):
         self,
         *,
         identity: Optional["BatchAccountIdentity"] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
+        network_profile: Optional["NetworkProfile"] = None,
         **kwargs
     ):
         """
         :keyword identity: The identity of the Batch account.
         :paramtype identity: ~azure.mgmt.batch.models.BatchAccountIdentity
+        :keyword public_network_access: If not specified, the default value is 'enabled'. Possible
+         values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+        :keyword network_profile: The network profile only takes effect when publicNetworkAccess is
+         enabled.
+        :paramtype network_profile: ~azure.mgmt.batch.models.NetworkProfile
         """
         super(BatchAccount, self).__init__(**kwargs)
         self.identity = identity
         self.account_endpoint = None
+        self.node_management_endpoint = None
         self.provisioning_state = None
         self.pool_allocation_mode = None
         self.key_vault_reference = None
-        self.public_network_access = None
+        self.public_network_access = public_network_access
+        self.network_profile = network_profile
         self.private_endpoint_connections = None
         self.auto_storage = None
         self.encryption = None
@@ -918,6 +933,9 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
     :ivar public_network_access: If not specified, the default value is 'enabled'. Possible values
      include: "Enabled", "Disabled". Default value: "Enabled".
     :vartype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :ivar network_profile: The network profile only takes effect when publicNetworkAccess is
+     enabled.
+    :vartype network_profile: ~azure.mgmt.batch.models.NetworkProfile
     :ivar encryption: Configures how customer data is encrypted inside the Batch account. By
      default, accounts are encrypted using a Microsoft managed key. For additional control, a
      customer-managed key can be used instead.
@@ -940,6 +958,7 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'str'},
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'allowed_authentication_modes': {'key': 'properties.allowedAuthenticationModes', 'type': '[str]'},
     }
@@ -954,6 +973,7 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         pool_allocation_mode: Optional[Union[str, "PoolAllocationMode"]] = None,
         key_vault_reference: Optional["KeyVaultReference"] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
+        network_profile: Optional["NetworkProfile"] = None,
         encryption: Optional["EncryptionProperties"] = None,
         allowed_authentication_modes: Optional[List[Union[str, "AuthenticationMode"]]] = None,
         **kwargs
@@ -979,6 +999,9 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         :keyword public_network_access: If not specified, the default value is 'enabled'. Possible
          values include: "Enabled", "Disabled". Default value: "Enabled".
         :paramtype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+        :keyword network_profile: The network profile only takes effect when publicNetworkAccess is
+         enabled.
+        :paramtype network_profile: ~azure.mgmt.batch.models.NetworkProfile
         :keyword encryption: Configures how customer data is encrypted inside the Batch account. By
          default, accounts are encrypted using a Microsoft managed key. For additional control, a
          customer-managed key can be used instead.
@@ -997,6 +1020,7 @@ class BatchAccountCreateParameters(msrest.serialization.Model):
         self.pool_allocation_mode = pool_allocation_mode
         self.key_vault_reference = key_vault_reference
         self.public_network_access = public_network_access
+        self.network_profile = network_profile
         self.encryption = encryption
         self.allowed_authentication_modes = allowed_authentication_modes
 
@@ -1175,6 +1199,12 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
      that can be used to authenticate with the data plane. This does not affect authentication with
      the control plane.
     :vartype allowed_authentication_modes: list[str or ~azure.mgmt.batch.models.AuthenticationMode]
+    :ivar public_network_access: If not specified, the default value is 'enabled'. Possible values
+     include: "Enabled", "Disabled". Default value: "Enabled".
+    :vartype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+    :ivar network_profile: The network profile only takes effect when publicNetworkAccess is
+     enabled.
+    :vartype network_profile: ~azure.mgmt.batch.models.NetworkProfile
     """
 
     _attribute_map = {
@@ -1183,6 +1213,8 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'allowed_authentication_modes': {'key': 'properties.allowedAuthenticationModes', 'type': '[str]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
     }
 
     def __init__(
@@ -1193,6 +1225,8 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
         auto_storage: Optional["AutoStorageBaseProperties"] = None,
         encryption: Optional["EncryptionProperties"] = None,
         allowed_authentication_modes: Optional[List[Union[str, "AuthenticationMode"]]] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
+        network_profile: Optional["NetworkProfile"] = None,
         **kwargs
     ):
         """
@@ -1211,6 +1245,12 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
          authentication with the control plane.
         :paramtype allowed_authentication_modes: list[str or
          ~azure.mgmt.batch.models.AuthenticationMode]
+        :keyword public_network_access: If not specified, the default value is 'enabled'. Possible
+         values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access: str or ~azure.mgmt.batch.models.PublicNetworkAccessType
+        :keyword network_profile: The network profile only takes effect when publicNetworkAccess is
+         enabled.
+        :paramtype network_profile: ~azure.mgmt.batch.models.NetworkProfile
         """
         super(BatchAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
@@ -1218,6 +1258,8 @@ class BatchAccountUpdateParameters(msrest.serialization.Model):
         self.auto_storage = auto_storage
         self.encryption = encryption
         self.allowed_authentication_modes = allowed_authentication_modes
+        self.public_network_access = public_network_access
+        self.network_profile = network_profile
 
 
 class BatchLocationQuota(msrest.serialization.Model):
@@ -2451,6 +2493,46 @@ class EncryptionProperties(msrest.serialization.Model):
         self.key_vault_properties = key_vault_properties
 
 
+class EndpointAccessProfile(msrest.serialization.Model):
+    """Network access profile for Batch endpoint.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar default_action: Required. Default action for endpoint access. It is only applicable when
+     publicNetworkAccess is enabled. Possible values include: "Allow", "Deny".
+    :vartype default_action: str or ~azure.mgmt.batch.models.EndpointAccessDefaultAction
+    :ivar ip_rules: Array of IP ranges to filter client IP address.
+    :vartype ip_rules: list[~azure.mgmt.batch.models.IPRule]
+    """
+
+    _validation = {
+        'default_action': {'required': True},
+    }
+
+    _attribute_map = {
+        'default_action': {'key': 'defaultAction', 'type': 'str'},
+        'ip_rules': {'key': 'ipRules', 'type': '[IPRule]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        default_action: Union[str, "EndpointAccessDefaultAction"],
+        ip_rules: Optional[List["IPRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword default_action: Required. Default action for endpoint access. It is only applicable
+         when publicNetworkAccess is enabled. Possible values include: "Allow", "Deny".
+        :paramtype default_action: str or ~azure.mgmt.batch.models.EndpointAccessDefaultAction
+        :keyword ip_rules: Array of IP ranges to filter client IP address.
+        :paramtype ip_rules: list[~azure.mgmt.batch.models.IPRule]
+        """
+        super(EndpointAccessProfile, self).__init__(**kwargs)
+        self.default_action = default_action
+        self.ip_rules = ip_rules
+
+
 class EndpointDependency(msrest.serialization.Model):
     """A domain name and connection details used to access a dependency.
 
@@ -2776,6 +2858,45 @@ class InboundNatPool(msrest.serialization.Model):
         self.frontend_port_range_start = frontend_port_range_start
         self.frontend_port_range_end = frontend_port_range_end
         self.network_security_group_rules = network_security_group_rules
+
+
+class IPRule(msrest.serialization.Model):
+    """Rule to filter client IP address.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar action: Action when client IP address is matched. Has constant value: "Allow".
+    :vartype action: str
+    :ivar value: Required. IPv4 address, or IPv4 address range in CIDR format.
+    :vartype value: str
+    """
+
+    _validation = {
+        'action': {'required': True, 'constant': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'action': {'key': 'action', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    action = "Allow"
+
+    def __init__(
+        self,
+        *,
+        value: str,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. IPv4 address, or IPv4 address range in CIDR format.
+        :paramtype value: str
+        """
+        super(IPRule, self).__init__(**kwargs)
+        self.value = value
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -3280,6 +3401,42 @@ class NetworkConfiguration(msrest.serialization.Model):
         self.public_ip_address_configuration = public_ip_address_configuration
 
 
+class NetworkProfile(msrest.serialization.Model):
+    """Network profile for Batch account, which contains network rule settings for each endpoint.
+
+    :ivar account_access: Network access profile for batchAccount endpoint (Batch account data
+     plane API).
+    :vartype account_access: ~azure.mgmt.batch.models.EndpointAccessProfile
+    :ivar node_management_access: Network access profile for nodeManagement endpoint (Batch service
+     managing compute nodes for Batch pools).
+    :vartype node_management_access: ~azure.mgmt.batch.models.EndpointAccessProfile
+    """
+
+    _attribute_map = {
+        'account_access': {'key': 'accountAccess', 'type': 'EndpointAccessProfile'},
+        'node_management_access': {'key': 'nodeManagementAccess', 'type': 'EndpointAccessProfile'},
+    }
+
+    def __init__(
+        self,
+        *,
+        account_access: Optional["EndpointAccessProfile"] = None,
+        node_management_access: Optional["EndpointAccessProfile"] = None,
+        **kwargs
+    ):
+        """
+        :keyword account_access: Network access profile for batchAccount endpoint (Batch account data
+         plane API).
+        :paramtype account_access: ~azure.mgmt.batch.models.EndpointAccessProfile
+        :keyword node_management_access: Network access profile for nodeManagement endpoint (Batch
+         service managing compute nodes for Batch pools).
+        :paramtype node_management_access: ~azure.mgmt.batch.models.EndpointAccessProfile
+        """
+        super(NetworkProfile, self).__init__(**kwargs)
+        self.account_access = account_access
+        self.node_management_access = node_management_access
+
+
 class NetworkSecurityGroupRule(msrest.serialization.Model):
     """A network security group rule to apply to an inbound endpoint.
 
@@ -3709,8 +3866,8 @@ class Pool(ProxyResource):
     :vartype deployment_configuration: ~azure.mgmt.batch.models.DeploymentConfiguration
     :ivar current_dedicated_nodes: The number of compute nodes currently in the pool.
     :vartype current_dedicated_nodes: int
-    :ivar current_low_priority_nodes: The number of Spot/low-priority compute nodes currently in
-     the pool.
+    :ivar current_low_priority_nodes: The number of low-priority compute nodes currently in the
+     pool.
     :vartype current_low_priority_nodes: int
     :ivar scale_settings: Defines the desired size of the pool. This can either be 'fixedScale'
      where the requested targetDedicatedNodes is specified, or 'autoScale' which defines a formula
@@ -4008,11 +4165,13 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the private endpoint connection. Possible
-     values include: "Succeeded", "Updating", "Failed".
+     values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Cancelled".
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.PrivateEndpointConnectionProvisioningState
     :ivar private_endpoint: The private endpoint of the private endpoint connection.
     :vartype private_endpoint: ~azure.mgmt.batch.models.PrivateEndpoint
+    :ivar group_ids: The value has one and only one group id.
+    :vartype group_ids: list[str]
     :ivar private_link_service_connection_state: The private link service connection state of the
      private endpoint connection.
     :vartype private_link_service_connection_state:
@@ -4025,6 +4184,8 @@ class PrivateEndpointConnection(ProxyResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'private_endpoint': {'readonly': True},
+        'group_ids': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4034,19 +4195,17 @@ class PrivateEndpointConnection(ProxyResource):
         'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
         """
-        :keyword private_endpoint: The private endpoint of the private endpoint connection.
-        :paramtype private_endpoint: ~azure.mgmt.batch.models.PrivateEndpoint
         :keyword private_link_service_connection_state: The private link service connection state of
          the private endpoint connection.
         :paramtype private_link_service_connection_state:
@@ -4054,7 +4213,8 @@ class PrivateEndpointConnection(ProxyResource):
         """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.private_endpoint = private_endpoint
+        self.private_endpoint = None
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
@@ -4166,9 +4326,9 @@ class PublicIPAddressConfiguration(msrest.serialization.Model):
      "UserManaged", "NoPublicIPAddresses".
     :vartype provision: str or ~azure.mgmt.batch.models.IPAddressProvisioningType
     :ivar ip_address_ids: The number of IPs specified here limits the maximum size of the Pool -
-     100 dedicated nodes or 100 Spot/low-priority nodes can be allocated for each public IP. For
-     example, a pool needing 250 dedicated VMs would need at least 3 public IPs specified. Each
-     element of this collection is of the form:
+     100 dedicated nodes or 100 low-priority nodes can be allocated for each public IP. For example,
+     a pool needing 250 dedicated VMs would need at least 3 public IPs specified. Each element of
+     this collection is of the form:
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
     :vartype ip_address_ids: list[str]
     """
@@ -4190,9 +4350,9 @@ class PublicIPAddressConfiguration(msrest.serialization.Model):
          "UserManaged", "NoPublicIPAddresses".
         :paramtype provision: str or ~azure.mgmt.batch.models.IPAddressProvisioningType
         :keyword ip_address_ids: The number of IPs specified here limits the maximum size of the Pool -
-         100 dedicated nodes or 100 Spot/low-priority nodes can be allocated for each public IP. For
-         example, a pool needing 250 dedicated VMs would need at least 3 public IPs specified. Each
-         element of this collection is of the form:
+         100 dedicated nodes or 100 low-priority nodes can be allocated for each public IP. For example,
+         a pool needing 250 dedicated VMs would need at least 3 public IPs specified. Each element of
+         this collection is of the form:
          /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
         :paramtype ip_address_ids: list[str]
         """
@@ -4256,8 +4416,7 @@ class ResizeOperationStatus(msrest.serialization.Model):
 
     :ivar target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
     :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: The desired number of Spot/low-priority compute nodes in the
-     pool.
+    :ivar target_low_priority_nodes: The desired number of low-priority compute nodes in the pool.
     :vartype target_low_priority_nodes: int
     :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
      specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
@@ -4297,8 +4456,8 @@ class ResizeOperationStatus(msrest.serialization.Model):
         """
         :keyword target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
         :paramtype target_dedicated_nodes: int
-        :keyword target_low_priority_nodes: The desired number of Spot/low-priority compute nodes in
-         the pool.
+        :keyword target_low_priority_nodes: The desired number of low-priority compute nodes in the
+         pool.
         :paramtype target_low_priority_nodes: int
         :keyword resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If
          you specify a value less than 5 minutes, the Batch service returns an error; if you are calling

@@ -11,10 +11,11 @@
 
 from typing import TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.core import PipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import FormRecognizerClientConfiguration
 from ._operations_mixin import FormRecognizerClientOperationsMixin
@@ -59,18 +60,18 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'authorize_copy_document_model': '2022-01-30-preview',
-            'begin_analyze_document': '2022-01-30-preview',
-            'begin_build_document_model': '2022-01-30-preview',
-            'begin_compose_document_model': '2022-01-30-preview',
-            'begin_copy_document_model_to': '2022-01-30-preview',
-            'delete_model': '2022-01-30-preview',
-            'get_analyze_document_result': '2022-01-30-preview',
-            'get_info': '2022-01-30-preview',
-            'get_model': '2022-01-30-preview',
-            'get_models': '2022-01-30-preview',
-            'get_operation': '2022-01-30-preview',
-            'get_operations': '2022-01-30-preview',
+            'authorize_copy_document_model': '2022-06-30-preview',
+            'begin_analyze_document': '2022-06-30-preview',
+            'begin_build_document_model': '2022-06-30-preview',
+            'begin_compose_document_model': '2022-06-30-preview',
+            'begin_copy_document_model_to': '2022-06-30-preview',
+            'delete_model': '2022-06-30-preview',
+            'get_analyze_document_result': '2022-06-30-preview',
+            'get_info': '2022-06-30-preview',
+            'get_model': '2022-06-30-preview',
+            'get_models': '2022-06-30-preview',
+            'get_operation': '2022-06-30-preview',
+            'get_operations': '2022-06-30-preview',
             'train_custom_model_async': '2.0',
         }},
         _PROFILE_TAG + " latest"
@@ -84,7 +85,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2022-01-30-preview':
+        if api_version == '2022-06-30-preview':
             base_url = '{endpoint}/formrecognizer'
         elif api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
@@ -107,12 +108,12 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2022-01-30-preview: :mod:`v2022_01_30_preview.models<azure.ai.formrecognizer.v2022_01_30_preview.models>`
+           * 2022-06-30-preview: :mod:`v2022_06_30_preview.models<azure.ai.formrecognizer.v2022_06_30_preview.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
-        if api_version == '2022-01-30-preview':
-            from .v2022_01_30_preview import models
+        if api_version == '2022-06-30-preview':
+            from .v2022_06_30_preview import models
             return models
         elif api_version == '2.0':
             from .v2_0 import models

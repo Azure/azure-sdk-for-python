@@ -69,11 +69,12 @@ setup(
         'azure.ai',
         'azure.ai.language',
     ]),
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
-        "azure-core<2.0.0,>=1.23.0",
-        "msrest>=0.6.21",
-        'azure-common~=1.1',
-        'six>=1.11.0',
+        "azure-core<2.0.0,>=1.24.0",
+        "isodate<1.0.0,>=0.6.1",
     ],
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',

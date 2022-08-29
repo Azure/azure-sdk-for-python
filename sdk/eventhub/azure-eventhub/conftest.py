@@ -42,6 +42,9 @@ def sleep(request):
     sleep = request.config.getoption("--sleep")
     return sleep.lower() in ('true', 'yes', '1', 'y')
 
+@pytest.fixture(scope="session", params=[True])
+def uamqp_transport(request):
+    return request.param
 
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
@@ -67,6 +70,13 @@ def get_logger(filename, level=logging.INFO):
 
 log = get_logger(None, logging.DEBUG)
 
+
+@pytest.fixture(scope="session")
+def timeout_factor(uamqp_transport):
+    if uamqp_transport:
+        return 1000
+    else:
+        return 1
 
 @pytest.fixture(scope="session")
 def resource_group():

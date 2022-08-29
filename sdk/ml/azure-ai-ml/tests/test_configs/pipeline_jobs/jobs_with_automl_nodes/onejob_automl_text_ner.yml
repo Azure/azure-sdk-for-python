@@ -1,0 +1,34 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:gpu-cluster
+
+settings:
+  continue_on_step_failure: false
+
+inputs:
+  text_ner_training_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/conll2003/train
+  text_ner_validation_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/conll2003/valid
+
+jobs:
+
+  automl_text_ner:
+    type: automl
+    task: text_ner
+    log_verbosity: info
+    primary_metric: accuracy
+    limits:
+      max_trials: 1
+      timeout_minutes: 60
+    training_data: ${{parent.inputs.text_ner_training_data}}
+    validation_data: ${{parent.inputs.text_ner_validation_data}}

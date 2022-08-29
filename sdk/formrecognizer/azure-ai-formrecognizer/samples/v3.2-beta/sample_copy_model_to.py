@@ -56,11 +56,11 @@ def sample_copy_model_to(custom_model_id):
     )
     copied_over_model = poller.result()
 
-    print("Model ID: {}".format(model.model_id))
-    print("Description: {}".format(model.description))
-    print("Model created on: {}\n".format(model.created_on))
+    print("Model ID: {}".format(copied_over_model.model_id))
+    print("Description: {}".format(copied_over_model.description))
+    print("Model created on: {}\n".format(copied_over_model.created_on))
     print("Doc types the model can recognize:")
-    for name, doc_type in model.doc_types.items():
+    for name, doc_type in copied_over_model.doc_types.items():
         print("\nDoc Type: '{}' which has the following fields:".format(name))
         for field_name, field in doc_type.field_schema.items():
             print("Field: '{}' has type '{}' and confidence score {}".format(
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     if os.getenv("CONTAINER_SAS_URL"):
 
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
+        from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 
         endpoint = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT")
         key = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_KEY")
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         document_model_admin_client = DocumentModelAdministrationClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        model = document_model_admin_client.begin_build_model(os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE).result()
+        model = document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")).result()
         model_id = model.model_id
 
     sample_copy_model_to(model_id)

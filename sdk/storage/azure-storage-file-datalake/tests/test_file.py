@@ -7,25 +7,43 @@
 # --------------------------------------------------------------------------
 import unittest
 from datetime import datetime, timedelta
+from math import ceil
 import pytest
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ClientAuthenticationError, ResourceModifiedError
-from azure.storage.filedatalake import ContentSettings, generate_account_sas, generate_file_sas, \
-    ResourceTypes, AccountSasPermissions, \
-    DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
-    FileSystemSasPermissions
-from azure.storage.filedatalake import DataLakeServiceClient
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError
+)
+from azure.storage.filedatalake import (
+    AccountSasPermissions,
+    ContentSettings,
+    DataLakeDirectoryClient,
+    DataLakeFileClient,
+    DataLakeServiceClient,
+    EncryptionScopeOptions,
+    FileSasPermissions,
+    FileSystemClient,
+    FileSystemSasPermissions,
+    generate_account_sas,
+    generate_file_sas,
+    generate_file_system_sas,
+    ResourceTypes,
+)
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
+
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
 FILE_PATH = 'file_output.temp.dat'
+
 # ------------------------------------------------------------------------------
 
 
@@ -97,6 +115,94 @@ class FileTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(response)
+
+    @DataLakePreparer()
+    def test_create_file_owner_group_acl(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_string_acl = 'user::rwx,group::r-x,other::rwx'
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(owner=test_string, group=test_string, acl=test_string_acl)
+
+        # Assert
+        acl_properties = file_client.get_access_control()
+        self.assertIsNotNone(acl_properties)
+        self.assertEqual(acl_properties['owner'], test_string)
+        self.assertEqual(acl_properties['group'], test_string)
+        self.assertEqual(acl_properties['acl'], test_string_acl)
+
+    @DataLakePreparer()
+    def test_create_file_proposed_lease_id(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
+        test_duration = 15
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(lease_id=test_string, lease_duration=test_duration)
+
+        # Assert
+        properties = file_client.get_file_properties()
+        self.assertIsNotNone(properties)
+        self.assertEqual(properties.lease['status'], 'locked')
+        self.assertEqual(properties.lease['state'], 'leased')
+        self.assertEqual(properties.lease['duration'], 'fixed')
+
+    @DataLakePreparer()
+    def test_create_file_relative_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_expiry_time = 86400000  # 1 day in milliseconds
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(expires_on=test_expiry_time)
+
+        # Assert
+        file_properties = file_client.get_file_properties()
+        expiry_time = file_properties['expiry_time']
+        expiry_time = expiry_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
+        creation_time = file_properties['creation_time']
+        creation_time = creation_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
+        self.assertIsNotNone(file_properties)
+        self.assertAlmostEqual(expiry_time, creation_time + timedelta(days=1), delta=timedelta(seconds=60))
+
+    @DataLakePreparer()
+    def test_create_file_absolute_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        test_expiry_time = datetime(2075, 4, 4)
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file(expires_on=test_expiry_time)
+
+        # Assert
+        file_properties = file_client.get_file_properties()
+        expiry_time = file_properties['expiry_time']
+        expiry_time = expiry_time.replace(tzinfo=None)  # Strip timezone info to be able to compare
+        self.assertIsNotNone(file_properties)
+        self.assertAlmostEqual(expiry_time, test_expiry_time, delta=timedelta(seconds=1))
 
     @DataLakePreparer()
     def test_create_file_extra_backslashes(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -230,6 +336,26 @@ class FileTest(StorageTestCase):
         # Act
         file_client.append_data(b'abc', 0, 3)
         response = file_client.flush_data(3)
+
+        # Assert
+        prop = file_client.get_file_properties()
+        self.assertIsNotNone(response)
+        self.assertEqual(prop['size'], 3)
+
+    @DataLakePreparer()
+    def test_flush_data_with_bool(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+
+        # Act
+        response = file_client.append_data(b'abc', 0, 3, flush=True)
 
         # Assert
         prop = file_client.get_file_properties()
@@ -799,6 +925,26 @@ class FileTest(StorageTestCase):
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
+    @DataLakePreparer()
+    def test_file_encryption_scope_from_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
+        self.file_system_name = self.get_resource_name('filesystem')
+        file_name = 'testfile'
+        encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
+
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        file_system.create_file_system(encryption_scope_options=encryption_scope)
+
+        file_client = file_system.create_file(file_name)
+        props = file_client.get_file_properties()
+
+        # Assert
+        self.assertTrue(props)
+        self.assertIsNotNone(props['encryption_scope'])
+        self.assertEqual(props['encryption_scope'], encryption_scope.default_encryption_scope)
+
     @pytest.mark.live_test_only
     @DataLakePreparer()
     def test_rename_file_with_file_system_sas(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -859,10 +1005,10 @@ class FileTest(StorageTestCase):
         self.assertEqual(data, data_bytes)
         self.assertEqual(new_client.path_name, "newname")
 
+    @pytest.mark.skip(reason="Service bug, requires further investigation.")
     @DataLakePreparer()
     def test_rename_file_with_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        pytest.skip("service bug")
         token = generate_account_sas(
             self.dsc.account_name,
             self.dsc.credential.account_key,
@@ -938,6 +1084,33 @@ class FileTest(StorageTestCase):
 
         with self.assertRaises(HttpResponseError):
             f3.download_file().readall()
+
+    @DataLakePreparer()
+    def test_read_file_read(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        self.dsc._config.max_single_get_size = 1024
+        self.dsc._config.max_chunk_get_size = 1024
+
+        file_client = self._create_file_and_return_client()
+        data = b'12345' * 205 * 5  # 5125 bytes
+
+        file_client.append_data(data, 0, len(data), flush=True)
+        stream = file_client.download_file()
+
+        # Act
+        result = bytearray()
+        read_size = 512
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import json
+
 import os
 import logging
 import requests
@@ -11,7 +11,6 @@ import shlex
 import sys
 import time
 import signal
-from typing import TYPE_CHECKING
 
 import pytest
 import subprocess
@@ -19,9 +18,6 @@ import subprocess
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
 from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
-
-if TYPE_CHECKING:
-    from typing import Optional
 
 
 _LOGGER = logging.getLogger()
@@ -37,8 +33,7 @@ PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
 
-def get_image_tag():
-    # type: () -> str
+def get_image_tag() -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
     version_file_location_from_root = os.path.abspath(os.path.join(REPO_ROOT, version_file_location))
@@ -62,43 +57,28 @@ def get_image_tag():
     return image_tag
 
 
-def get_container_info():
-    # type: () -> Optional[dict]
-    """Returns a dictionary containing the test proxy container's information, or None if the container isn't present"""
-    proc = subprocess.Popen(
-        shlex.split("docker container ls -a --format '{{json .}}' --filter name=" + CONTAINER_NAME),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        stdin=subprocess.DEVNULL,
-    )
-
+def delete_container() -> None:
+    """Delete container if it remained"""
+    proc = subprocess.Popen(shlex.split(f"docker rm -f {CONTAINER_NAME}"))
     output, stderr = proc.communicate()
-    try:
-        # This will succeed if we found a container with CONTAINER_NAME
-        return json.loads(output)
-    # We'll get a JSONDecodeError on Py3 (ValueError on Py2) if output is empty (i.e. there's no proxy container)
-    except ValueError:
-        # Didn't find a container with CONTAINER_NAME
-        return None
+    return None
 
 
-def check_availability():
-    # type: () -> None
+def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
         response = requests.get(PROXY_CHECK_URL, timeout=60)
         return response.status_code
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except requests.exceptions.SSLError as sslError:
-        _LOGGER.error(sslError)
+        _LOGGER.debug(sslError)
         return 404
     except Exception as e:
         _LOGGER.error(e)
         return 404
 
 
-def check_proxy_availability():
-    # type: () -> None
+def check_proxy_availability() -> None:
     """Waits for the availability of the test-proxy."""
     start = time.time()
     now = time.time()
@@ -108,12 +88,13 @@ def check_proxy_availability():
         now = time.time()
 
 
-def create_container():
-    # type: () -> None
+def create_container() -> None:
     """Creates the test proxy Docker container"""
     # Most of the time, running this script on a Windows machine will work just fine, as Docker defaults to Linux
     # containers. However, in CI, Windows images default to _Windows_ containers. We cannot swap them. We can tell
     # if we're in a CI build by checking for the environment variable TF_BUILD.
+    delete_container()
+
     if sys.platform.startswith("win") and os.environ.get("TF_BUILD"):
         image_prefix = WINDOWS_IMAGE_SOURCE_PREFIX
         path_prefix = "C:"
@@ -124,18 +105,15 @@ def create_container():
         linux_container_args = "--add-host=host.docker.internal:host-gateway"
 
     image_tag = get_image_tag()
-    proc = subprocess.Popen(
+    subprocess.Popen(
         shlex.split(
-            "docker container create -v '{}:{}/srv/testproxy' {} -p 5001:5001 -p 5000:5000 --name {} {}:{}".format(
-                REPO_ROOT, path_prefix, linux_container_args, CONTAINER_NAME, image_prefix, image_tag
-            )
+            f"docker run --rm --name {CONTAINER_NAME} -v '{REPO_ROOT}:{path_prefix}/srv/testproxy' "
+            f"{linux_container_args} -p 5001:5001 -p 5000:5000 {image_prefix}:{image_tag}"
         )
     )
-    proc.communicate()
 
 
-def start_test_proxy():
-    # type: () -> None
+def start_test_proxy() -> None:
     """Starts the test proxy and returns when the proxy server is ready to receive requests. In regular use
     cases, this will auto-start the test-proxy docker container. In CI, or when environment variable TF_BUILD is set, this
     function will start the test-proxy .NET tool."""
@@ -159,35 +137,18 @@ def start_test_proxy():
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
             _LOGGER.info("Starting the test proxy container...")
+            create_container()
 
-            container_info = get_container_info()
-            if container_info:
-                _LOGGER.debug("Found an existing instance of the test proxy container.")
-
-                if container_info["State"] == "running":
-                    _LOGGER.debug("Proxy container is already running. Exiting...")
-                    return
-
-            else:
-                _LOGGER.debug("No instance of the test proxy container found. Attempting creation...")
-                create_container()
-
-            _LOGGER.debug("Attempting to start the test proxy container...")
-
-            proc = subprocess.Popen(shlex.split("docker container start " + CONTAINER_NAME))
-            proc.communicate()
-
-        # Wait for the proxy server to become available
-        check_proxy_availability()
-        # remove headers from recordings if we don't need them, and ignore them if present
-        # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
-        headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
-        add_remove_header_sanitizer(headers=headers_to_ignore)
-        set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    # Wait for the proxy server to become available
+    check_proxy_availability()
+    # remove headers from recordings if we don't need them, and ignore them if present
+    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    add_remove_header_sanitizer(headers=headers_to_ignore)
+    set_custom_default_matcher(excluded_headers=headers_to_ignore)
 
 
-def stop_test_proxy():
-    # type: () -> None
+def stop_test_proxy() -> None:
     """Stops any running instance of the test proxy"""
 
     if not PROXY_MANUALLY_STARTED:
@@ -201,19 +162,11 @@ def stop_test_proxy():
 
         else:
             _LOGGER.info("Stopping the test proxy container...")
-            container_info = get_container_info()
-            if container_info:
-                if container_info["State"] == "running":
-                    _LOGGER.debug("Found a running instance of the test proxy container; shutting it down...")
-
-                    proc = subprocess.Popen(shlex.split("docker container stop " + CONTAINER_NAME))
-                    proc.communicate()
-            else:
-                _LOGGER.debug("No running instance of the test proxy container found. Exiting...")
+            subprocess.Popen(shlex.split("docker stop " + CONTAINER_NAME))
 
 
 @pytest.fixture(scope="session")
-def test_proxy():
+def test_proxy() -> None:
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
     if is_live_and_not_recording():
         yield

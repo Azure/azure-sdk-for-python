@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.2 (Unreleased)
+## 4.7.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,32 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.7.0b1 (2022-08-12)
+
+### Features Added
+- An attempt will be made to generate an IV if one isn't provided for local encryption
+  ([#25380](https://github.com/Azure/azure-sdk-for-python/pull/25380))
+
+### Other Changes
+- The most recent release was version 4.6.1 instead of the intended version, 4.5.2.
+  The next stable release is planned to be version 4.7.0.
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Updated minimum `azure-core` version to 1.24.0
+
+## 4.6.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
+
+## 4.6.0b1 (2022-06-07)
+
+### Bugs Fixed
+- If a key's ID contains a port number, this port will now be preserved in the vault URL of a
+  `CryptographyClient` instance created from this key
+  ([#24446](https://github.com/Azure/azure-sdk-for-python/issues/24446))
+  - Port numbers are now preserved in the `vault_url` property of a `KeyVaultKeyIdentifier`
 
 ## 4.5.1 (2022-04-18)
 

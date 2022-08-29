@@ -290,6 +290,8 @@ from ._models_py3 import GetSsisObjectMetadataRequest
 from ._models_py3 import GitHubAccessTokenRequest
 from ._models_py3 import GitHubAccessTokenResponse
 from ._models_py3 import GitHubClientSecret
+from ._models_py3 import GlobalParameterListResponse
+from ._models_py3 import GlobalParameterResource
 from ._models_py3 import GlobalParameterSpecification
 from ._models_py3 import GoogleAdWordsLinkedService
 from ._models_py3 import GoogleAdWordsObjectDataset
@@ -500,6 +502,7 @@ from ._models_py3 import PowerQuerySource
 from ._models_py3 import PrestoLinkedService
 from ._models_py3 import PrestoObjectDataset
 from ._models_py3 import PrestoSource
+from ._models_py3 import PrivateEndpoint
 from ._models_py3 import PrivateEndpointConnectionListResponse
 from ._models_py3 import PrivateEndpointConnectionResource
 from ._models_py3 import PrivateLinkConnectionApprovalRequest
@@ -508,6 +511,7 @@ from ._models_py3 import PrivateLinkConnectionState
 from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceProperties
 from ._models_py3 import PrivateLinkResourcesWrapper
+from ._models_py3 import PurviewConfiguration
 from ._models_py3 import QueryDataFlowDebugSessionsResponse
 from ._models_py3 import QuickBooksLinkedService
 from ._models_py3 import QuickBooksObjectDataset
@@ -565,6 +569,9 @@ from ._models_py3 import SapHanaLinkedService
 from ._models_py3 import SapHanaPartitionSettings
 from ._models_py3 import SapHanaSource
 from ._models_py3 import SapHanaTableDataset
+from ._models_py3 import SapOdpLinkedService
+from ._models_py3 import SapOdpResourceDataset
+from ._models_py3 import SapOdpSource
 from ._models_py3 import SapOpenHubLinkedService
 from ._models_py3 import SapOpenHubSource
 from ._models_py3 import SapOpenHubTableDataset
@@ -818,7 +825,9 @@ from ._data_factory_management_client_enums import (
     WebHookActivityMethod,
     ZendeskAuthenticationType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AccessPolicyResponse',
     'Activity',
@@ -1104,6 +1113,8 @@ __all__ = [
     'GitHubAccessTokenRequest',
     'GitHubAccessTokenResponse',
     'GitHubClientSecret',
+    'GlobalParameterListResponse',
+    'GlobalParameterResource',
     'GlobalParameterSpecification',
     'GoogleAdWordsLinkedService',
     'GoogleAdWordsObjectDataset',
@@ -1314,6 +1325,7 @@ __all__ = [
     'PrestoLinkedService',
     'PrestoObjectDataset',
     'PrestoSource',
+    'PrivateEndpoint',
     'PrivateEndpointConnectionListResponse',
     'PrivateEndpointConnectionResource',
     'PrivateLinkConnectionApprovalRequest',
@@ -1322,6 +1334,7 @@ __all__ = [
     'PrivateLinkResource',
     'PrivateLinkResourceProperties',
     'PrivateLinkResourcesWrapper',
+    'PurviewConfiguration',
     'QueryDataFlowDebugSessionsResponse',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
@@ -1379,6 +1392,9 @@ __all__ = [
     'SapHanaPartitionSettings',
     'SapHanaSource',
     'SapHanaTableDataset',
+    'SapOdpLinkedService',
+    'SapOdpResourceDataset',
+    'SapOdpSource',
     'SapOpenHubLinkedService',
     'SapOpenHubSource',
     'SapOpenHubTableDataset',
@@ -1629,3 +1645,5 @@ __all__ = [
     'WebHookActivityMethod',
     'ZendeskAuthenticationType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

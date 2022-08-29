@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
 
 import logging
 import uuid
@@ -10,9 +10,18 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
+<<<<<<< HEAD
 from datetime import timedelta, datetime
 from urllib.parse import urlparse
 import six
+=======
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
+from datetime import timedelta
+from urllib.parse import urlparse
+>>>>>>> main
 
 from azure.core.credentials import (
     AccessToken,
@@ -23,26 +32,40 @@ from azure.core.utils import parse_connection_string as core_parse_connection_st
 from azure.core.pipeline.policies import RetryMode
 
 
+<<<<<<< HEAD
 from ._pyamqp.client import AMQPClient
 from ._pyamqp.message import Message
 from ._pyamqp import constants, error as errors, utils as pyamqp_utils
 from ._pyamqp.authentication import JWTTokenAuth
 from .exceptions import _handle_exception, ClientClosedError
+=======
+from ._transport._uamqp_transport import UamqpTransport
+from .exceptions import ClientClosedError
+>>>>>>> main
 from ._configuration import Configuration
-from ._utils import utc_from_timestamp, parse_sas_credential
+from ._utils import utc_from_timestamp, parse_sas_credential, generate_sas_token
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
     JWT_TOKEN_SCOPE,
-    MGMT_OPERATION,
-    MGMT_PARTITION_OPERATION,
+    READ_OPERATION,
     MGMT_STATUS_CODE,
     MGMT_STATUS_DESC,
+<<<<<<< HEAD
     READ_OPERATION
+=======
+    MGMT_OPERATION,
+    MGMT_PARTITION_OPERATION,
+>>>>>>> main
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+<<<<<<< HEAD
+=======
+    from uamqp import Message as uamqp_Message
+    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+>>>>>>> main
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -144,7 +167,11 @@ def _generate_sas_token(uri, policy, key, expiry=None):
 
     abs_expiry = int(time.time()) + expiry.seconds
 
+<<<<<<< HEAD
     token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
+=======
+    token = generate_sas_token(uri, policy, key, abs_expiry).encode()
+>>>>>>> main
     return AccessToken(token=token, expires_on=abs_expiry)
 
 
@@ -163,7 +190,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2 ** retried_times)
+        backoff_value = backoff_factor * (2**retried_times)
     return min(backoff_max, backoff_value)
 
 
@@ -261,9 +288,34 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
+<<<<<<< HEAD
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
         # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
+=======
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
+    CredentialTypes: TypeAlias = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        EventHubSharedKeyCredential,
+        TokenCredential,
+    ]
+
+
+class ClientBase(object):  # pylint:disable=too-many-instance-attributes
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        credential: CredentialTypes,
+        **kwargs: Any,
+    ) -> None:
+        uamqp_transport = kwargs.pop("uamqp_transport", True)
+        self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport)
+
+>>>>>>> main
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -278,11 +330,12 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = credential  # type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._mgmt_target = "amqps://{}/{}".format(
-            self._address.hostname, self.eventhub_name
+        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
+        self._config = Configuration(
+            uamqp_transport=uamqp_transport,
+            hostname=self._address.hostname,
+            **kwargs,
         )
-        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
-        self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
@@ -301,11 +354,15 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
+<<<<<<< HEAD
     def _create_auth(self):
         # type: () -> JWTTokenAuth
+=======
+    def _create_auth(self) -> uamqp_JWTTokenAuth:
+>>>>>>> main
         """
-        Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
-        the session.
+        Create an ~uamqp.authentication.SASTokenAuth instance
+         to authenticate the session.
         """
         try:
             # ignore mypy's warning because token_type is Optional
@@ -313,6 +370,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
+<<<<<<< HEAD
             return JWTTokenAuth(
                 self._auth_uri,
                 self._auth_uri,
@@ -327,6 +385,21 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
             verify=self._config.connection_verify,
+=======
+            return self._amqp_transport.create_token_auth(
+                self._auth_uri,
+                functools.partial(self._credential.get_token, self._auth_uri),
+                token_type=token_type,
+                config=self._config,
+                update_token=True,
+            )
+        return self._amqp_transport.create_token_auth(
+            self._auth_uri,
+            functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
+            token_type=token_type,
+            config=self._config,
+            update_token=False,
+>>>>>>> main
         )
 
     def _close_connection(self):
@@ -361,12 +434,20 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             )
             raise last_exception
 
+<<<<<<< HEAD
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any
+=======
+    def _management_request(
+        self, mgmt_msg: uamqp_Message, op_type: bytes
+    ) -> Any:
+        # pylint:disable=assignment-from-none
+>>>>>>> main
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
+<<<<<<< HEAD
             hostname = self._address.hostname
             custom_endpoint_address = self._config.custom_endpoint_address
             if self._config.transport_type.name == 'AmqpOverWebsocket':
@@ -434,8 +515,42 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                         description
                     )
                 )
+=======
+            mgmt_client = self._amqp_transport.create_mgmt_client(
+                self._address, mgmt_auth=mgmt_auth, config=self._config
+            )
+            try:
+                conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
+                    host=self._address.hostname, auth=mgmt_auth
+                )
+                mgmt_client.open(connection=conn)
+                while not mgmt_client.client_ready():
+                    time.sleep(0.05)
+                mgmt_msg.application_properties[
+                    "security_token"
+                ] = self._amqp_transport.get_updated_token(mgmt_auth)
+                response = self._amqp_transport.mgmt_client_request(
+                    mgmt_client,
+                    mgmt_msg,
+                    operation=READ_OPERATION,
+                    operation_type=op_type,
+                    status_code_field=MGMT_STATUS_CODE,
+                    description_fields=MGMT_STATUS_DESC,
+                )
+                status_code = int(response.application_properties[MGMT_STATUS_CODE])
+                description = response.application_properties.get(
+                    MGMT_STATUS_DESC
+                )  # type: Optional[Union[str, bytes]]
+                if description and isinstance(description, bytes):
+                    description = description.decode("utf-8")
+                if status_code < 400:
+                    return response
+                raise self._amqp_transport.get_error(status_code, description)
+>>>>>>> main
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = _handle_exception(exception, self)
+                last_exception = self._amqp_transport._handle_exception(  # pylint: disable=protected-access
+                    exception, self
+                )
                 self._backoff(
                     retried_times=retried_times, last_exception=last_exception
                 )
@@ -454,12 +569,17 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
 
-    def _get_eventhub_properties(self):
-        # type:() -> Dict[str, Any]
-        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
+    def _get_eventhub_properties(self) -> Dict[str, Any]:
+        mgmt_msg = self._amqp_transport.build_message(
+            application_properties={"name": self.eventhub_name}
+        )
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
+<<<<<<< HEAD
         eh_info = response.value  # type: Dict[bytes, Any]
+=======
+        eh_info: Dict[bytes, Any] = response.value
+>>>>>>> main
         if eh_info:
             output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
             output["created_at"] = utc_from_timestamp(
@@ -476,7 +596,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
-        mgmt_msg = Message(
+        mgmt_msg = self._amqp_transport.build_message(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
@@ -521,9 +641,7 @@ class ConsumerProducerMixin(object):
     def _check_closed(self):
         if self.closed:
             raise ClientClosedError(
-                "{} has been closed. Please create a new one to handle event data.".format(
-                    self._name
-                )
+                f"{self._name} has been closed. Please create a new one to handle event data."
             )
 
     def _open(self):
@@ -534,6 +652,7 @@ class ConsumerProducerMixin(object):
                 self._handler.close()
             auth = self._client._create_auth()
             self._create_handler(auth)
+<<<<<<< HEAD
             self._handler.open()
             while not self._handler.client_ready():
                 time.sleep(0.05)
@@ -541,6 +660,18 @@ class ConsumerProducerMixin(object):
                 self._handler._link.remote_max_message_size
                 or constants.MAX_FRAME_SIZE_BYTES
             )  # pylint: disable=protected-access
+=======
+            conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
+                host=self._client._address.hostname, auth=auth
+            )
+            self._handler.open(connection=conn)
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self._max_message_size_on_link = (
+                self._amqp_transport.get_remote_max_message_size(self._handler)
+                or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+            )
+>>>>>>> main
             self.running = True
 
     def _close_handler(self):
@@ -553,12 +684,19 @@ class ConsumerProducerMixin(object):
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception):
+<<<<<<< HEAD
         if not self.running and isinstance(exception, TimeoutError):
            exception = errors.AuthenticationException(
                errors.ErrorCondition.InternalError,
                description="Authorization timeout."
            )
         return _handle_exception(exception, self)
+=======
+        exception = self._amqp_transport.check_timeout_exception(self, exception)
+        return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
+            exception, self
+        )
+>>>>>>> main
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # pylint:disable=protected-access
@@ -576,7 +714,7 @@ class ConsumerProducerMixin(object):
                     return operation(
                         timeout_time=timeout_time,
                         last_exception=last_exception,
-                        **kwargs
+                        **kwargs,
                     )
                 return operation()
             except Exception as exception:  # pylint:disable=broad-except

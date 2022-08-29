@@ -1,0 +1,30 @@
+$schema: http://azureml/sdk-2-0/CommandComponent.json
+type: command
+
+name: command_component_hdsds_registry_734_5459
+display_name: CommandComponentBasic_454
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 10
+
+inputs:
+  component_in_number:
+    description: A number
+    type: number
+    default: 10.99
+    optional: True
+  component_in_path:
+    description: A path
+    type: uri_folder
+
+outputs:
+  component_out_path:
+    type: uri_folder
+
+# Write some output to work around a bug when pipeline node failed to run with empty dataset as input
+command: "echo Hello World"
+code: azureml://registries/testFeed/codes/f5f51a11-1c9e-4cb9-89b1-48ff67a2b2f3/versions/1
+environment: azureml:AzureML-minimal-ubuntu18.04-py37-cpu-inference:34

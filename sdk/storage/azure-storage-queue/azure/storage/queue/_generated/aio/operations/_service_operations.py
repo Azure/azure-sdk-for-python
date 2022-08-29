@@ -8,17 +8,31 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._service_operations import build_get_properties_request, build_get_statistics_request, build_list_queues_segment_request, build_set_properties_request
-T = TypeVar('T')
+from ...operations._service_operations import (
+    build_get_properties_request,
+    build_get_statistics_request,
+    build_list_queues_segment_request,
+    build_set_properties_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ServiceOperations:
     """
@@ -33,17 +47,16 @@ class ServiceOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
-
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def set_properties(  # pylint: disable=inconsistent-return-statements
         self,
-        storage_service_properties: "_models.StorageServiceProperties",
+        storage_service_properties: _models.StorageServiceProperties,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -51,7 +64,7 @@ class ServiceOperations:
         """Sets properties for a storage account's Queue service endpoint, including properties for
         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param storage_service_properties: The StorageService properties.
+        :param storage_service_properties: The StorageService properties. Required.
         :type storage_service_properties: ~azure.storage.queue.models.StorageServiceProperties
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
@@ -68,41 +81,43 @@ class ServiceOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        restype = kwargs.pop('restype', "service")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        _content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
+        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        _content = self._serialize.body(storage_service_properties, "StorageServiceProperties", is_xml=True)
 
         request = build_set_properties_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_properties.metadata['url'],
+            restype=restype,
+            comp=comp,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            template_url=self.set_properties.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -111,23 +126,18 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': "{url}"}  # type: ignore
-
+    set_properties.metadata = {"url": "{url}"}  # type: ignore
 
     @distributed_trace_async
     async def get_properties(
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
-    ) -> "_models.StorageServiceProperties":
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    ) -> _models.StorageServiceProperties:
         """gets the properties of a storage account's Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -146,37 +156,38 @@ class ServiceOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: StorageServiceProperties, or the result of cls(response)
+        :return: StorageServiceProperties or the result of cls(response)
         :rtype: ~azure.storage.queue.models.StorageServiceProperties
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageServiceProperties"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        restype = kwargs.pop('restype', "service")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageServiceProperties]
+
         request = build_get_properties_request(
             url=self._config.url,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            timeout=timeout,
-            request_id_parameter=request_id_parameter,
-            template_url=self.get_properties.metadata['url'],
+            template_url=self.get_properties.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -185,26 +196,22 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize('StorageServiceProperties', pipeline_response)
+        deserialized = self._deserialize("StorageServiceProperties", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_properties.metadata = {'url': "{url}"}  # type: ignore
-
+    get_properties.metadata = {"url": "{url}"}  # type: ignore
 
     @distributed_trace_async
     async def get_statistics(
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
-    ) -> "_models.StorageServiceStats":
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    ) -> _models.StorageServiceStats:
         """Retrieves statistics related to replication for the Queue service. It is only available on the
         secondary location endpoint when read-access geo-redundant replication is enabled for the
         storage account.
@@ -224,37 +231,38 @@ class ServiceOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: StorageServiceStats, or the result of cls(response)
+        :return: StorageServiceStats or the result of cls(response)
         :rtype: ~azure.storage.queue.models.StorageServiceStats
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageServiceStats"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        restype = kwargs.pop('restype', "service")  # type: str
-        comp = kwargs.pop('comp', "stats")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "stats"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageServiceStats]
+
         request = build_get_statistics_request(
             url=self._config.url,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            timeout=timeout,
-            request_id_parameter=request_id_parameter,
-            template_url=self.get_statistics.metadata['url'],
+            template_url=self.get_statistics.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -263,19 +271,18 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize('StorageServiceStats', pipeline_response)
+        deserialized = self._deserialize("StorageServiceStats", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_statistics.metadata = {'url': "{url}"}  # type: ignore
-
+    get_statistics.metadata = {"url": "{url}"}  # type: ignore
 
     @distributed_trace_async
     async def list_queues_segment(
@@ -287,7 +294,7 @@ class ServiceOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> "_models.ListQueuesSegmentResponse":
+    ) -> _models.ListQueuesSegmentResponse:
         """The List Queues Segment operation returns a list of the queues under the specified account.
 
         :param prefix: Filters the results to return only queues whose name begins with the specified
@@ -322,39 +329,40 @@ class ServiceOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListQueuesSegmentResponse, or the result of cls(response)
+        :return: ListQueuesSegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.queue.models.ListQueuesSegmentResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListQueuesSegmentResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        comp = kwargs.pop('comp', "list")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListQueuesSegmentResponse]
+
         request = build_list_queues_segment_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
             include=include,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.list_queues_segment.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.list_queues_segment.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -363,16 +371,15 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize('ListQueuesSegmentResponse', pipeline_response)
+        deserialized = self._deserialize("ListQueuesSegmentResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    list_queues_segment.metadata = {'url': "{url}"}  # type: ignore
-
+    list_queues_segment.metadata = {"url": "{url}"}  # type: ignore

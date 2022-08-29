@@ -1,0 +1,8 @@
+command: python ./simple_train.py -c 45
+code: "../python/"
+environment:
+  conda_file: ./simple_train_conda.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+name: "test1"
+compute: "azureml:testCompute"
+experiment_name: mfe-test1

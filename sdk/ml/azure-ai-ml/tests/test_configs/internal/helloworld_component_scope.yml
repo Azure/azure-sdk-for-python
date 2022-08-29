@@ -1,0 +1,44 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json
+
+name: bing_relevance_convert2ss
+version: 0.0.1
+display_name: Convert Text to StructureStream
+
+type: ScopeComponent
+
+is_deterministic: True
+
+tags:
+  org: bing
+  project: relevance
+
+description: Convert ADLS test data to SS format
+
+inputs:
+  TextData:
+    type: string
+    optional: False  # TODO: support False as default value
+    description: text file on ADLS storage
+  ExtractionClause:
+    type: string
+    optional: False
+    description: the extraction clause, something like "column1:string, column2:int"
+outputs:
+  SSPath:
+    type: path
+    description: output path of ss
+
+code: ./scope
+
+environment: azureml:AzureEnv:1
+
+scope:
+  script: convert2ss.script
+  # to reference the inputs/outputs in your script
+  # you must define the argument name of your intpus/outputs in args section
+  # Both 'argument_name {inputs.input_name}' and 'argument_name={inputs.input_name}' are supported
+  # for example, if you define your args as below, you can use @@Input_TextData@@ to refer to your component's input TextData
+  args: >-
+    Input_TextData {inputs.TextData}
+    ExtractionClause={inputs.ExtractionClause}
+    Output_SSPath {outputs.SSPath}

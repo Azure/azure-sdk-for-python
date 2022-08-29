@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel72641144%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel72641144%3B1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,9 +23,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:59 GMT
+      - Thu, 26 May 2022 07:28:31 GMT
+      mise-correlation-id:
+      - cd1eac71-be3a-414a-b238-6d7f9edf3965
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-46fe630349d5f647ad31c26ef70bcb78-deee5fc78633ab48-01
     status:
       code: 404
       message: Not Found
@@ -46,21 +50,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:10:00.076774+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:32.540778+00:00"}]'
     headers:
       content-length:
-      - '174'
+      - '177'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:59 GMT
+      - Thu, 26 May 2022 07:28:31 GMT
+      mise-correlation-id:
+      - a08d5718-f08a-4d8a-8ac6-d1ed7cd67720
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-95e4b562cae80f45858360a73b6770bd-08b36ab8803aef4d-01
     status:
       code: 201
       message: Created
@@ -74,21 +82,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel72641144%3B1?includeModelDefinition=true&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel72641144%3B1?includeModelDefinition=true&api-version=2022-05-31
   response:
     body:
-      string: '{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:10:00.076774+00:00","model":{"@id":"dtmi:com:samples:ComponentModel72641144;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}'
+      string: '{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:32.540778+00:00","model":{"@id":"dtmi:com:samples:ComponentModel72641144;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}'
     headers:
       content-length:
-      - '460'
+      - '463'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:59 GMT
+      - Thu, 26 May 2022 07:28:31 GMT
+      mise-correlation-id:
+      - c5c37989-e36b-46e0-b72b-9a0898914644
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-eb4d1731775e5f4997adf7a9c62f22f3-6cd9010d0418a240-01
     status:
       code: 200
       message: OK

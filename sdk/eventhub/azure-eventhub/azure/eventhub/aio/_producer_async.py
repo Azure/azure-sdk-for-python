@@ -2,25 +2,36 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import uuid
 import asyncio
 import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
+<<<<<<< HEAD
 import time
+=======
+>>>>>>> main
 
 from azure.core.tracing import AbstractSpan
 
 from .._common import EventData, EventDataBatch
+<<<<<<< HEAD
 from ..exceptions import OperationTimeoutError
+=======
+>>>>>>> main
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import (
     create_properties,
-    set_message_partition_key,
     trace_message,
     send_context_manager,
     transform_outbound_single_message,
 )
+<<<<<<< HEAD
 from .._constants import TIMEOUT_SYMBOL, NO_RETRY_ERRORS, CUSTOM_CONDITION_BACKOFF
+=======
+from .._constants import TIMEOUT_SYMBOL
+from ..amqp import AmqpAnnotatedMessage
+>>>>>>> main
 from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 from .._pyamqp import (
@@ -30,6 +41,9 @@ from .._pyamqp import (
 from .._pyamqp.aio import SendClientAsync
 
 if TYPE_CHECKING:
+    from uamqp import types, constants, errors
+    from uamqp import SendClientAsync
+
     from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
     from ._producer_client_async import EventHubProducerClient
 
@@ -61,8 +75,9 @@ class EventHubProducer(
      Default value is `True`.
     """
 
-    def __init__(self, client: "EventHubProducerClient", target: str, **kwargs) -> None:
+    def __init__(self, client: EventHubProducerClient, target: str, **kwargs) -> None:
         super().__init__()
+        self._amqp_transport = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
@@ -80,11 +95,22 @@ class EventHubProducer(
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._timeout = send_timeout
+<<<<<<< HEAD
         self._idle_timeout = idle_timeout
         self._retry_policy = error.RetryPolicy(
             retry_total=self._client._config.max_retries,  # pylint: disable=protected-access
             no_retry_condition=NO_RETRY_ERRORS,
             custom_condition_backoff=CUSTOM_CONDITION_BACKOFF
+=======
+        self._idle_timeout = (
+            (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR)
+            if idle_timeout
+            else None
+        )
+
+        self._retry_policy = self._amqp_transport.create_retry_policy(
+            config=self._client._config
+>>>>>>> main
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
@@ -93,6 +119,7 @@ class EventHubProducer(
         if partition:
             self._target += "/Partitions/" + partition
             self._name += "-partition{}".format(partition)
+<<<<<<< HEAD
         self._handler = None  # type: Optional[SendClientAsync]
         self._condition = None  # type: Optional[Exception]
         self._lock = asyncio.Lock(**self._internal_kwargs)
@@ -112,16 +139,42 @@ class EventHubProducer(
             auth=auth,
             idle_timeout=self._idle_timeout,
             network_trace=self._client._config.network_tracing,  # pylint: disable=protected-access
+=======
+        self._handler: Optional[SendClientAsync] = None
+        self._outcome: Optional[constants.MessageSendResult] = None
+        self._condition: Optional[Exception] = None
+        self._lock = asyncio.Lock(**self._internal_kwargs)
+        self._link_properties = self._amqp_transport.create_link_properties(
+            {TIMEOUT_SYMBOL: int(self._timeout * self._amqp_transport.TIMEOUT_FACTOR)}
+        )
+
+
+    def _create_handler(self, auth: "JWTTokenAsync") -> None:
+        self._handler = self._amqp_transport.create_send_client(
+            config=self._client._config,  # pylint:disable=protected-access
+            target=self._target,
+            auth=auth,
+            network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
+            idle_timeout=self._idle_timeout,
+>>>>>>> main
             retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             transport_type=transport_type,
             http_proxy=self._client._config.http_proxy, # pylint:disable=protected-access
             client_name=self._name,
             link_properties=self._link_properties,
+<<<<<<< HEAD
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
             custom_endpoint_address=custom_endpoint_address,
             connection_verify=self._client._config.connection_verify,
             **self._internal_kwargs
+=======
+            properties=create_properties(
+                self._client._config.user_agent,  # pylint: disable=protected-access
+                amqp_transport=self._amqp_transport,
+            ),
+            msg_timeout=self._timeout * 1000,
+>>>>>>> main
         )
 
     async def _open_with_retry(self) -> Any:
@@ -134,12 +187,17 @@ class EventHubProducer(
         timeout_time: Optional[float] = None,
         last_exception: Optional[Exception] = None,
     ) -> None:
-        # TODO: Correct uAMQP type hints
         if self._unsent_events:
+<<<<<<< HEAD
             await self._open()
             timeout = timeout_time - time.time() if timeout_time else 0
             await self._handler.send_message_async(self._unsent_events[0], timeout=timeout)
             self._unsent_events = None
+=======
+            await self._amqp_transport.send_messages_async(
+                self, timeout_time, last_exception, _LOGGER
+            )
+>>>>>>> main
 
     async def _send_event_data_with_retry(
         self, timeout: Optional[float] = None
@@ -148,39 +206,65 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         span: Optional[AbstractSpan],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
-        if isinstance(event_data, EventData):
-            outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
+            outgoing_event_data = transform_outbound_single_message(
+                event_data, EventData, self._amqp_transport.to_outgoing_amqp_message
+            )
             if partition_key:
-                set_message_partition_key(outgoing_event_data.message, partition_key)
+                self._amqp_transport.set_message_partition_key(
+                    outgoing_event_data._message, partition_key  # pylint: disable=protected-access
+                )
             wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
             if isinstance(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
+                if not event_data:
+                    return event_data
                 if (
-                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
+                    partition_key
+                    and partition_key
+                    != event_data._partition_key  # pylint: disable=protected-access
                 ):
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
+<<<<<<< HEAD
                 for event in event_data.message.data: # pylint: disable=protected-access
+=======
+                for (
+                    event
+                ) in event_data._message.data:  # pylint: disable=protected-access
+>>>>>>> main
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key)
+                    event_data = _set_partition_key(
+                        event_data, partition_key, self._amqp_transport
+                    )
                 event_data = _set_trace_message(event_data, span)
+<<<<<<< HEAD
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
+=======
+                wrapper_event_data = EventDataBatch._from_batch(    # type: ignore  # pylint: disable=protected-access
+                    event_data, self._amqp_transport, partition_key
+                )
+>>>>>>> main
         return wrapper_event_data
 
     async def send(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         *,
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None
@@ -212,8 +296,14 @@ class EventHubProducer(
         async with self._lock:
             with send_context_manager() as child:
                 self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
-                self._unsent_events = [wrapper_event_data.message]
+                wrapper_event_data = self._wrap_eventdata(
+                    event_data, child, partition_key
+                )
+
+                if not wrapper_event_data:
+                    return
+
+                self._unsent_events = [wrapper_event_data._message]  # pylint: disable=protected-access
 
                 if child:
                     self._client._add_span_request_attributes(  # pylint: disable=protected-access

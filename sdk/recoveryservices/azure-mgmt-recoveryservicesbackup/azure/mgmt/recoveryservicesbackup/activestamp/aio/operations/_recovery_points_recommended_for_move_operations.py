@@ -78,7 +78,7 @@ class RecoveryPointsRecommendedForMoveOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-12-01")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecoveryPointResourceList"]

@@ -6,33 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessProfileType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessProfileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name which contains the role of the kubeconfig.
     """
 
     CLUSTER_USER = "clusterUser"
+    CLUSTER_CUSTOMER_USER = "clusterCustomerUser"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource.
     """
 
@@ -41,32 +26,54 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Distro(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Distro(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a supported Fabric/Infra. (AKSEdge etc...).
     """
 
     AKS_EDGE = "AKSEdge"
 
-class Provider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Provider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Information about the connected appliance.
     """
 
     VM_WARE = "VMWare"
     HCI = "HCI"
     SCVMM = "SCVMM"
+    KUBE_VIRT = "KubeVirt"
+    OPEN_STACK = "OpenStack"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SSHKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Appliance SSHKeyType definition.
+    """
+
+    SSH_CUSTOMER_USER = "SSHCustomerUser"
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Appliance’s health and state of connection to on-prem
     """
 
     WAITING_FOR_HEARTBEAT = "WaitingForHeartbeat"
     VALIDATING = "Validating"
+    CONNECTING = "Connecting"
     CONNECTED = "Connected"
     RUNNING = "Running"
+    PREPARING_FOR_UPGRADE = "PreparingForUpgrade"
+    UPGRADE_PREREQUISITES_COMPLETED = "UpgradePrerequisitesCompleted"
+    PRE_UPGRADE = "PreUpgrade"
+    UPDATING_CLOUD_OPERATOR = "UpdatingCloudOperator"
+    WAITING_FOR_CLOUD_OPERATOR = "WaitingForCloudOperator"
+    UPDATING_CAPI = "UpdatingCAPI"
+    UPDATING_CLUSTER = "UpdatingCluster"
+    POST_UPGRADE = "PostUpgrade"
+    UPGRADE_COMPLETE = "UpgradeComplete"
+    UPGRADE_CLUSTER_EXTENSION_FAILED_TO_DELETE = "UpgradeClusterExtensionFailedToDelete"
+    UPGRADE_FAILED = "UpgradeFailed"
+    OFFLINE = "Offline"
+    NONE = "None"

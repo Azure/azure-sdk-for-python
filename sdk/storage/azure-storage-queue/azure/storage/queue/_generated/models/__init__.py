@@ -6,63 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccessPolicy
-    from ._models_py3 import CorsRule
-    from ._models_py3 import DequeuedMessageItem
-    from ._models_py3 import EnqueuedMessage
-    from ._models_py3 import GeoReplication
-    from ._models_py3 import ListQueuesSegmentResponse
-    from ._models_py3 import Logging
-    from ._models_py3 import Metrics
-    from ._models_py3 import PeekedMessageItem
-    from ._models_py3 import QueueItem
-    from ._models_py3 import QueueMessage
-    from ._models_py3 import RetentionPolicy
-    from ._models_py3 import SignedIdentifier
-    from ._models_py3 import StorageError
-    from ._models_py3 import StorageServiceProperties
-    from ._models_py3 import StorageServiceStats
-except (SyntaxError, ImportError):
-    from ._models import AccessPolicy  # type: ignore
-    from ._models import CorsRule  # type: ignore
-    from ._models import DequeuedMessageItem  # type: ignore
-    from ._models import EnqueuedMessage  # type: ignore
-    from ._models import GeoReplication  # type: ignore
-    from ._models import ListQueuesSegmentResponse  # type: ignore
-    from ._models import Logging  # type: ignore
-    from ._models import Metrics  # type: ignore
-    from ._models import PeekedMessageItem  # type: ignore
-    from ._models import QueueItem  # type: ignore
-    from ._models import QueueMessage  # type: ignore
-    from ._models import RetentionPolicy  # type: ignore
-    from ._models import SignedIdentifier  # type: ignore
-    from ._models import StorageError  # type: ignore
-    from ._models import StorageServiceProperties  # type: ignore
-    from ._models import StorageServiceStats  # type: ignore
+from ._models_py3 import AccessPolicy
+from ._models_py3 import CorsRule
+from ._models_py3 import DequeuedMessageItem
+from ._models_py3 import EnqueuedMessage
+from ._models_py3 import GeoReplication
+from ._models_py3 import ListQueuesSegmentResponse
+from ._models_py3 import Logging
+from ._models_py3 import Metrics
+from ._models_py3 import PeekedMessageItem
+from ._models_py3 import QueueItem
+from ._models_py3 import QueueMessage
+from ._models_py3 import RetentionPolicy
+from ._models_py3 import SignedIdentifier
+from ._models_py3 import StorageError
+from ._models_py3 import StorageServiceProperties
+from ._models_py3 import StorageServiceStats
 
-from ._azure_queue_storage_enums import (
-    GeoReplicationStatusType,
-    StorageErrorCode,
-)
+from ._azure_queue_storage_enums import GeoReplicationStatusType
+from ._azure_queue_storage_enums import StorageErrorCode
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AccessPolicy',
-    'CorsRule',
-    'DequeuedMessageItem',
-    'EnqueuedMessage',
-    'GeoReplication',
-    'ListQueuesSegmentResponse',
-    'Logging',
-    'Metrics',
-    'PeekedMessageItem',
-    'QueueItem',
-    'QueueMessage',
-    'RetentionPolicy',
-    'SignedIdentifier',
-    'StorageError',
-    'StorageServiceProperties',
-    'StorageServiceStats',
-    'GeoReplicationStatusType',
-    'StorageErrorCode',
+    "AccessPolicy",
+    "CorsRule",
+    "DequeuedMessageItem",
+    "EnqueuedMessage",
+    "GeoReplication",
+    "ListQueuesSegmentResponse",
+    "Logging",
+    "Metrics",
+    "PeekedMessageItem",
+    "QueueItem",
+    "QueueMessage",
+    "RetentionPolicy",
+    "SignedIdentifier",
+    "StorageError",
+    "StorageServiceProperties",
+    "StorageServiceStats",
+    "GeoReplicationStatusType",
+    "StorageErrorCode",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

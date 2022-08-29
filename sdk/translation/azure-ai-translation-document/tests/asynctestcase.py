@@ -30,7 +30,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
         container_suffix = kwargs.pop('container_suffix', "")
         variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', True)
-        language_code = kwargs.pop('language_code', "es")
+        language = kwargs.pop('language', "es")
         docs_per_operation = kwargs.pop('docs_per_operation', 2)
         result_ids = []
         for i in range(operations_count):
@@ -52,7 +52,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code=language_code
+                            language=language
                         )
                     ]
                 )
@@ -73,7 +73,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
         # get input params
         variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', False)
-        language_code = kwargs.pop('language_code', "es")
+        language = kwargs.pop('language', "es")
 
         # prepare containers and test data
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
@@ -87,7 +87,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
                 targets=[
                     TranslationTarget(
                         target_url=target_container_sas_url,
-                        language_code=language_code
+                        language=language
                     )
                 ]
             )

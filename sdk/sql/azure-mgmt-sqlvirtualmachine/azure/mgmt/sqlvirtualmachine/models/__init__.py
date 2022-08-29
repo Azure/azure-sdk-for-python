@@ -45,6 +45,8 @@ from ._models_py3 import WsfcDomainProfile
 
 
 from ._sql_virtual_machine_management_client_enums import (
+    AssessmentDayOfWeek,
+    AutoBackupDaysOfWeek,
     BackupScheduleType,
     ClusterConfiguration,
     ClusterManagerType,
@@ -52,7 +54,6 @@ from ._sql_virtual_machine_management_client_enums import (
     ConnectivityType,
     CreatedByType,
     DayOfWeek,
-    DaysOfWeek,
     DiskConfigurationType,
     Failover,
     FullBackupFrequencyType,
@@ -106,6 +107,8 @@ __all__ = [
     'TrackedResource',
     'WsfcDomainCredentials',
     'WsfcDomainProfile',
+    'AssessmentDayOfWeek',
+    'AutoBackupDaysOfWeek',
     'BackupScheduleType',
     'ClusterConfiguration',
     'ClusterManagerType',
@@ -113,7 +116,6 @@ __all__ = [
     'ConnectivityType',
     'CreatedByType',
     'DayOfWeek',
-    'DaysOfWeek',
     'DiskConfigurationType',
     'Failover',
     'FullBackupFrequencyType',

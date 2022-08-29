@@ -6,6 +6,7 @@ from typing import Optional, Dict, Any
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import RetryMode
+from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 
 from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 
@@ -30,14 +31,20 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.max_batch_size = kwargs.get("max_batch_size", self.prefetch)  # type: int
         self.receive_timeout = kwargs.get("receive_timeout", 0)  # type: int
         self.send_timeout = kwargs.get("send_timeout", 60)  # type: int
-        self.custom_endpoint_address = kwargs.get("custom_endpoint_address")  # type: Optional[str]
+        self.custom_endpoint_address = kwargs.get(
+            "custom_endpoint_address"
+        )  # type: Optional[str]
         self.connection_verify = kwargs.get("connection_verify")  # type: Optional[str]
         self.connection_port = DEFAULT_AMQPS_PORT
         self.custom_endpoint_hostname = None
+        self.hostname = kwargs.pop("hostname")
+        uamqp_transport = kwargs.pop("uamqp_transport")
 
-        if self.http_proxy or self.transport_type == TransportType.AmqpOverWebsocket:
+        if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket
             self.connection_port = DEFAULT_AMQP_WSS_PORT
+            if not uamqp_transport:
+                self.hostname += "/$servicebus/websocket"
 
         # custom end point
         if self.custom_endpoint_address:
@@ -48,5 +55,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             endpoint = urlparse(self.custom_endpoint_address)
             self.transport_type = TransportType.AmqpOverWebsocket
             self.custom_endpoint_hostname = endpoint.hostname
+            if not uamqp_transport:
+                self.custom_endpoint_address += "/$servicebus/websocket"
             # in case proxy and custom endpoint are both provided, we default port to 443 if it's not provided
             self.connection_port = endpoint.port or DEFAULT_AMQP_WSS_PORT

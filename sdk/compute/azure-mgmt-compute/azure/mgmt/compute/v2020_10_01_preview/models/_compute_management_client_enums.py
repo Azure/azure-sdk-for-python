@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CloudServiceUpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CloudServiceUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Update mode for the cloud service. Role instances are allocated to update domains when the
     service is deployed. Updates can be initiated manually in each update domain or initiated
     automatically in all update domains.
@@ -26,7 +25,7 @@ class CloudServiceUpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     MANUAL = "Manual"
     SIMULTANEOUS = "Simultaneous"
 
-class StatusLevelTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level code.
     """
 

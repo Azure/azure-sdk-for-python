@@ -2,12 +2,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.12.1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 17:46:49 GMT
+      - Mon, 06 Jun 2022 23:55:07 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer5f711a90?restype=container
   response:
@@ -15,20 +17,13 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 17:46:48 GMT
-      etag: '"0x8D759734FCE0331"'
-      last-modified: Fri, 25 Oct 2019 17:46:49 GMT
+      date: Mon, 06 Jun 2022 23:55:07 GMT
+      etag: '"0x8DA4817FC172EC2"'
+      last-modified: Mon, 06 Jun 2022 23:55:07 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragehddhigausowa.blob.core.windows.net
-        - /utcontainer5f711a90
-        - restype=container
-        - ''
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainer5f711a90?restype=container
 version: 1

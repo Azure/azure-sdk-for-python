@@ -17,6 +17,7 @@ GitHub repository, and documentation of how to set up and use the proxy can be f
 - [ConnectionError during test startup](#connectionerror-during-test-startup)
 - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
 - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
+- [Fixture not found error](#fixture-not-found-error)
 
 ## General troubleshooting tip
 
@@ -100,8 +101,39 @@ of `test setup failure`. To resolve this, follow the instructions in the
 proxy should be enabled for playback test pipelines and disabled for live test pipelines, since recordings are only
 involved in the former scenario.
 
+## Fixture not found error
+
+Tests that aren't recorded should omit the `recorded_by_proxy` decorator. However, if these unrecorded tests accept
+parameters that are provided by a preparer like the `devtools_testutils` [EnvironmentVariableLoader][env_var_loader],
+you may see a new test setup error after migrating to the test proxy. For example, imagine a test is decorated with a
+preparer that provides a Key Vault URL as a `azure_keyvault_url` parameter:
+```python
+class TestExample(AzureRecordedTestCase):
+
+    @EnvironmentVariableLoader("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
+    def test_example(self, azure_keyvault_url):
+```
+
+The above would work in the old test setup, but with the test proxy, running the test will yield
+```text
+_______ ERROR at setup of TestExample.test_example _______
+...
+E  fixture 'azure_keyvault_url' not found
+```
+
+This is because `AzureRecordedTestCase` doesn't inherit from `unittest.TestCase`; `pytest` assumes that any named
+parameter in a test method is a reference to a fixture unless the test method is wrapped in a particular way. Wrapping
+a test with the `recorded_by_proxy` decorator will permit using named parameters, but wrapping with decorators like
+[EnvironmentVariableLoader][env_var_loader] alone will not.
+
+As noted in the [Fetch environment variables][env_var_section] section of the [migration guide][migration_guide],
+reading expected variables from an accepted `**kwargs` parameter is recommended instead so that tests will run as
+expected in either case.
+
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
+[env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+[env_var_section]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#fetch-environment-variables
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md

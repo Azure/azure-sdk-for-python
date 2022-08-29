@@ -1,6 +1,44 @@
 # Release History
 
+<<<<<<< HEAD
 ## 5.8.0b6 (Unreleased)
+=======
+## 5.10.1 (2022-08-22)
+
+This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
+
+### Bugs Fixed
+
+- Fixed a bug in async `BufferedProducer` that would block when flushing the queue causing the client to freeze up (issue #23510).
+- Fixed a bug in the async `EventHubProducerClient` and `EventHubConsumerClient` that set the default value of the `transport_type` parameter in the `from_connection_string` methods to `None` rather than `TransportType.Amqp`.
+
+### Other Changes
+
+- Internal refactoring to support upcoming Pure Python AMQP-based release.
+- Updated uAMQP dependency to 1.6.0.
+
+## 5.10.0 (2022-06-08)
+
+### Features Added
+
+- Includes the following features related to buffered sending of events:
+  - A new method `send_event` to `EventHubProducerClient` which allows sending single `EventData` or `AmqpAnnotatedMessage`.
+  - Buffered mode sending to `EventHubProducerClient` which is intended to allow for efficient publishing of events
+   without having to explicitly manage batches in the application.
+    - The constructor of `EventHubProducerClient` and `from_connection_string` method takes the following new keyword arguments
+     for configuration:
+      - `buffered_mode`: The flag to enable/disable buffered mode sending.
+      - `on_success`: The callback to be called once events have been successfully published.
+      - `on_error`: The callback to be called once events have failed to be published.
+      - `max_buffer_length`: The total number of events per partition that can be buffered before a flush will be triggered.
+      - `max_wait_time`: The amount of time to wait for a batch to be built with events in the buffer before publishing.
+    - A new method `EventHubProducerClient.flush` which flushes events in the buffer to be sent immediately.
+    - A new method `EventHubProducerClient.get_buffered_event_count` which returns the number of events that are buffered and waiting to be published for a given partition.
+    - A new property `EventHubProducerClient.total_buffered_event_count` which returns the total number of events that are currently buffered and waiting to be published, across all partitions.
+    - A new boolean keyword argument `flush` to `EventHubProducerClient.close` which indicates whether to flush the buffer or not while closing.
+
+## 5.9.0 (2022-05-10)
+>>>>>>> main
 
 ### Features Added
 

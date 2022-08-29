@@ -7,6 +7,7 @@ from ._version import VERSION
 
 __version__ = VERSION
 
+from ._constants import TransportType
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
 from ._client_base import EventHubSharedKeyCredential
@@ -15,9 +16,12 @@ from ._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ._eventprocessor.partition_context import PartitionContext
 from ._connection_string_parser import (
     parse_connection_string,
-    EventHubConnectionStringProperties
+    EventHubConnectionStringProperties,
 )
+<<<<<<< HEAD
 from ._constants import TransportType
+=======
+>>>>>>> main
 
 __all__ = [
     "EventData",

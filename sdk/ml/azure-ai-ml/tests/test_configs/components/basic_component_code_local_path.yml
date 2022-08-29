@@ -1,0 +1,22 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: sample_command_component_basic
+display_name: CommandComponentBasic
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+outputs:
+  component_out_path:
+    type: uri_folder
+
+command: >-
+  echo Hello World
+
+code: "./helloworld_components_with_env"
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

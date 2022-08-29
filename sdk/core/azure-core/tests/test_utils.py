@@ -40,3 +40,56 @@ def test_case_insensitive_dict_initialization():
         assert d['platformUpdateDomainCount'] == d['platformupdatedomaincount'] == d['PLATFORMUPDATEDOMAINCOUNT'] == 5
         assert d['platformFaultDomainCount'] == d['platformfaultdomaincount'] == d['PLATFORMFAULTDOMAINCOUNT'] == 3
         assert d['virtualMachines'] == d['virtualmachines'] == d['VIRTUALMACHINES'] == []
+
+def test_case_insensitive_dict_cant_compare():
+    my_dict = case_insensitive_dict({"accept": "application/json"})
+    assert my_dict != "accept"
+
+def test_case_insensitive_dict_lowerkey_items():
+    my_dict = case_insensitive_dict({"accept": "application/json"})
+    assert list(my_dict.lowerkey_items()) == [("accept","application/json")]
+
+@pytest.mark.parametrize("other, expected", (
+    ({"PLATFORMUPDATEDOMAINCOUNT": 5}, True),
+    ({}, False),
+    (None, False),
+))
+def test_case_insensitive_dict_equality(other, expected):
+    my_dict = case_insensitive_dict({"platformUpdateDomainCount": 5})
+    result = my_dict == other
+    assert result == expected
+
+def test_case_insensitive_dict_keys():
+    keys = ["One", "TWO", "tHrEe", "four"]
+    my_dict = case_insensitive_dict({key:idx for idx, key in enumerate(keys,1)})
+    dict_keys = list(my_dict.keys())
+
+    assert dict_keys == keys
+
+def test_case_insensitive_copy():
+    keys = ["One", "TWO", "tHrEe", "four"]
+    my_dict = case_insensitive_dict({key:idx for idx, key in enumerate(keys, 1)})
+    copy_my_dict = my_dict.copy()
+    assert copy_my_dict is not my_dict
+    assert copy_my_dict == my_dict
+
+def test_case_insensitive_keys_present(accept_cases):
+    my_dict = case_insensitive_dict({"accept": "application/json"})
+
+    for key in accept_cases:
+        assert key in my_dict
+
+def test_case_insensitive_keys_delete(accept_cases):
+    my_dict = case_insensitive_dict({"accept": "application/json"})
+
+    for key in accept_cases:
+        del my_dict[key]
+        assert key not in my_dict
+        my_dict[key] = "application/json"
+
+def test_case_iter():
+    keys = ["One", "TWO", "tHrEe", "four"]
+    my_dict = case_insensitive_dict({key:idx for idx, key in enumerate(keys, 1)})
+    
+    for key in my_dict:
+        assert key in keys
