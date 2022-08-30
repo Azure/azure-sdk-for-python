@@ -264,7 +264,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         content = dest_blob.download_blob().readall()
         assert self.source_blob_with_special_chars_data == content
 
-    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_sync_copy_blob_returns_vid(self, **kwargs):
