@@ -6,10 +6,6 @@ from typing import TYPE_CHECKING
 
 from .._internal.client_credential_base import ClientCredentialBase
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
 
 class ClientSecretCredential(ClientCredentialBase):
     """Authenticates as a service principal using a client secret.
@@ -24,11 +20,8 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_broker:  
-        Brokers provide Single-Sign-On, device identification,
-        and application identification verification.
-        If this parameter is set to True,
-        the broker will be used when possible. Default to False.
+    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
+        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
     """
 
     def __init__(
@@ -50,5 +43,9 @@ class ClientSecretCredential(ClientCredentialBase):
             )
 
         super(ClientSecretCredential, self).__init__(
-            client_id=client_id, client_credential=client_secret, tenant_id=tenant_id, **kwargs
+            client_id=client_id,
+            client_credential=client_secret,
+            tenant_id=tenant_id,
+            allow_broker=allow_broker,
+            **kwargs
         )

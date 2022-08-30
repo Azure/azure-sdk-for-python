@@ -48,11 +48,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword bool allow_broker:
-        Brokers provide Single-Sign-On, device identification,
-        and application identification verification.
-        If this parameter is set to True,
-        the broker will be used when possible. Default to False.
+    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
+        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
     """
 
     def __init__(
@@ -87,7 +84,12 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         else:
             raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
-        super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
+        super(OnBehalfOfCredential, self).__init__(
+            client_id=client_id,
+            client_credential=credential,
+            tenant_id=tenant_id,
+            allow_broker=allow_broker,
+            **kwargs)
         self._auth_record = None  # type: Optional[AuthenticationRecord]
 
     @wrap_exceptions

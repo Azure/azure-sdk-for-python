@@ -63,7 +63,11 @@ class CertificateCredential(ClientCredentialBase):
         client_credential = get_client_credential(certificate_path, **kwargs)
 
         super(CertificateCredential, self).__init__(
-            client_id=client_id, client_credential=client_credential, tenant_id=tenant_id, **kwargs
+            client_id=client_id,
+            client_credential=client_credential,
+            tenant_id=tenant_id,
+            allow_broker=allow_broker,
+            **kwargs
         )
 
 
