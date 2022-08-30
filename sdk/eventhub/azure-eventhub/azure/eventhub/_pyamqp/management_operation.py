@@ -129,7 +129,7 @@ class ManagementOperation(object):
         # ManagementOpenResult.ERROR or CANCELLED
         # TODO: update below with correct status code + info
         raise AMQPLinkError(
-            condition=ManagementOpenResult.ERROR,
+            condition=ErrorCondition.ClientError,
             description="Failed to open mgmt link, management link status: {}".format(self._mgmt_link_open_status),
             info=None
         )
