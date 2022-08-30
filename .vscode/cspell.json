@@ -423,7 +423,7 @@
       "words": ["groovin", "Olufsen"]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
         "Njgw",
