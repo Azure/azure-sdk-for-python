@@ -204,7 +204,8 @@ class CommonBlobSamples(object):
             copy_id = props.copy.id
             # [START abort_copy_blob_from_url]
             # Passing in copy id to abort copy operation
-            copied_blob.abort_copy(copy_id)
+            if props.copy.status != "success":
+                copied_blob.abort_copy(copy_id)
 
             # check copy status
             props = copied_blob.get_blob_properties()
