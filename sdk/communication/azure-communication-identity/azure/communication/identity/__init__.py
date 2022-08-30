@@ -11,10 +11,17 @@ from ._generated.models import (
 )
 
 from ._shared.models import (
+    CommunicationCloudEnvironment,
     CommunicationIdentifier,
     CommunicationIdentifierKind,
     CommunicationUserIdentifier,
-    CommunicationUserProperties
+    CommunicationUserProperties,
+    identifier_from_raw_id,
+    MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsUserProperties,
+    PhoneNumberIdentifier,
+    PhoneNumberProperties,
+    UnknownIdentifier
 )
 
 __all__ = [
@@ -24,8 +31,15 @@ __all__ = [
     'CommunicationTokenScope',
 
     # from _shared
+    'CommunicationCloudEnvironment',
     'CommunicationIdentifier',
     'CommunicationIdentifierKind',
     'CommunicationUserIdentifier',
-    'CommunicationUserProperties'
+    'CommunicationUserProperties',
+    'identifier_from_raw_id',
+    'MicrosoftTeamsUserIdentifier',
+    'MicrosoftTeamsUserProperties',
+    'PhoneNumberIdentifier',
+    'PhoneNumberProperties',
+    'UnknownIdentifier'
 ]

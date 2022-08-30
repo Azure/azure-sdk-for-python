@@ -1,5 +1,20 @@
 # Release History
 
+## 1.0.0b8 (Unreleased)
+
+### Features Added
+
+- Implement success count network statsbeat
+    ([#25752](https://github.com/Azure/azure-sdk-for-python/pull/25752))
+- Implement all network statsbeat
+    ([#25845](https://github.com/Azure/azure-sdk-for-python/pull/25845))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b7 (2022-08-12)
 
 ### Features Added

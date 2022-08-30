@@ -28,8 +28,8 @@ from ._models import (
     ModelBuildMode,
     DocumentModelDetails,
     DocumentModelSummary,
-    DocumentModelOperationDetails,
-    DocumentModelOperationSummary,
+    OperationDetails,
+    OperationSummary,
     ResourceDetails,
     TargetAuthorization,
 )
@@ -80,7 +80,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_06_30_PREVIEW)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_08_31)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -97,7 +97,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         configured, see more about configuring managed identities to work with Form Recognizer here:
         https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are built using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
+        'image/jpeg', 'image/png', 'image/tiff', 'image/bmp', or 'image/heif'. Other types of content in the container
+        is ignored.
 
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -131,8 +132,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """
 
         def callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelBuildOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         description = kwargs.pop("description", None)
@@ -199,8 +200,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """
 
         def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelComposeOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         model_id = kwargs.pop("model_id", None)
@@ -218,7 +219,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 description=description,
                 tags=tags,
                 component_models=[
-                    self._generated_models.ComponentModelInfo(model_id=model_id) for model_id in component_model_ids
+                    self._generated_models.ComponentDocumentModelDetails(model_id=model_id)
+                    for model_id in component_model_ids
                 ]
                 if component_model_ids
                 else [],
@@ -298,8 +300,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            op_response = self._deserialize(self._generated_models.GetOperationResponse, raw_response)
-            model_info = self._deserialize(self._generated_models.ModelInfo, op_response.result)
+            op_response = self._deserialize(self._generated_models.DocumentModelCopyToOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentModelDetails, op_response.result)
             return DocumentModelDetails._from_generated(model_info)
 
         if not model_id:
@@ -350,7 +352,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return self._client.delete_model(model_id=model_id, **kwargs)
+        return self._client.delete_document_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
@@ -371,7 +373,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: List all models that were built successfully under the Form Recognizer resource.
         """
 
-        return self._client.get_models(  # type: ignore
+        return self._client.get_document_models(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [DocumentModelSummary._from_generated(x) for x in objs],
@@ -397,7 +399,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: Get model counts and limits under the Form Recognizer resource.
         """
 
-        response = self._client.get_info(**kwargs)
+        response = self._client.get_resource_details(**kwargs)
         return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace
@@ -422,19 +424,19 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = self._client.get_model(model_id=model_id, **kwargs)
+        response = self._client.get_document_model(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> ItemPaged[DocumentModelOperationSummary]:
+    def list_operations(self, **kwargs: Any) -> ItemPaged[OperationSummary]:
         """List information for each document model operation.
 
         Lists all document model operations associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
-        :return: A pageable of DocumentModelOperationSummary.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentModelOperationSummary]
+        :return: A pageable of OperationSummary.
+        :rtype: ~azure.core.paging.ItemPaged[OperationSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -450,13 +452,13 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return self._client.get_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
-                lambda objs: [DocumentModelOperationSummary._from_generated(x) for x in objs],
+                lambda objs: [OperationSummary._from_generated(x) for x in objs],
             ),
             **kwargs
         )
 
     @distributed_trace
-    def get_operation(self, operation_id: str, **kwargs: Any) -> DocumentModelOperationDetails:
+    def get_operation(self, operation_id: str, **kwargs: Any) -> OperationDetails:
         """Get a document model operation by its ID.
 
         Get a document model operation associated with the Form Recognizer resource.
@@ -464,8 +466,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
         :param str operation_id: The operation ID.
-        :return: DocumentModelOperationDetails
-        :rtype: ~azure.ai.formrecognizer.DocumentModelOperationDetails
+        :return: OperationDetails
+        :rtype: ~azure.ai.formrecognizer.OperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -481,7 +483,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
-        return DocumentModelOperationDetails._from_generated(
+        return OperationDetails._from_generated(
             self._client.get_operation(operation_id, **kwargs),
             api_version=self._api_version,
         )

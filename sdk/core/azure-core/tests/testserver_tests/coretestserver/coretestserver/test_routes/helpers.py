@@ -7,7 +7,7 @@ from flask import (
     request,
     jsonify as flask_jsonify,
 )
-from six.moves.urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 from .structures import CaseInsensitiveDict
 import json
 

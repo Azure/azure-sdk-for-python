@@ -437,6 +437,9 @@ class DatabaseProxy(object):
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.aio.ContainerProxy
 
@@ -458,6 +461,7 @@ class DatabaseProxy(object):
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         parameters = {
             key: value
             for key, value in {
@@ -466,6 +470,7 @@ class DatabaseProxy(object):
                 "indexingPolicy": indexing_policy,
                 "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
+                "analyticalStorageTtl": analytical_storage_ttl,
             }.items()
             if value is not None
         }

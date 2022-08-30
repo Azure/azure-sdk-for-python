@@ -179,7 +179,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the new container.
@@ -277,7 +277,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container.
@@ -303,7 +303,7 @@ class DatabaseProxy(object):
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl
+                analytical_storage_ttl=analytical_storage_ttl,
             )
 
     @distributed_trace
@@ -486,6 +486,9 @@ class DatabaseProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.ContainerProxy
 
@@ -501,6 +504,7 @@ class DatabaseProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -518,6 +522,7 @@ class DatabaseProxy(object):
                 "indexingPolicy": indexing_policy,
                 "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
+                "analyticalStorageTtl": analytical_storage_ttl,
             }.items()
             if value is not None
         }

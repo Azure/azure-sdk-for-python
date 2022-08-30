@@ -3,18 +3,37 @@
 import logging
 import os
 import tempfile
+import time
 from enum import Enum
 from typing import List, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy
+from azure.monitor.opentelemetry.exporter._constants import (
+    _REDIRECT_STATUS_CODES,
+    _RETRYABLE_STATUS_CODES,
+    _THROTTLE_STATUS_CODES,
+)
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._constants import (
+    _REQ_DURATION_NAME,
+    _REQ_EXCEPTION_NAME,
+    _REQ_FAILURE_NAME,
+    _REQ_RETRY_NAME,
+    _REQ_SUCCESS_NAME,
+    _REQ_THROTTLE_NAME,
+)
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_LOCK,
+    _REQUESTS_MAP,
+    get_statsbeat_shutdown,
+    is_statsbeat_enabled,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +63,7 @@ class BaseExporter:
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._enable_local_storage = kwargs.get('enable_local_storage', True)
+        self._endpoint = parsed_connection_string.endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._storage_maintenance_period = kwargs.get('storage_maintenance_period', 60)  # Maintenance interval in seconds.
         self._storage_max_size = kwargs.get('storage_max_size', 50 * 1024 * 1024)  # Maximum size in bytes (default 50MiB)
@@ -56,8 +76,7 @@ class BaseExporter:
         self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
-        config = AzureMonitorClientConfiguration(
-            parsed_connection_string.endpoint, **kwargs)
+        config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
             RequestIdPolicy(**kwargs),
             config.headers_policy,
@@ -75,7 +94,7 @@ class BaseExporter:
             config.http_logging_policy or HttpLoggingPolicy(**kwargs)
         ]
         self.client = AzureMonitorClient(
-            host=parsed_connection_string.endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
+            host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
         self.storage = None
         if self._enable_local_storage:
             self.storage = LocalFileStorage(
@@ -86,6 +105,11 @@ class BaseExporter:
                 name="{} Storage".format(self.__class__.__name__),
                 lease_period=self._storage_min_retry_interval,
             )
+        # statsbeat initialization
+        if self._should_collect_stats():
+            # Import here to avoid circular dependencies
+            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+            collect_statsbeat_metrics(self)
 
     def _transmit_from_storage(self) -> None:
         for blob in self.storage.gets():
@@ -111,6 +135,7 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-statements
     def _transmit(self, envelopes: List[TelemetryItem]) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
@@ -120,35 +145,49 @@ class BaseExporter:
         """
         if len(envelopes) > 0:
             try:
+                start_time = time.time()
                 track_response = self.client.track(envelopes)
-                if not track_response.errors:
+                if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
-                    logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
-                                track_response.items_received, track_response.items_accepted)
+                    if not self._is_stats_exporter():
+                        logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
+                                    track_response.items_received, track_response.items_accepted)
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_SUCCESS_NAME[1])
                     return ExportResult.SUCCESS
                 resend_envelopes = []
-                for error in track_response.errors:
+                for error in track_response.errors:  # 206
                     if _is_retryable_code(error.status_code):
                         resend_envelopes.append(
                             envelopes[error.index]
                         )
+                        if self._should_collect_stats():
+                            _update_requests_map(_REQ_RETRY_NAME[1], value=error.status_code)
                     else:
-                        logger.error(
-                            "Data drop %s: %s %s.",
-                            error.status_code,
-                            error.message,
-                            envelopes[error.index] if error.index is not None else "",
-                        )
+                        if not self._is_stats_exporter():
+                            logger.error(
+                                "Data drop %s: %s %s.",
+                                error.status_code,
+                                error.message,
+                                envelopes[error.index] if error.index is not None else "",
+                            )
                 if self.storage and resend_envelopes:
                     envelopes_to_store = [x.as_dict()
                                           for x in resend_envelopes]
                     self.storage.put(envelopes_to_store, 0)
                     self._consecutive_redirects = 0
                     return ExportResult.FAILED_RETRYABLE
-
+                return ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
+                # HttpResponseError is raised when a response is received
                 if _is_retryable_code(response_error.status_code):
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_RETRY_NAME[1], value=response_error.status_code)
                     return ExportResult.FAILED_RETRYABLE
+                if _is_throttle_code(response_error.status_code):
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
+                    return ExportResult.FAILED_NOT_RETRYABLE
                 if _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
@@ -161,55 +200,102 @@ class BaseExporter:
                                     self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
                                     # Attempt to export again
                                     return self._transmit(envelopes)
+                        if not self._is_stats_exporter():
+                            logger.error(
+                                "Error parsing redirect information."
+                            )
+                    if not self._is_stats_exporter():
                         logger.error(
-                            "Error parsing redirect information."
+                            "Error sending telemetry because of circular redirects." \
+                            "Please check the integrity of your connection string."
                         )
-                        return ExportResult.FAILED_NOT_RETRYABLE
-                    logger.error(
-                        "Error sending telemetry because of circular redirects." \
-                        "Please check the integrity of your connection string."
-                    )
+                    # If redirect but did not return, exception occurred
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
                     return ExportResult.FAILED_NOT_RETRYABLE
+                # Any other status code counts as failure (non-retryable)
+                # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
+                # 404 - Ingestion is allowed only from stamp specific endpoint - must update connection string
+                if self._should_collect_stats():
+                    _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
+                if not self._is_stats_exporter():
+                    logger.error(
+                        'Non-retryable server side error: %s.',
+                        response_error.message,
+                    )
                 return ExportResult.FAILED_NOT_RETRYABLE
             except ServiceRequestError as request_error:
                 # Errors when we're fairly sure that the server did not receive the
                 # request, so it should be safe to retry.
+                # ServiceRequestError is raised by azure.core for these cases
                 logger.warning(
-                    "Retrying due to server request error: %s.", request_error
+                    "Retrying due to server request error: %s.", request_error.message
                 )
+                if self._should_collect_stats():
+                    exc_type = request_error.exc_type
+                    if exc_type is None or exc_type is type(None):
+                        exc_type = request_error.__class__.__name__
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 return ExportResult.FAILED_RETRYABLE
             except Exception as ex:
                 logger.error(
                     "Envelopes could not be exported and are not retryable: %s.", ex
                 )
+                if self._should_collect_stats():
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
                 return ExportResult.FAILED_NOT_RETRYABLE
-            return ExportResult.FAILED_NOT_RETRYABLE
+            finally:
+                if self._should_collect_stats():
+                    end_time = time.time()
+                    _update_requests_map('count')
+                    _update_requests_map(_REQ_DURATION_NAME[1], value=end_time-start_time)
+
         # No spans to export
         self._consecutive_redirects = 0
         return ExportResult.SUCCESS
+
+    # check to see whether its the case of stats collection
+    def _should_collect_stats(self):
+        return is_statsbeat_enabled() and \
+            not get_statsbeat_shutdown() and \
+            not self._is_stats_exporter()
+
+    def _is_stats_exporter(self):
+        return self.__class__.__name__ == "_StatsBeatExporter"
 
 
 def _is_redirect_code(response_code: int) -> bool:
     """
     Determine if response is a redirect response.
     """
-    return bool(response_code in(
-        307,  # Temporary redirect
-        308,  # Permanent redirect
-    ))
+    return response_code in _REDIRECT_STATUS_CODES
 
 
 def _is_retryable_code(response_code: int) -> bool:
     """
     Determine if response is retryable
     """
-    return bool(response_code in (
-        206,  # Partial success
-        408,  # Timeout
-        429,  # Throttle, too Many Requests
-        439,  # Quota, too Many Requests over extended time
-        500,  # Internal Server Error
-        502,  # BadGateway
-        503,  # Service Unavailable
-        504,  # Gateway timeout
-    ))
+    return response_code in _RETRYABLE_STATUS_CODES
+
+
+def _is_throttle_code(response_code: int) -> bool:
+    """
+    Determine if response is throttle response
+    """
+    return response_code in _THROTTLE_STATUS_CODES
+
+
+def _update_requests_map(type_name, value=None):
+    # value is either None, duration, status_code or exc_name
+    with _REQUESTS_LOCK:
+        if type_name in (_REQ_SUCCESS_NAME[1], "count"):  # success, count
+            _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + 1
+        elif type_name == _REQ_DURATION_NAME[1]:  # duration
+            _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + value
+        else:  # exception, failure, retry, throttle
+            prev = 0
+            if _REQUESTS_MAP.get(type_name):
+                prev = _REQUESTS_MAP.get(type_name).get(value, 0)
+            else:
+                _REQUESTS_MAP[type_name] = {}
+            _REQUESTS_MAP[type_name][value] = prev + 1

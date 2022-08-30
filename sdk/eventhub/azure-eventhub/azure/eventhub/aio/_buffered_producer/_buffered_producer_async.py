@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import asyncio
 import logging
 import queue
@@ -14,6 +15,7 @@ from ..._common import EventDataBatch
 from ...exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
+    from .._transport._base_async import AmqpTransportAsync
     from ..._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
@@ -118,7 +120,8 @@ class BufferedProducer:
                 self._buffered_queue.put(self._cur_batch)
             self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             self._cur_batch.add(events)
-        self._cur_buffered_len += new_events_len
+        async with self._lock:
+            self._cur_buffered_len += new_events_len
 
     def failsafe_callback(self, callback):
         async def wrapper_callback(*args, **kwargs):

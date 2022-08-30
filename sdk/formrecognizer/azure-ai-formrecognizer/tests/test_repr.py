@@ -295,7 +295,6 @@ def document_selection_mark(bounding_box, document_span):
 @pytest.fixture
 def document_page(document_span, document_word, document_selection_mark, document_line):
     model = _models.DocumentPage(
-        kind="document",
         page_number=1,
         angle=120.0,
         width=8.0,
@@ -306,8 +305,7 @@ def document_page(document_span, document_word, document_selection_mark, documen
         selection_marks=[document_selection_mark[0]],
         lines=[document_line[0]],
     )
-    model_repr = "DocumentPage(kind={}, page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}])".format(
-                "document",
+    model_repr = "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}])".format(
                 1,
                 120.0,
                 8.0,
@@ -381,7 +379,7 @@ def doc_type_info():
 @pytest.fixture
 def document_model(doc_type_info):
     model = _models.DocumentModelDetails(
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"awesome": "tag"},
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
@@ -392,7 +390,7 @@ def document_model(doc_type_info):
                 "prebuilt-invoice",
                 "my description",
                 datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
-                "2022-06-30-preview",
+                "2022-08-31",
                 {"awesome": "tag"},
                 doc_type_info[1]
             )
@@ -495,9 +493,9 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_analyze_result(self, document_page, document_table, document_key_value_pair, document_style, analyzed_document, document_language, document_paragraph):
-        model = _models.AnalyzeResult(api_version="2022-06-30-preview", model_id="mymodel", content="document content", languages=[document_language[0]], pages=[document_page[0]], tables=[document_table[0]], key_value_pairs=[document_key_value_pair[0]], styles=[document_style[0]], documents=[analyzed_document[0]], paragraphs=[document_paragraph[0]])
+        model = _models.AnalyzeResult(api_version="2022-08-31", model_id="mymodel", content="document content", languages=[document_language[0]], pages=[document_page[0]], tables=[document_table[0]], key_value_pairs=[document_key_value_pair[0]], styles=[document_style[0]], documents=[analyzed_document[0]], paragraphs=[document_paragraph[0]])
         model_repr = "AnalyzeResult(api_version={}, model_id={}, content={}, languages=[{}], pages=[{}], paragraphs=[{}], tables=[{}], key_value_pairs=[{}], styles=[{}], documents=[{}])".format(
-                "2022-06-30-preview",
+                "2022-08-31",
                 "mymodel",
                 "document content",
                 document_language[1],
@@ -511,8 +509,8 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation(self, document_analysis_error, document_model):
-        model = _models.DocumentModelOperationDetails(
-                api_version="2022-06-30-preview",
+        model = _models.OperationDetails(
+                api_version="2022-08-31",
                 tags={"awesome": "tag"},
                 operation_id="id",
                 status="succeeded",
@@ -524,7 +522,7 @@ class TestRepr():
                 error=document_analysis_error[0],
                 result=document_model[0],
             )
-        model_repr = "DocumentModelOperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
+        model_repr = "OperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     99,
@@ -534,13 +532,13 @@ class TestRepr():
                     "westus2",
                     document_model[1],
                     document_analysis_error[1],
-                    "2022-06-30-preview",
+                    "2022-08-31",
                     {"awesome": "tag"},
                 )
         assert repr(model) == model_repr
 
     def test_model_operation_info(self):
-        model = _models.DocumentModelOperationSummary(
+        model = _models.OperationSummary(
                 operation_id="id",
                 status="succeeded",
                 percent_completed=100,
@@ -548,10 +546,10 @@ class TestRepr():
                 last_updated_on=datetime.datetime(2021, 9, 16, 10, 30, 15, 342380),
                 kind="documentModelCompose",
                 resource_location="westus",
-                api_version="2022-06-30-preview",
+                api_version="2022-08-31",
                 tags={"test": "value"},
             )
-        model_repr = "DocumentModelOperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
+        model_repr = "OperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     100,
@@ -559,7 +557,7 @@ class TestRepr():
                     datetime.datetime(2021, 9, 16, 10, 30, 15, 342380),
                     "documentModelCompose",
                     "westus",
-                    "2022-06-30-preview",
+                    "2022-08-31",
                     {"test": "value"},
                 )
         assert repr(model) == model_repr
@@ -569,7 +567,7 @@ class TestRepr():
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
             doc_types={
                 "prebuilt-invoice": doc_type_info[0],
@@ -579,7 +577,7 @@ class TestRepr():
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
-            "2022-06-30-preview",
+            "2022-08-31",
             {"test": "value"},
             doc_type_info[1]
         )
@@ -590,24 +588,26 @@ class TestRepr():
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
         )
         model_repr = "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
-            "2022-06-30-preview",
+            "2022-08-31",
             {"test": "value"},
         )
         assert repr(model) == model_repr
 
-    def test_account_info(self):
+    def test_resource_details(self):
         model = _models.ResourceDetails(
-            document_model_limit=5000, document_model_count=10
+            custom_document_models=_models.CustomDocumentModelsDetails(
+                limit=5000, count=10
+            )
         )
-        model_repr = "ResourceDetails(document_model_count={}, document_model_limit={})".format(
-            10, 5000
+        model_repr = "ResourceDetails(custom_document_models={})".format(
+            "CustomDocumentModelsDetails(count=10, limit=5000)"
         )
         assert repr(model) == model_repr
 

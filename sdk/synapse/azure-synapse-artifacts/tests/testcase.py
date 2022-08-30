@@ -5,13 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.synapse.artifacts import ArtifactsClient
 
 
-class SynapseArtifactsTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(SynapseArtifactsTest, self).__init__(method_name, **kwargs)
+class SynapseArtifactsTest(AzureRecordedTestCase):
 
     def create_client(self, endpoint=None, **kwargs):
         credential = self.get_credential(ArtifactsClient)

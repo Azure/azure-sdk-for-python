@@ -58,7 +58,6 @@
     "sdk/confidentialledger/azure-confidentialledger/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
-    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-core/**",
     "sdk/cosmos/azure-cosmos/**",
@@ -91,7 +90,6 @@
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
-    "sdk/synapse/azure-synapse-spark/**",
     "sdk/storage/azure-storage-file-share/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
@@ -111,7 +109,9 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore"
+    ".gitignore",
+    "tools/azure-sdk-tools/packaging_tools/**",
+    "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
     "pyyaml",
@@ -126,6 +126,7 @@
     "adls",
     "aiohttp",
     "amqp",
+    "amqps",
     "apim",
     "Asal",
     "asyncio",
@@ -188,6 +189,7 @@
     "hmac",
     "hnstestscope",
     "howto",
+    "httpx",
     "illumos",
     "imds",
     "inotify",
@@ -251,6 +253,7 @@
     "PCREDENTIAL",
     "perfmon",
     "perfstress",
+    "perfstressdebug",
     "personalizer",
     "pkce",
     "pkey",
@@ -291,10 +294,12 @@
     "signup",
     "simplifiable",
     "skipif",
+    "sktid",
     "skus",
     "southcentralus",
     "ssis",
     "substringof",
+    "systemperf",
     "tenvparallel",
     "Teradata",
     "timegm",
@@ -334,7 +339,20 @@
     "westcentralus",
     "westus",
     "wfile",
-    "westus"
+    "westus",
+    "BUILDID",
+    "documentdb",
+    "chdir",
+    "reqs",
+    "rgpy",
+    "swaggertosdk",
+    "rgname",
+    "mtype",
+    "venvtools",
+    "ispkg",
+    "openpyxl",
+    "deps",
+    "prnumber"
   ],
   "overrides": [
     {
@@ -397,14 +415,19 @@
       ]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
+        "PBOF"
+      ]
+    },
+    {
+      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "words": [
         "Njgw",
         "FNNHHJT",
         "Zwiz",
         "nypg",
-        "PBOF",
         "tzutc",
         "gettz"
       ]
@@ -433,7 +456,8 @@
         "allinone",
         "dmac",
         "ierr",
-        "mymodel"
+        "mymodel",
+        "heif"
       ]
     },
     {
@@ -484,6 +508,14 @@
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
       "words": [
         "undoc"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-spark/azure/synapse/spark/models/*.py",
+      "words": [
+        "pyspark",
+        "ename",
+        "evalue"
       ]
     },
     {
