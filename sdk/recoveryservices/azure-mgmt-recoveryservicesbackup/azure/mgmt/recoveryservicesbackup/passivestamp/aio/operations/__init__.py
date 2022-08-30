@@ -18,6 +18,9 @@ from ._backup_resource_storage_configs_operations import BackupResourceStorageCo
 from ._recovery_points_crr_operations import RecoveryPointsCrrOperations
 from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'BackupUsageSummariesCRROperations',
     'AadPropertiesOperations',
@@ -31,3 +34,5 @@ __all__ = [
     'RecoveryPointsCrrOperations',
     'BackupProtectedItemsCrrOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

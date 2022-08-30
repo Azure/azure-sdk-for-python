@@ -76,7 +76,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         :param str model_id: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
-        :param document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :param document: JPEG, PNG, PDF, TIFF, BMP, or HEIF type file stream or bytes.
         :type document: bytes or IO[bytes]
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
@@ -105,18 +105,28 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a custom document. For more samples see the `samples` folder.
         """
 
-        if not model_id:
-            raise ValueError("model_id cannot be None or empty.")
-
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
+
+        if continuation_token is not None:
+            return self._client.begin_analyze_document(  # type: ignore
+                model_id=model_id,
+                analyze_request=document,  # type: ignore
+                content_type="application/octet-stream",
+                string_index_type="unicodeCodePoint",
+                continuation_token=continuation_token,
+                cls=cls,
+                **kwargs
+            )
+
+        if not model_id:
+            raise ValueError("model_id cannot be None or empty.")
 
         return self._client.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
-            continuation_token=continuation_token,
             cls=cls,
             **kwargs
         )
@@ -133,7 +143,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param str document_url: The URL of the document to analyze. The input must be a valid, properly
             encoded  (i.e. encode special characters, such as empty spaces), and publicly accessible URL
-            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, BMP, or HEIF.
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
@@ -154,22 +164,33 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 :caption: Analyze a receipt. For more samples see the `samples` folder.
         """
 
+        cls = kwargs.pop("cls", self._analyze_document_callback)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        # continuation token requests do not perform the same value checks as
+        # regular analysis requests
+        if continuation_token is not None:
+            return self._client.begin_analyze_document(  # type: ignore
+            model_id=model_id,
+            analyze_request={"urlSource": document_url},  # type: ignore
+            string_index_type="unicodeCodePoint",
+            continuation_token=continuation_token,
+            cls=cls,
+            **kwargs
+        )
+
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
         if not isinstance(document_url, str):
             raise ValueError(
-                "'document_url' needs to be of type 'str'."
+                "'document_url' needs to be of type 'str'. "
                 "Please see `begin_analyze_document()` to pass a byte stream.")
-
-        cls = kwargs.pop("cls", self._analyze_document_callback)
-        continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
-            continuation_token=continuation_token,
             cls=cls,
             **kwargs
         )

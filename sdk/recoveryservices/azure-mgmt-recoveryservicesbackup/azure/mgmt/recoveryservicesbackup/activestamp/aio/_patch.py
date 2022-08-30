@@ -32,8 +32,10 @@ from ._recovery_services_backup_client import RecoveryServicesBackupClient as Re
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class RecoveryServicesBackupClient(RecoveryServicesBackupClientGenerated):
     __doc__ = RecoveryServicesBackupClientGenerated.__doc__
+
     def __init__(
         self,
         credential: "AsyncTokenCredential",
@@ -53,6 +55,7 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientGenerated):
             per_call_policies=per_call_policies,
             **kwargs
         )
+
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md

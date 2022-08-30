@@ -144,12 +144,14 @@ def discover_targeted_packages(
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
+    pkg_set_ci_filtered = collected_directories
 
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
         if compatibility_filter:
             pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
+
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
