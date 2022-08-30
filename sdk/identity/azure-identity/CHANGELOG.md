@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added Windows Web Account Manager (WAM) Brokered Authentication Support. ([#23687](https://github.com/Azure/azure-sdk-for-python/issues/23687))
+- Added Windows Web Account Manager (WAM) Brokered Authentication support. ([#23687](https://github.com/Azure/azure-sdk-for-python/issues/23687))
 
 ### Breaking Changes
 
