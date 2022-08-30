@@ -8,7 +8,6 @@ Maps SDK converter for Geo Json
 This module provides converters to and from GeoJSON geo_interface, etc.
 Azure Maps Search uses these converters; they can also be used directly.
 """
-import json
 import re
 from ast import literal_eval
 from typing import Union
@@ -27,7 +26,7 @@ wkt_types = {x.upper() for x in geo_types}
 
 type_translations = {x.upper(): x for x in geo_types}
 
-def reformat_coordinates(item, style):
+def _reformat_coordinates(item, style):
     # type: (Union[list, tuple], str) -> Union[list, tuple]
     """
     Converts tuples, tuples of tuples, lists of tuples, etc. into lists and
@@ -35,7 +34,7 @@ def reformat_coordinates(item, style):
     tuples depending on the desired style.
     """
     if type(item) in {tuple, list} and type(item[0]) in {tuple, list}:
-        return [reformat_coordinates(x, style) for x in item]
+        return [_reformat_coordinates(x, style) for x in item]
     if style == 'geojson':
         return list(item)
     if style == 'geo_interface':
@@ -44,7 +43,7 @@ def reformat_coordinates(item, style):
 
 def geo_interface_to_geojson(geo_interface) -> dict:
     """Converts a geo_interface dictionary into a raw GeoJSON dictionary."""
-    coords = reformat_coordinates(geo_interface['coordinates'], 'geojson')
+    coords = _reformat_coordinates(geo_interface['coordinates'], 'geojson')
 
     return {'type': geo_interface['type'], 'coordinates': coords}
 
@@ -68,7 +67,7 @@ def wkt_to_geo_interface(wkt) -> dict:
         # Now we can turn the string into a tuple or a tuple of tuples
         coords = literal_eval(coords)
 
-        coords = reformat_coordinates(coords, 'geo_interface')  # type: ignore  # noqa: E501
+        coords = _reformat_coordinates(coords, 'geo_interface')  # type: ignore  # noqa: E501
 
         # If we only have a simple polygon (no hole), the coordinate array
         # won't be deep enough to satisfy the GeoJSON/geo_interface spec, so
@@ -85,8 +84,8 @@ def wkt_to_geo_interface(wkt) -> dict:
     return {'type': geo_type, 'coordinates': coords}
 
 def wkt_to_geojson(wkt) -> str:
-    """Converts a WKT string to serialized GeoJSON."""
-    return json.dumps(geo_interface_to_geojson(wkt_to_geo_interface(wkt)))
+    """Converts a WKT string to GeoJSON."""
+    return geo_interface_to_geojson(wkt_to_geo_interface(wkt))
 
 def parse_geometry_input(geo_thing) -> dict:
     """Checks to see if the string is geojson or WKT or geo_interface property"""
