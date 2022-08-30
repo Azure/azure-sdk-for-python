@@ -1,6 +1,6 @@
 # Azure App Configuration Python Provider
 
-Azure App Configuration is a managed service that helps developers centralize their application configurations simply and securely. This provider adds additional functionality above the azure-sdk-for-pyton.
+Azure App Configuration is a managed service that helps developers centralize their application configurations simply and securely. This provider adds additional functionality above the azure-sdk-for-python.
 
 Using the provider enables loading sets of configurations from a Azure App Configuration store in a managed way.
 
