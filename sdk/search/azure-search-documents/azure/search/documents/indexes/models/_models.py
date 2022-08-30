@@ -23,7 +23,9 @@ DELIMITER = "|"
 
 class AnalyzeTextOptions(msrest.serialization.Model):
     """Specifies some text and analysis components used to break that text into tokens.
+
     All required parameters must be populated in order to send to Azure.
+
     :param text: Required. The text to break into tokens.
     :type text: str
     :param analyzer_name: The name of the analyzer to use to break the given text. If this parameter is
@@ -95,7 +97,9 @@ class CustomAnalyzer(LexicalAnalyzer):
     It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters.
     The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens
     emitted by the tokenizer.
+
     All required parameters must be populated in order to send to Azure.
+
     :param odata_type: Required. Identifies the concrete type of the analyzer.Constant filled by
      server.
     :type odata_type: str
@@ -165,7 +169,9 @@ class CustomAnalyzer(LexicalAnalyzer):
 class PatternAnalyzer(LexicalAnalyzer):
     """Flexibly separates text into terms via a regular expression.
     This analyzer is implemented using Apache Lucene.
+
     All required parameters must be populated in order to send to Azure.
+
     :param name: Required. The name of the analyzer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
@@ -235,7 +241,9 @@ class PatternAnalyzer(LexicalAnalyzer):
 class PatternTokenizer(LexicalTokenizer):
     """Tokenizer that uses regex pattern matching to construct distinct tokens.
     This tokenizer is implemented using Apache Lucene.
+
     All required parameters must be populated in order to send to Azure.
+
     :param name: Required. The name of the tokenizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
      128 characters.
@@ -300,7 +308,9 @@ class PatternTokenizer(LexicalTokenizer):
 class SearchResourceEncryptionKey(msrest.serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
+
     All required parameters must be populated in order to send to Azure.
+
     :param key_name: Required. The name of your Azure Key Vault key to be used to encrypt your data
      at rest.
     :type key_name: str
@@ -376,8 +386,11 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
 
 class SynonymMap(msrest.serialization.Model):
     """Represents a synonym map definition.
+
     Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
+
     :param name: Required. The name of the synonym map.
     :type name: str
     :ivar format: Required. The format of the synonym map. Only the 'solr' format is currently
@@ -445,7 +458,9 @@ class SynonymMap(msrest.serialization.Model):
 
 class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
+
     All required parameters must be populated in order to send to Azure.
+
     :param name: Required. The name of the datasource connection.
     :type name: str
     :param description: The description of the datasource connection.

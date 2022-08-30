@@ -184,7 +184,10 @@ class SearchField(msrest.serialization.Model):
         "fields": {"key": "fields", "type": "[SearchField]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SearchField, self).__init__(**kwargs)
         self.name = kwargs["name"]
         self.type = kwargs["type"]
@@ -201,7 +204,8 @@ class SearchField(msrest.serialization.Model):
         self.fields = kwargs.get("fields", None)
 
     def _to_generated(self):
-        fields = [pack_search_field(x) for x in self.fields] if self.fields else None
+        fields = [pack_search_field(x) for x in self.fields] \
+            if self.fields else None
         retrievable = not self.hidden if self.hidden is not None else None
         return _SearchField(
             name=self.name,
@@ -216,7 +220,7 @@ class SearchField(msrest.serialization.Model):
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
             synonym_maps=self.synonym_map_names,
-            fields=fields,
+            fields=fields
         )
 
     @classmethod
@@ -224,16 +228,9 @@ class SearchField(msrest.serialization.Model):
         if not search_field:
             return None
         # pylint:disable=protected-access
-        fields = (
-            [SearchField._from_generated(x) for x in search_field.fields]
-            if search_field.fields
-            else None
-        )
-        hidden = (
-            not search_field.retrievable
-            if search_field.retrievable is not None
-            else None
-        )
+        fields = [SearchField._from_generated(x) for x in search_field.fields] \
+            if search_field.fields else None
+        hidden = not search_field.retrievable if search_field.retrievable is not None else None
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -247,9 +244,8 @@ class SearchField(msrest.serialization.Model):
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
             synonym_map_names=search_field.synonym_maps,
-            fields=fields,
+            fields=fields
         )
-
 
 def SimpleField(**kw):
     # type: (**Any) -> SearchField
@@ -513,55 +509,56 @@ class SearchIndex(msrest.serialization.Model):
     """
 
     _validation = {
-        "name": {"required": True},
-        "fields": {"required": True},
+        'name': {'required': True},
+        'fields': {'required': True},
     }
 
     _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "fields": {"key": "fields", "type": "[SearchField]"},
-        "scoring_profiles": {"key": "scoringProfiles", "type": "[ScoringProfile]"},
-        "default_scoring_profile": {"key": "defaultScoringProfile", "type": "str"},
-        "cors_options": {"key": "corsOptions", "type": "CorsOptions"},
-        "suggesters": {"key": "suggesters", "type": "[SearchSuggester]"},
-        "analyzers": {"key": "analyzers", "type": "[LexicalAnalyzer]"},
-        "tokenizers": {"key": "tokenizers", "type": "[LexicalTokenizer]"},
-        "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
-        "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
-        "encryption_key": {
-            "key": "encryptionKey",
-            "type": "SearchResourceEncryptionKey",
-        },
-        "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
-        "e_tag": {"key": "@odata\\.etag", "type": "str"},
+        'name': {'key': 'name', 'type': 'str'},
+        'fields': {'key': 'fields', 'type': '[SearchField]'},
+        'scoring_profiles': {'key': 'scoringProfiles', 'type': '[ScoringProfile]'},
+        'default_scoring_profile': {'key': 'defaultScoringProfile', 'type': 'str'},
+        'cors_options': {'key': 'corsOptions', 'type': 'CorsOptions'},
+        'suggesters': {'key': 'suggesters', 'type': '[SearchSuggester]'},
+        'analyzers': {'key': 'analyzers', 'type': '[LexicalAnalyzer]'},
+        'tokenizers': {'key': 'tokenizers', 'type': '[LexicalTokenizer]'},
+        'token_filters': {'key': 'tokenFilters', 'type': '[TokenFilter]'},
+        'char_filters': {'key': 'charFilters', 'type': '[CharFilter]'},
+        'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
+        'similarity': {'key': 'similarity', 'type': 'SimilarityAlgorithm'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
         super(SearchIndex, self).__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.fields = kwargs["fields"]
-        self.scoring_profiles = kwargs.get("scoring_profiles", None)
-        self.default_scoring_profile = kwargs.get("default_scoring_profile", None)
-        self.cors_options = kwargs.get("cors_options", None)
-        self.suggesters = kwargs.get("suggesters", None)
-        self.analyzers = kwargs.get("analyzers", None)
-        self.tokenizers = kwargs.get("tokenizers", None)
-        self.token_filters = kwargs.get("token_filters", None)
-        self.char_filters = kwargs.get("char_filters", None)
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.similarity = kwargs.get("similarity", None)
-        self.e_tag = kwargs.get("e_tag", None)
+        self.name = kwargs['name']
+        self.fields = kwargs['fields']
+        self.scoring_profiles = kwargs.get('scoring_profiles', None)
+        self.default_scoring_profile = kwargs.get('default_scoring_profile', None)
+        self.cors_options = kwargs.get('cors_options', None)
+        self.suggesters = kwargs.get('suggesters', None)
+        self.analyzers = kwargs.get('analyzers', None)
+        self.tokenizers = kwargs.get('tokenizers', None)
+        self.token_filters = kwargs.get('token_filters', None)
+        self.char_filters = kwargs.get('char_filters', None)
+        self.encryption_key = kwargs.get('encryption_key', None)
+        self.similarity = kwargs.get('similarity', None)
+        self.e_tag = kwargs.get('e_tag', None)
 
     def _to_generated(self):
         if self.analyzers:
             analyzers = [
-                pack_analyzer(x) for x in self.analyzers  # type: ignore
+                pack_analyzer(x)  # type: ignore
+                for x in self.analyzers
             ]  # mypy: ignore
         else:
             analyzers = None
         if self.tokenizers:
             tokenizers = [
-                x._to_generated()  # pylint:disable=protected-access
+                    x._to_generated()   # pylint:disable=protected-access
                 if isinstance(x, PatternTokenizer)
                 else x
                 for x in self.tokenizers
@@ -584,11 +581,9 @@ class SearchIndex(msrest.serialization.Model):
             token_filters=self.token_filters,
             char_filters=self.char_filters,
             # pylint:disable=protected-access
-            encryption_key=self.encryption_key._to_generated()
-            if self.encryption_key
-            else None,
+            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
-            e_tag=self.e_tag,
+            e_tag=self.e_tag
         )
 
     @classmethod
@@ -597,7 +592,8 @@ class SearchIndex(msrest.serialization.Model):
             return None
         if search_index.analyzers:
             analyzers = [
-                unpack_analyzer(x) for x in search_index.analyzers  # type: ignore
+                unpack_analyzer(x)  # type: ignore
+                for x in search_index.analyzers
             ]
         else:
             analyzers = None
@@ -611,9 +607,7 @@ class SearchIndex(msrest.serialization.Model):
         else:
             tokenizers = None
         if search_index.fields:
-            fields = [
-                SearchField._from_generated(x) for x in search_index.fields  # pylint:disable=protected-access
-            ]
+            fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
         return cls(
@@ -628,11 +622,9 @@ class SearchIndex(msrest.serialization.Model):
             token_filters=search_index.token_filters,
             char_filters=search_index.char_filters,
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(
-                search_index.encryption_key
-            ),
+            encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
-            e_tag=search_index.e_tag,
+            e_tag=search_index.e_tag
         )
 
 
@@ -668,6 +660,6 @@ def pack_search_field(search_field):
             search_analyzer=search_analyzer_name,
             index_analyzer=index_analyzer_name,
             synonym_maps=synonym_map_names,
-            fields=fields,
+            fields=fields
         )
-    return search_field._to_generated()  # pylint:disable=protected-access
+    return search_field._to_generated() # pylint:disable=protected-access
