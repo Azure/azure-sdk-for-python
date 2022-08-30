@@ -120,10 +120,10 @@ class AMQPClientAsync(AMQPClientSync):
     :paramtype max_message_size: int	
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.	
     :paramtype link_properties: dict	
-    :keyword prefetch: The receiver Link credit that determines how many	
+    :keyword link_credit: The Link credit that determines how many	
      messages the Link will attempt to handle per connection iteration.	
      The default is 300.	
-    :paramtype prefetch: int
+    :paramtype link_credit: int
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
@@ -136,7 +136,6 @@ class AMQPClientAsync(AMQPClientSync):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
-     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
