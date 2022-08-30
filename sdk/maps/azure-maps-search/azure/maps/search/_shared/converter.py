@@ -38,7 +38,7 @@ def reformat_coordinates(item, style):
         return [reformat_coordinates(x, style) for x in item]
     if style == 'geojson':
         return list(item)
-    elif style == 'geo_interface':
+    if style == 'geo_interface':
         return tuple(item)
     raise ValueError('Unknown style')
 
