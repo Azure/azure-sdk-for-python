@@ -141,11 +141,11 @@ class TableServiceClient(TablesBaseClient):
                 message = decoded_error.message
                 error_message = "Value for one of the query parameters specified in the request URI is invalid"
                 if error_code == "InvalidQueryParameterValue" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
-                else:
-                    raise
-            except:
-                raise
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
+                        "if it has.")
+                raise decoded_error
+            except Exception as e:
+                raise e
         return service_properties_deserialize(service_props)
 
     @distributed_trace
@@ -185,11 +185,11 @@ class TableServiceClient(TablesBaseClient):
                 message = decoded_error.message
                 error_message = "Value for one of the query parameters specified in the request URI is invalid"
                 if error_code == "InvalidQueryParameterValue" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
-                else:
-                    raise
-            except:
-                raise
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
+                        "if it has.")
+                raise decoded_error
+            except Exception as e:
+                raise e
 
     @distributed_trace
     def create_table(self, table_name, **kwargs):

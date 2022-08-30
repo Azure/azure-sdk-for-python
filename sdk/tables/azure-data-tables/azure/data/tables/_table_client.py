@@ -267,19 +267,19 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 message = decoded_error.message
                 error_message = "The table specified does not exist"
                 if error_code == "TableNotFound" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
-                else:
-                    raise
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
+                        "if it has.")
+                raise decoded_error
             except HttpResponseError as decoded_error2:
                 error_code = decoded_error2.error_code
                 message = decoded_error2.message
                 error_message = "The values are not specified for all properties in the entity"
                 if error_code == "PropertiesNeedValue" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
-                else:
-                    raise
-            except:
-                raise
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
+                        "if it has.")
+                raise decoded_error2
+            except Exception as e:
+                raise e
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
@@ -313,13 +313,14 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             except HttpResponseError as decoded_error:
                 error_code = decoded_error.error_code
                 message = decoded_error.message
-                error_message = "The number of keys specified in the URI does not match number of key properties for the resource"
+                error_message = "The number of keys specified in the URI does not match number of key properties"\
+                    "for the resource"
                 if error_code == "InvalidInput" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
-                else:
-                    raise
-            except:
-                raise
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
+                        "if it has.")
+                raise decoded_error
+            except Exception as e:
+                raise e
 
     @overload
     def delete_entity(self, partition_key, row_key, **kwargs):
