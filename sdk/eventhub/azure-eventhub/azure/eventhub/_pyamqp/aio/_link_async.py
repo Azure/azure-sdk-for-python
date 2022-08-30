@@ -182,11 +182,11 @@ class Link(object):
         if self.network_trace:
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
-            raise ValueError("Invalid link")
+            raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, description="Invalid link", info=None)
         elif not frame[5] or not frame[6]: 
             _LOGGER.info("Cannot get source or target. Detaching link")
             await self._set_state(LinkState.DETACHED) 
-            raise ValueError("Invalid link")
+            raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, description="Invalid link", info=None)
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
         self.offered_capabilities = frame[11]  # offered_capabilities

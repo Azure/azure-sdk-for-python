@@ -63,7 +63,7 @@ class SenderLink(Link):
     async def _incoming_attach(self, frame):
         try:
             await super(SenderLink, self)._incoming_attach(frame)
-        except ValueError:  # TODO: This should NOT be a ValueError
+        except AMQPLinkError:
             await self._remove_pending_deliveries()
             raise
         self.current_link_credit = self.link_credit
