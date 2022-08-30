@@ -43,7 +43,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
-    def continuation_token(self) -> str:
+    def continuation_token(self) -> str:  # pylint: disable=no-self-use
         """Return a continuation token that allows to restart the poller later.
 
         :returns: An opaque continuation token
@@ -51,7 +51,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
-    def status(self) -> str:
+    def status(self) -> str:  # pylint: disable=no-self-use
         """Returns the current status string.
 
         :returns: The current status string
@@ -59,6 +59,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
+    # pylint: disable=no-self-use, unused-argument
     def result(self, timeout: Optional[int] = None) -> PollingReturnType_co:
         """Return the result of the long running operation, or
         the result available after the specified timeout.
@@ -69,7 +70,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
-    def wait(self, timeout: Optional[float] = None) -> None:
+    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
         """Wait on the long running operation for a specified length
         of time. You can check if this call as ended with timeout with the
         "done()" method.
@@ -80,7 +81,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
-    def done(self) -> bool:
+    def done(self) -> bool:  # pylint: disable=no-self-use
         """Check status of the long running operation.
 
         :returns: 'True' if the process has completed, else 'False'.
@@ -88,7 +89,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
-    def add_done_callback(self, func: Callable) -> None:
+    def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
         """Add callback function to be run once the long running operation
         has completed - regardless of the status of the operation.
 
@@ -97,7 +98,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
-    def remove_done_callback(self, func: Callable) -> None:
+    def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
         """Remove a callback from the long running operation.
 
         :param callable func: The function to be removed from the callbacks.
@@ -105,7 +106,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         """
         ...
 
-    def cancel(self) -> None:
+    def cancel(self) -> None:  # pylint: disable=no-self-use
         """Cancel the operation currently being polled.
 
         :return: None

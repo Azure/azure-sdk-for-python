@@ -39,7 +39,7 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable):
         """
         ...
 
-    def continuation_token(self) -> str:
+    def continuation_token(self) -> str:  # pylint: disable=no-self-use
         """Return a continuation token that allows to restart the poller later.
 
         :returns: An opaque continuation token
@@ -47,7 +47,7 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable):
         """
         ...
 
-    def status(self) -> str:
+    def status(self) -> str:  # pylint: disable=no-self-use
         """Returns the current status string.
 
         :returns: The current status string
@@ -70,7 +70,7 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable):
         """
         ...
 
-    def done(self) -> bool:
+    def done(self) -> bool:  # pylint: disable=no-self-use
         """Check status of the long running operation.
 
         :returns: 'True' if the process has completed, else 'False'.
@@ -81,7 +81,7 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable):
     def __await__(self) -> Generator[Any, None, PollingReturnType_co]:
         ...
 
-    async def cancel(self) -> None:
+    async def cancel(self) -> None:  # pylint: disable=no-self-use
         """Cancel the operation currently being polled.
 
         :return: None
