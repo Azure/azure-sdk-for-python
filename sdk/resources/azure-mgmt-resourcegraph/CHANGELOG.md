@@ -1,5 +1,11 @@
 # Release History
 
+## 8.1.0b2 (2022-08-30)
+
+### Other Changes
+
+  - Regular update
+
 ## 8.1.0b1 (2021-04-25)
 
 **Features**

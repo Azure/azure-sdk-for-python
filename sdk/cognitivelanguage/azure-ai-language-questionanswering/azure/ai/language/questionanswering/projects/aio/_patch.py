@@ -87,5 +87,5 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientGenerated):
 
 
 def patch_sdk():
-    curr_package = importlib.import_module("azure.ai.language.questionanswering.projects.aio")
-    curr_package.QuestionAnsweringProjectsClient = QuestionAnsweringProjectsClient
+    current_package = importlib.import_module("azure.ai.language.questionanswering.projects.aio")
+    current_package.QuestionAnsweringProjectsClient = QuestionAnsweringProjectsClient

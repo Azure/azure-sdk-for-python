@@ -32,7 +32,6 @@
     "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
-    "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
     "sdk/cognitivelanguage/azure-ai-language-conversations/**",
     "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
@@ -90,7 +89,6 @@
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
-    "sdk/synapse/azure-synapse-spark/**",
     "sdk/storage/azure-storage-file-share/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
@@ -295,6 +293,7 @@
     "signup",
     "simplifiable",
     "skipif",
+    "sktid",
     "skus",
     "southcentralus",
     "ssis",
@@ -415,14 +414,28 @@
       ]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
+      "words": ["qnas", "qnamaker"],
+      "caseSensitive": false
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
+      "words": ["groovin", "Olufsen"]
+    },
+    {
+      "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
+        "PBOF"
+      ]
+    },
+    {
+      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "words": [
         "Njgw",
         "FNNHHJT",
         "Zwiz",
         "nypg",
-        "PBOF",
         "tzutc",
         "gettz"
       ]
@@ -451,7 +464,8 @@
         "allinone",
         "dmac",
         "ierr",
-        "mymodel"
+        "mymodel",
+        "heif"
       ]
     },
     {
@@ -502,6 +516,14 @@
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
       "words": [
         "undoc"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-spark/azure/synapse/spark/models/*.py",
+      "words": [
+        "pyspark",
+        "ename",
+        "evalue"
       ]
     },
     {
