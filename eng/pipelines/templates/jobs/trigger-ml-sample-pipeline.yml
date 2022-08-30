@@ -44,7 +44,7 @@ jobs:
       displayName: 'Prep Environment'
 
     - pwsh: |
-        sdk_build -d "$(Build.ArtifactStagingDirectory)" --repo $(Build.SourcesDirectory) --service=${{parameters.ServiceDirectory}}" "$(TargetingString)"
+        sdk_build -d "$(Build.ArtifactStagingDirectory)" --repo "$(Build.SourcesDirectory)" --service=${{parameters.ServiceDirectory}}" "$(TargetingString)"
       displayName: Generate Packages
 
     - pwsh: |
