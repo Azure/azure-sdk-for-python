@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 
 # pylint: skip-file
-# cspell:ignore ctxt wday mday astimezone
 
 from base64 import b64decode, b64encode
 import calendar

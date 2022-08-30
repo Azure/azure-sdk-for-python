@@ -423,6 +423,10 @@
       "words": ["undoc"]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
+      "words": ["ctxt", "wday", "mday", "astimezone"]
+    },
+    {
       "filename": "sdk/communication/azure-communication-identity/tests/**",
       "words": [
         "XVCJ",
