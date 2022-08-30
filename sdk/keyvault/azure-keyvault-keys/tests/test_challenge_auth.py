@@ -37,6 +37,7 @@ from _keys_test_case import KeysTestCase
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
 class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
     @KeysClientPreparer()
     @recorded_by_proxy

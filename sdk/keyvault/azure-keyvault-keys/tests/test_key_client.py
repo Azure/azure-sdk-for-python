@@ -179,6 +179,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -244,6 +245,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert deleted_key is not None
         assert rsa_key.id == deleted_key.id
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -257,6 +259,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         public_exponent = byte2int(key.key.e)
         assert public_exponent == 17
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -284,6 +287,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         restored_key = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -309,6 +313,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 del expected[key.name]
         assert len(expected) == 0
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -335,6 +340,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         assert 0 == len(expected)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -366,6 +372,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
                 del expected[key.name]
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -393,6 +400,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -425,6 +433,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         deleted = [s.name for s in client.list_deleted_keys()]
         assert not any(s in deleted for s in key_names)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",logging_enabled)
     @KeysClientPreparer(logging_enable = True)
     @recorded_by_proxy
@@ -460,6 +469,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",logging_enabled)
     @KeysClientPreparer(logging_enable = False)
     @recorded_by_proxy
@@ -494,6 +504,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         mock_handler.close()
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -510,6 +521,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -533,6 +545,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         release_result = client.release_key(rsa_key_name, attestation)
         assert release_result.value
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -553,6 +566,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         release_result = client.release_key(imported_key_name, attestation)
         assert release_result.value
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -598,6 +612,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert claim_condition is False
 
     #Immutable policies aren't currently supported on Managed HSM
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -635,6 +650,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         with pytest.raises(HttpResponseError):
             self._update_key_properties(client, key, new_release_policy)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -652,6 +668,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -720,6 +737,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
         _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy

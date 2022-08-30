@@ -13,6 +13,7 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator(only_vault=True)
 
 class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -51,6 +52,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         print(result.plaintext)
         # [END decrypt]
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -80,6 +82,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         key = result.key
         # [END unwrap_key]
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy

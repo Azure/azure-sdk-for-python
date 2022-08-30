@@ -12,7 +12,6 @@ from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 from devtools_testutils import AzureRecordedTestCase
 
-
 def get_attestation_token(attestation_uri):
     request = HttpRequest("GET", "{}/generate-test-token".format(attestation_uri))
     with Pipeline(transport=RequestsTransport()) as pipeline:
@@ -54,7 +53,6 @@ def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
 
 def is_public_cloud():
     return ".microsoftonline.com" in os.getenv("AZURE_AUTHORITY_HOST", "")
-
 
 class KeysClientPreparer(AzureRecordedTestCase):
     def __init__(self, *args, **kwargs):
@@ -103,6 +101,7 @@ class KeysClientPreparer(AzureRecordedTestCase):
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
 
     def _skip_if_not_configured(self, api_version, is_hsm):
+        
         if self.is_live and api_version != DEFAULT_VERSION:
             pytest.skip("This test only uses the default API version for live tests")
         if self.is_live and is_hsm and self.managed_hsm_url is None:

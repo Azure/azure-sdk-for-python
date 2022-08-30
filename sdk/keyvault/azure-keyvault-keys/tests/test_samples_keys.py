@@ -37,6 +37,7 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -132,6 +133,7 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -146,6 +148,7 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         print(key.key_type)
         # [END create_oct_key]
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -187,6 +190,7 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -220,6 +224,7 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy

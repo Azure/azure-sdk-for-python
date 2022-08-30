@@ -39,7 +39,6 @@ all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 no_get = get_decorator(permissions=NO_GET)
 
-
 class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
     iv = codecs.decode("89b8adbfb07345e3598932a09c517441", "hex_codec")
@@ -136,6 +135,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert key_vault_key.key.kid == imported_key.id == key_vault_key.id
         return key_vault_key
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -153,6 +153,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
 
         crypto_client.verify(SignatureAlgorithm.es256_k, hashlib.sha256(self.plaintext).digest(), self.plaintext)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -171,6 +172,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_client.verify(SignatureAlgorithm.rs256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
         crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
@@ -189,6 +191,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert EncryptionAlgorithm.rsa_oaep == result.algorithm
         assert self.plaintext == result.plaintext
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
@@ -210,6 +213,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert result.algorithm == SignatureAlgorithm.rs256
         assert verified.is_valid
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
@@ -229,6 +233,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         assert key_bytes, result.key
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -276,6 +281,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                 else:
                     assert decrypt_result.plaintext == self.plaintext
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -292,6 +298,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         assert result.key == self.plaintext
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -310,6 +317,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             result = crypto_client.decrypt(result.algorithm, result.ciphertext)
             assert result.plaintext == self.plaintext
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -328,7 +336,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
 
             result = crypto_client.decrypt(result.algorithm, result.ciphertext)
             assert result.plaintext == self.plaintext
-    
+
+    @pytest.mark.usefixtures("test_all_versions")  
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -389,6 +398,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert decrypt_result.algorithm == algorithm
         assert decrypt_result.plaintext == self.plaintext
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -406,6 +416,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             assert result.key == self.plaintext
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -424,6 +435,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             assert result.key == self.plaintext
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -449,6 +461,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                 result = crypto_client.verify(result.algorithm, digest, result.signature)
                 assert result.is_valid
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -475,6 +488,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                 result = local_client.verify(result.algorithm, digest, result.signature)
                 assert result.is_valid
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -500,6 +514,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             result = crypto_client.verify(result.algorithm, digest, result.signature)
             assert result.is_valid
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -526,6 +541,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             result = local_client.verify(result.algorithm, digest, result.signature)
             assert result.is_valid
 
+    @pytest.mark.usefixtures("test_all_versions")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy

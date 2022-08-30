@@ -14,6 +14,19 @@ from devtools_testutils import (add_general_regex_sanitizer,
 
 os.environ['PYTHONHASHSEED'] = '0'
 
+ALL_API_VERSIONS = "--all-api-versions"
+
+def pytest_addoption(parser):
+    parser.addoption(ALL_API_VERSIONS, action="store_true", default=False, help="run with all API versions")
+
+@pytest.fixture(scope="class")
+def test_all_versions(request):
+    """
+       test all versions
+    """
+    if is_live() and request.session.config.getoption(ALL_API_VERSIONS):
+        pytest.run('Run "pytest {}" to record a live run of this test'.format(ALL_API_VERSIONS))
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     azure_keyvault_url = os.getenv("azure_keyvault_url", "https://vaultname.vault.azure.net")
