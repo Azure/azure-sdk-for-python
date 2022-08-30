@@ -27,7 +27,7 @@ import datetime
 import json
 import uuid
 import binascii
-from typing import Dict, Any
+from typing import Dict, Any, Union
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
@@ -691,7 +691,7 @@ def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: ThroughputProperties, options: Dict[str, Any]) -> Any:
+def _set_throughput_options(offer: Union[int, ThroughputProperties], options: Dict[str, Any]) -> Any:
     offer_throughput = offer
     request_options = options
 
