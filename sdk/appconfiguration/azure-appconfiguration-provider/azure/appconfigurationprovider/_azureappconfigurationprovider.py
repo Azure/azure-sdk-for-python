@@ -22,7 +22,6 @@ class AzureAppConfigurationProvider:
         trimmed_key_prefixes (remove prefixes in key name, list of what to trim),
         key_vault_options (Configurations for connecting to Key Vault(s))
         """
-
         provider = AzureAppConfigurationProvider()
 
         key_vault_options = kwargs.pop("key_vault_options", None)
@@ -34,6 +33,7 @@ class AzureAppConfigurationProvider:
         provider.trim_prefixes = kwargs.pop("trimmed_key_prefixes", [])
 
         provider.dict = {}
+        secret_clients = {}
 
         for select in selects:
             configurations = provider.client.list_configuration_settings(
@@ -53,8 +53,17 @@ class AzureAppConfigurationProvider:
                     key_vault_secret_name = uri.path[len(
                         key_vault_secret_prefix):]
                     if (key_vault_options.credential is not None):
-                        secret_client = SecretClient(
-                            vault_url=key_vault_uri, credential=key_vault_options.credential)
+                        secret_client = None
+
+                        # Clients only should be made once, will reuse if client already made
+                        for client_uri in secret_clients:
+                            if client_uri == key_vault_uri:
+                                secret_client = secret_clients[client_uri]
+                                break
+                        if (secret_client is None):
+                            secret_client = SecretClient(
+                                vault_url=key_vault_uri, credential=key_vault_options.credential)
+                            secret_clients[key_vault_uri] = secret_client
                         secret = secret_client.get_secret(
                             key_vault_secret_name)
                         provider.dict[provider.trim(config.key)] = secret.value
