@@ -30,7 +30,7 @@ class ChangeLog:
         self.optional_features.sort()
 
     def build_md(self):
-        self.compare_operation_features()
+        self.compare_operation_function()
         self.sort()
         buffer = []
         if self.features:
@@ -76,7 +76,7 @@ class ChangeLog:
         # Is this a new operation, inside a known operation group?
         function_name, *remaining_path = remaining_path
         if not remaining_path:
-            # Simplify renaming func to begin_func change, put it into the compare_operation_features() for processing
+            # Simplify renaming func to begin_func change, put it into the compare_operation_function() for processing
             if is_deletion:
                 self.remove_operations.append(f'{operation_name}.{function_name}')
             else:
@@ -179,7 +179,7 @@ class ChangeLog:
             self.breaking_changes.append(msg)
         return
 
-    def compare_operation_features(self):
+    def compare_operation_function(self):
         '''
         Record changelog like rename operation.delete to operation.begin_delete change
         instead of using remove operation.delete or add operation.begin_delete
