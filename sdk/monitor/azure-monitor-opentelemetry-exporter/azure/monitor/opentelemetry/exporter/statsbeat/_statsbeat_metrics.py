@@ -4,10 +4,11 @@ import json
 import os
 import platform
 import re
-import requests
 import sys
 import threading
 from typing import Iterable
+
+import requests
 
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
@@ -131,6 +132,7 @@ def _get_exception_count(options: CallbackOptions) -> Iterable[Observation]:
     return observations
 
 
+# pylint: disable=R0902
 class _StatsbeatMetrics:
 
     _COMMON_ATTRIBUTES = {
@@ -248,6 +250,7 @@ class _StatsbeatMetrics:
         self._vm_retry = True
         return True
 
+    # pylint: disable=W0201
     def init_non_initial_metrics(self):
         # Network metrics - metrics related to request calls to ingestion service
         self._success_count = self._meter.create_observable_gauge(

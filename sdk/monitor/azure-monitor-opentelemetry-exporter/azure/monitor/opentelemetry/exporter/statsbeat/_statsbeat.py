@@ -47,7 +47,7 @@ def collect_statsbeat_metrics(exporter) -> None:
             _STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[reader])
             # long_interval_threshold represents how many collects for short interval
             # should have passed before a long interval collect
-            long_interval_threshold = _get_stats_long_export_interval() / _get_stats_short_export_interval() 
+            long_interval_threshold = _get_stats_long_export_interval() / _get_stats_short_export_interval()
             metrics = _StatsbeatMetrics(
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,

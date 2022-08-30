@@ -9,7 +9,7 @@
 - Implement all network statsbeat
     ([#25845](https://github.com/Azure/azure-sdk-for-python/pull/25845))
 - Implement attach statsbeat
-    ([#25845](https://github.com/Azure/azure-sdk-for-python/pull/25845))
+    ([#25956](https://github.com/Azure/azure-sdk-for-python/pull/25956))
 
 ### Breaking Changes
 
