@@ -165,9 +165,12 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             await tc.create_table()
         assert ("values are not specified") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
-        # Note: delete_table() works well with async client.exc.value
+        # test deleting a table when it already exists
+        with pytest.raises(ValueError) as exc:
+            await tc.delete_table()
+        assert ("URI does not match number of key properties for the resource") in str(exc.value)
+        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
         await valid_tc.delete_table()
-
 
 
 class TestTableClientUnit(AsyncTableTestCase):

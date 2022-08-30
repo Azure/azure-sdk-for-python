@@ -16,6 +16,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from pytest import raises
 
 from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
@@ -135,7 +136,18 @@ class TableServiceClient(AsyncTablesBaseClient):
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                error_code = decoded_error.error_code
+                message = decoded_error.message
+                error_message = "Value for one of the query parameters specified in the request URI is invalid"
+                if error_code == "InvalidQueryParameterValue" and error_message in message:
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+                else:
+                    raise
+            except:
+                raise
         return service_properties_deserialize(service_props)
 
     @distributed_trace_async
@@ -174,7 +186,18 @@ class TableServiceClient(AsyncTablesBaseClient):
         try:
             await self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                error_code = decoded_error.error_code
+                message = decoded_error.message
+                error_message = "Value for one of the query parameters specified in the request URI is invalid"
+                if error_code == "InvalidQueryParameterValue" and error_message in message:
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+                else:
+                    raise
+            except:
+                raise
 
     @distributed_trace_async
     async def create_table(self, table_name: str, **kwargs) -> TableClient:

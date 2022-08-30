@@ -134,7 +134,18 @@ class TableServiceClient(TablesBaseClient):
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                error_code = decoded_error.error_code
+                message = decoded_error.message
+                error_message = "Value for one of the query parameters specified in the request URI is invalid"
+                if error_code == "InvalidQueryParameterValue" and error_message in message:
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+                else:
+                    raise
+            except:
+                raise
         return service_properties_deserialize(service_props)
 
     @distributed_trace
@@ -167,7 +178,18 @@ class TableServiceClient(TablesBaseClient):
         try:
             self._client.service.set_properties(props, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                error_code = decoded_error.error_code
+                message = decoded_error.message
+                error_message = "Value for one of the query parameters specified in the request URI is invalid"
+                if error_code == "InvalidQueryParameterValue" and error_message in message:
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+                else:
+                    raise
+            except:
+                raise
 
     @distributed_trace
     def create_table(self, table_name, **kwargs):

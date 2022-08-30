@@ -14,7 +14,7 @@ except ImportError:
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -253,7 +253,26 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         try:
             result = await self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error, table_name=self.table_name)
+            try:
+                _process_table_error(error, table_name=self.table_name)
+            except ResourceNotFoundError as decoded_error:
+                error_code = decoded_error.error_code
+                message = decoded_error.message
+                error_message = "The table specified does not exist"
+                if error_code == "TableNotFound" and error_message in message:
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+                else:
+                    raise
+            except HttpResponseError as decoded_error2:
+                error_code = decoded_error2.error_code
+                message = decoded_error2.message
+                error_message = "The values are not specified for all properties in the entity"
+                if error_code == "PropertiesNeedValue" and error_message in message:
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+                else:
+                    raise
+            except:
+                raise
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace_async
@@ -279,7 +298,18 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error, table_name=self.table_name)
+            try:
+                _process_table_error(error, table_name=self.table_name)
+            except HttpResponseError as decoded_error:
+                error_code = decoded_error.error_code
+                message = decoded_error.message
+                error_message = "The number of keys specified in the URI does not match number of key properties for the resource"
+                if error_code == "InvalidInput" and error_message in message:
+                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+                else:
+                    raise
+            except:
+                raise
 
     @overload
     async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:

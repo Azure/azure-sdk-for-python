@@ -182,25 +182,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
         assert ("URI is invalid") in str(exc.value)
         assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
 
-        valid_tsc = TableServiceClient(url, credential=tables_primary_storage_account_key)
-        valid_tsc.create_table(table_name)
-        with pytest.raises(ValueError) as exc:
-            for _ in  tsc.query_tables("TableName eq 'tableName'"):
-                pass
-        assert ("operation is not implemented") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
-
-        with pytest.raises(ValueError) as exc:
-            for _ in  tsc.list_tables():
-                pass
-        assert ("operation is not implemented") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
-
-        with pytest.raises(ValueError) as exc:
-            tsc.delete_table(table_name)
-        assert ("URI does not match number of key properties for the resource") in str(exc.value)
-        assert ("Note: Try to remove the table name in the end of endpoint if it has.") in str(exc.value)
-        valid_tsc.delete_table(table_name)
+        tsc.delete_table(table_name)
 
 
 class TestTableUnitTest(TableTestCase):
