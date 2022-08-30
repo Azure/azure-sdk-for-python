@@ -1,13 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import json
+import os
 import platform
 import re
+import requests
 from typing import Iterable
 
-from opentelemetry.metrics import CallbackOptions, MeterProvider, Observation
+from opentelemetry.metrics import CallbackOptions, Observation
+from opentelemetry.sdk.metrics import MeterProvider
 
 from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ATTACH_METRIC_NAME,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -16,10 +21,14 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_THROTTLE_NAME,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQUESTS_LOCK,
+    _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
 )
 
+
+_AIMS_URI = "http://169.254.169.254/metadata/instance/compute"
+_AIMS_API_VERSION = "api-version=2017-12-01"
+_AIMS_FORMAT = "format=json"
 
 _ENDPOINT_TYPES = ["breeze"]
 _RP_NAMES = ["appsvc", "functions", "vm", "unknown"]
@@ -35,7 +44,7 @@ def _get_success_count(options: CallbackOptions) -> Iterable[Observation]:
     attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
     attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
     attributes["statusCode"] = 200
-    with _REQUESTS_LOCK:
+    with _REQUESTS_MAP_LOCK:
         # only observe if value is not 0
         count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0)
         if count != 0:
@@ -51,7 +60,7 @@ def _get_failure_count(options: CallbackOptions) -> Iterable[Observation]:
     observations = []
     attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
     attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_LOCK:
+    with _REQUESTS_MAP_LOCK:
         for code, count in _REQUESTS_MAP.get(_REQ_FAILURE_NAME[1], {}).items():
             # only observe if value is not 0
             if count != 0:
@@ -69,7 +78,7 @@ def _get_average_duration(options: CallbackOptions) -> Iterable[Observation]:
     observations = []
     attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
     attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_LOCK:
+    with _REQUESTS_MAP_LOCK:
         interval_duration = _REQUESTS_MAP.get(_REQ_DURATION_NAME[1], 0)
         interval_count = _REQUESTS_MAP.get("count", 0)
         # only observe if value is not 0
@@ -89,7 +98,7 @@ def _get_retry_count(options: CallbackOptions) -> Iterable[Observation]:
     observations = []
     attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
     attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_LOCK:
+    with _REQUESTS_MAP_LOCK:
         for code, count in _REQUESTS_MAP.get(_REQ_RETRY_NAME[1], {}).items():
             # only observe if value is not 0
             if count != 0:
@@ -107,7 +116,7 @@ def _get_throttle_count(options: CallbackOptions) -> Iterable[Observation]:
     observations = []
     attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
     attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_LOCK:
+    with _REQUESTS_MAP_LOCK:
         for code, count in _REQUESTS_MAP.get(_REQ_THROTTLE_NAME[1], {}).items():
             # only observe if value is not 0
             if count != 0:
@@ -125,7 +134,7 @@ def _get_exception_count(options: CallbackOptions) -> Iterable[Observation]:
     observations = []
     attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
     attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_LOCK:
+    with _REQUESTS_MAP_LOCK:
         for code, count in _REQUESTS_MAP.get(_REQ_EXCEPTION_NAME[1], {}).items():
             # only observe if value is not 0
             if count != 0:
@@ -140,6 +149,7 @@ def _get_exception_count(options: CallbackOptions) -> Iterable[Observation]:
 class _StatsbeatMetrics:
 
     _COMMON_ATTRIBUTES = {
+        "rp": _RP_NAMES[3],
         "attach": "sdk", # TODO: attach
         "cikey": None,
         "runtimeVersion": platform.python_version(),
@@ -159,54 +169,130 @@ class _StatsbeatMetrics:
         instrumentation_key: str,
         endpoint: str,
     ) -> None:
-        self._mp = meter_provider
         self._ikey = instrumentation_key
+        self._meter = meter_provider.get_meter(__name__)
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
-        self._rp = _RP_NAMES[3]
-        meter = meter_provider.get_meter(__name__)
 
+        self._vm_retry = True  # True if we want to attempt to find if in VM
+        self._vm_data = {}
+
+        # Initial metrics - metrics exported on application start
+
+        # Attach metrics - metrics related to identifying which rp is application being run in
+        self._attach_metric = self._meter.create_observable_gauge(
+            _ATTACH_METRIC_NAME[0],
+            callbacks=[self._get_attach_metric],
+            unit="",
+            description="Statsbeat metric tracking tracking rp information"
+        )
+    
+    def init_non_initial_metrics(self):
         # Network metrics - metrics related to request calls to ingestion service
-        self._success_count = meter.create_observable_gauge(
+        self._success_count = self._meter.create_observable_gauge(
             _REQ_SUCCESS_NAME[0],
             callbacks=[_get_success_count],
             unit="count",
             description="Statsbeat metric tracking request success count"
         )
-        self._failure_count = meter.create_observable_gauge(
+        self._failure_count = self._meter.create_observable_gauge(
             _REQ_FAILURE_NAME[0],
             callbacks=[_get_failure_count],
             unit="count",
             description="Statsbeat metric tracking request failure count"
         )
-        self._retry_count = meter.create_observable_gauge(
+        self._retry_count = self._meter.create_observable_gauge(
             _REQ_RETRY_NAME[0],
             callbacks=[_get_retry_count],
             unit="count",
             description="Statsbeat metric tracking request retry count"
         )
-        self._throttle_count = meter.create_observable_gauge(
+        self._throttle_count = self._meter.create_observable_gauge(
             _REQ_THROTTLE_NAME[0],
             callbacks=[_get_throttle_count],
             unit="count",
             description="Statsbeat metric tracking request throttle count"
         )
-        self._exception_count = meter.create_observable_gauge(
+        self._exception_count = self._meter.create_observable_gauge(
             _REQ_EXCEPTION_NAME[0],
             callbacks=[_get_exception_count],
             unit="count",
             description="Statsbeat metric tracking request exception count"
         )
-        self._average_duration = meter.create_observable_gauge(
+        self._average_duration = self._meter.create_observable_gauge(
             _REQ_DURATION_NAME[0],
             callbacks=[_get_average_duration],
             unit="avg",
             description="Statsbeat metric tracking average request duration"
         )
 
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_attach_metric(self, options: CallbackOptions) -> Iterable[Observation]:
+        observations = []
+        rp = ''
+        rpId = ''
+        os_type = platform.system()
+        # rp, rpId
+        if os.environ.get("WEBSITE_SITE_NAME") is not None:
+            # Web apps
+            rp = _RP_NAMES[0]
+            rpId = '{}/{}'.format(
+                        os.environ.get("WEBSITE_SITE_NAME"),
+                        os.environ.get("WEBSITE_HOME_STAMPNAME", '')
+            )
+        elif os.environ.get("FUNCTIONS_WORKER_RUNTIME") is not None:
+            # Function apps
+            rp = _RP_NAMES[1]
+            rpId = os.environ.get("WEBSITE_HOSTNAME")
+        elif self._vm_retry and self._get_azure_compute_metadata():
+            # VM
+            rp = _RP_NAMES[2]
+            rpId = '{}/{}'.format(
+                        self._vm_data.get("vmId", ''),
+                        self._vm_data.get("subscriptionId", ''))
+            os_type = self._vm_data.get("osType", '')
+        else:
+            # Not in any rp or VM metadata failed
+            rp = _RP_NAMES[3]
+            rpId = _RP_NAMES[3]
+
+        _StatsbeatMetrics._COMMON_ATTRIBUTES["rp"] = rp
+        _StatsbeatMetrics._COMMON_ATTRIBUTES["os"] = os_type or platform.system()
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes['rpId'] = rpId
+        observations.append(Observation(1, dict(attributes)))
+        return observations
+
+    def _get_azure_compute_metadata(self) -> bool:
+        try:
+            request_url = "{0}?{1}&{2}".format(
+                _AIMS_URI, _AIMS_API_VERSION, _AIMS_FORMAT)
+            response = requests.get(
+                request_url, headers={"MetaData": "True"}, timeout=5.0)
+        except (requests.exceptions.ConnectionError, requests.Timeout):
+            # Not in VM
+            self._vm_retry = False
+            return False
+        except requests.exceptions.RequestException:
+            self._vm_retry = True  # retry
+            return False
+
+        try:
+            text = response.text
+            self._vm_data = json.loads(text)
+        except Exception:  # pylint: disable=broad-except
+            # Error in reading response body, retry
+            self._vm_retry = True
+            return False
+
+        # Vm data is perpetually updated
+        self._vm_retry = True
+        return True
+
 # cSpell:enable
 
-def _shorten_host(host):
+def _shorten_host(host: str) -> str:
     if not host:
         host = ""
     match = _HOST_PATTERN.match(host)

@@ -45,17 +45,15 @@ def collect_statsbeat_metrics(exporter) -> None:
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
             _STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[reader])
-            _StatsbeatMetrics(
+            metrics = _StatsbeatMetrics(
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,
                 exporter._endpoint,
             )
             # Export some initial stats on program start
-            # TODO: initial stats
-            # TODO: set context
-            # execution_context.set_is_exporter(True)
-            # exporter.export_metrics(_STATSBEAT_METRICS.get_initial_metrics())
-            # execution_context.set_is_exporter(False)
+            _STATSBEAT_METER_PROVIDER.force_flush()
+            # initialize non-intial stats
+            metrics.init_non_initial_metrics()
         # TODO: state
         # with _STATSBEAT_STATE_LOCK:
         #     _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
