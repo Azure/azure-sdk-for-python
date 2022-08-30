@@ -41,22 +41,25 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :return: A mapping of details about the long-running operation.
         :rtype: Mapping[str, Any]
         """
+        ...
 
-    def continuation_token(self) -> str:  # pylint: disable=no-self-use
+    def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
 
         :returns: An opaque continuation token
         :rtype: str
         """
+        ...
 
-    def status(self) -> str:  # pylint: disable=no-self-use
+    def status(self) -> str:
         """Returns the current status string.
 
         :returns: The current status string
         :rtype: str
         """
+        ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    def result(self, timeout: Optional[int] = None) -> PollingReturnType_co:
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 
@@ -64,8 +67,9 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
          if one is available.
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
+        ...
 
-    def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
+    def wait(self, timeout: Optional[float] = None) -> None:
         """Wait on the long running operation for a specified length
         of time. You can check if this call as ended with timeout with the
         "done()" method.
@@ -74,36 +78,41 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
          operation to complete (in seconds).
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
+        ...
 
-    def done(self) -> bool:  # pylint: disable=no-self-use
+    def done(self) -> bool:
         """Check status of the long running operation.
 
         :returns: 'True' if the process has completed, else 'False'.
         :rtype: bool
         """
+        ...
 
-    def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+    def add_done_callback(self, func: Callable) -> None:
         """Add callback function to be run once the long running operation
         has completed - regardless of the status of the operation.
 
         :param callable func: Callback function that takes at least one
          argument, a completed LongRunningOperation.
         """
+        ...
 
-    def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+    def remove_done_callback(self, func: Callable) -> None:
         """Remove a callback from the long running operation.
 
         :param callable func: The function to be removed from the callbacks.
         :raises ValueError: if the long running operation has already completed.
         """
+        ...
 
-    def cancel(self) -> None:  # pylint: disable=no-self-use
+    def cancel(self) -> None:
         """Cancel the operation currently being polled.
 
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
+        ...
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):

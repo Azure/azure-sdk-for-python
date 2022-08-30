@@ -21,11 +21,12 @@ _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted",
 _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
-PollingReturnType = TypeVar("PollingReturnType", covariant=True)
+PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
+class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable):
     """Implements a protocol which returned poller objects are consistent with.
     """
 
@@ -36,51 +37,58 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType], Awaitable):
         :return: A mapping of details about the long-running operation.
         :rtype: Mapping[str, Any]
         """
+        ...
 
-    def continuation_token(self) -> str:  # pylint: disable=no-self-use
+    def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
 
         :returns: An opaque continuation token
         :rtype: str
         """
+        ...
 
-    def status(self) -> str:  # pylint: disable=no-self-use
+    def status(self) -> str:
         """Returns the current status string.
 
         :returns: The current status string
         :rtype: str
         """
+        ...
 
-    async def result(self) -> PollingReturnType:
+    async def result(self) -> PollingReturnType_co:
         """Return the result of the long running operation.
 
         :returns: The deserialized resource of the long running operation, if one is available.
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
+        ...
 
     async def wait(self) -> None:
         """Wait on the long running operation.
 
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
+        ...
 
-    def done(self) -> bool:  # pylint: disable=no-self-use
+    def done(self) -> bool:
         """Check status of the long running operation.
 
         :returns: 'True' if the process has completed, else 'False'.
         :rtype: bool
         """
-
-    def __await__(self) -> Generator[Any, None, PollingReturnType]:
         ...
 
-    async def cancel(self) -> None:  # pylint: disable=no-self-use
+    def __await__(self) -> Generator[Any, None, PollingReturnType_co]:
+        ...
+
+    async def cancel(self) -> None:
         """Cancel the operation currently being polled.
 
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
+        ...
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
