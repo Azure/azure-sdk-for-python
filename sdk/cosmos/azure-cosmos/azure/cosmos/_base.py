@@ -691,7 +691,7 @@ def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: int, options: Dict[str, Any]) -> Any:
+def _set_throughput_options(offer: ThroughputProperties, options: Dict[str, Any]) -> Any:
     offer_throughput = offer
     request_options = options
 
