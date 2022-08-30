@@ -15,6 +15,7 @@ from .._generated.models import (
 )
 
 from ._models import (
+    LatLon,
     StructuredAddress,
     BoundingBox,
     AddressRanges,
@@ -34,6 +35,7 @@ from ._models import (
 
 
 __all__ = [
+    'LatLon',
     'RoadUseType',
     'AddressRanges',
     'StructuredAddress',

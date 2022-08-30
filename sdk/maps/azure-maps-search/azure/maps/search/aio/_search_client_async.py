@@ -21,6 +21,7 @@ from .._generated.models import (
     Polygon,
 )
 from ..models import (
+    LatLon,
     BoundingBox,
     StructuredAddress,
     SearchAddressResult,
@@ -124,7 +125,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :type country_filter: list[str]
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :keyword Tuple coordinates: coordinates as (lat, long)
+        :keyword LatLon coordinates: coordinates as (lat, long)
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
@@ -214,7 +215,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
     @distributed_trace_async
     async def reverse_search_address(
         self,
-        coordinates: Tuple,
+        coordinates: LatLon,
         **kwargs: Any
     ) -> ReverseSearchAddressResult:
         """**Reverse Geocode to an Address**
@@ -225,7 +226,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         coordinate is located. This endpoint will return address information for a given coordinate.
 
         :param coordinates: The applicable coordinates as (lat, lon)
-        :type coordinates: Tuple
+        :type coordinates: LatLon
         :param language: Language in which search results should be returned.
         :type language: str
         :keyword bool include_speed_limit: Boolean. To enable return of the posted speed limit.
@@ -260,7 +261,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
     @distributed_trace_async
     async def reverse_search_cross_street_address(
         self,
-        coordinates: Tuple,
+        coordinates: LatLon,
         **kwargs: Any
     )-> ReverseSearchCrossStreetAddressResult:
         """**Reverse Geocode to a Cross Street**
@@ -272,7 +273,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         This endpoint will return cross street information  for a given coordinate.
 
         :param coordinates: The applicable coordinates as (lat, lon)
-        :type coordinates: Tuple
+        :type coordinates: LatLon
         :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
          maximum: 100.
         :keyword int heading: The directional heading of the vehicle in degrees, for travel along a segment
@@ -451,7 +452,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :keyword country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :paramtype country_filter: list[str]
-        :keyword Tuple coordinates: coordinates as (lat, lon)
+        :keyword LatLon coordinates: coordinates as (lat, lon)
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
         :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
@@ -490,7 +491,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
     @distributed_trace_async
     async def search_nearby_point_of_interest(
         self,
-        coordinates: Tuple,
+        coordinates: LatLon,
         **kwargs: Any
     ) -> SearchAddressResult:
         """**Search Nearby Point of Interest **
@@ -508,7 +509,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         :keyword list[str] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :param coordinates: The applicable coordinates as (lat, lon)
-        :type coordinates: Tuple
+        :type coordinates: LatLon
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area, Min value is 1, Max Value is 50000.
         :keyword str language: Language in which search results should be returned. Should be one of
@@ -559,7 +560,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
          maximum: 100.
         :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
          minimum: 0 and maximum: 1900.
-        :keyword Tuple coordinates: coordinates as (lat, lon)
+        :keyword LatLon coordinates: coordinates as (lat, lon)
         :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
          restrict the result to specific Points of Interest categories.
         :keyword country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
@@ -632,7 +633,7 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
          minimum: 0 and maximum: 1900.
         :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
          defined area.
-        :keyword Tuple coordinates: coordinates as (lat, lon)
+        :keyword LatLon coordinates: coordinates as (lat, lon)
         :keyword country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
          search to the specified countries.
         :paramtype country_filter: list[str]

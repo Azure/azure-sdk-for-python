@@ -26,8 +26,10 @@ wkt_types = {x.upper() for x in geo_types}
 
 type_translations = {x.upper(): x for x in geo_types}
 
-def _reformat_coordinates(item, style):
-    # type: (Union[list, tuple], str) -> Union[list, tuple]
+def _reformat_coordinates(
+    item: Union[list, tuple],
+    style: str
+) -> Union[list, tuple]:
     """
     Converts tuples, tuples of tuples, lists of tuples, etc. into lists and
     lists of lists, etc. and preserves points/coordinate pairs as lists or
@@ -41,13 +43,13 @@ def _reformat_coordinates(item, style):
         return tuple(item)
     raise ValueError('Unknown style')
 
-def geo_interface_to_geojson(geo_interface) -> dict:
+def geo_interface_to_geojson(geo_interface: dict) -> dict:
     """Converts a geo_interface dictionary into a raw GeoJSON dictionary."""
     coords = _reformat_coordinates(geo_interface['coordinates'], 'geojson')
 
     return {'type': geo_interface['type'], 'coordinates': coords}
 
-def wkt_to_geo_interface(wkt) -> dict:
+def wkt_to_geo_interface(wkt: str) -> dict:
     """Converts a WKT string to a geo_interface dictionary."""
     try:
         wkt_type, coords = re.split(r'(?<=[A-Z])\s', wkt)
@@ -83,11 +85,11 @@ def wkt_to_geo_interface(wkt) -> dict:
 
     return {'type': geo_type, 'coordinates': coords}
 
-def wkt_to_geojson(wkt) -> str:
+def wkt_to_geojson(wkt: str) -> str:
     """Converts a WKT string to GeoJSON."""
     return geo_interface_to_geojson(wkt_to_geo_interface(wkt))
 
-def parse_geometry_input(geo_thing) -> dict:
+def parse_geometry_input(geo_thing: Union[str, dict]) -> dict:
     """Checks to see if the string is geojson or WKT or geo_interface property"""
     error_msg = 'Strings must be valid GeoJSON or WKT or geo_interface property'
     geometry={}
