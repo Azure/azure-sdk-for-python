@@ -47,7 +47,7 @@ class AutoScaleTest(unittest.TestCase):
                                                 connection_policy=cls.connectionPolicy)
         cls.created_database = await cls.client.create_database(test_config._test_config.TEST_DATABASE_ID)
 
-    async def test_auto_scale_max_throughput(self):
+    async def test_auto_scale(self):
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
@@ -58,6 +58,8 @@ class AutoScaleTest(unittest.TestCase):
         # Testing the input value of the max_throughput
         self.assertEqual(
             created_container_properties.auto_scale_max_throughput, 5000)
+        self.assertEqual(created_container_properties.auto_scale_increment_percent, 0)
+        self.assertEqual(created_container_properties.offer_throughput, None)
 
         await self.created_database.delete_container(created_container)
 
@@ -68,20 +70,6 @@ class AutoScaleTest(unittest.TestCase):
                 partition_key=PartitionKey(path="/id"),
                 offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
         assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
-
-    async def test_auto_scale_increment_percent(self):
-        created_container = await self.created_database.create_container(
-            id='container_with_auto_scale_settings',
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=1)
-
-        )
-        created_container_properties = await created_container.get_throughput()
-        # Testing the input value of the max_increment_percentage
-        self.assertEqual(
-            created_container_properties.auto_scale_increment_percent, 1)
-
-        await self.created_database.delete_container(created_container)
 
     async def test_create_container_if_not_exist(self):
         # Testing auto_scale_settings for the create_container_if_not_exists method
