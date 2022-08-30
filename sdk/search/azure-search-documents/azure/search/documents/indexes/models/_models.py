@@ -13,7 +13,6 @@ from .._generated.models import (
     AnalyzeRequest,
     CustomAnalyzer as _CustomAnalyzer,
     EntityRecognitionSkill as _EntityRecognitionSkillV1,
-    EntityRecognitionSkillV3 as _EntityRecognitionSkillV3,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,

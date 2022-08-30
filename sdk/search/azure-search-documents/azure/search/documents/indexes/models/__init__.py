@@ -31,7 +31,7 @@ from ._index import (
     SimpleField,
     SearchIndex,
 )
-from . import _edm
+from . import _edm as SearchFieldDataType
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
     AnalyzeResult,
@@ -172,10 +172,10 @@ __all__ = (
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
-    "BM25SimilarityAlgorithm",
+    "BM25Similarity",
     "CharFilter",
     "CjkBigramTokenFilter",
-    "ClassicSimilarityAlgorithm",
+    "ClassicSimilarity",
     "ClassicTokenizer",
     "CognitiveServicesAccount",
     "CognitiveServicesAccountKey",
