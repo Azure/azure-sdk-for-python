@@ -4,6 +4,7 @@ import json
 import os
 import platform
 import requests
+import sys
 import unittest
 from unittest import mock
 
@@ -29,7 +30,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _get_exception_count,
     _get_failure_count,
     _get_retry_count,
-    _get_success_count,
     _get_throttle_count,
     _shorten_host,
     _StatsbeatMetrics,
@@ -159,6 +159,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westus-1")
@@ -167,6 +168,39 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(metric._ikey, ikey)
         self.assertTrue(isinstance(metric._attach_metric, ObservableGauge))
         self.assertEqual(metric._attach_metric.name, _ATTACH_METRIC_NAME[0])
+
+    # pylint: disable=protected-access
+    def test_get_attach_metric_meet_threshold(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            2,
+        )
+        metric._long_interval_count = 2
+        metric._vm_retry = False
+        observations = metric._get_attach_metric(options=None)
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(metric._long_interval_count, 0)
+
+    # pylint: disable=protected-access
+    def test_get_attach_metric_does_not_meet_threshold(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            2,
+        )
+        metric._long_interval_count = 1
+        observations = metric._get_attach_metric(options=None)
+        self.assertEqual(len(observations), 0)
+        self.assertEqual(metric._long_interval_count, 1)
 
     # pylint: disable=protected-access
     @mock.patch.dict(
@@ -184,6 +218,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_NAMES[3])
@@ -211,6 +246,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_NAMES[3])
@@ -230,6 +266,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         _vm_data = {}
         _vm_data["vmId"] = "123"
@@ -261,6 +298,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         _vm_data = {}
         _vm_data["vmId"] = "123"
@@ -286,6 +324,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         metric._vm_retry = False
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -303,6 +342,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         with mock.patch('requests.get') as get:
             get.return_value = MockResponse(
@@ -330,6 +370,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         with mock.patch(
             'requests.get',
@@ -348,6 +389,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         with mock.patch(
             'requests.get',
@@ -366,6 +408,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         with mock.patch(
             'requests.get',
@@ -384,6 +427,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            0,
         )
         metric.init_non_initial_metrics()
         self.assertTrue(isinstance(metric._success_count, ObservableGauge))
@@ -400,26 +444,45 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(metric._average_duration.name, _REQ_DURATION_NAME[0])
         
     def test_get_success_count(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            0,
+        )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
         _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 3
-        observations = _get_success_count(options=None)
+        self.assertEqual(metric._long_interval_count, sys.maxsize)
+        observations = metric._get_success_count(options=None)
+        self.assertEqual(metric._long_interval_count, sys.maxsize + 1)
         for obs in observations:
             self.assertEqual(obs.value, 3)
             self.assertEqual(obs.attributes, attributes)
             self.assertEqual(_REQUESTS_MAP[_REQ_SUCCESS_NAME[1]], 0)
 
     def test_get_success_zero_value(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            0,
+        )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
         _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
-        observations = _get_success_count(options=None)
-        exists = False
-        for obs in observations:
-            exists = True
-        self.assertFalse(exists)
+        self.assertEqual(metric._long_interval_count, sys.maxsize)
+        observations = metric._get_success_count(options=None)
+        self.assertEqual(metric._long_interval_count, sys.maxsize + 1)
+        self.assertEqual(len(observations), 0)
 
     def test_get_average_duration(self):
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES

@@ -5,6 +5,8 @@ import os
 import platform
 import re
 import requests
+import sys
+import threading
 from typing import Iterable
 
 from opentelemetry.metrics import CallbackOptions, Observation
@@ -36,23 +38,6 @@ _RP_NAMES = ["appsvc", "functions", "vm", "unknown"]
 _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
 
 # cSpell:disable
-
-# pylint: disable=unused-argument
-# pylint: disable=protected-access
-def _get_success_count(options: CallbackOptions) -> Iterable[Observation]:
-    observations = []
-    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-    attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    attributes["statusCode"] = 200
-    with _REQUESTS_MAP_LOCK:
-        # only observe if value is not 0
-        count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0)
-        if count != 0:
-            observations.append(
-                Observation(int(count), dict(attributes))
-            )
-            _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
-    return observations
 
 # pylint: disable=unused-argument
 # pylint: disable=protected-access
@@ -168,9 +153,14 @@ class _StatsbeatMetrics:
         meter_provider: MeterProvider,
         instrumentation_key: str,
         endpoint: str,
+        long_interval_threshold: int,
     ) -> None:
         self._ikey = instrumentation_key
         self._meter = meter_provider.get_meter(__name__)
+        self._long_interval_threshold = long_interval_threshold
+        # Start interal count at the max size for initial statsbeat export
+        self._long_interval_count = sys.maxsize
+        self._long_interval_lock = threading.Lock()
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
 
@@ -186,50 +176,18 @@ class _StatsbeatMetrics:
             unit="",
             description="Statsbeat metric tracking tracking rp information"
         )
-    
-    def init_non_initial_metrics(self):
-        # Network metrics - metrics related to request calls to ingestion service
-        self._success_count = self._meter.create_observable_gauge(
-            _REQ_SUCCESS_NAME[0],
-            callbacks=[_get_success_count],
-            unit="count",
-            description="Statsbeat metric tracking request success count"
-        )
-        self._failure_count = self._meter.create_observable_gauge(
-            _REQ_FAILURE_NAME[0],
-            callbacks=[_get_failure_count],
-            unit="count",
-            description="Statsbeat metric tracking request failure count"
-        )
-        self._retry_count = self._meter.create_observable_gauge(
-            _REQ_RETRY_NAME[0],
-            callbacks=[_get_retry_count],
-            unit="count",
-            description="Statsbeat metric tracking request retry count"
-        )
-        self._throttle_count = self._meter.create_observable_gauge(
-            _REQ_THROTTLE_NAME[0],
-            callbacks=[_get_throttle_count],
-            unit="count",
-            description="Statsbeat metric tracking request throttle count"
-        )
-        self._exception_count = self._meter.create_observable_gauge(
-            _REQ_EXCEPTION_NAME[0],
-            callbacks=[_get_exception_count],
-            unit="count",
-            description="Statsbeat metric tracking request exception count"
-        )
-        self._average_duration = self._meter.create_observable_gauge(
-            _REQ_DURATION_NAME[0],
-            callbacks=[_get_average_duration],
-            unit="avg",
-            description="Statsbeat metric tracking average request duration"
-        )
 
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     def _get_attach_metric(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
+        with self._long_interval_lock:
+            # if long interval theshold not met, it is not time to export
+            # statsbeat metrics that are long intervals
+            if self._long_interval_count < self._long_interval_threshold:
+                return observations
+            # reset the count if long interval theshold is met
+            self._long_interval_count = 0
         rp = ''
         rpId = ''
         os_type = platform.system()
@@ -289,6 +247,67 @@ class _StatsbeatMetrics:
         # Vm data is perpetually updated
         self._vm_retry = True
         return True
+
+    def init_non_initial_metrics(self):
+        # Network metrics - metrics related to request calls to ingestion service
+        self._success_count = self._meter.create_observable_gauge(
+            _REQ_SUCCESS_NAME[0],
+            callbacks=[self._get_success_count],
+            unit="count",
+            description="Statsbeat metric tracking request success count"
+        )
+        self._failure_count = self._meter.create_observable_gauge(
+            _REQ_FAILURE_NAME[0],
+            callbacks=[_get_failure_count],
+            unit="count",
+            description="Statsbeat metric tracking request failure count"
+        )
+        self._retry_count = self._meter.create_observable_gauge(
+            _REQ_RETRY_NAME[0],
+            callbacks=[_get_retry_count],
+            unit="count",
+            description="Statsbeat metric tracking request retry count"
+        )
+        self._throttle_count = self._meter.create_observable_gauge(
+            _REQ_THROTTLE_NAME[0],
+            callbacks=[_get_throttle_count],
+            unit="count",
+            description="Statsbeat metric tracking request throttle count"
+        )
+        self._exception_count = self._meter.create_observable_gauge(
+            _REQ_EXCEPTION_NAME[0],
+            callbacks=[_get_exception_count],
+            unit="count",
+            description="Statsbeat metric tracking request exception count"
+        )
+        self._average_duration = self._meter.create_observable_gauge(
+            _REQ_DURATION_NAME[0],
+            callbacks=[_get_average_duration],
+            unit="avg",
+            description="Statsbeat metric tracking average request duration"
+        )
+
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_success_count(self, options: CallbackOptions) -> Iterable[Observation]:
+        # get_success_count is special in such that it is the indicator of when
+        # a short interval collection has happened, which is why we increment
+        # the long_interval_count when it is called
+        with self._long_interval_lock:
+            self._long_interval_count = self._long_interval_count + 1
+        observations = []
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+        attributes["statusCode"] = 200
+        with _REQUESTS_MAP_LOCK:
+            # only observe if value is not 0
+            count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0)
+            if count != 0:
+                observations.append(
+                    Observation(int(count), dict(attributes))
+                )
+                _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
+        return observations
 
 # cSpell:enable
 

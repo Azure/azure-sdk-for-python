@@ -39,6 +39,8 @@ _REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle Count")
 
 _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
     [
+        _ATTACH_METRIC_NAME,
+        _FEATURE_METRIC_NAME,
         _REQ_DURATION_NAME,
         _REQ_EXCEPTION_NAME,
         _REQ_FAILURE_NAME,

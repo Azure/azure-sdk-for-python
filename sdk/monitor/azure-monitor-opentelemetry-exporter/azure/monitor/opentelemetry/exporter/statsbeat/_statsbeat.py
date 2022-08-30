@@ -45,14 +45,18 @@ def collect_statsbeat_metrics(exporter) -> None:
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
             _STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[reader])
+            # long_interval_threshold represents how many collects for short interval
+            # should have passed before a long interval collect
+            long_interval_threshold = _get_stats_long_export_interval() / _get_stats_short_export_interval() 
             metrics = _StatsbeatMetrics(
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,
                 exporter._endpoint,
+                long_interval_threshold,
             )
             # Export some initial stats on program start
             _STATSBEAT_METER_PROVIDER.force_flush()
-            # initialize non-intial stats
+            # initialize non-initial stats
             metrics.init_non_initial_metrics()
         # TODO: state
         # with _STATSBEAT_STATE_LOCK:

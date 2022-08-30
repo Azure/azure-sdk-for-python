@@ -6,9 +6,6 @@ import threading
 _REQUESTS_MAP = {}
 _REQUESTS_MAP_LOCK = threading.Lock()
 
-_STATSBEAT_INTERVAL_COUNT = 0
-_STATSBEAT_INTERVAL_LOCK = threading.Lock()
-
 _STATSBEAT_STATE = {
     "INITIAL_FAILURE_COUNT": 0,
     "INITIAL_SUCCESS": False,
