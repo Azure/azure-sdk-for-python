@@ -35,7 +35,7 @@ def build_get_request(
     domain_topic_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -73,7 +73,7 @@ def build_create_or_update_request_initial(
     domain_topic_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -111,7 +111,7 @@ def build_delete_request_initial(
     domain_topic_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{domainTopicName}")  # pylint: disable=line-too-long
@@ -145,7 +145,7 @@ def build_list_by_domain_request(
     top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -229,7 +229,7 @@ class DomainTopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_request(
@@ -277,7 +277,7 @@ class DomainTopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_create_or_update_request_initial(
@@ -343,7 +343,7 @@ class DomainTopicsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.DomainTopic]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainTopic"]
         lro_delay = kwargs.pop(
@@ -397,7 +397,7 @@ class DomainTopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -458,7 +458,7 @@ class DomainTopicsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -531,7 +531,7 @@ class DomainTopicsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.DomainTopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainTopicsListResult"]
         error_map = {

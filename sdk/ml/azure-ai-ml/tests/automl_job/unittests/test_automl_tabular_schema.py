@@ -42,6 +42,7 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import Tabu
 
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
+from azure.ai.ml import load_job
 
 
 @pytest.fixture(autouse=True)
@@ -235,7 +236,7 @@ def _get_rest_automl_job(automl_task, name, compute_id):
 @pytest.fixture
 def loaded_regression_full_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_job_mock_regression.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return _add_automl_default_properties(job)
 
@@ -243,7 +244,7 @@ def loaded_regression_full_job(mock_machinelearning_client: OperationScope) -> A
 @pytest.fixture
 def loaded_classification_full_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_job_mock_classification.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return _add_automl_default_properties(job)
 
@@ -251,7 +252,7 @@ def loaded_classification_full_job(mock_machinelearning_client: OperationScope) 
 @pytest.fixture
 def loaded_forecasting_full_job(mock_machinelearning_client: OperationScope) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_job_mock_forecasting.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return _add_automl_default_properties(job)
 
@@ -269,7 +270,7 @@ def _add_automl_default_properties(automl_job):
 @pytest.fixture
 def loaded_regression_job_auto_fields(mock_machinelearning_client) -> AutoMLJob:
     test_schema_path = Path("./tests/test_configs/automl_job/automl_job_mock_auto.yaml")
-    job = Job.load(test_schema_path)
+    job = load_job(test_schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return job
 

@@ -6,31 +6,28 @@ import logging
 import re
 from typing import Any, Optional, Tuple, Union
 
-from marshmallow import ValidationError
-
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import (
     ARM_ID_PREFIX,
+    ASSET_ID_URI_REGEX_FORMAT,
+    AZUREML_RESOURCE_PROVIDER,
     DATA_ARM_TYPE,
-    DATASET_ARM_TYPE,
     DATASTORE_RESOURCE_ID,
     DATASTORE_SHORT_URI,
-    REGISTRY_URI_REGEX_FORMAT,
-    ASSET_ID_URI_REGEX_FORMAT,
-    NAMED_RESOURCE_ID_FORMAT,
-    AZUREML_RESOURCE_PROVIDER,
-    PROVIDER_RESOURCE_ID_WITH_VERSION,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
+    NAMED_RESOURCE_ID_FORMAT,
+    PROVIDER_RESOURCE_ID_WITH_VERSION,
+    REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
-    AzureMLResourceType,
 )
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
 
 class AMLVersionedArmId(object):
-    """Parser for versioned arm id: e.g. /subscription/.../code/my-code/versions/1
+    """Parser for versioned arm id: e.g. /subscription/.../code/my-
+    code/versions/1.
 
     :param arm_id: the versioned arm id
     :type arm_id: str
@@ -84,7 +81,8 @@ def get_datastore_arm_id(datastore_name: str = None, operation_scope: OperationS
 
 
 class AMLNamedArmId:
-    """Parser for named arm id (no version): e.g. /subscription/.../compute/goazurego
+    """Parser for named arm id (no version): e.g.
+    /subscription/.../compute/cpu-cluster.
 
     :param arm_id: the named arm id
     :type arm_id: str
@@ -152,7 +150,7 @@ class AMLAssetId:
 
 
 class AzureResourceId:
-    """Parser for a non-AzureML ARM Id
+    """Parser for a non-AzureML ARM Id.
 
     :param arm_id: the named arm id
     :type arm_id: str
@@ -206,7 +204,11 @@ def parse_AzureML_id(name: str) -> Tuple[str, str, str]:
         return at_splits[0], None, name[1]
     else:
         colon_splits = name.rsplit(":", 1)
-        return colon_splits[0], None if len(colon_splits) == 1 else colon_splits[1], None
+        return (
+            colon_splits[0],
+            None if len(colon_splits) == 1 else colon_splits[1],
+            None,
+        )
 
 
 def parse_prefixed_name_version(name: str) -> Tuple[str, Optional[str]]:
@@ -265,7 +267,10 @@ def is_registry_id_for_resource(name: Any) -> bool:
 
 
 def get_arm_id_with_version(
-    operation_scope: OperationScope, provider_name: str, provider_value: str, provider_version: str
+    operation_scope: OperationScope,
+    provider_name: str,
+    provider_value: str,
+    provider_version: str,
 ):
     return PROVIDER_RESOURCE_ID_WITH_VERSION.format(
         operation_scope.subscription_id,
@@ -279,10 +284,6 @@ def get_arm_id_with_version(
 
 def generate_data_arm_id(operation_scope: OperationScope, name: str, version: int):
     return get_arm_id_with_version(operation_scope, DATA_ARM_TYPE, name, str(version))
-
-
-def generate_dataset_arm_id(operation_scope: OperationScope, name: str, version: int):
-    return get_arm_id_with_version(operation_scope, DATASET_ARM_TYPE, name, str(version))
 
 
 def remove_aml_prefix(id: Optional[str]) -> Optional[str]:
@@ -300,10 +301,33 @@ def get_resource_name_from_arm_id(resource_id: str) -> str:
     return AMLNamedArmId(resource_id).asset_name
 
 
-def get_arm_id_object_from_id(resource_id: str) -> Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]:
-    """Attempts to create and return one of: AMLVersionedId, AMLNamedId, AzureResoureId.
-    In the case than an AzureML ARM Id is passed in, either AMLVersionedId or AMLNamedId will be created depending on resource type
-    In the case that a non-AzureML ARM id is passed in, an AzureResourceId will be returned
+def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
+    """Get the resource name from an ARM id.
+
+    return input string if it is not an ARM id.
+    """
+    try:
+        return get_resource_name_from_arm_id(resource_id)
+    except ValidationException:
+        # already a name
+        return resource_id
+    except AttributeError:
+        # None or empty string
+        return resource_id
+    except Exception:
+        # unexpected error
+        module_logger.warning("Failed to parse resource id: %s", resource_id)
+        return resource_id
+
+
+def get_arm_id_object_from_id(
+    resource_id: str,
+) -> Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]:
+    """Attempts to create and return one of: AMLVersionedId, AMLNamedId,
+    AzureResoureId. In the case than an AzureML ARM Id is passed in, either
+    AMLVersionedId or AMLNamedId will be created depending on resource type In
+    the case that a non-AzureML ARM id is passed in, an AzureResourceId will be
+    returned.
 
     :param resource_id: the ARM Id to parse
     :type arm_id: str
@@ -334,27 +358,6 @@ def get_arm_id_object_from_id(resource_id: str) -> Union[AMLVersionedArmId, AMLN
         no_personal_data_message=msg.format("[resource_id]"),
         target=ErrorTarget.DEPLOYMENT,
     )
-
-
-def is_arm_id_or_arm_string_or_object(asset: str, azureml_type: str) -> None:
-    if not isinstance(asset, str):
-        return
-
-    if is_ARM_id_for_resource(asset, azureml_type) or is_registry_id_for_resource(asset):
-        return
-    else:
-        if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
-            name, label = parse_name_label(asset)
-            if not label:
-                name, version = parse_prefixed_name_version(asset)
-                if not version:
-                    raise ValidationException(
-                        message="Failed to extract version when parsing asset {} of type {} as arm id. Version must be provided.".format(
-                            asset, azureml_type
-                        ),
-                        no_personal_data_message="[asset]",
-                    )
-    return
 
 
 def remove_datastore_prefix(id: Optional[str]) -> Optional[str]:

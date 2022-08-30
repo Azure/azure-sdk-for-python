@@ -14,7 +14,7 @@ jobs:
     type: command
     inputs:
       # Hard coding input dataset, not mapping to job level input
-      component_in_1: 
+      component_in_1:
         path: azureml:fakeData:1
 
     outputs:

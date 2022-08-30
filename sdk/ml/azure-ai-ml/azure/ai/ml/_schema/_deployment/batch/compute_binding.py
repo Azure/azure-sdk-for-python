@@ -1,14 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 from typing import Any
 
-from azure.ai.ml.constants import AzureMLResourceType, LOCAL_COMPUTE_TARGET
 from marshmallow import ValidationError, fields, validates_schema
 
 from azure.ai.ml._schema.core.fields import ArmStr, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml.constants import LOCAL_COMPUTE_TARGET, AzureMLResourceType
 
 module_logger = logging.getLogger(__name__)
 

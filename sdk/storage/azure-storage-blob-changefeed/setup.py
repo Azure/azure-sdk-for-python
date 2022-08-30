@@ -59,10 +59,10 @@ setup(
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -73,7 +73,7 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
         "azure-storage-blob>=12.5.0,<13.0.0"
     ],

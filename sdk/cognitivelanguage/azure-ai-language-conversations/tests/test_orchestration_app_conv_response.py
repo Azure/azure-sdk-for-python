@@ -62,9 +62,9 @@ class OrchestrationAppConvResponseTests(ConversationTest):
             
             # assert intent and entities
             conversation_result = top_intent_object["result"]["prediction"]
-            assert conversation_result["topIntent"] == 'Setup'
+            assert conversation_result["topIntent"] == 'Send'
             assert len(conversation_result["intents"]) > 0
-            assert conversation_result["intents"][0]["category"] == 'Setup'
+            assert conversation_result["intents"][0]["category"] == 'Send'
             assert conversation_result["intents"][0]["confidenceScore"] > 0
             
             # assert - entities

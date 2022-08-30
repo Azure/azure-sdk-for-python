@@ -23,13 +23,9 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
-    def teardown(self):
-        self.sleep(4)
-
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    @recorded_by_proxy_async
-    async def test_identity_document_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_identity_document_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with open(self.identity_document_license_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):

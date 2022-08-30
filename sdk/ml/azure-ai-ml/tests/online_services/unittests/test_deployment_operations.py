@@ -1,4 +1,4 @@
-from azure.ai.ml._operations import OnlineDeploymentOperations
+from azure.ai.ml.operations import OnlineDeploymentOperations
 
 from unittest.mock import patch, Mock
 import pytest

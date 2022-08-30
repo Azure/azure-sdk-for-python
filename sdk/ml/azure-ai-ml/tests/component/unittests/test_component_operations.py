@@ -3,7 +3,7 @@ from typing import Callable
 from unittest.mock import Mock, patch
 
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml._operations import ComponentOperations
+from azure.ai.ml.operations import ComponentOperations
 from azure.ai.ml._scope_dependent_operations import OperationScope
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
@@ -12,6 +12,8 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentVersionData,
     ComponentVersionDetails,
 )
+
+from .._util import _COMPONENT_TIMEOUT_SECOND
 
 
 @pytest.fixture
@@ -25,6 +27,7 @@ def mock_component_operation(
     )
 
 
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestComponentOperation:
     def test_create(self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]) -> None:
@@ -32,8 +35,8 @@ class TestComponentOperation:
             name=randstr(), version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
         )
 
-        with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml._operations.component_operations.Component._from_rest_object",
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
             return_value=CommandComponent(),
         ):
             mock_component_operation.create_or_update(component)
@@ -47,6 +50,24 @@ class TestComponentOperation:
             workspace_name=mock_component_operation._workspace_name,
         )
 
+    def test_create_skip_validation(
+        self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]
+    ) -> None:
+        component = CommandComponent(
+            name=randstr(), version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
+        )
+
+        with patch.object(ComponentOperations, "_validate") as mock_thing, patch.object(
+            ComponentOperations, "_resolve_arm_id_or_upload_dependencies"
+        ), patch(
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
+            return_value=CommandComponent(),
+        ):
+            mock_component_operation.create_or_update(component, skip_validation=True)
+            mock_thing.assert_not_called()
+            mock_component_operation.create_or_update(component)
+            mock_thing.assert_called_once()
+
     def test_create_autoincrement(
         self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]
     ) -> None:
@@ -54,8 +75,8 @@ class TestComponentOperation:
             name=randstr(), version=None, environment="azureml:AzureML-Minimal:1", command="echo hello"
         )
         assert component._auto_increment_version
-        with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml._operations.component_operations.Component._from_rest_object", return_value=component
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object", return_value=component
         ):
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()
@@ -80,7 +101,7 @@ class TestComponentOperation:
         mock_component_operation._container_operation.list.assert_called_once()
 
     def test_get(self, mock_component_operation: ComponentOperations) -> None:
-        with patch("azure.ai.ml._operations.component_operations.Component") as mock_component_entity:
+        with patch("azure.ai.ml.operations._component_operations.Component") as mock_component_entity:
             mock_component_operation.get("mock_component", "1")
 
         mock_component_operation._version_operation.get.assert_called_once()

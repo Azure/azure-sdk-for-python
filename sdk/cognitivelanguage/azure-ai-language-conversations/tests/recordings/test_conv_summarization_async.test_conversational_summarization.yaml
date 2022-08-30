@@ -1,0 +1,64 @@
+interactions:
+- request:
+    body: '{"displayName": "Analyze conversations from xxx", "analysisInput": {"conversations":
+      [{"conversationItems": [{"text": "Hello, how can I help you?", "modality": "text",
+      "id": "1", "participantId": "Agent"}, {"text": "How to upgrade Office? I am
+      getting error messages the whole day.", "modality": "text", "id": "2", "participantId":
+      "Customer"}, {"text": "Press the upgrade button please. Then sign in and follow
+      the instructions.", "modality": "text", "id": "3", "participantId": "Agent"}],
+      "modality": "text", "id": "conversation1", "language": "en"}]}, "tasks": [{"taskName":
+      "analyze 1", "kind": "ConversationalSummarizationTask", "parameters": {"summaryAspects":
+      ["Issue, Resolution"]}}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '692'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 8d9307d4-1a3c-4ea0-b7e6-7c08c7c5a67b
+      content-length: '0'
+      date: Tue, 28 Jun 2022 21:14:37 GMT
+      operation-location: https://test-resource.api.cognitive.microsoft.comlanguage/analyze-conversations/jobs/7448692c-b226-485b-91f2-1f95697fdf7f?api-version=2022-05-15-preview
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '442'
+    status:
+      code: 202
+      message: Accepted
+    url: https://languagesdkresource.cognitiveservices.azure.com//language/analyze-conversations/jobs?api-version=2022-05-15-preview
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-language-conversations/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.comlanguage/analyze-conversations/jobs/7448692c-b226-485b-91f2-1f95697fdf7f?api-version=2022-05-15-preview
+  response:
+    body:
+      string: '{"jobId":"7448692c-b226-485b-91f2-1f95697fdf7f","lastUpdatedDateTime":"2022-06-28T21:14:40Z","createdDateTime":"2022-06-28T21:14:38Z","expirationDateTime":"2022-06-29T21:14:38Z","status":"succeeded","errors":[],"displayName":"Analyze
+        conversations from xxx","tasks":{"completed":1,"failed":0,"inProgress":0,"total":1,"items":[{"kind":"conversationalSummarizationResults","taskName":"analyze
+        1","lastUpdateDateTime":"2022-06-28T21:14:40.2625607Z","status":"succeeded","results":{"conversations":[{"id":"conversation1","summaries":[{"aspect":"issue","text":"Customer
+        wants to upgrade Office"},{"aspect":"resolution","text":"Asked for the error
+        message | Asked for help to upgrade Office"}],"warnings":[]}],"errors":[],"modelVersion":"2022-05-15-preview"}}]}}'
+    headers:
+      apim-request-id: db116b6e-f9d6-4c69-8486-e9f457099d52
+      content-length: '756'
+      content-type: application/json; charset=utf-8
+      date: Tue, 28 Jun 2022 21:15:09 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '40'
+    status:
+      code: 200
+      message: OK
+    url: https://languagesdkresource.cognitiveservices.azure.com/language/analyze-conversations/jobs/7448692c-b226-485b-91f2-1f95697fdf7f?api-version=2022-05-15-preview
+version: 1

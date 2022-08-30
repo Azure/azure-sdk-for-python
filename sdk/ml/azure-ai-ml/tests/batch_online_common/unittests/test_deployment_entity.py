@@ -16,6 +16,7 @@ from azure.ai.ml.entities._assets import Model, Environment
 from azure.ai.ml._restclient.v2021_10_01.models import EndpointComputeType, BatchOutputAction
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml import load_online_deployment, load_batch_deployment
 import copy
 import yaml
 import pytest
@@ -60,7 +61,7 @@ class TestOnlineDeploymentFromYAML:
     def test_generic_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
-        blue = OnlineDeployment.load(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
         assert isinstance(blue, OnlineDeployment)
         assert blue.type == EndpointComputeType.KUBERNETES
         assert blue.endpoint_name == target["endpoint_name"]
@@ -75,7 +76,7 @@ class TestOnlineDeploymentFromYAML:
         assert blue.description == target["description"]
 
     def test_generic_deployment_merge(self) -> None:
-        blue = OnlineDeployment.load(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
         blue_copy = copy.deepcopy(blue)
 
         blue_copy.code_configuration = CodeConfiguration(code="blah path", scoring_script="blah.py")
@@ -92,7 +93,7 @@ class TestOnlineDeploymentFromYAML:
         assert blue.endpoint_name == blue_copy.endpoint_name
 
     def test_generic_deployment_merge_props(self) -> None:
-        blue = OnlineDeployment.load(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
         blue_copy = copy.deepcopy(blue)
 
         blue.tags = {"otag": "otagvalue"}
@@ -117,7 +118,7 @@ class TestOnlineDeploymentFromYAML:
         assert blue.environment_variables["oev"] == "oevvalue"
 
     def test_generic_deployment_merge_endpoint_mismatch(self) -> None:
-        blue = OnlineDeployment.load(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
         blue_copy = copy.deepcopy(blue)
 
         blue_copy.name = "different deployment"
@@ -129,7 +130,7 @@ class TestOnlineDeploymentFromYAML:
     def test_k8s_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
-        blue = KubernetesOnlineDeployment.load(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT)
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT)
         assert isinstance(blue, KubernetesOnlineDeployment)
         assert blue.type == EndpointComputeType.KUBERNETES
         assert blue.endpoint_name == target["endpoint_name"]
@@ -150,7 +151,7 @@ class TestOnlineDeploymentFromYAML:
     def test_preview_mir_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.PREVIEW_DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
-        blue = OnlineDeployment.load(TestOnlineDeploymentFromYAML.PREVIEW_DEPLOYMENT)
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.PREVIEW_DEPLOYMENT)
         assert isinstance(blue, OnlineDeployment)
         for key, value in target.items():
             if isinstance(value, str):
@@ -164,7 +165,7 @@ class TestBatchDeploymentSDK:
     def test_batch_endpoint_deployment_load(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
-        deployment = BatchDeployment.load(TestBatchDeploymentSDK.DEPLOYMENT)
+        deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
         assert isinstance(deployment, BatchDeployment)
         assert isinstance(deployment.model, str)
         assert isinstance(deployment.compute, str)
@@ -180,7 +181,7 @@ class TestBatchDeploymentSDK:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
         print(target)
-        deployment = BatchDeployment.load(TestBatchDeploymentSDK.DEPLOYMENT)
+        deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
         # test REST translation
         deployment_resource = deployment._to_rest_object(location="westus2")
         rest_representation_properties = deployment_resource.properties

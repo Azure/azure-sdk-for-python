@@ -54,27 +54,44 @@ class ModelVersionsOperations:
         name: str,
         resource_group_name: str,
         registry_name: str,
+        skiptoken: Optional[str] = None,
         order_by: Optional[str] = None,
         top: Optional[int] = None,
-        skiptoken: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[str] = None,
+        properties: Optional[str] = None,
+        list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ModelVersionResourceArmPaginatedResult"]:
         """List versions.
 
         List versions.
 
-        :param name: Container name.
+        :param name: Container name. This is case-sensitive.
         :type name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param registry_name:
         :type registry_name: str
+        :param skiptoken: Continuation token for pagination.
+        :type skiptoken: str
         :param order_by: Ordering of list.
         :type order_by: str
         :param top: Maximum number of records to return.
         :type top: int
-        :param skiptoken: Continuation token for pagination.
-        :type skiptoken: str
+        :param version: Version identifier.
+        :type version: str
+        :param description: Model description.
+        :type description: str
+        :param tags: Comma-separated list of tag names (and optionally values). Example:
+         tag1,tag2=value2.
+        :type tags: str
+        :param properties: Comma-separated list of property names (and optionally values). Example:
+         prop1,prop2=value2.
+        :type properties: str
+        :param list_view_type: View type for including/excluding (for example) archived entities.
+        :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -101,9 +118,14 @@ class ModelVersionsOperations:
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
                     api_version=api_version,
+                    skiptoken=skiptoken,
                     order_by=order_by,
                     top=top,
-                    skiptoken=skiptoken,
+                    version=version,
+                    description=description,
+                    tags=tags,
+                    properties=properties,
+                    list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -117,9 +139,14 @@ class ModelVersionsOperations:
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
                     api_version=api_version,
+                    skiptoken=skiptoken,
                     order_by=order_by,
                     top=top,
-                    skiptoken=skiptoken,
+                    version=version,
+                    description=description,
+                    tags=tags,
+                    properties=properties,
+                    list_view_type=list_view_type,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -230,9 +257,9 @@ class ModelVersionsOperations:
 
         Get version.
 
-        :param name: Container name.
+        :param name: Container name. This is case-sensitive.
         :type name: str
-        :param version: Version identifier.
+        :param version: Version identifier. This is case-sensitive.
         :type version: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

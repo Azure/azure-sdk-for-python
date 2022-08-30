@@ -142,15 +142,6 @@ class ListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
 
-class ModelFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The async operation state.
-    """
-
-    CUSTOM = "Custom"
-    ML_FLOW = "MLFlow"
-    TRITON = "Triton"
-    OPEN_AI = "OpenAI"
-
 class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of operating system.
     """

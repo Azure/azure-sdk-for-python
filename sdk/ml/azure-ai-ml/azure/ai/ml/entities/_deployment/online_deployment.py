@@ -2,54 +2,48 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from abc import abstractmethod
+# pylint: disable=protected-access
+
 import logging
-from typing import Any, Dict, Union, Optional
-
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    CodeConfiguration as RestCodeConfiguration,
-    OnlineDeploymentDetails as RestOnlineDeploymentDetails,
-    OnlineDeploymentData as RestOnlineDeploymentData,
-    KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
-    ManagedOnlineDeployment as RestManagedOnlineDeployment,
-    Sku as RestSku,
-    EndpointComputeType,
-)
-from azure.ai.ml._utils.utils import camel_to_snake, load_yaml
-from azure.ai.ml.entities import CodeConfiguration, Environment, Model
-from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._deployment.deployment_settings import ProbeSettings, OnlineRequestSettings
-
-from azure.ai.ml.entities._deployment.scale_settings import (
-    OnlineScaleSettings,
-    TargetUtilizationScaleSettings,
-    DefaultScaleSettings,
-)
-from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    ArmConstants,
-)
+from abc import abstractmethod
 from os import PathLike
 from pathlib import Path
-from azure.ai.ml.entities._util import load_from_dict
-from marshmallow.exceptions import ValidationError
+from typing import Any, Dict, Optional, Union
 
+from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineDeploymentData as RestOnlineDeploymentData
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineDeploymentDetails as RestOnlineDeploymentDetails
+from azure.ai.ml._restclient.v2022_02_01_preview.models import Sku as RestSku
 from azure.ai.ml._schema._deployment.online.online_deployment import (
     KubernetesOnlineDeploymentSchema,
     ManagedOnlineDeploymentSchema,
 )
+from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, TYPE, ArmConstants, EndpointYamlFields
+from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
+from azure.ai.ml.entities._assets.environment import Environment
+from azure.ai.ml.entities._assets._artifacts.model import Model
+from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
+from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
+from azure.ai.ml.entities._deployment.scale_settings import DefaultScaleSettings, OnlineScaleSettings
+from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
+from azure.ai.ml.entities._util import load_from_dict
+
 from .deployment import Deployment
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
 class OnlineDeployment(Deployment):
-    """Online endpoint deployment entity
+    """Online endpoint deployment entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -141,7 +135,7 @@ class OnlineDeployment(Deployment):
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Deployment provisioning state, readonly
+        """Deployment provisioning state, readonly.
 
         :return: Deployment provisioning state.
         :rtype: Optional[str]
@@ -149,7 +143,7 @@ class OnlineDeployment(Deployment):
         return self._provisioning_state
 
     def _generate_dependencies(self) -> Any:
-        """Convert dependencies into ARM id or REST wrapper"""
+        """Convert dependencies into ARM id or REST wrapper."""
         code = None
 
         if self.code_configuration:
@@ -253,28 +247,29 @@ class OnlineDeployment(Deployment):
             self.instance_count = other.instance_count or self.instance_count
             self.instance_type = other.instance_type or self.instance_type
 
-    @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
-    ) -> "OnlineDeployment":
-        params_override = params_override or []
-        data = load_yaml(path)
-        return OnlineDeployment.load_from_dict(data=data, path=path, params_override=params_override)
+    def _set_scale_settings(data: dict):
+        if not hasattr(data, EndpointYamlFields.SCALE_SETTINGS):
+            return
+
+        scale_settings = data[EndpointYamlFields.SCALE_SETTINGS]
+        keyName = TYPE
+        if scale_settings and scale_settings[keyName] == "default":
+            scale_copy = scale_settings.copy()
+            for key in scale_copy:
+                if key != keyName:
+                    scale_settings.pop(key, None)
 
     @classmethod
-    def load_from_dict(
+    def _load(
         cls,
         data: dict,
-        path: Union[PathLike, str] = None,
+        yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "OnlineDeployment":
         params_override = params_override or []
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
@@ -287,7 +282,7 @@ class OnlineDeployment(Deployment):
 
 
 class KubernetesOnlineDeployment(OnlineDeployment):
-    """Kubernetes Online endpoint deployment entity
+    """Kubernetes Online endpoint deployment entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -472,7 +467,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
 
 
 class ManagedOnlineDeployment(OnlineDeployment):
-    """Managed Online endpoint deployment entity
+    """Managed Online endpoint deployment entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -667,7 +662,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         if self.scale_settings:
             if not isinstance(self.scale_settings, DefaultScaleSettings):
                 msg = "ManagedOnlineEndpoint supports DefaultScaleSettings only."
-                raise ValidationtException(
+                raise ValidationException(
                     message=msg,
                     target=ErrorTarget.ONLINE_DEPLOYMENT,
                     no_personal_data_message=msg,

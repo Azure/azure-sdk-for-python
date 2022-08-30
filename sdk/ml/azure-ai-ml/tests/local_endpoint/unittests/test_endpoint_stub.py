@@ -8,6 +8,7 @@ from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
 import pytest
 import random
 from pathlib import Path
+from azure.ai.ml import load_online_endpoint
 
 
 @pytest.fixture
@@ -24,7 +25,7 @@ def endpoint_mir_yaml() -> str:
 class TestEndpoingStub:
     def test_endpoint_stub_e2e(self, endpoint_name, endpoint_mir_yaml):
         endpoint_stub = EndpointStub()
-        endpoint = OnlineEndpoint.load(endpoint_mir_yaml)
+        endpoint = load_online_endpoint(endpoint_mir_yaml)
         endpoint.name = endpoint_name
 
         endpoint_stub.create_or_update(endpoint=endpoint)

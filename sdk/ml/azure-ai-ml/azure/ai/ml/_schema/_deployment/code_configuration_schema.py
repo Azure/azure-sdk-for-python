@@ -5,11 +5,9 @@
 import logging
 from typing import Any
 
-from azure.ai.ml._schema import NestedField, PathAwareSchema, UnionField
-from azure.ai.ml._schema.assets.code_asset import CodeAssetSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AzureMLResourceType, EndpointYamlFields
-from marshmallow import fields, post_load, validates_schema, ValidationError
+from marshmallow import fields, post_load
+
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
 

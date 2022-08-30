@@ -50,17 +50,24 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
     
     def _clean_up_relationships(self, client):
         for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
-            for relationship in client.list_relationships(dt_id):
-                client.delete_relationship(
-                    dt_id,
-                    relationship['$relationshipId']
-                )
+            try: 
+                for relationship in client.list_relationships(dt_id):
+                    client.delete_relationship(
+                        dt_id,
+                        relationship['$relationshipId']
+                    )
+            except:
+                pass
 
     def _clean_up_twins(self, client):
         for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
-            client.delete_digital_twin(dt_id)
+            try:
+                 client.delete_digital_twin(dt_id)
+            except:
+                pass
 
     def _set_up_models(self, client, *models):
+        
         self._clean_up_models(client)
         self._clean_up_relationships(client)
         self._clean_up_twins(client)

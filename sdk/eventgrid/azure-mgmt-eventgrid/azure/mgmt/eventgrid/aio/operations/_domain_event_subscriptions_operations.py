@@ -48,6 +48,70 @@ class DomainEventSubscriptionsOperations:
         self._config = config
 
     @distributed_trace_async
+    async def get_delivery_attributes(
+        self,
+        resource_group_name: str,
+        domain_name: str,
+        event_subscription_name: str,
+        **kwargs: Any
+    ) -> "_models.DeliveryAttributeListResult":
+        """Get delivery attributes for an event subscription for domain.
+
+        Get all delivery attributes for an event subscription for domain.
+
+        :param resource_group_name: The name of the resource group within the user's subscription.
+        :type resource_group_name: str
+        :param domain_name: Name of the domain topic.
+        :type domain_name: str
+        :param event_subscription_name: Name of the event subscription.
+        :type event_subscription_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DeliveryAttributeListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.DeliveryAttributeListResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeliveryAttributeListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
+
+        
+        request = build_get_delivery_attributes_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            domain_name=domain_name,
+            event_subscription_name=event_subscription_name,
+            api_version=api_version,
+            template_url=self.get_delivery_attributes.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('DeliveryAttributeListResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_delivery_attributes.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes"}  # type: ignore
+
+
+    @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
@@ -77,7 +141,7 @@ class DomainEventSubscriptionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_request(
@@ -126,7 +190,7 @@ class DomainEventSubscriptionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(event_subscription_info, 'EventSubscription')
@@ -206,7 +270,7 @@ class DomainEventSubscriptionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
@@ -263,7 +327,7 @@ class DomainEventSubscriptionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -326,7 +390,7 @@ class DomainEventSubscriptionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -378,7 +442,7 @@ class DomainEventSubscriptionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(event_subscription_update_parameters, 'EventSubscriptionUpdateParameters')
@@ -452,7 +516,7 @@ class DomainEventSubscriptionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
@@ -525,7 +589,7 @@ class DomainEventSubscriptionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_full_url_request(
@@ -596,7 +660,7 @@ class DomainEventSubscriptionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
         error_map = {
@@ -662,67 +726,3 @@ class DomainEventSubscriptionsOperations:
             get_next, extract_data
         )
     list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/eventSubscriptions"}  # type: ignore
-
-    @distributed_trace_async
-    async def get_delivery_attributes(
-        self,
-        resource_group_name: str,
-        domain_name: str,
-        event_subscription_name: str,
-        **kwargs: Any
-    ) -> "_models.DeliveryAttributeListResult":
-        """Get delivery attributes for an event subscription for domain.
-
-        Get all delivery attributes for an event subscription for domain.
-
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param domain_name: Name of the domain topic.
-        :type domain_name: str
-        :param event_subscription_name: Name of the event subscription.
-        :type event_subscription_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeliveryAttributeListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.DeliveryAttributeListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeliveryAttributeListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
-
-        
-        request = build_get_delivery_attributes_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            domain_name=domain_name,
-            event_subscription_name=event_subscription_name,
-            api_version=api_version,
-            template_url=self.get_delivery_attributes.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('DeliveryAttributeListResult', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_delivery_attributes.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes"}  # type: ignore
-

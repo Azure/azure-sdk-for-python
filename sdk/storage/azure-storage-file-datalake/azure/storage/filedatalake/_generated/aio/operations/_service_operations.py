@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +25,10 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._service_operations import build_list_file_systems_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ServiceOperations:
     """
@@ -41,7 +49,6 @@ class ServiceOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_file_systems(
         self,
@@ -51,7 +58,7 @@ class ServiceOperations:
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.FileSystemList]:
+    ) -> AsyncIterable["_models.FileSystem"]:
         """List FileSystems.
 
         List filesystems and their properties in given account.
@@ -82,34 +89,32 @@ class ServiceOperations:
          "account". Note that overriding this default value may result in unsupported behavior.
         :paramtype resource: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either FileSystemList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.storage.filedatalake.models.FileSystemList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either FileSystem or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.filedatalake.models.FileSystem]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        resource = kwargs.pop('resource', _params.pop('resource', "account"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FileSystemList]
+        resource = kwargs.pop("resource", _params.pop("resource", "account"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FileSystemList]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_file_systems_request(
                     url=self._config.url,
-                    resource=resource,
-                    version=self._config.version,
                     prefix=prefix,
                     continuation=continuation,
                     max_results=max_results,
                     request_id_parameter=request_id_parameter,
                     timeout=timeout,
-                    template_url=self.list_file_systems.metadata['url'],
+                    resource=resource,
+                    version=self._config.version,
+                    template_url=self.list_file_systems.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -117,20 +122,7 @@ class ServiceOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_file_systems_request(
-                    url=self._config.url,
-                    resource=resource,
-                    version=self._config.version,
-                    prefix=prefix,
-                    continuation=continuation,
-                    max_results=max_results,
-                    request_id_parameter=request_id_parameter,
-                    timeout=timeout,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -146,10 +138,8 @@ class ServiceOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -160,8 +150,6 @@ class ServiceOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_file_systems.metadata = {'url': "{url}"}  # type: ignore
+    list_file_systems.metadata = {"url": "{url}"}  # type: ignore

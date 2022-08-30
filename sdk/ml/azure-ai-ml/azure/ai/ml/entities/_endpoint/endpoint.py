@@ -3,13 +3,12 @@
 # ---------------------------------------------------------
 
 import logging
-from os import PathLike
 from abc import abstractmethod
+from os import PathLike
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml.entities import Resource
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-
+from azure.ai.ml.entities._resource import Resource
 
 module_logger = logging.getLogger(__name__)
 
@@ -62,7 +61,7 @@ class Endpoint(Resource):
 
     @property
     def scoring_uri(self) -> Optional[str]:
-        """URI to use to perform a prediction, readonly
+        """URI to use to perform a prediction, readonly.
 
         :return: The scoring URI
         :rtype: Optional[str]
@@ -80,17 +79,12 @@ class Endpoint(Resource):
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Endpoint provisioning state, readonly
+        """Endpoint provisioning state, readonly.
 
         :return: Endpoint provisioning state.
         :rtype: Optional[str]
         """
         return self._provisioning_state
-
-    @classmethod
-    @abstractmethod
-    def load(cls, path: Union[PathLike, str], params_override: list = None, **kwargs) -> "Endpoint":
-        pass
 
     @abstractmethod
     def dump(self, path: Union[PathLike, str]) -> None:

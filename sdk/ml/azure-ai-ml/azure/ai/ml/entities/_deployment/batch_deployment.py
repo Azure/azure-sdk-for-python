@@ -2,42 +2,35 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
-import collections.abc
+from os import PathLike
+from pathlib import Path
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchDeploymentDetails as RestBatchDeployment,
-    BatchDeploymentData,
-    CodeConfiguration as RestCodeConfiguration,
-    IdAssetReference,
-    BatchOutputAction,
-)
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    BatchDeploymentOutputAction,
-)
-from os import PathLike
-from azure.ai.ml._utils.utils import load_yaml
-from pathlib import Path
-from azure.ai.ml.entities._util import load_from_dict
-
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
-from .deployment import Deployment
-from .code_configuration import CodeConfiguration
-from azure.ai.ml.entities._assets import Model, Environment
-from azure.ai.ml.entities import ResourceConfiguration
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
+from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
+from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, BatchDeploymentOutputAction
+from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._assets import Environment, Model
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._util import load_from_dict
 
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from .code_configuration import CodeConfiguration
+from .deployment import Deployment
 
 module_logger = logging.getLogger(__name__)
 
 
 class BatchDeployment(Deployment):
-    """Batch endpoint deployment entity
+    """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
     :type name: str
@@ -85,7 +78,6 @@ class BatchDeployment(Deployment):
     :type scoring_script: Union[str, PathLike], optional
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
     :type instance_count: int, optional
-
     """
 
     def __init__(
@@ -189,7 +181,8 @@ class BatchDeployment(Deployment):
         self._validate()
         code_config = (
             RestCodeConfiguration(
-                code_id=self.code_configuration.code, scoring_script=self.code_configuration.scoring_script
+                code_id=self.code_configuration.code,
+                scoring_script=self.code_configuration.scoring_script,
             )
             if self.code_configuration
             else None
@@ -250,29 +243,18 @@ class BatchDeployment(Deployment):
         )
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
-    ) -> "BatchDeployment":
-        params_override = params_override or []
-        # Endpoint names are case insensitive, but given the case sensitive nature of MFE the convention is to always use lowercase
-        BatchDeployment._update_params(params_override)
-        data = load_yaml(path)
-        return BatchDeployment.load_from_dict(data=data, path=path, params_override=params_override)
-
-    @classmethod
-    def load_from_dict(
+    def _load(
         cls,
         data: dict,
-        path: Union[PathLike, str] = None,
+        yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "BatchDeployment":
         params_override = params_override or []
+        cls._update_params(params_override)
+
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
         return load_from_dict(BatchDeploymentSchema, data, context, **kwargs)

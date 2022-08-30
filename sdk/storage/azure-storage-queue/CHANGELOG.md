@@ -1,6 +1,6 @@
 # Release History
 
-## 12.3.1 (Unreleased)
+## 12.5.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,27 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.5.0b1 (2022-08-23)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
+## 12.4.0 (2022-07-07)
+
+### Features Added
+- Stable release of features from 12.4.0b1.
+
+## 12.4.0b1 (2022-06-15)
+
+### Features Added
+- Introduced version 2.0 of client-side encryption for Queue messages which utilizes AES-GCM-256 encryption.
+Version 1.0 is now deprecated and no longer considered secure. If you are using client-side encryption, it is
+**highly recommended** that you update to version 2.0.
+The encryption version can be specified on any client constructor via the `encryption_version`
+keyword (i.e. `encryption_version='2.0'`).
 
 ## 12.3.0 (2022-05-09)
 

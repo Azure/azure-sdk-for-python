@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
-import uuid
+
+from marshmallow import ValidationError, fields, post_load, pre_dump
 
 from azure.ai.ml._schema.core.fields import ArmStr
-
-from .asset import AnonymousAssetSchema
-from .artifact import ArtifactSchema
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
-from marshmallow import ValidationError, fields, post_load, pre_dump
+
+from .artifact import ArtifactSchema
+from .asset import AnonymousAssetSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -35,13 +37,7 @@ class AnonymousCodeAssetSchema(CodeAssetSchema, AnonymousAssetSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._assets import Code
 
-        return Code(
-            name=str(uuid.uuid4()),
-            version="1",
-            is_anonymous=True,
-            base_path=self.context[BASE_PATH_CONTEXT_KEY],
-            **data
-        )
+        return Code(is_anonymous=True, base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
 
     @pre_dump
     def validate(self, data, **kwargs):

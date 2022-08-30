@@ -1,14 +1,25 @@
 # Release History
 
-## 1.24.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.25.1 (2022-09-01)
 
 ### Bugs Fixed
 
-### Other Changes
+- Added @runtime_checkable to `TokenCredential` protocol definitions  #25187
+
+## 1.25.0 (2022-08-04)
+
+Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+### Features Added
+
+- Added `CaseInsensitiveDict` implementation in `azure.core.utils` removing dependency on `requests` and `aiohttp`
+
+## 1.24.2 (2022-06-30)
+
+### Bugs Fixed
+
+- Fixed the bug that azure-core could not be imported under Python 3.11.0b3  #24928
+- `ContentDecodePolicy` can now correctly deserialize more JSON bodies with different mime types #22410
 
 ## 1.24.1 (2022-06-01)
 

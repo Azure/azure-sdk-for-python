@@ -5,22 +5,20 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants, LONG_URI_FORMAT, AssetTypes
 from azure.ai.ml._restclient.v2022_05_01.models import (
-    ModelContainerData,
-    ModelVersionDetails,
-    ModelVersionData,
     FlavorData,
+    ModelContainerData,
+    ModelVersionData,
+    ModelVersionDetails,
 )
-
-
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
-from azure.ai.ml._utils.utils import load_yaml, snake_to_pascal
-from azure.ai.ml.entities._assets import Artifact
-from .artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._util import load_from_dict, get_md5_string
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY, ArmConstants, AssetTypes
+from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+
+from .artifact import ArtifactStorageInfo
 
 
 class Model(Artifact):
@@ -86,30 +84,6 @@ class Model(Artifact):
             self.name = get_md5_string(_upload_hash)
 
     @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Model":
-        """Construct a model object from yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Constructed model object.
-        :rtype: Model
-        """
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
-
-        # For lack of bidirectional map in Python, defining the mapping in two ways in one dictionary
-
-    @classmethod
     def _load(
         cls,
         data: Dict = None,
@@ -133,7 +107,6 @@ class Model(Artifact):
         rest_model_version: ModelVersionDetails = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
         flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
-
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
@@ -181,14 +154,19 @@ class Model(Artifact):
         return model_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        aml_datastore_id = AMLNamedArmId(asset_artifact.datastore_arm_id)
-        self.path = LONG_URI_FORMAT.format(
-            aml_datastore_id.subscription_id,
-            aml_datastore_id.resource_group_name,
-            aml_datastore_id.workspace_name,
-            aml_datastore_id.asset_name,
-            asset_artifact.relative_path,
-        )
+
+        # datastore_arm_id is null for registry scenario, so capture the full_storage_path
+        if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
+            self.path = asset_artifact.full_storage_path
+        else:
+            aml_datastore_id = AMLNamedArmId(asset_artifact.datastore_arm_id)
+            self.path = LONG_URI_FORMAT.format(
+                aml_datastore_id.subscription_id,
+                aml_datastore_id.resource_group_name,
+                aml_datastore_id.workspace_name,
+                aml_datastore_id.asset_name,
+                asset_artifact.relative_path,
+            )
 
     def _to_arm_resource_param(self, **kwargs):
         properties = self._to_rest_object().properties

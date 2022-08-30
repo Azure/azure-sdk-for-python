@@ -26,7 +26,7 @@ _CONVERT = {
 }
 _LANGUAGES = {
     'Test': common_process,
-    # 'Python': python_process,
+    'Python': python_process,
     'Java': java_process,
     'Go': go_process,
     'JS': js_process
@@ -34,7 +34,7 @@ _LANGUAGES = {
 
 
 def collect_open_issues() -> List[IssuePackage]:
-    hub = Github(os.getenv('TOKEN'))
+    hub = Github(os.getenv('AZURESDK_BOT_TOKEN'))
     request_repo = hub.get_repo(REQUEST_REPO)
     mgmt_label = request_repo.get_label('ManagementPlane')
     open_issues = request_repo.get_issues(state='open', labels=[mgmt_label])

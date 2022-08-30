@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml.constants import SearchSpace
-from marshmallow import fields, post_load, pre_dump, ValidationError
+# pylint: disable=unused-argument,no-self-use
+
+from marshmallow import ValidationError, fields, post_load, pre_dump
+
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml.constants import SearchSpace
 
 
 class RandintSchema(metaclass=PatchedSchemaMeta):

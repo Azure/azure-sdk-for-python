@@ -48,7 +48,7 @@ class ProvidersOperations:
         self._config = config
 
     async def unregister(self, resource_provider_namespace: str, **kwargs) -> "models.Provider":
-        """Unregisters a subscription from a resource provider.
+        """Unregister a subscription from a resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider to unregister.
         :type resource_provider_namespace: str

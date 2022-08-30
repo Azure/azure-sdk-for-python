@@ -32,3 +32,4 @@ extends:
     Artifacts:
     - name: azure-ai-ml
       safeName: azureaiml
+      skipVerifyChangeLog: true

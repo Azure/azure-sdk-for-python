@@ -16,7 +16,6 @@ from azure.ai.textanalytics import (
     RecognizePiiEntitiesResult,
     AnalyzeSentimentResult,
     ExtractKeyPhrasesResult,
-    ExtractSummaryResult,
     _AnalyzeActionsType
 )
 from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase
@@ -104,6 +103,4 @@ class TextAnalyticsTest(AzureRecordedTestCase):
             return _AnalyzeActionsType.ANALYZE_SENTIMENT
         if isinstance(document_result, ExtractKeyPhrasesResult):
             return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
-        if isinstance(document_result, ExtractSummaryResult):
-            return _AnalyzeActionsType.EXTRACT_SUMMARY
         raise ValueError("Your action result doesn't match any of the action types")

@@ -8,18 +8,17 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "33",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "491e0137-5eb2-11ec-91af-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "source": "https://blob_sas_url"
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "eb78e57d-e01c-435a-83dd-5212ea1fefec",
+        "apim-request-id": "6f9a2e8f-88bb-4a38-bad5-8de95ac22f24",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Thu, 16 Dec 2021 20:53:55 GMT"
+        "Date": "Fri, 24 Jun 2022 00:08:45 GMT"
       },
       "ResponseBody": {
         "error": {

@@ -2,37 +2,32 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import os
-from typing import Dict, Union, Optional
 from pathlib import Path
+from typing import Dict, Optional, Union
+
 import yaml
 
-from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import BuildContext as RestBuildContext
 from azure.ai.ml._restclient.v2022_05_01.models import (
-    BuildContext as RestBuildContext,
-    EnvironmentVersionDetails,
-    EnvironmentVersionData,
     EnvironmentContainerData,
-)
-from azure.ai.ml._utils.utils import load_yaml, load_file
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    DockerTypes,
-    ArmConstants,
-    ANONYMOUS_ENV_NAME,
+    EnvironmentVersionData,
+    EnvironmentVersionDetails,
 )
 from azure.ai.ml._schema import EnvironmentSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml.entities._util import load_from_dict, get_md5_string
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
-from azure.ai.ml._utils.utils import is_url
-
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
+from azure.ai.ml.constants import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
+from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._util import get_md5_string, load_from_dict
 
 
 class BuildContext:
-    """Docker build context for Environment
+    """Docker build context for Environment.
 
     :param path: The local or remote path to the the docker build context directory.
     :type path: Union[str, os.PathLike]
@@ -40,7 +35,12 @@ class BuildContext:
     :type dockerfile_path: str
     """
 
-    def __init__(self, *, dockerfile_path: Optional[str] = None, path: Union[str, os.PathLike] = None):
+    def __init__(
+        self,
+        *,
+        dockerfile_path: Optional[str] = None,
+        path: Union[str, os.PathLike] = None,
+    ):
         self.dockerfile_path = dockerfile_path
         self.path = path
 
@@ -125,7 +125,7 @@ class Environment(Asset):
 
         self._translated_conda_file = None
         if self.conda_file:
-            self._translated_conda_file = yaml.dump(self.conda_file)  # service needs str representation
+            self._translated_conda_file = dump_yaml(self.conda_file, sort_keys=True)  # service needs str representation
 
         if self.build and self.build.path and not is_url(self.build.path):
             path = Path(self.build.path)
@@ -161,28 +161,6 @@ class Environment(Asset):
         if not isinstance(value, Dict):
             value = _deserialize(self.base_path, value, is_conda=True)
         self._conda_file = value
-
-    @classmethod
-    def load(
-        cls,
-        path: Union[os.PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Environment":
-        """Construct a environment object from yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Constructed environment object.
-        :rtype: Environment
-        """
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
 
     @classmethod
     def _load(
@@ -346,9 +324,13 @@ class Environment(Asset):
 
 # TODO: Remove _DockerBuild and _DockerConfiguration classes once local endpoint moves to using updated env
 class _DockerBuild:
-    """Helper class to encapsulate Docker build info for Environment"""
+    """Helper class to encapsulate Docker build info for Environment."""
 
-    def __init__(self, base_path: Optional[Union[str, os.PathLike]] = None, dockerfile: Optional[str] = None):
+    def __init__(
+        self,
+        base_path: Optional[Union[str, os.PathLike]] = None,
+        dockerfile: Optional[str] = None,
+    ):
         self.dockerfile = _deserialize(base_path, dockerfile)
 
     def _to_rest_object(self):
@@ -365,15 +347,17 @@ class _DockerBuild:
 
 
 def _deserialize(
-    base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict], is_conda: bool = False
+    base_path: Union[str, os.PathLike],
+    input: Union[str, os.PathLike, Dict],
+    is_conda: bool = False,
 ) -> Union[str, Dict]:
-    """Deserialize user input files for conda and docker
+    """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.
     :type base_path: Union[str, os.PathLike]
     :param input: Input to be deserialized. Will be either dictionary of file contents or path to file.
     :type input: Union[str, os.PathLike, Dict[str, str]]
-    :param is_conda: If file is condafile, it will be returned as dictionary
+    :param is_conda: If file is conda file, it will be returned as dictionary
     :type is_conda: bool
     :return: Union[str, Dict]
     """
@@ -389,7 +373,7 @@ def _deserialize(
 
 
 def _resolve_path(base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict]):
-    """Deserialize user input files for conda and docker
+    """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.
     :type base_path: Union[str, os.PathLike]

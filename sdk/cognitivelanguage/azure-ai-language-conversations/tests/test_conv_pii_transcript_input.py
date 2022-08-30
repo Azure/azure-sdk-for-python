@@ -14,7 +14,8 @@ from testcase import (
 )
 from azure.ai.language.conversations import ConversationAnalysisClient
 
-class ConversationalPiiTests(ConversationTest):
+
+class TestConversationalPiiTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
     def test_conversational_pii(self, endpoint, key):
@@ -75,12 +76,12 @@ class ConversationalPiiTests(ConversationTest):
                     ]
                 }
             )
-        
+
             # assert - main object
             result = poller.result()
             assert not result is None
             assert result["status"] == "succeeded"
-            
+
             # assert - task result
             task_result = result["tasks"]["items"][0]
             assert task_result["status"] == "succeeded"
@@ -92,5 +93,3 @@ class ConversationalPiiTests(ConversationTest):
             for conversation in conversation_items:
                 assert not conversation["redactedContent"] is None
                 assert not conversation["entities"] is None
-
-

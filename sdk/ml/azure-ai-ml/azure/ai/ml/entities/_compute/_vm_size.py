@@ -2,22 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List
+from os import PathLike
+from typing import Dict, List, Union
+
 from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachineSize
 from azure.ai.ml._schema.compute.vm_size import VmSizeSchema
-from azure.ai.ml.entities import Resource
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from typing import Dict, Union
-from os import PathLike
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    CommonYamlFields,
-)
 
 
 class VmSize(Resource, RestTranslatableMixin):
-    """virtual Machine Size"""
+    """virtual Machine Size."""
 
     def __init__(
         self,
@@ -33,7 +29,8 @@ class VmSize(Resource, RestTranslatableMixin):
         supported_compute_types: List[str] = None,
         **kwargs,
     ):
-        """Virtual machine size
+        """Virtual machine size.
+
         :param name: The name of the virtual machine size.
         :type name: str
         :param family: The family name of the virtual machine size.
@@ -44,7 +41,7 @@ class VmSize(Resource, RestTranslatableMixin):
         :type gpus: int
         :param os_vhd_size_mb: The OS VHD disk size, in MB, allowed by the virtual machine size.
         :type os_vhd_size_mb: int
-        :prarm max_resource_volume_mb: The resource volume size, in MB, allowed by the virtual machine
+        :param max_resource_volume_mb: The resource volume size, in MB, allowed by the virtual machine
         size.
         :type max_resource_volume_mb: int
         :param memory_gb: The amount of memory, in GB, supported by the virtual machine size.

@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,35 +25,33 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class CapacityReservationGroupsOperations:
-    """CapacityReservationGroupsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.compute.v2021_04_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.v2021_04_01.aio.ComputeManagementClient`'s
+        :attr:`capacity_reservation_groups` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create_or_update(
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        parameters: "_models.CapacityReservationGroup",
+        parameters: _models.CapacityReservationGroup,
         **kwargs: Any
-    ) -> "_models.CapacityReservationGroup":
+    ) -> _models.CapacityReservationGroup:
         """The operation to create or update a capacity reservation group. When updating a capacity
         reservation group, only tags may be modified. Please refer to
         https://aka.ms/CapacityReservation for more details.
@@ -68,14 +67,17 @@ class CapacityReservationGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2021_04_01.models.CapacityReservationGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapacityReservationGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2021-04-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-04-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CapacityReservationGroup]
 
         _json = self._serialize.body(parameters, 'CapacityReservationGroup')
 
@@ -87,11 +89,13 @@ class CapacityReservationGroupsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -121,9 +125,9 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        parameters: "_models.CapacityReservationGroupUpdate",
+        parameters: _models.CapacityReservationGroupUpdate,
         **kwargs: Any
-    ) -> "_models.CapacityReservationGroup":
+    ) -> _models.CapacityReservationGroup:
         """The operation to update a capacity reservation group. When updating a capacity reservation
         group, only tags may be modified.
 
@@ -138,14 +142,17 @@ class CapacityReservationGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2021_04_01.models.CapacityReservationGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapacityReservationGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2021-04-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-04-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CapacityReservationGroup]
 
         _json = self._serialize.body(parameters, 'CapacityReservationGroupUpdate')
 
@@ -157,11 +164,13 @@ class CapacityReservationGroupsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -203,13 +212,16 @@ class CapacityReservationGroupsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2021-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -218,11 +230,13 @@ class CapacityReservationGroupsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -246,7 +260,7 @@ class CapacityReservationGroupsOperations:
         capacity_reservation_group_name: str,
         expand: Optional[Union[str, "_models.CapacityReservationGroupInstanceViewTypes"]] = None,
         **kwargs: Any
-    ) -> "_models.CapacityReservationGroup":
+    ) -> _models.CapacityReservationGroup:
         """The operation that retrieves information about a capacity reservation group.
 
         :param resource_group_name: The name of the resource group.
@@ -264,13 +278,16 @@ class CapacityReservationGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2021_04_01.models.CapacityReservationGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapacityReservationGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2021-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CapacityReservationGroup]
 
         
         request = build_get_request(
@@ -280,11 +297,13 @@ class CapacityReservationGroupsOperations:
             api_version=api_version,
             expand=expand,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -311,7 +330,7 @@ class CapacityReservationGroupsOperations:
         resource_group_name: str,
         expand: Optional[Union[str, "_models.ExpandTypesForGetCapacityReservationGroups"]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.CapacityReservationGroupListResult"]:
+    ) -> AsyncIterable[_models.CapacityReservationGroupListResult]:
         """Lists all of the capacity reservation groups in the specified resource group. Use the nextLink
         property in the response to get the next page of capacity reservation groups.
 
@@ -329,13 +348,16 @@ class CapacityReservationGroupsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2021_04_01.models.CapacityReservationGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapacityReservationGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CapacityReservationGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -345,9 +367,11 @@ class CapacityReservationGroupsOperations:
                     api_version=api_version,
                     expand=expand,
                     template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -357,9 +381,11 @@ class CapacityReservationGroupsOperations:
                     api_version=api_version,
                     expand=expand,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -397,7 +423,7 @@ class CapacityReservationGroupsOperations:
         self,
         expand: Optional[Union[str, "_models.ExpandTypesForGetCapacityReservationGroups"]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.CapacityReservationGroupListResult"]:
+    ) -> AsyncIterable[_models.CapacityReservationGroupListResult]:
         """Lists all of the capacity reservation groups in the subscription. Use the nextLink property in
         the response to get the next page of capacity reservation groups.
 
@@ -413,13 +439,16 @@ class CapacityReservationGroupsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2021_04_01.models.CapacityReservationGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-04-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapacityReservationGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-04-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CapacityReservationGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -428,9 +457,11 @@ class CapacityReservationGroupsOperations:
                     api_version=api_version,
                     expand=expand,
                     template_url=self.list_by_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -439,9 +470,11 @@ class CapacityReservationGroupsOperations:
                     api_version=api_version,
                     expand=expand,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

@@ -5,7 +5,7 @@ environment:
   name: "DroppedEnvName"
   version: 2
   image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
-code: "./path/to/code"
+code: "../python"
 name: "test1"
 compute: "azureml:testCompute"
 experiment_name: mfe-test1

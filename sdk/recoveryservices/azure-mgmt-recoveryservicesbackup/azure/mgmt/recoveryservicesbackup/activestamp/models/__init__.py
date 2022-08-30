@@ -58,9 +58,12 @@ from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectedItem
 from ._models_py3 import AzureVmWorkloadSAPAseDatabaseWorkloadItem
 from ._models_py3 import AzureVmWorkloadSAPAseSystemProtectableItem
 from ._models_py3 import AzureVmWorkloadSAPAseSystemWorkloadItem
+from ._models_py3 import AzureVmWorkloadSAPHanaDBInstance
+from ._models_py3 import AzureVmWorkloadSAPHanaDBInstanceProtectedItem
 from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseProtectableItem
 from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseProtectedItem
 from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseWorkloadItem
+from ._models_py3 import AzureVmWorkloadSAPHanaHSR
 from ._models_py3 import AzureVmWorkloadSAPHanaSystemProtectableItem
 from ._models_py3 import AzureVmWorkloadSAPHanaSystemWorkloadItem
 from ._models_py3 import AzureVmWorkloadSQLAvailabilityGroupProtectableItem
@@ -273,6 +276,7 @@ from ._models_py3 import SimpleSchedulePolicyV2
 from ._models_py3 import SubProtectionPolicy
 from ._models_py3 import TargetAFSRestoreInfo
 from ._models_py3 import TargetRestoreInfo
+from ._models_py3 import TieringPolicy
 from ._models_py3 import TokenInformation
 from ._models_py3 import TriggerDataMoveRequest
 from ._models_py3 import UnlockDeleteRequest
@@ -335,6 +339,7 @@ from ._recovery_services_backup_client_enums import (
     OverwriteOptions,
     PolicyType,
     PrivateEndpointConnectionStatus,
+    ProtectableContainerType,
     ProtectedItemHealthStatus,
     ProtectedItemState,
     ProtectionIntentItemType,
@@ -358,6 +363,7 @@ from ._recovery_services_backup_client_enums import (
     StorageType,
     StorageTypeState,
     SupportStatus,
+    TieringMode,
     Type,
     UsagesUnit,
     ValidationStatus,
@@ -366,7 +372,9 @@ from ._recovery_services_backup_client_enums import (
     WorkloadType,
     XcoolState,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AzureBackupGoalFeatureSupportRequest',
     'AzureBackupServerContainer',
@@ -420,9 +428,12 @@ __all__ = [
     'AzureVmWorkloadSAPAseDatabaseWorkloadItem',
     'AzureVmWorkloadSAPAseSystemProtectableItem',
     'AzureVmWorkloadSAPAseSystemWorkloadItem',
+    'AzureVmWorkloadSAPHanaDBInstance',
+    'AzureVmWorkloadSAPHanaDBInstanceProtectedItem',
     'AzureVmWorkloadSAPHanaDatabaseProtectableItem',
     'AzureVmWorkloadSAPHanaDatabaseProtectedItem',
     'AzureVmWorkloadSAPHanaDatabaseWorkloadItem',
+    'AzureVmWorkloadSAPHanaHSR',
     'AzureVmWorkloadSAPHanaSystemProtectableItem',
     'AzureVmWorkloadSAPHanaSystemWorkloadItem',
     'AzureVmWorkloadSQLAvailabilityGroupProtectableItem',
@@ -635,6 +646,7 @@ __all__ = [
     'SubProtectionPolicy',
     'TargetAFSRestoreInfo',
     'TargetRestoreInfo',
+    'TieringPolicy',
     'TokenInformation',
     'TriggerDataMoveRequest',
     'UnlockDeleteRequest',
@@ -694,6 +706,7 @@ __all__ = [
     'OverwriteOptions',
     'PolicyType',
     'PrivateEndpointConnectionStatus',
+    'ProtectableContainerType',
     'ProtectedItemHealthStatus',
     'ProtectedItemState',
     'ProtectionIntentItemType',
@@ -717,6 +730,7 @@ __all__ = [
     'StorageType',
     'StorageTypeState',
     'SupportStatus',
+    'TieringMode',
     'Type',
     'UsagesUnit',
     'ValidationStatus',
@@ -725,3 +739,5 @@ __all__ = [
     'WorkloadType',
     'XcoolState',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

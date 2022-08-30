@@ -8,8 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "130",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2dd85012-5eeb-11ec-8cd9-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "source": "https://blob_sas_url",
@@ -22,46 +21,45 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "f9850f11-04c4-47dc-908a-cabfc99826d2",
+        "apim-request-id": "cdc6324b-08bb-4365-b441-1e59a04c27f4",
         "Content-Length": "0",
-        "Date": "Fri, 17 Dec 2021 03:41:12 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea",
+        "Date": "Fri, 24 Jun 2022 01:20:35 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/fd720005-4fcf-498b-aadb-2527a5d846ae",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "514"
+        "x-envoy-upstream-service-time": "287"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea?includeKeys=true",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/fd720005-4fcf-498b-aadb-2527a5d846ae?includeKeys=true",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2dd85012-5eeb-11ec-8cd9-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "5947264e-25c4-45b0-9124-734f28f67622",
+        "apim-request-id": "a08abe19-43ea-45f7-bec3-b4cc71148027",
         "Content-Length": "1264",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:17 GMT",
+        "Date": "Fri, 24 Jun 2022 01:20:40 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "14"
+        "x-envoy-upstream-service-time": "67"
       },
       "ResponseBody": {
         "modelInfo": {
-          "modelId": "e9529096-cfbc-4838-90f6-463d2fec87ea",
+          "modelId": "fd720005-4fcf-498b-aadb-2527a5d846ae",
           "modelName": "mymodel",
           "attributes": {
             "isComposed": false
           },
           "status": "ready",
-          "createdDateTime": "2021-12-17T03:41:12Z",
-          "lastUpdatedDateTime": "2021-12-17T03:41:15Z"
+          "createdDateTime": "2022-06-24T01:20:35Z",
+          "lastUpdatedDateTime": "2022-06-24T01:20:37Z"
         },
         "trainResult": {
           "averageModelAccuracy": 0.96,
@@ -165,234 +163,151 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "315af1c8-5eeb-11ec-a2c1-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "78541198-fd0c-4dfe-8e9b-88d158ffe538",
+        "apim-request-id": "92be736a-e72c-457a-bbbc-0937c77850cb",
         "Content-Length": "112",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:17 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/dd9bb858-981f-44cb-9b4d-823e57fbb2ca",
+        "Date": "Fri, 24 Jun 2022 01:20:40 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/2eede63c-ea0a-4e58-8e1c-0c775ea4ddc0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "167"
+        "x-envoy-upstream-service-time": "174"
       },
       "ResponseBody": {
-        "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca",
+        "modelId": "2eede63c-ea0a-4e58-8e1c-0c775ea4ddc0",
         "accessToken": "redacted",
-        "expirationDateTimeTicks": 1639798878
+        "expirationDateTimeTicks": 1656120041
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea/copy",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/fd720005-4fcf-498b-aadb-2527a5d846ae/copy",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "315",
+        "Content-Length": "208",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "318f2d62-5eeb-11ec-b721-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname",
+        "targetResourceId": "/path/to/resource/id",
         "targetResourceRegion": "region",
         "copyAuthorization": {
-          "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca",
+          "modelId": "2eede63c-ea0a-4e58-8e1c-0c775ea4ddc0",
           "accessToken": "redacted",
-          "expirationDateTimeTicks": 1639798878
+          "expirationDateTimeTicks": 1656120041
+        }
+      },
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "33388152-f4bb-4e77-9e3a-3a3474bfad7e",
+        "Content-Length": "348",
+        "Content-Type": "application/json",
+        "Date": "Fri, 24 Jun 2022 01:20:40 GMT",
+        "policy-id": "ResourceRateLimitBy60s",
+        "Retry-After": "48",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Custom Form Model Management - Copy Custom Model Operation under Form Recognizer API (v2.1) have exceeded rate limit of your current FormRecognizer S0 pricing tier. Please retry after 48 seconds. Please contact Azure support service if you would like to further increase the default rate limit."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/fd720005-4fcf-498b-aadb-2527a5d846ae/copy",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "208",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": {
+        "targetResourceId": "/path/to/resource/id",
+        "targetResourceRegion": "region",
+        "copyAuthorization": {
+          "modelId": "2eede63c-ea0a-4e58-8e1c-0c775ea4ddc0",
+          "accessToken": "redacted",
+          "expirationDateTimeTicks": 1656120041
         }
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "0ba205c3-e5d2-44af-a6cb-ff6239179009",
+        "apim-request-id": "06a6387c-5f5c-4601-8bf2-ad4837309130",
         "Content-Length": "0",
-        "Date": "Fri, 17 Dec 2021 03:41:17 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea/copyresults/596347f2-c911-455b-b4ce-6e6be1132583",
+        "Date": "Fri, 24 Jun 2022 01:21:29 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/fd720005-4fcf-498b-aadb-2527a5d846ae/copyresults/9a4a62c1-14e4-47c8-b71f-7682130038b6",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "33"
+        "x-envoy-upstream-service-time": "124"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea/copyresults/596347f2-c911-455b-b4ce-6e6be1132583",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/fd720005-4fcf-498b-aadb-2527a5d846ae/copyresults/9a4a62c1-14e4-47c8-b71f-7682130038b6",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "318f2d62-5eeb-11ec-b721-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "03808c62-ca4e-4ec1-8c7e-46deb4571597",
-        "Content-Length": "173",
+        "apim-request-id": "8b9017d9-6f94-44c9-87d9-7b21b12aeb6a",
+        "Content-Length": "187",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:22 GMT",
+        "Date": "Fri, 24 Jun 2022 01:21:33 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
-      },
-      "ResponseBody": {
-        "status": "notStarted",
-        "createdDateTime": "2021-12-17T03:41:18Z",
-        "lastUpdatedDateTime": "2021-12-17T03:41:18Z",
-        "copyResult": {
-          "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea/copyresults/596347f2-c911-455b-b4ce-6e6be1132583",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "318f2d62-5eeb-11ec-b721-c8348e073d30"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "d788309a-52fc-45c5-bb0d-9dd5f6a4b584",
-        "Content-Length": "173",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:28 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "14"
-      },
-      "ResponseBody": {
-        "status": "notStarted",
-        "createdDateTime": "2021-12-17T03:41:18Z",
-        "lastUpdatedDateTime": "2021-12-17T03:41:18Z",
-        "copyResult": {
-          "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea/copyresults/596347f2-c911-455b-b4ce-6e6be1132583",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "318f2d62-5eeb-11ec-b721-c8348e073d30"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "ed30f7a5-6f37-4ff5-9886-30490eca42a7",
-        "Content-Length": "173",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:34 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "12"
-      },
-      "ResponseBody": {
-        "status": "notStarted",
-        "createdDateTime": "2021-12-17T03:41:18Z",
-        "lastUpdatedDateTime": "2021-12-17T03:41:18Z",
-        "copyResult": {
-          "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea/copyresults/596347f2-c911-455b-b4ce-6e6be1132583",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "318f2d62-5eeb-11ec-b721-c8348e073d30"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "96678bf6-4314-403e-9bcc-05949a0c4574",
-        "Content-Length": "173",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:38 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "18"
-      },
-      "ResponseBody": {
-        "status": "notStarted",
-        "createdDateTime": "2021-12-17T03:41:18Z",
-        "lastUpdatedDateTime": "2021-12-17T03:41:18Z",
-        "copyResult": {
-          "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/e9529096-cfbc-4838-90f6-463d2fec87ea/copyresults/596347f2-c911-455b-b4ce-6e6be1132583",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "318f2d62-5eeb-11ec-b721-c8348e073d30"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "1d6ae34d-be0d-4dee-995b-756188915331",
-        "Content-Length": "188",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:44 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "18"
+        "x-envoy-upstream-service-time": "16"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2021-12-17T03:41:39.9920126Z",
-        "lastUpdatedDateTime": "2021-12-17T03:41:39.9920129Z",
+        "createdDateTime": "2022-06-24T01:21:30.619016Z",
+        "lastUpdatedDateTime": "2022-06-24T01:21:30.6190181Z",
         "copyResult": {
-          "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca"
+          "modelId": "2eede63c-ea0a-4e58-8e1c-0c775ea4ddc0"
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/dd9bb858-981f-44cb-9b4d-823e57fbb2ca?includeKeys=true",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/2eede63c-ea0a-4e58-8e1c-0c775ea4ddc0?includeKeys=true",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "4170a9f1-5eeb-11ec-b6d3-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "7062f0fb-24da-4dea-afec-1a83b5a47d90",
+        "apim-request-id": "225cb99a-fdc3-4e2d-870b-18ce4ceef77a",
         "Content-Length": "1264",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:41:44 GMT",
+        "Date": "Fri, 24 Jun 2022 01:21:33 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "18"
+        "x-envoy-upstream-service-time": "80"
       },
       "ResponseBody": {
         "modelInfo": {
-          "modelId": "dd9bb858-981f-44cb-9b4d-823e57fbb2ca",
+          "modelId": "2eede63c-ea0a-4e58-8e1c-0c775ea4ddc0",
           "modelName": "mymodel",
           "attributes": {
             "isComposed": false
           },
           "status": "ready",
-          "createdDateTime": "2021-12-17T03:41:12Z",
-          "lastUpdatedDateTime": "2021-12-17T03:41:15Z"
+          "createdDateTime": "2022-06-24T01:20:35Z",
+          "lastUpdatedDateTime": "2022-06-24T01:20:37Z"
         },
         "trainResult": {
           "averageModelAccuracy": 0.96,

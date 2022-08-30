@@ -25,6 +25,7 @@ enable-xml: true
 vanilla: true
 clear-output-folder: true
 python: true
+version-tolerant: false
 ```
 
 ### Remove x-ms-pageable
@@ -48,7 +49,7 @@ directive:
         if (property.includes('/{filesystem}/{path}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/FileSystem") && false == param['$ref'].endsWith("#/parameters/Path"))});
-        } 
+        }
         else if (property.includes('/{filesystem}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/FileSystem"))});

@@ -3,8 +3,10 @@ from typing import Callable
 from unittest.mock import Mock, patch
 
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml._operations import ComponentOperations
+from azure.ai.ml.operations import ComponentOperations
 from azure.ai.ml._scope_dependent_operations import OperationScope
+
+from .._util import _COMPONENT_TIMEOUT_SECOND
 
 
 @pytest.fixture
@@ -20,11 +22,12 @@ def mock_component_operation(
     )
 
 
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestComponentOperation:
     def test_create(self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]) -> None:
         task = {
-            "type": "function",
+            "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
             "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -40,8 +43,8 @@ class TestComponentOperation:
             task=task,
         )
 
-        with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml._operations.component_operations.Component._from_rest_object",
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
             return_value=ParallelComponent(),
         ):
             mock_component_operation.create_or_update(component)
@@ -59,7 +62,7 @@ class TestComponentOperation:
         self, mock_component_operation: ComponentOperations, randstr: Callable[[], str]
     ) -> None:
         task = {
-            "type": "function",
+            "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
             "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -75,8 +78,8 @@ class TestComponentOperation:
             task=task,
         )
         assert component._auto_increment_version
-        with patch.object(ComponentOperations, "_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml._operations.component_operations.Component._from_rest_object",
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
             return_value=component,
         ):
             mock_component_operation.create_or_update(component)
@@ -102,7 +105,7 @@ class TestComponentOperation:
         mock_component_operation._container_operation.list.assert_called_once()
 
     def test_get(self, mock_component_operation: ComponentOperations) -> None:
-        with patch("azure.ai.ml._operations.component_operations.Component") as mock_component_entity:
+        with patch("azure.ai.ml.operations._component_operations.Component") as mock_component_entity:
             mock_component_operation.get("mock_component", "1")
 
         mock_component_operation._version_operation.get.assert_called_once()

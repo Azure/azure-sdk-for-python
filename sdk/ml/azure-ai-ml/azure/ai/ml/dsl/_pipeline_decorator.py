@@ -1,35 +1,41 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
+import logging
 from collections import OrderedDict
 from functools import wraps
-from inspect import signature, Parameter
-from typing import TypeVar, Callable, Any, Dict
-from azure.ai.ml.entities._inputs_outputs import Input
+from inspect import Parameter, signature
+from typing import Any, Callable, Dict, TypeVar
 
+from azure.ai.ml.dsl._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
+from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities._builders.pipeline import Pipeline
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.pipeline._exceptions import (
-    UnsupportedParameterKindError,
+    MissingPositionalArgsError,
+    MultipleValueError,
     TooManyPositionalArgsError,
     UnexpectedKeywordError,
-    MultipleValueError,
-    MissingPositionalArgsError,
+    UnsupportedParameterKindError,
     UserErrorException,
 )
-from azure.ai.ml.dsl._pipeline_component_builder import PipelineComponentBuilder
-from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml.constants import ComponentSource
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutputBase
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
 SUPPORTED_INPUT_TYPES = (
     PipelineInput,
+    PipelineOutputBase,
     Input,
     str,
     bool,
     int,
     float,
 )
+module_logger = logging.getLogger(__name__)
 
 
 def pipeline(
@@ -39,13 +45,12 @@ def pipeline(
     display_name: str = None,
     description: str = None,
     experiment_name: str = None,
-    default_compute: str = None,
-    default_datastore: str = None,
     tags: Dict[str, str] = None,
     continue_on_step_failure: bool = None,
     **kwargs,
 ):
-    """Build a pipeline which contains all component nodes defined in this function. Currently only single layer pipeline is supported.
+    """Build a pipeline which contains all component nodes defined in this
+    function. Currently only single layer pipeline is supported.
 
     .. note::
 
@@ -84,10 +89,6 @@ def pipeline(
     :type description: str
     :param experiment_name: Name of the experiment the job will be created under, if None is provided, experiment will be set to current directory.
     :type experiment_name: str
-    :param default_compute: The compute target of the built pipeline.
-    :type default_compute: str
-    :param default_datastore: The default datastore of pipeline.
-    :type default_datastore: str
     :param tags: The tags of pipeline component.
     :type tags: dict[str, str]
     :param continue_on_step_failure: Flag when set, continue pipeline execution if a step fails.
@@ -97,11 +98,30 @@ def pipeline(
     """
 
     def pipeline_decorator(func: _TFunc) -> _TFunc:
-        # Support both compute and default_compute target, but compute will have higher priority
+        # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
+        # to support legacy usage, we support them with priority.
         compute = kwargs.get("compute", None)
         default_compute_target = kwargs.get("default_compute_target", None)
-        actual_compute = default_compute or compute or default_compute_target
+        actual_compute = kwargs.get("default_compute", None) or compute or default_compute_target
+
+        default_datastore = kwargs.get("default_datastore", None)
         force_rerun = kwargs.get("force_rerun", None)
+        job_settings = {
+            "default_datastore": default_datastore,
+            "continue_on_step_failure": continue_on_step_failure,
+            "force_rerun": force_rerun,
+        }
+        job_settings = {k: v for k, v in job_settings.items() if v is not None}
+        pipeline_builder = PipelineComponentBuilder(
+            func=func,
+            name=name,
+            version=version,
+            display_name=display_name,
+            description=description,
+            compute=actual_compute,
+            default_datastore=default_datastore,
+            tags=tags,
+        )
 
         @wraps(func)
         def wrapper(*args, **kwargs) -> PipelineJob:
@@ -111,37 +131,35 @@ def pipeline(
             kwargs.update(provided_positional_args)
 
             # TODO: cache built pipeline component
-            pipeline_builder = PipelineComponentBuilder(
-                func=func,
-                name=name,
-                version=version,
-                display_name=display_name if display_name else func.__name__,
-                description=description,
-                compute=actual_compute,
-                default_datastore=default_datastore,
-                tags=tags,
-            )
-            pipeline_component = pipeline_builder.build(_build_pipeline_parameter(func))
+            pipeline_component = pipeline_builder.build()
 
             # TODO: pass compute & default_compute separately?
-            built_pipeline = PipelineJob(
-                jobs=pipeline_component.components,
-                component=pipeline_component,
-                experiment_name=experiment_name,
-                compute=actual_compute,
-                tags=tags,
-                settings=PipelineJobSettings(
-                    default_datastore=default_datastore,
-                    default_compute=None,
-                    continue_on_step_failure=continue_on_step_failure,
-                    force_rerun=force_rerun,
-                ),
-                inputs=kwargs,
-            )
+            common_init_args = {
+                "experiment_name": experiment_name,
+                "component": pipeline_component,
+                "inputs": kwargs,
+                "tags": tags,
+            }
+            if _is_inside_dsl_pipeline_func():
+                # Build pipeline node instead of pipeline job if inside dsl.
+                built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
+                if job_settings:
+                    module_logger.warning(
+                        f"Job settings {job_settings} on pipeline function {func.__name__!r} are ignored when using inside PipelineJob."
+                    )
+            else:
+                built_pipeline = PipelineJob(
+                    jobs=pipeline_component.jobs,
+                    compute=actual_compute,
+                    settings=PipelineJobSettings(**job_settings),
+                    **common_init_args,
+                )
 
             return built_pipeline
 
         wrapper._is_dsl_func = True
+        wrapper._job_settings = job_settings
+        wrapper._pipeline_builder = pipeline_builder
         return wrapper
 
     return pipeline_decorator
@@ -187,28 +205,3 @@ def _validate_args(func, args, kwargs):
             )
 
     return provided_args
-
-
-def _build_pipeline_parameter(func):
-    # transform kwargs
-    transformed_kwargs = {}
-
-    def all_params(parameters):
-        for value in parameters.values():
-            yield value
-
-    if func is None:
-        return transformed_kwargs
-
-    parameters = all_params(signature(func).parameters)
-    # transform default values
-    for left_args in parameters:
-        if left_args.name not in transformed_kwargs.keys():
-            default = left_args.default if left_args.default is not Parameter.empty else None
-            transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(left_args.name, default)
-    return transformed_kwargs
-
-
-def _wrap_pipeline_parameter(key, value):
-    # Note: here we build PipelineInput to mark this input as a data binding.
-    return PipelineInput(name=key, meta=None, data=value)

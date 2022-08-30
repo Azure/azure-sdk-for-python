@@ -7,11 +7,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._web_site_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ApiDefinitionInfo(msrest.serialization.Model):
@@ -61,9 +63,9 @@ class ApplicationLogsConfig(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        file_system: Optional["FileSystemApplicationLogsConfig"] = None,
-        azure_table_storage: Optional["AzureTableStorageApplicationLogsConfig"] = None,
-        azure_blob_storage: Optional["AzureBlobStorageApplicationLogsConfig"] = None,
+        file_system: Optional["_models.FileSystemApplicationLogsConfig"] = None,
+        azure_table_storage: Optional["_models.AzureTableStorageApplicationLogsConfig"] = None,
+        azure_blob_storage: Optional["_models.AzureBlobStorageApplicationLogsConfig"] = None,
         **kwargs
     ):
         """
@@ -85,8 +87,8 @@ class ApplicationLogsConfig(msrest.serialization.Model):
 class AutoHealActions(msrest.serialization.Model):
     """Actions which to take by the auto-heal module when a rule is triggered.
 
-    :ivar action_type: Predefined action to be taken. Possible values include: "Recycle",
-     "LogEvent", "CustomAction".
+    :ivar action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent",
+     "CustomAction".
     :vartype action_type: str or ~azure.mgmt.web.v2016_08_01.models.AutoHealActionType
     :ivar custom_action: Custom action to be taken.
     :vartype custom_action: ~azure.mgmt.web.v2016_08_01.models.AutoHealCustomAction
@@ -104,14 +106,14 @@ class AutoHealActions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "AutoHealActionType"]] = None,
-        custom_action: Optional["AutoHealCustomAction"] = None,
+        action_type: Optional[Union[str, "_models.AutoHealActionType"]] = None,
+        custom_action: Optional["_models.AutoHealCustomAction"] = None,
         min_process_execution_time: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword action_type: Predefined action to be taken. Possible values include: "Recycle",
-         "LogEvent", "CustomAction".
+        :keyword action_type: Predefined action to be taken. Known values are: "Recycle", "LogEvent",
+         "CustomAction".
         :paramtype action_type: str or ~azure.mgmt.web.v2016_08_01.models.AutoHealActionType
         :keyword custom_action: Custom action to be taken.
         :paramtype custom_action: ~azure.mgmt.web.v2016_08_01.models.AutoHealCustomAction
@@ -175,8 +177,8 @@ class AutoHealRules(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        triggers: Optional["AutoHealTriggers"] = None,
-        actions: Optional["AutoHealActions"] = None,
+        triggers: Optional["_models.AutoHealTriggers"] = None,
+        actions: Optional["_models.AutoHealActions"] = None,
         **kwargs
     ):
         """
@@ -213,10 +215,10 @@ class AutoHealTriggers(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        requests: Optional["RequestsBasedTrigger"] = None,
+        requests: Optional["_models.RequestsBasedTrigger"] = None,
         private_bytes_in_kb: Optional[int] = None,
-        status_codes: Optional[List["StatusCodesBasedTrigger"]] = None,
-        slow_requests: Optional["SlowRequestsBasedTrigger"] = None,
+        status_codes: Optional[List["_models.StatusCodesBasedTrigger"]] = None,
+        slow_requests: Optional["_models.SlowRequestsBasedTrigger"] = None,
         **kwargs
     ):
         """
@@ -239,8 +241,7 @@ class AutoHealTriggers(msrest.serialization.Model):
 class AzureBlobStorageApplicationLogsConfig(msrest.serialization.Model):
     """Application logs azure blob storage configuration.
 
-    :ivar level: Log level. Possible values include: "Off", "Verbose", "Information", "Warning",
-     "Error".
+    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", "Error".
     :vartype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
     :ivar sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
     :vartype sas_url: str
@@ -259,13 +260,13 @@ class AzureBlobStorageApplicationLogsConfig(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        level: Optional[Union[str, "LogLevel"]] = None,
+        level: Optional[Union[str, "_models.LogLevel"]] = None,
         sas_url: Optional[str] = None,
         retention_in_days: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword level: Log level. Possible values include: "Off", "Verbose", "Information", "Warning",
+        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning",
          "Error".
         :paramtype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
         :keyword sas_url: SAS url to a azure blob container with read/write/list/delete permissions.
@@ -331,8 +332,7 @@ class AzureTableStorageApplicationLogsConfig(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar level: Log level. Possible values include: "Off", "Verbose", "Information", "Warning",
-     "Error".
+    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", "Error".
     :vartype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
     :ivar sas_url: Required. SAS URL to an Azure table with add/query/delete permissions.
     :vartype sas_url: str
@@ -351,11 +351,11 @@ class AzureTableStorageApplicationLogsConfig(msrest.serialization.Model):
         self,
         *,
         sas_url: str,
-        level: Optional[Union[str, "LogLevel"]] = None,
+        level: Optional[Union[str, "_models.LogLevel"]] = None,
         **kwargs
     ):
         """
-        :keyword level: Log level. Possible values include: "Off", "Verbose", "Information", "Warning",
+        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning",
          "Error".
         :paramtype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
         :keyword sas_url: Required. SAS URL to an Azure table with add/query/delete permissions.
@@ -433,9 +433,8 @@ class BackupItem(ProxyOnlyResource):
     :vartype blob_name: str
     :ivar name_properties_name: Name of this backup.
     :vartype name_properties_name: str
-    :ivar status: Backup status. Possible values include: "InProgress", "Failed", "Succeeded",
-     "TimedOut", "Created", "Skipped", "PartiallySucceeded", "DeleteInProgress", "DeleteFailed",
-     "Deleted".
+    :ivar status: Backup status. Known values are: "InProgress", "Failed", "Succeeded", "TimedOut",
+     "Created", "Skipped", "PartiallySucceeded", "DeleteInProgress", "DeleteFailed", "Deleted".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.BackupItemStatus
     :ivar size_in_bytes: Size of the backup in bytes.
     :vartype size_in_bytes: long
@@ -552,7 +551,7 @@ class BackupItemCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["BackupItem"],
+        value: List["_models.BackupItem"],
         **kwargs
     ):
         """
@@ -588,7 +587,7 @@ class BackupRequest(ProxyOnlyResource):
     :vartype backup_schedule: ~azure.mgmt.web.v2016_08_01.models.BackupSchedule
     :ivar databases: Databases included in the backup.
     :vartype databases: list[~azure.mgmt.web.v2016_08_01.models.DatabaseBackupSetting]
-    :ivar type_properties_type: Type of the backup. Possible values include: "Default", "Clone",
+    :ivar type_properties_type: Type of the backup. Known values are: "Default", "Clone",
      "Relocation", "Snapshot".
     :vartype type_properties_type: str or
      ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
@@ -620,9 +619,9 @@ class BackupRequest(ProxyOnlyResource):
         backup_request_name: Optional[str] = None,
         enabled: Optional[bool] = None,
         storage_account_url: Optional[str] = None,
-        backup_schedule: Optional["BackupSchedule"] = None,
-        databases: Optional[List["DatabaseBackupSetting"]] = None,
-        type_properties_type: Optional[Union[str, "BackupRestoreOperationType"]] = None,
+        backup_schedule: Optional["_models.BackupSchedule"] = None,
+        databases: Optional[List["_models.DatabaseBackupSetting"]] = None,
+        type_properties_type: Optional[Union[str, "_models.BackupRestoreOperationType"]] = None,
         **kwargs
     ):
         """
@@ -639,7 +638,7 @@ class BackupRequest(ProxyOnlyResource):
         :paramtype backup_schedule: ~azure.mgmt.web.v2016_08_01.models.BackupSchedule
         :keyword databases: Databases included in the backup.
         :paramtype databases: list[~azure.mgmt.web.v2016_08_01.models.DatabaseBackupSetting]
-        :keyword type_properties_type: Type of the backup. Possible values include: "Default", "Clone",
+        :keyword type_properties_type: Type of the backup. Known values are: "Default", "Clone",
          "Relocation", "Snapshot".
         :paramtype type_properties_type: str or
          ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
@@ -665,7 +664,7 @@ class BackupSchedule(msrest.serialization.Model):
     :vartype frequency_interval: int
     :ivar frequency_unit: Required. The unit of time for how often the backup should be executed
      (e.g. for weekly backup, this should be set to Day and FrequencyInterval should be set to 7).
-     Possible values include: "Day", "Hour". Default value: "Day".
+     Known values are: "Day", "Hour". Default value: "Day".
     :vartype frequency_unit: str or ~azure.mgmt.web.v2016_08_01.models.FrequencyUnit
     :ivar keep_at_least_one_backup: Required. True if the retention policy should always keep at
      least one backup in the storage account, regardless how old it is; false otherwise.
@@ -699,7 +698,7 @@ class BackupSchedule(msrest.serialization.Model):
         self,
         *,
         frequency_interval: int = 7,
-        frequency_unit: Union[str, "FrequencyUnit"] = "Day",
+        frequency_unit: Union[str, "_models.FrequencyUnit"] = "Day",
         keep_at_least_one_backup: bool = True,
         retention_period_in_days: int = 30,
         start_time: Optional[datetime.datetime] = None,
@@ -711,7 +710,7 @@ class BackupSchedule(msrest.serialization.Model):
         :paramtype frequency_interval: int
         :keyword frequency_unit: Required. The unit of time for how often the backup should be executed
          (e.g. for weekly backup, this should be set to Day and FrequencyInterval should be set to 7).
-         Possible values include: "Day", "Hour". Default value: "Day".
+         Known values are: "Day", "Hour". Default value: "Day".
         :paramtype frequency_unit: str or ~azure.mgmt.web.v2016_08_01.models.FrequencyUnit
         :keyword keep_at_least_one_backup: Required. True if the retention policy should always keep at
          least one backup in the storage account, regardless how old it is; false otherwise.
@@ -900,7 +899,7 @@ class ConnectionStringDictionary(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        properties: Optional[Dict[str, "ConnStringValueTypePair"]] = None,
+        properties: Optional[Dict[str, "_models.ConnStringValueTypePair"]] = None,
         **kwargs
     ):
         """
@@ -920,9 +919,8 @@ class ConnStringInfo(msrest.serialization.Model):
     :vartype name: str
     :ivar connection_string: Connection string value.
     :vartype connection_string: str
-    :ivar type: Type of database. Possible values include: "MySql", "SQLServer", "SQLAzure",
-     "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
-     "PostgreSQL".
+    :ivar type: Type of database. Known values are: "MySql", "SQLServer", "SQLAzure", "Custom",
+     "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", "PostgreSQL".
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
     """
 
@@ -937,7 +935,7 @@ class ConnStringInfo(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         connection_string: Optional[str] = None,
-        type: Optional[Union[str, "ConnectionStringType"]] = None,
+        type: Optional[Union[str, "_models.ConnectionStringType"]] = None,
         **kwargs
     ):
         """
@@ -945,9 +943,8 @@ class ConnStringInfo(msrest.serialization.Model):
         :paramtype name: str
         :keyword connection_string: Connection string value.
         :paramtype connection_string: str
-        :keyword type: Type of database. Possible values include: "MySql", "SQLServer", "SQLAzure",
-         "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
-         "PostgreSQL".
+        :keyword type: Type of database. Known values are: "MySql", "SQLServer", "SQLAzure", "Custom",
+         "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache", "PostgreSQL".
         :paramtype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
         """
         super(ConnStringInfo, self).__init__(**kwargs)
@@ -963,9 +960,9 @@ class ConnStringValueTypePair(msrest.serialization.Model):
 
     :ivar value: Required. Value of pair.
     :vartype value: str
-    :ivar type: Required. Type of database. Possible values include: "MySql", "SQLServer",
-     "SQLAzure", "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb",
-     "RedisCache", "PostgreSQL".
+    :ivar type: Required. Type of database. Known values are: "MySql", "SQLServer", "SQLAzure",
+     "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
+     "PostgreSQL".
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
     """
 
@@ -983,15 +980,15 @@ class ConnStringValueTypePair(msrest.serialization.Model):
         self,
         *,
         value: str,
-        type: Union[str, "ConnectionStringType"],
+        type: Union[str, "_models.ConnectionStringType"],
         **kwargs
     ):
         """
         :keyword value: Required. Value of pair.
         :paramtype value: str
-        :keyword type: Required. Type of database. Possible values include: "MySql", "SQLServer",
-         "SQLAzure", "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb",
-         "RedisCache", "PostgreSQL".
+        :keyword type: Required. Type of database. Known values are: "MySql", "SQLServer", "SQLAzure",
+         "Custom", "NotificationHub", "ServiceBus", "EventHub", "ApiHub", "DocDb", "RedisCache",
+         "PostgreSQL".
         :paramtype type: str or ~azure.mgmt.web.v2016_08_01.models.ConnectionStringType
         """
         super(ConnStringValueTypePair, self).__init__(**kwargs)
@@ -1012,7 +1009,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar status: Job status. Possible values include: "Initializing", "Starting", "Running",
+    :ivar status: Job status. Known values are: "Initializing", "Starting", "Running",
      "PendingRestart", "Stopped".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.ContinuousWebJobStatus
     :ivar detailed_status: Detailed status.
@@ -1027,7 +1024,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :vartype url: str
     :ivar extra_info_url: Extra Info URL.
     :vartype extra_info_url: str
-    :ivar job_type: Job type. Possible values include: "Continuous", "Triggered".
+    :ivar job_type: Job type. Known values are: "Continuous", "Triggered".
     :vartype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
     :ivar error: Error information.
     :vartype error: str
@@ -1066,13 +1063,13 @@ class ContinuousWebJob(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        status: Optional[Union[str, "ContinuousWebJobStatus"]] = None,
+        status: Optional[Union[str, "_models.ContinuousWebJobStatus"]] = None,
         detailed_status: Optional[str] = None,
         log_url: Optional[str] = None,
         run_command: Optional[str] = None,
         url: Optional[str] = None,
         extra_info_url: Optional[str] = None,
-        job_type: Optional[Union[str, "WebJobType"]] = None,
+        job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
         settings: Optional[Dict[str, Any]] = None,
@@ -1081,7 +1078,7 @@ class ContinuousWebJob(ProxyOnlyResource):
         """
         :keyword kind: Kind of resource.
         :paramtype kind: str
-        :keyword status: Job status. Possible values include: "Initializing", "Starting", "Running",
+        :keyword status: Job status. Known values are: "Initializing", "Starting", "Running",
          "PendingRestart", "Stopped".
         :paramtype status: str or ~azure.mgmt.web.v2016_08_01.models.ContinuousWebJobStatus
         :keyword detailed_status: Detailed status.
@@ -1094,7 +1091,7 @@ class ContinuousWebJob(ProxyOnlyResource):
         :paramtype url: str
         :keyword extra_info_url: Extra Info URL.
         :paramtype extra_info_url: str
-        :keyword job_type: Job type. Possible values include: "Continuous", "Triggered".
+        :keyword job_type: Job type. Known values are: "Continuous", "Triggered".
         :paramtype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
         :keyword error: Error information.
         :paramtype error: str
@@ -1140,7 +1137,7 @@ class ContinuousWebJobCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ContinuousWebJob"],
+        value: List["_models.ContinuousWebJob"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1190,7 +1187,7 @@ class CsmPublishingProfileOptions(msrest.serialization.Model):
     :ivar format: Name of the format. Valid values are:
      FileZilla3
      WebDeploy -- default
-     Ftp. Possible values include: "FileZilla3", "WebDeploy", "Ftp".
+     Ftp. Known values are: "FileZilla3", "WebDeploy", "Ftp".
     :vartype format: str or ~azure.mgmt.web.v2016_08_01.models.PublishingProfileFormat
     """
 
@@ -1201,14 +1198,14 @@ class CsmPublishingProfileOptions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        format: Optional[Union[str, "PublishingProfileFormat"]] = None,
+        format: Optional[Union[str, "_models.PublishingProfileFormat"]] = None,
         **kwargs
     ):
         """
         :keyword format: Name of the format. Valid values are:
          FileZilla3
          WebDeploy -- default
-         Ftp. Possible values include: "FileZilla3", "WebDeploy", "Ftp".
+         Ftp. Known values are: "FileZilla3", "WebDeploy", "Ftp".
         :paramtype format: str or ~azure.mgmt.web.v2016_08_01.models.PublishingProfileFormat
         """
         super(CsmPublishingProfileOptions, self).__init__(**kwargs)
@@ -1286,7 +1283,7 @@ class CsmUsageQuota(msrest.serialization.Model):
         next_reset_time: Optional[datetime.datetime] = None,
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
-        name: Optional["LocalizableString"] = None,
+        name: Optional["_models.LocalizableString"] = None,
         **kwargs
     ):
         """
@@ -1335,7 +1332,7 @@ class CsmUsageQuotaCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CsmUsageQuota"],
+        value: List["_models.CsmUsageQuota"],
         **kwargs
     ):
         """
@@ -1363,7 +1360,7 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
     :ivar is_hostname_already_verified: :code:`<code>true</code>` if hostname is already verified;
      otherwise, :code:`<code>false</code>`.
     :vartype is_hostname_already_verified: bool
-    :ivar custom_domain_verification_test: DNS verification test result. Possible values include:
+    :ivar custom_domain_verification_test: DNS verification test result. Known values are:
      "Passed", "Failed", "Skipped".
     :vartype custom_domain_verification_test: str or
      ~azure.mgmt.web.v2016_08_01.models.DnsVerificationTestResult
@@ -1467,7 +1464,7 @@ class DatabaseBackupSetting(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar database_type: Required. Database type (e.g. SqlAzure / MySql). Possible values include:
+    :ivar database_type: Required. Database type (e.g. SqlAzure / MySql). Known values are:
      "SqlAzure", "MySql", "LocalMySql", "PostgreSql".
     :vartype database_type: str or ~azure.mgmt.web.v2016_08_01.models.DatabaseType
     :ivar name:
@@ -1496,15 +1493,15 @@ class DatabaseBackupSetting(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        database_type: Union[str, "DatabaseType"],
+        database_type: Union[str, "_models.DatabaseType"],
         name: Optional[str] = None,
         connection_string_name: Optional[str] = None,
         connection_string: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword database_type: Required. Database type (e.g. SqlAzure / MySql). Possible values
-         include: "SqlAzure", "MySql", "LocalMySql", "PostgreSql".
+        :keyword database_type: Required. Database type (e.g. SqlAzure / MySql). Known values are:
+         "SqlAzure", "MySql", "LocalMySql", "PostgreSql".
         :paramtype database_type: str or ~azure.mgmt.web.v2016_08_01.models.DatabaseType
         :keyword name:
         :paramtype name: str
@@ -1663,7 +1660,7 @@ class DeploymentCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Deployment"],
+        value: List["_models.Deployment"],
         **kwargs
     ):
         """
@@ -1734,7 +1731,7 @@ class ErrorEntity(msrest.serialization.Model):
         extended_code: Optional[str] = None,
         message_template: Optional[str] = None,
         parameters: Optional[List[str]] = None,
-        inner_errors: Optional[List["ErrorEntity"]] = None,
+        inner_errors: Optional[List["_models.ErrorEntity"]] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
         **kwargs
@@ -1776,7 +1773,7 @@ class Experiments(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        ramp_up_rules: Optional[List["RampUpRule"]] = None,
+        ramp_up_rules: Optional[List["_models.RampUpRule"]] = None,
         **kwargs
     ):
         """
@@ -1790,8 +1787,7 @@ class Experiments(msrest.serialization.Model):
 class FileSystemApplicationLogsConfig(msrest.serialization.Model):
     """Application logs to file system configuration.
 
-    :ivar level: Log level. Possible values include: "Off", "Verbose", "Information", "Warning",
-     "Error".
+    :ivar level: Log level. Known values are: "Off", "Verbose", "Information", "Warning", "Error".
     :vartype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
     """
 
@@ -1802,11 +1798,11 @@ class FileSystemApplicationLogsConfig(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        level: Optional[Union[str, "LogLevel"]] = None,
+        level: Optional[Union[str, "_models.LogLevel"]] = None,
         **kwargs
     ):
         """
-        :keyword level: Log level. Possible values include: "Off", "Verbose", "Information", "Warning",
+        :keyword level: Log level. Known values are: "Off", "Verbose", "Information", "Warning",
          "Error".
         :paramtype level: str or ~azure.mgmt.web.v2016_08_01.models.LogLevel
         """
@@ -2000,7 +1996,7 @@ class FunctionEnvelopeCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["FunctionEnvelope"],
+        value: List["_models.FunctionEnvelope"],
         **kwargs
     ):
         """
@@ -2168,16 +2164,14 @@ class HostNameBinding(ProxyOnlyResource):
     :vartype domain_id: str
     :ivar azure_resource_name: Azure resource name.
     :vartype azure_resource_name: str
-    :ivar azure_resource_type: Azure resource type. Possible values include: "Website",
-     "TrafficManager".
+    :ivar azure_resource_type: Azure resource type. Known values are: "Website", "TrafficManager".
     :vartype azure_resource_type: str or ~azure.mgmt.web.v2016_08_01.models.AzureResourceType
-    :ivar custom_host_name_dns_record_type: Custom DNS record type. Possible values include:
-     "CName", "A".
+    :ivar custom_host_name_dns_record_type: Custom DNS record type. Known values are: "CName", "A".
     :vartype custom_host_name_dns_record_type: str or
      ~azure.mgmt.web.v2016_08_01.models.CustomHostNameDnsRecordType
-    :ivar host_name_type: Hostname type. Possible values include: "Verified", "Managed".
+    :ivar host_name_type: Hostname type. Known values are: "Verified", "Managed".
     :vartype host_name_type: str or ~azure.mgmt.web.v2016_08_01.models.HostNameType
-    :ivar ssl_state: SSL type. Possible values include: "Disabled", "SniEnabled", "IpBasedEnabled".
+    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
     :vartype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
     :ivar thumbprint: SSL certificate thumbprint.
     :vartype thumbprint: str
@@ -2215,10 +2209,10 @@ class HostNameBinding(ProxyOnlyResource):
         site_name: Optional[str] = None,
         domain_id: Optional[str] = None,
         azure_resource_name: Optional[str] = None,
-        azure_resource_type: Optional[Union[str, "AzureResourceType"]] = None,
-        custom_host_name_dns_record_type: Optional[Union[str, "CustomHostNameDnsRecordType"]] = None,
-        host_name_type: Optional[Union[str, "HostNameType"]] = None,
-        ssl_state: Optional[Union[str, "SslState"]] = None,
+        azure_resource_type: Optional[Union[str, "_models.AzureResourceType"]] = None,
+        custom_host_name_dns_record_type: Optional[Union[str, "_models.CustomHostNameDnsRecordType"]] = None,
+        host_name_type: Optional[Union[str, "_models.HostNameType"]] = None,
+        ssl_state: Optional[Union[str, "_models.SslState"]] = None,
         thumbprint: Optional[str] = None,
         **kwargs
     ):
@@ -2231,17 +2225,16 @@ class HostNameBinding(ProxyOnlyResource):
         :paramtype domain_id: str
         :keyword azure_resource_name: Azure resource name.
         :paramtype azure_resource_name: str
-        :keyword azure_resource_type: Azure resource type. Possible values include: "Website",
+        :keyword azure_resource_type: Azure resource type. Known values are: "Website",
          "TrafficManager".
         :paramtype azure_resource_type: str or ~azure.mgmt.web.v2016_08_01.models.AzureResourceType
-        :keyword custom_host_name_dns_record_type: Custom DNS record type. Possible values include:
-         "CName", "A".
+        :keyword custom_host_name_dns_record_type: Custom DNS record type. Known values are: "CName",
+         "A".
         :paramtype custom_host_name_dns_record_type: str or
          ~azure.mgmt.web.v2016_08_01.models.CustomHostNameDnsRecordType
-        :keyword host_name_type: Hostname type. Possible values include: "Verified", "Managed".
+        :keyword host_name_type: Hostname type. Known values are: "Verified", "Managed".
         :paramtype host_name_type: str or ~azure.mgmt.web.v2016_08_01.models.HostNameType
-        :keyword ssl_state: SSL type. Possible values include: "Disabled", "SniEnabled",
-         "IpBasedEnabled".
+        :keyword ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
         :paramtype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
         :keyword thumbprint: SSL certificate thumbprint.
         :paramtype thumbprint: str
@@ -2284,7 +2277,7 @@ class HostNameBindingCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["HostNameBinding"],
+        value: List["_models.HostNameBinding"],
         **kwargs
     ):
         """
@@ -2301,7 +2294,7 @@ class HostNameSslState(msrest.serialization.Model):
 
     :ivar name: Hostname.
     :vartype name: str
-    :ivar ssl_state: SSL type. Possible values include: "Disabled", "SniEnabled", "IpBasedEnabled".
+    :ivar ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
     :vartype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
     :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
     :vartype virtual_ip: str
@@ -2309,8 +2302,8 @@ class HostNameSslState(msrest.serialization.Model):
     :vartype thumbprint: str
     :ivar to_update: Set to :code:`<code>true</code>` to update existing hostname.
     :vartype to_update: bool
-    :ivar host_type: Indicates whether the hostname is a standard or repository hostname. Possible
-     values include: "Standard", "Repository".
+    :ivar host_type: Indicates whether the hostname is a standard or repository hostname. Known
+     values are: "Standard", "Repository".
     :vartype host_type: str or ~azure.mgmt.web.v2016_08_01.models.HostType
     """
 
@@ -2327,18 +2320,17 @@ class HostNameSslState(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        ssl_state: Optional[Union[str, "SslState"]] = None,
+        ssl_state: Optional[Union[str, "_models.SslState"]] = None,
         virtual_ip: Optional[str] = None,
         thumbprint: Optional[str] = None,
         to_update: Optional[bool] = None,
-        host_type: Optional[Union[str, "HostType"]] = None,
+        host_type: Optional[Union[str, "_models.HostType"]] = None,
         **kwargs
     ):
         """
         :keyword name: Hostname.
         :paramtype name: str
-        :keyword ssl_state: SSL type. Possible values include: "Disabled", "SniEnabled",
-         "IpBasedEnabled".
+        :keyword ssl_state: SSL type. Known values are: "Disabled", "SniEnabled", "IpBasedEnabled".
         :paramtype ssl_state: str or ~azure.mgmt.web.v2016_08_01.models.SslState
         :keyword virtual_ip: Virtual IP address assigned to the hostname if IP based SSL is enabled.
         :paramtype virtual_ip: str
@@ -2346,8 +2338,8 @@ class HostNameSslState(msrest.serialization.Model):
         :paramtype thumbprint: str
         :keyword to_update: Set to :code:`<code>true</code>` to update existing hostname.
         :paramtype to_update: bool
-        :keyword host_type: Indicates whether the hostname is a standard or repository hostname.
-         Possible values include: "Standard", "Repository".
+        :keyword host_type: Indicates whether the hostname is a standard or repository hostname. Known
+         values are: "Standard", "Repository".
         :paramtype host_type: str or ~azure.mgmt.web.v2016_08_01.models.HostType
         """
         super(HostNameSslState, self).__init__(**kwargs)
@@ -2376,8 +2368,8 @@ class HttpLogsConfig(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        file_system: Optional["FileSystemHttpLogsConfig"] = None,
-        azure_blob_storage: Optional["AzureBlobStorageHttpLogsConfig"] = None,
+        file_system: Optional["_models.FileSystemHttpLogsConfig"] = None,
+        azure_blob_storage: Optional["_models.AzureBlobStorageHttpLogsConfig"] = None,
         **kwargs
     ):
         """
@@ -2622,7 +2614,7 @@ class IdentifierCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Identifier"],
+        value: List["_models.Identifier"],
         **kwargs
     ):
         """
@@ -2709,7 +2701,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Type of managed service identity. Possible values include: "SystemAssigned".
+    :ivar type: Type of managed service identity. Known values are: "SystemAssigned".
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
@@ -2731,11 +2723,11 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ManagedServiceIdentityType"]] = None,
+        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
         **kwargs
     ):
         """
-        :keyword type: Type of managed service identity. Possible values include: "SystemAssigned".
+        :keyword type: Type of managed service identity. Known values are: "SystemAssigned".
         :paramtype type: str or ~azure.mgmt.web.v2016_08_01.models.ManagedServiceIdentityType
         """
         super(ManagedServiceIdentity, self).__init__(**kwargs)
@@ -2759,7 +2751,7 @@ class MigrateMySqlRequest(ProxyOnlyResource):
     :vartype type: str
     :ivar connection_string: Connection string to the remote MySQL database.
     :vartype connection_string: str
-    :ivar migration_type: The type of migration operation to be done. Possible values include:
+    :ivar migration_type: The type of migration operation to be done. Known values are:
      "LocalToRemote", "RemoteToLocal".
     :vartype migration_type: str or ~azure.mgmt.web.v2016_08_01.models.MySqlMigrationType
     """
@@ -2784,7 +2776,7 @@ class MigrateMySqlRequest(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         connection_string: Optional[str] = None,
-        migration_type: Optional[Union[str, "MySqlMigrationType"]] = None,
+        migration_type: Optional[Union[str, "_models.MySqlMigrationType"]] = None,
         **kwargs
     ):
         """
@@ -2792,7 +2784,7 @@ class MigrateMySqlRequest(ProxyOnlyResource):
         :paramtype kind: str
         :keyword connection_string: Connection string to the remote MySQL database.
         :paramtype connection_string: str
-        :keyword migration_type: The type of migration operation to be done. Possible values include:
+        :keyword migration_type: The type of migration operation to be done. Known values are:
          "LocalToRemote", "RemoteToLocal".
         :paramtype migration_type: str or ~azure.mgmt.web.v2016_08_01.models.MySqlMigrationType
         """
@@ -2814,8 +2806,8 @@ class MigrateMySqlStatus(ProxyOnlyResource):
     :vartype kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar migration_operation_status: Status of the migration task. Possible values include:
-     "InProgress", "Failed", "Succeeded", "TimedOut", "Created".
+    :ivar migration_operation_status: Status of the migration task. Known values are: "InProgress",
+     "Failed", "Succeeded", "TimedOut", "Created".
     :vartype migration_operation_status: str or ~azure.mgmt.web.v2016_08_01.models.OperationStatus
     :ivar operation_id: Operation ID for the migration task.
     :vartype operation_id: str
@@ -3012,7 +3004,7 @@ class MSDeployLogEntry(msrest.serialization.Model):
 
     :ivar time: Timestamp of log entry.
     :vartype time: ~datetime.datetime
-    :ivar type: Log entry type. Possible values include: "Message", "Warning", "Error".
+    :ivar type: Log entry type. Known values are: "Message", "Warning", "Error".
     :vartype type: str or ~azure.mgmt.web.v2016_08_01.models.MSDeployLogEntryType
     :ivar message: Log entry message.
     :vartype message: str
@@ -3057,7 +3049,7 @@ class MSDeployStatus(ProxyOnlyResource):
     :vartype type: str
     :ivar deployer: Username of deployer.
     :vartype deployer: str
-    :ivar provisioning_state: Provisioning state. Possible values include: "accepted", "running",
+    :ivar provisioning_state: Provisioning state. Known values are: "accepted", "running",
      "succeeded", "failed", "canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.web.v2016_08_01.models.MSDeployProvisioningState
@@ -3211,8 +3203,8 @@ class Operation(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Operation name.
     :vartype name: str
-    :ivar status: The current status of the operation. Possible values include: "InProgress",
-     "Failed", "Succeeded", "TimedOut", "Created".
+    :ivar status: The current status of the operation. Known values are: "InProgress", "Failed",
+     "Succeeded", "TimedOut", "Created".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.OperationStatus
     :ivar errors: Any errors associate with the operation.
     :vartype errors: list[~azure.mgmt.web.v2016_08_01.models.ErrorEntity]
@@ -3242,8 +3234,8 @@ class Operation(msrest.serialization.Model):
         *,
         id: Optional[str] = None,
         name: Optional[str] = None,
-        status: Optional[Union[str, "OperationStatus"]] = None,
-        errors: Optional[List["ErrorEntity"]] = None,
+        status: Optional[Union[str, "_models.OperationStatus"]] = None,
+        errors: Optional[List["_models.ErrorEntity"]] = None,
         created_time: Optional[datetime.datetime] = None,
         modified_time: Optional[datetime.datetime] = None,
         expiration_time: Optional[datetime.datetime] = None,
@@ -3255,8 +3247,8 @@ class Operation(msrest.serialization.Model):
         :paramtype id: str
         :keyword name: Operation name.
         :paramtype name: str
-        :keyword status: The current status of the operation. Possible values include: "InProgress",
-         "Failed", "Succeeded", "TimedOut", "Created".
+        :keyword status: The current status of the operation. Known values are: "InProgress", "Failed",
+         "Succeeded", "TimedOut", "Created".
         :paramtype status: str or ~azure.mgmt.web.v2016_08_01.models.OperationStatus
         :keyword errors: Any errors associate with the operation.
         :paramtype errors: list[~azure.mgmt.web.v2016_08_01.models.ErrorEntity]
@@ -3306,7 +3298,7 @@ class PerfMonCounterCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["PerfMonResponse"],
+        value: List["_models.PerfMonResponse"],
         **kwargs
     ):
         """
@@ -3340,7 +3332,7 @@ class PerfMonResponse(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        data: Optional["PerfMonSet"] = None,
+        data: Optional["_models.PerfMonSet"] = None,
         **kwargs
     ):
         """
@@ -3433,7 +3425,7 @@ class PerfMonSet(msrest.serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_grain: Optional[str] = None,
-        values: Optional[List["PerfMonSample"]] = None,
+        values: Optional[List["_models.PerfMonSample"]] = None,
         **kwargs
     ):
         """
@@ -3779,9 +3771,9 @@ class ProcessInfo(ProxyOnlyResource):
         iis_profile_timeout_in_seconds: Optional[float] = None,
         parent: Optional[str] = None,
         children: Optional[List[str]] = None,
-        threads: Optional[List["ProcessThreadInfo"]] = None,
+        threads: Optional[List["_models.ProcessThreadInfo"]] = None,
         open_file_handles: Optional[List[str]] = None,
-        modules: Optional[List["ProcessModuleInfo"]] = None,
+        modules: Optional[List["_models.ProcessModuleInfo"]] = None,
         file_name: Optional[str] = None,
         command_line: Optional[str] = None,
         user_name: Optional[str] = None,
@@ -3949,7 +3941,7 @@ class ProcessInfoCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ProcessInfo"],
+        value: List["_models.ProcessInfo"],
         **kwargs
     ):
         """
@@ -4105,7 +4097,7 @@ class ProcessModuleInfoCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ProcessModuleInfo"],
+        value: List["_models.ProcessModuleInfo"],
         **kwargs
     ):
         """
@@ -4275,7 +4267,7 @@ class ProcessThreadInfoCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ProcessThreadInfo"],
+        value: List["_models.ProcessThreadInfo"],
         **kwargs
     ):
         """
@@ -4302,7 +4294,7 @@ class PublicCertificate(ProxyOnlyResource):
     :vartype type: str
     :ivar blob: Public Certificate byte array.
     :vartype blob: bytearray
-    :ivar public_certificate_location: Public Certificate Location. Possible values include:
+    :ivar public_certificate_location: Public Certificate Location. Known values are:
      "CurrentUserMy", "LocalMachineMy", "Unknown".
     :vartype public_certificate_location: str or
      ~azure.mgmt.web.v2016_08_01.models.PublicCertificateLocation
@@ -4332,7 +4324,7 @@ class PublicCertificate(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         blob: Optional[bytearray] = None,
-        public_certificate_location: Optional[Union[str, "PublicCertificateLocation"]] = None,
+        public_certificate_location: Optional[Union[str, "_models.PublicCertificateLocation"]] = None,
         **kwargs
     ):
         """
@@ -4340,7 +4332,7 @@ class PublicCertificate(ProxyOnlyResource):
         :paramtype kind: str
         :keyword blob: Public Certificate byte array.
         :paramtype blob: bytearray
-        :keyword public_certificate_location: Public Certificate Location. Possible values include:
+        :keyword public_certificate_location: Public Certificate Location. Known values are:
          "CurrentUserMy", "LocalMachineMy", "Unknown".
         :paramtype public_certificate_location: str or
          ~azure.mgmt.web.v2016_08_01.models.PublicCertificateLocation
@@ -4377,7 +4369,7 @@ class PublicCertificateCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["PublicCertificate"],
+        value: List["_models.PublicCertificate"],
         **kwargs
     ):
         """
@@ -4817,7 +4809,7 @@ class ResourceMetricCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ResourceMetric"],
+        value: List["_models.ResourceMetric"],
         **kwargs
     ):
         """
@@ -4933,7 +4925,7 @@ class ResourceMetricDefinitionCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ResourceMetricDefinition"],
+        value: List["_models.ResourceMetricDefinition"],
         **kwargs
     ):
         """
@@ -5102,8 +5094,8 @@ class RestoreRequest(ProxyOnlyResource):
     :vartype ignore_databases: bool
     :ivar app_service_plan: Specify app service plan that will own restored site.
     :vartype app_service_plan: str
-    :ivar operation_type: Operation type. Possible values include: "Default", "Clone",
-     "Relocation", "Snapshot".
+    :ivar operation_type: Operation type. Known values are: "Default", "Clone", "Relocation",
+     "Snapshot".
     :vartype operation_type: str or ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
     :ivar adjust_connection_strings: :code:`<code>true</code>` if SiteConfig.ConnectionStrings
      should be set in new app; otherwise, :code:`<code>false</code>`.
@@ -5145,11 +5137,11 @@ class RestoreRequest(ProxyOnlyResource):
         blob_name: Optional[str] = None,
         overwrite: Optional[bool] = None,
         site_name: Optional[str] = None,
-        databases: Optional[List["DatabaseBackupSetting"]] = None,
+        databases: Optional[List["_models.DatabaseBackupSetting"]] = None,
         ignore_conflicting_host_names: Optional[bool] = False,
         ignore_databases: Optional[bool] = False,
         app_service_plan: Optional[str] = None,
-        operation_type: Optional[Union[str, "BackupRestoreOperationType"]] = None,
+        operation_type: Optional[Union[str, "_models.BackupRestoreOperationType"]] = None,
         adjust_connection_strings: Optional[bool] = None,
         hosting_environment: Optional[str] = None,
         **kwargs
@@ -5180,8 +5172,8 @@ class RestoreRequest(ProxyOnlyResource):
         :paramtype ignore_databases: bool
         :keyword app_service_plan: Specify app service plan that will own restored site.
         :paramtype app_service_plan: str
-        :keyword operation_type: Operation type. Possible values include: "Default", "Clone",
-         "Relocation", "Snapshot".
+        :keyword operation_type: Operation type. Known values are: "Default", "Clone", "Relocation",
+         "Snapshot".
         :paramtype operation_type: str or ~azure.mgmt.web.v2016_08_01.models.BackupRestoreOperationType
         :keyword adjust_connection_strings: :code:`<code>true</code>` if SiteConfig.ConnectionStrings
          should be set in new app; otherwise, :code:`<code>false</code>`.
@@ -5279,7 +5271,7 @@ class Site(Resource):
     :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota usage. Read-only.
-     Possible values include: "Normal", "Exceeded".
+     Known values are: "Normal", "Exceeded".
     :vartype usage_state: str or ~azure.mgmt.web.v2016_08_01.models.UsageState
     :ivar enabled: :code:`<code>true</code>` if the app is enabled; otherwise,
      :code:`<code>false</code>`. Setting this value to false disables the app (takes the app
@@ -5289,8 +5281,8 @@ class Site(Resource):
      HostNames) AND enabled. Otherwise,
      the app is not served on those hostnames.
     :vartype enabled_host_names: list[str]
-    :ivar availability_state: Management information availability state for the app. Possible
-     values include: "Normal", "Limited", "DisasterRecoveryMode".
+    :ivar availability_state: Management information availability state for the app. Known values
+     are: "Normal", "Limited", "DisasterRecoveryMode".
     :vartype availability_state: str or ~azure.mgmt.web.v2016_08_01.models.SiteAvailabilityState
     :ivar host_name_ssl_states: Hostname SSL states are used to manage the SSL bindings for app's
      hostnames.
@@ -5436,21 +5428,21 @@ class Site(Resource):
         location: str,
         kind: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["ManagedServiceIdentity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         enabled: Optional[bool] = None,
-        host_name_ssl_states: Optional[List["HostNameSslState"]] = None,
+        host_name_ssl_states: Optional[List["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
         reserved: Optional[bool] = False,
-        site_config: Optional["SiteConfig"] = None,
+        site_config: Optional["_models.SiteConfig"] = None,
         scm_site_also_stopped: Optional[bool] = False,
-        hosting_environment_profile: Optional["HostingEnvironmentProfile"] = None,
+        hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         client_affinity_enabled: Optional[bool] = None,
         client_cert_enabled: Optional[bool] = None,
         host_names_disabled: Optional[bool] = None,
         container_size: Optional[int] = None,
         daily_memory_time_quota: Optional[int] = None,
-        cloning_info: Optional["CloningInfo"] = None,
-        snapshot_info: Optional["SnapshotRecoveryRequest"] = None,
+        cloning_info: Optional["_models.CloningInfo"] = None,
+        snapshot_info: Optional["_models.SnapshotRecoveryRequest"] = None,
         https_only: Optional[bool] = None,
         **kwargs
     ):
@@ -5569,7 +5561,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      Authorization module.
     :vartype runtime_version: str
     :ivar unauthenticated_client_action: The action to take when an unauthenticated client attempts
-     to access the app. Possible values include: "RedirectToLoginPage", "AllowAnonymous".
+     to access the app. Known values are: "RedirectToLoginPage", "AllowAnonymous".
     :vartype unauthenticated_client_action: str or
      ~azure.mgmt.web.v2016_08_01.models.UnauthenticatedClientAction
     :ivar token_store_enabled: :code:`<code>true</code>` to durably store platform-specific
@@ -5585,8 +5577,8 @@ class SiteAuthSettings(ProxyOnlyResource):
      configured.
      This setting is only needed if multiple providers are configured and the unauthenticated
      client
-     action is set to "RedirectToLoginPage". Possible values include: "AzureActiveDirectory",
-     "Facebook", "Google", "MicrosoftAccount", "Twitter".
+     action is set to "RedirectToLoginPage". Known values are: "AzureActiveDirectory", "Facebook",
+     "Google", "MicrosoftAccount", "Twitter".
     :vartype default_provider: str or
      ~azure.mgmt.web.v2016_08_01.models.BuiltInAuthenticationProvider
     :ivar token_refresh_extension_hours: The number of hours after session token expiration that a
@@ -5720,10 +5712,10 @@ class SiteAuthSettings(ProxyOnlyResource):
         kind: Optional[str] = None,
         enabled: Optional[bool] = None,
         runtime_version: Optional[str] = None,
-        unauthenticated_client_action: Optional[Union[str, "UnauthenticatedClientAction"]] = None,
+        unauthenticated_client_action: Optional[Union[str, "_models.UnauthenticatedClientAction"]] = None,
         token_store_enabled: Optional[bool] = None,
         allowed_external_redirect_urls: Optional[List[str]] = None,
-        default_provider: Optional[Union[str, "BuiltInAuthenticationProvider"]] = None,
+        default_provider: Optional[Union[str, "_models.BuiltInAuthenticationProvider"]] = None,
         token_refresh_extension_hours: Optional[float] = None,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
@@ -5755,7 +5747,7 @@ class SiteAuthSettings(ProxyOnlyResource):
          Authorization module.
         :paramtype runtime_version: str
         :keyword unauthenticated_client_action: The action to take when an unauthenticated client
-         attempts to access the app. Possible values include: "RedirectToLoginPage", "AllowAnonymous".
+         attempts to access the app. Known values are: "RedirectToLoginPage", "AllowAnonymous".
         :paramtype unauthenticated_client_action: str or
          ~azure.mgmt.web.v2016_08_01.models.UnauthenticatedClientAction
         :keyword token_store_enabled: :code:`<code>true</code>` to durably store platform-specific
@@ -5771,8 +5763,8 @@ class SiteAuthSettings(ProxyOnlyResource):
          are configured.
          This setting is only needed if multiple providers are configured and the unauthenticated
          client
-         action is set to "RedirectToLoginPage". Possible values include: "AzureActiveDirectory",
-         "Facebook", "Google", "MicrosoftAccount", "Twitter".
+         action is set to "RedirectToLoginPage". Known values are: "AzureActiveDirectory", "Facebook",
+         "Google", "MicrosoftAccount", "Twitter".
         :paramtype default_provider: str or
          ~azure.mgmt.web.v2016_08_01.models.BuiltInAuthenticationProvider
         :keyword token_refresh_extension_hours: The number of hours after session token expiration that
@@ -5892,8 +5884,7 @@ class SiteAuthSettings(ProxyOnlyResource):
 class SiteCloneability(msrest.serialization.Model):
     """Represents whether or not an app is cloneable.
 
-    :ivar result: Name of app. Possible values include: "Cloneable", "PartiallyCloneable",
-     "NotCloneable".
+    :ivar result: Name of app. Known values are: "Cloneable", "PartiallyCloneable", "NotCloneable".
     :vartype result: str or ~azure.mgmt.web.v2016_08_01.models.CloneAbilityResult
     :ivar blocking_features: List of features enabled on app that prevent cloning.
     :vartype blocking_features: list[~azure.mgmt.web.v2016_08_01.models.SiteCloneabilityCriterion]
@@ -5917,14 +5908,14 @@ class SiteCloneability(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        result: Optional[Union[str, "CloneAbilityResult"]] = None,
-        blocking_features: Optional[List["SiteCloneabilityCriterion"]] = None,
-        unsupported_features: Optional[List["SiteCloneabilityCriterion"]] = None,
-        blocking_characteristics: Optional[List["SiteCloneabilityCriterion"]] = None,
+        result: Optional[Union[str, "_models.CloneAbilityResult"]] = None,
+        blocking_features: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
+        unsupported_features: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
+        blocking_characteristics: Optional[List["_models.SiteCloneabilityCriterion"]] = None,
         **kwargs
     ):
         """
-        :keyword result: Name of app. Possible values include: "Cloneable", "PartiallyCloneable",
+        :keyword result: Name of app. Known values are: "Cloneable", "PartiallyCloneable",
          "NotCloneable".
         :paramtype result: str or ~azure.mgmt.web.v2016_08_01.models.CloneAbilityResult
         :keyword blocking_features: List of features enabled on app that prevent cloning.
@@ -6027,9 +6018,9 @@ class SiteConfig(msrest.serialization.Model):
     :vartype handler_mappings: list[~azure.mgmt.web.v2016_08_01.models.HandlerMapping]
     :ivar document_root: Document root.
     :vartype document_root: str
-    :ivar scm_type: SCM type. Possible values include: "None", "Dropbox", "Tfs", "LocalGit",
-     "GitHub", "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit",
-     "ExternalHg", "OneDrive", "VSO".
+    :ivar scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
+     "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
+     "OneDrive", "VSO".
     :vartype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
     :ivar use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
      otherwise, :code:`<code>false</code>`.
@@ -6048,12 +6039,11 @@ class SiteConfig(msrest.serialization.Model):
     :vartype java_container_version: str
     :ivar app_command_line: App command line to launch.
     :vartype app_command_line: str
-    :ivar managed_pipeline_mode: Managed pipeline mode. Possible values include: "Integrated",
-     "Classic".
+    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated", "Classic".
     :vartype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
     :ivar virtual_applications: Virtual applications.
     :vartype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
-    :ivar load_balancing: Site load balancing. Possible values include: "WeightedRoundRobin",
+    :ivar load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
      "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
     :vartype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
     :ivar experiments: This is work around for polymorphic types.
@@ -6087,7 +6077,7 @@ class SiteConfig(msrest.serialization.Model):
      http2.0.
     :vartype http20_enabled: bool
     :ivar min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-     requests. Possible values include: "1.0", "1.1", "1.2".
+     requests. Known values are: "1.0", "1.1", "1.2".
     :vartype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
     """
 
@@ -6161,11 +6151,11 @@ class SiteConfig(msrest.serialization.Model):
         logs_directory_size_limit: Optional[int] = None,
         detailed_error_logging_enabled: Optional[bool] = None,
         publishing_username: Optional[str] = None,
-        app_settings: Optional[List["NameValuePair"]] = None,
-        connection_strings: Optional[List["ConnStringInfo"]] = None,
-        handler_mappings: Optional[List["HandlerMapping"]] = None,
+        app_settings: Optional[List["_models.NameValuePair"]] = None,
+        connection_strings: Optional[List["_models.ConnStringInfo"]] = None,
+        handler_mappings: Optional[List["_models.HandlerMapping"]] = None,
         document_root: Optional[str] = None,
-        scm_type: Optional[Union[str, "ScmType"]] = None,
+        scm_type: Optional[Union[str, "_models.ScmType"]] = None,
         use32_bit_worker_process: Optional[bool] = None,
         web_sockets_enabled: Optional[bool] = None,
         always_on: Optional[bool] = None,
@@ -6173,23 +6163,23 @@ class SiteConfig(msrest.serialization.Model):
         java_container: Optional[str] = None,
         java_container_version: Optional[str] = None,
         app_command_line: Optional[str] = None,
-        managed_pipeline_mode: Optional[Union[str, "ManagedPipelineMode"]] = None,
-        virtual_applications: Optional[List["VirtualApplication"]] = None,
-        load_balancing: Optional[Union[str, "SiteLoadBalancing"]] = None,
-        experiments: Optional["Experiments"] = None,
-        limits: Optional["SiteLimits"] = None,
+        managed_pipeline_mode: Optional[Union[str, "_models.ManagedPipelineMode"]] = None,
+        virtual_applications: Optional[List["_models.VirtualApplication"]] = None,
+        load_balancing: Optional[Union[str, "_models.SiteLoadBalancing"]] = None,
+        experiments: Optional["_models.Experiments"] = None,
+        limits: Optional["_models.SiteLimits"] = None,
         auto_heal_enabled: Optional[bool] = None,
-        auto_heal_rules: Optional["AutoHealRules"] = None,
+        auto_heal_rules: Optional["_models.AutoHealRules"] = None,
         tracing_options: Optional[str] = None,
         vnet_name: Optional[str] = None,
-        cors: Optional["CorsSettings"] = None,
-        push: Optional["PushSettings"] = None,
-        api_definition: Optional["ApiDefinitionInfo"] = None,
+        cors: Optional["_models.CorsSettings"] = None,
+        push: Optional["_models.PushSettings"] = None,
+        api_definition: Optional["_models.ApiDefinitionInfo"] = None,
         auto_swap_slot_name: Optional[str] = None,
         local_my_sql_enabled: Optional[bool] = False,
-        ip_security_restrictions: Optional[List["IpSecurityRestriction"]] = None,
+        ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
         http20_enabled: Optional[bool] = True,
-        min_tls_version: Optional[Union[str, "SupportedTlsVersions"]] = None,
+        min_tls_version: Optional[Union[str, "_models.SupportedTlsVersions"]] = None,
         **kwargs
     ):
         """
@@ -6235,9 +6225,9 @@ class SiteConfig(msrest.serialization.Model):
         :paramtype handler_mappings: list[~azure.mgmt.web.v2016_08_01.models.HandlerMapping]
         :keyword document_root: Document root.
         :paramtype document_root: str
-        :keyword scm_type: SCM type. Possible values include: "None", "Dropbox", "Tfs", "LocalGit",
-         "GitHub", "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit",
-         "ExternalHg", "OneDrive", "VSO".
+        :keyword scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
+         "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
+         "OneDrive", "VSO".
         :paramtype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
         :keyword use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
          otherwise, :code:`<code>false</code>`.
@@ -6256,12 +6246,12 @@ class SiteConfig(msrest.serialization.Model):
         :paramtype java_container_version: str
         :keyword app_command_line: App command line to launch.
         :paramtype app_command_line: str
-        :keyword managed_pipeline_mode: Managed pipeline mode. Possible values include: "Integrated",
+        :keyword managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated",
          "Classic".
         :paramtype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
         :keyword virtual_applications: Virtual applications.
         :paramtype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
-        :keyword load_balancing: Site load balancing. Possible values include: "WeightedRoundRobin",
+        :keyword load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
          "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
         :paramtype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
         :keyword experiments: This is work around for polymorphic types.
@@ -6295,7 +6285,7 @@ class SiteConfig(msrest.serialization.Model):
          http2.0.
         :paramtype http20_enabled: bool
         :keyword min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-         requests. Possible values include: "1.0", "1.1", "1.2".
+         requests. Known values are: "1.0", "1.1", "1.2".
         :paramtype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
         """
         super(SiteConfig, self).__init__(**kwargs)
@@ -6403,9 +6393,9 @@ class SiteConfigResource(ProxyOnlyResource):
     :vartype handler_mappings: list[~azure.mgmt.web.v2016_08_01.models.HandlerMapping]
     :ivar document_root: Document root.
     :vartype document_root: str
-    :ivar scm_type: SCM type. Possible values include: "None", "Dropbox", "Tfs", "LocalGit",
-     "GitHub", "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit",
-     "ExternalHg", "OneDrive", "VSO".
+    :ivar scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
+     "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
+     "OneDrive", "VSO".
     :vartype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
     :ivar use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
      otherwise, :code:`<code>false</code>`.
@@ -6424,12 +6414,11 @@ class SiteConfigResource(ProxyOnlyResource):
     :vartype java_container_version: str
     :ivar app_command_line: App command line to launch.
     :vartype app_command_line: str
-    :ivar managed_pipeline_mode: Managed pipeline mode. Possible values include: "Integrated",
-     "Classic".
+    :ivar managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated", "Classic".
     :vartype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
     :ivar virtual_applications: Virtual applications.
     :vartype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
-    :ivar load_balancing: Site load balancing. Possible values include: "WeightedRoundRobin",
+    :ivar load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
      "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
     :vartype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
     :ivar experiments: This is work around for polymorphic types.
@@ -6463,7 +6452,7 @@ class SiteConfigResource(ProxyOnlyResource):
      http2.0.
     :vartype http20_enabled: bool
     :ivar min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-     requests. Possible values include: "1.0", "1.1", "1.2".
+     requests. Known values are: "1.0", "1.1", "1.2".
     :vartype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
     """
 
@@ -6545,11 +6534,11 @@ class SiteConfigResource(ProxyOnlyResource):
         logs_directory_size_limit: Optional[int] = None,
         detailed_error_logging_enabled: Optional[bool] = None,
         publishing_username: Optional[str] = None,
-        app_settings: Optional[List["NameValuePair"]] = None,
-        connection_strings: Optional[List["ConnStringInfo"]] = None,
-        handler_mappings: Optional[List["HandlerMapping"]] = None,
+        app_settings: Optional[List["_models.NameValuePair"]] = None,
+        connection_strings: Optional[List["_models.ConnStringInfo"]] = None,
+        handler_mappings: Optional[List["_models.HandlerMapping"]] = None,
         document_root: Optional[str] = None,
-        scm_type: Optional[Union[str, "ScmType"]] = None,
+        scm_type: Optional[Union[str, "_models.ScmType"]] = None,
         use32_bit_worker_process: Optional[bool] = None,
         web_sockets_enabled: Optional[bool] = None,
         always_on: Optional[bool] = None,
@@ -6557,23 +6546,23 @@ class SiteConfigResource(ProxyOnlyResource):
         java_container: Optional[str] = None,
         java_container_version: Optional[str] = None,
         app_command_line: Optional[str] = None,
-        managed_pipeline_mode: Optional[Union[str, "ManagedPipelineMode"]] = None,
-        virtual_applications: Optional[List["VirtualApplication"]] = None,
-        load_balancing: Optional[Union[str, "SiteLoadBalancing"]] = None,
-        experiments: Optional["Experiments"] = None,
-        limits: Optional["SiteLimits"] = None,
+        managed_pipeline_mode: Optional[Union[str, "_models.ManagedPipelineMode"]] = None,
+        virtual_applications: Optional[List["_models.VirtualApplication"]] = None,
+        load_balancing: Optional[Union[str, "_models.SiteLoadBalancing"]] = None,
+        experiments: Optional["_models.Experiments"] = None,
+        limits: Optional["_models.SiteLimits"] = None,
         auto_heal_enabled: Optional[bool] = None,
-        auto_heal_rules: Optional["AutoHealRules"] = None,
+        auto_heal_rules: Optional["_models.AutoHealRules"] = None,
         tracing_options: Optional[str] = None,
         vnet_name: Optional[str] = None,
-        cors: Optional["CorsSettings"] = None,
-        push: Optional["PushSettings"] = None,
-        api_definition: Optional["ApiDefinitionInfo"] = None,
+        cors: Optional["_models.CorsSettings"] = None,
+        push: Optional["_models.PushSettings"] = None,
+        api_definition: Optional["_models.ApiDefinitionInfo"] = None,
         auto_swap_slot_name: Optional[str] = None,
         local_my_sql_enabled: Optional[bool] = False,
-        ip_security_restrictions: Optional[List["IpSecurityRestriction"]] = None,
+        ip_security_restrictions: Optional[List["_models.IpSecurityRestriction"]] = None,
         http20_enabled: Optional[bool] = True,
-        min_tls_version: Optional[Union[str, "SupportedTlsVersions"]] = None,
+        min_tls_version: Optional[Union[str, "_models.SupportedTlsVersions"]] = None,
         **kwargs
     ):
         """
@@ -6621,9 +6610,9 @@ class SiteConfigResource(ProxyOnlyResource):
         :paramtype handler_mappings: list[~azure.mgmt.web.v2016_08_01.models.HandlerMapping]
         :keyword document_root: Document root.
         :paramtype document_root: str
-        :keyword scm_type: SCM type. Possible values include: "None", "Dropbox", "Tfs", "LocalGit",
-         "GitHub", "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit",
-         "ExternalHg", "OneDrive", "VSO".
+        :keyword scm_type: SCM type. Known values are: "None", "Dropbox", "Tfs", "LocalGit", "GitHub",
+         "CodePlexGit", "CodePlexHg", "BitbucketGit", "BitbucketHg", "ExternalGit", "ExternalHg",
+         "OneDrive", "VSO".
         :paramtype scm_type: str or ~azure.mgmt.web.v2016_08_01.models.ScmType
         :keyword use32_bit_worker_process: :code:`<code>true</code>` to use 32-bit worker process;
          otherwise, :code:`<code>false</code>`.
@@ -6642,12 +6631,12 @@ class SiteConfigResource(ProxyOnlyResource):
         :paramtype java_container_version: str
         :keyword app_command_line: App command line to launch.
         :paramtype app_command_line: str
-        :keyword managed_pipeline_mode: Managed pipeline mode. Possible values include: "Integrated",
+        :keyword managed_pipeline_mode: Managed pipeline mode. Known values are: "Integrated",
          "Classic".
         :paramtype managed_pipeline_mode: str or ~azure.mgmt.web.v2016_08_01.models.ManagedPipelineMode
         :keyword virtual_applications: Virtual applications.
         :paramtype virtual_applications: list[~azure.mgmt.web.v2016_08_01.models.VirtualApplication]
-        :keyword load_balancing: Site load balancing. Possible values include: "WeightedRoundRobin",
+        :keyword load_balancing: Site load balancing. Known values are: "WeightedRoundRobin",
          "LeastRequests", "LeastResponseTime", "WeightedTotalTraffic", "RequestHash".
         :paramtype load_balancing: str or ~azure.mgmt.web.v2016_08_01.models.SiteLoadBalancing
         :keyword experiments: This is work around for polymorphic types.
@@ -6681,7 +6670,7 @@ class SiteConfigResource(ProxyOnlyResource):
          http2.0.
         :paramtype http20_enabled: bool
         :keyword min_tls_version: MinTlsVersion: configures the minimum version of TLS required for SSL
-         requests. Possible values include: "1.0", "1.1", "1.2".
+         requests. Known values are: "1.0", "1.1", "1.2".
         :paramtype min_tls_version: str or ~azure.mgmt.web.v2016_08_01.models.SupportedTlsVersions
         """
         super(SiteConfigResource, self).__init__(kind=kind, **kwargs)
@@ -6758,7 +6747,7 @@ class SiteConfigResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SiteConfigResource"],
+        value: List["_models.SiteConfigResource"],
         **kwargs
     ):
         """
@@ -6847,7 +6836,7 @@ class SiteConfigurationSnapshotInfoCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SiteConfigurationSnapshotInfo"],
+        value: List["_models.SiteConfigurationSnapshotInfo"],
         **kwargs
     ):
         """
@@ -6876,7 +6865,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :vartype id_properties_id: str
     :ivar title: Site extension title.
     :vartype title: str
-    :ivar type_properties_type: Site extension type. Possible values include: "Gallery", "WebRoot".
+    :ivar type_properties_type: Site extension type. Known values are: "Gallery", "WebRoot".
     :vartype type_properties_type: str or ~azure.mgmt.web.v2016_08_01.models.SiteExtensionType
     :ivar summary: Summary description.
     :vartype summary: str
@@ -6954,7 +6943,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
         kind: Optional[str] = None,
         id_properties_id: Optional[str] = None,
         title: Optional[str] = None,
-        type_properties_type: Optional[Union[str, "SiteExtensionType"]] = None,
+        type_properties_type: Optional[Union[str, "_models.SiteExtensionType"]] = None,
         summary: Optional[str] = None,
         description: Optional[str] = None,
         version: Optional[str] = None,
@@ -6981,8 +6970,7 @@ class SiteExtensionInfo(ProxyOnlyResource):
         :paramtype id_properties_id: str
         :keyword title: Site extension title.
         :paramtype title: str
-        :keyword type_properties_type: Site extension type. Possible values include: "Gallery",
-         "WebRoot".
+        :keyword type_properties_type: Site extension type. Known values are: "Gallery", "WebRoot".
         :paramtype type_properties_type: str or ~azure.mgmt.web.v2016_08_01.models.SiteExtensionType
         :keyword summary: Summary description.
         :paramtype summary: str
@@ -7069,7 +7057,7 @@ class SiteExtensionInfoCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SiteExtensionInfo"],
+        value: List["_models.SiteExtensionInfo"],
         **kwargs
     ):
         """
@@ -7210,10 +7198,10 @@ class SiteLogsConfig(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        application_logs: Optional["ApplicationLogsConfig"] = None,
-        http_logs: Optional["HttpLogsConfig"] = None,
-        failed_requests_tracing: Optional["EnabledConfig"] = None,
-        detailed_error_messages: Optional["EnabledConfig"] = None,
+        application_logs: Optional["_models.ApplicationLogsConfig"] = None,
+        http_logs: Optional["_models.HttpLogsConfig"] = None,
+        failed_requests_tracing: Optional["_models.EnabledConfig"] = None,
+        detailed_error_messages: Optional["_models.EnabledConfig"] = None,
         **kwargs
     ):
         """
@@ -7301,7 +7289,7 @@ class SitePatchResource(ProxyOnlyResource):
     :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota usage. Read-only.
-     Possible values include: "Normal", "Exceeded".
+     Known values are: "Normal", "Exceeded".
     :vartype usage_state: str or ~azure.mgmt.web.v2016_08_01.models.UsageState
     :ivar enabled: :code:`<code>true</code>` if the app is enabled; otherwise,
      :code:`<code>false</code>`. Setting this value to false disables the app (takes the app
@@ -7311,8 +7299,8 @@ class SitePatchResource(ProxyOnlyResource):
      HostNames) AND enabled. Otherwise,
      the app is not served on those hostnames.
     :vartype enabled_host_names: list[str]
-    :ivar availability_state: Management information availability state for the app. Possible
-     values include: "Normal", "Limited", "DisasterRecoveryMode".
+    :ivar availability_state: Management information availability state for the app. Known values
+     are: "Normal", "Limited", "DisasterRecoveryMode".
     :vartype availability_state: str or ~azure.mgmt.web.v2016_08_01.models.SiteAvailabilityState
     :ivar host_name_ssl_states: Hostname SSL states are used to manage the SSL bindings for app's
      hostnames.
@@ -7453,19 +7441,19 @@ class SitePatchResource(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         enabled: Optional[bool] = None,
-        host_name_ssl_states: Optional[List["HostNameSslState"]] = None,
+        host_name_ssl_states: Optional[List["_models.HostNameSslState"]] = None,
         server_farm_id: Optional[str] = None,
         reserved: Optional[bool] = False,
-        site_config: Optional["SiteConfig"] = None,
+        site_config: Optional["_models.SiteConfig"] = None,
         scm_site_also_stopped: Optional[bool] = False,
-        hosting_environment_profile: Optional["HostingEnvironmentProfile"] = None,
+        hosting_environment_profile: Optional["_models.HostingEnvironmentProfile"] = None,
         client_affinity_enabled: Optional[bool] = None,
         client_cert_enabled: Optional[bool] = None,
         host_names_disabled: Optional[bool] = None,
         container_size: Optional[int] = None,
         daily_memory_time_quota: Optional[int] = None,
-        cloning_info: Optional["CloningInfo"] = None,
-        snapshot_info: Optional["SnapshotRecoveryRequest"] = None,
+        cloning_info: Optional["_models.CloningInfo"] = None,
+        snapshot_info: Optional["_models.SnapshotRecoveryRequest"] = None,
         https_only: Optional[bool] = None,
         **kwargs
     ):
@@ -7865,7 +7853,7 @@ class SlotDifferenceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SlotDifference"],
+        value: List["_models.SlotDifference"],
         **kwargs
     ):
         """
@@ -8025,7 +8013,7 @@ class SnapshotCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Snapshot"],
+        value: List["_models.Snapshot"],
         **kwargs
     ):
         """
@@ -8090,7 +8078,7 @@ class SnapshotRecoveryRequest(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         snapshot_time: Optional[str] = None,
-        recovery_target: Optional["SnapshotRecoveryTarget"] = None,
+        recovery_target: Optional["_models.SnapshotRecoveryTarget"] = None,
         overwrite: Optional[bool] = None,
         recover_configuration: Optional[bool] = None,
         ignore_conflicting_host_names: Optional[bool] = None,
@@ -8421,7 +8409,7 @@ class TriggeredJobHistory(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        triggered_job_runs: Optional[List["TriggeredJobRun"]] = None,
+        triggered_job_runs: Optional[List["_models.TriggeredJobRun"]] = None,
         **kwargs
     ):
         """
@@ -8460,7 +8448,7 @@ class TriggeredJobHistoryCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["TriggeredJobHistory"],
+        value: List["_models.TriggeredJobHistory"],
         **kwargs
     ):
         """
@@ -8489,7 +8477,7 @@ class TriggeredJobRun(ProxyOnlyResource):
     :vartype id_properties_id: str
     :ivar name_properties_name: Job name.
     :vartype name_properties_name: str
-    :ivar status: Job status. Possible values include: "Success", "Failed", "Error".
+    :ivar status: Job status. Known values are: "Success", "Failed", "Error".
     :vartype status: str or ~azure.mgmt.web.v2016_08_01.models.TriggeredWebJobStatus
     :ivar start_time: Start time.
     :vartype start_time: ~datetime.datetime
@@ -8539,7 +8527,7 @@ class TriggeredJobRun(ProxyOnlyResource):
         *,
         kind: Optional[str] = None,
         id_properties_id: Optional[str] = None,
-        status: Optional[Union[str, "TriggeredWebJobStatus"]] = None,
+        status: Optional[Union[str, "_models.TriggeredWebJobStatus"]] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         duration: Optional[str] = None,
@@ -8555,7 +8543,7 @@ class TriggeredJobRun(ProxyOnlyResource):
         :paramtype kind: str
         :keyword id_properties_id: Job ID.
         :paramtype id_properties_id: str
-        :keyword status: Job status. Possible values include: "Success", "Failed", "Error".
+        :keyword status: Job status. Known values are: "Success", "Failed", "Error".
         :paramtype status: str or ~azure.mgmt.web.v2016_08_01.models.TriggeredWebJobStatus
         :keyword start_time: Start time.
         :paramtype start_time: ~datetime.datetime
@@ -8615,7 +8603,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :vartype url: str
     :ivar extra_info_url: Extra Info URL.
     :vartype extra_info_url: str
-    :ivar job_type: Job type. Possible values include: "Continuous", "Triggered".
+    :ivar job_type: Job type. Known values are: "Continuous", "Triggered".
     :vartype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
     :ivar error: Error information.
     :vartype error: str
@@ -8654,13 +8642,13 @@ class TriggeredWebJob(ProxyOnlyResource):
         self,
         *,
         kind: Optional[str] = None,
-        latest_run: Optional["TriggeredJobRun"] = None,
+        latest_run: Optional["_models.TriggeredJobRun"] = None,
         history_url: Optional[str] = None,
         scheduler_logs_url: Optional[str] = None,
         run_command: Optional[str] = None,
         url: Optional[str] = None,
         extra_info_url: Optional[str] = None,
-        job_type: Optional[Union[str, "WebJobType"]] = None,
+        job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
         settings: Optional[Dict[str, Any]] = None,
@@ -8681,7 +8669,7 @@ class TriggeredWebJob(ProxyOnlyResource):
         :paramtype url: str
         :keyword extra_info_url: Extra Info URL.
         :paramtype extra_info_url: str
-        :keyword job_type: Job type. Possible values include: "Continuous", "Triggered".
+        :keyword job_type: Job type. Known values are: "Continuous", "Triggered".
         :paramtype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
         :keyword error: Error information.
         :paramtype error: str
@@ -8730,7 +8718,7 @@ class TriggeredWebJobCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["TriggeredWebJob"],
+        value: List["_models.TriggeredWebJob"],
         **kwargs
     ):
         """
@@ -8845,7 +8833,7 @@ class VirtualApplication(msrest.serialization.Model):
         virtual_path: Optional[str] = None,
         physical_path: Optional[str] = None,
         preload_enabled: Optional[bool] = None,
-        virtual_directories: Optional[List["VirtualDirectory"]] = None,
+        virtual_directories: Optional[List["_models.VirtualDirectory"]] = None,
         **kwargs
     ):
         """
@@ -9064,8 +9052,8 @@ class VnetRoute(ProxyOnlyResource):
      INHERITED - Routes inherited from the real Virtual Network routes
      STATIC - Static route set on the app only
     
-     These values will be used for syncing an app's routes with those from a Virtual Network.
-     Possible values include: "DEFAULT", "INHERITED", "STATIC".
+     These values will be used for syncing an app's routes with those from a Virtual Network. Known
+     values are: "DEFAULT", "INHERITED", "STATIC".
     :vartype route_type: str or ~azure.mgmt.web.v2016_08_01.models.RouteType
     """
 
@@ -9093,7 +9081,7 @@ class VnetRoute(ProxyOnlyResource):
         vnet_route_name: Optional[str] = None,
         start_address: Optional[str] = None,
         end_address: Optional[str] = None,
-        route_type: Optional[Union[str, "RouteType"]] = None,
+        route_type: Optional[Union[str, "_models.RouteType"]] = None,
         **kwargs
     ):
         """
@@ -9113,8 +9101,8 @@ class VnetRoute(ProxyOnlyResource):
          INHERITED - Routes inherited from the real Virtual Network routes
          STATIC - Static route set on the app only
         
-         These values will be used for syncing an app's routes with those from a Virtual Network.
-         Possible values include: "DEFAULT", "INHERITED", "STATIC".
+         These values will be used for syncing an app's routes with those from a Virtual Network. Known
+         values are: "DEFAULT", "INHERITED", "STATIC".
         :paramtype route_type: str or ~azure.mgmt.web.v2016_08_01.models.RouteType
         """
         super(VnetRoute, self).__init__(kind=kind, **kwargs)
@@ -9150,7 +9138,7 @@ class WebAppCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Site"],
+        value: List["_models.Site"],
         **kwargs
     ):
         """
@@ -9188,7 +9176,7 @@ class WebAppInstanceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["SiteInstance"],
+        value: List["_models.SiteInstance"],
         **kwargs
     ):
         """
@@ -9221,7 +9209,7 @@ class WebJob(ProxyOnlyResource):
     :vartype url: str
     :ivar extra_info_url: Extra Info URL.
     :vartype extra_info_url: str
-    :ivar job_type: Job type. Possible values include: "Continuous", "Triggered".
+    :ivar job_type: Job type. Known values are: "Continuous", "Triggered".
     :vartype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
     :ivar error: Error information.
     :vartype error: str
@@ -9260,7 +9248,7 @@ class WebJob(ProxyOnlyResource):
         run_command: Optional[str] = None,
         url: Optional[str] = None,
         extra_info_url: Optional[str] = None,
-        job_type: Optional[Union[str, "WebJobType"]] = None,
+        job_type: Optional[Union[str, "_models.WebJobType"]] = None,
         error: Optional[str] = None,
         using_sdk: Optional[bool] = None,
         settings: Optional[Dict[str, Any]] = None,
@@ -9275,7 +9263,7 @@ class WebJob(ProxyOnlyResource):
         :paramtype url: str
         :keyword extra_info_url: Extra Info URL.
         :paramtype extra_info_url: str
-        :keyword job_type: Job type. Possible values include: "Continuous", "Triggered".
+        :keyword job_type: Job type. Known values are: "Continuous", "Triggered".
         :paramtype job_type: str or ~azure.mgmt.web.v2016_08_01.models.WebJobType
         :keyword error: Error information.
         :paramtype error: str
@@ -9321,7 +9309,7 @@ class WebJobCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["WebJob"],
+        value: List["_models.WebJob"],
         **kwargs
     ):
         """

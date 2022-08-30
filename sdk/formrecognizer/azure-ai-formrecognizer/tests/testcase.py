@@ -6,9 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 import os
-import six
 import logging
 from azure.core.credentials import AccessToken
 from azure.ai.formrecognizer._helpers import (
@@ -633,7 +631,6 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
     def assertDocumentPagesTransformCorrect(self, transformed_pages, raw_pages, **kwargs):
         for page, expected_page in zip(transformed_pages, raw_pages):
-            assert page.kind == expected_page.kind
             assert page.page_number == expected_page.page_number
             if page.angle:
                 assert page.angle == adjust_text_angle(expected_page.angle)

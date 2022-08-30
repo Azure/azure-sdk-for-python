@@ -10,8 +10,13 @@ from ._system_assigned_identities_operations import SystemAssignedIdentitiesOper
 from ._operations import Operations
 from ._user_assigned_identities_operations import UserAssignedIdentitiesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'SystemAssignedIdentitiesOperations',
     'Operations',
     'UserAssignedIdentitiesOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

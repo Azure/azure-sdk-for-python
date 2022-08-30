@@ -18,7 +18,6 @@ def init():
     print("Pass through init done")
 
 
-
 def run(mini_batch):
     """Run."""
 

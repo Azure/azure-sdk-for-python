@@ -16,9 +16,8 @@ from azure.keyvault.keys.aio import KeyClient
 #
 # 3. Set environment variable VAULT_URL with the URL of your key vault
 #
-# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
-#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # 5. Key rotation permissions for your service principal in your vault
 #
@@ -44,7 +43,7 @@ async def run_sample():
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
 
     # First, create a key
-    key_name = "rotation-sample-key"
+    key_name = "rotation-sample-key-async"
     key = await client.create_rsa_key(key_name)
     print("\nCreated a key; new version is {}".format(key.properties.version))
 

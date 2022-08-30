@@ -3,20 +3,19 @@
 # ---------------------------------------------------------
 
 import logging
+from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Union
-from os import PathLike
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
+from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
 from azure.ai.ml._schema._endpoint import BatchEndpointSchema
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel, load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-
-from .endpoint import Endpoint
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
+from azure.ai.ml.constants import AAD_TOKEN_YAML, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.constants import AAD_TOKEN_YAML
+
+from .endpoint import Endpoint
 
 module_logger = logging.getLogger(__name__)
 
@@ -110,19 +109,19 @@ class BatchEndpoint(Endpoint):
         return BatchEndpointSchema(context=context).dump(self)  # type: ignore
 
     @classmethod
-    def load(
+    def _load(
         cls,
-        path: Union[PathLike, str] = None,
+        data: dict,
+        yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
-    ) -> "Endpoint":
+    ) -> "BatchEndpoint":
         params_override = params_override or []
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        yaml_dict = load_yaml(path)
-        return load_from_dict(BatchEndpointSchema, yaml_dict, context)
+        return load_from_dict(BatchEndpointSchema, data, context)
 
     def _to_dict(self) -> Dict:
         return BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

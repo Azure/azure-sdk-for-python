@@ -266,7 +266,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                         encrypt_result.algorithm,
                         encrypt_result.ciphertext,
                         iv=encrypt_result.iv,
-                        additional_authenticated_data=self.aad
+                        additional_authenticated_data=None if "CBC" in algorithm else self.aad
                     )
 
                 assert decrypt_result.key_id == imported_key.id
@@ -352,7 +352,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             encrypt_result.algorithm,
             encrypt_result.ciphertext,
             iv=encrypt_result.iv,
-            additional_authenticated_data=self.aad
         )
 
         assert decrypt_result.key_id == imported_key.id

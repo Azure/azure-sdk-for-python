@@ -8,7 +8,6 @@ import time
 
 from typing import Any, Union, List, Optional, Dict, Callable, cast
 from typing_extensions import TYPE_CHECKING, Literal, Awaitable, overload
-from uamqp import constants
 
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
@@ -16,12 +15,11 @@ from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from ._buffered_producer import BufferedProducerDispatcher
 from .._utils import set_event_partition_key
-from .._constants import ALL_PARTITIONS
+from .._constants import ALL_PARTITIONS, TransportType
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from ._client_base_async import CredentialTypes
-    from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -277,7 +275,7 @@ class EventHubProducerClient(
 
     async def _buffered_send_event(self, event, **kwargs):
         partition_key = kwargs.get("partition_key")
-        set_event_partition_key(event, partition_key)
+        set_event_partition_key(event, partition_key, self._amqp_transport)
         timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
         await self._buffered_send(
@@ -301,10 +299,12 @@ class EventHubProducerClient(
                     EventHubProducer, self._producers[ALL_PARTITIONS]
                 )._open_with_retry()
                 self._max_message_size_on_link = (
-                    cast(  # type: ignore
+                    self._amqp_transport.get_remote_max_message_size(
+                        cast(  # type: ignore
                         EventHubProducer, self._producers[ALL_PARTITIONS]
-                    )._handler.message_handler._link.peer_max_message_size
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                        )._handler
+                    )
+                    or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
                 )
 
     async def _start_producer(
@@ -350,6 +350,7 @@ class EventHubProducerClient(
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
+            amqp_transport = self._amqp_transport,
             **self._internal_kwargs
         )
         return handler
@@ -402,7 +403,7 @@ class EventHubProducerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
+        transport_type: TransportType = TransportType.Amqp,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -718,7 +719,7 @@ class EventHubProducerClient(
         event_data_batch = EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
-            partition_key=partition_key,
+            partition_key=partition_key
         )
 
         return event_data_batch
@@ -827,10 +828,11 @@ class EventHubProducerClient(
     def get_buffered_event_count(self, partition_id: str) -> Optional[int]:
         """
         The number of events that are buffered and waiting to be published for a given partition.
-         Returns None in non-buffered mode. **NOTE: This method should only be used for debugging
-         purposes. If an invalid `partition_id` is passed in, then a value of 0 will be returned
-         which may be misleading.**
-
+         Returns None in non-buffered mode. **NOTE: The event buffer is processed in a background
+         coroutine, therefore the number of events in the buffer reported by this API should be
+         considered only an approximation and is only recommend for use in debugging. For a
+         partition ID that has no events buffered, 0 will be returned regardless of whether that
+         partition ID actually exists within the Event Hub.**
 
         :param str partition_id: The target partition ID.
         :rtype: int or None
@@ -849,10 +851,10 @@ class EventHubProducerClient(
     def total_buffered_event_count(self) -> Optional[int]:
         """
         The total number of events that are currently buffered and waiting to be published,
-         across all partitions. Returns None in non-buffered mode. **NOTE: This method should
-         only be used for debugging purposes. If an invalid `partition_id` is passed in,
-         then a value of 0 will be returned which may be misleading.**
-
+         across all partitions. Returns None in non-buffered mode. **NOTE: The event buffer
+         is processed in a background coroutine, therefore the number of events in the buffer
+         reported by this API should be considered only an approximation and is only recommend
+         for use in debugging.**
 
         :rtype: int or None
         """

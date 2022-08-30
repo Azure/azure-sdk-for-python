@@ -26,6 +26,7 @@ from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.automl import NlpFeaturizationSettings, NlpLimitSettings
+from azure.ai.ml import load_job
 
 
 @pytest.fixture(autouse=True)
@@ -206,7 +207,7 @@ def loaded_text_ner_job(mock_machinelearning_client: OperationScope) -> AutoMLJo
 
 
 def _load_automl_job_from_path(mock_machinelearning_client: OperationScope, schema_path: Path) -> AutoMLJob:
-    job = Job.load(schema_path)
+    job = load_job(schema_path)
     mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
     return job
 

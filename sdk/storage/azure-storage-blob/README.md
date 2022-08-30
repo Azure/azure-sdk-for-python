@@ -15,7 +15,7 @@ Blob storage is ideal for:
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -331,6 +331,8 @@ Defaults to `False`.
 Use the following keyword arguments when instantiating a client to configure encryption:
 
 * __require_encryption__ (bool): If set to True, will enforce that objects are encrypted and decrypt them.
+* __encryption_version__ (str): Specifies the version of encryption to use. Current options are `'2.0'` or `'1.0'` and
+the default value is `'1.0'`. Version 1.0 is deprecated, and it is **highly recommended** to use version 2.0.
 * __key_encryption_key__ (object): The user-provided key-encryption-key. The instance must implement the following methods:
     - `wrap_key(key)`--wraps the specified key using an algorithm of the user's choice.
     - `get_key_wrap_algorithm()`--returns the algorithm used to wrap the specified symmetric key.

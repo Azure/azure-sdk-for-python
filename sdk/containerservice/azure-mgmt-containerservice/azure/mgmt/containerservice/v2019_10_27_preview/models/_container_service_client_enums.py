@@ -7,20 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class OpenShiftAgentPoolProfileRole(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OpenShiftAgentPoolProfileRole represents the role of the AgentPoolProfile.
-    """
+class OpenShiftAgentPoolProfileRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OpenShiftAgentPoolProfileRole represents the role of the AgentPoolProfile."""
 
     COMPUTE = "compute"
     INFRA = "infra"
 
-class OpenShiftContainerServiceVMSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Size of OpenShift VMs.
-    """
+
+class OpenShiftContainerServiceVMSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Size of OpenShift VMs."""
 
     STANDARD_D2_S_V3 = "Standard_D2s_v3"
     STANDARD_D4_S_V3 = "Standard_D4s_v3"
@@ -56,9 +54,9 @@ class OpenShiftContainerServiceVMSize(with_metaclass(CaseInsensitiveEnumMeta, st
     STANDARD_L16_S = "Standard_L16s"
     STANDARD_L32_S = "Standard_L32s"
 
-class OSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
-    """
+
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"

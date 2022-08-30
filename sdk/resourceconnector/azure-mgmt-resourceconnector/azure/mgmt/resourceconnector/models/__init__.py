@@ -6,40 +6,31 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Appliance
-    from ._models_py3 import ApplianceCredentialKubeconfig
-    from ._models_py3 import ApplianceListCredentialResults
-    from ._models_py3 import ApplianceListResult
-    from ._models_py3 import ApplianceOperation
-    from ._models_py3 import ApplianceOperationsList
-    from ._models_py3 import AppliancePropertiesInfrastructureConfig
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import HybridConnectionConfig
-    from ._models_py3 import Identity
-    from ._models_py3 import PatchableAppliance
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import Appliance  # type: ignore
-    from ._models import ApplianceCredentialKubeconfig  # type: ignore
-    from ._models import ApplianceListCredentialResults  # type: ignore
-    from ._models import ApplianceListResult  # type: ignore
-    from ._models import ApplianceOperation  # type: ignore
-    from ._models import ApplianceOperationsList  # type: ignore
-    from ._models import AppliancePropertiesInfrastructureConfig  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import HybridConnectionConfig  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import PatchableAppliance  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import Appliance
+from ._models_py3 import ApplianceCredentialKubeconfig
+from ._models_py3 import ApplianceListClusterCustomerUserCredentialResults
+from ._models_py3 import ApplianceListCredentialResults
+from ._models_py3 import ApplianceListResult
+from ._models_py3 import ApplianceOperation
+from ._models_py3 import ApplianceOperationsList
+from ._models_py3 import AppliancePropertiesInfrastructureConfig
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import HybridConnectionConfig
+from ._models_py3 import Identity
+from ._models_py3 import PatchableAppliance
+from ._models_py3 import Resource
+from ._models_py3 import SSHKey
+from ._models_py3 import SupportedVersion
+from ._models_py3 import SupportedVersionCatalogVersion
+from ._models_py3 import SupportedVersionCatalogVersionData
+from ._models_py3 import SupportedVersionMetadata
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import UpgradeGraph
+from ._models_py3 import UpgradeGraphProperties
+
 
 from ._appliances_enums import (
     AccessProfileType,
@@ -47,12 +38,16 @@ from ._appliances_enums import (
     Distro,
     Provider,
     ResourceIdentityType,
+    SSHKeyType,
     Status,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'Appliance',
     'ApplianceCredentialKubeconfig',
+    'ApplianceListClusterCustomerUserCredentialResults',
     'ApplianceListCredentialResults',
     'ApplianceListResult',
     'ApplianceOperation',
@@ -65,12 +60,22 @@ __all__ = [
     'Identity',
     'PatchableAppliance',
     'Resource',
+    'SSHKey',
+    'SupportedVersion',
+    'SupportedVersionCatalogVersion',
+    'SupportedVersionCatalogVersionData',
+    'SupportedVersionMetadata',
     'SystemData',
     'TrackedResource',
+    'UpgradeGraph',
+    'UpgradeGraphProperties',
     'AccessProfileType',
     'CreatedByType',
     'Distro',
     'Provider',
     'ResourceIdentityType',
+    'SSHKeyType',
     'Status',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

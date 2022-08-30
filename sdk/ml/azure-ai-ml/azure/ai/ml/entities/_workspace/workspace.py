@@ -4,21 +4,15 @@
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Union
-from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 
-from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
-from azure.ai.ml._utils._workspace_utils import get_endpoint_parts
-from .customer_managed_key import CustomerManagedKey
-from .private_endpoint import PrivateEndpoint, EndpointConnection
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    WorkspaceResourceConstants,
-    PublicNetworkAccess,
-)
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+
+from .customer_managed_key import CustomerManagedKey
 
 
 class Workspace(Resource):
@@ -76,7 +70,7 @@ class Workspace(Resource):
         :type public_network_access: str
         :param softdelete_enable: Create a workspace with soft delete capability
         :type softdelete_enable: bool
-        :param allow_recover_softdeleted_workspace: Allow an exising soft-deleted workspace to be recovered
+        :param allow_recover_softdeleted_workspace: Allow an existing soft-deleted workspace to be recovered
         :type allow_recover_softdeleted_workspace: bool
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
@@ -128,30 +122,6 @@ class Workspace(Resource):
 
     def _to_dict(self) -> Dict:
         return WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-
-    @classmethod
-    def load(
-        cls,
-        path: Union[PathLike, str],
-        params_override: list = None,
-        **kwargs,
-    ) -> "Workspace":
-        """Load a workspace object from a yaml file.
-
-        :param path: Path to a local file as the source.
-        :type path: str
-        :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
-        :type params_override: list
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-
-        :return: Loaded workspace object.
-        :rtype: Workspace
-        """
-
-        params_override = params_override or []
-        yaml_dict = load_yaml(path)
-        return cls._load(data=yaml_dict, yaml_path=path, params_override=params_override, **kwargs)
 
     @classmethod
     def _load(

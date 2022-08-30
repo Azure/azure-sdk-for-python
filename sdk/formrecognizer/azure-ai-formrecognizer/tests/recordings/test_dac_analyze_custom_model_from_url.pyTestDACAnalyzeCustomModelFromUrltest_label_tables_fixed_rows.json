@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-08-31",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,10 +9,10 @@
         "Connection": "keep-alive",
         "Content-Length": "131",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
-        "modelId": "a1bfddd9-ced4-4af5-9648-58e9ae4f57d7",
+        "modelId": "23a9fa3b-a3b7-4956-bbd0-978646111b8f",
         "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "https://blob_sas_url"
@@ -20,47 +20,47 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "0d0e4bbb-4335-49a6-9397-25f432ff3557",
+        "apim-request-id": "5c3a582c-092c-4114-8981-b91bb115388a",
         "Content-Length": "0",
-        "Date": "Thu, 26 May 2022 00:37:38 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31512842545_0d0e4bbb-4335-49a6-9397-25f432ff3557?api-version=2022-06-30-preview",
+        "Date": "Wed, 17 Aug 2022 00:23:20 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31505672200_5c3a582c-092c-4114-8981-b91bb115388a?api-version=2022-08-31",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3957"
+        "x-envoy-upstream-service-time": "978"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31512842545_0d0e4bbb-4335-49a6-9397-25f432ff3557?api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31505672200_5c3a582c-092c-4114-8981-b91bb115388a?api-version=2022-08-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "fac97a0a-c0ce-458a-ad4b-54555e7f1130",
+        "apim-request-id": "7158c03b-2aa0-4437-bae2-eb64d1062bcb",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 26 May 2022 00:37:43 GMT",
+        "Date": "Wed, 17 Aug 2022 00:23:25 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "14"
+        "x-envoy-upstream-service-time": "72"
       },
       "ResponseBody": {
-        "operationId": "31512842545_0d0e4bbb-4335-49a6-9397-25f432ff3557",
+        "operationId": "31505672200_5c3a582c-092c-4114-8981-b91bb115388a",
         "kind": "documentModelBuild",
         "status": "succeeded",
-        "createdDateTime": "2022-05-26T00:37:35Z",
-        "lastUpdatedDateTime": "2022-05-26T00:37:39Z",
-        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/a1bfddd9-ced4-4af5-9648-58e9ae4f57d7?api-version=2022-06-30-preview",
+        "createdDateTime": "2022-08-17T00:23:20Z",
+        "lastUpdatedDateTime": "2022-08-17T00:23:22Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/23a9fa3b-a3b7-4956-bbd0-978646111b8f?api-version=2022-08-31",
         "percentCompleted": 100,
         "result": {
           "docTypes": {
-            "a1bfddd9-ced4-4af5-9648-58e9ae4f57d7": {
+            "23a9fa3b-a3b7-4956-bbd0-978646111b8f": {
               "fieldSchema": {
                 "table": {
                   "type": "object",
@@ -130,14 +130,14 @@
               }
             }
           },
-          "modelId": "a1bfddd9-ced4-4af5-9648-58e9ae4f57d7",
-          "createdDateTime": "2022-05-26T00:37:39Z",
-          "apiVersion": "2022-06-30-preview"
+          "modelId": "23a9fa3b-a3b7-4956-bbd0-978646111b8f",
+          "createdDateTime": "2022-08-17T00:23:21Z",
+          "apiVersion": "2022-08-31"
         }
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/a1bfddd9-ced4-4af5-9648-58e9ae4f57d7:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/23a9fa3b-a3b7-4956-bbd0-978646111b8f:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-08-31",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -145,50 +145,50 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "ef44593b-b05e-4c9d-a4a1-ab5e6cc5e59a",
+        "apim-request-id": "a6369747-a819-4738-aa37-de153c7854dd",
         "Content-Length": "0",
-        "Date": "Thu, 26 May 2022 00:37:45 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/a1bfddd9-ced4-4af5-9648-58e9ae4f57d7/analyzeResults/ef44593b-b05e-4c9d-a4a1-ab5e6cc5e59a?api-version=2022-06-30-preview",
+        "Date": "Wed, 17 Aug 2022 00:23:25 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/23a9fa3b-a3b7-4956-bbd0-978646111b8f/analyzeResults/a6369747-a819-4738-aa37-de153c7854dd?api-version=2022-08-31",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "418"
+        "x-envoy-upstream-service-time": "259"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/a1bfddd9-ced4-4af5-9648-58e9ae4f57d7/analyzeResults/ef44593b-b05e-4c9d-a4a1-ab5e6cc5e59a?api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/23a9fa3b-a3b7-4956-bbd0-978646111b8f/analyzeResults/a6369747-a819-4738-aa37-de153c7854dd?api-version=2022-08-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b5 Python/3.9.1 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6df5567a-784c-421b-b3f0-b6810a9ddbd8",
+        "apim-request-id": "39c98318-d2fa-4af3-932d-2f13285e2c0c",
+        "Content-Length": "12616",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 26 May 2022 00:37:50 GMT",
+        "Date": "Wed, 17 Aug 2022 00:23:31 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "42"
+        "x-envoy-upstream-service-time": "32"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2022-05-26T00:37:45Z",
-        "lastUpdatedDateTime": "2022-05-26T00:37:48Z",
+        "createdDateTime": "2022-08-17T00:23:26Z",
+        "lastUpdatedDateTime": "2022-08-17T00:23:29Z",
         "analyzeResult": {
-          "apiVersion": "2022-06-30-preview",
-          "modelId": "a1bfddd9-ced4-4af5-9648-58e9ae4f57d7",
+          "apiVersion": "2022-08-31",
+          "modelId": "23a9fa3b-a3b7-4956-bbd0-978646111b8f",
           "stringIndexType": "unicodeCodePoint",
           "content": "Con t oso, Ltd.\nPrice\nTax\nTotal\nApple\n5.00\n2.00\n7.00\nOrange\n2.00\n1.00\n3.00\nGrapefruit\n1.00\n4.00\n5.00\nPear\n2.00\n2.00",
           "pages": [
@@ -1025,8 +1025,8 @@
                         2.2972,
                         1.6221,
                         2.2972,
-                        1.8208,
-                        0.9987,
+                        1.8262,
+                        0.9932,
                         1.8262
                       ]
                     }
@@ -1047,9 +1047,9 @@
                         3.5958,
                         1.6221,
                         3.5958,
-                        1.8208,
+                        1.8262,
                         2.2972,
-                        1.8208
+                        1.8262
                       ]
                     }
                   ],
@@ -1071,12 +1071,12 @@
                       "polygon": [
                         3.5958,
                         1.6221,
-                        4.8889,
+                        4.8943,
                         1.6221,
                         4.8943,
                         1.8262,
                         3.5958,
-                        1.8208
+                        1.8262
                       ]
                     }
                   ],
@@ -1096,7 +1096,7 @@
                     {
                       "pageNumber": 1,
                       "polygon": [
-                        4.8889,
+                        4.8943,
                         1.6221,
                         6.1929,
                         1.6221,
@@ -1122,13 +1122,13 @@
                     {
                       "pageNumber": 1,
                       "polygon": [
-                        0.9987,
+                        0.9932,
                         1.8262,
                         2.2972,
-                        1.8208,
+                        1.8262,
                         2.2972,
-                        2.0088,
-                        0.9987,
+                        2.0142,
+                        0.9932,
                         2.0088
                       ]
                     }
@@ -1149,13 +1149,13 @@
                       "pageNumber": 1,
                       "polygon": [
                         2.2972,
-                        1.8208,
+                        1.8262,
                         3.5958,
-                        1.8208,
+                        1.8262,
                         3.5958,
                         2.0088,
                         2.2972,
-                        2.0088
+                        2.0142
                       ]
                     }
                   ],
@@ -1175,7 +1175,7 @@
                       "pageNumber": 1,
                       "polygon": [
                         3.5958,
-                        1.8208,
+                        1.8262,
                         4.8943,
                         1.8262,
                         4.8943,
@@ -1226,14 +1226,14 @@
                     {
                       "pageNumber": 1,
                       "polygon": [
-                        0.9987,
+                        0.9932,
                         2.0088,
                         2.2972,
-                        2.0088,
+                        2.0142,
                         2.2972,
                         2.2075,
-                        0.9987,
-                        2.2075
+                        0.9932,
+                        2.2021
                       ]
                     }
                   ],
@@ -1253,11 +1253,11 @@
                       "pageNumber": 1,
                       "polygon": [
                         2.2972,
-                        2.0088,
+                        2.0142,
                         3.5958,
                         2.0088,
                         3.5958,
-                        2.2075,
+                        2.2021,
                         2.2972,
                         2.2075
                       ]
@@ -1283,9 +1283,9 @@
                         4.8943,
                         2.0088,
                         4.8943,
-                        2.2075,
+                        2.2021,
                         3.5958,
-                        2.2075
+                        2.2021
                       ]
                     }
                   ],
@@ -1309,9 +1309,9 @@
                         6.1929,
                         2.0088,
                         6.1929,
-                        2.2075,
+                        2.2021,
                         4.8943,
-                        2.2075
+                        2.2021
                       ]
                     }
                   ],
@@ -1330,14 +1330,14 @@
                     {
                       "pageNumber": 1,
                       "polygon": [
-                        0.9987,
-                        2.2075,
+                        0.9932,
+                        2.2021,
                         2.2972,
                         2.2075,
                         2.2972,
-                        2.4009,
-                        0.9987,
-                        2.4009
+                        2.3955,
+                        0.9932,
+                        2.3955
                       ]
                     }
                   ],
@@ -1359,11 +1359,11 @@
                         2.2972,
                         2.2075,
                         3.5958,
-                        2.2075,
+                        2.2021,
                         3.5958,
                         2.3955,
                         2.2972,
-                        2.4009
+                        2.3955
                       ]
                     }
                   ],
@@ -1383,9 +1383,9 @@
                       "pageNumber": 1,
                       "polygon": [
                         3.5958,
-                        2.2075,
+                        2.2021,
                         4.8943,
-                        2.2075,
+                        2.2021,
                         4.8943,
                         2.3955,
                         3.5958,
@@ -1409,9 +1409,9 @@
                       "pageNumber": 1,
                       "polygon": [
                         4.8943,
-                        2.2075,
+                        2.2021,
                         6.1929,
-                        2.2075,
+                        2.2021,
                         6.1929,
                         2.3955,
                         4.8943,
@@ -1434,13 +1434,13 @@
                     {
                       "pageNumber": 1,
                       "polygon": [
-                        0.9987,
-                        2.4009,
+                        0.9932,
+                        2.3955,
                         2.2972,
-                        2.4009,
+                        2.3955,
                         2.2972,
-                        2.5942,
-                        0.9987,
+                        2.5889,
+                        0.9878,
                         2.5942
                       ]
                     }
@@ -1461,13 +1461,13 @@
                       "pageNumber": 1,
                       "polygon": [
                         2.2972,
-                        2.4009,
+                        2.3955,
                         3.5958,
                         2.3955,
                         3.5958,
-                        2.5942,
+                        2.5889,
                         2.2972,
-                        2.5942
+                        2.5889
                       ]
                     }
                   ],
@@ -1488,7 +1488,7 @@
                         4.8943,
                         2.5942,
                         3.5958,
-                        2.5942
+                        2.5889
                       ]
                     }
                   ],
@@ -1530,14 +1530,14 @@
                 {
                   "pageNumber": 1,
                   "polygon": [
-                    0.9943,
-                    1.6127,
-                    6.1996,
-                    1.6137,
-                    6.2007,
-                    2.6045,
-                    0.9945,
-                    2.6038
+                    0.9977,
+                    1.613,
+                    6.202,
+                    1.6187,
+                    6.2013,
+                    2.6066,
+                    0.9961,
+                    2.6008
                   ]
                 }
               ],
@@ -1552,7 +1552,7 @@
           "styles": [],
           "documents": [
             {
-              "docType": "a1bfddd9-ced4-4af5-9648-58e9ae4f57d7:a1bfddd9-ced4-4af5-9648-58e9ae4f57d7",
+              "docType": "23a9fa3b-a3b7-4956-bbd0-978646111b8f:23a9fa3b-a3b7-4956-bbd0-978646111b8f",
               "boundingRegions": [
                 {
                   "pageNumber": 1,

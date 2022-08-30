@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class Action(msrest.serialization.Model):
@@ -57,8 +59,7 @@ class AlertingAction(Action):
     :ivar odata_type: Required. Specifies the action. Supported values - AlertingAction,
      LogToMetricAction.Constant filled by server.
     :vartype odata_type: str
-    :ivar severity: Required. Severity of the alert. Possible values include: "0", "1", "2", "3",
-     "4".
+    :ivar severity: Required. Severity of the alert. Known values are: "0", "1", "2", "3", "4".
     :vartype severity: str or ~$(python-base-namespace).v2018_04_16.models.AlertSeverity
     :ivar azns_action: Azure action group reference.
     :vartype azns_action: ~$(python-base-namespace).v2018_04_16.models.AzNsActionGroup
@@ -85,15 +86,14 @@ class AlertingAction(Action):
     def __init__(
         self,
         *,
-        severity: Union[str, "AlertSeverity"],
-        trigger: "TriggerCondition",
-        azns_action: Optional["AzNsActionGroup"] = None,
+        severity: Union[str, "_models.AlertSeverity"],
+        trigger: "_models.TriggerCondition",
+        azns_action: Optional["_models.AzNsActionGroup"] = None,
         throttling_in_min: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword severity: Required. Severity of the alert. Possible values include: "0", "1", "2",
-         "3", "4".
+        :keyword severity: Required. Severity of the alert. Known values are: "0", "1", "2", "3", "4".
         :paramtype severity: str or ~$(python-base-namespace).v2018_04_16.models.AlertSeverity
         :keyword azns_action: Azure action group reference.
         :paramtype azns_action: ~$(python-base-namespace).v2018_04_16.models.AzNsActionGroup
@@ -176,7 +176,7 @@ class Criteria(msrest.serialization.Model):
         self,
         *,
         metric_name: str,
-        dimensions: Optional[List["Dimension"]] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
         **kwargs
     ):
         """
@@ -197,7 +197,7 @@ class Dimension(msrest.serialization.Model):
 
     :ivar name: Required. Name of the dimension.
     :vartype name: str
-    :ivar operator: Required. Operator for dimension values. Possible values include: "Include".
+    :ivar operator: Required. Operator for dimension values. Known values are: "Include".
     :vartype operator: str or ~$(python-base-namespace).v2018_04_16.models.Operator
     :ivar values: Required. List of dimension values.
     :vartype values: list[str]
@@ -219,14 +219,14 @@ class Dimension(msrest.serialization.Model):
         self,
         *,
         name: str,
-        operator: Union[str, "Operator"],
+        operator: Union[str, "_models.Operator"],
         values: List[str],
         **kwargs
     ):
         """
         :keyword name: Required. Name of the dimension.
         :paramtype name: str
-        :keyword operator: Required. Operator for dimension values. Possible values include: "Include".
+        :keyword operator: Required. Operator for dimension values. Known values are: "Include".
         :paramtype operator: str or ~$(python-base-namespace).v2018_04_16.models.Operator
         :keyword values: Required. List of dimension values.
         :paramtype values: list[str]
@@ -251,7 +251,7 @@ class ErrorContract(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         **kwargs
     ):
         """
@@ -298,14 +298,14 @@ class LogMetricTrigger(msrest.serialization.Model):
     """A log metrics trigger descriptor.
 
     :ivar threshold_operator: Evaluation operation for Metric -'GreaterThan' or 'LessThan' or
-     'Equal'. Possible values include: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan",
-     "LessThan", "Equal". Default value: "GreaterThanOrEqual".
+     'Equal'. Known values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan",
+     "Equal". Default value: "GreaterThanOrEqual".
     :vartype threshold_operator: str or
      ~$(python-base-namespace).v2018_04_16.models.ConditionalOperator
     :ivar threshold: The threshold of the metric trigger.
     :vartype threshold: float
-    :ivar metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Possible values
-     include: "Consecutive", "Total". Default value: "Consecutive".
+    :ivar metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Known values are:
+     "Consecutive", "Total". Default value: "Consecutive".
     :vartype metric_trigger_type: str or
      ~$(python-base-namespace).v2018_04_16.models.MetricTriggerType
     :ivar metric_column: Evaluation of metric on a particular column.
@@ -322,22 +322,22 @@ class LogMetricTrigger(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        threshold_operator: Optional[Union[str, "ConditionalOperator"]] = "GreaterThanOrEqual",
+        threshold_operator: Optional[Union[str, "_models.ConditionalOperator"]] = "GreaterThanOrEqual",
         threshold: Optional[float] = None,
-        metric_trigger_type: Optional[Union[str, "MetricTriggerType"]] = "Consecutive",
+        metric_trigger_type: Optional[Union[str, "_models.MetricTriggerType"]] = "Consecutive",
         metric_column: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword threshold_operator: Evaluation operation for Metric -'GreaterThan' or 'LessThan' or
-         'Equal'. Possible values include: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan",
-         "LessThan", "Equal". Default value: "GreaterThanOrEqual".
+         'Equal'. Known values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan",
+         "Equal". Default value: "GreaterThanOrEqual".
         :paramtype threshold_operator: str or
          ~$(python-base-namespace).v2018_04_16.models.ConditionalOperator
         :keyword threshold: The threshold of the metric trigger.
         :paramtype threshold: float
-        :keyword metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Possible values
-         include: "Consecutive", "Total". Default value: "Consecutive".
+        :keyword metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Known values are:
+         "Consecutive", "Total". Default value: "Consecutive".
         :paramtype metric_trigger_type: str or
          ~$(python-base-namespace).v2018_04_16.models.MetricTriggerType
         :keyword metric_column: Evaluation of metric on a particular column.
@@ -460,12 +460,12 @@ class LogSearchRuleResource(Resource):
      or not. The default is false.
     :vartype auto_mitigate: bool
     :ivar enabled: The flag which indicates whether the Log Search rule is enabled. Value should be
-     true or false. Possible values include: "true", "false".
+     true or false. Known values are: "true", "false".
     :vartype enabled: str or ~$(python-base-namespace).v2018_04_16.models.Enabled
     :ivar last_updated_time: Last time the rule was updated in IS08601 format.
     :vartype last_updated_time: ~datetime.datetime
-    :ivar provisioning_state: Provisioning state of the scheduled query rule. Possible values
-     include: "Succeeded", "Deploying", "Canceled", "Failed".
+    :ivar provisioning_state: Provisioning state of the scheduled query rule. Known values are:
+     "Succeeded", "Deploying", "Canceled", "Failed".
     :vartype provisioning_state: str or
      ~$(python-base-namespace).v2018_04_16.models.ProvisioningState
     :ivar source: Required. Data Source against which rule will Query Data.
@@ -517,14 +517,14 @@ class LogSearchRuleResource(Resource):
         self,
         *,
         location: str,
-        source: "Source",
-        action: "Action",
+        source: "_models.Source",
+        action: "_models.Action",
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         display_name: Optional[str] = None,
         auto_mitigate: Optional[bool] = False,
-        enabled: Optional[Union[str, "Enabled"]] = None,
-        schedule: Optional["Schedule"] = None,
+        enabled: Optional[Union[str, "_models.Enabled"]] = None,
+        schedule: Optional["_models.Schedule"] = None,
         **kwargs
     ):
         """
@@ -540,7 +540,7 @@ class LogSearchRuleResource(Resource):
          resolved or not. The default is false.
         :paramtype auto_mitigate: bool
         :keyword enabled: The flag which indicates whether the Log Search rule is enabled. Value should
-         be true or false. Possible values include: "true", "false".
+         be true or false. Known values are: "true", "false".
         :paramtype enabled: str or ~$(python-base-namespace).v2018_04_16.models.Enabled
         :keyword source: Required. Data Source against which rule will Query Data.
         :paramtype source: ~$(python-base-namespace).v2018_04_16.models.Source
@@ -578,7 +578,7 @@ class LogSearchRuleResourceCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["LogSearchRuleResource"]] = None,
+        value: Optional[List["_models.LogSearchRuleResource"]] = None,
         **kwargs
     ):
         """
@@ -595,7 +595,7 @@ class LogSearchRuleResourcePatch(msrest.serialization.Model):
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar enabled: The flag which indicates whether the Log Search rule is enabled. Value should be
-     true or false. Possible values include: "true", "false".
+     true or false. Known values are: "true", "false".
     :vartype enabled: str or ~$(python-base-namespace).v2018_04_16.models.Enabled
     """
 
@@ -608,14 +608,14 @@ class LogSearchRuleResourcePatch(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        enabled: Optional[Union[str, "Enabled"]] = None,
+        enabled: Optional[Union[str, "_models.Enabled"]] = None,
         **kwargs
     ):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
         :keyword enabled: The flag which indicates whether the Log Search rule is enabled. Value should
-         be true or false. Possible values include: "true", "false".
+         be true or false. Known values are: "true", "false".
         :paramtype enabled: str or ~$(python-base-namespace).v2018_04_16.models.Enabled
         """
         super(LogSearchRuleResourcePatch, self).__init__(**kwargs)
@@ -648,7 +648,7 @@ class LogToMetricAction(Action):
     def __init__(
         self,
         *,
-        criteria: List["Criteria"],
+        criteria: List["_models.Criteria"],
         **kwargs
     ):
         """
@@ -714,7 +714,7 @@ class Source(msrest.serialization.Model):
     :vartype authorized_resources: list[str]
     :ivar data_source_id: Required. The resource uri over which log search query is to be run.
     :vartype data_source_id: str
-    :ivar query_type: Set value to 'ResultCount' . Possible values include: "ResultCount".
+    :ivar query_type: Set value to 'ResultCount' . Known values are: "ResultCount".
     :vartype query_type: str or ~$(python-base-namespace).v2018_04_16.models.QueryType
     """
 
@@ -735,7 +735,7 @@ class Source(msrest.serialization.Model):
         data_source_id: str,
         query: Optional[str] = None,
         authorized_resources: Optional[List[str]] = None,
-        query_type: Optional[Union[str, "QueryType"]] = None,
+        query_type: Optional[Union[str, "_models.QueryType"]] = None,
         **kwargs
     ):
         """
@@ -745,7 +745,7 @@ class Source(msrest.serialization.Model):
         :paramtype authorized_resources: list[str]
         :keyword data_source_id: Required. The resource uri over which log search query is to be run.
         :paramtype data_source_id: str
-        :keyword query_type: Set value to 'ResultCount' . Possible values include: "ResultCount".
+        :keyword query_type: Set value to 'ResultCount' . Known values are: "ResultCount".
         :paramtype query_type: str or ~$(python-base-namespace).v2018_04_16.models.QueryType
         """
         super(Source, self).__init__(**kwargs)
@@ -761,8 +761,8 @@ class TriggerCondition(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar threshold_operator: Required. Evaluation operation for rule - 'GreaterThan' or 'LessThan.
-     Possible values include: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan",
-     "Equal". Default value: "GreaterThanOrEqual".
+     Known values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan", "Equal".
+     Default value: "GreaterThanOrEqual".
     :vartype threshold_operator: str or
      ~$(python-base-namespace).v2018_04_16.models.ConditionalOperator
     :ivar threshold: Required. Result or count threshold based on which rule should be triggered.
@@ -785,14 +785,14 @@ class TriggerCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        threshold_operator: Union[str, "ConditionalOperator"] = "GreaterThanOrEqual",
+        threshold_operator: Union[str, "_models.ConditionalOperator"] = "GreaterThanOrEqual",
         threshold: float,
-        metric_trigger: Optional["LogMetricTrigger"] = None,
+        metric_trigger: Optional["_models.LogMetricTrigger"] = None,
         **kwargs
     ):
         """
         :keyword threshold_operator: Required. Evaluation operation for rule - 'GreaterThan' or
-         'LessThan. Possible values include: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan",
+         'LessThan. Known values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan",
          "LessThan", "Equal". Default value: "GreaterThanOrEqual".
         :paramtype threshold_operator: str or
          ~$(python-base-namespace).v2018_04_16.models.ConditionalOperator

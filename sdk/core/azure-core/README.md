@@ -208,11 +208,10 @@ A metaclass to support case-insensitive enums.
 
 ```python
 from enum import Enum
-from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
 
-class MyCustomEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MyCustomEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FOO = 'foo'
     BAR = 'bar'
 ```

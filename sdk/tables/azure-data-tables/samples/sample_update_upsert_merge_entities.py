@@ -106,13 +106,13 @@ class TableEntitySamples(object):
                 # Create entities
                 table.create_entity(entity=entity)
                 table.create_entity(entity=entity1)
-                # [START query_entities]
+                # [START list_entities]
                 # Query the entities in the table
                 entities = list(table.list_entities())
 
                 for i, entity in enumerate(entities):
                     print("Entity #{}: {}".format(entity, i))
-                # [END query_entities]
+                # [END list_entities]
 
             finally:
                 # Delete the table

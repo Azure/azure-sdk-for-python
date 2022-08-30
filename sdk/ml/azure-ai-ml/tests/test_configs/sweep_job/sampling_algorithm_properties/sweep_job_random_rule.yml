@@ -19,7 +19,7 @@ objective:
   goal: maximize
 trial:
   command: python ./sweep_script.py --lr ${{search_space.lr}} --conv_size ${{search_space.conv_size}} --dropout_rate ${{search_space.dropout_rate}}
-  code: ../python
+  code: ../../python
   environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
 compute: azureml:cpu-cluster
 limits:

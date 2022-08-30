@@ -2,17 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Usage as RestUsage, UsageName as RestUsageName, UsageUnit
-from azure.ai.ml._schema.compute.usage import UsageSchema
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from typing import Dict, Union
 from os import PathLike
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    CommonYamlFields,
-)
+from typing import Dict, Union
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import Usage as RestUsage
+from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageName as RestUsageName
+from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageUnit
+from azure.ai.ml._schema.compute.usage import UsageSchema
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class UsageName:
@@ -29,7 +28,7 @@ class UsageName:
 
 
 class Usage(Resource, RestTranslatableMixin):
-    """Describes AML Resource Usage"""
+    """Describes AML Resource Usage."""
 
     def __init__(
         self,
@@ -42,7 +41,8 @@ class Usage(Resource, RestTranslatableMixin):
         name: RestUsageName = None,
         **kwargs,
     ):
-        """Describes AML Resource Usage
+        """Describes AML Resource Usage.
+
         :param id: Specifies the resource ID.
         :type id: str
         :param aml_workspace_location: Region of the AML workspace in the id.
@@ -73,7 +73,7 @@ class Usage(Resource, RestTranslatableMixin):
         return result
 
     def dump(self, path: Union[PathLike, str]) -> None:
-        """Dump the resourse usage content into a file in yaml format.
+        """Dump the resource usage content into a file in yaml format.
 
         :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
         :type path: str

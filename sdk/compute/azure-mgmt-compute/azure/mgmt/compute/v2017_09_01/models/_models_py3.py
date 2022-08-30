@@ -6,9 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ResourceSku(msrest.serialization.Model):
@@ -145,7 +149,7 @@ class ResourceSkuCapacity(msrest.serialization.Model):
     :vartype maximum: long
     :ivar default: The default capacity.
     :vartype default: long
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
+    :ivar scale_type: The scale type applicable to the sku. Known values are: "Automatic",
      "Manual", "None".
     :vartype scale_type: str or ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuCapacityScaleType
     """
@@ -283,14 +287,14 @@ class ResourceSkuRestrictions(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of restrictions. Possible values include: "Location", "Zone".
+    :ivar type: The type of restrictions. Known values are: "Location", "Zone".
     :vartype type: str or ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuRestrictionsType
     :ivar values: The value of restrictions. If the restriction type is set to location. This would
      be different locations where the SKU is restricted.
     :vartype values: list[str]
     :ivar restriction_info: The information about the restriction where the SKU cannot be used.
     :vartype restriction_info: ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuRestrictionInfo
-    :ivar reason_code: The reason for restriction. Possible values include: "QuotaId",
+    :ivar reason_code: The reason for restriction. Known values are: "QuotaId",
      "NotAvailableForSubscription".
     :vartype reason_code: str or
      ~azure.mgmt.compute.v2017_09_01.models.ResourceSkuRestrictionsReasonCode
@@ -347,7 +351,7 @@ class ResourceSkusResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["ResourceSku"],
+        value: List["_models.ResourceSku"],
         next_link: Optional[str] = None,
         **kwargs
     ):

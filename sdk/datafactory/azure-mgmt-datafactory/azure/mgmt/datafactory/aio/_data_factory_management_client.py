@@ -105,27 +105,69 @@ class DataFactoryManagementClient:    # pylint: disable=too-many-instance-attrib
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.factories = FactoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.exposure_control = ExposureControlOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtimes = IntegrationRuntimesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.linked_services = LinkedServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.pipelines = PipelinesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline_runs = PipelineRunsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.activity_runs = ActivityRunsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.triggers = TriggersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.trigger_runs = TriggerRunsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_flows = DataFlowsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_flow_debug_session = DataFlowDebugSessionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_virtual_networks = ManagedVirtualNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_end_point_connections = PrivateEndPointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connection = PrivateEndpointConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.global_parameters = GlobalParametersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.factories = FactoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.exposure_control = ExposureControlOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.linked_services = LinkedServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.datasets = DatasetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.pipelines = PipelinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.pipeline_runs = PipelineRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.activity_runs = ActivityRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.triggers = TriggersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trigger_runs = TriggerRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_flows = DataFlowsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_flow_debug_session = DataFlowDebugSessionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_virtual_networks = ManagedVirtualNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_end_point_connections = PrivateEndPointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.global_parameters = GlobalParametersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

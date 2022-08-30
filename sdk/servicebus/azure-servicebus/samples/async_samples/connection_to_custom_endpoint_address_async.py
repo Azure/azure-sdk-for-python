@@ -28,7 +28,7 @@ CUSTOM_CA_BUNDLE_PATH = '<your_custom_ca_bundle_file_path>'
 
 async def send_single_message(sender):
     message = ServiceBusMessage("Single Message")
-    sender.send_messages(message)
+    await sender.send_messages(message)
 
 async def main():
     servicebus_client = ServiceBusClient.from_connection_string(

@@ -24,6 +24,9 @@ from ._events_operations import EventsOperations
 from ._lots_operations import LotsOperations
 from ._credits_operations import CreditsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'UsageDetailsOperations',
     'MarketplacesOperations',
@@ -43,3 +46,5 @@ __all__ = [
     'LotsOperations',
     'CreditsOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

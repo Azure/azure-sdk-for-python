@@ -7,7 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
@@ -19,9 +19,6 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
-
-    def teardown(self):
-        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

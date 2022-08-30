@@ -2,6 +2,7 @@ import pytest
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory, ConnectionAuthType
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.credentials import PatTokenCredentials
+from azure.ai.ml import load_workspace_connection
 
 
 @pytest.mark.unittest
@@ -23,7 +24,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.metadata is None
 
     def test_workspace_connection_entity_load(self):
-        ws_connection = WorkspaceConnection.load(path="./tests/test_configs/workspace_connection/git_pat.yaml")
+        ws_connection = load_workspace_connection(path="./tests/test_configs/workspace_connection/git_pat.yaml")
 
         assert ws_connection.name == "test_ws_conn_git_pat"
         assert ws_connection.target == "https://test-git-feed.com"
@@ -32,7 +33,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.pat == "dummy_pat"
         assert ws_connection.metadata is None
 
-        ws_connection = WorkspaceConnection.load(
+        ws_connection = load_workspace_connection(
             path="./tests/test_configs/workspace_connection/container_registry_managed_identity.yaml"
         )
 
@@ -44,7 +45,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.metadata is None
 
-        ws_connection = WorkspaceConnection.load(path="./tests/test_configs/workspace_connection/python_feed_pat.yaml")
+        ws_connection = load_workspace_connection(path="./tests/test_configs/workspace_connection/python_feed_pat.yaml")
 
         assert ws_connection.type == ConnectionCategory.PYTHON_FEED
         assert ws_connection.credentials.type == ConnectionAuthType.PAT
@@ -53,7 +54,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.metadata is None
 
-        ws_connection = WorkspaceConnection.load(
+        ws_connection = load_workspace_connection(
             path="./tests/test_configs/workspace_connection/fs_service_principal.yaml"
         )
 

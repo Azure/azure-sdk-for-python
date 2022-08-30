@@ -14,37 +14,32 @@ from azure.identity import OnBehalfOfCredential, UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
-import six
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
 from recorded_test_case import RecordedTestCase
 from test_certificate_credential import PEM_CERT_PATH
+from devtools_testutils import is_live, recorded_by_proxy
 
+missing_variables = [
+    var
+    for var in (
+        "OBO_CERT_BYTES",
+        "OBO_CLIENT_ID",
+        "OBO_CLIENT_SECRET",
+        "OBO_PASSWORD",
+        "OBO_SCOPE",
+        "OBO_TENANT_ID",
+        "OBO_USERNAME",
+    )
+    if var not in os.environ
+]
 
-class OboRecordedTestCase(RecordedTestCase):
-    def __init__(self, *args, **kwargs):
-        super(OboRecordedTestCase, self).__init__(*args, **kwargs)
-
-        if self.is_live:
-            missing_variables = [
-                var
-                for var in (
-                    "OBO_CERT_BYTES",
-                    "OBO_CLIENT_ID",
-                    "OBO_CLIENT_SECRET",
-                    "OBO_PASSWORD",
-                    "OBO_SCOPE",
-                    "OBO_TENANT_ID",
-                    "OBO_USERNAME",
-                )
-                if var not in os.environ
-            ]
-            if any(missing_variables):
-                pytest.skip("No value for environment variables: " + ", ".join(missing_variables))
-
+class TestObo(RecordedTestCase):
+    def load_settings(self):
+        if is_live():
             self.obo_settings = {
-                "cert_bytes": six.ensure_binary(os.environ["OBO_CERT_BYTES"]),
+                "cert_bytes": os.environ["OBO_CERT_BYTES"],
                 "client_id": os.environ["OBO_CLIENT_ID"],
                 "client_secret": os.environ["OBO_CLIENT_SECRET"],
                 "password": os.environ["OBO_PASSWORD"],
@@ -52,10 +47,6 @@ class OboRecordedTestCase(RecordedTestCase):
                 "tenant_id": os.environ["OBO_TENANT_ID"],
                 "username": os.environ["OBO_USERNAME"],
             }
-
-            self.scrubber.register_name_pair(self.obo_settings["tenant_id"], "tenant")
-            self.scrubber.register_name_pair(self.obo_settings["username"], "username")
-
         else:
             self.obo_settings = {
                 "cert_bytes": open(PEM_CERT_PATH, "rb").read(),
@@ -67,9 +58,11 @@ class OboRecordedTestCase(RecordedTestCase):
                 "username": "username",
             }
 
-
-class RecordedTests(OboRecordedTestCase):
+    @pytest.mark.manual
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
+    @recorded_by_proxy
     def test_obo(self):
+        self.load_settings()
         client_id = self.obo_settings["client_id"]
         tenant_id = self.obo_settings["tenant_id"]
 
@@ -80,7 +73,11 @@ class RecordedTests(OboRecordedTestCase):
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=self.obo_settings["client_secret"], user_assertion=assertion)
         credential.get_token(self.obo_settings["scope"])
 
+    @pytest.mark.manual
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
+    @recorded_by_proxy
     def test_obo_cert(self):
+        self.load_settings()
         client_id = self.obo_settings["client_id"]
         tenant_id = self.obo_settings["tenant_id"]
 

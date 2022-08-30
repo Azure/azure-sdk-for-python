@@ -201,7 +201,6 @@ from ._models_py3 import VirtualMachineScaleSetExtensionUpdate
 from ._models_py3 import VirtualMachineScaleSetHardwareProfile
 from ._models_py3 import VirtualMachineScaleSetIPConfiguration
 from ._models_py3 import VirtualMachineScaleSetIdentity
-from ._models_py3 import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
 from ._models_py3 import VirtualMachineScaleSetInstanceView
 from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
 from ._models_py3 import VirtualMachineScaleSetIpTag
@@ -248,6 +247,7 @@ from ._models_py3 import VirtualMachineSizeListResult
 from ._models_py3 import VirtualMachineSoftwarePatchProperties
 from ._models_py3 import VirtualMachineStatusCodeCount
 from ._models_py3 import VirtualMachineUpdate
+from ._models_py3 import VmImagesInEdgeZoneListResult
 from ._models_py3 import WinRMConfiguration
 from ._models_py3 import WinRMListener
 from ._models_py3 import WindowsConfiguration
@@ -328,7 +328,9 @@ from ._compute_management_client_enums import (
     WindowsVMGuestPatchAutomaticByPlatformRebootSetting,
     WindowsVMGuestPatchMode,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AdditionalCapabilities',
     'AdditionalUnattendContent',
@@ -525,7 +527,6 @@ __all__ = [
     'VirtualMachineScaleSetHardwareProfile',
     'VirtualMachineScaleSetIPConfiguration',
     'VirtualMachineScaleSetIdentity',
-    'VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue',
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetInstanceViewStatusesSummary',
     'VirtualMachineScaleSetIpTag',
@@ -572,6 +573,7 @@ __all__ = [
     'VirtualMachineSoftwarePatchProperties',
     'VirtualMachineStatusCodeCount',
     'VirtualMachineUpdate',
+    'VmImagesInEdgeZoneListResult',
     'WinRMConfiguration',
     'WinRMListener',
     'WindowsConfiguration',
@@ -649,3 +651,5 @@ __all__ = [
     'WindowsVMGuestPatchAutomaticByPlatformRebootSetting',
     'WindowsVMGuestPatchMode',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -1,5 +1,15 @@
 # Release History
 
+## 2.7.0 (2022-06-15)
+
+**Features**
+
+  - Model RestServiceLinkedService has a new parameter client_id
+  - Model RestServiceLinkedService has a new parameter client_secret
+  - Model RestServiceLinkedService has a new parameter resource
+  - Model RestServiceLinkedService has a new parameter scope
+  - Model RestServiceLinkedService has a new parameter token_endpoint
+
 ## 2.6.0 (2022-05-27)
 
 **Features**
