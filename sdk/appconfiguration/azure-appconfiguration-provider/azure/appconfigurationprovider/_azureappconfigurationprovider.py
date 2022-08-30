@@ -43,10 +43,10 @@ class AzureAppConfigurationProvider:
                     # Deals with possible null value via Rest API
                     provider.dict[provider.trim(config.key)] = config.value
                 elif config.content_type == "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8":
-                    jObject = json.loads(config.value)
-                    uriValue = jObject['uri']
+                    j_object = json.loads(config.value)
+                    uri_value = j_object['uri']
 
-                    uri = urlparse(uriValue)
+                    uri = urlparse(uri_value)
 
                     key_vault_uri = "https://" + uri.hostname
                     key_vault_secret_prefix = "/secrets/"
@@ -81,8 +81,8 @@ class AzureAppConfigurationProvider:
                         provider.dict[provider.trim(
                             config.key)] = key_vault_options.secret_resolver(uri)
                 elif "application/json" in config.content_type:
-                    jObject = json.loads(config.value)
-                    provider.dict[provider.trim(config.key)] = jObject
+                    j_object = json.loads(config.value)
+                    provider.dict[provider.trim(config.key)] = j_object
                 else:
                     provider.dict[provider.trim(config.key)] = config.value
         return provider
@@ -94,12 +94,12 @@ class AzureAppConfigurationProvider:
             usesKeyVault = True
 
         headers = {}
-        correlationcontext = "RequestType=Startup"
+        correlation_context = "RequestType=Startup"
 
         if (usesKeyVault):
-            correlationcontext += ",UsesKeyVault"
+            correlation_context += ",UsesKeyVault"
 
-        headers["Correlation-Context"] = correlationcontext
+        headers["Correlation-Context"] = correlation_context
         useragent = USER_AGENT
 
         if (connection_string is not None):
