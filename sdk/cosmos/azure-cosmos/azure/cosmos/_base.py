@@ -684,8 +684,8 @@ def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
     increment_percent = offer.auto_scale_increment_percent
     if max_throughput is not None:
         auto_scale_params = {"maxThroughput": max_throughput}
-        if increment_percent is not None:
-            auto_scale_params["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment_percent}}
+    if increment_percent is not None:
+        auto_scale_params["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment_percent}}
     auto_scale_settings = json.dumps(auto_scale_params)
 
     return auto_scale_settings
