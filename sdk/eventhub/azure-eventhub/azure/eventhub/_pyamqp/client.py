@@ -429,12 +429,11 @@ class SendClient(AMQPClient):
 
     def __init__(self, hostname, target, **kwargs):
         self.target = target
-        auth = kwargs.pop('auth', None)
         # Sender and Link settings
         self._max_message_size = kwargs.pop('max_message_size', MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', None)
-        super(SendClient, self).__init__(hostname, auth=auth, **kwargs)
+        super(SendClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
@@ -573,7 +572,7 @@ f"""
 
 class ReceiveClient(AMQPClient):
 
-    def __init__(self, hostname, source, auth=None, **kwargs):
+    def __init__(self, hostname, source, **kwargs):
         self.source = source
         self._streaming_receive = kwargs.pop("streaming_receive", False) 
         self._received_messages = queue.Queue()
@@ -583,7 +582,7 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop('max_message_size', MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', 300)
-        super(ReceiveClient, self).__init__(hostname, auth=auth, **kwargs)
+        super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
