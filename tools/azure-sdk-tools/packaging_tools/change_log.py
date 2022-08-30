@@ -21,8 +21,8 @@ class ChangeLog:
         self.optional_features = []
         self._old_report = old_report
         self._new_report = new_report
-        self.remove_operations = []
-        self.add_operations = []
+        self.removed_operations = []
+        self.added_operations = []
 
     def sort(self):
         self.features.sort()
@@ -30,7 +30,7 @@ class ChangeLog:
         self.optional_features.sort()
 
     def build_md(self):
-        self.compare_operation_function()
+        self.compare_operation()
         self.sort()
         buffer = []
         if self.features:
@@ -76,11 +76,11 @@ class ChangeLog:
         # Is this a new operation, inside a known operation group?
         function_name, *remaining_path = remaining_path
         if not remaining_path:
-            # Simplify renaming func to begin_func change, put it into the compare_operation_function() for processing
+            # Simplify renaming func to begin_func change, put it into the compare_operation() for processing
             if is_deletion:
-                self.remove_operations.append(f'{operation_name}.{function_name}')
+                self.removed_operations.append(f'{operation_name}.{function_name}')
             else:
-                self.add_operations.append(f'{operation_name}.{function_name}')
+                self.added_operations.append(f'{operation_name}.{function_name}')
             return
 
         if remaining_path[0] == "metadata":
@@ -179,21 +179,21 @@ class ChangeLog:
             self.breaking_changes.append(msg)
         return
 
-    def compare_operation_function(self):
+    def compare_operation(self):
         '''
-        Record changelog like rename operation.delete to operation.begin_delete change
-        instead of using remove operation.delete or add operation.begin_delete
+        Record changelog like "rename operation.delete to operation.begin_delete"
+        instead of "remove operation.delete or add operation.begin_delete"
         '''
-        while self.remove_operations:
-            op, old_function  = self.remove_operations.pop().split('.')
-            if f'{op}.begin_{old_function}' in self.add_operations:
-                self.add_operations.remove(f'{op}.begin_{old_function}')
-                self.breaking_changes.append(_RENAME_OPERATION.format(op, old_function, op, f'begin_{old_function}'))
+        while self.removed_operations:
+            op, old_function  = self.removed_operations.pop().split('.')
+            new_function = f'begin_{old_function}'
+            if f'{op}.{new_function}' in self.added_operations:
+                self.added_operations.remove(f'{op}.{new_function}')
+                self.breaking_changes.append(_RENAME_OPERATION.format(op, old_function, op, new_function))
             else:
                 self.breaking_changes.append(_REMOVE_OPERATION.format(op, old_function))
-        if self.add_operations:
-            for op_function in self.add_operations:
-                operation_name, function_name = op_function.split('.')
+        for op_function in self.added_operations:
+            operation_name, function_name = op_function.split('.')
             self.features.append(_ADD_OPERATION.format(operation_name, function_name))
 
 
