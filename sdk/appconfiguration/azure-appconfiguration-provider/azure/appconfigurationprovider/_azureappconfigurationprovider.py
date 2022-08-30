@@ -19,7 +19,7 @@ class AzureAppConfigurationProvider:
         Optional parameters:  
         selectors (List of SettingSelector for selecting which applicationconfiguration settings to load),. If not specified, all key-values with the empty label will be loaded.  
         trimmed_key_prefixes (remove prefixes in key name, list of what to trim),  
-        key_vault_options (Configurations for connecting to Key Vault(s))  test
+        key_vault_options (Configurations for connecting to Key Vault(s))
         """
         provider = AzureAppConfigurationProvider()
 
