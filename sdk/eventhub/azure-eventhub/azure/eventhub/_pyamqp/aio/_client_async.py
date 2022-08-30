@@ -112,9 +112,6 @@ class AMQPClientAsync(AMQPClientSync):
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
-     To create an desired_capabilities object, please do as follows:
-        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
-        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
     :paramtype desired_capabilities: List
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.	
     :paramtype max_message_size: int	
@@ -610,18 +607,18 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         available rather than waiting to achieve a specific batch size, and therefore the
         number of messages returned per call will vary up to the maximum allowed.
 
-        :param max_batch_size: The maximum number of messages that can be returned in
+        :keyword max_batch_size: The maximum number of messages that can be returned in
          one call. This value cannot be larger than the prefetch value, and if not specified,
          the prefetch value will be used.
-        :type max_batch_size: int
-        :param on_message_received: A callback to process messages as they arrive from the
-         service. It takes a single argument, a ~uamqp.message.Message object.
-        :type on_message_received: callable[~uamqp.message.Message]
-        :param timeout: Timeout in seconds for which to wait to receive any messages.
+        :paramtype max_batch_size: int
+        :keyword on_message_received: A callback to process messages as they arrive from the
+         service. It takes a single argument, a ~pyamqp.message.Message object.
+        :paramtype on_message_received: callable[~pyamqp.message.Message]
+        :keyword timeout: Timeout in seconds for which to wait to receive any messages.
          If no messages are received in this time, an empty list will be returned. If set to
          0, the client will continue to wait until at least one message is received. The
          default is 0.
-        :type timeout: float
+        :paramtype timeout: float
         """
         return await self._do_retryable_operation_async(
             self._receive_message_batch_impl_async,

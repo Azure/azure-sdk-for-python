@@ -125,9 +125,6 @@ class AMQPClient(object):
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
-     To create an desired_capabilities object, please do as follows:
-        - 1. Create an array of desired capability symbols: `capabilities_symbol_array = [types.AMQPSymbol(string)]`
-        - 2. Transform the array to AMQPValue object: `utils.data_factory(types.AMQPArray(capabilities_symbol_array))`
     :paramtype desired_capabilities: List
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.	
     :paramtype max_message_size: int	
