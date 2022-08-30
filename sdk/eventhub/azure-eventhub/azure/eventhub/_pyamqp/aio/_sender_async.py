@@ -164,8 +164,8 @@ class SenderLink(Link):
     async def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()
         if self.state != LinkState.ATTACHED:
-            raise AMQPLinkError(  # TODO: should we introduce MessageHandler to indicate the handler is in wrong state
-                condition=ErrorCondition.ClientError,  # TODO: should this be a ClientError?
+            raise AMQPLinkError(  
+                condition=ErrorCondition.ClientError,
                 description="Link is not attached."
             )
         settled = self.send_settle_mode == SenderSettleMode.Settled
