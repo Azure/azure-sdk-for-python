@@ -6,6 +6,7 @@
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient
 from ._settingselector import SettingSelector
+from ._user_agent import USER_AGENT
 from urllib.parse import urlparse
 import json
 
@@ -14,25 +15,23 @@ class AzureAppConfigurationProvider:
 
     @classmethod
     def load(cls, connection_string=None, endpoint=None, credential=None, **kwargs):
-        """ 
-        Requires either a connection-string, or an Endpoint with a Credential. Loads the selected configuration settings into itself for usage. 
-        Optional parameters:  
-        selectors (List of SettingSelector for selecting which applicationconfiguration settings to load),. If not specified, all key-values with the empty label will be loaded.  
-        trimmed_key_prefixes (remove prefixes in key name, list of what to trim),  
+        """
+        Requires either a connection-string, or an Endpoint with a Credential. Loads the selected configuration settings into itself for usage.
+        Optional parameters:
+        selectors (List of SettingSelector for selecting which applicationconfiguration settings to load),. If not specified, all key-values with the empty label will be loaded.
+        trimmed_key_prefixes (remove prefixes in key name, list of what to trim),
         key_vault_options (Configurations for connecting to Key Vault(s))
         """
+
         provider = AzureAppConfigurationProvider()
 
-        if (connection_string is not None):
-            provider.client = AzureAppConfigurationClient.from_connection_string(
-                connection_string)
-        else:
-            provider.client = AzureAppConfigurationClient(endpoint, credential)
+        key_vault_options = kwargs.pop("key_vault_options", None)
+
+        provider.client = cls.buildprovider(
+            connection_string, endpoint, credential, key_vault_options)
 
         selects = kwargs.pop("selects", {SettingSelector("*", "\0")})
         provider.trim_prefixes = kwargs.pop("trimmed_key_prefixes", [])
-        key_vault_options = kwargs.pop("key_vault_options", None)
-        pipeline = kwargs.pop("pipeline")
 
         provider.dict = {}
 
@@ -78,6 +77,28 @@ class AzureAppConfigurationProvider:
                 else:
                     provider.dict[provider.trim(config.key)] = config.value
         return provider
+
+    def buildprovider(connection_string, endpoint, credential, key_vault_options):
+        usesKeyVault = False
+
+        if (key_vault_options is not None and (key_vault_options.credential is not None or key_vault_options.secret_clients is not None or key_vault_options.secret_resolver is not None)):
+            usesKeyVault = True
+
+        headers = {}
+        correlationcontext = "RequestType=Startup"
+
+        if (usesKeyVault):
+            correlationcontext += ",UsesKeyVault"
+
+        headers["Correlation-Context"] = correlationcontext
+        useragent = USER_AGENT
+
+        if (connection_string is not None):
+            return AzureAppConfigurationClient.from_connection_string(
+                connection_string, user_agent=useragent, headers=headers)
+        else:
+            return AzureAppConfigurationClient(
+                endpoint, credential, user_agent=useragent, headers=headers)
 
     def trim(self, key):
         for trim in self.trim_prefixes:
