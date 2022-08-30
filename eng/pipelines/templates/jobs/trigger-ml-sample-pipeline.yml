@@ -43,11 +43,9 @@ jobs:
         pip install -r eng/ml_sample_tools.txt
       displayName: 'Prep Environment'
 
-    - task: PythonScript@0
-      displayName: 'Generate Packages'
-      inputs:
-        scriptPath: 'scripts/devops_tasks/build_packages.py'
-        arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
+    - pwsh: |
+        sdk_build -d "$(Build.ArtifactStagingDirectory)" --repo="$(Build.SourcesDirectory)" --service="${{parameters.ServiceDirectory}}" "$(TargetingString)"
+      displayName: Generate Packages
 
     - pwsh: |
         Get-ChildItem "$(Build.ArtifactStagingDirectory)" -R

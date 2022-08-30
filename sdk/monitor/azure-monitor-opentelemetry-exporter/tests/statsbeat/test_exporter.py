@@ -8,7 +8,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.metrics.export import NumberDataPoint
 
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _STATSBEAT_METRIC_NAME_MAPPINGS
+from azure.monitor.opentelemetry.exporter._constants import _STATSBEAT_METRIC_NAME_MAPPINGS
 
 # pylint: disable=protected-access
 class TestStatsbeatExporter(unittest.TestCase):
