@@ -188,21 +188,27 @@ class SearchClient(HeadersMixin):
          server-side paging, the response will include a continuation token that can be used to issue
          another Search request for the next page of results.
         :rtype:  AsyncSearchItemPaged[dict]
+    
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_simple_query_async.py
                 :start-after: [START simple_query_async]
                 :end-before: [END simple_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Search on a simple text term.
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_filter_query_async.py
                 :start-after: [START filter_query_async]
                 :end-before: [END filter_query_async]
                 :language: python
                 :dedent: 4
                 :caption: Filter and sort search results.
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_facet_query_async.py
                 :start-after: [START facet_query_async]
                 :end-before: [END facet_query_async]

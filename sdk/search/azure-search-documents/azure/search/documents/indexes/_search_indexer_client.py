@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchClient as _SearchServiceClient
-from .models import SearchIndexerSkillset
+from ._generated.models import SearchIndexerSkillset
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -25,7 +25,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
+    from ._generated.models import SearchIndexer, SearchIndexerStatus
     from typing import Any, Optional, Sequence, Union
     from azure.core.credentials import TokenCredential
 
@@ -493,7 +493,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if kwargs.get('select', None):
             kwargs['select'] = ','.join(kwargs['select'])
         result = self._client.skillsets.list(**kwargs)
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
+        return result.skillsets
 
     @distributed_trace
     def get_skillset_names(self, **kwargs):
@@ -531,8 +531,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.skillsets.get(name, **kwargs)
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+        return self._client.skillsets.get(name, **kwargs)
 
     @distributed_trace
     def delete_skillset(self, skillset, **kwargs):
@@ -588,10 +587,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        result = self._client.skillsets.create(skillset, **kwargs)
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+        return self._client.skillsets.create(skillset, **kwargs)
 
     @distributed_trace
     def create_or_update_skillset(self, skillset, **kwargs):
@@ -612,12 +609,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        result = self._client.skillsets.create_or_update(
-            skillset_name=skillset.name,
-            skillset=skillset,
-            error_map=error_map,
-            **kwargs
+        return self._client.skillsets.create_or_update(
+            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
         )
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
