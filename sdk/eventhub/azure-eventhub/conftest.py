@@ -18,6 +18,10 @@ from azure.mgmt.eventhub import EventHubManagementClient
 from azure.eventhub import EventHubProducerClient
 from azure.eventhub._pyamqp import ReceiveClient
 from azure.eventhub._pyamqp.authentication import SASTokenAuth
+try:
+    import uamqp
+except ImportError:
+    pass
 
 from devtools_testutils import get_region_override
 
@@ -42,6 +46,9 @@ def sleep(request):
     sleep = request.config.getoption("--sleep")
     return sleep.lower() in ('true', 'yes', '1', 'y')
 
+@pytest.fixture(scope="session", params=[False])
+def uamqp_transport(request):
+    return request.param
 
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
@@ -67,6 +74,13 @@ def get_logger(filename, level=logging.INFO):
 
 log = get_logger(None, logging.DEBUG)
 
+
+@pytest.fixture(scope="session")
+def timeout_factor(uamqp_transport):
+    if uamqp_transport:
+        return 1000
+    else:
+        return 1
 
 @pytest.fixture(scope="session")
 def resource_group():
@@ -188,22 +202,26 @@ def invalid_policy(live_eventhub):
 
 
 @pytest.fixture()
-def connstr_receivers(live_eventhub):
+def connstr_receivers(live_eventhub, uamqp_transport):
     connection_str = live_eventhub["connection_str"]
     partitions = [str(i) for i in range(PARTITION_COUNT)]
     receivers = []
     for p in partitions:
         uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-        sas_auth = SASTokenAuth(
-            uri, uri, live_eventhub['key_name'], live_eventhub['access_key']
-        )
-
         source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
             live_eventhub['hostname'],
             live_eventhub['event_hub'],
             live_eventhub['consumer_group'],
             p)
-        receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, timeout=0, link_credit=500)
+        if uamqp_transport:
+            sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
+                uri, live_eventhub['key_name'], live_eventhub['access_key'])
+            receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
+        else:
+            sas_auth = SASTokenAuth(
+                uri, uri, live_eventhub['key_name'], live_eventhub['access_key']
+            )
+            receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500)
         receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers
@@ -212,9 +230,9 @@ def connstr_receivers(live_eventhub):
 
 
 @pytest.fixture()
-def connstr_senders(live_eventhub):
+def connstr_senders(live_eventhub, uamqp_transport):
     connection_str = live_eventhub["connection_str"]
-    client = EventHubProducerClient.from_connection_string(connection_str)
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     partitions = client.get_partition_ids()
 
     senders = []

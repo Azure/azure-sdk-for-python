@@ -31,7 +31,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api-version-keyword
+class EventHubConsumerClient(
+    ClientBase
+):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -85,6 +87,14 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
+    :keyword transport_type: The type of transport protocol that will be used for communicating with
+     the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
+    :paramtype transport_type: ~azure.eventhub.TransportType
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
      when receiving events. The checkpoint store will be used in both cases of receiving from all partitions
      or a single partition. In the latter case load-balancing does not apply.
@@ -136,6 +146,7 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
@@ -200,6 +211,7 @@ class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            amqp_transport=self._amqp_transport,
         )
         return handler
 

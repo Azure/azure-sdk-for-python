@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
 
 from contextlib import contextmanager
 import sys
@@ -10,19 +10,34 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping
+from base64 import b64encode
+from hashlib import sha256
+from hmac import HMAC
+from urllib.parse import urlencode, quote_plus
+import time
+from typing import (
+    TYPE_CHECKING,
+    cast,
+    Type,
+    Optional,
+    Dict,
+    Union,
+    Any,
+    Iterable,
+    Tuple,
+    Mapping,
+    Callable
+)
 
 import six
-
-from ._pyamqp.message import Header
+from uamqp import types as uamqp_types
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
-from .amqp import AmqpAnnotatedMessage
+from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
 from ._version import VERSION
 from ._constants import (
-    PROP_PARTITION_KEY,
     MAX_USER_AGENT_LENGTH,
     USER_AGENT_PREFIX,
     PROP_LAST_ENQUEUED_SEQUENCE_NUMBER,
@@ -32,9 +47,10 @@ from ._constants import (
     PROP_TIMESTAMP,
 )
 
+
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
-    from ._pyamqp.message import Message
+    from ._transport._base import AmqpTransport
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
@@ -76,64 +92,34 @@ def utc_from_timestamp(timestamp):
     return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 
-def create_properties(user_agent=None):
-    # type: (Optional[str]) -> Dict[types.AMQPSymbol, str]
+def create_properties(
+    user_agent: Optional[str] = None, *, amqp_transport: AmqpTransport
+) -> Dict[uamqp_types.AMQPSymbol, str]:
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
 
     :rtype: dict
     """
-    properties = {}
-    properties["product"] = USER_AGENT_PREFIX
-    properties["version"] = VERSION
-    framework = "Python/{}.{}.{}".format(
-        sys.version_info[0], sys.version_info[1], sys.version_info[2]
-    )
-    properties["framework"] = framework
+    properties: Dict[Any, str] = {}
+    properties[amqp_transport.PRODUCT_SYMBOL] = USER_AGENT_PREFIX
+    properties[amqp_transport.VERSION_SYMBOL] = VERSION
+    framework = f"Python/{sys.version_info[0]}.{sys.version_info[1]}.{sys.version_info[2]}"
+    properties[amqp_transport.FRAMEWORK_SYMBOL] = framework
     platform_str = platform.platform()
-    properties["platform"] = platform_str
+    properties[amqp_transport.PLATFORM_SYMBOL] = platform_str
 
-    final_user_agent = "{}/{} {} ({})".format(
-        USER_AGENT_PREFIX, VERSION, framework, platform_str
-    )
+    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {framework} ({platform_str})"
     if user_agent:
-        final_user_agent = "{} {}".format(user_agent, final_user_agent)
+        final_user_agent = f"{user_agent} {final_user_agent}"
 
     if len(final_user_agent) > MAX_USER_AGENT_LENGTH:
         raise ValueError(
-            "The user-agent string cannot be more than {} in length."
-            "Current user_agent string is: {} with length: {}".format(
-                MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)
-            )
+            f"The user-agent string cannot be more than {MAX_USER_AGENT_LENGTH} in length."
+            f"Current user_agent string is: {final_user_agent} with length: {len(final_user_agent)}"
         )
-    properties["user-agent"] = final_user_agent
+    properties[amqp_transport.USER_AGENT_SYMBOL] = final_user_agent
     return properties
-
-
-def set_message_partition_key(message, partition_key, **kwargs):
-    # type: (Message, Optional[Union[bytes, str]]) -> Message
-    """Set the partition key as an annotation on a uamqp message.
-
-    :param ~uamqp.Message message: The message to update.
-    :param str partition_key: The partition key value.
-    :rtype: None
-    """
-    encoding = kwargs.pop("encoding", 'utf-8')
-    if partition_key:
-        annotations = message.message_annotations
-        if annotations is None:
-            annotations = dict()
-        try:
-            partition_key = partition_key.decode(encoding)
-        except AttributeError:
-            pass
-        annotations[
-            PROP_PARTITION_KEY
-        ] = partition_key  # pylint:disable=protected-access
-        header = Header(durable=True)
-        return message._replace(message_annotations=annotations, header=header)
-    return message
 
 
 @contextmanager
@@ -145,6 +131,31 @@ def send_context_manager():
             yield child
     else:
         yield None
+
+
+def set_event_partition_key(
+    event: Union[AmqpAnnotatedMessage, EventData],
+    partition_key: Optional[Union[bytes, str]],
+    amqp_transport: AmqpTransport
+) -> None:
+    if not partition_key:
+        return
+
+    try:
+        raw_message = event.raw_amqp_message  # type: ignore
+    except AttributeError:
+        raw_message = event
+
+    annotations = raw_message.annotations
+    if annotations is None:
+        annotations = {}
+    annotations[
+        amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL
+    ] = partition_key  # pylint:disable=protected-access
+    if not raw_message.header:
+        raw_message.header = AmqpMessageHeader(header=True)
+    else:
+        raw_message.header.durable = True
 
 
 def trace_message(event, parent_span=None):
@@ -176,9 +187,7 @@ def trace_message(event, parent_span=None):
 
 def get_event_links(events):
     # pylint:disable=isinstance-second-argument-not-valid-type
-    trace_events = (
-        events if isinstance(events, Iterable) else (events,)
-    )
+    trace_events = events if isinstance(events, Iterable) else (events,)
     links = []
     try:
         for event in trace_events:  # type: ignore
@@ -209,15 +218,13 @@ def event_position_selector(value, inclusive=False):
             value.microsecond / 1000
         )
         return (
-            "amqp.annotation.x-opt-enqueued-time {} '{}'".format(
-                operator, int(timestamp)
-            )
+            f"amqp.annotation.x-opt-enqueued-time {operator} '{int(timestamp)}'"
         ).encode("utf-8")
     elif isinstance(value, six.integer_types):
         return (
-            "amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, value)
+            f"amqp.annotation.x-opt-sequence-number {operator} '{value}'"
         ).encode("utf-8")
-    return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, value)).encode(
+    return (f"amqp.annotation.x-opt-offset {operator} '{value}'").encode(
         "utf-8"
     )
 
@@ -232,23 +239,23 @@ def get_last_enqueued_event_properties(event_data):
     if event_data._last_enqueued_event_properties:
         return event_data._last_enqueued_event_properties
 
-    if event_data.message.delivery_annotations:
-        sequence_number = event_data.message.delivery_annotations.get(
+    if event_data._message.delivery_annotations:
+        sequence_number = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None
         )
-        enqueued_time_stamp = event_data.message.delivery_annotations.get(
+        enqueued_time_stamp = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_TIME_UTC, None
         )
         if enqueued_time_stamp:
             enqueued_time_stamp = utc_from_timestamp(float(enqueued_time_stamp) / 1000)
-        retrieval_time_stamp = event_data.message.delivery_annotations.get(
+        retrieval_time_stamp = event_data._message.delivery_annotations.get(
             PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None
         )
         if retrieval_time_stamp:
             retrieval_time_stamp = utc_from_timestamp(
                 float(retrieval_time_stamp) / 1000
             )
-        offset_bytes = event_data.message.delivery_annotations.get(
+        offset_bytes = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_OFFSET, None
         )
         offset = offset_bytes.decode("UTF-8") if offset_bytes else None
@@ -274,8 +281,8 @@ def parse_sas_credential(credential):
     return (sas, expiry)
 
 
-def transform_outbound_single_message(message, message_type):
-    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
+def transform_outbound_single_message(message, message_type, to_outgoing_amqp_message):
+    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData], Callable) -> EventData
     """
     This method serves multiple goals:
     1. update the internal message to reflect any updates to settable properties on EventData
@@ -287,14 +294,20 @@ def transform_outbound_single_message(message, message_type):
     :rtype: EventData
     """
     try:
-        # EventData
         # pylint: disable=protected-access
-        return message._to_outgoing_message()  # type: ignore
+        # If EventData, set EventData._message to uamqp/pyamqp.Message right before sending.
+        message = cast("EventData", message)
+        message._message = to_outgoing_amqp_message(message.raw_amqp_message)
+        return message  # type: ignore
     except AttributeError:
-        # AmqpAnnotatedMessage
         # pylint: disable=protected-access
+        # If AmqpAnnotatedMessage, create EventData object with _from_message.
+        # event_data._message will be set to outgoing uamqp/pyamqp.Message.
+        # event_data.raw_amqp_message will be set to AmqpAnnotatedMessage.
+        message = cast(AmqpAnnotatedMessage, message)
+        amqp_message = to_outgoing_amqp_message(message)
         return message_type._from_message(
-            message=message._to_outgoing_amqp_message(), raw_amqp_message=message  # type: ignore
+            message=amqp_message, raw_amqp_message=message  # type: ignore
         )
 
 
@@ -314,14 +327,18 @@ def decode_with_recurse(data, encoding="UTF-8"):
         return data
     if isinstance(data, six.binary_type):
         return data.decode(encoding)
-    if isinstance(data, Mapping): # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(
+        data, Mapping
+    ):  # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_mapping = {}
         for k, v in data.items():
             decoded_key = decode_with_recurse(k, encoding)
             decoded_val = decode_with_recurse(v, encoding)
             decoded_mapping[decoded_key] = decoded_val
         return decoded_mapping
-    if isinstance(data, Iterable): # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(
+        data, Iterable
+    ):  # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_list = []
         for d in data:
             decoded_list.append(decode_with_recurse(d, encoding))

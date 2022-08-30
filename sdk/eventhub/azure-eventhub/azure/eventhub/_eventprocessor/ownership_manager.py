@@ -9,6 +9,7 @@ from collections import Counter, defaultdict
 from typing import List, Iterable, Optional, Dict, Any, Union, TYPE_CHECKING
 
 from .common import LoadBalancingStrategy
+
 if TYPE_CHECKING:
     from .checkpoint_store import CheckpointStore
     from .._consumer_client import EventHubConsumerClient
@@ -52,8 +53,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
 
     def claim_ownership(self):
         # type: () -> List[str]
-        """Claims ownership for this EventProcessor
-        """
+        """Claims ownership for this EventProcessor"""
         if not self.cached_parition_ids:
             self._retrieve_partition_ids()
 
@@ -102,16 +102,14 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
 
     def _retrieve_partition_ids(self):
         # type: () -> None
-        """List all partition ids of the event hub that the EventProcessor is working on.
-        """
+        """List all partition ids of the event hub that the EventProcessor is working on."""
         self.cached_parition_ids = self.eventhub_client.get_partition_ids()
 
     def _balance_ownership(  # pylint:disable=too-many-locals
         self, ownership_list, all_partition_ids
     ):
         # type: (Iterable[Dict[str, Any]], List[str]) -> List[Dict[str, Any]]
-        """Balances and claims ownership of partitions for this EventProcessor.
-        """
+        """Balances and claims ownership of partitions for this EventProcessor."""
         now = time.time()
         ownership_dict = {
             x["partition_id"]: x for x in ownership_list
@@ -148,7 +146,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         expected_count_per_owner = all_partition_count // owners_count
         # Py2 math.ceil() returns float, a/b return int if not divisable.
         # Py3 math.ceil() returns int, a/b return float if not divisable.
-        max_count_per_owner = int(math.ceil(all_partition_count*1.0 / owners_count))
+        max_count_per_owner = int(math.ceil(all_partition_count * 1.0 / owners_count))
         # end of calculating expected count per owner
 
         to_claim = active_ownership_self
@@ -157,9 +155,11 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
             if self.load_balancing_strategy is LoadBalancingStrategy.GREEDY:
                 # Greedily claim more partitions if there are claimable partitions
                 to_greedy_claim_ids = random.sample(
-                    claimable_partition_ids, k=min(
-                        max_count_per_owner - len(active_ownership_self), len(claimable_partition_ids)
-                    )
+                    claimable_partition_ids,
+                    k=min(
+                        max_count_per_owner - len(active_ownership_self),
+                        len(claimable_partition_ids),
+                    ),
                 )
                 if to_greedy_claim_ids:
                     for pid in to_greedy_claim_ids:
@@ -195,13 +195,9 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
                 active_ownership_count_group_by_owner = Counter(
                     dict((x, len(y)) for x, y in active_ownership_by_owner.items())
                 )
-                most_frequent_owner_id = active_ownership_count_group_by_owner.most_common(
-                    1
-                )[
-                    0
-                ][
-                    0
-                ]
+                most_frequent_owner_id = (
+                    active_ownership_count_group_by_owner.most_common(1)[0][0]
+                )
                 # randomly choose a partition to steal from the most_frequent_owner
                 to_steal_partition = random.choice(
                     active_ownership_by_owner[most_frequent_owner_id]
