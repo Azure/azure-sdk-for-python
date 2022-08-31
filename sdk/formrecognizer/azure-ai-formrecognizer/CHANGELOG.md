@@ -3,6 +3,9 @@
 ## 3.2.0b7 (Unreleased)
 
 ### Features Added
+- Content type `image/heif` is supported for document analysis and building models.
+- Added `custom_document_models` property on `ResourceDetails`.
+- Added new `CustomDocumentModelsDetails` model to represent the details of the custom document models in a given Form Recognizer resource.
 
 ### Breaking Changes
 - This library will default to service API version `2022-08-31` going forward.
@@ -13,6 +16,9 @@
 - Renamed `list_models()` to `list_document_models()` on the `DocumentModelAdministrationClient`.
 - Renamed `get_model()` to `get_document_model()` on the `DocumentModelAdministrationClient`.
 - Renamed `delete_model()` to `delete_document_model()` on the `DocumentModelAdministrationClient`.
+- Removed `document_model_count` and `document_model_limit` properties on `ResourceDetails`.
+- Renamed `DocumentModelOperationDetails` to `OperationDetails`.
+- Renamed `DocumentModelOperationSummary` to `OperationSummary`.
 
 ### Bugs Fixed
 

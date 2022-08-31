@@ -37,9 +37,9 @@ def sample_manage_models():
     # [START get_resource_details]
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    account_info = document_model_admin_client.get_resource_details()
+    account_details = document_model_admin_client.get_resource_details()
     print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
-        account_info.document_model_count, account_info.document_model_limit
+        account_details.custom_document_models.count, account_details.custom_document_models.limit
     ))
     # [END get_resource_details]
 

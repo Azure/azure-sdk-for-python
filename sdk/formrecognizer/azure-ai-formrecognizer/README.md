@@ -518,9 +518,9 @@ credential = AzureKeyCredential("<api_key>")
 
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
-account_info = document_model_admin_client.get_resource_details()
+account_details = document_model_admin_client.get_resource_details()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
-    account_info.document_model_count, account_info.document_model_limit
+    account_details.custom_document_models.count, account_details.custom_document_models.limit
 ))
 
 # Here we get a paged list of all of our models

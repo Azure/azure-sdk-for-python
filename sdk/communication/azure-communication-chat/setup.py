@@ -8,7 +8,7 @@ import re
 # your package.
 
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 3.6. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+# up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-communication-chat"
 PACKAGE_PPRINT_NAME = "Communication Chat"
@@ -43,7 +43,6 @@ setup(
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
@@ -55,7 +54,7 @@ setup(
         'azure',
         'azure.communication'
     ]),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     include_package_data=True,
     package_data={
         'pytyped': ['py.typed'],

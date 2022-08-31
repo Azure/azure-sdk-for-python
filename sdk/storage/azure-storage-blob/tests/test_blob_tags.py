@@ -495,7 +495,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         )
         self._setup(storage_account_name, token)
 
-        tags = {"year": '1000', "tag2": "secondtag", "tag3": "thirdtag", "habitat_type": 'Shallow Lowland Billabongs'}
+        tags = {"year": '2000', "tag2": "tagtwo", "tag3": "tagthree", "habitat_type": 'Shallow Lowland Billabongs'}
         blob_client, _ = self._create_block_blob(tags=tags, container_name=self.container_name)
         token1 = generate_blob_sas(
             storage_account_name,
@@ -505,19 +505,20 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             permission=BlobSasPermissions(delete_previous_version=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob_client=BlobClient.from_blob_url(blob_client.url, token1)
+        blob_client = BlobClient.from_blob_url(blob_client.url, token1)
         blob_client.set_blob_tags(tags=tags)
         tags_on_blob = blob_client.get_blob_tags()
         assert len(tags_on_blob) == len(tags)
 
         if self.is_live:
-            sleep(15)
+            sleep(10)
 
         # To filter in a specific container use:
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
-        where = "\"year\"='1000' and tag2 = 'secondtag' and tag3='thirdtag'"
+        where = "\"year\"='2000' and tag2 = 'tagtwo' and tag3='tagthree'"
 
-        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
+        container_client = self.bsc.get_container_client(self.container_name)
+        blob_list = container_client.find_blobs_by_tags(filter_expression=where, results_per_page=3).by_page()
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)

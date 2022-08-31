@@ -85,7 +85,7 @@ async def sample_conv_summarization_async():
         result = await poller.result()
         task_result = result["tasks"]["items"][0]
         print("... view task status ...")
-        print("status: {}".format(task_result["status"]))
+        print(f"status: {task_result['status']}")
         resolution_result = task_result["results"]
         if resolution_result["errors"]:
             print("... errors occured ...")
@@ -100,8 +100,8 @@ async def sample_conv_summarization_async():
             else:
                 summaries = conversation_result["summaries"]
                 print("... view task result ...")
-                print("issue: {}".format(summaries[0]["text"]))
-                print("resolution: {}".format(summaries[1]["text"]))
+                print(f"issue: {summaries[0]['text']}")
+                print(f"resolution: {summaries[1]['text']}")
 
     # [END analyze_conversation_app]
 

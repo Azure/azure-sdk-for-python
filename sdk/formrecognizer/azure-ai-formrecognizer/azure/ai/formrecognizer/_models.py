@@ -3261,7 +3261,7 @@ class DocumentTableCell:
         )
 
 
-class DocumentModelOperationSummary:
+class OperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
@@ -3307,14 +3307,14 @@ class DocumentModelOperationSummary:
 
     def __repr__(self):
         return (
-            f"DocumentModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
+            f"OperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelOperationSummary.
+        """Returns a dict representation of OperationSummary.
 
         :return: dict
         :rtype: dict
@@ -3332,12 +3332,12 @@ class DocumentModelOperationSummary:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelOperationSummary":
-        """Converts a dict in the shape of a DocumentModelOperationSummary to the model itself.
+    def from_dict(cls, data: dict) -> "OperationSummary":
+        """Converts a dict in the shape of a OperationSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelOperationSummary.
-        :return: DocumentModelOperationSummary
-        :rtype: DocumentModelOperationSummary
+        :param dict data: A dictionary in the shape of OperationSummary.
+        :return: OperationSummary
+        :rtype: OperationSummary
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3366,8 +3366,8 @@ class DocumentModelOperationSummary:
         )
 
 
-class DocumentModelOperationDetails(DocumentModelOperationSummary):
-    """DocumentModelOperationDetails consists of information about the model operation, including the result or
+class OperationDetails(OperationSummary):
+    """OperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
@@ -3412,7 +3412,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
 
     def __repr__(self):
         return (
-            f"DocumentModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
+            f"OperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, result={repr(self.result)}, "
@@ -3420,7 +3420,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelOperationDetails.
+        """Returns a dict representation of OperationDetails.
 
         :return: dict
         :rtype: dict
@@ -3440,12 +3440,12 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelOperationDetails":
-        """Converts a dict in the shape of a DocumentModelOperationDetails to the model itself.
+    def from_dict(cls, data: dict) -> "OperationDetails":
+        """Converts a dict in the shape of a OperationDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelOperationDetails.
-        :return: DocumentModelOperationDetails
-        :rtype: DocumentModelOperationDetails
+        :param dict data: A dictionary in the shape of OperationDetails.
+        :return: OperationDetails
+        :rtype: OperationDetails
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3930,31 +3930,76 @@ class DocumentTypeDetails:
         )
 
 
-class ResourceDetails:
-    """Details regarding models under the Form Recognizer resource.
+class CustomDocumentModelsDetails:
+    """Details regarding the custom models under the Form Recognizer resource.
 
-    :ivar int document_model_count: Number of custom models in the current resource.
-    :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
+    :ivar int count: Number of custom models in the current resource.
+    :ivar int limit: Maximum number of custom models supported in the current resource.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.document_model_count = kwargs.get("document_model_count", None)
-        self.document_model_limit = kwargs.get("document_model_limit", None)
+        self.count = kwargs.get("count", None)
+        self.limit = kwargs.get("limit", None)
 
     def __repr__(self):
-        return (
-            f"ResourceDetails(document_model_count={self.document_model_count}, "
-            f"document_model_limit={self.document_model_limit})"
-        )
+        return f"CustomDocumentModelsDetails(count={self.count}, limit={self.limit})"
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            document_model_count=info.count,
-            document_model_limit=info.limit,
+            count=info.count,
+            limit=info.limit,
+        )
+
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of CustomDocumentModelsDetails.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "count": self.count,
+            "limit": self.limit,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "CustomDocumentModelsDetails":
+        """Converts a dict in the shape of a CustomDocumentModelsDetails to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomDocumentModelsDetails.
+        :return: CustomDocumentModelsDetails
+        :rtype: CustomDocumentModelsDetails
+        """
+        return cls(
+            count=data.get("count", None),
+            limit=data.get("limit", None),
+        )
+
+
+class ResourceDetails:
+    """Details regarding the Form Recognizer resource.
+
+    :ivar CustomDocumentModelsDetails custom_document_models: Details regarding the custom models
+    under the Form Recognizer resource.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.custom_document_models = kwargs.get("custom_document_models", None)
+
+    def __repr__(self):
+        return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)})"
+
+    @classmethod
+    def _from_generated(cls, info):
+        return cls(
+            custom_document_models=CustomDocumentModelsDetails._from_generated(info),
         )
 
 
@@ -3964,10 +4009,7 @@ class ResourceDetails:
         :return: dict
         :rtype: dict
         """
-        return {
-            "document_model_count": self.document_model_count,
-            "document_model_limit": self.document_model_limit,
-        }
+        return {"custom_document_models": self.custom_document_models.to_dict()}
 
     @classmethod
     def from_dict(cls, data: dict) -> "ResourceDetails":
@@ -3978,8 +4020,7 @@ class ResourceDetails:
         :rtype: ResourceDetails
         """
         return cls(
-            document_model_count=data.get("document_model_count", None),
-            document_model_limit=data.get("document_model_limit", None),
+            custom_document_models=CustomDocumentModelsDetails.from_dict(data.get("custom_document_models", None)),
         )
 
 
