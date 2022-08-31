@@ -4,10 +4,6 @@
 
 from enum import Enum
 
-from six import with_metaclass
-
-from azure.core import CaseInsensitiveEnumMeta
-
 
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
@@ -127,6 +123,27 @@ STORAGE_ACCOUNT_URLS = {
 
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
+SCHEMA_VALIDATION_ERROR_TEMPLATE = (
+    "Error: {description}\n{error_msg}\n\n"
+    "Details: {parsed_error_details}\n"
+    "Resolutions:\n{resolutions}"
+    "You can also check the full log in debug mode for more details by adding --debug to the end of your command\n"
+    "Additional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
+    "auto-completion Azure ML VS code extension provides: "
+    "https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
+    "To set up VS Code, visit https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code\n"
+)
+YAML_CREATION_ERROR_DESCRIPTION = (
+    "The yaml file you provided does not match the prescribed schema "
+    "for {entity_type} yaml files and/or has the following issues:"
+)
+DATASTORE_SCHEMA_TYPES = [
+    "AzureFileSchema",
+    "AzureBlobSchema",
+    "AzureDataLakeGen2Schema",
+    "AzureStorageSchema",
+    "AzureDataLakeGen1Schema",
+]
 LOCAL_PATH = "local_path"
 
 
@@ -161,6 +178,7 @@ class ComputeType(object):
     COMPUTEINSTANCE = "computeinstance"
     VIRTUALMACHINE = "virtualmachine"
     KUBERNETES = "kubernetes"
+    ADF = "DataFactory"
 
 
 class ComputeTier(object):
@@ -199,6 +217,8 @@ class JobType(object):
     COMPONENT = "component"
     BASE = "base"
     PARALLEL = "parallel"
+    IMPORT = "import"
+    SPARK = "spark"
 
 
 class JobLimitsType(object):
@@ -620,6 +640,8 @@ class NodeType(object):
     PARALLEL = "parallel"
     AUTOML = "automl"
     PIPELINE = "pipeline"
+    IMPORT = "import"
+    SPARK = "spark"
 
 
 class ComponentSource:
@@ -765,7 +787,7 @@ class TimeZone(str, Enum):
     WEST_PACIFIC_STANDARD_TIME = "West Pacific Standard Time"
     TASMANIA_STANDARD_TIME = "Tasmania Standard Time"
     VLADIVOSTOK_STANDARD_TIME = "Vladivostok Standard Time"
-    LORDE_HOWE_STANDARD_TIME = "Lord Howe Standard Time"
+    LORD_HOWE_STANDARD_TIME = "Lord Howe Standard Time"
     BOUGAINVILLE_STANDARD_TIME = "Bougainville Standard Time"
     RUSSIA_TIME_ZONE_10 = "Russia Time Zone 10"
     MAGADAN_STANDARD_TIME = "Magadan Standard Time"
@@ -826,3 +848,23 @@ class IOConstants:
         "string": ["default"],
         "boolean": ["default"],
     }
+    GROUP_ATTR_NAME = "__parameter_group__"
+    GROUP_TYPE_NAME = "group"
+
+
+class ImportSourceType:
+    AZURESQLDB = "azuresqldb"
+    AZURESYNAPSEANALYTICS = "azuresynapseanalytics"
+    SNOWFLAKE = "snowflake"
+    S3 = "s3"
+
+
+class SparkConfKey:
+    DRIVER_CORES = "driver_cores"
+    DRIVER_MEMORY = "driver_memory"
+    EXECUTOR_CORES = "executor_cores"
+    EXECUTOR_MEMORY = "executor_memory"
+    EXECUTOR_INSTANCES = "executor_instances"
+    DYNAMIC_ALLOCATION_MIN_EXECUTORS = "dynamic_allocation_min_executors"
+    DYNAMIC_ALLOCATION_MAX_EXECUTORS = "dynamic_allocation_max_executors"
+    DYNAMIC_ALLOCATION_ENABLED = "dynamic_allocation_enabled"

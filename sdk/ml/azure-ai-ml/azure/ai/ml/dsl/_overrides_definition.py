@@ -1,18 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Mapping
+
+from typing import Mapping
 
 
 class OverrideDefinition(dict):
     """Definition of a overridable field of a component job."""
 
-    def __init__(self, schema_dict: Dict):
-        super(OverrideDefinition, self).__init__(schema_dict)
-
 
 def get_override_definition_from_schema(
-    schema: str,
+    schema: str,  # pylint: disable=unused-argument
 ) -> Mapping[str, OverrideDefinition]:
     """Ger override definition from a json schema.
 

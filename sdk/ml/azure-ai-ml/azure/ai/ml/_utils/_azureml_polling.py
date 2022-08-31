@@ -20,7 +20,7 @@ class AzureMLPolling(ARMPolling):
 
     def update_status(self):
         """Update the current status of the LRO."""
-        super(ARMPolling, self).update_status()
+        super().update_status()
         print(".", end="", flush=True)
 
 
@@ -38,11 +38,11 @@ def polling_wait(
     :param start_time: Start time of operation.
     :type start_time: Optional[float]
     """
-    module_logger.info(f"{message}")
+    module_logger.info("%s", message)
     poller.result(timeout=LROConfigurations.POLLING_TIMEOUT)
     module_logger.info("Done.")
 
     if start_time:
         end_time = time()
         duration = divmod(int(round(end_time - start_time)), 60)
-        module_logger.info(f"({duration[0]}m {duration[1]}s)\n")
+        module_logger.info("(%sm %ss)\n", duration[0], duration[1])

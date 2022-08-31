@@ -1,0 +1,33 @@
+$schema: http://azureml/sdk-2-0/SparkComponent.json
+name: sample_spark_component
+type: spark
+version: 1
+display_name: Aml Spark dataset sample test module
+description: Aml Spark dataset sample test module
+
+
+code: ./basic_src
+
+entry:
+  file: sampleword.py
+
+inputs:
+  input1:
+    type: uri_file
+    mode: direct
+  sample_rate:
+    type: number
+    default: 0.01
+
+outputs:
+  output1:
+    type: uri_file
+    mode: direct
+
+
+args: >-
+  --input1 ${{inputs.input1}}
+  --output2 ${{outputs.output1}}
+  --my_sample_rate ${{inputs.sample_rate}}
+
+#environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

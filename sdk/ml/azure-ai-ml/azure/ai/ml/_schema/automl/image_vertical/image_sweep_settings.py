@@ -19,7 +19,9 @@ class ImageSweepSettingsSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def conversion(self, data, **kwargs):
-        return data._to_rest_object()
+        rest_obj = data._to_rest_object()
+        rest_obj.early_termination = data.early_termination
+        return rest_obj
 
     @post_load
     def make(self, data, **kwargs):

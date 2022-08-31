@@ -1,16 +1,17 @@
 import json
 
 import pytest
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import CommandJob, Environment, Job
 from azure.ai.ml.entities._builders.command import Command
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities._builders.command_func import command
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken
+
 from azure.ai.ml import Input
 from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml import MpiDistribution
@@ -41,7 +42,7 @@ class TestCommandJobEntity:
     def test_from_rest_legacy1_command(self, mock_workspace_scope: OperationScope, file: str):
         with open(file, "r") as f:
             resource = json.load(f)
-        rest_job = JobBaseData.deserialize(resource)
+        rest_job = JobBase.deserialize(resource)
         print(type(rest_job.properties))
         job = Job._from_rest_object(rest_job)
         assert job.command == "echo ${{inputs.filePath}} && ls ${{inputs.dirPath}}"
@@ -49,7 +50,7 @@ class TestCommandJobEntity:
     def test_missing_input_raises(self):
         with open("./tests/test_configs/command_job/rest_command_job_env_var_command.json", "r") as f:
             resource = json.load(f)
-        rest_job = JobBaseData.deserialize(resource)
+        rest_job = JobBase.deserialize(resource)
         job = Job._from_rest_object(rest_job)
         job.command = "echo ${{inputs.missing_input}}"
         with pytest.raises(ValidationException):
@@ -83,7 +84,7 @@ class TestCommandJobEntity:
         )
         assert distributed_job.code == "./src"
 
-        distributed_job.resources = ResourceConfiguration()
+        distributed_job.resources = JobResourceConfiguration()
         distributed_job.resources.instance_count = 4
         assert distributed_job.resources.instance_count == 4
 
@@ -97,8 +98,8 @@ class TestCommandJobEntity:
             distribution=MpiDistribution(process_count_per_instance=2),
         )
 
-        distribution = {"distribution_type": "Mpi", "process_count_per_instance": 2}
-        assert OrderedDict(distribution) == OrderedDict(node._to_job().distribution.as_dict())
+        distribution = {"type": "mpi", "process_count_per_instance": 2}
+        assert OrderedDict(distribution) == OrderedDict(node._to_job().distribution.__dict__)
 
         from_rest_job = Job._from_rest_object(node._to_job()._to_rest_object())
 
@@ -152,7 +153,7 @@ class TestCommandJobEntity:
             environment_variables={"EVN1": "VAR1"},
             outputs={"best_model": {}},
             limits=CommandJobLimits(timeout=300),
-            resources=ResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
             code="./",
         )
 

@@ -5,7 +5,8 @@ from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
 from azure.ai.ml import MLClient, load_component, load_job, Input
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.ai.ml.entities._inputs_outputs import GroupInput
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -18,7 +19,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 class TestPipelineComponentEntity:
     def test_inline_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(source=component_path)
         exptected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "name": "helloworld_pipeline_component",
@@ -67,7 +68,7 @@ class TestPipelineComponentEntity:
 
     def test_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(source=component_path)
         exptected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "name": "helloworld_pipeline_component",
@@ -128,7 +129,7 @@ class TestPipelineComponentEntity:
 
     def test_helloworld_nested_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(source=component_path)
 
         exptected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
@@ -221,7 +222,7 @@ class TestPipelineComponentEntity:
 
     def test_pipeline_job_to_component(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml"
-        job: PipelineJob = load_job(path=test_path)
+        job: PipelineJob = load_job(source=test_path)
 
         pipeline_component = job._to_component()
         expected_dict = {
@@ -268,7 +269,7 @@ class TestPipelineComponentEntity:
 
     def test_pipeline_job_translation_warning(self, caplog):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml"
-        job: PipelineJob = load_job(path=test_path)
+        job: PipelineJob = load_job(source=test_path)
 
         from azure.ai.ml.entities._job.pipeline import pipeline_job
 
@@ -284,7 +285,7 @@ class TestPipelineComponentEntity:
         )
 
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults.yml"
-        job: PipelineJob = load_job(path=test_path)
+        job: PipelineJob = load_job(source=test_path)
 
         with caplog.at_level(logging.WARNING):
             job._to_component()
@@ -315,3 +316,72 @@ class TestPipelineComponentEntity:
         assert input._to_input()._to_dict() == {"type": "uri_folder"}
         input = PipelineInput(name="input", meta=None, data=Input(type="uri_file", mode="download", path="fake"))
         assert input._to_input()._to_dict() == {"type": "uri_file", "mode": "download"}
+
+    def test_pipeline_component_with_group(self) -> None:
+        component_path = "./tests/test_configs/components/pipeline_component_with_group.yml"
+        component: PipelineComponent = load_component(path=component_path)
+        assert len(component.inputs) == 2
+        assert isinstance(component.inputs["group"], GroupInput)
+        component_dict = component._to_dict()
+        assert component_dict["inputs"] == {
+            "component_in_path": {"type": "uri_folder", "description": "A path"},
+            "group.component_in_number": {
+                "type": "number",
+                "optional": True,
+                "default": "10.99",
+                "description": "A number",
+            },
+            "group.sub.component_in_number2": {
+                "type": "number",
+                "optional": True,
+                "default": "10.99",
+                "description": "A number",
+            },
+        }
+        assert component_dict["jobs"]["node1"]["inputs"] == {
+            "component_in_number": {"path": "${{parent.inputs.group.component_in_number}}"},
+            "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
+        }
+        assert component_dict["jobs"]["node2"]["inputs"] == {
+            "component_in_number": {"path": "${{parent.inputs.group.sub.component_in_number}}"},
+            "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
+        }
+
+    def test_nested_pipeline_component_with_group(self) -> None:
+        component_path = "./tests/test_configs/components/nested_pipeline_component_with_group.yml"
+        component: PipelineComponent = load_component(path=component_path)
+        assert len(component.inputs) == 2
+        assert isinstance(component.inputs["top_group"], GroupInput)
+        nested_pipeline_component = component.jobs["component_a_job"]
+        assert len(nested_pipeline_component.inputs) == 2
+        assert isinstance(nested_pipeline_component.inputs.group, _GroupAttrDict)
+        component_dict = component._to_dict()
+        assert component_dict["inputs"] == {
+            "component_in_path": {"type": "uri_folder", "description": "A path"},
+            "top_group.component_in_number": {
+                "type": "number",
+                "optional": True,
+                "default": "10.99",
+                "description": "A number",
+            },
+            "top_group.sub2.component_in_number2": {
+                "type": "number",
+                "optional": True,
+                "default": "10.99",
+                "description": "A number",
+            },
+        }
+        assert component_dict["jobs"]["component_a_job"]["inputs"] == {
+            "component_in_path": {"path": "${{parent.inputs.group.component_in_path}}"},
+            "group.component_in_number": {"path": "${{parent.inputs.top_group.component_in_number}}"},
+            "group.sub.component_in_number2": {"path": "${{parent.inputs.top_group.sub2.component_in_number2}}"},
+        }
+
+    def test_invalid_nested_pipeline_component_with_group(self) -> None:
+        component_path = "./tests/test_configs/components/invalid/invalid_nested_pipeline_component_with_group.yml"
+        with pytest.raises(Exception) as e:
+            load_component(path=component_path)
+        assert (
+            "'group' is defined as a parameter group but got input '${{parent.inputs.top_group}}' with type '<class 'str'>'"
+            in str(e.value)
+        )

@@ -23,23 +23,35 @@ from azure.ai.ml._azure_environments import (
     _get_base_url_from_metadata,
     _resource_to_scopes,
 )
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, JobException
+from azure.ai.ml._ml_exceptions import (
+    ComponentException,
+    ErrorCategory,
+    ErrorTarget,
+    JobException,
+    ValidationErrorType,
+    ValidationException,
+    MlException,
+)
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml.entities._job.import_job import ImportJob
+from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
+
 from azure.ai.ml._telemetry import (
     AML_INTERNAL_LOGGER_NAMESPACE,
     ActivityType,
     monitor_with_activity,
     monitor_with_telemetry_mixin,
 )
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import (
-    create_session_with_retry,
+    create_requests_pipeline_with_retry,
     download_text_from_url,
     is_data_binding_expression,
     is_private_preview_enabled,
@@ -61,11 +73,12 @@ from azure.ai.ml.constants import (
     AssetTypes,
     AzureMLResourceType,
     PipelineConstants,
+    ComputeType,
 )
 from azure.ai.ml.entities import Component, Compute, Job, PipelineJob
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._assets._artifacts.code import Code
-from azure.ai.ml.entities._builders import BaseNode, Command
+from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
@@ -75,8 +88,8 @@ from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
-from azure.core.exceptions import ResourceNotFoundError
-from azure.identity import ChainedTokenCredential
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.credentials import TokenCredential
 
 from .._utils._experimental import experimental
 from ..entities._job.pipeline._io import InputOutputBase
@@ -114,15 +127,15 @@ class JobOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client_02_2022_preview: ServiceClient022022Preview,
+        service_client_06_2022_preview: ServiceClient062022Preview,
         all_operations: OperationsContainer,
-        credential: ChainedTokenCredential,
+        credential: TokenCredential,
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope)
         if "app_insights_handler" in kwargs:
             logger.addHandler(kwargs.pop("app_insights_handler"))
-        self._operation_2022_02_preview = service_client_02_2022_preview.jobs
+        self._operation_2022_06_preview = service_client_06_2022_preview.jobs
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -137,6 +150,8 @@ class JobOperations(_ScopeDependentOperations):
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
 
         self._kwargs = kwargs
+
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @property
     def _component_operations(self) -> ComponentOperations:
@@ -216,7 +231,7 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name)
 
-        return self._operation_2022_02_preview.list(
+        return self._operation_2022_06_preview.list(
             self._operation_scope.resource_group_name,
             self._workspace_name,
             cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -265,7 +280,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: None
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        return self._operation_2022_02_preview.cancel(
+        return self._operation_2022_06_preview.begin_cancel(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -273,6 +288,11 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     def try_get_compute_arm_id(self, compute: Union[Compute, str]):
+        # TODO: Remove in PuP with native import job/component type support in MFE/Designer
+        # DataFactory 'clusterless' job
+        if compute == ComputeType.ADF:
+            return compute
+
         if compute is not None:
             if is_ARM_id_for_resource(compute, resource_type=AzureMLResourceType.COMPUTE):
                 # compute is not a sub-workspace resource
@@ -393,7 +413,9 @@ class JobOperations(_ScopeDependentOperations):
         :return: Created or updated job.
         :rtype: Job
         """
-        if isinstance(job, BaseNode) and not isinstance(job, Command):  # Command objects can be used directly
+        if isinstance(job, BaseNode) and not (
+            isinstance(job, Command) or isinstance(job, Spark)
+        ):  # Command/Spark objects can be used directly
             job = job._to_job()
 
         # Set job properties before submission
@@ -430,7 +452,8 @@ class JobOperations(_ScopeDependentOperations):
             or isinstance(rest_job_resource.properties.identity, UserIdentity)
         ):
             self._set_headers_with_user_aml_token(kwargs)
-        result = self._operation_2022_02_preview.create_or_update(
+
+        result = self._operation_2022_06_preview.create_or_update(
             id=rest_job_resource.name,  # type: ignore
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -459,7 +482,7 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._operation_2022_02_preview.create_or_update(
+            result = self._operation_2022_06_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -474,7 +497,7 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self._operation_2022_02_preview.create_or_update(
+        self._operation_2022_06_preview.create_or_update(
             id=job_object.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -517,9 +540,7 @@ class JobOperations(_ScopeDependentOperations):
 
         try:
             self._stream_logs_until_completion(
-                self._runs_operations,
-                job_object,
-                self._datastore_operations,
+                self._runs_operations, job_object, self._datastore_operations, requests_pipeline=self._requests_pipeline
             )
         except Exception:
             raise
@@ -699,8 +720,8 @@ class JobOperations(_ScopeDependentOperations):
                 break
         return uri
 
-    def _get_job(self, name: str) -> JobBaseData:
-        return self._operation_2022_02_preview.get(
+    def _get_job(self, name: str) -> JobBase:
+        return self._operation_2022_06_preview.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -713,7 +734,11 @@ class JobOperations(_ScopeDependentOperations):
             .get(self._operation_scope.workspace_name)
             .discovery_url
         )
-        all_urls = json.loads(download_text_from_url(discovery_url, create_session_with_retry()))
+        all_urls = json.loads(
+            download_text_from_url(
+                discovery_url, create_requests_pipeline_with_retry(requests_pipeline=self._requests_pipeline)
+            )
+        )
         return all_urls[url_key]
 
     def _resolve_arm_id_or_upload_dependencies(self, job: Job) -> None:
@@ -735,6 +760,8 @@ class JobOperations(_ScopeDependentOperations):
                 self._component_operations._resolve_inputs_for_pipeline_component_jobs(job.jobs, job.base_path)
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job, job._base_path, inside_pipeline=False)
+        elif isinstance(job, Spark):
+            self._resolve_job_inputs(job._job_inputs.values(), job._base_path)
         elif isinstance(job, Command):
             # TODO: switch to use inputs of Command objects, once the inputs/outputs building logic is removed from the BaseNode constructor.
             try:
@@ -761,23 +788,34 @@ class JobOperations(_ScopeDependentOperations):
         if inside_pipeline and is_data_binding_expression(str(input)):
             return input
         try:
+            datastore_name = (
+                input.datastore if (hasattr(input, "datastore") and input.datastore) else WORKSPACE_BLOB_STORE
+            )
+
             if os.path.isabs(input):  # absolute local path, upload, transform to remote url
                 # absolute local path
-                return _upload_and_generate_remote_uri(self._operation_scope, self._datastore_operations, input)
+                return _upload_and_generate_remote_uri(
+                    self._operation_scope, self._datastore_operations, input, datastore_name=datastore_name
+                )
             elif ":" in input or "@" in input:  # Check for AzureML id, is there a better way?
                 asset_type = AzureMLResourceType.DATA
                 return self._orchestrators.get_asset_arm_id(input, asset_type)
             else:  # relative local path, upload, transform to remote url
                 local_path = Path(base_path, input).resolve()
-                return _upload_and_generate_remote_uri(self._operation_scope, self._datastore_operations, local_path)
+                return _upload_and_generate_remote_uri(
+                    self._operation_scope, self._datastore_operations, local_path, datastore_name=datastore_name
+                )
+        except (MlException, HttpResponseError) as e:
+            raise e
         except Exception as e:
-            raise JobException(
+            raise ValidationException(
                 message=f"Supported input path value are ARM id, AzureML id, remote uri or local path.\n"
                 f"Met {type(e)}:\n{e}",
                 target=ErrorTarget.JOB,
                 no_personal_data_message="Supported input path value are ARM id, AzureML id, remote uri or local path.",
                 error=e,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def _resolve_automl_job_inputs(self, job: AutoMLJob, base_path: os.PathLike, inside_pipeline) -> None:
@@ -787,16 +825,11 @@ class JobOperations(_ScopeDependentOperations):
         :type job: AutoMLJob
         """
         if isinstance(job, AutoMLJob):
-            data = job._data
-            self._resolve_job_input(data.training_data.data, job._base_path)
-
-            validation_data = data.validation_data
-            if validation_data and validation_data.data:
-                self._resolve_job_input(data.validation_data.data, job._base_path)
-
-            test_data = data.test_data
-            if test_data and test_data.data:
-                self._resolve_job_input(data.test_data.data, job._base_path)
+            self._resolve_job_input(job.training_data, job._base_path)
+            if job.validation_data:
+                self._resolve_job_input(job.validation_data, job._base_path)
+            if hasattr(job, "test_data") and job.test_data:
+                self._resolve_job_input(job.test_data, job._base_path)
 
     def _resolve_azureml_id(self, job: Job) -> Job:
         """This method converts ARM id to name or name:version for nested
@@ -848,11 +881,12 @@ class JobOperations(_ScopeDependentOperations):
         # path can be empty if the job was created from builder functions
         if isinstance(entry, Input) and not entry.path:
             msg = "Input path can't be empty for jobs."
-            raise JobException(
+            raise ValidationException(
                 message=msg,
                 target=ErrorTarget.JOB,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
 
         if (
@@ -863,26 +897,33 @@ class JobOperations(_ScopeDependentOperations):
         ):  # Literal value, ARM id or remote url. Pass through
             return
         try:
+            datastore_name = (
+                entry.datastore if hasattr(entry, "datastore") and entry.datastore else WORKSPACE_BLOB_STORE
+            )
+
             if os.path.isabs(entry.path):  # absolute local path, upload, transform to remote url
                 if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(entry.path):
-                    raise JobException(
+                    raise ValidationException(
                         message="There is no dir on target path: {}".format(entry.path),
                         target=ErrorTarget.JOB,
                         no_personal_data_message="There is no dir on target path",
                         error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
                     )
                 elif entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):
-                    raise JobException(
+                    raise ValidationException(
                         message="There is no file on target path: {}".format(entry.path),
                         target=ErrorTarget.JOB,
                         no_personal_data_message="There is no file on target path",
                         error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
                     )
                 # absolute local path
                 entry.path = _upload_and_generate_remote_uri(
                     self._operation_scope,
                     self._datastore_operations,
                     entry.path,
+                    datastore_name=datastore_name,
                 )
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
@@ -899,18 +940,22 @@ class JobOperations(_ScopeDependentOperations):
                     self._operation_scope,
                     self._datastore_operations,
                     local_path,
+                    datastore_name=datastore_name,
                 )
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
+        except (MlException, HttpResponseError) as e:
+            raise e
         except Exception as e:
-            raise JobException(
+            raise ValidationException(
                 message=f"Supported input path value are ARM id, AzureML id, remote uri or local path.\n"
                 f"Met {type(e)}:\n{e}",
                 target=ErrorTarget.JOB,
                 no_personal_data_message="Supported input path value are ARM id, AzureML id, remote uri or local path.",
                 error=e,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
     def _resolve_job_inputs_arm_id(self, job: Job) -> None:
@@ -938,6 +983,10 @@ class JobOperations(_ScopeDependentOperations):
             job.compute = self._resolve_compute_id(resolver, job.compute)
         elif isinstance(job, Command):
             job = self._resolve_arm_id_for_command_job(job, resolver)
+        elif isinstance(job, ImportJob):
+            job = self._resolve_arm_id_for_import_job(job, resolver)
+        elif isinstance(job, Spark):
+            job = self._resolve_arm_id_for_spark_job(job, resolver)
         elif isinstance(job, ParallelJob):
             job = self._resolve_arm_id_for_parallel_job(job, resolver)
         elif isinstance(job, SweepJob):
@@ -948,16 +997,38 @@ class JobOperations(_ScopeDependentOperations):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
         else:
             msg = f"Non supported job type: {type(job)}"
-            raise JobException(
+            raise ValidationException(
                 message=msg,
                 target=ErrorTarget.JOB,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
         return job
 
     def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Job:
         """Resolve arm_id for CommandJob."""
+        if job.code is not None and is_registry_id_for_resource(job.code):
+            msg = f"Format not supported for code asset: {job.code}"
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.JOB,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+        if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):
+            job.code = resolver(
+                Code(base_path=job._base_path, path=job.code),
+                azureml_type=AzureMLResourceType.CODE,
+            )
+        job.environment = resolver(job.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+        job.compute = self._resolve_compute_id(resolver, job.compute)
+        return job
+
+    def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Job:
+        """Resolve arm_id for SparkJob."""
         if job.code is not None and is_registry_id_for_resource(job.code):
             msg = f"Format not supported for code asset: {job.code}"
             raise JobException(
@@ -974,6 +1045,16 @@ class JobOperations(_ScopeDependentOperations):
             )
         job.environment = resolver(job.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
         job.compute = self._resolve_compute_id(resolver, job.compute)
+        return job
+
+    def _resolve_arm_id_for_import_job(self, job: Job, resolver: Callable) -> Job:
+        """Resolve arm_id for ImportJob."""
+        # compute property will be no longer applicable once import job type is ready on MFE in PuP
+        # for PrP, we use command job type instead for import job where compute property is required
+        # However, MFE only validates compute resource url format. Execution service owns the real
+        # validation today but supports reserved compute names like AmlCompute, ContainerInstance and
+        # DataFactory here for 'clusterless' jobs
+        job.compute = self._resolve_compute_id(resolver, ComputeType.ADF)
         return job
 
     def _resolve_arm_id_for_parallel_job(self, job: Job, resolver: Callable) -> Job:

@@ -31,7 +31,8 @@ class EndpointSchema(PathAwareSchema):
         ],
         casing_transform=camel_to_snake,
         metadata={
-            "description": "authentication method: no auth, key based or azure ml token based. aad_token is only valid for batch endpoint."
+            "description": """authentication method: no auth, key based or azure ml token based.
+            aad_token is only valid for batch endpoint."""
         },
     )
     scoring_uri = fields.Str(metadata={"description": "The endpoint uri that can be used for scoring"})

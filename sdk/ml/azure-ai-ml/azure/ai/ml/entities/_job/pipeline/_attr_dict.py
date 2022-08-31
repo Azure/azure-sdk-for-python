@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, unnecessary-comprehension
 
 import logging
 from abc import ABC
@@ -50,7 +50,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self._key_restriction = True
         self._logger = logging.getLogger("attr_dict")
 
-    def _initializing(self) -> bool:
+    def _initializing(self) -> bool:  # pylint: disable=no-self-use
         # use this to indicate ongoing init process, sub class need to make sure this return True during init process.
         return False
 
@@ -105,7 +105,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
     def __getattr__(self, key: K) -> V:
         if not self._is_arbitrary_attr(key):
             return super().__getattribute__(key)
-        self._logger.debug(f"getting {key}")
+        self._logger.debug("getting %s", key)
         try:
             return super().__getitem__(key)
         except KeyError:
@@ -118,7 +118,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         if not self._is_arbitrary_attr(key):
             super().__setattr__(key, value)
         else:
-            self._logger.debug(f"setting {key} to {value}")
+            self._logger.debug("setting %s to %s", key, value)
             return super().__setitem__(key, value)
 
     def __setitem__(self, key: K, value: V):
@@ -147,5 +147,4 @@ def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
         has_attr = hasattr(obj, attr)
     if has_attr:
         return getattr(obj, attr)
-    else:
-        return None
+    return None

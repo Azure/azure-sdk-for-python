@@ -3,10 +3,10 @@ from azure.ai.ml.constants import AssetTypes
 from typing import Union
 from azure.ai.ml.automl import classification, regression, forecasting
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     CustomNCrossValidations,
     AutoNCrossValidations,
-    JobBaseData,
+    JobBase,
 )
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.tabular.classification_job import ClassificationJob
@@ -24,7 +24,7 @@ class TestNCrossValidationSettings:
         automl_job: Union[classification, regression, forecasting],
         validation_data_size: float = None,
         from_rest_obj: bool = False,
-    ) -> Union[JobBaseData, ClassificationJob, RegressionJob, ForecastingJob]:
+    ) -> Union[JobBase, ClassificationJob, RegressionJob, ForecastingJob]:
         # Create an AutoML Job
 
         job = automl_job(
@@ -59,7 +59,7 @@ class TestNCrossValidationSettings:
 
         for obj in rest_objs:
             assert isinstance(
-                obj.properties.task_details.data_settings.validation_data.n_cross_validations, AutoNCrossValidations
+                obj.properties.task_details.n_cross_validations, AutoNCrossValidations
             ), "N cross validations not an object of AutoNCrossValidations in {} job".format(
                 obj.properties.task_details.task_type
             )
@@ -73,9 +73,9 @@ class TestNCrossValidationSettings:
         ]
 
         for obj in rest_objs:
-            assert (
-                obj._data.validation_data.n_cross_validations == "auto"
-            ), "N cross validations incorrectly deserializing in {} job".format(obj.task_type)
+            assert obj.n_cross_validations == "auto", "N cross validations incorrectly deserializing in {} job".format(
+                obj.task_type
+            )
 
     def test_value_n_cv_to_rest(self):
         # Test with int value n cross validations (to_rest_obj)
@@ -87,7 +87,7 @@ class TestNCrossValidationSettings:
 
         for obj in rest_objs:
             assert isinstance(
-                obj.properties.task_details.data_settings.validation_data.n_cross_validations, CustomNCrossValidations
+                obj.properties.task_details.n_cross_validations, CustomNCrossValidations
             ), "N cross validations not an object of CustomNCrossValidations in {} job".format(
                 obj.properties.task_details.task_type
             )
@@ -101,9 +101,9 @@ class TestNCrossValidationSettings:
         ]
 
         for obj in rest_objs:
-            assert (
-                obj._data.validation_data.n_cross_validations == 2
-            ), "N cross validations incorrectly deserializing in {} job".format(obj.task_type)
+            assert obj.n_cross_validations == 2, "N cross validations incorrectly deserializing in {} job".format(
+                obj.task_type
+            )
 
     def test_none_n_cv_to_rest(self):
         # Test with None value n cross validations
@@ -114,9 +114,7 @@ class TestNCrossValidationSettings:
         ]
 
         for obj in rest_objs:
-            assert (
-                obj.properties.task_details.data_settings.validation_data.n_cross_validations is None
-            ), "N cross validations not None"
+            assert obj.properties.task_details.n_cross_validations is None, "N cross validations not None"
 
     def test_none_n_cv_from_rest(self):
         # Test with auto n cross validations (from_rest_object)
@@ -127,9 +125,7 @@ class TestNCrossValidationSettings:
         ]
 
         for obj in rest_objs:
-            assert (
-                obj._data.validation_data.n_cross_validations is None
-            ), "N cross validations not None in {} job".format(obj.task_type)
+            assert obj.n_cross_validations is None, "N cross validations not None in {} job".format(obj.task_type)
 
     def test_monte_carlo_cv(self):
         # Test with monte carlo cv
@@ -141,10 +137,10 @@ class TestNCrossValidationSettings:
 
         for obj in rest_objs:
             assert isinstance(
-                obj.properties.task_details.data_settings.validation_data.n_cross_validations, CustomNCrossValidations
+                obj.properties.task_details.n_cross_validations, CustomNCrossValidations
             ), "N cross validations not an object of CustomNCrossValidations in {} job".format(
                 obj.properties.task_details.task_type
             )
             assert (
-                obj.properties.task_details.data_settings.validation_data.validation_data_size == 0.2
+                obj.properties.task_details.validation_data_size == 0.2
             ), "Validation data size not being assigned in {} job".format(obj.properties.task_details.task_type)

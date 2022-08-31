@@ -8,6 +8,7 @@ from azure.ai.ml.entities import (
 import yaml
 import pytest
 from azure.ai.ml import load_online_endpoint, load_batch_endpoint
+from test_utilities.utils import verify_entity_load_and_dump
 
 
 @pytest.mark.unittest
@@ -16,12 +17,20 @@ class TestOnlineEndpointYAML:
     MINIMAL_ENDPOINT = "tests/test_configs/endpoints/online/online_endpoint_minimal.yaml"
     MINIMAL_DEPLOYMENT = "tests/test_configs/deployments/online/online_endpoint_deployment_k8s_minimum.yml"
 
-    def test_specific_endpoint_load(self) -> None:
+    def test_specific_endpoint_load_and_dump(self) -> None:
         with open(TestOnlineEndpointYAML.MINIMAL_ENDPOINT, "r") as f:
             target = yaml.safe_load(f)
-        endpoint = load_online_endpoint(TestOnlineEndpointYAML.MINIMAL_ENDPOINT)
-        assert isinstance(endpoint, OnlineEndpoint)
-        assert endpoint.name == target["name"]
+
+        def simple_online_endpoint_validation(endpoint):
+            assert isinstance(endpoint, OnlineEndpoint)
+            assert endpoint.name == target["name"]
+
+        _ = verify_entity_load_and_dump(
+            load_online_endpoint,
+            simple_online_endpoint_validation,
+            TestOnlineEndpointYAML.MINIMAL_ENDPOINT,
+            test_dump_file_path=None,
+        )
 
     def test_default_endpoint_load_to_online(self) -> None:
         with open(TestOnlineEndpointYAML.MINIMAL_ENDPOINT, "r") as f:
@@ -39,14 +48,22 @@ class TestOnlineEndpointYAML:
 class TestBatchEndpointYAML:
     BATCH_ENDPOINT_WITH_BLUE = "tests/test_configs/endpoints/batch/batch_endpoint.yaml"
 
-    def test_generic_endpoint_load_2(self) -> None:
+    def test_generic_endpoint_load_and_dump_2(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE, "r") as f:
             target = yaml.safe_load(f)
-        endpoint = load_batch_endpoint(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE)
-        assert isinstance(endpoint, BatchEndpoint)
-        assert endpoint.name == target["name"].lower()
-        assert endpoint.description == target["description"]
-        assert endpoint.auth_mode == target["auth_mode"]
+
+        def simple_batch_endpoint_validation(endpoint):
+            assert isinstance(endpoint, BatchEndpoint)
+            assert endpoint.name == target["name"].lower()
+            assert endpoint.description == target["description"]
+            assert endpoint.auth_mode == target["auth_mode"]
+
+        verify_entity_load_and_dump(
+            load_batch_endpoint,
+            simple_batch_endpoint_validation,
+            TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE,
+            test_dump_file_path=None,
+        )
 
     def test_to_rest_batch_endpoint(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE, "r") as f:

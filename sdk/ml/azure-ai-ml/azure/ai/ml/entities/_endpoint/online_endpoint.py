@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-member
+
 import logging
 from os import PathLike
 from pathlib import Path
@@ -168,12 +170,7 @@ class OnlineEndpoint(Endpoint):
         return switcher.get(yaml_auth_mode, yaml_auth_mode)
 
     @classmethod
-    def _from_rest_object(
-        cls,
-        resource: OnlineEndpointData,
-    ):
-
-        from azure.ai.ml.entities import KubernetesOnlineEndpoint, ManagedOnlineEndpoint
+    def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
 
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
         if resource.properties.compute:
@@ -234,11 +231,12 @@ class OnlineEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "Endpoint":
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
@@ -247,8 +245,8 @@ class OnlineEndpoint(Endpoint):
 
         if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(params_override):
             return load_from_dict(KubernetesOnlineEndpointSchema, data, context)
-        else:
-            return load_from_dict(ManagedOnlineEndpointSchema, data, context)
+
+        return load_from_dict(ManagedOnlineEndpointSchema, data, context)
 
 
 class KubernetesOnlineEndpoint(OnlineEndpoint):
@@ -308,7 +306,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
         self.compute = compute
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(self, path: Union[PathLike, str] = None) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return KubernetesOnlineEndpointSchema(context=context).dump(self)
 
@@ -393,7 +391,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
             **kwargs,
         )
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(self, path: Union[PathLike, str] = None) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return ManagedOnlineEndpointSchema(context=context).dump(self)
 

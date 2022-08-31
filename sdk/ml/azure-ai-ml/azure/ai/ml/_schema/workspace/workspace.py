@@ -34,5 +34,3 @@ class WorkspaceSchema(PathAwareSchema):
         allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
         casing_transform=snake_to_pascal,
     )
-    softdelete_enable = fields.Bool()
-    allow_recover_softdeleted_workspace = fields.Bool()

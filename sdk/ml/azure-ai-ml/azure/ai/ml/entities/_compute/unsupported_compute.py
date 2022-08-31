@@ -38,6 +38,7 @@ class UnsupportedCompute(Compute):
         return response
 
     @classmethod
+    # pylint: disable=unused-argument
     def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "UnsupportedCompute":
         msg = "Cannot create unsupported compute type."
         raise ValidationException(

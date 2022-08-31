@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=no-self-use,protected-access
 
 import logging
 from pathlib import Path
@@ -15,28 +15,36 @@ from azure.ai.ml._schema.core.fields import (
     NestedField,
     RegistryStr,
     UnionField,
+    CodeField,
 )
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.component import (
     AnonymousCommandComponentSchema,
     AnonymousParallelComponentSchema,
+    AnonymousImportComponentSchema,
+    AnonymousSparkComponentSchema,
     ComponentFileRefField,
     ParallelComponentFileRefField,
+    ImportComponentFileRefField,
+    SparkComponentFileRefField,
 )
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
+from azure.ai.ml._schema.spark_resource_configuration import SparkResourceConfigurationSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AzureMLResourceType, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input
 
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from ..._ml_exceptions import ValidationException
 from ...entities._job.pipeline._attr_dict import _AttrDict
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
-from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema
+from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
 from ..job.job_limits import CommandJobLimitsSchema
+from ..job.parameterized_spark import SparkEntryFileSchema, SparkEntryClassSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -56,7 +64,7 @@ class BaseNodeSchema(PathAwareSchema):
         support_data_binding_expression_for_fields(self, ["type"])
 
     @post_dump(pass_original=True)
-    def add_user_setting_attr_dict(self, data, original_data, **kwargs):
+    def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
         """Support serializing unknown fields for pipeline node."""
         if isinstance(original_data, _AttrDict):
             user_setting_attr_dict = original_data._get_attrs()
@@ -86,6 +94,7 @@ def _resolve_inputs_outputs(job):
 
 
 class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
+    # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
             NodeType.COMMAND: [
@@ -110,7 +119,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     # Change required fields to optional
     command = fields.Str(
         metadata={
-            "description": "The command run and the parameters passed. This string may contain place holders of inputs in {}. "
+            "description": "The command run and the parameters passed. \
+            This string may contain place holders of inputs in {}. "
         }
     )
     environment = UnionField(
@@ -165,6 +175,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
 
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
+    # pylint: disable=unused-argument
     type = StringTransformedEnum(allowed_values=[NodeType.SWEEP])
     compute = ComputeField()
     trial = TypeSensitiveUnionField(
@@ -189,7 +200,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
 
         # parse inputs/outputs
         data = parse_inputs_outputs(data)
-        return Sweep(**data)
+        return Sweep(**data)  # pylint: disable=abstract-class-instantiated
 
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
@@ -197,6 +208,7 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
 
 
 class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
+    # pylint: disable=unused-argument
     compute = ComputeField()
     component = TypeSensitiveUnionField(
         {
@@ -229,3 +241,121 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
+
+
+class ImportSchema(BaseNodeSchema):
+    # pylint: disable=unused-argument
+    component = TypeSensitiveUnionField(
+        {
+            NodeType.IMPORT: [
+                # inline component or component file reference starting with FILE prefix
+                NestedField(AnonymousImportComponentSchema, unknown=INCLUDE),
+                # component file reference
+                ImportComponentFileRefField(),
+            ],
+        },
+        plain_union_fields=[
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
+        required=True,
+    )
+    type = StringTransformedEnum(allowed_values=[NodeType.IMPORT])
+
+    @post_load
+    def make(self, data, **kwargs) -> "Import":
+        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from azure.ai.ml.entities._builders.import_func import import_job
+
+        # parse inputs/outputs
+        data = parse_inputs_outputs(data)
+        import_node = import_job(**data)
+        return import_node
+
+    @pre_dump
+    def resolve_inputs_outputs(self, job, **kwargs):
+        return _resolve_inputs_outputs(job)
+
+
+class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
+    # pylint: disable=unused-argument
+    component = TypeSensitiveUnionField(
+        {
+            NodeType.SPARK: [
+                # inline component or component file reference starting with FILE prefix
+                NestedField(AnonymousSparkComponentSchema, unknown=INCLUDE),
+                # component file reference
+                SparkComponentFileRefField(),
+            ],
+        },
+        plain_union_fields=[
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
+        required=True,
+    )
+    type = StringTransformedEnum(allowed_values=[NodeType.SPARK])
+    compute = ComputeField()
+    resources = NestedField(SparkResourceConfigurationSchema)
+    code = CodeField()
+    entry = UnionField(
+        [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
+        metadata={"description": "Entry."},
+    )
+    py_files = fields.List(fields.Str())
+    jars = fields.List(fields.Str())
+    files = fields.List(fields.Str())
+    archives = fields.List(fields.Str())
+    identity = UnionField(
+        [
+            NestedField(ManagedIdentitySchema),
+            NestedField(AMLTokenIdentitySchema),
+            NestedField(UserIdentitySchema),
+        ]
+    )
+
+    @post_load
+    def make(self, data, **kwargs) -> "Spark":
+        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from azure.ai.ml.entities._builders.spark_func import spark
+
+        # parse inputs/outputs
+        data = parse_inputs_outputs(data)
+        try:
+            spark_node = spark(**data)
+        except ValidationException as e:
+            # It may raise ValidationError during initialization, command._validate_io e.g. raise ValidationError
+            # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
+            raise ValidationError(e.message)
+        return spark_node
+
+    @pre_dump
+    def resolve_inputs_outputs(self, job, **kwargs):
+        return _resolve_inputs_outputs(job)
+
+    @post_dump(pass_original=True)
+    def resolve_code_path(self, data, original_data, **kwargs):
+        # Command.code is relative to pipeline instead of Command.component after serialization,
+        # so we need to transform it. Not sure if this is the best way to do it
+        # maybe move this logic to LocalPathField
+        if (
+            hasattr(original_data.component, "code")
+            and original_data.component.code is not None
+            and original_data.component.base_path != original_data._base_path
+        ):
+            try:
+                code_path = Path(original_data.component.base_path) / original_data.component.code
+                if code_path.exists():
+                    # relative path can't be calculated if component.base_path & pipeline.base_path are in different
+                    # drive, so just use absolute path
+                    rebased_path = code_path.resolve().absolute().as_posix()
+                    data["code"], data["component"]["code"] = rebased_path, rebased_path
+            except OSError:
+                # OSError will be raised when _base_path or code is an arm_str or an invalid path,
+                # then just return the origin value to avoid blocking serialization
+                pass
+        return data

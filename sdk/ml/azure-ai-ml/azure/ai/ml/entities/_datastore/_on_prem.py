@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-member
 
 from base64 import b64encode
 from pathlib import Path
@@ -29,7 +29,8 @@ class HdfsDatastore(Datastore):
     :type name: str
     :param name_node_address: IP Address or DNS HostName.
     :type name_node_address: str
-    :param hdfs_server_certificate: The TLS cert of the HDFS server (optional). Needs to be a local path on create and will be a base64 encoded string on get.
+    :param hdfs_server_certificate: The TLS cert of the HDFS server (optional).
+        Needs to be a local path on create and will be a base64 encoded string on get.
     :type hdfs_server_certificate: str
     :param protocol: http or https
     :type protocol: str

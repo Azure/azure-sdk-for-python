@@ -156,7 +156,7 @@ class BatchDeployment(Deployment):
         self.resources.instance_count = value
 
     def _to_dict(self) -> Dict:
-        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
     def _rest_output_action_to_yaml_output_action(cls, rest_output_action: str) -> str:
@@ -177,7 +177,7 @@ class BatchDeployment(Deployment):
 
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code_config = (
             RestCodeConfiguration(
@@ -210,7 +210,7 @@ class BatchDeployment(Deployment):
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
     @classmethod
-    def _from_rest_object(cls, deployment: BatchDeploymentData):
+    def _from_rest_object(cls, deployment: BatchDeploymentData):  # pylint: disable=arguments-renamed
 
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
         code_configuration = (
@@ -245,11 +245,12 @@ class BatchDeployment(Deployment):
     @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "BatchDeployment":
+        data = data or {}
         params_override = params_override or []
         cls._update_params(params_override)
 
@@ -262,7 +263,8 @@ class BatchDeployment(Deployment):
     def _validate(self) -> None:
         self._validate_output_action()
 
-    def _update_params(params_override) -> None:
+    @classmethod
+    def _update_params(cls, params_override) -> None:
         for param in params_override:
             endpoint_name = param.get("endpoint_name")
             if isinstance(endpoint_name, str):
@@ -274,7 +276,8 @@ class BatchDeployment(Deployment):
             and self.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
             and self.output_file_name
         ):
-            msg = f"When output_action is set to {BatchDeploymentOutputAction.SUMMARY_ONLY}, the output_file_name need not to be specified."
+            msg = "When output_action is set to {}, the output_file_name need not to be specified."
+            msg = msg.format(BatchDeploymentOutputAction.SUMMARY_ONLY)
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.BATCH_DEPLOYMENT,

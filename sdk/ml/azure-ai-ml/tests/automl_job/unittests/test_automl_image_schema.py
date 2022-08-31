@@ -8,7 +8,7 @@ from unittest.mock import patch
 from azure.ai.ml._utils.utils import to_iso_duration_format_mins, load_yaml, dump_yaml_to_file
 from azure.ai.ml.constants import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._restclient.v2022_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
     AutoMLJob as RestAutoMLJob,
     BanditPolicy as RestBanditPolicy,
     ClassificationPrimaryMetrics,
@@ -24,15 +24,11 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models._models_py3 import (
     ImageModelDistributionSettingsObjectDetection as RestImageObjectDetectionSearchSpace,
     ImageModelSettingsClassification,
     ImageModelSettingsObjectDetection,
-    ImageVerticalDataSettings as RestImageVerticalDataSettings,
     InstanceSegmentationPrimaryMetrics,
-    JobBaseData,
+    JobBase,
     LogVerbosity,
     MLTableJobInput,
     ObjectDetectionPrimaryMetrics,
-    TestDataSettings,
-    TrainingDataSettings,
-    ImageVerticalValidationDataSettings,
 )
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -67,28 +63,22 @@ def expected_image_limits(run_type: str) -> RestImageLimitSettings:
 
 
 @pytest.fixture
-def expected_image_data_settings() -> RestImageVerticalDataSettings:
-    training_data = TrainingDataSettings(
-        data=Input(
-            path="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/image-training-data/versions/1",
-            type="mltable",
-        ),
+def expected_image_training_data() -> MLTableJobInput:
+    return MLTableJobInput(
+        uri="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/image-training-data/versions/1",
     )
-    validation_data = ImageVerticalValidationDataSettings(
-        data=Input(
-            path="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/image-validation-data/versions/1",
-            type="mltable",
-        ),
+
+
+@pytest.fixture
+def expected_image_validation_data() -> MLTableJobInput:
+    return MLTableJobInput(
+        uri="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/image-validation-data/versions/1",
     )
-    data = RestImageVerticalDataSettings(
-        target_column_name="label",
-        training_data=training_data,
-        validation_data=validation_data,
-    )
-    # update data
-    data.training_data.data = MLTableJobInput(uri=data.training_data.data.path)
-    data.validation_data.data = MLTableJobInput(uri=data.validation_data.data.path)
-    return data
+
+
+@pytest.fixture
+def expected_image_target_column_name() -> str:
+    return "label"
 
 
 @pytest.fixture
@@ -100,7 +90,7 @@ def expected_image_sweep_settings() -> RestImageSweepSettings:
         ),
         sampling_algorithm="grid",
         early_termination=RestBanditPolicy(
-            slack_factor="0.2",
+            slack_factor=0.2,
             evaluation_interval=10,
         ),
     )
@@ -164,16 +154,20 @@ def expected_image_object_detection_search_space_settings() -> List[RestImageObj
 def expected_image_classification_job(
     mock_workspace_scope: OperationScope,
     run_type: str,
-    expected_image_data_settings: RestImageVerticalDataSettings,
+    expected_image_target_column_name: str,
+    expected_image_training_data: MLTableJobInput,
+    expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_classification: ImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
-) -> JobBaseData:
+) -> JobBase:
     return _get_rest_automl_job(
         RestImageClassification(
-            data_settings=expected_image_data_settings,
+            target_column_name=expected_image_target_column_name,
+            training_data=expected_image_training_data,
+            validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
             sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_classification,
@@ -190,16 +184,20 @@ def expected_image_classification_job(
 def expected_image_classification_multilabel_job(
     mock_workspace_scope: OperationScope,
     run_type: str,
-    expected_image_data_settings: RestImageVerticalDataSettings,
+    expected_image_target_column_name: str,
+    expected_image_training_data: MLTableJobInput,
+    expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_classification: ImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
-) -> JobBaseData:
+) -> JobBase:
     return _get_rest_automl_job(
         RestImageClassificationMultilabel(
-            data_settings=expected_image_data_settings,
+            target_column_name=expected_image_target_column_name,
+            training_data=expected_image_training_data,
+            validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
             sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_classification,
@@ -216,16 +214,20 @@ def expected_image_classification_multilabel_job(
 def expected_image_object_detection_job(
     mock_workspace_scope: OperationScope,
     run_type: str,
-    expected_image_data_settings: RestImageVerticalDataSettings,
+    expected_image_target_column_name: str,
+    expected_image_training_data: MLTableJobInput,
+    expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
     expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
-) -> JobBaseData:
+) -> JobBase:
     return _get_rest_automl_job(
         RestImageObjectDetection(
-            data_settings=expected_image_data_settings,
+            target_column_name=expected_image_target_column_name,
+            training_data=expected_image_training_data,
+            validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
             sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_object_detection,
@@ -242,16 +244,20 @@ def expected_image_object_detection_job(
 def expected_image_instance_segmentation_job(
     mock_workspace_scope: OperationScope,
     run_type: str,
-    expected_image_data_settings: RestImageVerticalDataSettings,
+    expected_image_target_column_name: str,
+    expected_image_training_data: MLTableJobInput,
+    expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
     expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
-) -> JobBaseData:
+) -> JobBase:
     return _get_rest_automl_job(
         RestImageInstanceSegmentation(
-            data_settings=expected_image_data_settings,
+            target_column_name=expected_image_target_column_name,
+            training_data=expected_image_training_data,
+            validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
             sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_object_detection,
@@ -273,7 +279,7 @@ def _get_rest_automl_job(automl_task, name, compute_id):
         outputs={},
         tags={},
     )
-    result = JobBaseData(properties=properties)
+    result = JobBase(properties=properties)
     result.name = name
     return result
 
@@ -375,7 +381,7 @@ class TestAutoMLImageSchema:
         self,
         mock_workspace_scope: OperationScope,
         run_type: str,
-        expected_image_classification_job: JobBaseData,
+        expected_image_classification_job: JobBase,
         loaded_image_classification_job: AutoMLJob,
     ):
         self._validate_automl_image_classification_jobs(loaded_image_classification_job, run_type)
@@ -388,7 +394,7 @@ class TestAutoMLImageSchema:
         self,
         mock_workspace_scope: OperationScope,
         run_type: str,
-        expected_image_classification_multilabel_job: JobBaseData,
+        expected_image_classification_multilabel_job: JobBase,
         loaded_image_classification_multilabel_job: AutoMLJob,
     ):
         self._validate_automl_image_classification_jobs(loaded_image_classification_multilabel_job, run_type)
@@ -402,7 +408,7 @@ class TestAutoMLImageSchema:
         self,
         mock_workspace_scope: OperationScope,
         run_type: str,
-        expected_image_object_detection_job: JobBaseData,
+        expected_image_object_detection_job: JobBase,
         loaded_image_object_detection_job: AutoMLJob,
     ):
         self._validate_automl_image_object_detection_jobs(loaded_image_object_detection_job, run_type)
@@ -416,7 +422,7 @@ class TestAutoMLImageSchema:
         self,
         mock_workspace_scope: OperationScope,
         run_type: str,
-        expected_image_instance_segmentation_job: JobBaseData,
+        expected_image_instance_segmentation_job: JobBase,
         loaded_image_instance_segmentation_job: AutoMLJob,
     ):
         self._validate_automl_image_object_detection_jobs(loaded_image_instance_segmentation_job, run_type)
@@ -427,10 +433,13 @@ class TestAutoMLImageSchema:
 
     def _validate_automl_image_classification_jobs(self, automl_job, run_type):
         assert isinstance(automl_job, AutoMLJob)
-        assert automl_job._data and isinstance(automl_job._data, RestImageVerticalDataSettings)
+        assert automl_job.training_data and isinstance(automl_job.training_data, Input)
+        assert automl_job.validation_data and isinstance(automl_job.validation_data, Input)
         assert automl_job.limits and isinstance(automl_job.limits, ImageLimitSettings)
         assert automl_job.compute and isinstance(automl_job.compute, str)
-        assert automl_job.image_model and isinstance(automl_job.image_model, ImageModelSettingsClassification)
+        assert automl_job.training_parameters and isinstance(
+            automl_job.training_parameters, ImageModelSettingsClassification
+        )
         if run_type == "sweep":
             assert automl_job.sweep and isinstance(automl_job.sweep, ImageSweepSettings)
             assert automl_job.search_space and isinstance(automl_job.search_space, List)
@@ -442,10 +451,13 @@ class TestAutoMLImageSchema:
 
     def _validate_automl_image_object_detection_jobs(self, automl_job, run_type):
         assert isinstance(automl_job, AutoMLJob)
-        assert automl_job._data and isinstance(automl_job._data, RestImageVerticalDataSettings)
+        assert automl_job.training_data and isinstance(automl_job.training_data, Input)
+        assert automl_job.validation_data and isinstance(automl_job.validation_data, Input)
         assert automl_job.limits and isinstance(automl_job.limits, ImageLimitSettings)
         assert automl_job.compute and isinstance(automl_job.compute, str)
-        assert automl_job.image_model and isinstance(automl_job.image_model, ImageModelSettingsObjectDetection)
+        assert automl_job.training_parameters and isinstance(
+            automl_job.training_parameters, ImageModelSettingsObjectDetection
+        )
         if run_type == "sweep":
             assert automl_job.sweep and isinstance(automl_job.sweep, ImageSweepSettings)
             assert automl_job.search_space and isinstance(automl_job.search_space, List)
@@ -460,7 +472,7 @@ class TestAutoMLImageSchema:
         self,
         mock_workspace_scope,
         run_type,
-        expected_image_classification_job: JobBaseData,
+        expected_image_classification_job: JobBase,
         loaded_image_classification_job: AutoMLJob,
     ):
         # test expected job when deserialized is same as loaded one.

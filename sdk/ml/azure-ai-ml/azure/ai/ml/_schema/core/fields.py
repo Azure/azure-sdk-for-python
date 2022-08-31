@@ -116,7 +116,7 @@ class LocalPathField(fields.Str):
             pass
         if self._allow_dir and self._allow_file:
             raise ValidationError(f"{value} is not a valid path")
-        elif self._allow_dir:
+        if self._allow_dir:
             raise ValidationError(f"{value} is not a valid directory")
         raise ValidationError(f"{value} is not a valid file")
 
@@ -219,11 +219,22 @@ class ArmStr(Field):
         if isinstance(value, str) and value.startswith(ARM_ID_PREFIX):
             name = value[len(ARM_ID_PREFIX) :]
             return name
+        formatted_resource_id = RESOURCE_ID_FORMAT.format(
+            "<subscription_id>", "<resource_group>", AZUREML_RESOURCE_PROVIDER, "<workspace_name>/"
+        )
+        if self.azureml_type is not None:
+            azureml_type_suffix = self.azureml_type
+        else:
+            azureml_type_suffix = "<asset_type>" + "/<resource_name>/<version-if applicable>)"
         raise ValidationError(
-            f"In order to specify an existing {self.azureml_type if self.azureml_type is not None else 'asset'}, please provide either of the following prefixed with 'azureml:':\n"
+            f"In order to specify an existing {self.azureml_type if self.azureml_type is not None else 'asset'}, "
+            "please provide either of the following prefixed with 'azureml:':\n"
             "1. The full ARM ID for the resource, e.g."
-            f"azureml:{RESOURCE_ID_FORMAT.format('<subscription_id>', '<resource_group>', AZUREML_RESOURCE_PROVIDER, '<workspace_name>/') + self.azureml_type if self.azureml_type is not None else '<asset_type>' +'/<resource_name>/<version-if applicable>)'}\n"
-            "2. The short-hand name of the resource registered in the workspace, eg: azureml:<short-hand-name>:<version-if applicable>. For example, version 1 of the environment registered as 'my-env' in the workspace can be referenced as 'azureml:my-env:1'"
+            f"azureml:{formatted_resource_id + azureml_type_suffix}\n"
+            "2. The short-hand name of the resource registered in the workspace, "
+            "eg: azureml:<short-hand-name>:<version-if applicable>. "
+            "For example, version 1 of the environment registered as "
+            "'my-env' in the workspace can be referenced as 'azureml:my-env:1'"
         )
 
 
@@ -542,7 +553,7 @@ class TypeSensitiveUnionField(UnionField):
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
                 with target_path.open() as f:
                     return yaml.safe_load(f)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             pass
         return value
 
@@ -569,6 +580,41 @@ def ComputeField(**kwargs):
         ],
         metadata={"description": "The compute resource."},
         **kwargs,
+    )
+
+
+def CodeField(**kwargs):
+    """
+    :param required : if set to True, it is not possible to pass None
+    :type required: bool
+    """
+    return UnionField(
+        [
+            LocalPathField(),
+            SerializeValidatedUrl(),
+            GitStr(),
+            RegistryStr(azureml_type=AzureMLResourceType.CODE),
+            # put arm versioned string at last order as it can deserialize any string into "azureml:<origin>"
+            ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
+        ],
+        metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
+        **kwargs,
+    )
+
+
+def DistributionField(**kwargs):
+    from azure.ai.ml._schema.job.distribution import (
+        PyTorchDistributionSchema,
+        TensorFlowDistributionSchema,
+        MPIDistributionSchema,
+    )
+
+    return UnionField(
+        [
+            NestedField(PyTorchDistributionSchema, **kwargs),
+            NestedField(TensorFlowDistributionSchema, **kwargs),
+            NestedField(MPIDistributionSchema, **kwargs),
+        ]
     )
 
 
@@ -664,7 +710,8 @@ class RegistryStr(Field):
         if isinstance(value, str) and value.startswith(REGISTRY_URI_FORMAT):
             return value
         raise ValidationError(
-            f"In order to specify an existing {self.azureml_type}, please provide the correct registry path prefixed with 'azureml://':\n"
+            f"In order to specify an existing {self.azureml_type}, "
+            "please provide the correct registry path prefixed with 'azureml://':\n"
         )
 
 
@@ -679,7 +726,9 @@ class PythonFuncNameStr(fields.Str):
         pattern = r"^[a-z][a-z\d_]*$"
         if not re.match(pattern, name):
             raise ValidationError(
-                f"{self._get_field_name()} name should only contain lower letter, number, underscore and start with a lower letter. Currently got {name}."
+                f"{self._get_field_name()} name should only contain "
+                "lower letter, number, underscore and start with a lower letter. "
+                "Currently got {name}."
             )
         return name
 
@@ -694,7 +743,9 @@ class PipelineNodeNameStr(fields.Str):
         name = super()._deserialize(value, attr, data, **kwargs)
         if not is_valid_node_name(name):
             raise ValidationError(
-                f"{self._get_field_name()} name should be a valid python identifier(lower letters, numbers, underscore and start with a letter or underscore). Currently got {name}."
+                f"{self._get_field_name()} name should be a valid python identifier"
+                "(lower letters, numbers, underscore and start with a letter or underscore). "
+                "Currently got {name}."
             )
         return name
 

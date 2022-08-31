@@ -22,7 +22,8 @@ class OnlineEndpointSchema(EndpointSchema):
         keys=fields.Str(),
         values=fields.Int(),
         metadata={
-            "description": "a dict with key as deployment name and value as traffic percentage. The values need to sum to 100"
+            "description": """a dict with key as deployment name and value as traffic percentage.
+             The values need to sum to 100 """
         },
     )
     kind = fields.Str(dump_only=True)
@@ -32,7 +33,8 @@ class OnlineEndpointSchema(EndpointSchema):
             keys=fields.Str(),
             values=fields.Int(),
             metadata={
-                "description": "a dict with key as deployment name and value as traffic percentage. Only one key will be accepted and value needs to be less than or equal to 50%"
+                "description": """a dict with key as deployment name and value as traffic percentage.
+                 Only one key will be accepted and value needs to be less than or equal to 50%"""
             },
         )
     )

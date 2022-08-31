@@ -632,7 +632,20 @@
         "errno",
         "firstlineno",
         "chdir",
-        "fset"
+        "fset",
+        "jioindiawest",
+        "AZURESQLDB",
+        "azuresqldb",
+        "vals",
+        "subel",
+        "unflat",
+        "unflatten",
+        "Unflattens",
+        "unflattened",
+        "reprlib",
+        "deque",
+        "fstring",
+        "wsid"
       ]
     },
     {

@@ -6,7 +6,8 @@ description: Example of using automl function inside pipeline
 
 experiment_name: sdk-cli-v2
 
-compute: azureml:cpu-cluster
+settings:
+  default_compute: azureml:cpu-cluster
 
 inputs:
   # examples of inputs that take values such as int, string, etc.

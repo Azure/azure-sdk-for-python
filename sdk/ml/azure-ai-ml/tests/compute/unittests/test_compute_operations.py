@@ -85,7 +85,7 @@ class TestComputeOperation:
                 type="UserAssigned",
                 user_assigned_identities=[
                     UserAssignedIdentity(
-                        resoure_id="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/MC_banibatch_bani-aks_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omsagent-bani-aks"
+                        resource_id="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/MC_banibatch_bani-aks_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omsagent-bani-aks"
                     )
                 ],
             ),

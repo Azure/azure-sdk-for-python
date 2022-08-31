@@ -1,5 +1,26 @@
 # Release History
 
+## 0.1.0b7 (Unreleased)
+
+### Features Added
+ - Spark job submission.
+ - Command and sweep job docker config (shmSize and dockerArgs) spec support.
+ - Entity load and dump now also accept a file pointer as input.
+ - Load and dump input names changed from path to 'source' and 'dest', respectively.
+ - Load and dump 'path' input still works, but is deprecated and emits a warning.
+ - Managed Identity Support for Compute Instance.
+
+### Breaking Changes
+ - Change (begin_)create_or_update typehints to use generics.
+ - Remove invalid option from create_or_update typehints.
+ - Change error returned by (begin_)create_or_update invalid input to TypeError.
+ - Rename set_image_model APIs for all vision tasks to set_training_parameters
+
+### Bugs Fixed
+
+### Other Changes
+
+
 ## 0.1.0b6
 
 ### Features Added
@@ -17,6 +38,7 @@
 - Removed az CLI command that was printed when deleting OnlineEndpoint
 
 ### Other Changes
+
 
 ## 0.1.0b5 (2022-07-15)
 

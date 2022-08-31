@@ -162,14 +162,8 @@ def only_registry_client(e2e_ws_scope: OperationScope) -> MLClient:
 
 
 @pytest.fixture
-def client_fixture(request, client) -> MLClient:
-    """return a machine learning client using default e2e testing workspace"""
-    request.cls.client = client
-
-
-@pytest.fixture
 def resource_group_name(location: str) -> str:
-    return f"test-rg-{location}-v2-t-{_get_week_format()}"
+    return f"test-rg-{location}-v2-{_get_week_format()}"
 
 
 @pytest.fixture
@@ -216,7 +210,7 @@ def light_gbm_model(client: MLClient) -> Model:
     try:
         client.models.get(name=model_name, version="1")
     except ResourceNotFoundError:
-        job = load_job(path="./tests/test_configs/batch_setup/lgb.yml")
+        job = load_job(source="./tests/test_configs/batch_setup/lgb.yml")
         job.name = job_name
         print(f"Starting new job with name {job_name}")
         job = client.jobs.create_or_update(job)

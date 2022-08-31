@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from marshmallow import post_load
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ClassificationPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationPrimaryMetrics, TaskType
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.automl.table_vertical.table_vertical import AutoMLTableVerticalSchema
 from azure.ai.ml._schema.automl.training_settings import ClassificationTrainingSettingsSchema

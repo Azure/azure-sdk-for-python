@@ -12,7 +12,7 @@ from unittest import mock
 
 from marshmallow.exceptions import ValidationError
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException, ValidationErrorType
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -183,6 +183,7 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
                 message=msg.format(expecting_type, attr, type(attr_val)),
                 no_personal_data_message=msg.format(expecting_type, "[attr]", type(attr_val)),
                 target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
 
@@ -307,3 +308,60 @@ def get_rest_dict(target_obj, clear_empty_value=False):
         if key in result:
             del result[key]
     return result
+
+
+def extract_label(input_str: str):
+    if "@" in input_str:
+        return input_str.rsplit("@", 1)
+    else:
+        return input_str, None
+
+
+def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
+    """Resolve pipeline parameters.
+
+    1. Resolve BaseNode and OutputsAttrDict type to PipelineOutputBase.
+    2. Remove empty value (optional).
+    """
+
+    if pipeline_parameters is None:
+        return
+    if not isinstance(pipeline_parameters, dict):
+        raise ValidationException(
+            message="pipeline_parameters must in dict {parameter: value} format.",
+            no_personal_data_message="pipeline_parameters must in dict {parameter: value} format.",
+            target=ErrorTarget.PIPELINE,
+        )
+
+    updated_parameters = {}
+    for k, v in pipeline_parameters.items():
+        v = resolve_pipeline_parameter(v)
+        if v is None and remove_empty:
+            continue
+        updated_parameters[k] = v
+    pipeline_parameters = updated_parameters
+    return pipeline_parameters
+
+
+def resolve_pipeline_parameter(data):
+    from azure.ai.ml.entities._builders.pipeline import Pipeline
+    from azure.ai.ml.entities._builders.base_node import BaseNode
+    from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
+
+    if isinstance(data, (BaseNode, Pipeline)):
+        # For the case use a node/pipeline node as the input, we use its only one output as the real input.
+        # Here we set node = node.outputs, then the following logic will get the output object.
+        data = data.outputs
+    if isinstance(data, OutputsAttrDict):
+        # For the case that use the outputs of another component as the input,
+        # we use the only one output as the real input,
+        # if multiple outputs are provided, an exception is raised.
+        output_len = len(data)
+        if output_len != 1:
+            raise ValidationException(
+                message="Setting input failed: Exactly 1 output is required, got %d. (%s)" % (output_len, data),
+                no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
+                target=ErrorTarget.PIPELINE,
+            )
+        data = list(data.values())[0]
+    return data

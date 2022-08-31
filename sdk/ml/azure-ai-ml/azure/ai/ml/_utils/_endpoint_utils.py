@@ -10,10 +10,8 @@ import time
 from concurrent.futures import Future
 from typing import Any, Callable, Union
 
-import requests
-
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
-from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
@@ -26,9 +24,10 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.polling import LROPoller
+from azure.core.rest import HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .utils import initialize_logger_info, show_debug_info
+from .utils import initialize_logger_info
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -43,19 +42,20 @@ def polling_wait(
 ) -> Any:
     """Print out status while polling and time of operation once completed.
 
-    :param Union[LROPoller, concurrent.futures.Future] poller: An poller which will return status update via function done().
+    :param poller: An poller which will return status update via function done().
+    :type poller: Union[LROPoller, concurrent.futures.Future]
     :param (str, optional) message: Message to print out before starting operation write-out.
     :param (float, optional) start_time: Start time of operation.
     :param (bool, optional) is_local: If poller is for a local endpoint, so the timeout is removed.
     :param (int, optional) timeout: New value to overwrite the default timeout.
     """
-    module_logger.warning(f"{message}")
+    module_logger.warning("%s", message)
     if is_local:
-        """We removed timeout on local endpoints in case it takes a long time
-        to pull image or install conda env.
+        # We removed timeout on local endpoints in case it takes a long time
+        # to pull image or install conda env.
 
-        We want user to be able to see that.
-        """
+        # We want user to be able to see that.
+
         while not poller.done():
             module_logger.warning(".")
             time.sleep(LROConfigurations.SLEEP_TIME)
@@ -70,7 +70,7 @@ def polling_wait(
     if start_time:
         end_time = time.time()
         duration = divmod(int(round(end_time - start_time)), 60)
-        module_logger.warning(f"({duration[0]}m {duration[1]}s)\n")
+        module_logger.warning("(%sm %ss)\n", duration[0], duration[1])
 
 
 def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:
@@ -88,23 +88,14 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
     return event.result()
 
 
-def post_and_validate_response(url, data=None, json=None, headers=None, **kwargs) -> requests.Response:
-    r"""Sends a POST request and validate the response.
-    :param url: URL for the new :class:`Request` object.
-    :param data: (optional) Dictionary, list of tuples, bytes, or file-like
-        object to send in the body of the :class:`Request`.
-    :param json: (optional) json data to send in the body of the :class:`Request`.
-    :param headers: (optional) Dictionary of HTTP Headers to send with the :class:`Request`.
-    :param \*\*kwargs: Optional arguments that ``request`` takes.
-    :return: :class:`Response <Response>` object
-    :rtype: requests.Response
-    """
-    logging = kwargs.pop("logging_enable", None)
-    response = requests.post(url=url, data=data, json=json, headers=headers, **kwargs)
-    r_json = {}
+def validate_response(response: HttpResponse) -> None:
+    """Validates the response of POST requests, throws on error
 
-    if logging:
-        show_debug_info(response)
+    :param HttpResponse response: the response of a POST requests
+    :raises Exception: Raised when response is not json serializable
+    :raises HttpResponseError: Raised when the response signals that an error occurred
+    """
+    r_json = {}
 
     if response.status_code not in [200, 201]:
         # We need to check for an empty response body or catch the exception raised.
@@ -124,8 +115,6 @@ def post_and_validate_response(url, data=None, json=None, headers=None, **kwargs
         map_error(status_code=response.status_code, response=response, error_map=error_map)
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
 
-    return response
-
 
 def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
     """Upload code, dependency, model dependencies. For BatchDeployment only
@@ -135,7 +124,7 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
     :param OperationOrchestrator orchestrators: Operation Orchestrator.
     """
 
-    module_logger.debug(f"Uploading the dependencies for deployment {deployment.name}")
+    module_logger.debug("Uploading the dependencies for deployment %s", deployment.name)
 
     # Create a code asset if code is not already an ARM ID
     if (
@@ -143,10 +132,16 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
         and not is_ARM_id_for_resource(deployment.code_configuration.code, AzureMLResourceType.CODE)
         and not is_registry_id_for_resource(deployment.code_configuration.code)
     ):
-        deployment.code_configuration.code = orchestrators.get_asset_arm_id(
-            Code(base_path=deployment._base_path, path=deployment.code_configuration.code),
-            azureml_type=AzureMLResourceType.CODE,
-        )
+        if deployment.code_configuration.code.startswith(ARM_ID_PREFIX):
+            deployment.code_configuration.code = orchestrators.get_asset_arm_id(
+                deployment.code_configuration.code[len(ARM_ID_PREFIX) :],
+                azureml_type=AzureMLResourceType.CODE,
+            )
+        else:
+            deployment.code_configuration.code = orchestrators.get_asset_arm_id(
+                Code(base_path=deployment._base_path, path=deployment.code_configuration.code),
+                azureml_type=AzureMLResourceType.CODE,
+            )
 
     if not is_registry_id_for_resource(deployment.environment):
         deployment.environment = (

@@ -5,9 +5,9 @@
 import uuid
 from abc import abstractmethod
 from os import PathLike
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, IO, AnyStr
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException, ValidationErrorType
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._resource import Resource
 
@@ -53,6 +53,7 @@ class Asset(Resource):
                 target=ErrorTarget.ASSET,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
 
         super().__init__(
@@ -85,18 +86,32 @@ class Asset(Resource):
                     target=ErrorTarget.ASSET,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(self, path: Union[PathLike, str]) -> None:
-        """Dump the artifact content into a file in yaml format.
+    def dump(
+        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
+    ) -> None:
+        """Dump the asset content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this asset's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :param path: Deprecated path to a local file as the target, a new file
+            will be created, raises exception if the file exists.
+            It's recommended what you change 'path=' inputs to 'dest='.
+            The first unnamed input of this function will also be treated like
+            a path input.
+        :type path: Union[str, Pathlike]
         """
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
 
     def __eq__(self, other) -> bool:
         return (

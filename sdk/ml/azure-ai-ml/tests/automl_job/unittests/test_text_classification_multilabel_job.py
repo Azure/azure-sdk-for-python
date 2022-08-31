@@ -1,27 +1,25 @@
+from lib2to3.pytree import convert
 import pytest
 
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     AutoMLJob as RestAutoMLJob,
-    JobBaseData,
+    JobBase,
     LogVerbosity,
     MLTableJobInput,
     NlpVerticalFeaturizationSettings,
-    NlpVerticalDataSettings,
     NlpVerticalLimitSettings,
-    NlpVerticalValidationDataSettings,
     TextClassificationMultilabel,
-    TrainingDataSettings,
-    ValidationDataSettings,
-    UserIdentity,
+    UserIdentity as RestUserIdentity,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
 from azure.ai.ml._utils.utils import to_iso_duration_format_mins
 from azure.ai.ml.automl import text_classification_multilabel
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.nlp.text_classification_multilabel_job import TextClassificationMultilabelJob
+from azure.ai.ml import UserIdentity
 
 
 @pytest.mark.unittest
@@ -45,9 +43,9 @@ class TestAutoMLTextClassificationMultilabelJob:
         assert job.training_data.path == training_data_uri
         assert job.validation_data.type == AssetTypes.MLTABLE
         assert job.validation_data.path == validation_data_uri
-        assert job._data.target_column_name == label_column
-        assert job._data.training_data.data.path == training_data_uri
-        assert job._data.validation_data.data.path == validation_data_uri
+        assert job.target_column_name == label_column
+        assert job.training_data.path == training_data_uri
+        assert job.validation_data.path == validation_data_uri
         assert job._limits is None
         assert job._featurization is None
         assert job.log_verbosity is None
@@ -122,11 +120,9 @@ class TestAutoMLTextClassificationMultilabelJob:
         expected = TextClassificationMultilabel(
             primary_metric=primary_metric,
             log_verbosity=log_verbosity,
-            data_settings=NlpVerticalDataSettings(
-                target_column_name=label_column,
-                training_data=TrainingDataSettings(data=MLTableJobInput(uri=training_data_uri)),
-                validation_data=NlpVerticalValidationDataSettings(data=MLTableJobInput(uri=validation_data_uri)),
-            ),
+            target_column_name=label_column,
+            training_data=MLTableJobInput(uri=training_data_uri),
+            validation_data=MLTableJobInput(uri=validation_data_uri),
             limit_settings=NlpVerticalLimitSettings(
                 max_concurrent_trials=max_concurrent_trials, timeout=to_iso_duration_format_mins(timeout)
             ),
@@ -135,16 +131,15 @@ class TestAutoMLTextClassificationMultilabelJob:
 
         # Test converting Job to REST object
         converted_to_rest_obj = job._to_rest_object()
-        assert converted_to_rest_obj.properties.identity == identity
-        assert isinstance(converted_to_rest_obj, JobBaseData)
+        assert isinstance(converted_to_rest_obj.properties.identity, RestUserIdentity)
+        assert isinstance(converted_to_rest_obj, JobBase)
         assert converted_to_rest_obj.properties.task_details == expected
         result = converted_to_rest_obj.properties.task_details
         assert result.task_type == "TextClassificationMultilabel"
         assert expected.task_type == result.task_type
         assert expected.primary_metric == result.primary_metric
-        assert expected.data_settings == result.data_settings
-        assert expected.data_settings.training_data == result.data_settings.training_data
-        assert expected.data_settings.validation_data == result.data_settings.validation_data
+        assert expected.training_data == result.training_data
+        assert expected.validation_data == result.validation_data
         assert expected.limit_settings == result.limit_settings
         assert expected.featurization_settings == result.featurization_settings
         assert expected.log_verbosity == result.log_verbosity
@@ -176,17 +171,15 @@ class TestAutoMLTextClassificationMultilabelJob:
 
         task_details = TextClassificationMultilabel(
             log_verbosity=log_verbosity,
-            data_settings=NlpVerticalDataSettings(
-                target_column_name=label_column,
-                training_data=TrainingDataSettings(data=MLTableJobInput(uri=training_data_uri)),
-                validation_data=NlpVerticalValidationDataSettings(data=MLTableJobInput(uri=validation_data_uri)),
-            ),
+            target_column_name=label_column,
+            training_data=MLTableJobInput(uri=training_data_uri),
+            validation_data=MLTableJobInput(uri=validation_data_uri),
             limit_settings=NlpVerticalLimitSettings(
                 max_concurrent_trials=max_concurrent_trials, timeout=to_iso_duration_format_mins(timeout)
             ),
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
         )
-        job_data = JobBaseData(properties=RestAutoMLJob(task_details=task_details, identity=identity))
+        job_data = JobBase(properties=RestAutoMLJob(task_details=task_details, identity=identity._to_rest_object()))
         # Test converting REST object to Job
         converted_to_job = TextClassificationMultilabelJob._from_rest_object(job_data)
         assert converted_to_job.identity == identity
@@ -196,6 +189,5 @@ class TestAutoMLTextClassificationMultilabelJob:
         assert expected_job.training_data == converted_to_job.training_data
         assert expected_job.validation_data == converted_to_job.validation_data
         assert expected_job.limits == converted_to_job.limits
-        assert expected_job._data == converted_to_job._data
         assert expected_job.featurization == converted_to_job.featurization
         assert expected_job.log_verbosity == converted_to_job.log_verbosity

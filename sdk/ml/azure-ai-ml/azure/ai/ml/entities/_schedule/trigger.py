@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=protected-access
 import logging
 from abc import ABC
 from datetime import datetime
@@ -18,7 +19,6 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import TriggerType as Re
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._util import LiteralToListDescriptor
 
 module_logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
     def __init__(
         self,
         *,
-        type: str,
+        type: str,  # pylint: disable=redefined-builtin
         start_time: Union[str, datetime] = None,
         end_time: Union[str, datetime] = None,
         time_zone: TimeZone = TimeZone.UTC,
@@ -56,11 +56,11 @@ class TriggerBase(RestTranslatableMixin, ABC):
     def _from_rest_object(cls, obj: RestTriggerBase) -> Union["CronTrigger", "RecurrenceTrigger"]:
         if isinstance(obj, RestRecurrenceTrigger):
             return RecurrenceTrigger._from_rest_object(obj)
-        elif isinstance(obj, RestCronTrigger):
+        if isinstance(obj, RestCronTrigger):
             return CronTrigger._from_rest_object(obj)
 
 
-class RecurrencePattern(RestRecurrencePattern):
+class RecurrencePattern(RestTranslatableMixin):
     """Recurrence pattern
 
     :param hours: List of hours for recurrence schedule pattern.
@@ -68,12 +68,9 @@ class RecurrencePattern(RestRecurrencePattern):
     :param minutes: List of minutes for recurrence schedule pattern.
     :type minutes: Union[int, List[int]]
     :param week_days: List of weekdays for recurrence schedule pattern.
+        Possible values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
     :type week_days: Union[str, List[str]]
     """
-
-    hours = LiteralToListDescriptor()
-    minutes = LiteralToListDescriptor()
-    week_days = LiteralToListDescriptor()
 
     def __init__(
         self,
@@ -82,7 +79,16 @@ class RecurrencePattern(RestRecurrencePattern):
         minutes: Union[int, List[int]],
         week_days: Union[str, List[str]] = None,
     ):
-        super().__init__(hours=hours, minutes=minutes, week_days=week_days)
+        self.hours = hours
+        self.minutes = minutes
+        self.week_days = week_days
+
+    def _to_rest_object(self) -> RestRecurrencePattern:
+        return RestRecurrencePattern(
+            hours=[self.hours] if not isinstance(self.hours, list) else self.hours,
+            minutes=[self.minutes] if not isinstance(self.minutes, list) else self.minutes,
+            week_days=[self.week_days] if not isinstance(self.week_days, list) else self.week_days,
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestRecurrencePattern) -> "RecurrencePattern":
@@ -199,7 +205,7 @@ class RecurrenceTrigger(TriggerBase):
         return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
-            schedule=self.schedule,
+            schedule=self.schedule._to_rest_object(),
             start_time=self.start_time,
             end_time=self.end_time,
             time_zone=self.time_zone,

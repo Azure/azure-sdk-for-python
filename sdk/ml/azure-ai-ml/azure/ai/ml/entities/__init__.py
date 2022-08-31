@@ -4,8 +4,6 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ScheduleStatus
-
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
@@ -13,6 +11,7 @@ from ._assets.environment import BuildContext, Environment
 from ._component.command_component import CommandComponent
 from ._component.component import Component
 from ._component.parallel_component import ParallelComponent
+from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
 from ._compute._identity import IdentityConfiguration
 from ._compute._schedule import (
@@ -45,6 +44,8 @@ from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import KubernetesOnlineEndpoint, ManagedOnlineEndpoint, OnlineEndpoint
 from ._job.base_job import _BaseJob
 from ._job.command_job import CommandJob
+from ._job.spark_job import SparkJob
+from ._job.spark_job_entry import SparkJobEntry, SparkJobEntryType
 from ._job.compute_configuration import ComputeConfiguration
 from ._job.input_port import InputPort
 from ._job.job import Job
@@ -56,6 +57,8 @@ from ._job.parameterized_command import ParameterizedCommand
 # Pipeline related entities goes behind component since it depends on component
 from ._job.pipeline.pipeline_job import PipelineJob, PipelineJobSettings
 from ._job.resource_configuration import ResourceConfiguration
+from ._job.job_resource_configuration import JobResourceConfiguration
+from ._job.spark_resource_configuration import SparkResourceConfiguration
 from ._job.sweep.search_space import (
     Choice,
     LogNormal,
@@ -76,14 +79,25 @@ from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 
+# TODO: enable in PuP
+# from ._job.import_job import ImportJob
+# from ._component.import_component import ImportComponent
+
 __all__ = [
+    # "ImportJob",
+    # "ImportComponent",
     "Resource",
     "Job",
     "CommandJob",
     "PipelineJob",
+    "SparkJob",
+    "SparkJobEntry",
+    "SparkJobEntryType",
     "CommandJobLimits",
     "ComputeConfiguration",
     "ResourceConfiguration",
+    "JobResourceConfiguration",
+    "SparkResourceConfiguration",
     "ParameterizedCommand",
     "InputPort",
     "BatchEndpoint",
@@ -130,6 +144,7 @@ __all__ = [
     "PipelineJobSettings",
     "ParallelComponent",
     "CommandComponent",
+    "SparkComponent",
     "Choice",
     "Normal",
     "LogNormal",

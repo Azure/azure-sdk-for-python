@@ -22,7 +22,7 @@ from azure.ai.ml._vendor.azure_resources._resource_management_client import Reso
 from azure.ai.ml._vendor.azure_resources.models import Deployment, DeploymentProperties
 from azure.ai.ml.constants import ENDPOINT_DEPLOYMENT_START_MSG, ArmConstants, LROConfigurations, OperationStatus
 from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
+from azure.core.credentials import TokenCredential
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -31,7 +31,7 @@ initialize_logger_info(module_logger, terminator="")
 class ArmDeploymentExecutor(object):
     def __init__(
         self,
-        credentials: ChainedTokenCredential,
+        credentials: TokenCredential,
         resource_group_name: str,
         subscription_id: str,
         deployment_name: str,

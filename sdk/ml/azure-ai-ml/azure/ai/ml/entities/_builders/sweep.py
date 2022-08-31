@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 # pylint: disable=protected-access
 
 import logging
@@ -10,11 +9,11 @@ from typing import Dict, List, Union
 import pydash
 from marshmallow import EXCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, NodeType
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInputBase
@@ -125,7 +124,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         # hack: only early termination policy does not follow yaml schema now, should be removed after server-side made
         # the change
         if "early_termination" in rest_obj:
-            rest_obj["early_termination"] = self.early_termination._to_rest_object()
+            rest_obj["early_termination"] = self.early_termination._to_rest_object().as_dict()
 
         rest_obj.update(
             dict(
@@ -151,7 +150,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
         support_data_binding_expression_for_fields(schema, ["type"])
 
-        base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)
+        base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)  # pylint: disable=no-member
         for key, value in base_sweep.items():
             obj[key] = value
 
@@ -166,12 +165,11 @@ class Sweep(ParameterizedSweep, BaseNode):
         trial_component_id = self._get_component_id()
         if trial_component_id is None:
             return None
-        elif isinstance(trial_component_id, str):
+        if isinstance(trial_component_id, str):
             return dict(componentId=trial_component_id)
-        elif isinstance(trial_component_id, CommandComponent):
+        if isinstance(trial_component_id, CommandComponent):
             return trial_component_id._to_rest_object()
-        else:
-            raise UserErrorException(f"invalid trial in sweep node {self.name}: {str(self.trial)}")
+        raise UserErrorException(f"invalid trial in sweep node {self.name}: {str(self.trial)}")
 
     def _to_job(self) -> SweepJob:
         command = self.trial.command
@@ -234,14 +232,14 @@ class Sweep(ParameterizedSweep, BaseNode):
                         message=msg.format(input_name, type(input_obj)),
                         no_personal_data_message=msg.format("[input_name]", type(input_obj)),
                         target=ErrorTarget.SWEEP_JOB,
+                        error_type=ValidationErrorType.INVALID_VALUE,
                     )
         return inputs, search_space
 
     def _is_input_set(self, input_name: str) -> bool:
         if super(Sweep, self)._is_input_set(input_name):
             return True
-        else:
-            return self.search_space is not None and input_name in self.search_space
+        return self.search_space is not None and input_name in self.search_space
 
     def __setattr__(self, key, value):
         super(Sweep, self).__setattr__(key, value)

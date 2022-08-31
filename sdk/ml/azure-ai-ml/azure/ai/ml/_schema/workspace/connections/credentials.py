@@ -35,6 +35,7 @@ class PatTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> PatTokenCredentials:
+        data.pop("type")
         return PatTokenCredentials(**data)
 
 
@@ -48,6 +49,7 @@ class SasTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> SasTokenCredentials:
+        data.pop("type")
         return SasTokenCredentials(**data)
 
 
@@ -62,6 +64,7 @@ class UsernamePasswordCredentialsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> UsernamePasswordCredentials:
+        data.pop("type")
         return UsernamePasswordCredentials(**data)
 
 
@@ -76,6 +79,7 @@ class ManagedIdentityCredentialsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> ManagedIdentityCredentials:
+        data.pop("type")
         return ManagedIdentityCredentials(**data)
 
 
@@ -92,4 +96,5 @@ class ServicePrincipalCredentialsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> ServicePrincipalCredentials:
+        data.pop("type")
         return ServicePrincipalCredentials(**data)

@@ -9,7 +9,7 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    batch_inference1 = load_component(path=parent_dir + "/tabular_input_e2e.yml")
+    batch_inference1 = load_component(source=parent_dir + "/tabular_input_e2e.yml")
 
     # Construct pipeline
     @dsl.pipeline(default_compute="cpu-cluster")

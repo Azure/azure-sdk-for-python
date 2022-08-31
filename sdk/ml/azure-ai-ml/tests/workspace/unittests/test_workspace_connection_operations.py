@@ -70,7 +70,7 @@ class TestWorkspaceConnectionsOperation:
             metadata=None,
         )
         workspace_connection = load_workspace_connection(
-            path="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
+            source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
         )
         mock_workspace_connection_operation.create_or_update(workspace_connection=workspace_connection)
         mock_workspace_connection_operation._operation.create.assert_called_once()

@@ -5,7 +5,7 @@
 import abc
 from typing import TYPE_CHECKING, cast
 
-from azure.identity import CredentialUnavailableError
+from ..._exceptions import CredentialUnavailableError
 
 from . import AsyncContextManager
 from .get_token_mixin import GetTokenMixin

@@ -14,7 +14,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._util import validate_attribute_type
+from .._util import validate_attribute_type, convert_ordered_dict_to_dict
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -110,6 +110,17 @@ class Pipeline(BaseNode):
         obj["component"] = component_id
         return Pipeline(**obj)
 
+    def _to_rest_object(self, **kwargs) -> dict:
+        rest_obj = super()._to_rest_object(**kwargs)
+        rest_obj.update(
+            convert_ordered_dict_to_dict(
+                dict(
+                    componentId=self._get_component_id(),
+                )
+            )
+        )
+        return rest_obj
+
     def _build_inputs(self):
         inputs = super(Pipeline, self)._build_inputs()
         built_inputs = {}
@@ -144,8 +155,7 @@ class Pipeline(BaseNode):
             node.tags = self.tags
             node.display_name = self.display_name
             return node
-        else:
-            raise Exception(
-                f"Pipeline can be called as a function only when referenced component is {type(Component)}, "
-                f"currently got {self._component}."
-            )
+        raise Exception(
+            f"Pipeline can be called as a function only when referenced component is {type(Component)}, "
+            f"currently got {self._component}."
+        )

@@ -29,20 +29,20 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         *,
         timeout: int = None,
         max_retries: int = None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ):
         self.timeout = timeout
         self.max_retries = max_retries
 
     def _to_dict(self) -> Dict:
-        return RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
     def load(
         cls,
         path: Union[PathLike, str] = None,
         params_override: list = None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> "RetrySettings":
         params_override = params_override or []
         data = load_yaml(path)
@@ -66,5 +66,5 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
     @classmethod
     def from_dict(cls, dct: dict):
         """Convert a dict to an Input object."""
-        obj = cls(**{key: val for key, val in dct.items()})
+        obj = cls(**dict(dct.items()))
         return obj

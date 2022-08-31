@@ -2,50 +2,32 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,no-self-use,protected-access,no-member
 
 from copy import deepcopy
 
 import yaml
 from marshmallow import INCLUDE, fields, post_load
 
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
-from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.component.resource import ComponentResourceSchema
-from azure.ai.ml._schema.core.fields import FileRefField, GitStr, LocalPathField, RegistryStr, SerializeValidatedUrl
+from azure.ai.ml._schema.core.fields import FileRefField
+from azure.ai.ml._schema.job.parameterized_command import ParameterizedCommandSchema
 from azure.ai.ml._schema.job.distribution import (
     MPIDistributionSchema,
     PyTorchDistributionSchema,
     TensorFlowDistributionSchema,
 )
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AzureMLResourceType, ComponentSource, NodeType
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComponentSource, NodeType
 
 
-class CommandComponentSchema(ComponentSchema):
+class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
+    class Meta:
+        exclude = ["environment_variables"]  # component doesn't have environment variables
+
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
-    command = fields.Str(metadata={"description": "String to be executed. Can set variables using ${{ }}"})
-    code = UnionField(
-        [
-            SerializeValidatedUrl(),
-            LocalPathField(),
-            RegistryStr(azureml_type=AzureMLResourceType.CODE),
-            # Accept str to support git paths
-            GitStr(),
-            # put arm versioned string at last order as it can deserialize any string into "azureml:<origin>"
-            ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
-        ],
-        metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
-    )
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-        required=True,
-    )
     resources = NestedField(ComponentResourceSchema, unknown=INCLUDE)
     distribution = UnionField(
         [

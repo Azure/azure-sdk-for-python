@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-member
+
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -47,7 +49,7 @@ class MLTableMetadata:
         paths: List[MLTableMetadataPath],
         transformations: Optional[List[Any]] = None,
         base_path: str,
-        **kwargs,
+        **_kwargs,
     ):
         self.base_path = base_path
         self.paths = paths

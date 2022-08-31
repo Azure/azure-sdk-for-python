@@ -13,8 +13,10 @@ def test_smoke():
         Environment,
         CommandComponent,
         ParallelComponent,
+        SparkComponent,
         CommandJob,
         PipelineJob,
+        SparkJob,
         BatchDeployment,
         BatchEndpoint,
         OnlineDeployment,
@@ -25,19 +27,22 @@ def test_smoke():
     )
     from azure.ai.ml.sweep import SweepJob
     from azure.ai.ml.entities._assets import Code, Data
-    from azure.ai.ml.entities._builders import Command, Parallel
+    from azure.ai.ml.entities._builders import Command, Parallel, Spark
 
     Environment()
     Model()
     Code()
     CommandComponent()
     ParallelComponent()
+    SparkComponent()
     Data()
     Command(component="fake_component")
     Parallel(component="fake_component")
+    Spark(component="fake_component")
     CommandJob()
     SweepJob()
     PipelineJob()
+    SparkJob()
     BatchEndpoint()
     BatchDeployment(name="bla")
 

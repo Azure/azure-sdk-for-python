@@ -1,11 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=unused-import
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from .component_job import CommandSchema, ParallelSchema
+from .component_job import CommandSchema, ParallelSchema, ImportSchema, SparkSchema
 from .pipeline_job import PipelineJobSchema
 from .settings import PipelineJobSettingsSchema
-
-# nopycln: file
