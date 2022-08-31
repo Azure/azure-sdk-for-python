@@ -17,19 +17,9 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.policies import ContentDecodePolicy
 
-if sys.version_info < (3,):
-
-    def _str(value):
-        if isinstance(value, unicode):  # pylint: disable=undefined-variable
-            return value.encode("utf-8")
-
-        return str(value)
-else:
-    _str = str
-
 
 def _to_str(value):
-    return _str(value) if value is not None else None
+    return str if value is not None else None
 
 
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
@@ -213,6 +203,27 @@ def _process_table_error(storage_error, table_name=None):
     if table_name:
         _validate_tablename_error(decoded_error, table_name)
     _reraise_error(decoded_error)
+
+
+def _reprocess_error(decoded_error, identifiers=None):
+    error_code = decoded_error.error_code
+    message = decoded_error.message
+    invalid_input = "The number of keys specified in the URI does not match number of key properties for the resource"
+    invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
+    properties_need_value = "The values are not specified for all properties in the entity"
+    table_does_not_exist = "The table specified does not exist"
+    if (error_code == "InvalidInput" and invalid_input in message or
+        error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or
+        error_code == "PropertiesNeedValue" and properties_need_value in message or
+        error_code =="TableNotFound" and table_does_not_exist in message
+        ):
+        raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint if it has.")
+    if (identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5):
+        raise ValueError(
+            "Too many access policies provided. The server does not support setting more than 5 access policies"\
+                "on a single resource."
+            )
+    raise decoded_error
 
 
 class TableTransactionError(HttpResponseError):

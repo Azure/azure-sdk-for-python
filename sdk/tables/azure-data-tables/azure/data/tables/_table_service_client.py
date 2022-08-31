@@ -6,7 +6,7 @@
 
 import functools
 from typing import Any, Dict, TYPE_CHECKING
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, AzureError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -20,7 +20,7 @@ from ._models import (
 )
 from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._models import LocationMode
-from ._error import _process_table_error
+from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
 
@@ -136,16 +136,8 @@ class TableServiceClient(TablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except HttpResponseError as decoded_error:
-                error_code = decoded_error.error_code
-                message = decoded_error.message
-                error_message = "Value for one of the query parameters specified in the request URI is invalid"
-                if error_code == "InvalidQueryParameterValue" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
-                        "if it has.")
-                raise decoded_error
-            except Exception as e:
-                raise e
+            except AzureError as decoded_error:
+                _reprocess_error(decoded_error)
         return service_properties_deserialize(service_props)
 
     @distributed_trace
@@ -180,16 +172,8 @@ class TableServiceClient(TablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except HttpResponseError as decoded_error:
-                error_code = decoded_error.error_code
-                message = decoded_error.message
-                error_message = "Value for one of the query parameters specified in the request URI is invalid"
-                if error_code == "InvalidQueryParameterValue" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
-                        "if it has.")
-                raise decoded_error
-            except Exception as e:
-                raise e
+            except AzureError as decoded_error:
+                _reprocess_error(decoded_error)
 
     @distributed_trace
     def create_table(self, table_name, **kwargs):

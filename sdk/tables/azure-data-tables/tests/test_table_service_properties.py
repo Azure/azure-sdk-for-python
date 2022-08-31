@@ -138,8 +138,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
             cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        pytest.raises(HttpResponseError,
-                          tsc.set_service_properties, cors=cors)
+        pytest.raises(HttpResponseError, tsc.set_service_properties, cors=cors)
 
     @tables_decorator
     @recorded_by_proxy
@@ -150,9 +149,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
                                  retention_policy=TableRetentionPolicy(enabled=True, days=366))
 
         # Assert
-        pytest.raises(HttpResponseError,
-                          tsc.set_service_properties,
-                          minute_metrics=minute_metrics)
+        pytest.raises(HttpResponseError, tsc.set_service_properties, minute_metrics=minute_metrics)
 
     @tables_decorator
     @recorded_by_proxy

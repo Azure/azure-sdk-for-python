@@ -12,16 +12,15 @@ from typing import (
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, AzureError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from pytest import raises
 
 from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
-from .._error import _process_table_error
+from .._error import _process_table_error, _reprocess_error
 from .._models import TableItem, LocationMode
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
@@ -138,16 +137,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except HttpResponseError as decoded_error:
-                error_code = decoded_error.error_code
-                message = decoded_error.message
-                error_message = "Value for one of the query parameters specified in the request URI is invalid"
-                if error_code == "InvalidQueryParameterValue" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
-                        "if it has.")
-                raise decoded_error
-            except Exception as e:
-                raise e
+            except AzureError as decoded_error:
+                _reprocess_error(decoded_error)
         return service_properties_deserialize(service_props)
 
     @distributed_trace_async
@@ -188,16 +179,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
-            except HttpResponseError as decoded_error:
-                error_code = decoded_error.error_code
-                message = decoded_error.message
-                error_message = "Value for one of the query parameters specified in the request URI is invalid"
-                if error_code == "InvalidQueryParameterValue" and error_message in message:
-                    raise ValueError(message + "\nNote: Try to remove the table name in the end of endpoint"\
-                        "if it has.")
-                raise decoded_error
-            except Exception as e:
-                raise e
+            except AzureError as decoded_error:
+                _reprocess_error(decoded_error)
 
     @distributed_trace_async
     async def create_table(self, table_name: str, **kwargs) -> TableClient:
