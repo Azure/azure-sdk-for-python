@@ -6,8 +6,6 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
-# pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
-
 
 class KeyVaultRoleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Collection of well known role scopes. This list is not exhaustive."""
