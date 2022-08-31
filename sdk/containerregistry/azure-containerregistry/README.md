@@ -199,4 +199,4 @@ additional questions or comments.
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
-[troubleshooting guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/TROUBLESHOOTING.md
+[troubleshooting guide]: https://github.com/Azure/azure-sdk-for-python/4a4fce380969974dbd8cc2245bb3a4b77aa68679/main/sdk/containerregistry/azure-containerregistry/TROUBLESHOOTING.md
