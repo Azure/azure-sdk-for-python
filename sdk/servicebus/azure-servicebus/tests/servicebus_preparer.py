@@ -50,7 +50,9 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("BASE_URL", "https://management.azure.com")
+            credential_scopes = [os.environ.get("CREDENTIAL_SCOPES", "https://management.azure.com/.default")]
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url, credential_scopes=credential_scopes)
             group = self._get_resource_group(**kwargs)
             retries = 4
             for i in range(retries):
@@ -163,7 +165,9 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("BASE_URL", "https://management.azure.com")
+            credential_scopes = [os.environ.get("CREDENTIAL_SCOPES", "https://management.azure.com/.default")]
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url, credential_scopes=credential_scopes)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             retries = 4
@@ -229,7 +233,9 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("BASE_URL", "https://management.azure.com")
+            credential_scopes = [os.environ.get("CREDENTIAL_SCOPES", "https://management.azure.com/.default")]
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url, credential_scopes=credential_scopes)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             topic = self._get_topic(**kwargs)
@@ -312,7 +318,9 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("BASE_URL", "https://management.azure.com")
+            credential_scopes = [os.environ.get("CREDENTIAL_SCOPES", "https://management.azure.com/.default")]
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url, credential_scopes=credential_scopes)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             retries = 4
@@ -378,7 +386,9 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("BASE_URL", "https://management.azure.com")
+            credential_scopes = [os.environ.get("CREDENTIAL_SCOPES", "https://management.azure.com/.default")]
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url, credential_scopes=credential_scopes)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             retries = 4
@@ -447,7 +457,9 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("BASE_URL", "https://management.azure.com")
+            credential_scopes = [os.environ.get("CREDENTIAL_SCOPES", "https://management.azure.com/.default")]
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url, credential_scopes=credential_scopes)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             queue = self._get_queue(**kwargs)

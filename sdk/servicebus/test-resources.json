@@ -236,6 +236,10 @@
     "SERVICE_BUS_SESSION_QUEUE_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('sessionQueueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
+    },
+    "RESOURCE_REGION": {
+      "type": "string",
+      "value": "[parameters('location')]"
     }
   }
 }
