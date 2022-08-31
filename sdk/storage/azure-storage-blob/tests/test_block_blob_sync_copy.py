@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 from datetime import datetime, timedelta
 
+import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobClient,
