@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeletionRecoveryLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Reflects the deletion recovery level currently in effect for secrets in the current vault. If
     it contains 'Purgeable', the secret can be permanently deleted by a privileged user; otherwise,
     only the system can purge the secret, at the end of the retention interval.

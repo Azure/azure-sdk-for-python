@@ -7,17 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the action.
     """
 
     EMAIL_CONTACTS = "EmailContacts"
     AUTO_RENEW = "AutoRenew"
 
-class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeletionRecoveryLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Reflects the deletion recovery level currently in effect for certificates in the current vault.
     If it contains 'Purgeable', the certificate can be permanently deleted by a privileged user;
     otherwise, only the system can purge the certificate, at the end of the retention interval.
@@ -60,7 +61,7 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: that the subscription itself cannot be cancelled.
     CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
 
-class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonWebKeyCurveName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Elliptic curve name. For valid values, see JsonWebKeyCurveName.
     """
 
@@ -69,7 +70,7 @@ class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     P521 = "P-521"
     P256_K = "P-256K"
 
-class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonWebKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of key pair to be used for the certificate.
     """
 
@@ -79,7 +80,7 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RSA_HSM = "RSA-HSM"
     OCT = "oct"
 
-class KeyUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KeyUsageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DIGITAL_SIGNATURE = "digitalSignature"
     NON_REPUDIATION = "nonRepudiation"

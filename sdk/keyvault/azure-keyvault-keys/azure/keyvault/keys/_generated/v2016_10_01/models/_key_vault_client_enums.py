@@ -7,17 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the action.
     """
 
     EMAIL_CONTACTS = "EmailContacts"
     AUTO_RENEW = "AutoRenew"
 
-class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeletionRecoveryLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Reflects the deletion recovery level currently in effect for keys in the current vault. If it
     contains 'Purgeable' the key can be permanently deleted by a privileged user; otherwise, only
     the system can purge the key, at the end of the retention interval.
@@ -36,7 +37,7 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: deletion.
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
 
-class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonWebKeyCurveName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Elliptic curve name. For valid values, see JsonWebKeyCurveName.
     """
 
@@ -49,7 +50,7 @@ class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The SECG SECP256K1 elliptic curve.
     SECP256_K1 = "SECP256K1"
 
-class JsonWebKeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonWebKeyEncryptionAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """algorithm identifier
     """
 
@@ -57,7 +58,7 @@ class JsonWebKeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta
     RSA_OAEP256 = "RSA-OAEP-256"
     RSA1_5 = "RSA1_5"
 
-class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonWebKeyOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """JSON web key operations. For more information, see JsonWebKeyOperation.
     """
 
@@ -68,7 +69,7 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
 
-class JsonWebKeySignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonWebKeySignatureAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The signing/verification algorithm identifier. For more information on possible algorithm
     types, see JsonWebKeySignatureAlgorithm.
     """
@@ -85,7 +86,7 @@ class JsonWebKeySignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ES512 = "ES512"
     ECDSA256 = "ECDSA256"
 
-class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonWebKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """JsonWebKey key type (kty).
     """
 
@@ -95,7 +96,7 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RSA_HSM = "RSA-HSM"
     OCT = "oct"
 
-class KeyUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KeyUsageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DIGITAL_SIGNATURE = "digitalSignature"
     NON_REPUDIATION = "nonRepudiation"
