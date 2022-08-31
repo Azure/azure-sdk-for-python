@@ -28,7 +28,7 @@ class TestSearchClientSkillsets(AzureRecordedTestCase):
     async def test_skillset_crud(self, api_key, endpoint):
         client = SearchIndexerClient(endpoint, api_key)
         async with client:
-            await self._test_create_skillset(client)
+            #await self._test_create_skillset(client)
             await self._test_get_skillset(client)
             await self._test_get_skillsets(client)
             await self._test_create_or_update_skillset(client)

@@ -39,14 +39,19 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
         tuning the behavior of the sender. The default value is 512.
     :keyword int max_retries_per_action: The number of times to retry a failed document. The default value is 3.
-    :keyword callable on_new: If it is set, the client will call corresponding methods when there
-        is a new IndexAction added.
-    :keyword callable on_progress: If it is set, the client will call corresponding methods when there
-        is a IndexAction succeeds.
-    :keyword callable on_error: If it is set, the client will call corresponding methods when there
-        is a IndexAction fails.
-    :keyword callable on_remove: If it is set, the client will call corresponding methods when there
-        is a IndexAction removed from the queue (succeeds or fails).
+    :keyword on_new: If it is set, the client will call corresponding methods when there
+        is a new IndexAction added. This may be called from main thread or a worker thread.
+    :paramtype on_new: callable[[IndexAction], None]
+    :keyword on_progress: If it is set, the client will call corresponding methods when there
+        is a IndexAction succeeds. This may be called from main thread or a worker thread.
+    :paramtype on_progress: callable[[IndexAction], None]
+    :keyword on_error: If it is set, the client will call corresponding methods when there
+        is a IndexAction fails. This may be called from main thread or a worker thread.
+    :paramtype on_error: callable[[IndexAction], None]
+    :keyword on_remove: If it is set, the client will call corresponding methods when there
+        is a IndexAction removed from the queue (succeeds or fails). This may be called from main
+        thread or a worker thread.
+    :paramtype on_remove: callable[[IndexAction], None]
     :keyword str api_version: The Search API version to use for requests.
     :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
      audience is not considered when using a shared key. If audience is not provided, the public cloud audience
