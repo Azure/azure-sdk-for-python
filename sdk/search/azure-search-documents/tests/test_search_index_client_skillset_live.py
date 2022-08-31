@@ -22,6 +22,7 @@ from azure.search.documents.indexes import SearchIndexerClient
 
 class TestSearchSkillset(AzureRecordedTestCase):
 
+    @pytest.mark.skip
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
@@ -54,7 +55,7 @@ class TestSearchSkillset(AzureRecordedTestCase):
                                 include_opinion_mining=True)
             skillset = SearchIndexerSkillset(name=name, skills=list([s1, s2, s3]), description="desc")
             client.create_skillset(skillset)
-        #assert 'include_typeless_entities' in str(err.value)
+        assert 'include_typeless_entities' in str(err.value)
         assert 'model_version' in str(err.value)
         assert 'include_opinion_mining' in str(err.value)
 
