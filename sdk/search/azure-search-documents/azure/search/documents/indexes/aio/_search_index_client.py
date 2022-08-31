@@ -392,8 +392,8 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
-        :param name: The synonym map name or object to delete
-        :type name: str or ~azure.search.documents.indexes.models.SynonymMap
+        :param synonym_map: The synonym map name or object to delete
+        :type synonym_map: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
