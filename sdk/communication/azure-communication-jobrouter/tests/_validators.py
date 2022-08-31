@@ -5,9 +5,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime, timezone
+from dateutil.parser import parse
 from collections import Counter
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
+from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
 from azure.communication.jobrouter import (
     BestWorkerMode,
     LongestIdleMode,
@@ -595,11 +598,18 @@ class RouterJobValidator(object):
     @staticmethod
     def validate_notes(
             entity: RouterJob,
-            note_collection,
+            note_collection: Dict[str, str],
             **kwargs
     ):
         assert isinstance(entity.notes, dict) is True
-        assert entity.notes == note_collection
+        assert len(entity.notes) == len(note_collection)
+
+        for k1, k2 in zip([key for key in entity.notes.keys()], [key for key in note_collection.keys()]):
+            k1_as_dt: datetime = parse(k1, tzinfos = [timezone.utc])
+            k2_as_dt: datetime = parse(k2, tzinfos = [timezone.utc])
+
+            assert k1_as_dt == k2_as_dt
+            assert entity.notes[k1] == note_collection[k2]
 
     @staticmethod
     def validate_job(

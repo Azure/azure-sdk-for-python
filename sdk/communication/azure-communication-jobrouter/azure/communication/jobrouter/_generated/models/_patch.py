@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Optional, Dict, Union, TypedDict, MutableMapping
 from datetime import datetime, timezone
 from dateutil.parser import parse
+from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
 
 from ._models import (
     JobQueue as JobQueueGenerated,
@@ -50,7 +51,17 @@ class RouterJob(RouterJobGenerated):
             **kwargs):
 
         if notes:
-            notes = {_convert_str_to_datetime(k): v for k, v in notes.items()}
+            for k in [key for key in notes.keys()]:
+                v: str = notes[k]
+                if isinstance(k, str):
+                    datetime_as_dt: datetime = _convert_str_to_datetime(k)    # pylint:disable=protected-access
+                    notes.pop(k)
+                    datetime_as_str: str = _datetime_as_isostr(datetime_as_dt)    # pylint:disable=protected-access
+                    notes[datetime_as_str] = v
+                elif isinstance(k, datetime):
+                    datetime_as_str: str = _datetime_as_isostr(k)    # pylint:disable=protected-access
+                    notes.pop(k)
+                    notes[datetime_as_str] = v
 
         if labels:
             for k, v in labels.items():
