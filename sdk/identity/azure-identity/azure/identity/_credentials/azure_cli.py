@@ -38,9 +38,7 @@ class AzureCliCredential(TokenCredential):
 
     :keyword str tenant_id: optional tenant to include in the token request.
     """
-    def __init__(self, *, tenant_id: str = ""):
-        object.__init__(self)
-
+    def __init__(self, *, tenant_id: str = ""):  # pylint:disable=super-init-not-called
         self.tenant_id = tenant_id
 
     def __enter__(self):

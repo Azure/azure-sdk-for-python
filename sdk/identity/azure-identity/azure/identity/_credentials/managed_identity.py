@@ -40,7 +40,7 @@ class ManagedIdentityCredential(TokenCredential):
     :paramtype identity_config: Mapping[str, str]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint:disable=super-init-not-called
         # type: (**Any) -> None
         self._credential = None  # type: Optional[TokenCredential]
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):

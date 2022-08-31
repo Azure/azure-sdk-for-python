@@ -37,7 +37,7 @@ class SharedTokenCacheCredential(TokenCredential):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    def __init__(self, username=None, **kwargs):
+    def __init__(self, username=None, **kwargs):  # pylint:disable=super-init-not-called
         # type: (Optional[str], **Any) -> None
 
         if "authentication_record" in kwargs:

@@ -46,7 +46,7 @@ class ChainedTokenCredential(TokenCredential):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    def __init__(self, *credentials):
+    def __init__(self, *credentials):  # pylint:disable=super-init-not-called
         # type: (*TokenCredential) -> None
         if not credentials:
             raise ValueError("at least one credential is required")

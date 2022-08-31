@@ -30,7 +30,7 @@ class ChainedTokenCredential(AsyncContextManager, AsyncTokenCredential):
     :type credentials: :class:`azure.core.credentials.AsyncTokenCredential`
     """
 
-    def __init__(self, *credentials: "AsyncTokenCredential") -> None:
+    def __init__(self, *credentials: "AsyncTokenCredential") -> None:  # pylint:disable=super-init-not-called
         if not credentials:
             raise ValueError("at least one credential is required")
 

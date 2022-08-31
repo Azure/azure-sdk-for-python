@@ -64,7 +64,7 @@ class EnvironmentCredential(TokenCredential):
         when no value is given.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint:disable=super-init-not-called
         # type: (Mapping[str, Any]) -> None
         self._credential = None  # type: Optional[EnvironmentCredentialTypes]
 

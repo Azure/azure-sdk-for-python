@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 class SilentAuthenticationCredential(TokenCredential):
     """Internal class for authenticating from the default shared cache given an AuthenticationRecord"""
 
-    def __init__(self, authentication_record, **kwargs):
+    def __init__(self, authentication_record, **kwargs):  # pylint:disable=super-init-not-called
         # type: (AuthenticationRecord, **Any) -> None
         self._auth_record = authentication_record
 

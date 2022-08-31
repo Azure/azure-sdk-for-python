@@ -36,7 +36,7 @@ class ManagedIdentityCredential(AsyncContextManager, AsyncTokenCredential):
     :paramtype identity_config: Mapping[str, str]
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs: "Any") -> None:  # pylint:disable=super-init-not-called
         self._credential = None  # type: Optional[AsyncTokenCredential]
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):

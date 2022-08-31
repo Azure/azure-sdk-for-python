@@ -36,7 +36,7 @@ class AzureCliCredential(AsyncContextManager, AsyncTokenCredential):
 
     :keyword str tenant_id: optional tenant to include in the token request.
     """
-    def __init__(self, *, tenant_id: str = ""):
+    def __init__(self, *, tenant_id: str = ""):  # pylint:disable=super-init-not-called
         AsyncContextManager.__init__(self)
 
         self.tenant_id = tenant_id

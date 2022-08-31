@@ -46,7 +46,7 @@ class EnvironmentCredential(AsyncContextManager, AsyncTokenCredential):
         when no value is given.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs: "Any") -> None:  # pylint:disable=super-init-not-called
         self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
