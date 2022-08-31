@@ -35,7 +35,7 @@ class TestManagement(FormRecognizerTest):
         credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
         client = DocumentModelAdministrationClient(endpoint, token, credential_scopes=credential_scopes)
         info = client.get_resource_details()
-
+        assert info
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
