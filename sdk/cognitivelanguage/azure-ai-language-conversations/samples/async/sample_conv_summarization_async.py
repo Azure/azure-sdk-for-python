@@ -88,7 +88,7 @@ async def sample_conv_summarization_async():
         print(f"status: {task_result['status']}")
         resolution_result = task_result["results"]
         if resolution_result["errors"]:
-            print("... errors occured ...")
+            print("... errors occurred ...")
             for error in resolution_result["errors"]:
                 print(error)
         else:
