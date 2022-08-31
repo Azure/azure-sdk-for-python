@@ -5,16 +5,15 @@
 # -------------------------------------------------------------------------
 
 import base64
-import isodate
 import json
 import calendar
 from typing import (cast,
                     Tuple,
                     )
 from datetime import datetime
+import isodate
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import raise_with_traceback
 
 
 def _convert_datetime_to_utc_int(input_datetime):
@@ -75,7 +74,7 @@ def verify_datetime_format(input_datetime):
     try:
         if isinstance(input_datetime, str):
             input_datetime = isodate.parse_datetime(input_datetime)
-        if type(input_datetime) is datetime:
+        if isinstance(input_datetime, datetime):
             return True
     except:
         raise ValueError("{} is not a valid ISO-8601 datetime format".format(input_datetime)) from None
