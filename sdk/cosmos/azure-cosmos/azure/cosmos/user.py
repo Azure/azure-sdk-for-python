@@ -31,7 +31,6 @@ from azure.core.tracing.decorator import distributed_trace  # type: ignore
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
 from .permission import Permission
-from .cosmos_diagnostics import CosmosDiagnostics
 
 
 class UserProxy(object):

@@ -35,7 +35,6 @@ from .http_constants import StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
-from .cosmos_diagnostics import CosmosDiagnostics
 
 __all__ = ("DatabaseProxy",)
 

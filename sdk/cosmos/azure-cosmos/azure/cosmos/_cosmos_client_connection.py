@@ -59,7 +59,6 @@ from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
-from .cosmos_diagnostics import CosmosDiagnostics
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
 ClassType = TypeVar("ClassType")
