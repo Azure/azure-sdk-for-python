@@ -109,8 +109,8 @@ class TestStorageLogging(StorageRecordedTestCase):
             assert _AUTHORIZATION_HEADER_NAME in log_as_str
             assert not 'SharedKey' in log_as_str
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_sas_signature_is_scrubbed_off(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -120,7 +120,8 @@ class TestStorageLogging(StorageRecordedTestCase):
         self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
-        token = generate_container_sas(
+        token = self.generate_sas(
+            generate_container_sas,
             container.account_name,
             container.container_name,
             account_key=container.credential.account_key,
@@ -143,8 +144,8 @@ class TestStorageLogging(StorageRecordedTestCase):
             assert QueryStringConstants.SIGNED_SIGNATURE in log_as_str
             assert not signed_signature in log_as_str
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_copy_source_sas_is_scrubbed_off(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
