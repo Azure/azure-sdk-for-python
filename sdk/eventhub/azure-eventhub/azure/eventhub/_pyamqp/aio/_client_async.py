@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+# TODO: Check types of kwargs (issue exists for this)
 import asyncio
 import collections.abc
 import logging
@@ -86,7 +86,7 @@ class AMQPClientAsync(AMQPClientSync):
      Default value is 60s.
     :paramtype auth_timeout: int
     :keyword properties: Connection properties.
-    :paramtype properties: dict
+    :paramtype properties: dict[str, any]
     :keyword remote_idle_timeout_empty_frame_send_ratio: Ratio of empty frames to
      idle time for Connections with no activity. Value must be between
      0.0 and 1.0 inclusive. Default is 0.5.
@@ -112,11 +112,11 @@ class AMQPClientAsync(AMQPClientSync):
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
-    :paramtype desired_capabilities: List
+    :paramtype desired_capabilities: list[any]
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.	
     :paramtype max_message_size: int	
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.	
-    :paramtype link_properties: dict	
+    :paramtype link_properties: dict[str, any]
     :keyword link_credit: The Link credit that determines how many	
      messages the Link will attempt to handle per connection iteration.	
      The default is 300.	
@@ -129,7 +129,7 @@ class AMQPClientAsync(AMQPClientSync):
     :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :paramtype http_proxy: Dict
+    :paramtype http_proxy: dict[str, str]
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
@@ -303,7 +303,7 @@ class AMQPClientAsync(AMQPClientSync):
         to be shut down.
 
         :rtype: bool
-        :raises: TimeoutError or ~uamqp.errors.ClientTimeout if CBS authentication timeout reached.
+        :raises: TimeoutError if CBS authentication timeout reached.
         """
         if self._shutdown:
             return False
@@ -314,7 +314,7 @@ class AMQPClientAsync(AMQPClientSync):
     async def mgmt_request_async(self, message, **kwargs):
         """
         :param message: The message to send in the management request.
-        :type message: ~uamqp.message.Message
+        :type message: ~pyamqp.message.Message
         :keyword str operation: The type of operation to be performed. This value will
          be service-specific, but common values include READ, CREATE and UPDATE.
          This value will be added as an application property on the message.
@@ -324,7 +324,7 @@ class AMQPClientAsync(AMQPClientSync):
         :keyword str node: The target node. Default node is `$management`.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
-        :rtype: ~uamqp.message.Message
+        :rtype: ~pyamqp.message.Message
         """
 
         # The method also takes "status_code_field" and "status_description_field"
@@ -470,7 +470,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
     async def send_message_async(self, message, **kwargs):
         """
-        :param ~uamqp.message.Message message:
+        :param ~pyamqp.message.Message message:
         :param int timeout: timeout in seconds
         """
         await self._do_retryable_operation_async(self._send_message_impl_async, message=message, **kwargs)
@@ -531,7 +531,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         or iterator, the message will be added to an internal queue.
 
         :param message: Received message.
-        :type message: ~uamqp.message.Message
+        :type message: ~pyamqp.message.Message
         """
         if self._message_received_callback:
             await self._message_received_callback(message)

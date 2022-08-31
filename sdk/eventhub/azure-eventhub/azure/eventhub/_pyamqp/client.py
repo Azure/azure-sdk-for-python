@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
-
+# TODO: Check types of kwargs (issue exists for this)
 import logging
 import time
 import uuid
@@ -41,6 +41,7 @@ from .outcomes import(
 )
 
 from .constants import (
+    MAX_CHANNELS,
     MessageDeliveryState,
     SenderSettleMode,
     ReceiverSettleMode,
@@ -100,7 +101,7 @@ class AMQPClient(object):
      Default value is 60s.
     :paramtype auth_timeout: int
     :keyword properties: Connection properties.
-    :paramtype properties: dict
+    :paramtype properties: dict[str, any]
     :keyword remote_idle_timeout_empty_frame_send_ratio: Portion of the idle timeout time to wait before sending an
      empty frame. The default portion is 50% of the idle timeout value (i.e. `0.5`).
     :paramtype remote_idle_timeout_empty_frame_send_ratio: float
@@ -125,11 +126,11 @@ class AMQPClient(object):
      default is `PeekLock`.
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
-    :paramtype desired_capabilities: List
+    :paramtype desired_capabilities: list[any]
     :keyword max_message_size: The maximum allowed message size negotiated for the Link.	
     :paramtype max_message_size: int	
     :keyword link_properties: Metadata to be sent in the Link ATTACH frame.	
-    :paramtype link_properties: dict	
+    :paramtype link_properties: dict[str, any]	
     :keyword link_credit: The Link credit that determines how many	
      messages the Link will attempt to handle per connection iteration.	
      The default is 300.	
@@ -142,7 +143,7 @@ class AMQPClient(object):
     :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :paramtype http_proxy: Dict
+    :paramtype http_proxy: dict[str, str]
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
@@ -173,7 +174,7 @@ class AMQPClient(object):
 
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)
-        self._channel_max = kwargs.pop('channel_max', 65535)
+        self._channel_max = kwargs.pop('channel_max', MAX_CHANNELS)
         self._idle_timeout = kwargs.pop('idle_timeout', None)
         self._properties = kwargs.pop('properties', None)
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.pop(
@@ -703,7 +704,7 @@ class ReceiveClient(AMQPClient):
         :param on_message_received: A callback to process messages as they arrive from the
          service. It takes a single argument, a ~pyamqp.message.Message object.
         :type on_message_received: callable[~pyamqp.message.Message]
-        :param timeout: I timeout in milliseconds for which to wait to receive any messages.
+        :param timeout: The timeout in milliseconds for which to wait to receive any messages.
          If no messages are received in this time, an empty list will be returned. If set to
          0, the client will continue to wait until at least one message is received. The
          default is 0.
