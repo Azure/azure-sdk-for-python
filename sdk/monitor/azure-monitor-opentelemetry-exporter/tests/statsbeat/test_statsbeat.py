@@ -125,12 +125,6 @@ class TestStatsbeat(unittest.TestCase):
             _statsbeat._DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
         )
 
-_StatsbeatMetrics_COMMON_ATTRS = dict(
-    _StatsbeatMetrics._COMMON_ATTRIBUTES
-)
-_StatsbeatMetrics_NETWORK_ATTRS = dict(
-    _StatsbeatMetrics._NETWORK_ATTRIBUTES
-)
 
 # pylint: disable=protected-access
 class TestStatsbeatMetrics(unittest.TestCase):
