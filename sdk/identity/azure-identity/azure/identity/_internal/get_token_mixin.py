@@ -7,8 +7,6 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.credentials import TokenCredential
-
 from . import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 

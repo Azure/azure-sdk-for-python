@@ -7,8 +7,6 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.credentials_async import AsyncTokenCredential
-
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ..._internal import within_credential_chain
 
@@ -20,7 +18,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class GetTokenMixin(abc.ABC, AsyncTokenCredential):
+class GetTokenMixin(abc.ABC):
     def __init__(self, *args: "Any", **kwargs: "Any") -> None:
         self._last_request_time = 0
 
