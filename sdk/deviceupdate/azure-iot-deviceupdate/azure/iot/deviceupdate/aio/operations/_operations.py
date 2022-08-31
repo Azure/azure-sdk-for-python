@@ -47,7 +47,7 @@ from ...operations._operations import (
     build_device_management_get_group_request,
     build_device_management_get_log_collection_detailed_status_request,
     build_device_management_get_log_collection_request,
-    build_device_management_get_operation_request,
+    build_device_management_get_operation_status_request,
     build_device_management_get_update_compliance_for_group_request,
     build_device_management_get_update_compliance_request,
     build_device_management_import_devices_request,
@@ -56,25 +56,25 @@ from ...operations._operations import (
     build_device_management_list_deployments_for_group_request,
     build_device_management_list_device_class_subgroups_for_group_request,
     build_device_management_list_device_classes_request,
-    build_device_management_list_device_health_request,
     build_device_management_list_device_states_for_device_class_subgroup_deployment_request,
     build_device_management_list_devices_request,
     build_device_management_list_groups_request,
+    build_device_management_list_health_of_devices_request,
     build_device_management_list_installable_updates_for_device_class_request,
     build_device_management_list_log_collections_request,
-    build_device_management_list_operations_request,
+    build_device_management_list_operation_statuses_request,
     build_device_management_retry_deployment_request,
     build_device_management_start_log_collection_request,
     build_device_management_stop_deployment_request,
     build_device_management_update_device_class_request,
     build_device_update_delete_update_request,
     build_device_update_get_file_request,
-    build_device_update_get_operation_request,
+    build_device_update_get_operation_status_request,
     build_device_update_get_update_request,
     build_device_update_import_update_request,
     build_device_update_list_files_request,
     build_device_update_list_names_request,
-    build_device_update_list_operations_request,
+    build_device_update_list_operation_statuses_request,
     build_device_update_list_providers_request,
     build_device_update_list_updates_request,
     build_device_update_list_versions_request,
@@ -459,7 +459,7 @@ class DeviceUpdateOperations:
     @distributed_trace_async
     async def get_update(
         self, provider: str, name: str, version: str, *, if_none_match: Optional[str] = None, **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """Get a specific update version.
 
         :param provider: Update provider. Required.
@@ -471,8 +471,8 @@ class DeviceUpdateOperations:
         :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
          only if the ETag on the server does not match this value. Default value is None.
         :paramtype if_none_match: str
-        :return: JSON object or None
-        :rtype: JSON or None
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -549,7 +549,7 @@ class DeviceUpdateOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_device_update_get_update_request(
             provider=provider,
@@ -572,21 +572,19 @@ class DeviceUpdateOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     async def _delete_update_initial(  # pylint: disable=inconsistent-return-statements
         self, provider: str, name: str, version: str, **kwargs: Any
@@ -1033,7 +1031,7 @@ class DeviceUpdateOperations:
         *,
         if_none_match: Optional[str] = None,
         **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """Get a specific update file from the version.
 
         :param provider: Update provider. Required.
@@ -1047,8 +1045,8 @@ class DeviceUpdateOperations:
         :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
          only if the ETag on the server does not match this value. Default value is None.
         :paramtype if_none_match: str
-        :return: JSON object or None
-        :rtype: JSON or None
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1100,7 +1098,7 @@ class DeviceUpdateOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_device_update_get_file_request(
             provider=provider,
@@ -1124,24 +1122,22 @@ class DeviceUpdateOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_operations(
+    def list_operation_statuses(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of all import update operations. Completed operations are kept for 7 days before
@@ -1217,7 +1213,7 @@ class DeviceUpdateOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_device_update_list_operations_request(
+                request = build_device_update_list_operation_statuses_request(
                     instance_id=self._config.instance_id,
                     filter=filter,
                     top=top,
@@ -1271,9 +1267,9 @@ class DeviceUpdateOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_operation(
+    async def get_operation_status(
         self, operation_id: str, *, if_none_match: Optional[str] = None, **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """Retrieve operation status.
 
         :param operation_id: Operation identifier. Required.
@@ -1281,8 +1277,8 @@ class DeviceUpdateOperations:
         :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
          only if the ETag on the server does not match this value. Default value is None.
         :paramtype if_none_match: str
-        :return: JSON object or None
-        :rtype: JSON or None
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1339,9 +1335,9 @@ class DeviceUpdateOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_update_get_operation_request(
+        request = build_device_update_get_operation_status_request(
             operation_id=operation_id,
             instance_id=self._config.instance_id,
             if_none_match=if_none_match,
@@ -1360,24 +1356,22 @@ class DeviceUpdateOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+        response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
 
-        return deserialized
+        return cast(JSON, deserialized)
 
 
 class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
@@ -4758,9 +4752,9 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_operation(
+    async def get_operation_status(
         self, operation_id: str, *, if_none_match: Optional[str] = None, **kwargs: Any
-    ) -> Optional[JSON]:
+    ) -> JSON:
         """Retrieve operation status.
 
         :param operation_id: Operation identifier. Required.
@@ -4768,8 +4762,8 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword if_none_match: Defines the If-None-Match condition. The operation will be performed
          only if the ETag on the server does not match this value. Default value is None.
         :paramtype if_none_match: str
-        :return: JSON object or None
-        :rtype: JSON or None
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4815,9 +4809,9 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_device_management_get_operation_request(
+        request = build_device_management_get_operation_status_request(
             operation_id=operation_id,
             instance_id=self._config.instance_id,
             if_none_match=if_none_match,
@@ -4836,27 +4830,25 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+        response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_operations(
+    def list_operation_statuses(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of all device import operations. Completed operations are kept for 7 days before
@@ -4921,7 +4913,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_device_management_list_operations_request(
+                request = build_device_management_list_operation_statuses_request(
                     instance_id=self._config.instance_id,
                     filter=filter,
                     top=top,
@@ -5324,11 +5316,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_log_collection_detailed_status(self, operation_id: str, **kwargs: Any) -> JSON:
+    async def get_log_collection_detailed_status(self, log_collection_id: str, **kwargs: Any) -> JSON:
         """Get log collection with detailed status.
 
-        :param operation_id: Operation identifier. Required.
-        :type operation_id: str
+        :param log_collection_id: Log collection identifier. Required.
+        :type log_collection_id: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5369,7 +5361,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_device_management_get_log_collection_detailed_status_request(
-            operation_id=operation_id,
+            log_collection_id=log_collection_id,
             instance_id=self._config.instance_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5401,7 +5393,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_device_health(self, *, filter: str, **kwargs: Any) -> AsyncIterable[JSON]:
+    def list_health_of_devices(self, *, filter: str, **kwargs: Any) -> AsyncIterable[JSON]:
         """Get list of device health.
 
         :keyword filter: Restricts the set of devices for which device health is returned. You can
@@ -5441,7 +5433,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_device_management_list_device_health_request(
+                request = build_device_management_list_health_of_devices_request(
                     instance_id=self._config.instance_id,
                     filter=filter,
                     api_version=self._config.api_version,
