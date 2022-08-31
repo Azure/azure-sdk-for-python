@@ -476,7 +476,8 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         await self._do_retryable_operation_async(self._send_message_impl_async, message=message, **kwargs)
 
 
-SendClientAsync.__doc__ = SendClientSync.__doc__
+SendClientAsync.__doc__ = \
+    f"""{SendClientSync.__doc__[0:41]} asynchronously{SendClientSync.__doc__[41::]}"""
 
 
 class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
@@ -710,4 +711,5 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         )
 
 
-ReceiveClientAsync.__doc__ = ReceiveClientSync.__doc__
+ReceiveClientAsync.__doc__ = \
+    f"""{ReceiveClientSync.__doc__[0:43]} asynchronously{ReceiveClientSync.__doc__[43::]}"""
