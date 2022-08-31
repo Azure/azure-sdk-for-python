@@ -68,6 +68,7 @@ setup(
     python_requires = ">=3.7",
     install_requires = [
         'azure-core<2.0.0,>=1.25.0',
+        'msrest>=0.6.21',
         'six>=1.11.0',
         'python-dateutil>=2.8.0'
     ],
