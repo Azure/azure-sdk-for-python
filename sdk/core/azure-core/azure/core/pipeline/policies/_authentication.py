@@ -35,6 +35,8 @@ class _BearerTokenCredentialPolicyBase(object):
         self._scopes = scopes
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
+        self._original_url = None
+        self._always_adding_header = kwargs.pop('always_adding_header', False)
 
     @staticmethod
     def _enforce_https(request):
@@ -70,6 +72,17 @@ class _BearerTokenCredentialPolicyBase(object):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
+    def _need_adding_header(self, url):
+        if self._always_adding_header:
+            return True
+        if not self._original_url:
+            self._original_url = url
+            return True
+        if self._original_url == url:
+            return True
+        return False
+
+
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     """Adds a bearer token Authorization header to requests.
 
@@ -89,9 +102,10 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         """
         self._enforce_https(request)
 
-        if self._token is None or self._need_new_token:
-            self._token = self._credential.get_token(*self._scopes)
-        self._update_headers(request.http_request.headers, self._token.token)
+        if self._need_adding_header(request.http_request.url):
+            if self._token is None or self._need_new_token:
+                self._token = self._credential.get_token(*self._scopes)
+            self._update_headers(request.http_request.headers, self._token.token)
 
     def authorize_request(self, request, *scopes, **kwargs):
         # type: (PipelineRequest, *str, **Any) -> None

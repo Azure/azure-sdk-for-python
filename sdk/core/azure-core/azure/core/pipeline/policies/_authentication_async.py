@@ -44,12 +44,14 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
-        if self._token is None or self._need_new_token():
-            async with self._lock:
-                # double check because another coroutine may have acquired a token while we waited to acquire the lock
-                if self._token is None or self._need_new_token():
-                    self._token = await self._credential.get_token(*self._scopes)
-        request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+        if self._need_adding_header(request.http_request.url):
+            if self._token is None or self._need_new_token():
+                async with self._lock:
+                    # double check because another coroutine may have acquired a token
+                    # while we waited to acquire the lock
+                    if self._token is None or self._need_new_token():
+                        self._token = await self._credential.get_token(*self._scopes)
+            request.http_request.headers["Authorization"] = "Bearer " + self._token.token
 
     async def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs: "Any") -> None:
         """Acquire a token from the credential and authorize the request with it.
