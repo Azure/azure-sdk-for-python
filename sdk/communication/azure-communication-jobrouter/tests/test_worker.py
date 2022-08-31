@@ -208,6 +208,60 @@ class TestRouterWorker(RouterTestCase):
             available_for_offers = False
         )
 
+    @pytest.mark.skip(reason = "Upsert worker not working correctly")
+    @RouterPreparers.before_test_execute('setup_distribution_policy')
+    @RouterPreparers.before_test_execute('setup_job_queue')
+    def test_update_worker_w_kwargs(self):
+        w_identifier = "tst_update_w_kwargs"
+        router_client: RouterClient = self.create_client()
+        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+
+        router_worker = router_client.create_worker(
+            worker_id = w_identifier,
+            total_capacity = worker_total_capacity,
+            labels = worker_labels,
+            tags = worker_tags,
+            queue_assignments = worker_queue_assignments,
+            channel_configurations = worker_channel_configs,
+            available_for_offers = False
+        )
+
+        # add for cleanup
+        self.worker_ids[self._testMethodName] = [w_identifier]
+
+        assert router_worker is not None
+        RouterWorkerValidator.validate_worker(
+            router_worker,
+            identifier = w_identifier,
+            total_capacity = worker_total_capacity,
+            labels = worker_labels,
+            tags = worker_tags,
+            queue_assignments = worker_queue_assignments,
+            channel_configurations = worker_channel_configs,
+            available_for_offers = False
+        )
+
+        # Act
+        router_worker.labels['FakeKey'] = "FakeWorkerValue"
+        updated_worker_labels = router_worker.labels
+
+        update_router_worker = router_client.update_worker(
+            worker_id = w_identifier,
+            labels = updated_worker_labels
+        )
+
+        assert update_router_worker is not None
+        RouterWorkerValidator.validate_worker(
+            update_router_worker,
+            identifier = w_identifier,
+            total_capacity = worker_total_capacity,
+            labels = updated_worker_labels,
+            tags = worker_tags,
+            queue_assignments = worker_queue_assignments,
+            channel_configurations = worker_channel_configs,
+            available_for_offers = False
+        )
+
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     def test_get_worker(self):

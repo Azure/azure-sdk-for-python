@@ -307,8 +307,60 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                         classification_policy.prioritization_rule = updated_prioritization_rule
 
                         updated_classification_policy = await router_client.update_classification_policy(
+                            cp_identifier,
+                            classification_policy
+                        )
+
+                        ClassificationPolicyValidator.validate_classification_policy(
+                            updated_classification_policy,
+                            name = cp_identifier,
+                            fallback_queue_id = self.get_job_queue_id(),
+                            queue_selectors = [qs],
+                            prioritization_rule = updated_prioritization_rule,
+                            worker_selectors = [ws]
+                        )
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_update_classification_policy_w_kwargs(self):
+        router_client: RouterAdministrationClient = self.create_admin_client()
+        cp_identifier = 'tst_update_cp_w_args_async'
+
+        async with router_client:
+            for qs in queue_selectors:
+                for rule in prioritization_rules:
+                    for ws in worker_selectors:
+                        classification_policy = await router_client.create_classification_policy(
                             classification_policy_id = cp_identifier,
-                            classification_policy = classification_policy
+                            name = cp_identifier,
+                            fallback_queue_id = self.get_job_queue_id(),
+                            queue_selectors = [qs],
+                            prioritization_rule = rule,
+                            worker_selectors = [ws]
+                        )
+
+                        # add for cleanup
+                        self.classification_policy_ids[self._testMethodName] = [cp_identifier]
+
+                        assert classification_policy is not None
+
+                        ClassificationPolicyValidator.validate_classification_policy(
+                            classification_policy,
+                            name = cp_identifier,
+                            fallback_queue_id = self.get_job_queue_id(),
+                            queue_selectors = [qs],
+                            prioritization_rule = rule,
+                            worker_selectors = [ws]
+                        )
+
+                        updated_prioritization_rule = ExpressionRule(expression = "2")
+                        classification_policy.prioritization_rule = updated_prioritization_rule
+
+                        updated_classification_policy = await router_client.update_classification_policy(
+                            cp_identifier,
+                            prioritization_rule = updated_prioritization_rule
                         )
 
                         ClassificationPolicyValidator.validate_classification_policy(

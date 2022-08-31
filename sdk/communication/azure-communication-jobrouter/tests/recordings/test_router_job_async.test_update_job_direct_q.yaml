@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:17 GMT
+      - Tue, 30 Aug 2022 23:35:20 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_update_job_direct_q_tst_dp_async","name":"test_update_job_direct_q_tst_dp_async","offerTtlSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
@@ -25,17 +25,17 @@ interactions:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:11 GMT
+      date: Tue, 30 Aug 2022 23:35:22 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 22:12:48 GMT
+      last-modified: Tue, 30 Aug 2022 23:35:22 GMT
       request-context: appId=
-      trace-id: ff6ba673d2ebbfca0d378cb4c839c544
+      trace-id: b09be5094c60d885070e2f29f5236d8b
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
 - request:
     body: '{"name": "test_update_job_direct_q_tst_q_async", "distributionPolicyId":
       "test_update_job_direct_q_tst_dp_async", "labels": {"key1": "JobKey", "key2":
@@ -50,28 +50,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:19 GMT
+      - Tue, 30 Aug 2022 23:35:21 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_update_job_direct_q_tst_q_async","name":"test_update_job_direct_q_tst_q_async","distributionPolicyId":"test_update_job_direct_q_tst_dp_async","labels":{"key1":"JobKey","key2":10,"key3":true,"Id":"test_update_job_direct_q_tst_q_async"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:11 GMT
+      date: Tue, 30 Aug 2022 23:35:22 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 22:12:50 GMT
+      last-modified: Tue, 30 Aug 2022 23:35:22 GMT
       request-context: appId=
-      trace-id: b429142c2fcfcb39d9dec208d466ae9e
+      trace-id: c8883556f954f2574fd71dc708250286
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
 - request:
     body: '{"channelReference": "fakeChannelRef1", "channelId": "fakeChannelId1",
       "queueId": "test_update_job_direct_q_tst_q_async", "priority": 10, "requestedWorkerSelectors":
@@ -92,11 +93,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:20 GMT
+      - Tue, 30 Aug 2022 23:35:21 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"created","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
@@ -105,17 +106,17 @@ interactions:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:14 GMT
+      date: Tue, 30 Aug 2022 23:35:23 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 22:19:13 GMT
+      last-modified: Tue, 30 Aug 2022 23:35:23 GMT
       request-context: appId=
-      trace-id: 2c810e4a6ab300bb954ae98658580f19
+      trace-id: 25774f9c6318e825f4d31941680cfb31
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -124,60 +125,30 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:22 GMT
+      - Tue, 30 Aug 2022 23:35:21 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"created","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:35:23.3405972+00:00","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:14 GMT
+      date: Tue, 30 Aug 2022 23:35:23 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 22:19:13 GMT
+      last-modified: Tue, 30 Aug 2022 23:35:23 GMT
       request-context: appId=
-      trace-id: f0b9c6b975b170de9d181a24cc01704a
+      trace-id: 91d574972a61c9cb616003c4526cbb90
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Thu, 18 Aug 2022 22:19:26 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
-  response:
-    body:
-      string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T22:19:14.8809986+00:00","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
-        notes attached to job"}}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
-      content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:18 GMT
-      etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 22:19:14 GMT
-      request-context: appId=
-      trace-id: 43037421a0d1937a3b66d5108b0729a6
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
 - request:
     body: '{"channelReference": "fakeChannelRef1", "channelId": "fakeChannelId1",
       "queueId": "test_update_job_direct_q_tst_q_async", "priority": 10, "requestedWorkerSelectors":
@@ -200,63 +171,95 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:27 GMT
+      - Tue, 30 Aug 2022 23:35:22 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T22:19:14.8809986+00:00","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true,"FakeKey":"FakeWorkerValue"},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:35:23.3405972+00:00","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true,"FakeKey":"FakeWorkerValue"},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:22 GMT
+      date: Tue, 30 Aug 2022 23:35:23 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 22:19:20 GMT
+      last-modified: Tue, 30 Aug 2022 23:35:23 GMT
       request-context: appId=
-      trace-id: a391a9310ea0e824b6ae827a44d1c266
+      trace-id: f3061674464f51e0c0defaf21dcb8fa0
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
 - request:
-    body: '{"note": "Cancelling job after test cleanup after: test_update_job_direct_q",
-      "dispositionCode": "JobCancelledAsPartOfTestCleanUp"}'
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 30 Aug 2022 23:35:22 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:35:23.3405972+00:00","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true,"FakeKey":"FakeWorkerValue"},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+        notes attached to job"}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Aug 2022 23:35:24 GMT
+      etag: REDACTED
+      last-modified: Tue, 30 Aug 2022 23:35:23 GMT
+      request-context: appId=
+      trace-id: 715c7b873d10e8c3719195c3c6e40e23
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+- request:
+    body: '{"dispositionCode": "JobCancelledAsPartOfTestCleanUp"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '131'
+      - '54'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:30 GMT
+      - Tue, 30 Aug 2022 23:35:22 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_update_job_man_async:cancel?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async:cancel?api-version=2022-07-18-preview
   response:
     body:
       string: '{}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:24 GMT
+      date: Tue, 30 Aug 2022 23:35:24 GMT
       request-context: appId=
-      trace-id: fc694df91729b1a1a5f11baca440f28e
+      trace-id: fdc13319d96e78d1cb77a1a529e0a8b3
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/tst_update_job_man_async:cancel?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async:cancel?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -265,31 +268,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:33 GMT
+      - Tue, 30 Aug 2022 23:35:22 GMT
       x-ms-return-client-request-id:
       - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    method: DELETE
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_update_job_man_async","channelReference":"fakeChannelRef1","jobStatus":"cancelled","enqueueTimeUtc":"2022-08-18T22:19:14.8809986+00:00","channelId":"fakeChannelId1","queueId":"test_update_job_direct_q_tst_q_async","priority":10,"dispositionCode":"JobCancelledAsPartOfTestCleanUp","requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true,"FakeKey":"FakeWorkerValue"},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
-        notes attached to job","2022-08-18T22:19:23.211718+00:00":"Cancelling job
-        after test cleanup after: test_update_job_direct_q"}}'
+      string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 22:19:25 GMT
-      etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 22:19:23 GMT
+      date: Tue, 30 Aug 2022 23:35:24 GMT
       request-context: appId=
-      trace-id: aca58799902602042b55fadf067ba6e7
-      transfer-encoding: chunked
+      trace-id: 6c044204fe29a36ee463b6b487d44b3e
       x-cache: CONFIG_NOCACHE
     status:
-      code: 200
-      message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+      code: 204
+      message: No Content
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -298,24 +295,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:33 GMT
+      - Tue, 30 Aug 2022 23:35:22 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
-      date: Thu, 18 Aug 2022 22:19:26 GMT
+      connection: keep-alive
+      date: Tue, 30 Aug 2022 23:35:24 GMT
       request-context: appId=
-      trace-id: 926a124e090a443a63c4999115aa18ef
+      trace-id: 6502ae273fadc7be9231c65ee2a50733
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/tst_update_job_man_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -324,48 +322,23 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 22:19:35 GMT
+      - Tue, 30 Aug 2022 23:35:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
-      date: Thu, 18 Aug 2022 22:19:27 GMT
+      connection: keep-alive
+      date: Tue, 30 Aug 2022 23:35:24 GMT
       request-context: appId=
-      trace-id: 28419929c19755ed60de5f1171c2198c
+      trace-id: a77ab4721e1ab7a8343699baa61626fd
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_update_job_direct_q_tst_q_async?api-version=2022-07-18-preview
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Thu, 18 Aug 2022 22:19:36 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
-  response:
-    body:
-      string: ''
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
-      date: Thu, 18 Aug 2022 22:19:28 GMT
-      request-context: appId=
-      trace-id: 43582b2f20082740aa7c49e7925d21b1
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 204
-      message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/test_update_job_direct_q_tst_dp_async?api-version=2022-07-18-preview
 version: 1

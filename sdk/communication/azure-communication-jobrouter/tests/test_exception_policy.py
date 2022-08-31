@@ -232,6 +232,80 @@ class TestExceptionPolicy(RouterTestCase):
                     )
                 }
 
+                exception_policy: ExceptionPolicy = router_client.create_exception_policy(
+                    exception_policy_id = ep_identifier,
+                    exception_rules = exception_rules,
+                    name = ep_identifier
+                )
+
+                # add for cleanup
+                self.exception_policy_ids[self._testMethodName] = [ep_identifier]
+
+                assert exception_policy is not None
+                ExceptionPolicyValidator.validate_exception_policy(
+                    exception_policy,
+                    identifier = ep_identifier,
+                    name = ep_identifier,
+                    exception_rules = exception_rules
+                )
+
+                updated_exception_rules = {
+                    "fakeExceptionRuleId": None,  # existing rule is set to delete
+                    "fakeExceptionRuleId2": ExceptionRule(
+                        trigger = trigger,
+                        actions = {
+                            "fakeExceptionActionId": action
+                        }
+                    )
+                }
+
+                exception_policy.exception_rules = updated_exception_rules
+
+                exception_policy = router_client.update_exception_policy(
+                    ep_identifier,
+                    exception_policy
+                )
+
+                assert exception_policy is not None
+                ExceptionPolicyValidator.validate_exception_policy(
+                    exception_policy,
+                    identifier = ep_identifier,
+                    name = ep_identifier,
+                    exception_rules = updated_exception_rules
+                )
+
+    @RouterPreparers.before_test_execute('setup_distribution_policy')
+    @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.before_test_execute('setup_classification_policy')
+    def test_update_exception_policy_w_kwargs(self):
+        ep_identifier = "tst_update_ep_w_kwargs"
+        router_client: RouterAdministrationClient = self.create_admin_client()
+
+        updated_exception_actions = []
+        updated_exception_actions.extend(exception_actions)
+        updated_exception_actions.append(
+            ManualReclassifyExceptionAction(
+                queue_id = self.get_job_queue_id(),
+                priority = 1,
+            )
+        )
+        updated_exception_actions.append((
+            ReclassifyExceptionAction(
+                classification_policy_id = self.get_classification_policy_id()
+            )
+        ))
+
+        for trigger in exception_triggers:
+            for action in updated_exception_actions:
+                exception_rules = {
+                    "fakeExceptionRuleId": ExceptionRule(
+                        trigger = trigger,
+                        actions = {
+                            "fakeExceptionActionId": action
+                        }
+                    )
+                }
+
                 exception_policy = router_client.create_exception_policy(
                     exception_policy_id = ep_identifier,
                     exception_rules = exception_rules,
@@ -260,7 +334,7 @@ class TestExceptionPolicy(RouterTestCase):
                 }
 
                 exception_policy = router_client.update_exception_policy(
-                    exception_policy_id = ep_identifier,
+                    ep_identifier,
                     name = ep_identifier,
                     exception_rules = updated_exception_rules
                 )

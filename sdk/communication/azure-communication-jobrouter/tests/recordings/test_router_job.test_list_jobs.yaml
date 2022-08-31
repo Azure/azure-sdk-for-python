@@ -16,29 +16,31 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:04 GMT
+      - Tue, 30 Aug 2022 23:28:45 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_list_jobs_tst_dp?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/test_list_jobs_tst_dp?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_list_jobs_tst_dp","name":"test_list_jobs_tst_dp","offerTtlSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:43:59 GMT
+      - Tue, 30 Aug 2022 23:28:46 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:43:59 GMT
+      - Tue, 30 Aug 2022 23:28:46 GMT
       request-context:
       - appId=
       trace-id:
-      - d96dd1170429f0c54a819a0b9f89067d
+      - 6d0ced3a878e45150908842e7eb29239
       transfer-encoding:
       - chunked
       x-cache:
@@ -63,29 +65,31 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:05 GMT
+      - Tue, 30 Aug 2022 23:28:45 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_list_jobs_tst_q?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/queues/test_list_jobs_tst_q?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_list_jobs_tst_q","name":"test_list_jobs_tst_q","distributionPolicyId":"test_list_jobs_tst_dp","labels":{"key1":"JobKey","key2":10,"key3":true,"Id":"test_list_jobs_tst_q"}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:00 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:40:57 GMT
+      - Tue, 30 Aug 2022 23:28:46 GMT
       request-context:
       - appId=
       trace-id:
-      - 93387e4aa58b4389005418ec21e21ddd
+      - 4f84a71a10ad8e2150211eee474adc17
       transfer-encoding:
       - chunked
       x-cache:
@@ -117,30 +121,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:06 GMT
+      - Tue, 30 Aug 2022 23:28:45 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_1?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_1?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_list_job_1","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:42:51.7782074+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_list_job_1","channelReference":"fakeChannelRef1","jobStatus":"created","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:00 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:42:51 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       request-context:
       - appId=
       trace-id:
-      - 0db5b6a11ceb7b49239e300a4ed60a91
+      - b40dfd05bd67bf2c19700af223de6016
       transfer-encoding:
       - chunked
       x-cache:
@@ -160,30 +166,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:06 GMT
+      - Tue, 30 Aug 2022 23:28:45 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_1?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_1?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_list_job_1","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:42:51.7782074+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_list_job_1","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:47.4566009+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:01 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:42:51 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       request-context:
       - appId=
       trace-id:
-      - e8a062bd8407b7dbfd8abf08c30fc2a6
+      - 711baa87960523bea4022e88d996c13d
       transfer-encoding:
       - chunked
       x-cache:
@@ -215,30 +223,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:07 GMT
+      - Tue, 30 Aug 2022 23:28:46 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_2?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_2?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_list_job_2","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:41:02.6645101+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_list_job_2","channelReference":"fakeChannelRef1","jobStatus":"created","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:02 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:41:02 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       request-context:
       - appId=
       trace-id:
-      - ea14823229a96dd15292cd696eb2b10e
+      - 0919f06de83a74a310b108df1252fcaa
       transfer-encoding:
       - chunked
       x-cache:
@@ -258,30 +268,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:08 GMT
+      - Tue, 30 Aug 2022 23:28:46 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_2?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_2?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_list_job_2","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:41:02.6645101+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_list_job_2","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:48.0090588+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:04 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:41:02 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       request-context:
       - appId=
       trace-id:
-      - 6e42394fe450dd19eea962f70a93e23c
+      - 99cd0b4092d7d49db2f7c99c9db962d1
       transfer-encoding:
       - chunked
       x-cache:
@@ -313,30 +325,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:09 GMT
+      - Tue, 30 Aug 2022 23:28:46 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_3?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_3?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_list_job_3","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:41:03.1564147+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_list_job_3","channelReference":"fakeChannelRef1","jobStatus":"created","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:04 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:41:03 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       request-context:
       - appId=
       trace-id:
-      - 82d9dc8385a2f4c4c2e05982b9c7d495
+      - a16da6dbee9fcbb7dd3b319a5fcf388e
       transfer-encoding:
       - chunked
       x-cache:
@@ -356,30 +370,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:10 GMT
+      - Tue, 30 Aug 2022 23:28:46 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_3?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_3?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"tst_list_job_3","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:41:03.1564147+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+      string: '{"id":"tst_list_job_3","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:48.4129663+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
         notes attached to job"}}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:05 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       etag:
       - REDACTED
       last-modified:
-      - Thu, 18 Aug 2022 15:41:03 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       request-context:
       - appId=
       trace-id:
-      - 6c9b9df9f448c5a3bd4b693536af632d
+      - 6f6c9fceb6023b48ff1be21a6c3a4958
       transfer-encoding:
       - chunked
       x-cache:
@@ -399,27 +415,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:11 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs?maxpagesize=2&status=queued&queueId=test_list_jobs_tst_q&channelId=fakeChannelId1&api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs?maxpagesize=2&status=queued&queueId=test_list_jobs_tst_q&channelId=fakeChannelId1&api-version=2022-07-18-preview
   response:
     body:
-      string: '{"value":[{"routerJob":{"id":"tst_list_job_2","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:41:02.6645101+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
-        notes attached to job"}},"etag":"\"00000001-0000-0000-6de0-6a0e3081da08\""},{"routerJob":{"id":"tst_list_job_3","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:41:03.1564147+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
-        notes attached to job"}},"etag":"\"00000001-0000-0000-73ef-b50e3081da08\""}],"nextLink":"/routing/jobs?continuationToken=bWF4cGFnZXNpemU9MiZzdGF0dXM9cXVldWVkJnF1ZXVlSWQ9dGVzdF9saXN0X2pvYnNfdHN0X3EmY2hhbm5lbElkPWZha2VDaGFubmVsSWQxJmFwaS12ZXJzaW9uPTIwMjItMDctMTgtcHJldmlldyZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVV3elMzVk9iR3BSZDBsQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalVVTkdPamdqUmxCRE9rRm5SVXBEVVd0RlFVZEZSRU5CUlQwaUxDSnlZVzVuWlNJNmV5SnRhVzRpT2lJaUxDSnRZWGdpT2lKR1JpSjlmVjA9"}'
+      string: '{"value":[{"routerJob":{"id":"tst_list_job_1","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:47.4566009+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+        notes attached to job"}},"etag":"\"00000001-0000-0000-794d-4b63df8ada08\""},{"routerJob":{"id":"tst_list_job_2","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:48.0090588+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+        notes attached to job"}},"etag":"\"00000001-0000-0000-dc99-9f63df8ada08\""}],"nextLink":"/routing/jobs?continuationToken=bWF4cGFnZXNpemU9MiZzdGF0dXM9cXVldWVkJnF1ZXVlSWQ9dGVzdF9saXN0X2pvYnNfdHN0X3EmY2hhbm5lbElkPWZha2VDaGFubmVsSWQxJmFwaS12ZXJzaW9uPTIwMjItMDctMTgtcHJldmlldyZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNWxiekF4UVU1Mk0xaG1jelV0VVZGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalVVTkdPamdqUmxCRE9rRlViamxDUVVGQlFVRkJRVTkyTUVWQlFVRkJRVUZCUFNJc0luSmhibWRsSWpwN0ltMXBiaUk2SWlJc0ltMWhlQ0k2SWtaR0luMTlYUT09"}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:05 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       request-context:
       - appId=
       trace-id:
-      - 5fc0138d062156341898d2c4cfc4cfb1
+      - 3a74b0d579a060b5ff0090a159fcc453
       transfer-encoding:
       - chunked
       x-cache:
@@ -439,26 +457,28 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:12 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs?continuationToken=bWF4cGFnZXNpemU9MiZzdGF0dXM9cXVldWVkJnF1ZXVlSWQ9dGVzdF9saXN0X2pvYnNfdHN0X3EmY2hhbm5lbElkPWZha2VDaGFubmVsSWQxJmFwaS12ZXJzaW9uPTIwMjItMDctMTgtcHJldmlldyZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVV3elMzVk9iR3BSZDBsQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalVVTkdPamdqUmxCRE9rRm5SVXBEVVd0RlFVZEZSRU5CUlQwaUxDSnlZVzVuWlNJNmV5SnRhVzRpT2lJaUxDSnRZWGdpT2lKR1JpSjlmVjA9&api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs?continuationToken=bWF4cGFnZXNpemU9MiZzdGF0dXM9cXVldWVkJnF1ZXVlSWQ9dGVzdF9saXN0X2pvYnNfdHN0X3EmY2hhbm5lbElkPWZha2VDaGFubmVsSWQxJmFwaS12ZXJzaW9uPTIwMjItMDctMTgtcHJldmlldyZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNWxiekF4UVU1Mk0xaG1jelV0VVZGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalVVTkdPamdqUmxCRE9rRlViamxDUVVGQlFVRkJRVTkyTUVWQlFVRkJRVUZCUFNJc0luSmhibWRsSWpwN0ltMXBiaUk2SWlJc0ltMWhlQ0k2SWtaR0luMTlYUT09&api-version=2022-07-18-preview
   response:
     body:
-      string: '{"value":[{"routerJob":{"id":"tst_list_job_1","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-18T15:42:51.7782074+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
-        notes attached to job"}},"etag":"\"00000001-0000-0000-3a4e-744f3081da08\""}]}'
+      string: '{"value":[{"routerJob":{"id":"tst_list_job_3","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:48.4129663+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+        notes attached to job"}},"etag":"\"00000001-0000-0000-7f3b-dd63df8ada08\""}]}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:06 GMT
+      - Tue, 30 Aug 2022 23:28:49 GMT
       request-context:
       - appId=
       trace-id:
-      - 383ec85326a1e8d0479a94d9487be5f7
+      - 84ffa70fcb06578d7f024e9e1f765444
       transfer-encoding:
       - chunked
       x-cache:
@@ -467,8 +487,52 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"note": "Cancelling job after test cleanup after: test_list_jobs", "dispositionCode":
-      "JobCancelledAsPartOfTestCleanUp"}'
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 30 Aug 2022 23:28:47 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_3?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"tst_list_job_3","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:48.4129663+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+        notes attached to job"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 30 Aug 2022 23:28:49 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Tue, 30 Aug 2022 23:28:48 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 0fc864daec828a4781629ddf753e4125
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dispositionCode": "JobCancelledAsPartOfTestCleanUp"}'
     headers:
       Accept:
       - application/json
@@ -477,31 +541,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '54'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:12 GMT
+      - Tue, 30 Aug 2022 23:28:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_3:cancel?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_3:cancel?api-version=2022-07-18-preview
   response:
     body:
       string: '{}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:08 GMT
+      - Tue, 30 Aug 2022 23:28:49 GMT
       request-context:
       - appId=
       trace-id:
-      - 6b693c50c6ba4cc77006968ceae09e50
+      - 1f9ec0be4d2fa5d168456fe5e39e2966
       transfer-encoding:
       - chunked
       x-cache:
@@ -523,31 +589,77 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:14 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_3?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_3?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       date:
-      - Thu, 18 Aug 2022 15:44:10 GMT
+      - Tue, 30 Aug 2022 23:28:49 GMT
       request-context:
       - appId=
       trace-id:
-      - 103cfd133daff213d365cad37124a562
+      - c1324ec9fc0ac842e47808960adeaab8
       x-cache:
       - CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
 - request:
-    body: '{"note": "Cancelling job after test cleanup after: test_list_jobs", "dispositionCode":
-      "JobCancelledAsPartOfTestCleanUp"}'
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 30 Aug 2022 23:28:48 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_1?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"tst_list_job_1","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:47.4566009+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+        notes attached to job"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 30 Aug 2022 23:28:50 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Tue, 30 Aug 2022 23:28:47 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 081d9c45b0b38849ec2c94ae32200a6a
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dispositionCode": "JobCancelledAsPartOfTestCleanUp"}'
     headers:
       Accept:
       - application/json
@@ -556,31 +668,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '54'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:15 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_2:cancel?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_1:cancel?api-version=2022-07-18-preview
   response:
     body:
       string: '{}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:11 GMT
+      - Tue, 30 Aug 2022 23:28:50 GMT
       request-context:
       - appId=
       trace-id:
-      - cac4b177704f8c0a30e91d20b261c0b0
+      - a320d988d79775ccc900a8144052bcf2
       transfer-encoding:
       - chunked
       x-cache:
@@ -602,31 +716,77 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:17 GMT
+      - Tue, 30 Aug 2022 23:28:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_2?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_1?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       date:
-      - Thu, 18 Aug 2022 15:44:14 GMT
+      - Tue, 30 Aug 2022 23:28:50 GMT
       request-context:
       - appId=
       trace-id:
-      - 4647b9e5da9a37fa924432bd14d37a9b
+      - d9213783a635ec21c1baf2a70c6360a7
       x-cache:
       - CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
 - request:
-    body: '{"note": "Cancelling job after test cleanup after: test_list_jobs", "dispositionCode":
-      "JobCancelledAsPartOfTestCleanUp"}'
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 30 Aug 2022 23:28:49 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_2?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"tst_list_job_2","channelReference":"fakeChannelRef1","jobStatus":"queued","enqueueTimeUtc":"2022-08-30T23:28:48.0090588+00:00","channelId":"fakeChannelId1","queueId":"test_list_jobs_tst_q","priority":10,"requestedWorkerSelectors":[{"expedite":false,"state":"active","key":"FakeKey1","labelOperator":"equal","value":true},{"expedite":false,"state":"active","key":"FakeKey2","labelOperator":"notEqual","value":false},{"expedite":false,"state":"active","key":"FakeKey3","labelOperator":"lessThan","value":10},{"expedite":false,"state":"active","key":"FakeKey4","labelOperator":"lessThanEqual","value":10.01},{"expedite":false,"state":"active","key":"FakeKey5","labelOperator":"greaterThan","value":10},{"expedite":false,"state":"active","key":"FakeKey6","labelOperator":"greaterThanEqual","value":10}],"attachedWorkerSelectors":[],"labels":{"key1":"JobKey","key2":10,"key3":true},"assignments":{},"tags":{"tag1":"WorkerGenericInfo"},"notes":{"2022-05-13T16:59:04.531199+00:00":"Fake
+        notes attached to job"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 30 Aug 2022 23:28:50 GMT
+      etag:
+      - REDACTED
+      last-modified:
+      - Tue, 30 Aug 2022 23:28:48 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 798a058d50e8b85357bb028d5a75d71d
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dispositionCode": "JobCancelledAsPartOfTestCleanUp"}'
     headers:
       Accept:
       - application/json
@@ -635,31 +795,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '54'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:19 GMT
+      - Tue, 30 Aug 2022 23:28:49 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_1:cancel?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_2:cancel?api-version=2022-07-18-preview
   response:
     body:
       string: '{}'
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Aug 2022 15:44:15 GMT
+      - Tue, 30 Aug 2022 23:28:50 GMT
       request-context:
       - appId=
       trace-id:
-      - ef2f8ab69f3cbba6328262cd03700ab5
+      - 11f54f2ab4dc1b30b55d381d6745d331
       transfer-encoding:
       - chunked
       x-cache:
@@ -681,23 +843,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:21 GMT
+      - Tue, 30 Aug 2022 23:28:49 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/tst_list_job_1?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/tst_list_job_2?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       date:
-      - Thu, 18 Aug 2022 15:44:17 GMT
+      - Tue, 30 Aug 2022 23:28:51 GMT
       request-context:
       - appId=
       trace-id:
-      - bf1d7466b6a36a813530638e62af8af5
+      - 1e8f3ac62d0c8a47610277c753177b67
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -717,23 +881,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:22 GMT
+      - Tue, 30 Aug 2022 23:28:49 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_list_jobs_tst_q?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/queues/test_list_jobs_tst_q?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       date:
-      - Thu, 18 Aug 2022 15:44:18 GMT
+      - Tue, 30 Aug 2022 23:28:51 GMT
       request-context:
       - appId=
       trace-id:
-      - cf988589c19b6a9f16658864c9cdf33c
+      - 177bff6d49f08c2b9a6db11e302a20f9
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -753,23 +919,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 15:44:23 GMT
+      - Tue, 30 Aug 2022 23:28:50 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_list_jobs_tst_dp?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/test_list_jobs_tst_dp?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      - 2021-04-07-preview1, 2022-07-18-preview
+      connection:
+      - keep-alive
       date:
-      - Thu, 18 Aug 2022 15:44:18 GMT
+      - Tue, 30 Aug 2022 23:28:51 GMT
       request-context:
       - appId=
       trace-id:
-      - 3f09fd62539c1ef81d958ec54bec5600
+      - 960900b22220088141436ed9f17fe29e
       x-cache:
       - CONFIG_NOCACHE
     status:

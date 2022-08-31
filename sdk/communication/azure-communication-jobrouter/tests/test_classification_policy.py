@@ -297,8 +297,59 @@ class TestClassificationPolicy(RouterTestCase):
                     classification_policy.prioritization_rule = updated_prioritization_rule
 
                     updated_classification_policy = router_client.update_classification_policy(
+                        cp_identifier,
+                        classification_policy
+                    )
+
+                    ClassificationPolicyValidator.validate_classification_policy(
+                        updated_classification_policy,
+                        name = cp_identifier,
+                        fallback_queue_id = self.get_job_queue_id(),
+                        queue_selectors = [qs],
+                        prioritization_rule = updated_prioritization_rule,
+                        worker_selectors = [ws]
+                    )
+
+        self.clean_up()
+
+    @RouterPreparers.before_test_execute('setup_distribution_policy')
+    @RouterPreparers.before_test_execute('setup_job_queue')
+    def test_update_classification_policy_w_kwargs(self):
+        router_client: RouterAdministrationClient = self.create_admin_client()
+        cp_identifier = 'tst_update_cp_w_kwargs'
+
+        for qs in queue_selectors:
+            for rule in prioritization_rules:
+                for ws in worker_selectors:
+                    classification_policy = router_client.create_classification_policy(
                         classification_policy_id = cp_identifier,
-                        classification_policy = classification_policy
+                        name = cp_identifier,
+                        fallback_queue_id = self.get_job_queue_id(),
+                        queue_selectors = [qs],
+                        prioritization_rule = rule,
+                        worker_selectors = [ws]
+                    )
+
+                    # add for cleanup
+                    self.classification_policy_ids[self._testMethodName] = [cp_identifier]
+
+                    assert classification_policy is not None
+
+                    ClassificationPolicyValidator.validate_classification_policy(
+                        classification_policy,
+                        name = cp_identifier,
+                        fallback_queue_id = self.get_job_queue_id(),
+                        queue_selectors = [qs],
+                        prioritization_rule = rule,
+                        worker_selectors = [ws]
+                    )
+
+                    updated_prioritization_rule = ExpressionRule(expression = "2")
+                    classification_policy.prioritization_rule = updated_prioritization_rule
+
+                    updated_classification_policy = router_client.update_classification_policy(
+                        classification_policy_id = cp_identifier,
+                        prioritization_rule = updated_prioritization_rule
                     )
 
                     ClassificationPolicyValidator.validate_classification_policy(

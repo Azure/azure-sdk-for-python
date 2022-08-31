@@ -246,6 +246,83 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         )
                     }
 
+                    exception_policy: ExceptionPolicy = await router_client.create_exception_policy(
+                        exception_policy_id = ep_identifier,
+                        name = ep_identifier,
+                        exception_rules = exception_rules
+                    )
+
+                    # add for cleanup
+                    self.exception_policy_ids[self._testMethodName] = [ep_identifier]
+
+                    assert exception_policy is not None
+                    ExceptionPolicyValidator.validate_exception_policy(
+                        exception_policy,
+                        identifier = ep_identifier,
+                        name = ep_identifier,
+                        exception_rules = exception_rules
+                    )
+
+                    updated_exception_rules = {
+                        "fakeExceptionRuleId": None,
+                        "fakeExceptionRuleId2": ExceptionRule(
+                            trigger = trigger,
+                            actions = {
+                                "fakeExceptionActionId": action
+                            }
+                        )
+                    }
+
+                    exception_policy.exception_rules = updated_exception_rules
+
+                    exception_policy = await router_client.update_exception_policy(
+                        ep_identifier,
+                        exception_policy
+                    )
+
+                    assert exception_policy is not None
+                    ExceptionPolicyValidator.validate_exception_policy(
+                        exception_policy,
+                        identifier = ep_identifier,
+                        name = ep_identifier,
+                        exception_rules = updated_exception_rules
+                    )
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_update_exception_policy_w_kwargs(self):
+        ep_identifier = "tst_update_ep_w_kwargs_async"
+        router_client: RouterAdministrationClient = self.create_admin_client()
+
+        updated_exception_actions = []
+        updated_exception_actions.extend(exception_actions)
+        updated_exception_actions.append(
+            ManualReclassifyExceptionAction(
+                queue_id = self.get_job_queue_id(),
+                priority = 1,
+            )
+        )
+        updated_exception_actions.append((
+            ReclassifyExceptionAction(
+                classification_policy_id = self.get_classification_policy_id()
+            )
+        ))
+
+        async with router_client:
+            for trigger in exception_triggers:
+                for action in updated_exception_actions:
+                    exception_rules = {
+                        "fakeExceptionRuleId": ExceptionRule(
+                            trigger = trigger,
+                            actions = {
+                                "fakeExceptionActionId": action
+                            }
+                        )
+                    }
+
                     exception_policy = await router_client.create_exception_policy(
                         exception_policy_id = ep_identifier,
                         name = ep_identifier,
@@ -274,7 +351,7 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     }
 
                     exception_policy = await router_client.update_exception_policy(
-                        exception_policy_id = ep_identifier,
+                        ep_identifier,
                         name = ep_identifier,
                         exception_rules = updated_exception_rules
                     )

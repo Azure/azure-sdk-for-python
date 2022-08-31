@@ -4,6 +4,8 @@ from ._router_administration_client import RouterAdministrationClient
 from ._generated.models import (
     ClassificationPolicy,
     ClassificationPolicyItem,
+    JobQueue,
+    JobQueueItem,
     LabelOperator,
     QueueSelector,
     StaticQueueSelectorAttachment,
@@ -51,25 +53,19 @@ from ._generated.models import (
     JobOffer,
     ScoringRuleOptions,
     ScoringRuleParameterSelector,
-    JobRouterError
-)
-
-from ._models import (
-    QueueAssignment,
-    JobQueue,
-    JobQueueItem,
+    JobRouterError,
     RouterWorker,
     RouterWorkerItem,
-    RouterJob,
-    RouterJobItem,
+    QueueAssignment,
     DeclineJobOfferResult,
     ReclassifyJobResult,
     CancelJobResult,
     CompleteJobResult,
     CloseJobResult,
+    RouterJob,
+    RouterJobItem,
 )
 
-from ._shared.user_credential import CommunicationTokenCredential
 
 __all__ = [
     # Clients
@@ -79,6 +75,8 @@ __all__ = [
     # Generated models
     'ClassificationPolicy',
     'ClassificationPolicyItem',
+    'JobQueue',
+    'JobQueueItem',
     'LabelOperator',
     'QueueSelector',
     'StaticQueueSelectorAttachment',
@@ -128,23 +126,19 @@ __all__ = [
     'ScoringRuleOptions',
     'ScoringRuleParameterSelector',
     'JobRouterError',
-
-    # Created models
-    'QueueAssignment',
-    'JobQueue',
-    'JobQueueItem',
     'RouterWorker',
     'RouterWorkerItem',
+
+    # Created models
+
     'RouterJob',
     'RouterJobItem',
+    'QueueAssignment',
     'DeclineJobOfferResult',
     'ReclassifyJobResult',
     'CancelJobResult',
     'CompleteJobResult',
     'CloseJobResult',
-
-    # Credentials
-    'CommunicationTokenCredential'
 ]
 
 __version__ = VERSION

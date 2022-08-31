@@ -164,6 +164,55 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
+    @pytest.mark.skip(reason = "Upsert queue not working correctly")
+    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_update_queue_w_kwargs(self):
+        dp_identifier = "tst_updated_q_w_kwargs_async"
+        router_client: RouterAdministrationClient = self.create_admin_client()
+
+        async with router_client:
+            job_queue = await router_client.create_queue(
+                queue_id = dp_identifier,
+                name = dp_identifier,
+                labels = queue_labels,
+                distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            # add for cleanup
+            self.queue_ids[self._testMethodName] = [dp_identifier]
+
+            assert job_queue is not None
+            JobQueueValidator.validate_queue(
+                job_queue,
+                identifier = dp_identifier,
+                name = dp_identifier,
+                labels = queue_labels,
+                distribution_policy_id = self.get_distribution_policy_id()
+            )
+
+            # Act
+            job_queue = await router_client.get_queue(identifier = dp_identifier)
+            updated_queue_labels = dict(job_queue.labels)
+            updated_queue_labels['key6'] = "Key6"
+
+            job_queue.labels = updated_queue_labels
+
+            update_job_queue = await router_client.update_queue(
+                dp_identifier,
+                labels = updated_queue_labels
+            )
+
+            assert update_job_queue is not None
+            JobQueueValidator.validate_queue(
+                update_job_queue,
+                identifier = dp_identifier,
+                name = dp_identifier,
+                labels = updated_queue_labels,
+                distribution_policy_id = self.get_distribution_policy_id()
+            )
+
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')

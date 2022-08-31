@@ -119,8 +119,53 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                 distribution_policy_response.mode = mode
 
                 updated_distribution_policy = await router_client.update_distribution_policy(
+                    dp_identifier,
+                    distribution_policy_response
+                )
+
+                DistributionPolicyValidator.validate_distribution_policy(
+                    distribution_policy = updated_distribution_policy,
+                    identifier = dp_identifier,
+                    name = dp_identifier,
+                    offer_ttl_seconds = 10.0,
+                    mode = mode
+                )
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_update_distribution_policy_w_kwargs(self):
+        dp_identifier = "tst_update_dp_w_kwargs_async"
+        router_client: RouterAdministrationClient = self.create_admin_client()
+
+        async with router_client:
+            for mode in distribution_modes:
+                # Arrange
+                distribution_policy_response = await router_client.create_distribution_policy(
                     distribution_policy_id = dp_identifier,
-                    distribution_policy = distribution_policy_response
+                    name = dp_identifier,
+                    offer_ttl_seconds = 10.0,
+                    mode = mode
+                )
+
+                self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
+
+                assert distribution_policy_response is not None
+                DistributionPolicyValidator.validate_distribution_policy(
+                    distribution_policy = distribution_policy_response,
+                    identifier = dp_identifier,
+                    name = dp_identifier,
+                    offer_ttl_seconds = 10.0,
+                    mode = mode
+                )
+
+                # Act
+                mode.min_concurrent_offers = 2
+                mode.max_concurrent_offers = 2
+                distribution_policy_response.mode = mode
+
+                updated_distribution_policy = await router_client.update_distribution_policy(
+                    dp_identifier,
+                    mode = distribution_policy_response.mode
                 )
 
                 DistributionPolicyValidator.validate_distribution_policy(

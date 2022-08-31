@@ -154,6 +154,52 @@ class TestJobQueue(RouterTestCase):
             distribution_policy_id = self.get_distribution_policy_id()
         )
 
+    @pytest.mark.skip(reason = "Upsert queue not working correctly")
+    @RouterPreparers.before_test_execute('setup_distribution_policy')
+    def test_update_queue_w_kwargs(self):
+        dp_identifier = "tst_update_q_w_kwargs"
+        router_client: RouterAdministrationClient = self.create_admin_client()
+
+        job_queue = router_client.create_queue(
+            queue_id = dp_identifier,
+            distribution_policy_id = self.get_distribution_policy_id(),
+            name = dp_identifier,
+            labels = queue_labels,
+        )
+
+        # add for cleanup
+        self.queue_ids[self._testMethodName] = [dp_identifier]
+
+        assert job_queue is not None
+        JobQueueValidator.validate_queue(
+            job_queue,
+            identifier = dp_identifier,
+            name = dp_identifier,
+            labels = queue_labels,
+            distribution_policy_id = self.get_distribution_policy_id()
+        )
+
+        # Act
+        job_queue = router_client.get_queue(identifier = dp_identifier)
+        updated_queue_labels = dict(queue_labels)
+        updated_queue_labels['key6'] = "Key6"
+
+        job_queue.labels = updated_queue_labels
+
+        update_job_queue = router_client.update_queue(
+            dp_identifier,
+            labels = updated_queue_labels
+        )
+
+        assert update_job_queue is not None
+        JobQueueValidator.validate_queue(
+            update_job_queue,
+            identifier = dp_identifier,
+            name = dp_identifier,
+            labels = updated_queue_labels,
+            distribution_policy_id = self.get_distribution_policy_id()
+        )
+
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     def test_get_queue(self):
         dp_identifier = "tst_get_q"

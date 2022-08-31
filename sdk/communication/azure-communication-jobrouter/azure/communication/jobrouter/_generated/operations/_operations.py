@@ -1750,13 +1750,8 @@ class JobRouterAdministrationOperations:
 
     @overload
     def upsert_queue(
-        self,
-        id: str,
-        patch: _models.JobQueueInternal,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.JobQueueInternal:
+        self, id: str, patch: _models.JobQueue, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.JobQueue:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1765,19 +1760,19 @@ class JobRouterAdministrationOperations:
         :type id: str
         :param patch: Model of queue properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.JobQueueInternal
+        :type patch: ~azure.communication.jobrouter.models.JobQueue
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JobQueueInternal
-        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.models.JobQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def upsert_queue(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.JobQueueInternal:
+    ) -> _models.JobQueue:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1790,15 +1785,13 @@ class JobRouterAdministrationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JobQueueInternal
-        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.models.JobQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def upsert_queue(
-        self, id: str, patch: Union[_models.JobQueueInternal, IO], **kwargs: Any
-    ) -> _models.JobQueueInternal:
+    def upsert_queue(self, id: str, patch: Union[_models.JobQueue, IO], **kwargs: Any) -> _models.JobQueue:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1807,12 +1800,12 @@ class JobRouterAdministrationOperations:
         :type id: str
         :param patch: Model of queue properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
-        :type patch: ~azure.communication.jobrouter.models.JobQueueInternal or IO
+        :type patch: ~azure.communication.jobrouter.models.JobQueue or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: JobQueueInternal
-        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.models.JobQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1822,7 +1815,7 @@ class JobRouterAdministrationOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobQueueInternal]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobQueue]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1830,7 +1823,7 @@ class JobRouterAdministrationOperations:
         if isinstance(patch, (IO, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "JobQueueInternal")
+            _json = self._serialize.body(patch, "JobQueue")
 
         request = build_job_router_administration_upsert_queue_request(
             id=id,
@@ -1857,7 +1850,7 @@ class JobRouterAdministrationOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("JobQueueInternal", pipeline_response)
+        deserialized = self._deserialize("JobQueue", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1865,15 +1858,15 @@ class JobRouterAdministrationOperations:
         return deserialized
 
     @distributed_trace
-    def get_queue(self, id: str, **kwargs: Any) -> _models.JobQueueInternal:
+    def get_queue(self, id: str, **kwargs: Any) -> _models.JobQueue:
         """Retrieves an existing queue by Id.
 
         Retrieves an existing queue by Id.
 
         :param id: Id of the queue to retrieve. Required.
         :type id: str
-        :return: JobQueueInternal
-        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
+        :return: JobQueue
+        :rtype: ~azure.communication.jobrouter.models.JobQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -1882,7 +1875,7 @@ class JobRouterAdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobQueueInternal]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobQueue]
 
         request = build_job_router_administration_get_queue_request(
             id=id,
@@ -1906,7 +1899,7 @@ class JobRouterAdministrationOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("JobQueueInternal", pipeline_response)
+        deserialized = self._deserialize("JobQueue", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1959,14 +1952,13 @@ class JobRouterAdministrationOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_queues(self, **kwargs: Any) -> Iterable["_models.JobQueueItemInternal"]:
+    def list_queues(self, **kwargs: Any) -> Iterable["_models.JobQueueItem"]:
         """Retrieves existing queues.
 
         Retrieves existing queues.
 
-        :return: An iterator like instance of JobQueueItemInternal
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.JobQueueItemInternal]
+        :return: An iterator like instance of JobQueueItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.JobQueueItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2053,13 +2045,8 @@ class JobRouterOperations:
 
     @overload
     def upsert_job(
-        self,
-        id: str,
-        patch: _models.RouterJobInternal,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.RouterJobInternal:
+        self, id: str, patch: _models.RouterJob, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.RouterJob:
         """Creates or updates a router job.
 
         Creates or updates a router job.
@@ -2068,19 +2055,19 @@ class JobRouterOperations:
         :type id: str
         :param patch: Model of job properties to be created or patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterJobInternal
+        :type patch: ~azure.communication.jobrouter.models.RouterJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterJobInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def upsert_job(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.RouterJobInternal:
+    ) -> _models.RouterJob:
         """Creates or updates a router job.
 
         Creates or updates a router job.
@@ -2093,15 +2080,13 @@ class JobRouterOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterJobInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def upsert_job(
-        self, id: str, patch: Union[_models.RouterJobInternal, IO], **kwargs: Any
-    ) -> _models.RouterJobInternal:
+    def upsert_job(self, id: str, patch: Union[_models.RouterJob, IO], **kwargs: Any) -> _models.RouterJob:
         """Creates or updates a router job.
 
         Creates or updates a router job.
@@ -2110,12 +2095,12 @@ class JobRouterOperations:
         :type id: str
         :param patch: Model of job properties to be created or patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterJobInternal or IO
+        :type patch: ~azure.communication.jobrouter.models.RouterJob or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: RouterJobInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -2125,7 +2110,7 @@ class JobRouterOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterJobInternal]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterJob]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -2133,7 +2118,7 @@ class JobRouterOperations:
         if isinstance(patch, (IO, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "RouterJobInternal")
+            _json = self._serialize.body(patch, "RouterJob")
 
         request = build_job_router_upsert_job_request(
             id=id,
@@ -2160,7 +2145,7 @@ class JobRouterOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouterJobInternal", pipeline_response)
+        deserialized = self._deserialize("RouterJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2168,15 +2153,15 @@ class JobRouterOperations:
         return deserialized
 
     @distributed_trace
-    def get_job(self, id: str, **kwargs: Any) -> _models.RouterJobInternal:
+    def get_job(self, id: str, **kwargs: Any) -> _models.RouterJob:
         """Retrieves an existing job by Id.
 
         Retrieves an existing job by Id.
 
         :param id: Id of the job to retrieve. Required.
         :type id: str
-        :return: RouterJobInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterJobInternal
+        :return: RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -2185,7 +2170,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterJobInternal]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterJob]
 
         request = build_job_router_get_job_request(
             id=id,
@@ -2209,7 +2194,7 @@ class JobRouterOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouterJobInternal", pipeline_response)
+        deserialized = self._deserialize("RouterJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2676,7 +2661,7 @@ class JobRouterOperations:
         channel_id: Optional[str] = None,
         classification_policy_id: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterJobItemInternal"]:
+    ) -> Iterable["_models.RouterJobItem"]:
         """Retrieves list of jobs based on filter parameters.
 
         Retrieves list of jobs based on filter parameters.
@@ -2692,9 +2677,8 @@ class JobRouterOperations:
         :keyword classification_policy_id: (Optional) If specified, filter jobs by
          classificationPolicy. Default value is None.
         :paramtype classification_policy_id: str
-        :return: An iterator like instance of RouterJobItemInternal
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterJobItemInternal]
+        :return: An iterator like instance of RouterJobItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterJobItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3023,11 +3007,11 @@ class JobRouterOperations:
     def upsert_worker(
         self,
         worker_id: str,
-        patch: _models.RouterWorkerInternal,
+        patch: _models.RouterWorker,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.RouterWorkerInternal:
+    ) -> _models.RouterWorker:
         """Creates or updates a worker.
 
         Creates or updates a worker.
@@ -3036,19 +3020,19 @@ class JobRouterOperations:
         :type worker_id: str
         :param patch: Model of worker properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :type patch: ~azure.communication.jobrouter.models.RouterWorker
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterWorkerInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def upsert_worker(
         self, worker_id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.RouterWorkerInternal:
+    ) -> _models.RouterWorker:
         """Creates or updates a worker.
 
         Creates or updates a worker.
@@ -3061,15 +3045,15 @@ class JobRouterOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterWorkerInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def upsert_worker(
-        self, worker_id: str, patch: Union[_models.RouterWorkerInternal, IO], **kwargs: Any
-    ) -> _models.RouterWorkerInternal:
+        self, worker_id: str, patch: Union[_models.RouterWorker, IO], **kwargs: Any
+    ) -> _models.RouterWorker:
         """Creates or updates a worker.
 
         Creates or updates a worker.
@@ -3078,12 +3062,12 @@ class JobRouterOperations:
         :type worker_id: str
         :param patch: Model of worker properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Is either a model type or a IO type. Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterWorkerInternal or IO
+        :type patch: ~azure.communication.jobrouter.models.RouterWorker or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: RouterWorkerInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -3093,7 +3077,7 @@ class JobRouterOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterWorkerInternal]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterWorker]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -3101,7 +3085,7 @@ class JobRouterOperations:
         if isinstance(patch, (IO, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "RouterWorkerInternal")
+            _json = self._serialize.body(patch, "RouterWorker")
 
         request = build_job_router_upsert_worker_request(
             worker_id=worker_id,
@@ -3128,7 +3112,7 @@ class JobRouterOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouterWorkerInternal", pipeline_response)
+        deserialized = self._deserialize("RouterWorker", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -3136,15 +3120,15 @@ class JobRouterOperations:
         return deserialized
 
     @distributed_trace
-    def get_worker(self, worker_id: str, **kwargs: Any) -> _models.RouterWorkerInternal:
+    def get_worker(self, worker_id: str, **kwargs: Any) -> _models.RouterWorker:
         """Retrieves an existing worker by Id.
 
         Retrieves an existing worker by Id.
 
         :param worker_id: Id of the worker to retrieve. Required.
         :type worker_id: str
-        :return: RouterWorkerInternal
-        :rtype: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :return: RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -3153,7 +3137,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterWorkerInternal]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouterWorker]
 
         request = build_job_router_get_worker_request(
             worker_id=worker_id,
@@ -3177,7 +3161,7 @@ class JobRouterOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouterWorkerInternal", pipeline_response)
+        deserialized = self._deserialize("RouterWorker", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -3238,7 +3222,7 @@ class JobRouterOperations:
         queue_id: Optional[str] = None,
         has_capacity: Optional[bool] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterWorkerItemInternal"]:
+    ) -> Iterable["_models.RouterWorkerItem"]:
         """Retrieves existing workers.
 
         Retrieves existing workers.
@@ -3257,9 +3241,8 @@ class JobRouterOperations:
                      if ``channelId`` not specified. If set to false, then will return all workers
          including workers without any capacity for jobs. Defaults to false. Default value is None.
         :paramtype has_capacity: bool
-        :return: An iterator like instance of RouterWorkerItemInternal
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterWorkerItemInternal]
+        :return: An iterator like instance of RouterWorkerItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterWorkerItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}

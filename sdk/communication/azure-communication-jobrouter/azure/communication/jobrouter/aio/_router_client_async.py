@@ -19,6 +19,7 @@ from urllib.parse import urlparse
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.credentials_async import AsyncTokenCredential
 
 from .._generated._serialization import Serializer  # pylint:disable=protected-access
 from .._generated.aio import AzureCommunicationJobRouterService
@@ -32,26 +33,24 @@ from .._generated.models import (
     CompleteJobRequest,
     CloseJobRequest,
     WorkerSelector,
-    ChannelConfiguration
-)
-from .._models import (
+    ChannelConfiguration,
     RouterWorker,
     RouterWorkerItem,
-    RouterJob,
-    RouterJobItem,
     DeclineJobOfferResult,
     ReclassifyJobResult,
     CancelJobResult,
     CompleteJobResult,
     CloseJobResult,
     QueueAssignment,
+    RouterJob,
+    RouterJobItem,
 )
-from .._shared.user_credential_async import CommunicationTokenCredential
+
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
+from .._api_versions import DEFAULT_VERSION
 
 _SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
 
 
 class RouterClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods,too-many-lines
@@ -61,17 +60,16 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationTokenCredential credential:
+    :param Union[str, AsyncTokenCredential] credential:
         The credentials with which to authenticate
     """
 
     def __init__(
             self,
             endpoint: str,
-            credential: CommunicationTokenCredential,
+            credential: Union[str, AsyncTokenCredential],
             **kwargs: Any
     ) -> None:
-        # type: (...) -> None
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -86,9 +84,11 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             raise ValueError("Invalid URL: {}".format(endpoint))
 
         self._endpoint = endpoint
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._authentication_policy = get_authentication_policy(endpoint, credential)
         self._client = AzureCommunicationJobRouterService(
             self._endpoint,
+            api_version = self._api_version,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -99,7 +99,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             conn_str: str,
             **kwargs: Any
     ) -> "RouterClient":
-        # type: (...) -> RouterClient
         """Create RouterClient from a Connection String.
 
         :param str conn_str:
@@ -158,74 +157,17 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     # region WorkerAio
 
-    @overload
-    def create_worker(
-            self,
-            worker_id: str,
-            router_worker: RouterWorker,
-            **kwargs: Any
-    ) -> RouterWorker:
-        """ Create a new worker.
-
-        :param str worker_id: Id of the worker.
-
-        :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
-        :type router_worker: ~azure.communication.jobrouter.RouterWorker
-
-        :return: RouterWorker
-        :rtype: ~azure.communication.jobrouter.RouterWorker
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-
-    @overload
-    def create_worker(
-            self,
-            worker_id: str,
-            total_capacity: int,
-            *,
-            queue_assignments: Optional[Dict[str, QueueAssignment]],
-            labels: Optional[Dict[str, Union[int, float, str, bool]]],
-            tags: Optional[Dict[str, Union[int, float, str, bool]]],
-            channel_configurations: Optional[Dict[str, ChannelConfiguration]],
-            available_for_offers: Optional[bool],
-            **kwargs: Any
-    ) -> RouterWorker:
-        """ Create a new worker.
-
-        :param str worker_id: Id of the worker.
-
-        :param int total_capacity: The total capacity score this worker has to manage multiple concurrent
-            jobs.
-
-        :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
-
-        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
-            engines to make decisions.
-        :paramtype labels: Optional[dict[str, Union[int, float, str, bool]]]
-
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[dict[str, Union[int, float, str, bool]]]
-
-        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
-            capacity of the worker.
-        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
-
-        :keyword available_for_offers: A flag indicating whether the worker is open to receive offers or not.
-        :paramtype available_for_offers: Optional[bool]
-
-        :return: RouterWorker
-        :rtype: ~azure.communication.jobrouter.RouterWorker
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-
     @distributed_trace_async
     async def create_worker(
             self,
             worker_id: str,
-            router_worker: RouterWorker = RouterWorker(),
-            total_capacity: int = None,
+            total_capacity: int,
+            *,
+            queue_assignments: Optional[Dict[str, QueueAssignment]] = None,
+            labels: Optional[Dict[str, Union[int, float, str, bool]]] = None,
+            tags: Optional[Dict[str, Union[int, float, str, bool]]] = None,
+            channel_configurations: Optional[Dict[str, ChannelConfiguration]] = None,
+            available_for_offers: Optional[bool] = None,
             **kwargs: Any
     ) -> RouterWorker:
         """Create a new worker.
@@ -268,30 +210,26 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
-        total_capacity = total_capacity if total_capacity is not None else router_worker.total_capacity
         if not total_capacity:
             raise ValueError("total_capacity cannot be None")
 
         router_worker = RouterWorker(
-            queue_assignments = kwargs.pop('queue_assignments', router_worker.queue_assignments),
+            queue_assignments = queue_assignments,
             total_capacity = total_capacity,
-            labels = kwargs.pop('labels', router_worker.labels),
-            tags = kwargs.pop('tags', router_worker.tags),
-            channel_configurations = kwargs.pop('channel_configurations', router_worker.channel_configurations),
-            available_for_offers = kwargs.pop('available_for_offers', router_worker.available_for_offers)
+            labels = labels,
+            tags = tags,
+            channel_configurations = channel_configurations,
+            available_for_offers = available_for_offers
         )
 
         return await self._client.job_router.upsert_worker(
             worker_id = worker_id,
-            patch = router_worker._to_generated(),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: RouterWorker._from_generated(
-                deserialized_response),
+            patch = router_worker,
             **kwargs
         )
 
     @overload
-    def update_worker(
+    async def update_worker(
             self,
             worker_id: str,
             router_worker: RouterWorker,
@@ -311,7 +249,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
 
     @overload
-    def update_worker(
+    async def update_worker(
             self,
             worker_id: str,
             *,
@@ -357,7 +295,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     async def update_worker(
             self,
             worker_id: str,
-            router_worker: RouterWorker = RouterWorker(),
+            *args: RouterWorker,
             **kwargs: Any
     ) -> RouterWorker:
         """Update a router worker.
@@ -427,6 +365,10 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
+        router_worker = RouterWorker()
+        if len(args) == 1:
+            router_worker = args[0]
+
         patch = RouterWorker(
             queue_assignments = kwargs.pop('queue_assignments', router_worker.queue_assignments),
             total_capacity = kwargs.pop('total_capacity', router_worker.total_capacity),
@@ -438,10 +380,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         return await self._client.job_router.upsert_worker(
             worker_id = worker_id,
-            patch = patch._to_generated(),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: RouterWorker._from_generated(
-                deserialized_response),
+            patch = patch,
             **kwargs
         )
 
@@ -451,7 +390,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             worker_id: str,
             **kwargs: Any
     ) -> RouterWorker:
-        #  type: (...) -> RouterWorker
         """Retrieves an existing worker by Id.
 
         :param str worker_id: Id of the worker.
@@ -474,18 +412,20 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         return await self._client.job_router.get_worker(
             worker_id = worker_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: RouterWorker._from_generated(
-                deserialized_response),
             **kwargs
         )
 
     @distributed_trace
     def list_workers(
             self,
+            *,
+            status: Optional[Union[str, WorkerStateSelector]] = WorkerStateSelector.ALL,
+            channel_id: Optional[str] = None,
+            queue_id: Optional[str] = None,
+            has_capacity: Optional[bool] = None,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[RouterWorkerItem]:
-        #  type: (...) -> AsyncItemPaged[RouterWorkerItem]
         """Retrieves existing workers.
 
         :keyword status: If specified, select workers by worker status. Default value is "all".
@@ -520,24 +460,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 :caption: Use a RouterClient to retrieve workers
         """
 
-        results_per_page = kwargs.pop("results_per_page", None)
-
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
 
-        status = kwargs.pop('status', None)
-        if status is None:
-            status = WorkerStateSelector.ALL
-        elif not isinstance(status, WorkerStateSelector):
+        if not isinstance(status, WorkerStateSelector):
             try:
                 status = WorkerStateSelector.__getattr__(status)
             except Exception:
                 raise ValueError(f"status: {status} is not acceptable")
-
-        channel_id = kwargs.pop('channel_id', None)
-        queue_id = kwargs.pop('queue_id', None)
-        has_capacity = kwargs.pop('has_capacity', None)
 
         return self._client.job_router.list_workers(
             params = params,
@@ -545,8 +476,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             channel_id = channel_id,
             queue_id = queue_id,
             has_capacity = has_capacity,
-            # pylint:disable=protected-access
-            cls = lambda objs: [RouterWorkerItem._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -585,86 +514,20 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     # region JobAio
 
-    @overload
-    def create_job(
-            self,
-            job_id: str,
-            router_job: RouterJob,
-            **kwargs: Any
-    ) -> RouterJob:
-        """ Create a job.
-
-        :param str job_id: Id of the job.
-
-        :param router_job: An instance of RouterJob. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
-        :type router_job: ~azure.communication.jobrouter.RouterJob
-
-        :return: RouterJob
-        :rtype: ~azure.communication.jobrouter.RouterJob
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-
-    @overload
-    def create_job(
-            self,
-            job_id: str,
-            channel_id: str = None,
-            *,
-            channel_reference: Optional[str],
-            classification_policy_id: Optional[str],
-            queue_id: Optional[str],
-            priority: Optional[int],
-            requested_worker_selectors: Optional[List[WorkerSelector]],
-            labels: Optional[Dict[str, Union[int, float, str, bool]]],
-            tags: Optional[Dict[str, Union[int, float, str, bool]]],
-            notes: Optional[Dict[datetime, str]],
-            **kwargs: Any
-    ) -> RouterJob:
-        """ Create a job.
-
-        :param str job_id: Id of the job.
-
-        :param str channel_id: The channel identifier. eg. voice, chat, etc.
-
-        :keyword channel_reference: Reference to an external parent context, eg. call ID.
-        :paramtype channel_reference: Optional[str]
-
-        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
-         job.
-        :paramtype classification_policy_id: Optional[str]
-
-        :keyword queue_id: The Id of the Queue that this job is queued to.
-        :paramtype queue_id: Optional[str]
-
-        :keyword priority: The priority of this job.
-        :paramtype priority: Optional[int]
-
-        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
-         a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
-
-        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
-         engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
-
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
-
-        :keyword notes: Notes attached to a job, sorted by timestamp.
-        :paramtype notes: Optional[Dict[~datetime.datetime, str]]
-
-        :return: RouterJob
-        :rtype: ~azure.communication.jobrouter.RouterJob
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-
     @distributed_trace_async
     async def create_job(
             self,
             job_id: str,
-            channel_id: str = None,
-            router_job: RouterJob = RouterJob(),
+            channel_id: str,
+            *,
+            channel_reference: Optional[str] = None,
+            classification_policy_id: Optional[str] = None,
+            queue_id: Optional[str] = None,
+            priority: Optional[int] = None,
+            requested_worker_selectors: Optional[List[WorkerSelector]] = None,
+            labels: Optional[Dict[str, Union[int, float, str, bool]]] = None,
+            tags: Optional[Dict[str, Union[int, float, str, bool]]] = None,
+            notes: Optional[Dict[datetime, str]] = None,
             **kwargs: Any
     ) -> RouterJob:
         """Create a job.
@@ -672,10 +535,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :param str job_id: Id of the job.
 
         :param str channel_id: The channel identifier. eg. voice, chat, etc.
-
-        :param router_job: An instance of RouterJob. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
-        :type router_job: ~azure.communication.jobrouter.RouterJob
 
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: Optional[str]
@@ -721,34 +580,29 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        channel_id = channel_id if channel_id is not None else router_job.channel_id
         if not channel_id:
             raise ValueError("channel_id cannot be None")
 
         router_job = RouterJob(
-            channel_reference = kwargs.pop('channel_reference', router_job.channel_reference),
+            channel_reference = channel_reference,
             channel_id = channel_id,
-            classification_policy_id = kwargs.pop('classification_policy_id', router_job.classification_policy_id),
-            queue_id = kwargs.pop('queue_id', router_job.queue_id),
-            priority = kwargs.pop('priority', router_job.priority),
-            requested_worker_selectors = kwargs.pop('requested_worker_selectors',
-                                                    router_job.requested_worker_selectors),
-            labels = kwargs.pop('labels', router_job.labels),
-            tags = kwargs.pop('tags', router_job.tags),
-            notes = kwargs.pop('notes', router_job.notes)
+            classification_policy_id = classification_policy_id,
+            queue_id = queue_id,
+            priority = priority,
+            requested_worker_selectors = requested_worker_selectors,
+            labels = labels,
+            tags = tags,
+            notes = notes
         )
 
         return await self._client.job_router.upsert_job(
             id = job_id,
-            patch = router_job._to_generated(),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: RouterJob._from_generated(
-                deserialized_response),
+            patch = router_job,
             **kwargs
         )
 
     @overload
-    def update_job(
+    async def update_job(
             self,
             job_id: str,
             router_job: RouterJob,
@@ -768,7 +622,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
 
     @overload
-    def update_job(
+    async def update_job(
             self,
             job_id: str,
             *,
@@ -830,7 +684,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
     async def update_job(
             self,
             job_id: str,
-            router_job: RouterJob = RouterJob(),
+            *args: RouterJob,
             **kwargs: Any
     ) -> RouterJob:
         """Update a job.
@@ -891,6 +745,10 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
+        router_job = RouterJob()
+        if len(args) == 1:
+            router_job = args[0]
+
         patch = RouterJob(
             channel_reference = kwargs.pop('channel_reference', router_job.channel_reference),
             channel_id = kwargs.pop('channel_id', router_job.channel_id),
@@ -907,10 +765,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         return await self._client.job_router.upsert_job(
             id = job_id,
-            patch = patch._to_generated(),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: RouterJob._from_generated(
-                deserialized_response),
+            patch = patch,
             **kwargs
         )
 
@@ -920,7 +775,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             job_id: str,
             **kwargs: Any
     ) -> RouterJob:
-        #  type: (...) -> RouterJob
         """Retrieves an existing worker by Id.
 
         :param str job_id: Id of the job.
@@ -943,18 +797,20 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         return await self._client.job_router.get_job(
             id = job_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: RouterJob._from_generated(
-                deserialized_response),
             **kwargs
         )
 
     @distributed_trace
     def list_jobs(
             self,
-            **kwargs  : Any
+            *,
+            status: Optional[Union[str, JobStateSelector]] = JobStateSelector.ALL,
+            channel_id: Optional[str] = None,
+            queue_id: Optional[str] = None,
+            classification_policy_id: Optional[str] = None,
+            results_per_page: Optional[int] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[RouterJobItem]:
-        #  type: (...) -> AsyncItemPaged[RouterJobItem]
         """Retrieves list of jobs based on filter parameters.
 
         :keyword status: If specified, filter jobs by status. Default value is "all".
@@ -987,24 +843,15 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 :caption: Use a RouterClient to retrieve jobs
         """
 
-        results_per_page = kwargs.pop("results_per_page", None)
-
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
 
-        status = kwargs.pop('status', None)
-        if status is None:
-            status = JobStateSelector.ALL
-        elif not isinstance(status, JobStateSelector):
+        if not isinstance(status, JobStateSelector):
             try:
                 status = JobStateSelector.__getattr__(status)
             except Exception:
                 raise ValueError(f"status: {status} is not acceptable")
-
-        channel_id = kwargs.pop('channel_id', None)
-        queue_id = kwargs.pop('queue_id', None)
-        classification_policy_id = kwargs.pop('classification_policy_id', None)
 
         return self._client.job_router.list_jobs(
             params = params,
@@ -1012,8 +859,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             channel_id = channel_id,
             queue_id = queue_id,
             classification_policy_id = classification_policy_id,
-            # pylint:disable=protected-access
-            cls = lambda objs: [RouterJobItem._from_generated(x) for x in objs],
             **kwargs
         )
 
@@ -1054,7 +899,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             job_id: str,
             **kwargs: Any
     ) -> JobPositionDetails:
-        #  type: (...) -> JobPositionDetails
         """Gets a job's position details.
 
         :param str job_id: Id of the job.
@@ -1087,7 +931,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             assignment_id: str,
             **kwargs: Any
     ) -> CloseJobResult:
-        #  type: (...) -> CloseJobResult
         """Closes a completed job.
 
         :param str job_id: Id of the job.
@@ -1152,7 +995,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             assignment_id: str,
             **kwargs: Any
     ) -> CompleteJobResult:
-        #  type: (...) -> CompleteJobResult
         """Completes an assigned job.
 
         :param str job_id: Id of the job.
@@ -1203,7 +1045,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             job_id: str,
             **kwargs: Any
     ) -> CancelJobResult:
-        #  type: (...) -> CancelJobResult
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param str job_id: Id of the job.
@@ -1256,7 +1097,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             job_id: str,
             **kwargs: Any
     ) -> ReclassifyJobResult:
-        #  type: (...) -> ReclassifyJobResult
         """Reclassify a job.
 
         :param str job_id: Id of the job.
@@ -1295,7 +1135,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             offer_id: str,
             **kwargs: Any
     ) -> AcceptJobOfferResult:
-        #  type: (...) -> AcceptJobOfferResult
         """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 
@@ -1336,7 +1175,6 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             offer_id: str,
             **kwargs: Any
     ) -> DeclineJobOfferResult:
-        #  type: (...) -> DeclineJobOfferResult
         """Declines an offer to work on a job.
 
         :param worker_id: Id of the worker.

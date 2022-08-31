@@ -12,28 +12,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:32 GMT
+      - Tue, 30 Aug 2022 23:15:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_assignment_scenario_tst_dp_async","name":"test","offerTtlSeconds":600,"mode":{"kind":"longest-idle","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:26 GMT
+      date: Tue, 30 Aug 2022 23:15:36 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:26 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:36 GMT
       request-context: appId=
-      trace-id: de21dc22444f0a9216228e953a675008
+      trace-id: 1a8a0b5f9bd8d88e59100c02b6e55eca
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
 - request:
     body: '{"name": "test", "distributionPolicyId": "test_assignment_scenario_tst_dp_async"}'
     headers:
@@ -46,11 +47,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:34 GMT
+      - Tue, 30 Aug 2022 23:15:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_assignment_scenario_tst_q_async","name":"test","distributionPolicyId":"test_assignment_scenario_tst_dp_async","labels":{"Id":"test_assignment_scenario_tst_q_async"}}'
@@ -58,17 +59,17 @@ interactions:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:29 GMT
+      date: Tue, 30 Aug 2022 23:15:36 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:28 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:36 GMT
       request-context: appId=
-      trace-id: f4445dce3744ad474131b11076154bb3
+      trace-id: 9491361b30cc84e3b48bc9a0ab8eb5b3
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
 - request:
     body: '{"queueAssignments": {"test_assignment_scenario_tst_q_async": {}}, "totalCapacity":
       1, "channelConfigurations": {"fakeChannel1": {"capacityCostPerJob": 1}}, "availableForOffers":
@@ -83,11 +84,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:37 GMT
+      - Tue, 30 Aug 2022 23:15:35 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":true}'
@@ -95,17 +96,17 @@ interactions:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:33 GMT
+      date: Tue, 30 Aug 2022 23:15:37 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:31 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:36 GMT
       request-context: appId=
-      trace-id: 33b1f88c5323484d733916943cbdbd8d
+      trace-id: 79f5e8922600b9ff42c220368ea6c95e
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
 - request:
     body: '{"channelId": "fakeChannel1", "queueId": "test_assignment_scenario_tst_q_async",
       "priority": 1}'
@@ -119,28 +120,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:41 GMT
+      - Tue, 30 Aug 2022 23:15:35 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"assignment_scenario_job_id","jobStatus":"created","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q_async","priority":1,"requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{},"tags":{},"notes":{}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:33 GMT
+      date: Tue, 30 Aug 2022 23:15:37 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:33 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:37 GMT
       request-context: appId=
-      trace-id: 881ad54983894c1d4b3ab92a6082116d
+      trace-id: 870133353bb14e3cfa093ddc75996c36
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -149,29 +151,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:41 GMT
+      - Tue, 30 Aug 2022 23:15:35 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":true}'
+      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[{"id":"eee6cac6-ec35-42cc-afac-72528f9a11c9","jobId":"assignment_scenario_job_id","capacityCost":1,"offerTimeUtc":"2022-08-30T23:15:37.7073198+00:00","expiryTimeUtc":"2022-08-30T23:25:37.7073213+00:00"}],"assignedJobs":[],"loadRatio":1,"availableForOffers":true}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:34 GMT
+      date: Tue, 30 Aug 2022 23:15:37 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:33 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:37 GMT
       request-context: appId=
-      trace-id: ccb0be51a2ed1928066c94215a5012e7
+      trace-id: ed19bc9f8fdd5b1012f0f971a263c5a4
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -180,29 +182,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:45 GMT
+      - Tue, 30 Aug 2022 23:15:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[{"id":"9fc427a8-4857-4264-8f32-8a6c3ffb9316","jobId":"assignment_scenario_job_id","capacityCost":1,"offerTimeUtc":"2022-08-18T21:55:35.883412+00:00","expiryTimeUtc":"2022-08-18T22:05:35.8834136+00:00"}],"assignedJobs":[],"loadRatio":1,"availableForOffers":true}'
+      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[{"id":"eee6cac6-ec35-42cc-afac-72528f9a11c9","jobId":"assignment_scenario_job_id","capacityCost":1,"offerTimeUtc":"2022-08-30T23:15:37.7073198+00:00","expiryTimeUtc":"2022-08-30T23:25:37.7073213+00:00"}],"assignedJobs":[],"loadRatio":1,"availableForOffers":true}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:37 GMT
+      date: Tue, 30 Aug 2022 23:15:37 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:35 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:37 GMT
       request-context: appId=
-      trace-id: 513c872ae3846cad4c28df67fe772990
+      trace-id: dedce6e3b4a792471a17ee01ea22550e
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -211,28 +213,27 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:45 GMT
+      - Tue, 30 Aug 2022 23:15:36 GMT
       x-ms-return-client-request-id:
       - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    method: POST
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:accept?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"test_assignment_scenario_tst_w","state":"active","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[{"id":"9fc427a8-4857-4264-8f32-8a6c3ffb9316","jobId":"assignment_scenario_job_id","capacityCost":1,"offerTimeUtc":"2022-08-18T21:55:35.883412+00:00","expiryTimeUtc":"2022-08-18T22:05:35.8834136+00:00"}],"assignedJobs":[],"loadRatio":1,"availableForOffers":true}'
+      string: '{"assignmentId":"677ab9d0-007c-43e2-a580-6a5fc907e4e8","jobId":"assignment_scenario_job_id","workerId":"test_assignment_scenario_tst_w"}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:38 GMT
-      etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:35 GMT
+      date: Tue, 30 Aug 2022 23:15:38 GMT
       request-context: appId=
-      trace-id: dda9f54a99330b2c3588e0b1a58c1e75
+      trace-id: 560a71ab84fea55acd127a60d8c3a86e
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:accept?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -241,55 +242,28 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:46 GMT
+      - Tue, 30 Aug 2022 23:15:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:accept?api-version=2022-07-18-preview
-  response:
-    body:
-      string: '{"assignmentId":"3d2b8ac3-4bb7-4174-8f5f-579609c25296","jobId":"assignment_scenario_job_id","workerId":"test_assignment_scenario_tst_w"}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
-      content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:40 GMT
-      request-context: appId=
-      trace-id: 95fbf03b391fd2b673cd944970d0938a
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:accept?api-version=2022-07-18-preview
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Thu, 18 Aug 2022 21:55:48 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
   response:
     body:
       string: '{"communicationError":{"code":"InternalServerError","message":"An internal
-        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline"}}'
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:41 GMT
+      date: Tue, 30 Aug 2022 23:15:38 GMT
       request-context: appId=
-      trace-id: d4a608d6a0e35e7a9d518de96306e112
+      trace-id: 00583dfce318781ec950d1a0ae152a60
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 500
       message: Internal Server Error
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -298,27 +272,28 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:49 GMT
+      - Tue, 30 Aug 2022 23:15:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
   response:
     body:
       string: '{"communicationError":{"code":"InternalServerError","message":"An internal
-        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline"}}'
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:41 GMT
+      date: Tue, 30 Aug 2022 23:15:38 GMT
       request-context: appId=
-      trace-id: eb295a00705041483a500bd8f8eb988a
+      trace-id: 600907e36730ebf512bc7e2848285fe4
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 500
       message: Internal Server Error
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -327,27 +302,28 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:51 GMT
+      - Tue, 30 Aug 2022 23:15:38 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
   response:
     body:
       string: '{"communicationError":{"code":"InternalServerError","message":"An internal
-        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline"}}'
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:43 GMT
+      date: Tue, 30 Aug 2022 23:15:40 GMT
       request-context: appId=
-      trace-id: 94df77946da15a816f332474419c4d2e
+      trace-id: d3c42a31858769e89bea56e17c1d1d69
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 500
       message: Internal Server Error
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -356,29 +332,30 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:54 GMT
+      - Tue, 30 Aug 2022 23:15:41 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
   response:
     body:
       string: '{"communicationError":{"code":"InternalServerError","message":"An internal
-        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline"}}'
+        server error has occurred.","target":"/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline"}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:46 GMT
+      date: Tue, 30 Aug 2022 23:15:43 GMT
       request-context: appId=
-      trace-id: 257a91f390b2604df84fa9a1b6a6f434
+      trace-id: 750f6948f2bebf789a2a8e50c26ec9b9
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 500
       message: Internal Server Error
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/9fc427a8-4857-4264-8f32-8a6c3ffb9316:decline?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w/offers/eee6cac6-ec35-42cc-afac-72528f9a11c9:decline?api-version=2022-07-18-preview
 - request:
-    body: '{"assignmentId": "3d2b8ac3-4bb7-4174-8f5f-579609c25296"}'
+    body: '{"assignmentId": "677ab9d0-007c-43e2-a580-6a5fc907e4e8"}'
     headers:
       Accept:
       - application/json
@@ -389,28 +366,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:55 GMT
+      - Tue, 30 Aug 2022 23:15:42 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id:complete?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id:complete?api-version=2022-07-18-preview
   response:
     body:
       string: '{}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:48 GMT
+      date: Tue, 30 Aug 2022 23:15:43 GMT
       request-context: appId=
-      trace-id: 894d6cb6a15a53640d8869c0d78d70dc
+      trace-id: 988bbf6fd19eea1be5a730d4649f72d8
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/assignment_scenario_job_id:complete?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id:complete?api-version=2022-07-18-preview
 - request:
-    body: '{"assignmentId": "3d2b8ac3-4bb7-4174-8f5f-579609c25296"}'
+    body: '{"assignmentId": "677ab9d0-007c-43e2-a580-6a5fc907e4e8"}'
     headers:
       Accept:
       - application/json
@@ -421,26 +399,27 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:56 GMT
+      - Tue, 30 Aug 2022 23:15:42 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id:close?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id:close?api-version=2022-07-18-preview
   response:
     body:
       string: '{}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:49 GMT
+      date: Tue, 30 Aug 2022 23:15:43 GMT
       request-context: appId=
-      trace-id: b3590cf1243b3a0b956304e07227cf5a
+      trace-id: b5af90447bbe8998230e0100445cdef2
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/assignment_scenario_job_id:close?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id:close?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -449,59 +428,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:57 GMT
+      - Tue, 30 Aug 2022 23:15:42 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
   response:
     body:
-      string: '{"id":"assignment_scenario_job_id","jobStatus":"closed","enqueueTimeUtc":"2022-08-18T21:55:33.5372614+00:00","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q_async","priority":1,"dispositionCode":"Closed","requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{"3d2b8ac3-4bb7-4174-8f5f-579609c25296":{"id":"3d2b8ac3-4bb7-4174-8f5f-579609c25296","workerId":"test_assignment_scenario_tst_w","assignTime":"2022-08-18T21:55:38.843929+00:00","completeTime":"2022-08-18T21:55:47.7367694+00:00","closeTime":"2022-08-18T21:55:48.9114713+00:00"}},"tags":{},"notes":{}}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
-      content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:50 GMT
-      etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:48 GMT
-      request-context: appId=
-      trace-id: 967b1473ba5596b40c5ceb9ebcbfb42e
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Thu, 18 Aug 2022 21:55:58 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
-  response:
-    body:
-      string: '{"id":"assignment_scenario_job_id","jobStatus":"closed","enqueueTimeUtc":"2022-08-18T21:55:33.5372614+00:00","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q_async","priority":1,"dispositionCode":"Closed","requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{"3d2b8ac3-4bb7-4174-8f5f-579609c25296":{"id":"3d2b8ac3-4bb7-4174-8f5f-579609c25296","workerId":"test_assignment_scenario_tst_w","assignTime":"2022-08-18T21:55:38.843929+00:00","completeTime":"2022-08-18T21:55:47.7367694+00:00","closeTime":"2022-08-18T21:55:48.9114713+00:00"}},"tags":{},"notes":{}}'
+      string: '{"id":"assignment_scenario_job_id","jobStatus":"closed","enqueueTimeUtc":"2022-08-30T23:15:37.4647197+00:00","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q_async","priority":1,"dispositionCode":"Closed","requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{"677ab9d0-007c-43e2-a580-6a5fc907e4e8":{"id":"677ab9d0-007c-43e2-a580-6a5fc907e4e8","workerId":"test_assignment_scenario_tst_w","assignTime":"2022-08-30T23:15:37.9272935+00:00","completeTime":"2022-08-30T23:15:43.5918887+00:00","closeTime":"2022-08-30T23:15:43.7887883+00:00"}},"tags":{},"notes":{}}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:51 GMT
+      date: Tue, 30 Aug 2022 23:15:44 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:48 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:43 GMT
       request-context: appId=
-      trace-id: 45db1d74f939f7d7213ffcc77190b48f
+      trace-id: 4f7bb7fbb46f68670064313ce288224e
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -510,25 +459,56 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:55:59 GMT
+      - Tue, 30 Aug 2022 23:15:42 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+  response:
+    body:
+      string: '{"id":"assignment_scenario_job_id","jobStatus":"closed","enqueueTimeUtc":"2022-08-30T23:15:37.4647197+00:00","channelId":"fakeChannel1","queueId":"test_assignment_scenario_tst_q_async","priority":1,"dispositionCode":"Closed","requestedWorkerSelectors":[],"attachedWorkerSelectors":[],"labels":{},"assignments":{"677ab9d0-007c-43e2-a580-6a5fc907e4e8":{"id":"677ab9d0-007c-43e2-a580-6a5fc907e4e8","workerId":"test_assignment_scenario_tst_w","assignTime":"2022-08-30T23:15:37.9272935+00:00","completeTime":"2022-08-30T23:15:43.5918887+00:00","closeTime":"2022-08-30T23:15:43.7887883+00:00"}},"tags":{},"notes":{}}'
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
+      content-type: application/json; charset=utf-8
+      date: Tue, 30 Aug 2022 23:15:44 GMT
+      etag: REDACTED
+      last-modified: Tue, 30 Aug 2022 23:15:43 GMT
+      request-context: appId=
+      trace-id: a303002661ef4886ed1a46fa6a9244e9
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 30 Aug 2022 23:15:42 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      date: Thu, 18 Aug 2022 21:55:52 GMT
+      date: Tue, 30 Aug 2022 23:15:44 GMT
       request-context: appId=
-      trace-id: efb0c635ce5910f9b6685a163d006234
+      trace-id: ca99a0cbccbedf42da251c1674e442fd
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/jobs/assignment_scenario_job_id?api-version=2022-07-18-preview
 - request:
     body: '{"availableForOffers": false}'
     headers:
@@ -541,11 +521,11 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:56:00 GMT
+      - Tue, 30 Aug 2022 23:15:43 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_assignment_scenario_tst_w","state":"inactive","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":false}'
@@ -553,17 +533,17 @@ interactions:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:53 GMT
+      date: Tue, 30 Aug 2022 23:15:44 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:53 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:44 GMT
       request-context: appId=
-      trace-id: 7019db51c6508fed1018c107e9394706
+      trace-id: fd5422fad0e658fa8adc7ef024ffbf16
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -572,28 +552,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:56:01 GMT
+      - Tue, 30 Aug 2022 23:15:43 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"test_assignment_scenario_tst_w","state":"inactive","queueAssignments":{"test_assignment_scenario_tst_q_async":{}},"totalCapacity":1,"labels":{"Id":"test_assignment_scenario_tst_w"},"tags":{},"channelConfigurations":{"fakeChannel1":{"capacityCostPerJob":1}},"offers":[],"assignedJobs":[],"loadRatio":0,"availableForOffers":false}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Thu, 18 Aug 2022 21:55:53 GMT
+      date: Tue, 30 Aug 2022 23:15:45 GMT
       etag: REDACTED
-      last-modified: Thu, 18 Aug 2022 21:55:53 GMT
+      last-modified: Tue, 30 Aug 2022 23:15:45 GMT
       request-context: appId=
-      trace-id: 7f4e35af01908bae6eab2c4c192fa865
+      trace-id: c2ae6d913d4a029cf0c4243e111ccde6
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -602,25 +583,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:56:02 GMT
+      - Tue, 30 Aug 2022 23:15:43 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      date: Thu, 18 Aug 2022 21:55:56 GMT
+      date: Tue, 30 Aug 2022 23:15:45 GMT
       request-context: appId=
-      trace-id: 810b6d11c3cb39a31154c274af06ec65
+      trace-id: 88d6b75d861721bdb9a0d0f5212a6de7
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/workers/test_assignment_scenario_tst_w?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -629,25 +610,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:56:04 GMT
+      - Tue, 30 Aug 2022 23:15:44 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      date: Thu, 18 Aug 2022 21:56:00 GMT
+      date: Tue, 30 Aug 2022 23:15:45 GMT
       request-context: appId=
-      trace-id: 9bcb7ebb7eca5912aab9222f979e4ca4
+      trace-id: b2042f0fe7c4f377920b68b7851950af
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/queues/test_assignment_scenario_tst_q_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -656,23 +637,23 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 18 Aug 2022 21:56:08 GMT
+      - Tue, 30 Aug 2022 23:15:44 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      date: Thu, 18 Aug 2022 21:56:00 GMT
+      date: Tue, 30 Aug 2022 23:15:46 GMT
       request-context: appId=
-      trace-id: 65171ca57647259b0e8d21163adce5a5
+      trace-id: ce9358a21728484c27c34f09d44a1d7d
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/test_assignment_scenario_tst_dp_async?api-version=2022-07-18-preview
 version: 1

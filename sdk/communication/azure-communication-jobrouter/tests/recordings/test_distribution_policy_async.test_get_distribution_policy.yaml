@@ -12,28 +12,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 17 Aug 2022 21:27:41 GMT
+      - Tue, 30 Aug 2022 23:26:30 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"tst_get_dp_async","name":"tst_get_dp_async","offerTtlSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 17 Aug 2022 21:27:36 GMT
+      date: Tue, 30 Aug 2022 23:26:32 GMT
       etag: REDACTED
-      last-modified: Wed, 17 Aug 2022 21:27:36 GMT
+      last-modified: Tue, 30 Aug 2022 23:26:32 GMT
       request-context: appId=
-      trace-id: 980b6249e774d3d906d65cc9fe9b6d47
+      trace-id: 293b1399d43cb2efed47e5534ba5bce0
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -42,28 +43,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 17 Aug 2022 21:27:44 GMT
+      - Tue, 30 Aug 2022 23:26:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"tst_get_dp_async","name":"tst_get_dp_async","offerTtlSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 17 Aug 2022 21:27:37 GMT
+      date: Tue, 30 Aug 2022 23:26:32 GMT
       etag: REDACTED
-      last-modified: Wed, 17 Aug 2022 21:27:36 GMT
+      last-modified: Tue, 30 Aug 2022 23:26:32 GMT
       request-context: appId=
-      trace-id: c22a382338d869a3e2eb73ded829c282
+      trace-id: 921be11b34a1eba6afc5c55fa92aa636
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
 - request:
     body: '{"name": "tst_get_dp_async", "offerTtlSeconds": 10.0, "mode": {"kind":
       "longest-idle", "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
@@ -77,28 +79,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 17 Aug 2022 21:27:45 GMT
+      - Tue, 30 Aug 2022 23:26:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"tst_get_dp_async","name":"tst_get_dp_async","offerTtlSeconds":10,"mode":{"kind":"longest-idle","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 17 Aug 2022 21:27:38 GMT
+      date: Tue, 30 Aug 2022 23:26:32 GMT
       etag: REDACTED
-      last-modified: Wed, 17 Aug 2022 21:27:38 GMT
+      last-modified: Tue, 30 Aug 2022 23:26:32 GMT
       request-context: appId=
-      trace-id: e7f19bc77c67021f648cbf1e5020e5da
+      trace-id: 9f1cfa6ef1167105677cd660379800ae
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -107,28 +110,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 17 Aug 2022 21:27:46 GMT
+      - Tue, 30 Aug 2022 23:26:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"tst_get_dp_async","name":"tst_get_dp_async","offerTtlSeconds":10,"mode":{"kind":"longest-idle","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 17 Aug 2022 21:27:38 GMT
+      date: Tue, 30 Aug 2022 23:26:32 GMT
       etag: REDACTED
-      last-modified: Wed, 17 Aug 2022 21:27:38 GMT
+      last-modified: Tue, 30 Aug 2022 23:26:32 GMT
       request-context: appId=
-      trace-id: 66827c99b93428ab887b25b6e47af84d
+      trace-id: 842dd4f0f110fad2e4d643153ecf87eb
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
 - request:
     body: '{"name": "tst_get_dp_async", "offerTtlSeconds": 10.0, "mode": {"kind":
       "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
@@ -142,28 +146,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 17 Aug 2022 21:27:46 GMT
+      - Tue, 30 Aug 2022 23:26:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"tst_get_dp_async","name":"tst_get_dp_async","offerTtlSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 17 Aug 2022 21:27:39 GMT
+      date: Tue, 30 Aug 2022 23:26:32 GMT
       etag: REDACTED
-      last-modified: Wed, 17 Aug 2022 21:27:39 GMT
+      last-modified: Tue, 30 Aug 2022 23:26:32 GMT
       request-context: appId=
-      trace-id: 3ef18b6a172f0cc10d827a122a42c5b9
+      trace-id: bad99191178120d5968b16ed442a2cf4
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -172,28 +177,29 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 17 Aug 2022 21:27:47 GMT
+      - Tue, 30 Aug 2022 23:26:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: '{"id":"tst_get_dp_async","name":"tst_get_dp_async","offerTtlSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
+      connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 17 Aug 2022 21:27:39 GMT
+      date: Tue, 30 Aug 2022 23:26:32 GMT
       etag: REDACTED
-      last-modified: Wed, 17 Aug 2022 21:27:39 GMT
+      last-modified: Tue, 30 Aug 2022 23:26:32 GMT
       request-context: appId=
-      trace-id: ab83c5948d44910a3e4baa751bbb72b9
+      trace-id: c6bddb0377f50b145dc13dc4d335dc04
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 200
       message: OK
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
 - request:
     body: ''
     headers:
@@ -202,23 +208,23 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 17 Aug 2022 21:27:47 GMT
+      - Tue, 30 Aug 2022 23:26:31 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    uri: https://sanitized.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
   response:
     body:
       string: ''
     headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2, 2022-07-18-preview
+      api-supported-versions: 2021-04-07-preview1, 2022-07-18-preview
       connection: keep-alive
-      date: Wed, 17 Aug 2022 21:27:41 GMT
+      date: Tue, 30 Aug 2022 23:26:33 GMT
       request-context: appId=
-      trace-id: 9f1db933e1992ff54de87f8603238a10
+      trace-id: 2033770d2cf9a1230274ead2185aaf01
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
       message: No Content
-    url: https://rsarkar-sdktest.int.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
+    url: https://rsarkar-ppe-test.ppe.communication.azure.net/routing/distributionPolicies/tst_get_dp_async?api-version=2022-07-18-preview
 version: 1

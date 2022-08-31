@@ -1339,7 +1339,7 @@ class JobCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterJobItemInternal]
+    :vartype value: list[~azure.communication.jobrouter.models.RouterJobItem]
     :ivar next_link:
     :vartype next_link: str
     """
@@ -1350,14 +1350,14 @@ class JobCollection(_serialization.Model):
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[RouterJobItemInternal]"},
+        "value": {"key": "value", "type": "[RouterJobItem]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RouterJobItemInternal"], **kwargs):
+    def __init__(self, *, value: List["_models.RouterJobItem"], **kwargs):
         """
         :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterJobItemInternal]
+        :paramtype value: list[~azure.communication.jobrouter.models.RouterJobItem]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -1518,7 +1518,7 @@ class JobPositionDetails(_serialization.Model):
         self.estimated_wait_time_minutes = estimated_wait_time_minutes
 
 
-class JobQueueInternal(_serialization.Model):
+class JobQueue(_serialization.Model):
     """A queue that can contain jobs to be routed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1580,24 +1580,24 @@ class JobQueueInternal(_serialization.Model):
         self.exception_policy_id = exception_policy_id
 
 
-class JobQueueItemInternal(_serialization.Model):
+class JobQueueItem(_serialization.Model):
     """Paged instance of JobQueue.
 
     :ivar job_queue: A queue that can contain jobs to be routed.
-    :vartype job_queue: ~azure.communication.jobrouter.models.JobQueueInternal
+    :vartype job_queue: ~azure.communication.jobrouter.models.JobQueue
     :ivar etag: (Optional) The Concurrency Token.
     :vartype etag: str
     """
 
     _attribute_map = {
-        "job_queue": {"key": "jobQueue", "type": "JobQueueInternal"},
+        "job_queue": {"key": "jobQueue", "type": "JobQueue"},
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, job_queue: Optional["_models.JobQueueInternal"] = None, etag: Optional[str] = None, **kwargs):
+    def __init__(self, *, job_queue: Optional["_models.JobQueue"] = None, etag: Optional[str] = None, **kwargs):
         """
         :keyword job_queue: A queue that can contain jobs to be routed.
-        :paramtype job_queue: ~azure.communication.jobrouter.models.JobQueueInternal
+        :paramtype job_queue: ~azure.communication.jobrouter.models.JobQueue
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
@@ -1880,7 +1880,7 @@ class QueueCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.JobQueueItemInternal]
+    :vartype value: list[~azure.communication.jobrouter.models.JobQueueItem]
     :ivar next_link:
     :vartype next_link: str
     """
@@ -1891,14 +1891,14 @@ class QueueCollection(_serialization.Model):
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[JobQueueItemInternal]"},
+        "value": {"key": "value", "type": "[JobQueueItem]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.JobQueueItemInternal"], **kwargs):
+    def __init__(self, *, value: List["_models.JobQueueItem"], **kwargs):
         """
         :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.JobQueueItemInternal]
+        :paramtype value: list[~azure.communication.jobrouter.models.JobQueueItem]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -2191,7 +2191,7 @@ class RoundRobinMode(DistributionMode):
         self.kind = "round-robin"  # type: str
 
 
-class RouterJobInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A unit of work to be routed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2318,26 +2318,24 @@ class RouterJobInternal(_serialization.Model):  # pylint: disable=too-many-insta
         self.notes = notes
 
 
-class RouterJobItemInternal(_serialization.Model):
+class RouterJobItem(_serialization.Model):
     """Paged instance of RouterJob.
 
     :ivar router_job: A unit of work to be routed.
-    :vartype router_job: ~azure.communication.jobrouter.models.RouterJobInternal
+    :vartype router_job: ~azure.communication.jobrouter.models.RouterJob
     :ivar etag: (Optional) The Concurrency Token.
     :vartype etag: str
     """
 
     _attribute_map = {
-        "router_job": {"key": "routerJob", "type": "RouterJobInternal"},
+        "router_job": {"key": "routerJob", "type": "RouterJob"},
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(
-        self, *, router_job: Optional["_models.RouterJobInternal"] = None, etag: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, *, router_job: Optional["_models.RouterJob"] = None, etag: Optional[str] = None, **kwargs):
         """
         :keyword router_job: A unit of work to be routed.
-        :paramtype router_job: ~azure.communication.jobrouter.models.RouterJobInternal
+        :paramtype router_job: ~azure.communication.jobrouter.models.RouterJob
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
@@ -2346,7 +2344,7 @@ class RouterJobItemInternal(_serialization.Model):
         self.etag = etag
 
 
-class RouterWorkerInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RouterWorker(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An entity for jobs to be routed to.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2446,26 +2444,24 @@ class RouterWorkerInternal(_serialization.Model):  # pylint: disable=too-many-in
         self.available_for_offers = available_for_offers
 
 
-class RouterWorkerItemInternal(_serialization.Model):
+class RouterWorkerItem(_serialization.Model):
     """Paged instance of RouterWorker.
 
     :ivar router_worker: An entity for jobs to be routed to.
-    :vartype router_worker: ~azure.communication.jobrouter.models.RouterWorkerInternal
+    :vartype router_worker: ~azure.communication.jobrouter.models.RouterWorker
     :ivar etag: (Optional) The Concurrency Token.
     :vartype etag: str
     """
 
     _attribute_map = {
-        "router_worker": {"key": "routerWorker", "type": "RouterWorkerInternal"},
+        "router_worker": {"key": "routerWorker", "type": "RouterWorker"},
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(
-        self, *, router_worker: Optional["_models.RouterWorkerInternal"] = None, etag: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, *, router_worker: Optional["_models.RouterWorker"] = None, etag: Optional[str] = None, **kwargs):
         """
         :keyword router_worker: An entity for jobs to be routed to.
-        :paramtype router_worker: ~azure.communication.jobrouter.models.RouterWorkerInternal
+        :paramtype router_worker: ~azure.communication.jobrouter.models.RouterWorker
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
@@ -2917,7 +2913,7 @@ class WorkerCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterWorkerItemInternal]
+    :vartype value: list[~azure.communication.jobrouter.models.RouterWorkerItem]
     :ivar next_link:
     :vartype next_link: str
     """
@@ -2928,14 +2924,14 @@ class WorkerCollection(_serialization.Model):
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[RouterWorkerItemInternal]"},
+        "value": {"key": "value", "type": "[RouterWorkerItem]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RouterWorkerItemInternal"], **kwargs):
+    def __init__(self, *, value: List["_models.RouterWorkerItem"], **kwargs):
         """
         :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterWorkerItemInternal]
+        :paramtype value: list[~azure.communication.jobrouter.models.RouterWorkerItem]
         """
         super().__init__(**kwargs)
         self.value = value

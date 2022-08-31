@@ -353,8 +353,75 @@ class TestRouterJob(RouterTestCase):
         updated_job_labels = router_job.labels
 
         update_router_job = router_client.update_job(
+            job_identifier,
+            router_job
+        )
+
+        assert update_router_job is not None
+        RouterJobValidator.validate_job(
+            update_router_job,
+            identifier = job_identifier,
+            channel_reference = job_channel_references[0],
+            channel_id = job_channel_ids[0],
+            queue_id = self.get_job_queue_id(),
+            priority = job_priority,
+            requested_worker_selectors = job_requested_worker_selectors,
+            labels = updated_job_labels,
+            tags = job_tags,
+            notes = job_notes
+        )
+
+        # updating labels does not change job status
+        assert update_router_job.job_status == RouterJobStatus.QUEUED
+
+    @pytest.mark.skip(reason = "Update job not working correctly")
+    @RouterPreparers.before_test_execute('setup_distribution_policy')
+    @RouterPreparers.before_test_execute('setup_job_queue')
+    def test_update_job_direct_q_w_kwargs(self):
+        job_identifier = "tst_update_job_man_w_kwargs"
+        router_client: RouterClient = self.create_client()
+
+        router_job = router_client.create_job(
             job_id = job_identifier,
-            router_job = router_job
+            channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
+            queue_id = self.get_job_queue_id(),
+            priority = job_priority,
+            requested_worker_selectors = job_requested_worker_selectors,
+            labels = job_labels,
+            tags = job_tags,
+            notes = job_notes
+        )
+
+        # add for cleanup
+        self.job_ids[self._testMethodName] = [job_identifier]
+
+        assert router_job is not None
+        RouterJobValidator.validate_job(
+            router_job,
+            identifier = job_identifier,
+            channel_reference = job_channel_references[0],
+            channel_id = job_channel_ids[0],
+            queue_id = self.get_job_queue_id(),
+            priority = job_priority,
+            requested_worker_selectors = job_requested_worker_selectors,
+            labels = job_labels,
+            tags = job_tags,
+            notes = job_notes
+        )
+
+        self._poll_until_no_exception(
+            self.validate_job_is_queued,
+            Exception,
+            job_identifier)
+
+        # Act
+        router_job.labels['FakeKey'] = "FakeWorkerValue"
+        updated_job_labels = router_job.labels
+
+        update_router_job = router_client.update_job(
+            job_identifier,
+            labels = updated_job_labels
         )
 
         assert update_router_job is not None
@@ -522,8 +589,80 @@ class TestRouterJob(RouterTestCase):
         updated_job_labels = router_job.labels
 
         update_router_job = router_client.update_job(
+            job_identifier,
+            router_job
+        )
+
+        assert update_router_job is not None
+        RouterJobValidator.validate_job(
+            update_router_job,
+            identifier = job_identifier,
+            channel_reference = job_channel_references[0],
+            channel_id = job_channel_ids[0],
+            classification_policy_id = self.get_classification_policy_id(),
+            requested_worker_selectors = job_requested_worker_selectors,
+            labels = updated_job_labels,
+            tags = job_tags,
+            notes = job_notes
+        )
+
+        # updating labels reverts job status to pending classification
+        assert update_router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
+
+        self._poll_until_no_exception(
+            self.validate_job_is_queued,
+            Exception,
+            job_identifier)
+
+    @RouterPreparers.before_test_execute('setup_distribution_policy')
+    @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.before_test_execute('setup_fallback_queue')
+    @RouterPreparers.before_test_execute('setup_classification_policy')
+    def test_update_job_w_cp_w_kwargs(self):
+        job_identifier = "tst_update_job_cp_w_kwargs"
+        router_client: RouterClient = self.create_client()
+
+        router_job = router_client.create_job(
             job_id = job_identifier,
-            router_job = router_job
+            channel_id = job_channel_ids[0],
+            channel_reference = job_channel_references[0],
+            classification_policy_id = self.get_classification_policy_id(),
+            requested_worker_selectors = job_requested_worker_selectors,
+            labels = job_labels,
+            tags = job_tags,
+            notes = job_notes
+        )
+
+        # add for cleanup
+        self.job_ids[self._testMethodName] = [job_identifier]
+
+        assert router_job is not None
+        RouterJobValidator.validate_job(
+            router_job,
+            identifier = job_identifier,
+            channel_reference = job_channel_references[0],
+            channel_id = job_channel_ids[0],
+            classification_policy_id = self.get_classification_policy_id(),
+            requested_worker_selectors = job_requested_worker_selectors,
+            labels = job_labels,
+            tags = job_tags,
+            notes = job_notes
+        )
+
+        assert router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
+
+        self._poll_until_no_exception(
+            self.validate_job_is_queued,
+            Exception,
+            job_identifier)
+
+        # Act
+        router_job.labels['FakeKey'] = "FakeWorkerValue"
+        updated_job_labels = router_job.labels
+
+        update_router_job = router_client.update_job(
+            job_id = job_identifier,
+            labels = updated_job_labels
         )
 
         assert update_router_job is not None

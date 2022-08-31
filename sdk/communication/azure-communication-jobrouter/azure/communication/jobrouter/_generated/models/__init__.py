@@ -33,8 +33,8 @@ from ._models import JobAssignment
 from ._models import JobExceptionTrigger
 from ._models import JobOffer
 from ._models import JobPositionDetails
-from ._models import JobQueueInternal
-from ._models import JobQueueItemInternal
+from ._models import JobQueue
+from ._models import JobQueueItem
 from ._models import JobRouterError
 from ._models import LongestIdleMode
 from ._models import ManualReclassifyExceptionAction
@@ -47,11 +47,11 @@ from ._models import QueueStatistics
 from ._models import QueueWeightedAllocation
 from ._models import ReclassifyExceptionAction
 from ._models import RoundRobinMode
-from ._models import RouterJobInternal
-from ._models import RouterJobItemInternal
+from ._models import RouterJob
+from ._models import RouterJobItem
 from ._models import RouterRule
-from ._models import RouterWorkerInternal
-from ._models import RouterWorkerItemInternal
+from ._models import RouterWorker
+from ._models import RouterWorkerItem
 from ._models import RuleEngineQueueSelectorAttachment
 from ._models import RuleEngineWorkerSelectorAttachment
 from ._models import ScoringRuleOptions
@@ -106,8 +106,8 @@ __all__ = [
     "JobExceptionTrigger",
     "JobOffer",
     "JobPositionDetails",
-    "JobQueueInternal",
-    "JobQueueItemInternal",
+    "JobQueue",
+    "JobQueueItem",
     "JobRouterError",
     "LongestIdleMode",
     "ManualReclassifyExceptionAction",
@@ -120,11 +120,11 @@ __all__ = [
     "QueueWeightedAllocation",
     "ReclassifyExceptionAction",
     "RoundRobinMode",
-    "RouterJobInternal",
-    "RouterJobItemInternal",
+    "RouterJob",
+    "RouterJobItem",
     "RouterRule",
-    "RouterWorkerInternal",
-    "RouterWorkerItemInternal",
+    "RouterWorker",
+    "RouterWorkerItem",
     "RuleEngineQueueSelectorAttachment",
     "RuleEngineWorkerSelectorAttachment",
     "ScoringRuleOptions",

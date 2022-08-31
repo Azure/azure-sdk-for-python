@@ -373,8 +373,77 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             updated_job_labels = router_job.labels
 
             update_router_job = await router_client.update_job(
+                job_identifier,
+                router_job
+            )
+
+            assert update_router_job is not None
+            RouterJobValidator.validate_job(
+                update_router_job,
+                identifier = job_identifier,
+                channel_reference = job_channel_references[0],
+                channel_id = job_channel_ids[0],
+                queue_id = self.get_job_queue_id(),
+                priority = job_priority,
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = updated_job_labels,
+                tags = job_tags,
+                notes = job_notes
+            )
+
+            # updating labels does not change job status
+            assert update_router_job.job_status == RouterJobStatus.QUEUED
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_update_job_direct_q_w_kwargs(self):
+        job_identifier = "tst_update_job_man_w_kwargs_async"
+        router_client: RouterClient = self.create_client()
+
+        async with router_client:
+            router_job = await router_client.create_job(
                 job_id = job_identifier,
-                router_job = router_job
+                channel_reference = job_channel_references[0],
+                channel_id = job_channel_ids[0],
+                queue_id = self.get_job_queue_id(),
+                priority = job_priority,
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = job_labels,
+                tags = job_tags,
+                notes = job_notes
+            )
+
+            # add for cleanup
+            self.job_ids[self._testMethodName] = [job_identifier]
+
+            assert router_job is not None
+            RouterJobValidator.validate_job(
+                router_job,
+                identifier = job_identifier,
+                channel_reference = job_channel_references[0],
+                channel_id = job_channel_ids[0],
+                queue_id = self.get_job_queue_id(),
+                priority = job_priority,
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = job_labels,
+                tags = job_tags,
+                notes = job_notes
+            )
+
+            await self._poll_until_no_exception(
+                self.validate_job_is_queued,
+                Exception,
+                job_identifier)
+
+            # Act
+            router_job.labels['FakeKey'] = "FakeWorkerValue"
+            updated_job_labels = router_job.labels
+
+            update_router_job = await router_client.update_job(
+                job_id = job_identifier,
+                labels = updated_job_labels
             )
 
             assert update_router_job is not None
@@ -551,8 +620,83 @@ class TestRouterJobAsync(AsyncRouterTestCase):
             updated_job_labels = router_job.labels
 
             update_router_job = await router_client.update_job(
+                job_identifier,
+                router_job
+            )
+
+            assert update_router_job is not None
+            RouterJobValidator.validate_job(
+                update_router_job,
+                identifier = job_identifier,
+                channel_reference = job_channel_references[0],
+                channel_id = job_channel_ids[0],
+                classification_policy_id = self.get_classification_policy_id(),
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = updated_job_labels,
+                tags = job_tags,
+                notes = job_notes
+            )
+
+            # updating labels reverts job status to pending classification
+            assert update_router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
+
+            await self._poll_until_no_exception(
+                self.validate_job_is_queued,
+                Exception,
+                job_identifier)
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.before_test_execute_async('setup_fallback_queue')
+    @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_update_job_w_cp_w_kwargs(self):
+        job_identifier = "tst_update_job_cp_w_kwargs_async"
+        router_client: RouterClient = self.create_client()
+
+        async with router_client:
+            router_job = await router_client.create_job(
                 job_id = job_identifier,
-                router_job = router_job
+                channel_reference = job_channel_references[0],
+                channel_id = job_channel_ids[0],
+                classification_policy_id = self.get_classification_policy_id(),
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = job_labels,
+                tags = job_tags,
+                notes = job_notes
+            )
+
+            # add for cleanup
+            self.job_ids[self._testMethodName] = [job_identifier]
+
+            assert router_job is not None
+            RouterJobValidator.validate_job(
+                router_job,
+                identifier = job_identifier,
+                channel_reference = job_channel_references[0],
+                channel_id = job_channel_ids[0],
+                classification_policy_id = self.get_classification_policy_id(),
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = job_labels,
+                tags = job_tags,
+                notes = job_notes
+            )
+
+            assert router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION
+
+            await self._poll_until_no_exception(
+                self.validate_job_is_queued,
+                Exception,
+                job_identifier)
+
+            # Act
+            router_job.labels['FakeKey'] = "FakeWorkerValue"
+            updated_job_labels = router_job.labels
+
+            update_router_job = await router_client.update_job(
+                job_identifier,
+                labels = updated_job_labels
             )
 
             assert update_router_job is not None
@@ -744,7 +888,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
                 created_job_response[router_job.id] = router_job
 
             router_jobs = router_client.list_jobs(
-                results_per_page = 2,
+                results_per_page = 3,
                 status = JobStateSelector.QUEUED,
                 queue_id = self.get_job_queue_id(),
                 channel_id = job_channel_ids[0]
@@ -752,7 +896,7 @@ class TestRouterJobAsync(AsyncRouterTestCase):
 
             async for router_job_page in router_jobs.by_page():
                 list_of_jobs = [i async for i in router_job_page]
-                assert len(list_of_jobs) <= 2
+                assert len(list_of_jobs) <= 3
 
                 for j_item in list_of_jobs:
                     response_at_creation = created_job_response.get(j_item.router_job.id, None)
