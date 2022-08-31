@@ -422,6 +422,10 @@
       "words": ["groovin", "Olufsen"]
     },
     {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
+      "words": ["Apim", "cognituve"]
+    },
+    {
       "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
