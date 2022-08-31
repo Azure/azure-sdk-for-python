@@ -431,10 +431,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace
     def list_operations(self, **kwargs: Any) -> AsyncItemPaged[OperationSummary]:
-        """List information for each document model operation.
+        """List information for each operation.
 
-        Lists all document model operations associated with the Form Recognizer resource.
-        Note that operation information only persists for 24 hours. If the operation was successful,
+        Lists all operations associated with the Form Recognizer resource.
+        Note that operation information only persists for 24 hours. If the document model operation was successful,
         the document model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :return: A pageable of OperationSummary.
@@ -461,10 +461,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def get_operation(self, operation_id: str, **kwargs: Any) -> OperationDetails:
-        """Get a model operation by its ID.
+        """Get an operation by its ID.
 
-        Get a model operation associated with the Form Recognizer resource.
-        Note that operation information only persists for 24 hours. If the operation was successful,
+        Get an operation associated with the Form Recognizer resource.
+        Note that operation information only persists for 24 hours. If the document model operation was successful,
         the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :param str operation_id: The operation ID.
