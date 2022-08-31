@@ -4,12 +4,12 @@
 # ------------------------------------
 import asyncio
 from abc import abstractmethod
-from _shared.utils import get_http_logging_policy
+from ._shared.utils import get_http_logging_policy
 from azure.communication.jobrouter.aio import (
     RouterClient,
     RouterAdministrationClient,
 )
-from _router_test_case import RouterTestCaseBase
+from ._router_test_case import RouterTestCaseBase
 from azure.communication.jobrouter import (
     RouterJobStatus,
 )

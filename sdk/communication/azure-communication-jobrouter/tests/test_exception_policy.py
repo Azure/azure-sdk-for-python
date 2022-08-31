@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from _router_test_case import RouterTestCase
-from _decorators import RouterPreparers
-from _validators import ExceptionPolicyValidator
+from ._router_test_case import RouterTestCase
+from ._decorators import RouterPreparers
+from ._validators import ExceptionPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str  # pylint:disable=protected-access
 from azure.core.exceptions import ResourceNotFoundError
 

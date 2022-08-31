@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from _router_test_case import (
+from ._router_test_case import (
     RouterTestCase
 )
-from _validators import RouterWorkerValidator
-from _decorators import RouterPreparers
+from ._validators import RouterWorkerValidator
+from ._decorators import RouterPreparers
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 

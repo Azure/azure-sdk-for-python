@@ -10,9 +10,9 @@ import pytest
 from azure.core.exceptions import (
     HttpResponseError,
 )
-from _router_test_case import RouterTestCase
+from ._router_test_case import RouterTestCase
 
-from _decorators import RouterPreparers
+from ._decorators import RouterPreparers
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 from azure.communication.jobrouter import (

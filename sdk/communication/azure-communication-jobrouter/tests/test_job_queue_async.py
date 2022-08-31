@@ -9,12 +9,10 @@ import asyncio
 from typing import Callable, Any, Coroutine, Awaitable
 
 import pytest
-from _decorators_async import RouterPreparersAsync
-from _validators import JobQueueValidator
-from _router_test_case_async import AsyncRouterTestCase
-from _shared.asynctestcase import AsyncCommunicationTestCase
-from _shared.utils import get_http_logging_policy
-from azure.core.exceptions import ResourceExistsError
+from ._decorators_async import RouterPreparersAsync
+from ._validators import JobQueueValidator
+from ._router_test_case_async import AsyncRouterTestCase
+from ._shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 

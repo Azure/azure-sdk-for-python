@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from _router_test_case_async import (
+from ._router_test_case_async import (
     AsyncRouterTestCase
 )
-from _validators import RouterJobValidator
-from _helpers import _convert_str_to_datetime
-from _decorators_async import RouterPreparersAsync
-from _shared.asynctestcase import AsyncCommunicationTestCase
+from ._validators import RouterJobValidator
+from ._helpers import _convert_str_to_datetime
+from ._decorators_async import RouterPreparersAsync
+from ._shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
