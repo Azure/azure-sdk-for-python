@@ -7,6 +7,12 @@
 ### Breaking Changes
 - This library will default to service API version `2022-08-31` going forward.
 - Removed `kind` property on `DocumentPage`.
+- Renamed `begin_build_model()` to `begin_build_document_model()` on the `DocumentModelAdministrationClient`.
+- Renamed `begin_compose_model()` to `begin_compose_document_model()` on the `DocumentModelAdministrationClient`.
+- Renamed `begin_copy_model_to()` to `begin_copy_document_model_to()` on the `DocumentModelAdministrationClient`.
+- Renamed `list_models()` to `list_document_models()` on the `DocumentModelAdministrationClient`.
+- Renamed `get_model()` to `get_document_model()` on the `DocumentModelAdministrationClient`.
+- Renamed `delete_model()` to `delete_document_model()` on the `DocumentModelAdministrationClient`.
 
 ### Bugs Fixed
 
