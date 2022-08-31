@@ -588,8 +588,6 @@ class ReceiveClient(AMQPClient):
         states.
 
         :rtype: bool
-        :raises: ~pyamqp.error. if the MessageReceiver
-         goes into an error state.
         """
         # pylint: disable=protected-access
         if not self._link:
