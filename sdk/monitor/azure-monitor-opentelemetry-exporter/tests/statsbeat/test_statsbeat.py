@@ -130,7 +130,6 @@ class TestStatsbeat(unittest.TestCase):
 class TestStatsbeatMetrics(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.environ.clear()
         cls._StatsbeatMetrics_COMMON_ATTRS = dict(
             _StatsbeatMetrics._COMMON_ATTRIBUTES
         )
@@ -148,6 +147,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         )
 
     def setUp(self):
+        os.environ.clear()
         _statsbeat._STATSBEAT_METER_PROVIDER = None
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(
             self._StatsbeatMetrics_COMMON_ATTRS
