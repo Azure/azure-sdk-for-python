@@ -1,6 +1,6 @@
 # Release History
 
-## 5.2.0b6 (Unreleased)
+## 5.2.0 (Unreleased)
 
 ### Features Added
 
