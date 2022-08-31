@@ -56,6 +56,7 @@ setup(
     ],
     packages = find_packages(exclude = [
         'tests',
+        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.communication'
@@ -72,5 +73,9 @@ setup(
     ],
     extras_require = {
         ":python_version<'3.8'": ["typing-extensions"]
+    },
+    project_urls = {
+        'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
+        'Source': 'https://github.com/Azure/azure-sdk-for-python',
     }
 )

@@ -6,11 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from typing_extensions import TypedDict
+import sys
+if sys.version_info >= (3, 8):
+    from typing import TypedDict  # pylint: disable=no-name-in-module
 else:
-    from typing import TypedDict
+    from typing_extensions import TypedDict
+
 from typing import List, Optional, Dict, Union, MutableMapping
 
 from datetime import datetime, timezone
