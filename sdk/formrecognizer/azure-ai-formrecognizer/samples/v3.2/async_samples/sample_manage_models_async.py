@@ -48,7 +48,7 @@ async def sample_manage_models_async():
 
         # Next, we get a paged list of all of our custom models
         # [START list_models_async]
-        models = document_model_admin_client.list_models()
+        models = document_model_admin_client.list_document_models()
 
         print("We have the following 'ready' models with IDs and descriptions:")
         async for model in models:
@@ -56,11 +56,11 @@ async def sample_manage_models_async():
         # [END list_models_async]
 
         # let's build a model to use for this sample
-        poller = await document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
+        poller = await document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
         model = await poller.result()
 
         # [START get_model_async]
-        my_model = await document_model_admin_client.get_model(model_id=model.model_id)
+        my_model = await document_model_admin_client.get_document_model(model_id=model.model_id)
         print("\nModel ID: {}".format(my_model.model_id))
         print("Description: {}".format(my_model.description))
         print("Model created on: {}".format(my_model.created_on))
@@ -68,10 +68,10 @@ async def sample_manage_models_async():
 
         # Finally, we will delete this model by ID
         # [START delete_model_async]
-        await document_model_admin_client.delete_model(model_id=my_model.model_id)
+        await document_model_admin_client.delete_document_model(model_id=my_model.model_id)
 
         try:
-            await document_model_admin_client.get_model(model_id=my_model.model_id)
+            await document_model_admin_client.get_document_model(model_id=my_model.model_id)
         except ResourceNotFoundError:
             print("Successfully deleted model with ID {}".format(my_model.model_id))
         # [END delete_model_async]
