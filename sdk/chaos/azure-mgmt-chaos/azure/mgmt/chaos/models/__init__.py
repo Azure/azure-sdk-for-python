@@ -14,6 +14,7 @@ from ._models_py3 import Capability
 from ._models_py3 import CapabilityListResult
 from ._models_py3 import CapabilityType
 from ._models_py3 import CapabilityTypeListResult
+from ._models_py3 import CapabilityTypePropertiesRuntimeProperties
 from ._models_py3 import ContinuousAction
 from ._models_py3 import DelayAction
 from ._models_py3 import DiscreteAction
@@ -68,6 +69,7 @@ __all__ = [
     'CapabilityListResult',
     'CapabilityType',
     'CapabilityTypeListResult',
+    'CapabilityTypePropertiesRuntimeProperties',
     'ContinuousAction',
     'DelayAction',
     'DiscreteAction',

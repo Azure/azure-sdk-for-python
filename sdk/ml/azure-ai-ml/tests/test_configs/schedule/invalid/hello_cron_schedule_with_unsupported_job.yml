@@ -1,0 +1,13 @@
+$schema:  http://azureml/sdk-2-0/Schedule.json
+name: weekly_retrain_2022_cron_unsupported
+display_name: weekly retrain schedule
+description: a weekly retrain schedule
+
+trigger:
+  type: cron
+  expression: "15 10 * * 1"
+  start_time: "2022-03-10T10:15:00" # optional - default will be start immediately
+  end_time: "2022-06-10T10:15:00+08:00" # optional - default will be run indefinitely
+  time_zone: "Pacific Standard Time" # optional - default will be UTC
+
+create_job: ../../command_job/command_job_test.yml

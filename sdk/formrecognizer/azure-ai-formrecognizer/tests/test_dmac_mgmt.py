@@ -13,7 +13,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.ai.formrecognizer import (
     DocumentModelAdministrationClient,
     DocumentAnalysisApiVersion,
-    ModelOperationDetails
+    OperationDetails
 )
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -78,8 +78,8 @@ class TestManagement(FormRecognizerTest):
     def test_account_info(self, client):
         info = client.get_resource_details()
 
-        assert info.document_model_limit
-        assert info.document_model_count
+        assert info.custom_document_models.limit
+        assert info.custom_document_models.count
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -103,7 +103,7 @@ class TestManagement(FormRecognizerTest):
     @recorded_by_proxy
     def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="mgmt model")
+        poller = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
         model = poller.result()
 
         model_from_get = client.get_model(model.model_id)
@@ -157,7 +157,7 @@ class TestManagement(FormRecognizerTest):
             # assert op.tags is None
             # test to/from dict
             op_dict = op.to_dict()
-            op = ModelOperationDetails.from_dict(op_dict)
+            op = OperationDetails.from_dict(op_dict)
             assert op.error is None
             model = op.result
             assert model.model_id
@@ -177,7 +177,7 @@ class TestManagement(FormRecognizerTest):
             op = client.get_operation(failed_op.operation_id)
             # test to/from dict
             op_dict = op.to_dict()
-            op = ModelOperationDetails.from_dict(op_dict)
+            op = OperationDetails.from_dict(op_dict)
 
             assert op.result is None
             error = op.error
@@ -206,6 +206,6 @@ class TestManagement(FormRecognizerTest):
             with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2022_06_30_PREVIEW
+                assert dac._api_version == DocumentAnalysisApiVersion.V2022_08_31
             dtc.get_resource_details()
             assert transport.session is not None

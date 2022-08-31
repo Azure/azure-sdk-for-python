@@ -24,7 +24,7 @@ def test_smoke():
         Resource,
     )
     from azure.ai.ml.sweep import SweepJob
-    from azure.ai.ml.entities._assets import Code, Dataset
+    from azure.ai.ml.entities._assets import Code, Data
     from azure.ai.ml.entities._builders import Command, Parallel
 
     Environment()
@@ -32,7 +32,7 @@ def test_smoke():
     Code()
     CommandComponent()
     ParallelComponent()
-    Dataset()
+    Data()
     Command(component="fake_component")
     Parallel(component="fake_component")
     CommandJob()

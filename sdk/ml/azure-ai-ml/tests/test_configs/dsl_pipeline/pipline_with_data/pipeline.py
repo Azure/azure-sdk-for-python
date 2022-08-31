@@ -1,5 +1,4 @@
-from azure.ai.ml import dsl, Input
-from azure.ai.ml.entities import load_component
+from azure.ai.ml import dsl, Input, load_component
 from azure.ai.ml.entities import PipelineJob
 from pathlib import Path
 
@@ -8,9 +7,9 @@ parent_dir = str(Path(__file__).parent)
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    a_func = load_component(yaml_file=parent_dir + "/componentA.yml")
-    b_func = load_component(yaml_file=parent_dir + "/componentB.yml")
-    c_func = load_component(yaml_file=parent_dir + "/componentC.yml")
+    a_func = load_component(path=parent_dir + "/componentA.yml")
+    b_func = load_component(path=parent_dir + "/componentB.yml")
+    c_func = load_component(path=parent_dir + "/componentC.yml")
 
     # 2. Construct pipeline
     @dsl.pipeline(compute="cpu-cluster")
@@ -25,7 +24,8 @@ def generate_dsl_pipeline() -> PipelineJob:
         }
 
     pipeline = pipeline_with_data(
-        Input(type='uri_file', path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"))
+        Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+    )
     pipeline.outputs.pipeline_sample_output_data_A.mode = "upload"
     pipeline.outputs.pipeline_sample_output_data_B.mode = "rw_mount"
     pipeline.outputs.pipeline_sample_output_data_C.mode = "upload"

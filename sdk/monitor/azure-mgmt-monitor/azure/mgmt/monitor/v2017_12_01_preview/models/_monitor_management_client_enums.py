@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class NamespaceClassification(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of namespace
     """
 

@@ -9,10 +9,10 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrL4S6ySq0hFHyK-b9G-E167zAmBD4qy8wdKrSxUf46RXRQKbazUgrQJDX6nIWynBoP2fEpun6DflpO8bQiEOOPqWJ8wmD44c4APiCOuofhHrceEL3hMohMjTOCR8qGYDKJsuk_lQoYmqSX7VnCu5dJi2-4LizJ5Zeq0uuMvE5j8sgAA;
-        fpc=AsoaNo89f21AhVKIKQyfAJA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr0qiMEgnV1XQoPLHpQ-GxAsOz1HoyUsap11FEXQ7KZuWaCrTYMMOGlNxCAf1L5CSUcGA-WmQEt0mYIyqF7Sw4Yaoc6_GfYsy0whnSew--CAB7iEE_IjN-AMEgs5S8Kpm_8ghQoJS8jio8YXp2zej7JmIMYHq-J22X3UMw0wlO5mEgAA;
+        fpc=AlGde4uDPjhHtYuyVr6-h0w; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.28.1
     method: GET
     uri: https://sanitized.microsoftonline.com/common/userrealm/sanitized@test.onmicrosoft.com?api-version=1.0
   response:
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 01 Jun 2022 08:16:35 GMT
+      - Wed, 03 Aug 2022 09:15:49 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AsoaNo89f21AhVKIKQyfAJA; expires=Fri, 01-Jul-2022 08:16:35 GMT; path=/;
+      - fpc=AlGde4uDPjhHtYuyVr6-h0w; expires=Fri, 02-Sep-2022 09:15:49 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12794.7 - NEULR2 ProdSlices
+      - 2.1.13355.6 - NEULR2 ProdSlices
       x-xss-protection:
       - '0'
     status:
@@ -58,13 +58,13 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '2178'
+      - '2199'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 01 Jun 2022 08:16:35 GMT
+      - Wed, 03 Aug 2022 09:15:49 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -76,13 +76,13 @@ interactions:
     headers:
       api-supported-versions: 2021-10-31-preview, 2022-06-01
       content-type: application/json
-      date: Wed, 01 Jun 2022 08:16:35 GMT
-      ms-cv: rgY2gMTifkizQ8+fYTrRPA.0
+      date: Wed, 03 Aug 2022 09:15:49 GMT
+      ms-cv: 7hUyRJLl20+gIMkNgFZkfg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 107ms
+      x-processing-time: 37ms
     status:
       code: 400
       message: Bad Request

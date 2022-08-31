@@ -2,19 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml.constants import SearchSpace
+# pylint: disable=unused-argument,no-self-use
+
+from marshmallow import ValidationError, fields, post_load, pre_dump
+
+from azure.ai.ml._schema._sweep.search_space.normal import NormalSchema, QNormalSchema
+from azure.ai.ml._schema._sweep.search_space.randint import RandintSchema
+from azure.ai.ml._schema._sweep.search_space.uniform import QUniformSchema, UniformSchema
 from azure.ai.ml._schema.core.fields import (
+    DumpableIntegerField,
     DumpableStringField,
     NestedField,
     StringTransformedEnum,
     UnionField,
-    DumpableIntegerField,
 )
-from azure.ai.ml._schema._sweep.search_space.normal import NormalSchema, QNormalSchema
-from azure.ai.ml._schema._sweep.search_space.randint import RandintSchema
-from azure.ai.ml._schema._sweep.search_space.uniform import UniformSchema, QUniformSchema
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from marshmallow import fields, post_load, pre_dump, ValidationError
+from azure.ai.ml.constants import SearchSpace
 
 
 class ChoiceSchema(metaclass=PatchedSchemaMeta):

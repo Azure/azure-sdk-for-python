@@ -2,19 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
 
 import json
 import logging
-import requests
-from docker.models.containers import Container
 from typing import Iterable
 
-from azure.ai.ml.constants import EndpointInvokeFields, LocalEndpointConstants
-from azure.ai.ml.entities import OnlineEndpoint
+import requests
+from docker.models.containers import Container
+
 from azure.ai.ml._local_endpoints import DockerClient, EndpointStub
 from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
-
+from azure.ai.ml.constants import EndpointInvokeFields, LocalEndpointConstants
+from azure.ai.ml.entities import OnlineEndpoint
 
 module_logger = logging.getLogger(__name__)
 
@@ -22,7 +23,8 @@ module_logger = logging.getLogger(__name__)
 class _LocalEndpointHelper(object):
     """A helper class to interact with Azure ML endpoints locally.
 
-    Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.
+    Use this helper to manage Azure ML endpoints locally, e.g. create,
+    invoke, show, list, delete.
     """
 
     def __init__(self):
@@ -141,7 +143,8 @@ class _LocalEndpointHelper(object):
             raise LocalEndpointNotFoundError(endpoint_name=name)
 
     def _convert_container_to_endpoint(self, container: Container, endpoint_json: dict = None) -> OnlineEndpoint:
-        """Converts provided Container for local deployment to OnlineEndpoint entity.
+        """Converts provided Container for local deployment to OnlineEndpoint
+        entity.
 
         :param container: Container for a local deployment.
         :type container: docker.models.containers.Container

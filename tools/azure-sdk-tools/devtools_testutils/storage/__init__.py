@@ -6,8 +6,7 @@ __all__ = [
     "ApiVersionAssertPolicy",
     "service_version_map",
     "StorageTestCase",
-    "StorageRecordedTestCase",
     "ServiceVersion",
     "is_version_before",
-    "LogCaptured"
+    "LogCaptured",
 ]

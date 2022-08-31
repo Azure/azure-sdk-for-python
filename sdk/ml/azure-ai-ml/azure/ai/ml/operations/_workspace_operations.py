@@ -2,37 +2,37 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from time import time
-from typing import Iterable, Dict, Union
+# pylint: disable=protected-access
+
 import logging
+from time import time
+from typing import Dict, Iterable, Union
+
+from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.core.polling import LROPoller
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012022Preview
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ListWorkspaceKeysResult,
-    DiagnoseWorkspaceParameters,
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_05_01.models import (
     DiagnoseRequestProperties,
+    DiagnoseWorkspaceParameters,
+    ListWorkspaceKeysResult,
     WorkspaceUpdateParameters,
 )
-from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
-from azure.identity import ChainedTokenCredential
-from azure.ai.ml.constants import ArmConstants, WorkspaceResourceConstants, LROConfigurations
+from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._utils._azureml_polling import AzureMLPolling, polling_wait
 from azure.ai.ml._utils._workspace_utils import (
     delete_resource_by_arm_id,
     get_deployment_name,
-    get_resource_group_location,
     get_name_for_dependent_resource,
     get_resource_and_group_name,
+    get_resource_group_location,
 )
-from azure.ai.ml.entities import Workspace
-from marshmallow import RAISE
-from azure.core.exceptions import ResourceExistsError
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling, polling_wait
 from azure.ai.ml._version import VERSION
-
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml.constants import ArmConstants, LROConfigurations, WorkspaceResourceConstants
+from azure.ai.ml.entities import Workspace
+from azure.core.polling import LROPoller
+from azure.identity import ChainedTokenCredential
 
 logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
 logger.propagate = False
@@ -40,16 +40,17 @@ module_logger = logging.getLogger(__name__)
 
 
 class WorkspaceOperations:
-    """
-    WorkspaceOperations
+    """WorkspaceOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient012022Preview,
+        service_client: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: ChainedTokenCredential = None,
         **kwargs: Dict,
@@ -72,7 +73,8 @@ class WorkspaceOperations:
 
     @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = "resource_group") -> Iterable[Workspace]:
-        """List all workspaces that the user has access to in the current resource group or subscription
+        """List all workspaces that the user has access to in the current
+        resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
@@ -86,7 +88,8 @@ class WorkspaceOperations:
             )
         else:
             return self._operation.list_by_resource_group(
-                self._resource_group_name, cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
+                self._resource_group_name,
+                cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
             )
 
     @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
@@ -118,8 +121,11 @@ class WorkspaceOperations:
 
     @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     def begin_sync_keys(self, name: str = None, **kwargs: Dict) -> LROPoller:
-        """Triggers the workspace to immediately synchronize keys.
-        If keys for any resource in the workspace are changed, it can take around an hour for them to automatically be updated. This function enables keys to be updated upon request. An example scenario is needing immediate access to storage after regenerating storage keys.
+        """Triggers the workspace to immediately synchronize keys. If keys for
+        any resource in the workspace are changed, it can take around an hour
+        for them to automatically be updated. This function enables keys to be
+        updated upon request. An example scenario is needing immediate access
+        to storage after regenerating storage keys.
 
         :param name: Name of the workspace.
         :type name: str
@@ -136,7 +142,12 @@ class WorkspaceOperations:
             polling_wait(poller, message="Waiting for the workspace keys sync.")
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
-    def begin_create(self, workspace: Workspace, update_dependent_resources: bool = False, **kwargs: Dict) -> LROPoller:
+    def begin_create(
+        self,
+        workspace: Workspace,
+        update_dependent_resources: bool = False,
+        **kwargs: Dict,
+    ) -> LROPoller:
         """Create a new Azure Machine Learning Workspace.
 
         Returns the workspace if already exists.
@@ -162,7 +173,11 @@ class WorkspaceOperations:
             workspace.tags = existing_workspace.tags
             workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
             workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
-            return self.begin_update(workspace, update_dependent_resources=update_dependent_resources, kwargs=kwargs)
+            return self.begin_update(
+                workspace,
+                update_dependent_resources=update_dependent_resources,
+                kwargs=kwargs,
+            )
 
         # add tag in the workspace to indicate which sdk version the workspace is created from
         if workspace.tags is None:
@@ -192,7 +207,11 @@ class WorkspaceOperations:
 
     @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(
-        self, workspace: Workspace, *, update_dependent_resources: bool = False, **kwargs: Dict
+        self,
+        workspace: Workspace,
+        *,
+        update_dependent_resources: bool = False,
+        **kwargs: Dict,
     ) -> Union[LROPoller, Workspace]:
         """Update friendly name, description or tags of a workspace.
 
@@ -250,7 +269,7 @@ class WorkspaceOperations:
 
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
-        """Delete a workspace
+        """Delete a workspace.
 
         :param name: Name of the workspace
         :type name: str
@@ -320,7 +339,7 @@ class WorkspaceOperations:
 
     @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
     def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller:
-        """Diagnose workspace setup problems
+        """Diagnose workspace setup problems.
 
         If your workspace is not working as expected, you can run this diagnosis to check if the workspace has been broken.
         For private endpoint workspace, it will also help check out if the network setup to this workspace and its dependent resource
@@ -371,7 +390,10 @@ class WorkspaceOperations:
         else:
             self._generate_key_vault(workspace.name)
             self._set_val(self.param["keyVaultName"], self.keyVault)
-            self._set_val(self.param["keyVaultResourceGroupName"], resource_group_for_new_resources)
+            self._set_val(
+                self.param["keyVaultResourceGroupName"],
+                resource_group_for_new_resources,
+            )
 
         if workspace.storage_account:
             resource_name, group_name = get_resource_and_group_name(workspace.storage_account)
@@ -381,7 +403,10 @@ class WorkspaceOperations:
         else:
             self._generate_storage(workspace.name)
             self._set_val(self.param["storageAccountName"], self.storage)
-            self._set_val(self.param["storageAccountResourceGroupName"], resource_group_for_new_resources)
+            self._set_val(
+                self.param["storageAccountResourceGroupName"],
+                resource_group_for_new_resources,
+            )
 
         if workspace.application_insights:
             resource_name, group_name = get_resource_and_group_name(workspace.application_insights)
@@ -394,7 +419,10 @@ class WorkspaceOperations:
         else:
             self._generate_appInsights(workspace.name)
             self._set_val(self.param["applicationInsightsName"], self.appInsights)
-            self._set_val(self.param["applicationInsightsResourceGroupName"], resource_group_for_new_resources)
+            self._set_val(
+                self.param["applicationInsightsResourceGroupName"],
+                resource_group_for_new_resources,
+            )
 
         if workspace.container_registry:
             resource_name, group_name = get_resource_and_group_name(workspace.container_registry)
@@ -405,10 +433,22 @@ class WorkspaceOperations:
         if workspace.customer_managed_key:
             self._set_val(self.param["cmk_keyvault"], workspace.customer_managed_key.key_vault)
             self._set_val(self.param["resource_cmk_uri"], workspace.customer_managed_key.key_uri)
-            self._set_val(self.param["encryption_status"], WorkspaceResourceConstants.ENCRYPTION_STATUS_ENABLED)
-            self._set_val(self.param["encryption_cosmosdb_resourceid"], workspace.customer_managed_key.cosmosdb_id)
-            self._set_val(self.param["encryption_storage_resourceid"], workspace.customer_managed_key.storage_id)
-            self._set_val(self.param["encryption_search_resourceid"], workspace.customer_managed_key.search_id)
+            self._set_val(
+                self.param["encryption_status"],
+                WorkspaceResourceConstants.ENCRYPTION_STATUS_ENABLED,
+            )
+            self._set_val(
+                self.param["encryption_cosmosdb_resourceid"],
+                workspace.customer_managed_key.cosmosdb_id,
+            )
+            self._set_val(
+                self.param["encryption_storage_resourceid"],
+                workspace.customer_managed_key.storage_id,
+            )
+            self._set_val(
+                self.param["encryption_search_resourceid"],
+                workspace.customer_managed_key.search_id,
+            )
 
         if workspace.hbi_workspace:
             self._set_val(self.param["confidential_data"], "true")
@@ -449,7 +489,10 @@ class WorkspaceOperations:
         # Application name only allows alphanumeric characters, periods, underscores,
         # hyphens and parenthesis and cannot end in a period
         self.appInsights = get_name_for_dependent_resource(name, "insights")
-        self.resources_being_deployed[self.appInsights] = (ArmConstants.APP_INSIGHTS, None)
+        self.resources_being_deployed[self.appInsights] = (
+            ArmConstants.APP_INSIGHTS,
+            None,
+        )
 
     def _check_workspace_name(self, name) -> str:
         workspace_name = name or self._default_workspace_name

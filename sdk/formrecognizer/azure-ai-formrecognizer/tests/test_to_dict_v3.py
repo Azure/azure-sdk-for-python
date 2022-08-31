@@ -512,7 +512,6 @@ class TestToDict(FormRecognizerTest):
 
     def test_document_page_to_dict(self):
         model = _models.DocumentPage(
-            kind="document",
             page_number=1,
             angle=180.0,
             width=8.5,
@@ -578,7 +577,6 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
-            "kind": "document",
             "page_number": 1,
             "angle": 180.0,
             "width": 8.5,
@@ -910,7 +908,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_model_operation_info_to_dict(self):
-        model = _models.ModelOperationSummary(
+        model = _models.OperationSummary(
             operation_id="id123",
             status="succeeded",
             percent_completed=100,
@@ -918,7 +916,7 @@ class TestToDict(FormRecognizerTest):
             last_updated_on="1994-11-05T13:20:30Z",
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
         )
 
@@ -932,7 +930,7 @@ class TestToDict(FormRecognizerTest):
             "last_updated_on": "1994-11-05T13:20:30Z",
             "kind": "documentModelBuild",
             "resource_location": "https://contoso.com/resource",
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {"test": "value"},
         }
 
@@ -1008,7 +1006,6 @@ class TestToDict(FormRecognizerTest):
             ],
             pages=[
                 _models.DocumentPage(
-                    kind="document",
                     page_number=1,
                     angle=180.0,
                     width=8.5,
@@ -1219,7 +1216,6 @@ class TestToDict(FormRecognizerTest):
             ],
             "pages": [
                 {
-                    "kind": "document",
                     "page_number": 1,
                     "angle": 180.0,
                     "width": 8.5,
@@ -1503,8 +1499,8 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_model_operation_to_dict(self):
-        model = _models.ModelOperationDetails(
-            api_version="2022-06-30-preview",
+        model = _models.OperationDetails(
+            api_version="2022-08-31",
             tags={},
             operation_id="id123",
             status="succeeded",
@@ -1514,13 +1510,13 @@ class TestToDict(FormRecognizerTest):
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
             result=_models.DocumentModelDetails(
-                api_version="2022-06-30-preview",
+                api_version="2022-08-31",
                 tags={},
                 description="my description",
                 created_on="1994-11-05T13:15:30Z",
                 model_id="prebuilt-invoice",
                 doc_types={
-                    "prebuilt-invoice": _models.DocTypeInfo(
+                    "prebuilt-invoice": _models.DocumentTypeDetails(
                         build_mode="template",
                         description="my description",
                         field_confidence={"CustomerName": 95},
@@ -1596,7 +1592,7 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {},
             "operation_id": "id123",
             "status": "succeeded",
@@ -1606,7 +1602,7 @@ class TestToDict(FormRecognizerTest):
             "kind": "documentModelBuild",
             "resource_location": "https://contoso.com/resource",
             "result": {
-                "api_version": "2022-06-30-preview",
+                "api_version": "2022-08-31",
                 "tags": {},
                 "description": "my description",
                 "created_on": "1994-11-05T13:15:30Z",
@@ -1693,7 +1689,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_doc_type_info_to_dict(self):
-        model = _models.DocTypeInfo(
+        model = _models.DocumentTypeDetails(
             description="my description",
             build_mode="neural",
             field_confidence={"CustomerName": 95},
@@ -1806,10 +1802,10 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
             doc_types={
-                "prebuilt-invoice": _models.DocTypeInfo(
+                "prebuilt-invoice": _models.DocumentTypeDetails(
                     build_mode="template",
                     description="my description",
                     field_confidence={"CustomerName": 95},
@@ -1869,7 +1865,7 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {"test": "value"},
             "doc_types": {
                 "prebuilt-invoice": {
@@ -1933,7 +1929,7 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
-            api_version="2022-06-30-preview",
+            api_version="2022-08-31",
             tags={"test": "value"},
         )
 
@@ -1943,18 +1939,18 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
-            "api_version": "2022-06-30-preview",
+            "api_version": "2022-08-31",
             "tags": {"test": "value"},
         }
 
         assert d == final
 
-    def test_account_info_to_dict(self):
-        model = _models.ResourceDetails(document_model_limit=5000, document_model_count=10)
+    def test_resource_details_to_dict(self):
+        model = _models.ResourceDetails(custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10))
 
         d = model.to_dict()
 
-        final = {"document_model_limit": 5000, "document_model_count": 10}
+        final = {"custom_document_models": {"limit": 5000, "count": 10}}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):

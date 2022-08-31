@@ -2,21 +2,25 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
+import copy
 import logging
 from pathlib import Path
-import copy
+from typing import Optional
+
+from marshmallow import fields, post_load, pre_load
+from pydash import objects
 
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY, SOURCE_PATH_CONTEXT_KEY
-from marshmallow import post_load, pre_load, fields
-from pydash import objects
+from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
 
 module_logger = logging.getLogger(__name__)
 
 
 class PathAwareSchema(metaclass=PatchedSchemaMeta):
-    schema_ignored = fields.Str(name="$schema", data_key="$schema", dump_only=True)
+    schema_ignored = fields.Str(data_key="$schema", dump_only=True)
 
     def __init__(self, *args, **kwargs):
         # this will make context of all PathAwareSchema child class point to one object
@@ -52,10 +56,11 @@ class PathAwareSchema(metaclass=PatchedSchemaMeta):
 
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """
-        Marshmallow raises if dump_only fields are present in the schema.
-        This is not desirable for our use case, where read-only properties can be
-        present in the yaml, and should simply be ignored, while we should raise in
+        """Marshmallow raises if dump_only fields are present in the schema.
+        This is not desirable for our use case, where read-only properties can
+        be present in the yaml, and should simply be ignored, while we should
+        raise in.
+
         the case an unknown field is present - to prevent typos.
         """
         if isinstance(data, str) or data is None:
@@ -69,37 +74,40 @@ class PathAwareSchema(metaclass=PatchedSchemaMeta):
 
 
 class YamlFileSchema(PathAwareSchema):
-    """
-    Base class that allows derived classes to be built from paths to separate yaml files in place of inline
-    yaml definitions. This will be transparent to any parent schema containing a nested schema of the derived class,
-    it will not need a union type for the schema, a YamlFile string will be resolved by the pre_load method
-    into a dictionary.
-    On loading the child yaml, update the base path to use for loading sub-child files.
+    """Base class that allows derived classes to be built from paths to
+    separate yaml files in place of inline yaml definitions.
+
+    This will be transparent to any parent schema containing a nested
+    schema of the derived class, it will not need a union type for the
+    schema, a YamlFile string will be resolved by the pre_load method
+    into a dictionary. On loading the child yaml, update the base path
+    to use for loading sub-child files.
     """
 
     def __init__(self, *args, **kwargs):
         self._previous_base_path = None
         super().__init__(*args, **kwargs)
-        self._previous_source_path = None
-        if SOURCE_PATH_CONTEXT_KEY not in self.context:
-            self.context[SOURCE_PATH_CONTEXT_KEY] = None
 
-    @pre_load
-    def load_from_file(self, data, **kwargs):
-        # always push update
-        self._previous_source_path = self.context[SOURCE_PATH_CONTEXT_KEY]
+    def resolve_path(self, data, base_path) -> Optional[Path]:
         if isinstance(data, str) and data.startswith(FILE_PREFIX):
-            self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             # Use directly if absolute path
             path = Path(data[len(FILE_PREFIX) :])
             if not path.is_absolute():
-                path = self._previous_base_path / path
+                path = Path(base_path) / path
                 path.resolve()
+            return path
+        else:
+            return None
+
+    @pre_load
+    def load_from_file(self, data, **kwargs):
+        path = self.resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
+        if path is not None:
+            self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             # Push update
             # deepcopy self.context[BASE_PATH_CONTEXT_KEY] to update old base path
             self.old_base_path = copy.deepcopy(self.context[BASE_PATH_CONTEXT_KEY])
             self.context[BASE_PATH_CONTEXT_KEY] = path.parent
-            self.context[SOURCE_PATH_CONTEXT_KEY] = path
 
             data = load_yaml(path)
             return data
@@ -111,6 +119,4 @@ class YamlFileSchema(PathAwareSchema):
         if self._previous_base_path is not None:
             # pop state
             self.context[BASE_PATH_CONTEXT_KEY] = self._previous_base_path
-        # always pop state
-        self.context[SOURCE_PATH_CONTEXT_KEY] = self._previous_source_path
         return data

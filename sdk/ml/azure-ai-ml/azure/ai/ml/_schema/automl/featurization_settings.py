@@ -2,15 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields as flds, post_load
+# pylint: disable=unused-argument,no-self-use
+
+from marshmallow import fields as flds
+from marshmallow import post_load
+
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants import AutoMLConstants
-from azure.ai.ml._schema import PatchedSchemaMeta, NestedField, StringTransformedEnum, UnionField
 
 
 class ColumnTransformerSchema(metaclass=PatchedSchemaMeta):
     fields = flds.List(flds.Str())
     parameters = flds.Dict(
-        keys=flds.Str(), values=UnionField([flds.Float(), flds.Str()], allow_none=True, missing=None)
+        keys=flds.Str(),
+        values=UnionField([flds.Float(), flds.Str()], allow_none=True, load_default=None),
     )
 
     @post_load
@@ -36,7 +42,11 @@ class NlpFeaturizationSettingsSchema(FeaturizationSettingsSchema):
 
 class TableFeaturizationSettingsSchema(FeaturizationSettingsSchema):
     mode = StringTransformedEnum(
-        allowed_values=[AutoMLConstants.AUTO, AutoMLConstants.OFF, AutoMLConstants.CUSTOM],
+        allowed_values=[
+            AutoMLConstants.AUTO,
+            AutoMLConstants.OFF,
+            AutoMLConstants.CUSTOM,
+        ],
         load_default=AutoMLConstants.AUTO,
     )
     blocked_transformers = flds.List(flds.Str())

@@ -1,0 +1,58 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://someEndpoint/emails:send?api-version=2021-10-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "355",
+        "Content-Type": "application/json",
+        "repeatability-first-sent": "sanitized",
+        "repeatability-request-id": "sanitized",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)",
+        "x-ms-client-request-id": "sanitized",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Fri, 24 Jun 2022 21:20:57 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "sender": "someSender@contoso.com",
+        "content": {
+          "subject": "This is the subject",
+          "plainText": "This is the body"
+        },
+        "importance": "normal",
+        "recipients": {
+          "to": [
+            {
+              "email": "someRecipient@domain.com",
+              "displayName": "Customer Name"
+            }
+          ]
+        },
+        "attachments": [
+          {
+            "name": "readme.txt",
+            "attachmentType": "txt",
+            "contentBytesBase64": "ZW1haWwgdGVzdCBhdHRhY2htZW50"
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-10-01-preview",
+        "Content-Length": "0",
+        "Date": "sanitized",
+        "Operation-Location": "https://someEndpoint/emails/someMessageId/status",
+        "Repeatability-Result": "accepted",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "x-ms-request-id": "someMessageId"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

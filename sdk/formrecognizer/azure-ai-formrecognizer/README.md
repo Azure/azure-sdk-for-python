@@ -28,14 +28,14 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the `2022-06-30-preview` version of the service.
+> Note: This version of the client library defaults to the `2022-08-31` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b5 - Latest beta release | 2.0, 2.1, 2022-06-30-preview
-|3.1.X - Latest GA release| 2.0, 2.1 (default)
+|3.2.0 - Latest GA release | 2.0, 2.1, 2022-08-31
+|3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
 > Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
@@ -45,7 +45,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |API version|Supported clients
 |-|-
-|2022-06-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
@@ -423,7 +423,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
     # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
-    source=container_sas_url, build_mode="template", model_id="my-first-model"
+    build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
 )
 model = poller.result()
 
@@ -518,9 +518,9 @@ credential = AzureKeyCredential("<api_key>")
 
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
-account_info = document_model_admin_client.get_resource_details()
+account_details = document_model_admin_client.get_resource_details()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
-    account_info.document_model_count, account_info.document_model_limit
+    account_details.custom_document_models.count, account_details.custom_document_models.limit
 ))
 
 # Here we get a paged list of all of our models

@@ -109,7 +109,7 @@ class TestAutoMLTextNerJob:
             validation_data=Input(type=AssetTypes.MLTABLE, path=validation_data_uri),
             primary_metric=primary_metric,
             log_verbosity=log_verbosity,
-            identity = identity,
+            identity=identity,
         )
         job.set_limits(max_concurrent_trials=max_concurrent_trials, timeout_minutes=timeout)
         job.set_featurization(dataset_language=dataset_language)
@@ -163,7 +163,7 @@ class TestAutoMLTextNerJob:
             name="text_ner_job",
             experiment_name="experiment",
             tags={"foo_tag": "bar"},
-            identity = identity,
+            identity=identity,
         )
         expected_job.set_limits(max_concurrent_trials=max_concurrent_trials, timeout_minutes=timeout)
         expected_job.set_featurization(dataset_language=dataset_language)
@@ -180,7 +180,7 @@ class TestAutoMLTextNerJob:
             ),
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
         )
-        job_data = JobBaseData(properties=RestAutoMLJob(task_details=task_details, identity = identity))
+        job_data = JobBaseData(properties=RestAutoMLJob(task_details=task_details, identity=identity))
         # Test converting REST object to Job
         converted_to_job = TextNerJob._from_rest_object(job_data)
         assert isinstance(converted_to_job, TextNerJob)

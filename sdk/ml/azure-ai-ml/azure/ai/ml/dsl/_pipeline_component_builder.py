@@ -1,27 +1,38 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import sys
-from typing import Callable, Union
+import typing
 from collections import OrderedDict
 from contextlib import contextmanager
-from inspect import signature, Parameter
+from inspect import Parameter, signature
+from typing import Callable, Union
 
 from azure.ai.ml.constants import ComponentSource
+from azure.ai.ml.entities import PipelineJob
+from azure.ai.ml.entities._inputs_outputs import _get_param_with_standard_annotation
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.entities._job.pipeline._io import PipelineOutputBase, PipelineOutput
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput, PipelineOutputBase
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
-from azure.ai.ml.entities._component._pipeline_component import _PipelineComponent
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
+from azure.ai.ml._utils.utils import (
+    is_valid_node_name,
+    parse_args_description_from_docstring,
+    is_private_preview_enabled,
+)
 
 # Currently we only support single layer pipeline, we may increase this when we supports multiple layer pipeline(
 # nested pipeline, aka sub graph).
 # But we still need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
 
-_BUILDER_STACK_MAX_DEPTH = 2
+_BUILDER_STACK_MAX_DEPTH = 100
 
 
 class _PipelineComponentBuilderStack:
@@ -44,13 +55,23 @@ class _PipelineComponentBuilderStack:
 
         # TODO: validate cycle
         self.items.append(item)
-        if self.size() >= _BUILDER_STACK_MAX_DEPTH:
+        if not is_private_preview_enabled() and self.size() >= 2:
             current_pipelines = [p.name for p in self.items]
             # clear current pipeline stack
             self.items = []
-            msg = "Currently only single layer pipeline is supported. Currently got: {}"
+            msg = "Currently only single layer pipeline is supported. Got: {}"
             raise UserErrorException(
-                message=msg.format(current_pipelines), no_personal_data_message=msg.format("[current_pipeline]")
+                message=msg.format(current_pipelines),
+                no_personal_data_message=msg.format("[current_pipeline]"),
+            )
+        if self.size() >= _BUILDER_STACK_MAX_DEPTH:
+            current_pipeline = self.items[0].name
+            # clear current pipeline stack
+            self.items = []
+            msg = "Pipeline {} depth exceeds limitation. Max depth: {}"
+            raise UserErrorException(
+                message=msg.format(current_pipeline, _BUILDER_STACK_MAX_DEPTH),
+                no_personal_data_message=msg.format("[current_pipeline]", _BUILDER_STACK_MAX_DEPTH),
             )
 
     def is_empty(self):
@@ -130,45 +151,23 @@ class PipelineComponentBuilder:
         self._args_description = parse_args_description_from_docstring(func.__doc__)
         if name is None:
             name = func.__name__
-        if version is None:
-            version = "1"
         # List of nodes, order by it's creation order in pipeline.
         self.nodes = []
         # A dict of inputs name to InputDefinition.
         # TODO: infer pipeline component input meta from assignment
-        self.inputs = {}
-        for p in signature(func).parameters.values():
-            if p.default is Parameter.empty or p.default is None:
-                self.inputs[p.name] = {"type": "unknown", "default": None}
-            else:
-                default_type = type(p.default).__name__
-                self.inputs[p.name] = {
-                    "type": self.DEFAULT_DATA_TYPE_MAPPING.get(default_type, default_type),
-                    "default": p.default,
-                }
-            # add arg description
-            if p.name in self._args_description:
-                self.inputs[p.name]["description"] = self._args_description[p.name]
-        # A dict of outputs name to OutputDefinition.
-        self.outputs = {}
-        self.pipeline_component = _PipelineComponent(
-            name=name,
-            version=version,
-            display_name=display_name,
-            description=description,
-            inputs=self.inputs,
-            outputs=self.outputs,
-            components={},
-            _source=ComponentSource.DSL,
-        )
-        self._name = self.pipeline_component.name
+        self.inputs = self._build_inputs(func)
+        self._name = name
+        self.version = version
+        self.display_name = display_name
+        self.description = description
         self.compute = compute
         self.default_datastore = default_datastore
         self.tags = tags
 
     @property
     def name(self):
-        """Name of pipeline builder, it's name will be same as the pipeline definition it builds."""
+        """Name of pipeline builder, it's name will be same as the pipeline
+        definition it builds."""
         return self._name
 
     def add_node(self, node: Union[BaseNode, AutoMLJob]):
@@ -179,7 +178,10 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, kwargs) -> _PipelineComponent:
+    def build(self) -> PipelineComponent:
+        # Clear nodes as we may call build multiple times.
+        self.nodes = []
+        kwargs = _build_pipeline_parameter(self.func)
         # We use this stack to store the dsl pipeline definition hierarchy
         _definition_builder_stack.push(self)
 
@@ -195,12 +197,36 @@ class PipelineComponentBuilder:
         if outputs is None:
             outputs = {}
 
-        self._update_outputs(outputs)
-        self._update_nodes_variable_names(_locals)
-        return self.pipeline_component
+        self._update_nodes_inputs()
 
-    def _update_outputs(self, outputs):
-        """Validate if dsl.pipeline returns valid outputs and set output binding.
+        jobs = self._update_nodes_variable_names(_locals)
+        pipeline_component = PipelineComponent(
+            name=self.name,
+            version=self.version,
+            display_name=self.display_name,
+            description=self.description,
+            inputs=self.inputs,
+            jobs=jobs,
+            tags=self.tags,
+            _source=ComponentSource.DSL,
+        )
+        # TODO: Refine here. The output can not be built first then pass into pipeline component creation,
+        # exception will be raised in component.build_validate_io().
+        pipeline_component._outputs = self._build_pipeline_outputs(outputs)
+        return pipeline_component
+
+    def _build_inputs(self, func):
+        inputs = _get_param_with_standard_annotation(func, is_func=True)
+        for k, v in inputs.items():
+            # add arg description
+            if k in self._args_description:
+                v["description"] = self._args_description[k]
+        return inputs
+
+    def _build_pipeline_outputs(self, outputs: typing.Dict[str, PipelineOutputBase]):
+        """Validate if dsl.pipeline returns valid outputs and set output
+        binding. Create PipelineOutput as pipeline's output definition based on
+        node outputs from return.
 
         :param outputs: Outputs of pipeline
         :type outputs: Mapping[str, azure.ai.ml.Output]
@@ -217,16 +243,27 @@ class PipelineComponentBuilder:
             if not isinstance(key, str) or not isinstance(value, PipelineOutputBase) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
 
+            # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             pipeline_output = PipelineOutput(
-                name=key, data=None, meta=None, owner="pipeline", description=self._args_description.get(key, None)
+                name=key,
+                data=None,
+                meta=None,
+                owner="pipeline",
+                description=self._args_description.get(key, None),
             )
-            # set bound component's output to data binding
-            value._owner.outputs[value._name]._data = pipeline_output
+            value._owner.outputs[value._name]._data = PipelineOutput(
+                name=key,
+                data=value._data,
+                meta=None,
+                owner="pipeline",
+                description=self._args_description.get(key, None),
+            )
             output_dict[key] = pipeline_output
-        self.pipeline_component._outputs = output_dict
+        return output_dict
 
     def _update_nodes_variable_names(self, func_variables: dict):
-        """Update nodes list to ordered dict with variable name key and component object value.
+        """Update nodes list to ordered dict with variable name key and
+        component object value.
 
         Variable naming priority:
              1. Specified by using xxx.name.
@@ -248,7 +285,6 @@ class PipelineComponentBuilder:
                  e.g.
                  my_node = module_func()     # final node name is "my_node"
                  module_func_1()             # final node name is its component name
-
         """
 
         def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]):
@@ -265,7 +301,7 @@ class PipelineComponentBuilder:
         result = OrderedDict()
 
         for k, v in func_variables.items():
-            if not isinstance(v, (BaseNode, AutoMLJob)):
+            if not isinstance(v, (BaseNode, AutoMLJob, PipelineJob)):
                 continue
             if getattr(v, "_instance_id", None) not in valid_component_ids:
                 continue
@@ -312,4 +348,37 @@ class PipelineComponentBuilder:
             final_name = id_name_dict[_id]
             node.name = final_name
             result[final_name] = node
-        self.pipeline_component._components = result
+        return result
+
+    def _update_nodes_inputs(self) -> None:
+        """Update nodes' input if it is PipelineExpression, transform to data binding string."""
+        for node in self.nodes:
+            for node_input_name in node.inputs:
+                node_input = node.inputs[node_input_name]
+                if isinstance(node_input._data, PipelineExpression):
+                    node_input._data = node_input._data._data_binding()
+
+
+def _build_pipeline_parameter(func):
+    # transform kwargs
+    transformed_kwargs = {}
+
+    def all_params(parameters):
+        for value in parameters.values():
+            yield value
+
+    if func is None:
+        return transformed_kwargs
+
+    parameters = all_params(signature(func).parameters)
+    # transform default values
+    for left_args in parameters:
+        if left_args.name not in transformed_kwargs.keys():
+            default = left_args.default if left_args.default is not Parameter.empty else None
+            transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(left_args.name, default)
+    return transformed_kwargs
+
+
+def _wrap_pipeline_parameter(key, value):
+    # Note: here we build PipelineInput to mark this input as a data binding.
+    return PipelineInput(name=key, meta=None, data=value)

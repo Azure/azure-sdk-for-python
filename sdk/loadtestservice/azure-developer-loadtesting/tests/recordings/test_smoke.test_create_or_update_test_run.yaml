@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"testId": "TEST_ID", "displayName": "TestingResource", "requestSamplers":
+      [], "errors": [], "percentiles": ["90"], "groupByInterval": "5s"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '156'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-developer-loadtesting/1.0.0b1 Python/3.8.8 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://myservice.azure.com/testruns/TEST_RUN_ID?api-version=2022-06-01-preview
+  response:
+    body:
+      string: '{}'
+    headers:
+      api-supported-versions:
+      - 2021-07-01-preview, 2022-06-01-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '3675'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 27 Jul 2022 08:20:14 GMT
+      mise-correlation-id:
+      - 9f63646f-7bc1-47c9-8a69-6bffb3b63471
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

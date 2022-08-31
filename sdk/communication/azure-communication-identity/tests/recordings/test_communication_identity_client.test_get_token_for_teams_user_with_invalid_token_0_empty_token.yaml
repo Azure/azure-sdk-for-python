@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 01 Jun 2022 08:16:13 GMT
+      - Wed, 03 Aug 2022 09:15:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -28,9 +28,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 01 Jun 2022 08:16:14 GMT
+      - Wed, 03 Aug 2022 09:15:01 GMT
       ms-cv:
-      - BPTD7HpwhkuFLPsqeBiygw.0
+      - 7KrUNc1QhEaSLSPw85d33g.0
       request-context:
       - appId=
       strict-transport-security:
@@ -40,7 +40,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 107ms
+      - 25ms
     status:
       code: 401
       message: Unauthorized

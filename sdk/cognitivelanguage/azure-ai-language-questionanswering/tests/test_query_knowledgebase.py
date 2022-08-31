@@ -282,10 +282,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 deployment_name='test'
             )
 
-        assert len(output.answers) == 2
-        confident_answers = [a for a in output.answers if a.confidence > 0.9]
+        assert len(output.answers) == 3
+        confident_answers = [a for a in output.answers if a.confidence > 0.7]
         assert len(confident_answers) == 1
-        assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
+        assert confident_answers[0].source == "surface-book-user-guide-EN.pdf"
 
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_overload(self, qna_account, qna_key, qna_project):
@@ -305,10 +305,10 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 include_unstructured_sources=True
             )
 
-        assert len(output.answers) == 2
-        confident_answers = [a for a in output.answers if a.confidence > 0.9]
+        assert len(output.answers) == 3
+        confident_answers = [a for a in output.answers if a.confidence > 0.7]
         assert len(confident_answers) == 1
-        assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
+        assert confident_answers[0].source == "surface-book-user-guide-EN.pdf"
 
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_with_followup(self, qna_account, qna_key, qna_project):
@@ -331,9 +331,9 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
                 project_name=qna_project,
                 deployment_name='test'
             )
-            confident_answers = [a for a in output.answers if a.confidence > 0.9]
+            confident_answers = [a for a in output.answers if a.confidence > 0.7]
             assert len(confident_answers) == 1
-            assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
+            assert confident_answers[0].source == "surface-book-user-guide-EN.pdf"
 
             query_params = AnswersOptions(
                 question="How long it takes to charge Surface?",
@@ -357,7 +357,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             )
 
             assert output.answers
-            confident_answers = [a for a in output.answers if a.confidence > 0.5]
+            confident_answers = [a for a in output.answers if a.confidence > 0.48]
             assert len(confident_answers) == 1
             assert confident_answers[0].short_answer.text == " two to four hours"
 

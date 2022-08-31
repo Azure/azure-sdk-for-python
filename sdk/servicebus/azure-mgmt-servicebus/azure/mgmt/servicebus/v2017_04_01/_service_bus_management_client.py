@@ -6,34 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import ServiceBusManagementClientConfiguration
+from .operations import DisasterRecoveryConfigsOperations, EventHubsOperations, MigrationConfigsOperations, NamespacesOperations, Operations, PremiumMessagingRegionsOperations, QueuesOperations, RegionsOperations, RulesOperations, SubscriptionsOperations, TopicsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import ServiceBusManagementClientConfiguration
-from .operations import NamespacesOperations
-from .operations import QueuesOperations
-from .operations import TopicsOperations
-from .operations import DisasterRecoveryConfigsOperations
-from .operations import EventHubsOperations
-from .operations import MigrationConfigsOperations
-from .operations import Operations
-from .operations import PremiumMessagingRegionsOperations
-from .operations import RulesOperations
-from .operations import RegionsOperations
-from .operations import SubscriptionsOperations
-from . import models
-
-
-class ServiceBusManagementClient(object):
+class ServiceBusManagementClient:    # pylint: disable=too-many-instance-attributes
     """Azure Service Bus client.
 
     :ivar namespaces: NamespacesOperations operations
@@ -43,15 +32,18 @@ class ServiceBusManagementClient(object):
     :ivar topics: TopicsOperations operations
     :vartype topics: azure.mgmt.servicebus.v2017_04_01.operations.TopicsOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigsOperations operations
-    :vartype disaster_recovery_configs: azure.mgmt.servicebus.v2017_04_01.operations.DisasterRecoveryConfigsOperations
+    :vartype disaster_recovery_configs:
+     azure.mgmt.servicebus.v2017_04_01.operations.DisasterRecoveryConfigsOperations
     :ivar event_hubs: EventHubsOperations operations
     :vartype event_hubs: azure.mgmt.servicebus.v2017_04_01.operations.EventHubsOperations
     :ivar migration_configs: MigrationConfigsOperations operations
-    :vartype migration_configs: azure.mgmt.servicebus.v2017_04_01.operations.MigrationConfigsOperations
+    :vartype migration_configs:
+     azure.mgmt.servicebus.v2017_04_01.operations.MigrationConfigsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicebus.v2017_04_01.operations.Operations
     :ivar premium_messaging_regions: PremiumMessagingRegionsOperations operations
-    :vartype premium_messaging_regions: azure.mgmt.servicebus.v2017_04_01.operations.PremiumMessagingRegionsOperations
+    :vartype premium_messaging_regions:
+     azure.mgmt.servicebus.v2017_04_01.operations.PremiumMessagingRegionsOperations
     :ivar rules: RulesOperations operations
     :vartype rules: azure.mgmt.servicebus.v2017_04_01.operations.RulesOperations
     :ivar regions: RegionsOperations operations
@@ -60,70 +52,92 @@ class ServiceBusManagementClient(object):
     :vartype subscriptions: azure.mgmt.servicebus.v2017_04_01.operations.SubscriptionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
+     subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2017-04-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = ServiceBusManagementClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = ServiceBusManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
+        self._serialize.client_side_validation = False
         self.namespaces = NamespacesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.queues = QueuesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.topics = TopicsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.event_hubs = EventHubsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.migration_configs = MigrationConfigsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.premium_messaging_regions = PremiumMessagingRegionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.rules = RulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.regions = RegionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.subscriptions = SubscriptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

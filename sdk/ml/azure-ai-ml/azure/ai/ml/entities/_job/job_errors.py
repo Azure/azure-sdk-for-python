@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import re
 
-from azure.ai.ml._ml_exceptions import MlException, ErrorCategory, ErrorTarget
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 class JobParsingError(MlException):

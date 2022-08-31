@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._key_vault_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccessPolicyEntry(msrest.serialization.Model):
@@ -49,7 +51,7 @@ class AccessPolicyEntry(msrest.serialization.Model):
         *,
         tenant_id: str,
         object_id: str,
-        permissions: "Permissions",
+        permissions: "_models.Permissions",
         application_id: Optional[str] = None,
         **kwargs
     ):
@@ -84,8 +86,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a vault name could not be used. The Reason element is only
-     returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
-     "AlreadyExists".
+     returned if NameAvailable is false. Known values are: "AccountNameInvalid", "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.keyvault.v2016_10_01.models.Reason
     :ivar message: An error message explaining the Reason value in more detail.
     :vartype message: str
@@ -146,7 +147,7 @@ class DeletedVault(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["DeletedVaultProperties"] = None,
+        properties: Optional["_models.DeletedVaultProperties"] = None,
         **kwargs
     ):
         """
@@ -177,7 +178,7 @@ class DeletedVaultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DeletedVault"]] = None,
+        value: Optional[List["_models.DeletedVault"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -302,9 +303,9 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        service_specification: Optional["ServiceSpecification"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -387,7 +388,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -426,10 +427,10 @@ class Permissions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        keys: Optional[List[Union[str, "KeyPermissions"]]] = None,
-        secrets: Optional[List[Union[str, "SecretPermissions"]]] = None,
-        certificates: Optional[List[Union[str, "CertificatePermissions"]]] = None,
-        storage: Optional[List[Union[str, "StoragePermissions"]]] = None,
+        keys: Optional[List[Union[str, "_models.KeyPermissions"]]] = None,
+        secrets: Optional[List[Union[str, "_models.SecretPermissions"]]] = None,
+        certificates: Optional[List[Union[str, "_models.CertificatePermissions"]]] = None,
+        storage: Optional[List[Union[str, "_models.StoragePermissions"]]] = None,
         **kwargs
     ):
         """
@@ -523,7 +524,7 @@ class ResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Resource"]] = None,
+        value: Optional[List["_models.Resource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -552,7 +553,7 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["LogSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
         **kwargs
     ):
         """
@@ -568,10 +569,10 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: Required. SKU family name. Possible values include: "A".
+    :ivar family: Required. SKU family name. Known values are: "A".
     :vartype family: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuFamily
     :ivar name: Required. SKU name to specify whether the key vault is a standard vault or a
-     premium vault. Possible values include: "standard", "premium".
+     premium vault. Known values are: "standard", "premium".
     :vartype name: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuName
     """
 
@@ -588,15 +589,15 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        family: Union[str, "SkuFamily"] = "A",
-        name: Union[str, "SkuName"],
+        family: Union[str, "_models.SkuFamily"] = "A",
+        name: Union[str, "_models.SkuName"],
         **kwargs
     ):
         """
-        :keyword family: Required. SKU family name. Possible values include: "A".
+        :keyword family: Required. SKU family name. Known values are: "A".
         :paramtype family: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuFamily
         :keyword name: Required. SKU name to specify whether the key vault is a standard vault or a
-         premium vault. Possible values include: "standard", "premium".
+         premium vault. Known values are: "standard", "premium".
         :paramtype name: str or ~azure.mgmt.keyvault.v2016_10_01.models.SkuName
         """
         super(Sku, self).__init__(**kwargs)
@@ -646,7 +647,7 @@ class Vault(Resource):
         self,
         *,
         location: str,
-        properties: "VaultProperties",
+        properties: "_models.VaultProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -701,7 +702,7 @@ class VaultAccessPolicyParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "VaultAccessPolicyProperties",
+        properties: "_models.VaultAccessPolicyProperties",
         **kwargs
     ):
         """
@@ -737,7 +738,7 @@ class VaultAccessPolicyProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        access_policies: List["AccessPolicyEntry"],
+        access_policies: List["_models.AccessPolicyEntry"],
         **kwargs
     ):
         """
@@ -817,7 +818,7 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
         self,
         *,
         location: str,
-        properties: "VaultProperties",
+        properties: "_models.VaultProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -853,7 +854,7 @@ class VaultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Vault"]] = None,
+        value: Optional[List["_models.Vault"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -886,7 +887,7 @@ class VaultPatchParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["VaultPatchProperties"] = None,
+        properties: Optional["_models.VaultPatchProperties"] = None,
         **kwargs
     ):
         """
@@ -924,7 +925,7 @@ class VaultPatchProperties(msrest.serialization.Model):
      enabled for this key vault. The property may not be set to false.
     :vartype enable_soft_delete: bool
     :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: "recover", "default".
+     or not. Known values are: "recover", "default".
     :vartype create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault; it is only effective if soft delete is also enabled. Once activated, the
@@ -948,13 +949,13 @@ class VaultPatchProperties(msrest.serialization.Model):
         self,
         *,
         tenant_id: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        access_policies: Optional[List["AccessPolicyEntry"]] = None,
+        sku: Optional["_models.Sku"] = None,
+        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
         enabled_for_deployment: Optional[bool] = None,
         enabled_for_disk_encryption: Optional[bool] = None,
         enabled_for_template_deployment: Optional[bool] = None,
         enable_soft_delete: Optional[bool] = None,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         enable_purge_protection: Optional[bool] = None,
         **kwargs
     ):
@@ -980,7 +981,7 @@ class VaultPatchProperties(msrest.serialization.Model):
          is enabled for this key vault. The property may not be set to false.
         :paramtype enable_soft_delete: bool
         :keyword create_mode: The vault's create mode to indicate whether the vault need to be
-         recovered or not. Possible values include: "recover", "default".
+         recovered or not. Known values are: "recover", "default".
         :paramtype create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this vault; it is only effective if soft delete is also enabled. Once activated,
@@ -1031,7 +1032,7 @@ class VaultProperties(msrest.serialization.Model):
      that is, the property does not accept false as its value.
     :vartype enable_soft_delete: bool
     :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: "recover", "default".
+     or not. Known values are: "recover", "default".
     :vartype create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -1063,14 +1064,14 @@ class VaultProperties(msrest.serialization.Model):
         self,
         *,
         tenant_id: str,
-        sku: "Sku",
-        access_policies: Optional[List["AccessPolicyEntry"]] = None,
+        sku: "_models.Sku",
+        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
         vault_uri: Optional[str] = None,
         enabled_for_deployment: Optional[bool] = None,
         enabled_for_disk_encryption: Optional[bool] = None,
         enabled_for_template_deployment: Optional[bool] = None,
         enable_soft_delete: Optional[bool] = None,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         enable_purge_protection: Optional[bool] = None,
         **kwargs
     ):
@@ -1102,7 +1103,7 @@ class VaultProperties(msrest.serialization.Model):
          - that is, the property does not accept false as its value.
         :paramtype enable_soft_delete: bool
         :keyword create_mode: The vault's create mode to indicate whether the vault need to be
-         recovered or not. Possible values include: "recover", "default".
+         recovered or not. Known values are: "recover", "default".
         :paramtype create_mode: str or ~azure.mgmt.keyvault.v2016_10_01.models.CreateMode
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this vault. Setting this property to true activates protection against purge for
