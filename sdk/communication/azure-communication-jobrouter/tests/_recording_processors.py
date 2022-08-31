@@ -21,7 +21,7 @@ def _is_merge_patch_payload(entity):
     return content_type.startswith(router_additional_accepted_content_type)
 
 def _is_text_payload_internal(entity):
-    return is_text_payload(entity) or _is_merge_patch_payload(entity)
+    return is_text_payload(entity)
 
 def sanitize_query_params(value,  # type: str
                           exceptions,  # type: List[str]
@@ -136,15 +136,22 @@ class RouterScrubber(RecordingProcessor):
         return request
 
     def process_response(self, response):
-        if _is_text_payload_internal(response) and response['body']:
+        if _is_text_payload_internal(response) and 'body' in response:
+            import six
             try:
-                if isinstance(response['body'], str):
-                    body_as_string = response["body"]
-                    body_as_string = re.sub(r"\\.", '', body_as_string)
-                    body = json.loads(body_as_string)
+                if isinstance(response['body'], dict) \
+                        and 'string' in response['body']:
+                    body = response["body"]["string"]
+
+                    if body == b"":
+                        return response
+
+                    body_is_string = isinstance(body, six.string_types)
+                    if body_is_string and body and not body.isspace():
+                        body = json.loads(body)
 
                     body = self._scrub(body, 0)
-                    response["body"] = json.dumps(body)
+                    response["body"]["string"] = json.dumps(body).encode('utf-8')
             except (KeyError, ValueError) as e:
                 raise e
 

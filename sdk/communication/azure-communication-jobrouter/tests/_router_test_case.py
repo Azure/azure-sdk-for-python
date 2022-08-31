@@ -7,8 +7,6 @@ from abc import abstractmethod
 
 from _shared.testcase import (
     CommunicationTestCase,
-    BodyReplacerProcessor,
-    ResponseReplacerProcessor
 )
 from azure_devtools.scenario_tests import LargeResponseBodyReplacer
 from _recording_processors import (
@@ -34,8 +32,7 @@ class RouterTestCaseBase(CommunicationTestCase):
         super(RouterTestCaseBase, self).setUp()
 
         self.recording_processors.extend([
-            LargeResponseBodyReplacer(),
-            RouterScrubber(keys = ["etag"]),
+            RouterScrubber(keys = ["etag", "functionUri", "functionKey", "appKey", "clientId"]),
             RouterHeaderSanitizer(headers = ["etag"]),
         ])
 
