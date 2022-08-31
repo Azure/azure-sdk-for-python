@@ -86,24 +86,22 @@ from ._models_py3 import TextAnalyticsError
 from ._models_py3 import TextAnalyticsWarning
 
 
-from ._text_analytics_client_enums import (
-    Association,
-    Certainty,
-    Conditionality,
-    DocumentSentimentValue,
-    ErrorCodeValue,
-    HealthcareEntityCategory,
-    InnerErrorCodeValue,
-    PiiCategory,
-    PiiTaskParametersDomain,
-    RelationType,
-    SentenceSentimentValue,
-    State,
-    StringIndexType,
-    TargetRelationType,
-    TokenSentimentValue,
-    WarningCodeValue,
-)
+from ._text_analytics_client_enums import Association
+from ._text_analytics_client_enums import Certainty
+from ._text_analytics_client_enums import Conditionality
+from ._text_analytics_client_enums import DocumentSentimentValue
+from ._text_analytics_client_enums import ErrorCodeValue
+from ._text_analytics_client_enums import HealthcareEntityCategory
+from ._text_analytics_client_enums import InnerErrorCodeValue
+from ._text_analytics_client_enums import PiiCategory
+from ._text_analytics_client_enums import PiiTaskParametersDomain
+from ._text_analytics_client_enums import RelationType
+from ._text_analytics_client_enums import SentenceSentimentValue
+from ._text_analytics_client_enums import State
+from ._text_analytics_client_enums import StringIndexType
+from ._text_analytics_client_enums import TargetRelationType
+from ._text_analytics_client_enums import TokenSentimentValue
+from ._text_analytics_client_enums import WarningCodeValue
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

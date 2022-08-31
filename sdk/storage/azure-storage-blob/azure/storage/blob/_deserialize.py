@@ -4,22 +4,35 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
-from typing import (  # pylint: disable=unused-import
-    Tuple, Dict, List,
+
+from typing import (
+    Dict, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
-try:
-    from urllib.parse import unquote
-except ImportError:
-    from urllib import unquote
-from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties, ImmutabilityPolicy
+from urllib.parse import unquote
+from xml.etree.ElementTree import Element
+
+from ._models import (
+    BlobAnalyticsLogging,
+    BlobProperties,
+    BlobType,
+    ContainerProperties,
+    ContentSettings,
+    CopyProperties,
+    CorsRule,
+    ImmutabilityPolicy,
+    LeaseProperties,
+    Metrics,
+    ObjectReplicationPolicy,
+    ObjectReplicationRule,
+    RetentionPolicy,
+    StaticWebsite,
+)
 from ._shared.models import get_enum_value
 from ._shared.response_handlers import deserialize_metadata
-from ._models import ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
-    StaticWebsite, ObjectReplicationPolicy, ObjectReplicationRule
 
 if TYPE_CHECKING:
-    from ._generated.models import PageList
+    from ._generated.models import BlobTag, PageList
 
 
 def deserialize_pipeline_response_into_cls(cls_method, response, obj, headers):
@@ -172,3 +185,27 @@ def parse_tags(generated_tags):
         tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
         return tag_dict
     return None
+
+
+def load_single_xml_node(element: Element, name: str) -> Union[Element, None]:
+    return element.find(name)
+
+
+def load_many_xml_nodes(element: Element, name: str, wrapper: Element = None) -> List[Union[Element, None]]:
+    if wrapper:
+        element = load_single_xml_node(element, wrapper)
+    return list(element.findall(name))
+
+
+def load_xml_string(element: Element, name: str) -> str:
+    node = element.find(name)
+    if node is None or not node.text:
+        return None
+    return node.text
+
+
+def load_xml_int(element: Element, name: str) -> int:
+    node = element.find(name)
+    if node is None or not node.text:
+        return None
+    return int(node.text)
