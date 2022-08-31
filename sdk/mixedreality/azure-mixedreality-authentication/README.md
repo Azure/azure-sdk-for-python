@@ -12,7 +12,7 @@ token from the STS that can be used to access Mixed Reality services.
 
 ## Currently supported environments
 
-This package has been tested with Python 3.6+.
+This package has been tested with Python 3.7+.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ This package has been tested with Python 3.6+.
   - [Azure Remote Rendering](https://docs.microsoft.com/azure/remote-rendering/)
   - [Azure Spatial Anchors](https://docs.microsoft.com/azure/spatial-anchors/)
 - Familiarity with the authentication and credential concepts from the [Azure Identity library][azure_identity].
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 
 ## Install the package
 
