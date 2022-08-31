@@ -77,6 +77,6 @@ s/acr/firewall to grant access."}]}
 [anonymous pull access]: https://docs.microsoft.com/azure/container-registry/anonymous-pull-access
 [troubleshoot registry login]: https://docs.microsoft.com/azure/container-registry/container-registry-troubleshoot-login
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#authenticate-with-defaultazurecredential
-[enable client logging]: https://github.com/Azure/azure-sdk-for-python/blob/4a4fce380969974dbd8cc2245bb3a4b77aa68679/sdk/containerregistry/container-registry/TROUBLESHOOTING.md#enable-client-logging
+[enable client logging]: https://github.com/Azure/azure-sdk-for-python/blob/6f443271cb603025e1351f3356eb2606d79e00ec/sdk/containerregistry/azure-containerregistry/TROUBLESHOOTING.md#enable-client-logging
 [troubleshooting guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
 [troubleshoot network issues with registry]: https://docs.microsoft.com/azure/container-registry/container-registry-troubleshoot-access
