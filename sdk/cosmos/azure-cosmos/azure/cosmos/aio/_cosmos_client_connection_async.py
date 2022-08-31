@@ -59,7 +59,7 @@ from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
-from ..cosmos_diagnostics import CosmosDiagnostics
+from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
 ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
@@ -146,8 +146,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
-        self._user_agent = _utils.get_user_agent_async()
-        self.diagnostics = CosmosDiagnostics(ua=self._user_agent)
+
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
@@ -181,7 +180,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
-
+        self._user_agent = _utils.get_user_agent_async()
 
         credentials_policy = None
         if self.aad_credentials:
@@ -198,7 +197,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            CosmosHttpLoggingPolicy(**kwargs),
             ]
 
         transport = kwargs.pop("transport", None)
@@ -254,7 +253,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         else:
             # Use database_account if no consistency passed in to verify consistency level to be used
             user_defined_consistency = self._check_if_account_session_consistency(database_account)
-        self.diagnostics.consistency_level = user_defined_consistency
         if user_defined_consistency == documents.ConsistencyLevel.Session:
             # create a Session if the user wants Session consistency
             self.session = _session.Session(self.url_connection)

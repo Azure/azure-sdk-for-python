@@ -602,6 +602,31 @@ even when it isn't enabled for the client:
 database = client.create_database(DATABASE_NAME, logging_enable=True)
 ```
 
+Alternatively, you can log using the CosmosHttpLoggingPolicy, which extends from the azure core HttpLoggingPolicy, by passing in your logger to the `logger` argument.
+By default, it will use the behaviour from HttpLoggingPolicy. The `enable_diagnostics_logging` argument will add additional diagnostic information to the logger.
+```python
+import logging
+from azure.cosmos import CosmosClient
+
+#Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a file output
+handler = logging.FileHandler(filename="azure")
+logger.addHandler(handler)
+
+# This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy
+client = CosmosClient(URL, credential=KEY, logger=logger, enable_diagnostics_logging=True)
+```
+| Name                    | Policy Flavor    | Parameters                 | Accepted in Init? | Accepted in Request? | Description                                                                   |
+|-------------------------|------------------|----------------------------|----------------|------------------|-------------------------------------------------------------------------------|
+| CosmosHttpLoggingPolicy | SansIOHTTPPolicy |                    |                |                  |                                                                               |
+|       |   |  logger  | X              | X                | If specified, it will be used to log information.                             |
+|       |   | enable_diagnostics_logging | X              | X                | Used to enable logging additional diagnostic information. Defaults to `False` |
+You can learn more about the different policies and how they work [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+
 ## Next steps
 
 For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos DB documentation][cosmos_docs] on docs.microsoft.com.

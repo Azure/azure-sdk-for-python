@@ -143,12 +143,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
-        self._user_agent = _utils.get_user_agent()
-        self.diagnostics = CosmosDiagnostics(ua=self._user_agent)
+
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
-        # Keep Track of Last Exceptions
-        self.last_exceptions = None
 
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
@@ -180,6 +177,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
+        self._user_agent = _utils.get_user_agent()
 
         credentials_policy = None
         if self.aad_credentials:
@@ -196,7 +194,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            CosmosHttpLoggingPolicy(enable_diagnostics_logging=kwargs.pop("enable_diagnostics_logging",None), **kwargs),
+            CosmosHttpLoggingPolicy(**kwargs),
         ]
 
         transport = kwargs.pop("transport", None)
@@ -239,7 +237,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         else:
             # Set consistency level header to be used for the client
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-        self.diagnostics.consistency_level = consistency_level
         if consistency_level == documents.ConsistencyLevel.Session:
             # create a session - this is maintained only if the default consistency level
             # on the client is set to session, or if the user explicitly sets it as a property

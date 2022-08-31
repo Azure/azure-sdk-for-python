@@ -136,8 +136,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
             **kwargs
         )
-    #Will make updating diagnostics less verbose
-    ir = response.http_response.internal_response
+
     response = response.http_response
     headers = dict(response.headers)
 
@@ -145,8 +144,6 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     data = response.body()
     if data:
         data = data.decode("utf-8")
-    global_endpoint_manager.Client.diagnostics.update_diagnostics(header=headers, body=data, elapsed_time=ir.elapsed, status_code=ir.status_code, status_reason=ir.reason, response_text=ir.text,
-                                                                  request_headers=ir.request.headers, operation_type=request_params.operation_type, resource_type=request_params.resource_type)
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
     if response.status_code == 409:

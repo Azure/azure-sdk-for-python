@@ -3,6 +3,7 @@
 ### 4.3.1 (Unreleased)
 
 #### Features Added
+- Added `CosmosHttpLoggingPolicy` to replace `HttpLoggingPolicy` for logging HTTP sessions. 
 
 #### Breaking Changes
 

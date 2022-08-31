@@ -9,18 +9,19 @@ import types
 
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
-    def __init__(self, logger=None, enable_diagnostics_logging=False, **kwargs):
-        self._diagnostics_mode = enable_diagnostics_logging
-        if not enable_diagnostics_logging:
-            super().__init__(logger, **kwargs)
-        else:
+    def __init__(self, logger=None, **kwargs):
+        self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", None)
+        super().__init__(logger, **kwargs)
+        if self._enable_diagnostics_logging:
             self.logger = logger or logging.getLogger(__name__)
-            self.allowed_query_params = set()
 
     def on_request(self, request):  # type: (PipelineRequest) -> None
-        if self._diagnostics_mode:
-            http_request = request.http_request
-            options = request.context.options
+        http_request = request.http_request
+        options = request.context.options
+        self._enable_diagnostics_logging = request.context.setdefault(
+            "enable_diagnostics_logging",
+            options.pop("enable_diagnostics_logging", self._enable_diagnostics_logging))
+        if self._enable_diagnostics_logging:
             # Get logger in my context first (request has been retried)
             # then read from kwargs (pop if that's the case)
             # then use my instance logger
@@ -90,7 +91,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
 
     def on_response(self, request, response):  # type: (PipelineRequest, PipelineResponse) -> None
-        if self._diagnostics_mode:
+        if self._enable_diagnostics_logging:
             http_response = response.http_response
             ir = http_response.internal_response
             try:
@@ -103,7 +104,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 if multi_record:
                     logger.info("Response status: %r", http_response.status_code)
                     logger.info("Response status reason: %r", ir.reason)
-                    logger.info("Elapsed Time: %r".ir.elapsed)
+                    try:
+                        logger.info("Elapsed Time: %r", ir.elapsed)
+                    except AttributeError:
+                        logger.info("Elapsed Time: %r", None)
                     if http_response.status_code >= 400:
                         sm = ir.text
                         sm.replace("true", "True")
@@ -117,7 +121,10 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     return
                 log_string = "Response status: {}".format(http_response.status_code)
                 log_string += "\nResponse status reason: {}".format(ir.reason)
-                log_string += "\nElapsed Time: {}".format(ir.elapsed)
+                try:
+                    log_string += "\nElapsed Time: {}".format(ir.elapsed)
+                except AttributeError:
+                    log_string += "\nElapsed Time: {}".format(None)
                 if http_response.status_code >= 400:
                     sm = ir.text
                     sm.replace("true", "True")
@@ -133,3 +140,15 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 logger.warning("Failed to log response: %s", repr(err))
         else:
             super().on_response(request, response)
+
+        # # Current System info
+        # def get_system_info(self):
+        #     ret = {}
+        #     ret["system"] = platform.system()
+        #     ret["python version"] = platform.python_version()
+        #     ret["architecture"] = platform.architecture()
+        #     ret["cpu"] = platform.processor()
+        #     ret["cpu count"] = os.cpu_count()
+        #     ret["machine"] = platform.machine()
+        #
+        #     return ret
