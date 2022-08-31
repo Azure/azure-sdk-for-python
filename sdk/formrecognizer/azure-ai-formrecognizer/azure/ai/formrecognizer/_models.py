@@ -2120,9 +2120,9 @@ class CurrencyValue:
     """A currency value element.
 
     :ivar amount: The currency amount.
-    :vartype: float
+    :vartype amount: float
     :ivar symbol: The currency symbol, if found.
-    :vartype: Optional[str]
+    :vartype symbol: Optional[str]
     """
 
     def __init__(self, **kwargs):
