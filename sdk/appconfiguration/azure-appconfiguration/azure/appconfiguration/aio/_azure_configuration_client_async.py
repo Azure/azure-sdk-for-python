@@ -18,7 +18,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.transport import AsyncioRequestsTransport
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -156,7 +156,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             ]
 
         if not transport:
-            transport = AsyncioRequestsTransport(**kwargs)
+            transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(
             transport,

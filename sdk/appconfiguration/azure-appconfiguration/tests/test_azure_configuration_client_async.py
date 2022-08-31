@@ -11,7 +11,6 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
 )
-from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
@@ -285,7 +284,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
+        await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         ))
@@ -296,7 +295,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
-        client = self.create_client(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
+        client = self.create_client(appconfiguration_connection_string)
         resered_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
         resered_char_kv = await client.add_configuration_setting(resered_char_kv)
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
@@ -308,7 +307,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
+        await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
@@ -331,7 +330,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_multi_pages(self, appconfiguration_connection_string):
-        client = self.create_client(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
+        client = self.create_client(appconfiguration_connection_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
             [
@@ -417,7 +416,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_connection_string):
-        await self.set_up(appconfiguration_connection_string, transport=AsyncioRequestsTransport())
+        await self.set_up(appconfiguration_connection_string)
         items = await self.convert_to_list(self.client.list_revisions(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         ))
