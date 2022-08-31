@@ -170,7 +170,7 @@ class AMQPClient(object):
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
-        self._keep_alive_interval = int(kwargs.pop("keep_alive_interval", 0))
+        self._keep_alive_interval = int(kwargs.get("keep_alive_interval") or 0)
 
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)
