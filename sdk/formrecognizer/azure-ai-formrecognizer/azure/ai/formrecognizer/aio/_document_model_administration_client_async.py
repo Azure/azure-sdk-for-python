@@ -88,10 +88,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def begin_build_model(
+    async def begin_build_document_model(
         self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        """Build a custom model.
+        """Build a custom document model.
 
         The request must include a `blob_container_url` keyword parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
@@ -99,7 +99,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         configured, see more about configuring managed identities to work with Form Recognizer here:
         https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are built using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
+        'image/jpeg', 'image/png', 'image/tiff', 'image/bmp', or 'image/heif'. Other types of content in the container
+        is ignored.
 
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -167,10 +168,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def begin_compose_model(
+    async def begin_compose_document_model(
         self, component_model_ids: List[str], **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        """Creates a composed model from a collection of existing models.
+        """Creates a composed document model from a collection of existing models.
 
         A composed model allows multiple models to be called with a single model ID. When a document is
         submitted to be analyzed with a composed model ID, a classification step is first performed to
@@ -271,10 +272,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return target
 
     @distributed_trace_async
-    async def begin_copy_model_to(
+    async def begin_copy_document_model_to(
         self, model_id: str, target: TargetAuthorization, **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        """Copy a model stored in this resource (the source) to the user specified
+        """Copy a document model stored in this resource (the source) to the user specified
         target Form Recognizer resource.
 
         This should be called with the source Form Recognizer resource
@@ -332,8 +333,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def delete_model(self, model_id: str, **kwargs: Any) -> None:
-        """Delete a custom model.
+    async def delete_document_model(self, model_id: str, **kwargs: Any) -> None:
+        """Delete a custom document model.
 
         :param model_id: Model identifier.
         :type model_id: str
@@ -356,7 +357,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return await self._client.delete_document_model(model_id=model_id, **kwargs)
 
     @distributed_trace
-    def list_models(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelSummary]:
+    def list_document_models(self, **kwargs: Any) -> AsyncItemPaged[DocumentModelSummary]:
         """List information for each model, including its model ID,
         description, and when it was created.
 
@@ -404,8 +405,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace_async
-    async def get_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
-        """Get a model by its ID.
+    async def get_document_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
+        """Get a document model by its ID.
 
         :param str model_id: Model identifier.
         :return: DocumentModelDetails
@@ -460,11 +461,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def get_operation(self, operation_id: str, **kwargs: Any) -> DocumentModelOperationDetails:
-        """Get a document model operation by its ID.
+        """Get a model operation by its ID.
 
-        Get a document model operation associated with the Form Recognizer resource.
+        Get a model operation associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
-        the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+        the model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
 
         :param str operation_id: The operation ID.
         :return: DocumentModelOperationDetails
