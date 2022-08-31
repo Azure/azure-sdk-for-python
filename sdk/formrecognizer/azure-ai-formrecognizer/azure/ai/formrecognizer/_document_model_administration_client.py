@@ -238,7 +238,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
-        and the output can be passed as the `target` parameter into :func:`~begin_copy_model_to()`.
+        and the output can be passed as the `target` parameter into :func:`~begin_copy_document_model_to()`.
 
         :keyword str model_id: A unique ID for your copied model.
             If not specified, a model ID will be created for you.
@@ -292,8 +292,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/sample_copy_model.py
-                :start-after: [START begin_copy_model_to]
-                :end-before: [END begin_copy_model_to]
+                :start-after: [START begin_copy_document_model_to]
+                :end-before: [END begin_copy_document_model_to]
                 :language: python
                 :dedent: 4
                 :caption: Copy a model from the source resource to the target resource
@@ -342,8 +342,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/sample_manage_models.py
-                :start-after: [START delete_model]
-                :end-before: [END delete_model]
+                :start-after: [START delete_document_model]
+                :end-before: [END delete_document_model]
                 :language: python
                 :dedent: 4
                 :caption: Delete a model.
@@ -366,8 +366,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/sample_manage_models.py
-                :start-after: [START list_models]
-                :end-before: [END list_models]
+                :start-after: [START list_document_models]
+                :end-before: [END list_document_models]
                 :language: python
                 :dedent: 4
                 :caption: List all models that were built successfully under the Form Recognizer resource.
@@ -414,8 +414,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/sample_manage_models.py
-                :start-after: [START get_model]
-                :end-before: [END get_model]
+                :start-after: [START get_document_model]
+                :end-before: [END get_document_model]
                 :language: python
                 :dedent: 4
                 :caption: Get a model by its ID.
@@ -433,7 +433,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         Lists all document model operations associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
-        the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+        the document model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :return: A pageable of DocumentModelOperationSummary.
         :rtype: ~azure.core.paging.ItemPaged[DocumentModelOperationSummary]
@@ -463,7 +463,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         Get a model operation associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
-        the model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+        the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :param str operation_id: The operation ID.
         :return: DocumentModelOperationDetails

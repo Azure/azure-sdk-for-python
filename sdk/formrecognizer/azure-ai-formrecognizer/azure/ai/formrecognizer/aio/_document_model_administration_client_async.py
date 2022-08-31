@@ -240,7 +240,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
-        and the output can be passed as the `target` parameter into :func:`~begin_copy_model_to()`.
+        and the output can be passed as the `target` parameter into :func:`~begin_copy_document_model_to()`.
 
         :keyword str model_id: A unique ID for your copied model.
             If not specified, a model ID will be created for you.
@@ -435,7 +435,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         Lists all document model operations associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
-        the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+        the document model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :return: A pageable of DocumentModelOperationSummary.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentModelOperationSummary]
@@ -465,7 +465,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         Get a model operation associated with the Form Recognizer resource.
         Note that operation information only persists for 24 hours. If the operation was successful,
-        the model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+        the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :param str operation_id: The operation ID.
         :return: DocumentModelOperationDetails
