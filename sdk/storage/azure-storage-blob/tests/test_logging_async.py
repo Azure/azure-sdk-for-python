@@ -85,7 +85,10 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
                 pass
 
     @BlobPreparer()
-    async def test_logging_request_and_response_body(self, storage_account_name, storage_account_key):
+    async def test_logging_request_and_response_body(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport(), logging_enable=True)
         await self._setup(bsc)
         # Arrange
@@ -98,16 +101,19 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
         with LogCaptured(self) as log_captured:
             await blob_client.download_blob()
             log_as_str = log_captured.getvalue()
-            self.assertFalse(request_body in log_as_str)
+            assert not request_body in log_as_str
 
         with LogCaptured(self) as log_captured:
             await blob_client.upload_blob(request_body, overwrite=True, logging_body=True)
             log_as_str = log_captured.getvalue()
-            self.assertTrue(request_body in log_as_str)
-            self.assertEqual(log_as_str.count(request_body), 1)
+            assert request_body in log_as_str
+            assert log_as_str.count(request_body) == 1
             
     @BlobPreparer()         
-    async def test_authorization_is_scrubbed_off(self, storage_account_name, storage_account_key):
+    async def test_authorization_is_scrubbed_off(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         await self._setup(bsc)
         # Arrange
@@ -119,13 +125,15 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
             # Assert
             # make sure authorization header is logged, but its value is not
             # the keyword SharedKey is present in the authorization header's value
-            self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
-            self.assertFalse('SharedKey' in log_as_str)
+            assert _AUTHORIZATION_HEADER_NAME in log_as_str
+            assert not 'SharedKey' in log_as_str
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_sas_signature_is_scrubbed_off(self, storage_account_name, storage_account_key):
+    async def test_sas_signature_is_scrubbed_off(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Test can only run live
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
@@ -152,13 +160,15 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
-            self.assertFalse(signed_signature in log_as_str)
+            assert QueryStringConstants.SIGNED_SIGNATURE in log_as_str
+            assert not signed_signature in log_as_str
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_copy_source_sas_is_scrubbed_off(self, storage_account_name, storage_account_key):
+    async def test_copy_source_sas_is_scrubbed_off(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Test can only run live
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         await self._setup(bsc)
@@ -185,10 +195,10 @@ class StorageLoggingTestAsync(AsyncStorageTestCase):
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
-            self.assertFalse(signed_signature in log_as_str)
+            assert QueryStringConstants.SIGNED_SIGNATURE in log_as_str
+            assert not signed_signature in log_as_str
 
             # make sure authorization header is logged, but its value is not
             # the keyword SharedKey is present in the authorization header's value
-            self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
-            self.assertFalse('SharedKey' in log_as_str)
+            assert _AUTHORIZATION_HEADER_NAME in log_as_str
+            assert not 'SharedKey' in log_as_str
