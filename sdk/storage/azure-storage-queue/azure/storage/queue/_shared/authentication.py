@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import logging
-import sys
 
 try:
     from urllib.parse import urlparse, unquote
