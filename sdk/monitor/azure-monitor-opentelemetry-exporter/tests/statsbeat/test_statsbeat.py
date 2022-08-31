@@ -26,11 +26,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
-    _get_average_duration,
-    _get_exception_count,
-    _get_failure_count,
-    _get_retry_count,
-    _get_throttle_count,
     _shorten_host,
     _StatsbeatMetrics,
     _RP_NAMES,
@@ -82,9 +77,7 @@ class TestStatsbeat(unittest.TestCase):
         _statsbeat.collect_statsbeat_metrics(exporter)
         self.assertEqual(_statsbeat._STATSBEAT_METER_PROVIDER, mock_mp)
 
-    @mock.patch.object(_StatsbeatMetrics, 'init_non_initial_metrics')
-    @mock.patch.object(_StatsbeatMetrics, '_get_attach_metric')
-    def test_collect_statsbeat_metrics_non_eu(self,  attach_mock, non_init_mock):
+    def test_collect_statsbeat_metrics_non_eu(self):
         exporter = mock.Mock()
         exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
         exporter._endpoint = "https://westus-0.in.applicationinsights.azure.com/"
@@ -141,6 +134,19 @@ _StatsbeatMetrics_NETWORK_ATTRS = dict(
 
 # pylint: disable=protected-access
 class TestStatsbeatMetrics(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        os.environ.clear()
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        cls._metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            0,
+        )
+
     def setUp(self):
         _statsbeat._STATSBEAT_METER_PROVIDER = None
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(
@@ -211,20 +217,11 @@ class TestStatsbeatMetrics(unittest.TestCase):
         }
     )
     def test_get_attach_metric_appsvc(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            0,
-        )
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_NAMES[3])
         attributes["rp"] = _RP_NAMES[0]
         attributes["rpId"] = "site_name/stamp_name"
-        observations = metric._get_attach_metric(options=None)
+        observations = self._metric._get_attach_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
@@ -239,20 +236,11 @@ class TestStatsbeatMetrics(unittest.TestCase):
         }
     )
     def test_get_attach_metric_functions(self):
-        mp = MeterProvider()
-        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        metric = _StatsbeatMetrics(
-            mp,
-            ikey,
-            endpoint,
-            0,
-        )
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_NAMES[3])
         attributes["rp"] = _RP_NAMES[1]
         attributes["rpId"] = "host_name"
-        observations = metric._get_attach_metric(options=None)
+        observations = self._metric._get_attach_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
@@ -489,7 +477,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         _REQUESTS_MAP[_REQ_DURATION_NAME[1]] = 10.0
         _REQUESTS_MAP["count"] = 4
-        observations = _get_average_duration(options=None)
+        observations = self._metric._get_average_duration(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 2500)
             self.assertEqual(obs.attributes, attributes)
@@ -501,7 +489,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         _REQUESTS_MAP[_REQ_DURATION_NAME[1]] = 0
         _REQUESTS_MAP["count"] = 4
-        observations = _get_average_duration(options=None)
+        observations = self._metric._get_average_duration(options=None)
         self.assertEqual(len(observations), 0)
 
     def test_get_failure_count(self):
@@ -510,7 +498,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["statusCode"] = 400
         _REQUESTS_MAP[_REQ_FAILURE_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][400] = 3
-        observations = _get_failure_count(options=None)
+        observations = self._metric._get_failure_count(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 3)
             self.assertEqual(obs.attributes, attributes)
@@ -522,7 +510,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["statusCode"] = 400
         _REQUESTS_MAP[_REQ_FAILURE_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][400] = 0
-        observations = _get_failure_count(options=None)
+        observations = self._metric._get_failure_count(options=None)
         self.assertEqual(len(observations), 0)
 
     def test_get_retry_count(self):
@@ -531,7 +519,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["statusCode"] = 500
         _REQUESTS_MAP[_REQ_RETRY_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_RETRY_NAME[1]][500] = 3
-        observations = _get_retry_count(options=None)
+        observations = self._metric._get_retry_count(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 3)
             self.assertEqual(obs.attributes, attributes)
@@ -543,7 +531,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["statusCode"] = 500
         _REQUESTS_MAP[_REQ_RETRY_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_RETRY_NAME[1]][500] = 0
-        observations = _get_retry_count(options=None)
+        observations = self._metric._get_retry_count(options=None)
         self.assertEqual(len(observations), 0)
 
     def test_get_throttle_count(self):
@@ -552,7 +540,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["statusCode"] = 402
         _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][402] = 3
-        observations = _get_throttle_count(options=None)
+        observations = self._metric._get_throttle_count(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 3)
             self.assertEqual(obs.attributes, attributes)
@@ -564,7 +552,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["statusCode"] = 402
         _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][402] = 0
-        observations = _get_throttle_count(options=None)
+        observations = self._metric._get_throttle_count(options=None)
         self.assertEqual(len(observations), 0)
 
     def test_get_exception_count(self):
@@ -573,7 +561,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["exceptionType"] = "Exception"
         _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["Exception"] = 3
-        observations = _get_exception_count(options=None)
+        observations = self._metric._get_exception_count(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 3)
             self.assertEqual(obs.attributes, attributes)
@@ -585,7 +573,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         attributes["exceptionType"] = "Exception"
         _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]] = {}
         _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["Exception"] = 0
-        observations = _get_exception_count(options=None)
+        observations = self._metric._get_exception_count(options=None)
         self.assertEqual(len(observations), 0)
 
     def test_shorten_host(self):

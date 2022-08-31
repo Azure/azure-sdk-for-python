@@ -40,98 +40,6 @@ _HOST_PATTERN = re.compile('^https?://(?:www\\.)?([^/.]+)')
 
 # cSpell:disable
 
-# pylint: disable=unused-argument
-# pylint: disable=protected-access
-def _get_failure_count(options: CallbackOptions) -> Iterable[Observation]:
-    observations = []
-    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-    attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_MAP_LOCK:
-        for code, count in _REQUESTS_MAP.get(_REQ_FAILURE_NAME[1], {}).items():
-            # only observe if value is not 0
-            if count != 0:
-                attributes["statusCode"] = code
-                observations.append(
-                    Observation(int(count), dict(attributes))
-                )
-                _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0
-    return observations
-
-
-# pylint: disable=unused-argument
-# pylint: disable=protected-access
-def _get_average_duration(options: CallbackOptions) -> Iterable[Observation]:
-    observations = []
-    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-    attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_MAP_LOCK:
-        interval_duration = _REQUESTS_MAP.get(_REQ_DURATION_NAME[1], 0)
-        interval_count = _REQUESTS_MAP.get("count", 0)
-        # only observe if value is not 0
-        if interval_duration > 0 and interval_count > 0:
-            result = interval_duration / interval_count
-            observations.append(
-                Observation(result * 1000, dict(attributes))
-            )
-            _REQUESTS_MAP[_REQ_DURATION_NAME[1]] = 0
-            _REQUESTS_MAP["count"] = 0
-    return observations
-
-
-# pylint: disable=unused-argument
-# pylint: disable=protected-access
-def _get_retry_count(options: CallbackOptions) -> Iterable[Observation]:
-    observations = []
-    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-    attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_MAP_LOCK:
-        for code, count in _REQUESTS_MAP.get(_REQ_RETRY_NAME[1], {}).items():
-            # only observe if value is not 0
-            if count != 0:
-                attributes["statusCode"] = code
-                observations.append(
-                    Observation(int(count), dict(attributes))
-                )
-                _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0
-    return observations
-
-
-# pylint: disable=unused-argument
-# pylint: disable=protected-access
-def _get_throttle_count(options: CallbackOptions) -> Iterable[Observation]:
-    observations = []
-    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-    attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_MAP_LOCK:
-        for code, count in _REQUESTS_MAP.get(_REQ_THROTTLE_NAME[1], {}).items():
-            # only observe if value is not 0
-            if count != 0:
-                attributes["statusCode"] = code
-                observations.append(
-                    Observation(int(count), dict(attributes))
-                )
-                _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0
-    return observations
-
-
-# pylint: disable=unused-argument
-# pylint: disable=protected-access
-def _get_exception_count(options: CallbackOptions) -> Iterable[Observation]:
-    observations = []
-    attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-    attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-    with _REQUESTS_MAP_LOCK:
-        for code, count in _REQUESTS_MAP.get(_REQ_EXCEPTION_NAME[1], {}).items():
-            # only observe if value is not 0
-            if count != 0:
-                attributes["exceptionType"] = code
-                observations.append(
-                    Observation(int(count), dict(attributes))
-                )
-                _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0
-    return observations
-
-
 # pylint: disable=R0902
 class _StatsbeatMetrics:
 
@@ -261,31 +169,31 @@ class _StatsbeatMetrics:
         )
         self._failure_count = self._meter.create_observable_gauge(
             _REQ_FAILURE_NAME[0],
-            callbacks=[_get_failure_count],
+            callbacks=[self._get_failure_count],
             unit="count",
             description="Statsbeat metric tracking request failure count"
         )
         self._retry_count = self._meter.create_observable_gauge(
             _REQ_RETRY_NAME[0],
-            callbacks=[_get_retry_count],
+            callbacks=[self._get_retry_count],
             unit="count",
             description="Statsbeat metric tracking request retry count"
         )
         self._throttle_count = self._meter.create_observable_gauge(
             _REQ_THROTTLE_NAME[0],
-            callbacks=[_get_throttle_count],
+            callbacks=[self._get_throttle_count],
             unit="count",
             description="Statsbeat metric tracking request throttle count"
         )
         self._exception_count = self._meter.create_observable_gauge(
             _REQ_EXCEPTION_NAME[0],
-            callbacks=[_get_exception_count],
+            callbacks=[self._get_exception_count],
             unit="count",
             description="Statsbeat metric tracking request exception count"
         )
         self._average_duration = self._meter.create_observable_gauge(
             _REQ_DURATION_NAME[0],
-            callbacks=[_get_average_duration],
+            callbacks=[self._get_average_duration],
             unit="avg",
             description="Statsbeat metric tracking average request duration"
         )
@@ -310,6 +218,97 @@ class _StatsbeatMetrics:
                     Observation(int(count), dict(attributes))
                 )
                 _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
+        return observations
+
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_failure_count(self, options: CallbackOptions) -> Iterable[Observation]:
+        observations = []
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+        with _REQUESTS_MAP_LOCK:
+            for code, count in _REQUESTS_MAP.get(_REQ_FAILURE_NAME[1], {}).items():
+                # only observe if value is not 0
+                if count != 0:
+                    attributes["statusCode"] = code
+                    observations.append(
+                        Observation(int(count), dict(attributes))
+                    )
+                    _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0
+        return observations
+
+
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_average_duration(self, options: CallbackOptions) -> Iterable[Observation]:
+        observations = []
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+        with _REQUESTS_MAP_LOCK:
+            interval_duration = _REQUESTS_MAP.get(_REQ_DURATION_NAME[1], 0)
+            interval_count = _REQUESTS_MAP.get("count", 0)
+            # only observe if value is not 0
+            if interval_duration > 0 and interval_count > 0:
+                result = interval_duration / interval_count
+                observations.append(
+                    Observation(result * 1000, dict(attributes))
+                )
+                _REQUESTS_MAP[_REQ_DURATION_NAME[1]] = 0
+                _REQUESTS_MAP["count"] = 0
+        return observations
+
+
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_retry_count(self, options: CallbackOptions) -> Iterable[Observation]:
+        observations = []
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+        with _REQUESTS_MAP_LOCK:
+            for code, count in _REQUESTS_MAP.get(_REQ_RETRY_NAME[1], {}).items():
+                # only observe if value is not 0
+                if count != 0:
+                    attributes["statusCode"] = code
+                    observations.append(
+                        Observation(int(count), dict(attributes))
+                    )
+                    _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0
+        return observations
+
+
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_throttle_count(self, options: CallbackOptions) -> Iterable[Observation]:
+        observations = []
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+        with _REQUESTS_MAP_LOCK:
+            for code, count in _REQUESTS_MAP.get(_REQ_THROTTLE_NAME[1], {}).items():
+                # only observe if value is not 0
+                if count != 0:
+                    attributes["statusCode"] = code
+                    observations.append(
+                        Observation(int(count), dict(attributes))
+                    )
+                    _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0
+        return observations
+
+
+    # pylint: disable=unused-argument
+    # pylint: disable=protected-access
+    def _get_exception_count(self, options: CallbackOptions) -> Iterable[Observation]:
+        observations = []
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+        with _REQUESTS_MAP_LOCK:
+            for code, count in _REQUESTS_MAP.get(_REQ_EXCEPTION_NAME[1], {}).items():
+                # only observe if value is not 0
+                if count != 0:
+                    attributes["exceptionType"] = code
+                    observations.append(
+                        Observation(int(count), dict(attributes))
+                    )
+                    _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0
         return observations
 
 # cSpell:enable
