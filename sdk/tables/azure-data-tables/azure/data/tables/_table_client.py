@@ -23,7 +23,7 @@ from ._error import (
     _decode_error,
     _process_table_error,
     _reprocess_error,
-    _reraise_error, 
+    _reraise_error,
     _validate_tablename_error
 )
 from ._generated.models import (

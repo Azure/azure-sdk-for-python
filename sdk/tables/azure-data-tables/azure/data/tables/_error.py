@@ -212,7 +212,7 @@ def _reprocess_error(decoded_error, identifiers=None):
     invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
     properties_need_value = "The values are not specified for all properties in the entity"
     table_does_not_exist = "The table specified does not exist"
-    if (error_code == "InvalidInput" and invalid_input in message or
+    if (error_code == "InvalidInput" and invalid_input in message or # pylint: disable=too-many-boolean-expressions
         error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or
         error_code == "PropertiesNeedValue" and properties_need_value in message or
         error_code =="TableNotFound" and table_does_not_exist in message
