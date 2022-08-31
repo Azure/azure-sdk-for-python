@@ -125,17 +125,18 @@ class TestStatsbeat(unittest.TestCase):
             _statsbeat._DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
         )
 
+_StatsbeatMetrics_COMMON_ATTRS = dict(
+    _StatsbeatMetrics._COMMON_ATTRIBUTES
+)
+_StatsbeatMetrics_NETWORK_ATTRS = dict(
+    _StatsbeatMetrics._NETWORK_ATTRIBUTES
+)
 
 # pylint: disable=protected-access
 class TestStatsbeatMetrics(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls._StatsbeatMetrics_COMMON_ATTRS = dict(
-            _StatsbeatMetrics._COMMON_ATTRIBUTES
-        )
-        cls._StatsbeatMetrics_NETWORK_ATTRS = dict(
-            _StatsbeatMetrics._NETWORK_ATTRIBUTES
-        )
+        os.environ.clear()
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -147,13 +148,12 @@ class TestStatsbeatMetrics(unittest.TestCase):
         )
 
     def setUp(self):
-        os.environ.clear()
         _statsbeat._STATSBEAT_METER_PROVIDER = None
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(
-            self._StatsbeatMetrics_COMMON_ATTRS
+            _StatsbeatMetrics_COMMON_ATTRS
         )
         _StatsbeatMetrics._NETWORK_ATTRIBUTES = dict(
-            self._StatsbeatMetrics_NETWORK_ATTRS
+            _StatsbeatMetrics_NETWORK_ATTRS
         )
         _REQUESTS_MAP.clear()
 
