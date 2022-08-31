@@ -375,7 +375,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 properties=self._link_properties)
             await self._link.attach()
             return False
-        if self._link.get_state() != LinkState.ATTACHED:  # ATTACHED
+        if self._link.get_state().value != 3:  # ATTACHED
             return False
         return True
 
