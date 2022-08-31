@@ -46,28 +46,28 @@ class TestManagement(FormRecognizerTest):
     def test_get_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.get_model("")
+            result = client.get_document_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_get_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.get_model(None)
+            result = client.get_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_delete_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.delete_model(None)
+            result = client.delete_document_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_delete_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError):
-            result = client.delete_model("")
+            result = client.delete_document_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -82,7 +82,7 @@ class TestManagement(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_get_model_prebuilt(self, client, **kwargs):
-        model = client.get_model("prebuilt-invoice")
+        model = client.get_document_model("prebuilt-invoice")
         assert model.model_id == "prebuilt-invoice"
         assert model.description is not None
         assert model.created_on
@@ -100,10 +100,10 @@ class TestManagement(FormRecognizerTest):
     @recorded_by_proxy
     def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
+        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
         model = poller.result()
 
-        model_from_get = client.get_model(model.model_id)
+        model_from_get = client.get_document_model(model.model_id)
 
         assert model.model_id == model_from_get.model_id
         assert model.description == model_from_get.description
@@ -115,15 +115,15 @@ class TestManagement(FormRecognizerTest):
                 assert field["type"] == model_from_get.doc_types[name].field_schema[key]["type"]
                 assert doc_type.field_confidence[key] == model_from_get.doc_types[name].field_confidence[key]
 
-        models_list = client.list_models()
+        models_list = client.list_document_models()
         for model in models_list:
             assert model.model_id
             assert model.created_on
 
-        client.delete_model(model.model_id)
+        client.delete_document_model(model.model_id)
 
         with pytest.raises(ResourceNotFoundError):
-            client.get_model(model.model_id)
+            client.get_document_model(model.model_id)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
