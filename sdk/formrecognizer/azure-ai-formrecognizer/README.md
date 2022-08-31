@@ -421,7 +421,7 @@ credential = AzureKeyCredential("<api_key>")
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
-poller = document_model_admin_client.begin_build_model(
+poller = document_model_admin_client.begin_build_document_model(
     # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
     build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
 )
@@ -524,7 +524,7 @@ print("Our account has {} custom models, and we can have at most {} custom model
 ))
 
 # Here we get a paged list of all of our models
-models = document_model_admin_client.list_models()
+models = document_model_admin_client.list_document_models()
 print("We have models with the following ids: {}".format(
     ", ".join([m.model_id for m in models])
 ))
@@ -532,16 +532,16 @@ print("We have models with the following ids: {}".format(
 # Replace with the custom model ID from the "Build a model" sample
 model_id = "<model_id from the Build a Model sample>"
 
-custom_model = document_model_admin_client.get_model(model_id=model_id)
+custom_model = document_model_admin_client.get_document_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Description: {}".format(custom_model.description))
 print("Model created on: {}\n".format(custom_model.created_on))
 
 # Finally, we will delete this model by ID
-document_model_admin_client.delete_model(model_id=custom_model.model_id)
+document_model_admin_client.delete_document_model(model_id=custom_model.model_id)
 
 try:
-    document_model_admin_client.get_model(model_id=custom_model.model_id)
+    document_model_admin_client.get_document_model(model_id=custom_model.model_id)
 except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
