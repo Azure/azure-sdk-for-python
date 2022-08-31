@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class GetTokenMixin(ABC, TokenCredential):
+class GetTokenMixin(ABC):
     def __init__(self, *args, **kwargs):
         # type: (*Any, **Any) -> None
         self._last_request_time = 0
