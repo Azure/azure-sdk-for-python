@@ -294,8 +294,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_copy_model_to_async.py
-                :start-after: [START begin_copy_model_to_async]
-                :end-before: [END begin_copy_model_to_async]
+                :start-after: [START begin_copy_document_model_to_async]
+                :end-before: [END begin_copy_document_model_to_async]
                 :language: python
                 :dedent: 4
                 :caption: Copy a model from the source resource to the target resource
@@ -344,8 +344,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START delete_model_async]
-                :end-before: [END delete_model_async]
+                :start-after: [START delete_document_model_async]
+                :end-before: [END delete_document_model_async]
                 :language: python
                 :dedent: 8
                 :caption: Delete a model.
@@ -368,8 +368,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START list_models_async]
-                :end-before: [END list_models_async]
+                :start-after: [START list_document_models_async]
+                :end-before: [END list_document_models_async]
                 :language: python
                 :dedent: 8
                 :caption: List all models that were built successfully under the Form Recognizer resource.
@@ -416,8 +416,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
-                :start-after: [START get_model_async]
-                :end-before: [END get_model_async]
+                :start-after: [START get_document_model_async]
+                :end-before: [END get_document_model_async]
                 :language: python
                 :dedent: 8
                 :caption: Get a model by its ID.
