@@ -4,25 +4,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
-import logging
-
 import sys
 from datetime import datetime, timedelta
 
+import pytest
 from azure.storage.blob import (
+    BlobClient,
+    BlobSasPermissions,
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
     ContainerSasPermissions,
-    BlobSasPermissions,
     generate_blob_sas,
     generate_container_sas
 )
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageTestCase, LogCaptured, StorageRecordedTestCase
 
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 if sys.version_info >= (3,):
