@@ -6,7 +6,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Dict, Union, TypedDict, MutableMapping
+from typing import List, Optional, Dict, Union, TypedDict, MutableMapping, TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing_extensions import TypedDict
 from datetime import datetime, timezone
 from dateutil.parser import parse
 from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access

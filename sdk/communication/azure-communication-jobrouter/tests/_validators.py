@@ -605,6 +605,7 @@ class RouterJobValidator(object):
         assert len(entity.notes) == len(note_collection)
 
         for k1, k2 in zip([key for key in entity.notes.keys()], [key for key in note_collection.keys()]):
+            # cSpell:ignore tzinfos
             k1_as_dt: datetime = parse(k1, tzinfos = [timezone.utc])
             k2_as_dt: datetime = parse(k2, tzinfos = [timezone.utc])
 
