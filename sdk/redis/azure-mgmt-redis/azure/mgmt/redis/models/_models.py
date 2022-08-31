@@ -23,19 +23,16 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Required. Resource name.
         :paramtype name: str
@@ -44,8 +41,8 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
         :paramtype type: str
         """
         super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.type = kwargs['type']
+        self.name = kwargs["name"]
+        self.type = kwargs["type"]
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -60,21 +57,17 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -98,27 +91,23 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -135,19 +124,16 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.redis.models.ErrorDetail
         """
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ExportRDBParameters(msrest.serialization.Model):
@@ -164,20 +150,17 @@ class ExportRDBParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'prefix': {'required': True},
-        'container': {'required': True},
+        "prefix": {"required": True},
+        "container": {"required": True},
     }
 
     _attribute_map = {
-        'format': {'key': 'format', 'type': 'str'},
-        'prefix': {'key': 'prefix', 'type': 'str'},
-        'container': {'key': 'container', 'type': 'str'},
+        "format": {"key": "format", "type": "str"},
+        "prefix": {"key": "prefix", "type": "str"},
+        "container": {"key": "container", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword format: File format.
         :paramtype format: str
@@ -187,9 +170,9 @@ class ExportRDBParameters(msrest.serialization.Model):
         :paramtype container: str
         """
         super(ExportRDBParameters, self).__init__(**kwargs)
-        self.format = kwargs.get('format', None)
-        self.prefix = kwargs['prefix']
-        self.container = kwargs['container']
+        self.format = kwargs.get("format", None)
+        self.prefix = kwargs["prefix"]
+        self.container = kwargs["container"]
 
 
 class ImportRDBParameters(msrest.serialization.Model):
@@ -204,18 +187,15 @@ class ImportRDBParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'files': {'required': True},
+        "files": {"required": True},
     }
 
     _attribute_map = {
-        'format': {'key': 'format', 'type': 'str'},
-        'files': {'key': 'files', 'type': '[str]'},
+        "format": {"key": "format", "type": "str"},
+        "files": {"key": "files", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword format: File format.
         :paramtype format: str
@@ -223,8 +203,8 @@ class ImportRDBParameters(msrest.serialization.Model):
         :paramtype files: list[str]
         """
         super(ImportRDBParameters, self).__init__(**kwargs)
-        self.format = kwargs.get('format', None)
-        self.files = kwargs['files']
+        self.format = kwargs.get("format", None)
+        self.files = kwargs["files"]
 
 
 class ManagedServiceIdentity(msrest.serialization.Model):
@@ -252,22 +232,19 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword type: Required. Type of managed service identity (where both SystemAssigned and
          UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
@@ -282,8 +259,8 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs['type']
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.type = kwargs["type"]
+        self.user_assigned_identities = kwargs.get("user_assigned_identities", None)
 
 
 class NotificationListResponse(msrest.serialization.Model):
@@ -298,24 +275,21 @@ class NotificationListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UpgradeNotification]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UpgradeNotification]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: List of all notifications.
         :paramtype value: list[~azure.mgmt.redis.models.UpgradeNotification]
         """
         super(NotificationListResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -329,14 +303,11 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -344,8 +315,8 @@ class Operation(msrest.serialization.Model):
         :paramtype display: ~azure.mgmt.redis.models.OperationDisplay
         """
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        self.name = kwargs.get("name", None)
+        self.display = kwargs.get("display", None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -362,16 +333,13 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -383,10 +351,10 @@ class OperationDisplay(msrest.serialization.Model):
         :paramtype description: str
         """
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.operation = kwargs.get('operation', None)
-        self.resource = kwargs.get('resource', None)
-        self.description = kwargs.get('description', None)
+        self.provider = kwargs.get("provider", None)
+        self.operation = kwargs.get("operation", None)
+        self.resource = kwargs.get("resource", None)
+        self.description = kwargs.get("description", None)
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -401,24 +369,21 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.redis.models.Operation]
         """
         super(OperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -432,19 +397,15 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -465,23 +426,19 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -514,25 +471,25 @@ class PrivateEndpointConnection(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.redis.models.PrivateEndpoint
@@ -542,8 +499,8 @@ class PrivateEndpointConnection(Resource):
          ~azure.mgmt.redis.models.PrivateLinkServiceConnectionState
         """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.private_endpoint = kwargs.get('private_endpoint', None)
-        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.private_endpoint = kwargs.get("private_endpoint", None)
+        self.private_link_service_connection_state = kwargs.get("private_link_service_connection_state", None)
         self.provisioning_state = None
 
 
@@ -555,19 +512,16 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.redis.models.PrivateEndpointConnection]
         """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class PrivateLinkResource(Resource):
@@ -592,26 +546,23 @@ class PrivateLinkResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -619,7 +570,7 @@ class PrivateLinkResource(Resource):
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
-        self.required_zone_names = kwargs.get('required_zone_names', None)
+        self.required_zone_names = kwargs.get("required_zone_names", None)
 
 
 class PrivateLinkResourceListResult(msrest.serialization.Model):
@@ -630,19 +581,16 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.redis.models.PrivateLinkResource]
         """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
@@ -659,15 +607,12 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Possible values include: "Pending", "Approved", "Rejected".
@@ -679,9 +624,9 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         :paramtype actions_required: str
         """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.description = kwargs.get('description', None)
-        self.actions_required = kwargs.get('actions_required', None)
+        self.status = kwargs.get("status", None)
+        self.description = kwargs.get("description", None)
+        self.actions_required = kwargs.get("actions_required", None)
 
 
 class ProxyResource(Resource):
@@ -700,23 +645,19 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -734,21 +675,17 @@ class RedisAccessKeys(msrest.serialization.Model):
     """
 
     _validation = {
-        'primary_key': {'readonly': True},
-        'secondary_key': {'readonly': True},
+        "primary_key": {"readonly": True},
+        "secondary_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(RedisAccessKeys, self).__init__(**kwargs)
         self.primary_key = None
         self.secondary_key = None
@@ -785,21 +722,18 @@ class RedisCommonProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'redis_configuration': {'key': 'redisConfiguration', 'type': 'RedisCommonPropertiesRedisConfiguration'},
-        'redis_version': {'key': 'redisVersion', 'type': 'str'},
-        'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
-        'replicas_per_master': {'key': 'replicasPerMaster', 'type': 'int'},
-        'replicas_per_primary': {'key': 'replicasPerPrimary', 'type': 'int'},
-        'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'shardCount', 'type': 'int'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        "redis_configuration": {"key": "redisConfiguration", "type": "RedisCommonPropertiesRedisConfiguration"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "enable_non_ssl_port": {"key": "enableNonSslPort", "type": "bool"},
+        "replicas_per_master": {"key": "replicasPerMaster", "type": "int"},
+        "replicas_per_primary": {"key": "replicasPerPrimary", "type": "int"},
+        "tenant_settings": {"key": "tenantSettings", "type": "{str}"},
+        "shard_count": {"key": "shardCount", "type": "int"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword redis_configuration: All Redis Settings. Few possible keys:
          rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
@@ -830,15 +764,15 @@ class RedisCommonProperties(msrest.serialization.Model):
         :paramtype public_network_access: str or ~azure.mgmt.redis.models.PublicNetworkAccess
         """
         super(RedisCommonProperties, self).__init__(**kwargs)
-        self.redis_configuration = kwargs.get('redis_configuration', None)
-        self.redis_version = kwargs.get('redis_version', None)
-        self.enable_non_ssl_port = kwargs.get('enable_non_ssl_port', False)
-        self.replicas_per_master = kwargs.get('replicas_per_master', None)
-        self.replicas_per_primary = kwargs.get('replicas_per_primary', None)
-        self.tenant_settings = kwargs.get('tenant_settings', None)
-        self.shard_count = kwargs.get('shard_count', None)
-        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
-        self.public_network_access = kwargs.get('public_network_access', "Enabled")
+        self.redis_configuration = kwargs.get("redis_configuration", None)
+        self.redis_version = kwargs.get("redis_version", None)
+        self.enable_non_ssl_port = kwargs.get("enable_non_ssl_port", False)
+        self.replicas_per_master = kwargs.get("replicas_per_master", None)
+        self.replicas_per_primary = kwargs.get("replicas_per_primary", None)
+        self.tenant_settings = kwargs.get("tenant_settings", None)
+        self.shard_count = kwargs.get("shard_count", None)
+        self.minimum_tls_version = kwargs.get("minimum_tls_version", None)
+        self.public_network_access = kwargs.get("public_network_access", "Enabled")
 
 
 class RedisCommonPropertiesRedisConfiguration(msrest.serialization.Model):
@@ -883,32 +817,29 @@ class RedisCommonPropertiesRedisConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'maxclients': {'readonly': True},
-        'preferred_data_archive_auth_method': {'readonly': True},
-        'preferred_data_persistence_auth_method': {'readonly': True},
+        "maxclients": {"readonly": True},
+        "preferred_data_archive_auth_method": {"readonly": True},
+        "preferred_data_persistence_auth_method": {"readonly": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'rdb_backup_enabled': {'key': 'rdb-backup-enabled', 'type': 'str'},
-        'rdb_backup_frequency': {'key': 'rdb-backup-frequency', 'type': 'str'},
-        'rdb_backup_max_snapshot_count': {'key': 'rdb-backup-max-snapshot-count', 'type': 'str'},
-        'rdb_storage_connection_string': {'key': 'rdb-storage-connection-string', 'type': 'str'},
-        'aof_storage_connection_string0': {'key': 'aof-storage-connection-string-0', 'type': 'str'},
-        'aof_storage_connection_string1': {'key': 'aof-storage-connection-string-1', 'type': 'str'},
-        'maxfragmentationmemory_reserved': {'key': 'maxfragmentationmemory-reserved', 'type': 'str'},
-        'maxmemory_policy': {'key': 'maxmemory-policy', 'type': 'str'},
-        'maxmemory_reserved': {'key': 'maxmemory-reserved', 'type': 'str'},
-        'maxmemory_delta': {'key': 'maxmemory-delta', 'type': 'str'},
-        'maxclients': {'key': 'maxclients', 'type': 'str'},
-        'preferred_data_archive_auth_method': {'key': 'preferred-data-archive-auth-method', 'type': 'str'},
-        'preferred_data_persistence_auth_method': {'key': 'preferred-data-persistence-auth-method', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "rdb_backup_enabled": {"key": "rdb-backup-enabled", "type": "str"},
+        "rdb_backup_frequency": {"key": "rdb-backup-frequency", "type": "str"},
+        "rdb_backup_max_snapshot_count": {"key": "rdb-backup-max-snapshot-count", "type": "str"},
+        "rdb_storage_connection_string": {"key": "rdb-storage-connection-string", "type": "str"},
+        "aof_storage_connection_string0": {"key": "aof-storage-connection-string-0", "type": "str"},
+        "aof_storage_connection_string1": {"key": "aof-storage-connection-string-1", "type": "str"},
+        "maxfragmentationmemory_reserved": {"key": "maxfragmentationmemory-reserved", "type": "str"},
+        "maxmemory_policy": {"key": "maxmemory-policy", "type": "str"},
+        "maxmemory_reserved": {"key": "maxmemory-reserved", "type": "str"},
+        "maxmemory_delta": {"key": "maxmemory-delta", "type": "str"},
+        "maxclients": {"key": "maxclients", "type": "str"},
+        "preferred_data_archive_auth_method": {"key": "preferred-data-archive-auth-method", "type": "str"},
+        "preferred_data_persistence_auth_method": {"key": "preferred-data-persistence-auth-method", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -941,17 +872,17 @@ class RedisCommonPropertiesRedisConfiguration(msrest.serialization.Model):
         :paramtype maxmemory_delta: str
         """
         super(RedisCommonPropertiesRedisConfiguration, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.rdb_backup_enabled = kwargs.get('rdb_backup_enabled', None)
-        self.rdb_backup_frequency = kwargs.get('rdb_backup_frequency', None)
-        self.rdb_backup_max_snapshot_count = kwargs.get('rdb_backup_max_snapshot_count', None)
-        self.rdb_storage_connection_string = kwargs.get('rdb_storage_connection_string', None)
-        self.aof_storage_connection_string0 = kwargs.get('aof_storage_connection_string0', None)
-        self.aof_storage_connection_string1 = kwargs.get('aof_storage_connection_string1', None)
-        self.maxfragmentationmemory_reserved = kwargs.get('maxfragmentationmemory_reserved', None)
-        self.maxmemory_policy = kwargs.get('maxmemory_policy', None)
-        self.maxmemory_reserved = kwargs.get('maxmemory_reserved', None)
-        self.maxmemory_delta = kwargs.get('maxmemory_delta', None)
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.rdb_backup_enabled = kwargs.get("rdb_backup_enabled", None)
+        self.rdb_backup_frequency = kwargs.get("rdb_backup_frequency", None)
+        self.rdb_backup_max_snapshot_count = kwargs.get("rdb_backup_max_snapshot_count", None)
+        self.rdb_storage_connection_string = kwargs.get("rdb_storage_connection_string", None)
+        self.aof_storage_connection_string0 = kwargs.get("aof_storage_connection_string0", None)
+        self.aof_storage_connection_string1 = kwargs.get("aof_storage_connection_string1", None)
+        self.maxfragmentationmemory_reserved = kwargs.get("maxfragmentationmemory_reserved", None)
+        self.maxmemory_policy = kwargs.get("maxmemory_policy", None)
+        self.maxmemory_reserved = kwargs.get("maxmemory_reserved", None)
+        self.maxmemory_delta = kwargs.get("maxmemory_delta", None)
         self.maxclients = None
         self.preferred_data_archive_auth_method = None
         self.preferred_data_persistence_auth_method = None
@@ -1007,35 +938,37 @@ class RedisCreateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
-        'sku': {'required': True},
-        'subnet_id': {'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
-        'static_ip': {'pattern': r'^\d+\.\d+\.\d+\.\d+$'},
+        "location": {"required": True},
+        "sku": {"required": True},
+        "subnet_id": {
+            "pattern": r"^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$"
+        },
+        "static_ip": {"pattern": r"^\d+\.\d+\.\d+\.\d+$"},
     }
 
     _attribute_map = {
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': 'RedisCommonPropertiesRedisConfiguration'},
-        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
-        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
-        'replicas_per_master': {'key': 'properties.replicasPerMaster', 'type': 'int'},
-        'replicas_per_primary': {'key': 'properties.replicasPerPrimary', 'type': 'int'},
-        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
-        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
+        "zones": {"key": "zones", "type": "[str]"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "redis_configuration": {
+            "key": "properties.redisConfiguration",
+            "type": "RedisCommonPropertiesRedisConfiguration",
+        },
+        "redis_version": {"key": "properties.redisVersion", "type": "str"},
+        "enable_non_ssl_port": {"key": "properties.enableNonSslPort", "type": "bool"},
+        "replicas_per_master": {"key": "properties.replicasPerMaster", "type": "int"},
+        "replicas_per_primary": {"key": "properties.replicasPerPrimary", "type": "int"},
+        "tenant_settings": {"key": "properties.tenantSettings", "type": "{str}"},
+        "shard_count": {"key": "properties.shardCount", "type": "int"},
+        "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
+        "static_ip": {"key": "properties.staticIP", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword zones: A list of availability zones denoting where the resource needs to come from.
         :paramtype zones: list[str]
@@ -1083,22 +1016,22 @@ class RedisCreateParameters(msrest.serialization.Model):
         :paramtype static_ip: str
         """
         super(RedisCreateParameters, self).__init__(**kwargs)
-        self.zones = kwargs.get('zones', None)
-        self.location = kwargs['location']
-        self.tags = kwargs.get('tags', None)
-        self.identity = kwargs.get('identity', None)
-        self.redis_configuration = kwargs.get('redis_configuration', None)
-        self.redis_version = kwargs.get('redis_version', None)
-        self.enable_non_ssl_port = kwargs.get('enable_non_ssl_port', False)
-        self.replicas_per_master = kwargs.get('replicas_per_master', None)
-        self.replicas_per_primary = kwargs.get('replicas_per_primary', None)
-        self.tenant_settings = kwargs.get('tenant_settings', None)
-        self.shard_count = kwargs.get('shard_count', None)
-        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
-        self.public_network_access = kwargs.get('public_network_access', "Enabled")
-        self.sku = kwargs['sku']
-        self.subnet_id = kwargs.get('subnet_id', None)
-        self.static_ip = kwargs.get('static_ip', None)
+        self.zones = kwargs.get("zones", None)
+        self.location = kwargs["location"]
+        self.tags = kwargs.get("tags", None)
+        self.identity = kwargs.get("identity", None)
+        self.redis_configuration = kwargs.get("redis_configuration", None)
+        self.redis_version = kwargs.get("redis_version", None)
+        self.enable_non_ssl_port = kwargs.get("enable_non_ssl_port", False)
+        self.replicas_per_master = kwargs.get("replicas_per_master", None)
+        self.replicas_per_primary = kwargs.get("replicas_per_primary", None)
+        self.tenant_settings = kwargs.get("tenant_settings", None)
+        self.shard_count = kwargs.get("shard_count", None)
+        self.minimum_tls_version = kwargs.get("minimum_tls_version", None)
+        self.public_network_access = kwargs.get("public_network_access", "Enabled")
+        self.sku = kwargs["sku"]
+        self.subnet_id = kwargs.get("subnet_id", None)
+        self.static_ip = kwargs.get("static_ip", None)
 
 
 class RedisCreateProperties(RedisCommonProperties):
@@ -1143,30 +1076,29 @@ class RedisCreateProperties(RedisCommonProperties):
     """
 
     _validation = {
-        'sku': {'required': True},
-        'subnet_id': {'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
-        'static_ip': {'pattern': r'^\d+\.\d+\.\d+\.\d+$'},
+        "sku": {"required": True},
+        "subnet_id": {
+            "pattern": r"^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$"
+        },
+        "static_ip": {"pattern": r"^\d+\.\d+\.\d+\.\d+$"},
     }
 
     _attribute_map = {
-        'redis_configuration': {'key': 'redisConfiguration', 'type': 'RedisCommonPropertiesRedisConfiguration'},
-        'redis_version': {'key': 'redisVersion', 'type': 'str'},
-        'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
-        'replicas_per_master': {'key': 'replicasPerMaster', 'type': 'int'},
-        'replicas_per_primary': {'key': 'replicasPerPrimary', 'type': 'int'},
-        'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'shardCount', 'type': 'int'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'static_ip': {'key': 'staticIP', 'type': 'str'},
+        "redis_configuration": {"key": "redisConfiguration", "type": "RedisCommonPropertiesRedisConfiguration"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "enable_non_ssl_port": {"key": "enableNonSslPort", "type": "bool"},
+        "replicas_per_master": {"key": "replicasPerMaster", "type": "int"},
+        "replicas_per_primary": {"key": "replicasPerPrimary", "type": "int"},
+        "tenant_settings": {"key": "tenantSettings", "type": "{str}"},
+        "shard_count": {"key": "shardCount", "type": "int"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "static_ip": {"key": "staticIP", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword redis_configuration: All Redis Settings. Few possible keys:
          rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
@@ -1206,9 +1138,9 @@ class RedisCreateProperties(RedisCommonProperties):
         :paramtype static_ip: str
         """
         super(RedisCreateProperties, self).__init__(**kwargs)
-        self.sku = kwargs['sku']
-        self.subnet_id = kwargs.get('subnet_id', None)
-        self.static_ip = kwargs.get('static_ip', None)
+        self.sku = kwargs["sku"]
+        self.subnet_id = kwargs.get("subnet_id", None)
+        self.static_ip = kwargs.get("static_ip", None)
 
 
 class RedisFirewallRule(ProxyResource):
@@ -1233,25 +1165,22 @@ class RedisFirewallRule(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'start_ip': {'required': True},
-        'end_ip': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "start_ip": {"required": True},
+        "end_ip": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_ip': {'key': 'properties.startIP', 'type': 'str'},
-        'end_ip': {'key': 'properties.endIP', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start_ip": {"key": "properties.startIP", "type": "str"},
+        "end_ip": {"key": "properties.endIP", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword start_ip: Required. lowest IP address included in the range.
         :paramtype start_ip: str
@@ -1259,8 +1188,8 @@ class RedisFirewallRule(ProxyResource):
         :paramtype end_ip: str
         """
         super(RedisFirewallRule, self).__init__(**kwargs)
-        self.start_ip = kwargs['start_ip']
-        self.end_ip = kwargs['end_ip']
+        self.start_ip = kwargs["start_ip"]
+        self.end_ip = kwargs["end_ip"]
 
 
 class RedisFirewallRuleCreateParameters(RedisFirewallRule):
@@ -1285,25 +1214,22 @@ class RedisFirewallRuleCreateParameters(RedisFirewallRule):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'start_ip': {'required': True},
-        'end_ip': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "start_ip": {"required": True},
+        "end_ip": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_ip': {'key': 'properties.startIP', 'type': 'str'},
-        'end_ip': {'key': 'properties.endIP', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start_ip": {"key": "properties.startIP", "type": "str"},
+        "end_ip": {"key": "properties.endIP", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword start_ip: Required. lowest IP address included in the range.
         :paramtype start_ip: str
@@ -1325,24 +1251,21 @@ class RedisFirewallRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RedisFirewallRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RedisFirewallRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Results of the list firewall rules operation.
         :paramtype value: list[~azure.mgmt.redis.models.RedisFirewallRule]
         """
         super(RedisFirewallRuleListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -1356,19 +1279,15 @@ class RedisForceRebootResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'message': {'readonly': True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(RedisForceRebootResponse, self).__init__(**kwargs)
         self.message = None
 
@@ -1394,29 +1313,25 @@ class RedisInstanceDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'ssl_port': {'readonly': True},
-        'non_ssl_port': {'readonly': True},
-        'zone': {'readonly': True},
-        'shard_id': {'readonly': True},
-        'is_master': {'readonly': True},
-        'is_primary': {'readonly': True},
+        "ssl_port": {"readonly": True},
+        "non_ssl_port": {"readonly": True},
+        "zone": {"readonly": True},
+        "shard_id": {"readonly": True},
+        "is_master": {"readonly": True},
+        "is_primary": {"readonly": True},
     }
 
     _attribute_map = {
-        'ssl_port': {'key': 'sslPort', 'type': 'int'},
-        'non_ssl_port': {'key': 'nonSslPort', 'type': 'int'},
-        'zone': {'key': 'zone', 'type': 'str'},
-        'shard_id': {'key': 'shardId', 'type': 'int'},
-        'is_master': {'key': 'isMaster', 'type': 'bool'},
-        'is_primary': {'key': 'isPrimary', 'type': 'bool'},
+        "ssl_port": {"key": "sslPort", "type": "int"},
+        "non_ssl_port": {"key": "nonSslPort", "type": "int"},
+        "zone": {"key": "zone", "type": "str"},
+        "shard_id": {"key": "shardId", "type": "int"},
+        "is_master": {"key": "isMaster", "type": "bool"},
+        "is_primary": {"key": "isPrimary", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(RedisInstanceDetails, self).__init__(**kwargs)
         self.ssl_port = None
         self.non_ssl_port = None
@@ -1436,19 +1351,15 @@ class RedisLinkedServer(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(RedisLinkedServer, self).__init__(**kwargs)
         self.id = None
 
@@ -1468,21 +1379,18 @@ class RedisLinkedServerCreateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'linked_redis_cache_id': {'required': True},
-        'linked_redis_cache_location': {'required': True},
-        'server_role': {'required': True},
+        "linked_redis_cache_id": {"required": True},
+        "linked_redis_cache_location": {"required": True},
+        "server_role": {"required": True},
     }
 
     _attribute_map = {
-        'linked_redis_cache_id': {'key': 'properties.linkedRedisCacheId', 'type': 'str'},
-        'linked_redis_cache_location': {'key': 'properties.linkedRedisCacheLocation', 'type': 'str'},
-        'server_role': {'key': 'properties.serverRole', 'type': 'str'},
+        "linked_redis_cache_id": {"key": "properties.linkedRedisCacheId", "type": "str"},
+        "linked_redis_cache_location": {"key": "properties.linkedRedisCacheLocation", "type": "str"},
+        "server_role": {"key": "properties.serverRole", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword linked_redis_cache_id: Required. Fully qualified resourceId of the linked redis cache.
         :paramtype linked_redis_cache_id: str
@@ -1493,9 +1401,9 @@ class RedisLinkedServerCreateParameters(msrest.serialization.Model):
         :paramtype server_role: str or ~azure.mgmt.redis.models.ReplicationRole
         """
         super(RedisLinkedServerCreateParameters, self).__init__(**kwargs)
-        self.linked_redis_cache_id = kwargs['linked_redis_cache_id']
-        self.linked_redis_cache_location = kwargs['linked_redis_cache_location']
-        self.server_role = kwargs['server_role']
+        self.linked_redis_cache_id = kwargs["linked_redis_cache_id"]
+        self.linked_redis_cache_location = kwargs["linked_redis_cache_location"]
+        self.server_role = kwargs["server_role"]
 
 
 class RedisLinkedServerCreateProperties(msrest.serialization.Model):
@@ -1513,21 +1421,18 @@ class RedisLinkedServerCreateProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'linked_redis_cache_id': {'required': True},
-        'linked_redis_cache_location': {'required': True},
-        'server_role': {'required': True},
+        "linked_redis_cache_id": {"required": True},
+        "linked_redis_cache_location": {"required": True},
+        "server_role": {"required": True},
     }
 
     _attribute_map = {
-        'linked_redis_cache_id': {'key': 'linkedRedisCacheId', 'type': 'str'},
-        'linked_redis_cache_location': {'key': 'linkedRedisCacheLocation', 'type': 'str'},
-        'server_role': {'key': 'serverRole', 'type': 'str'},
+        "linked_redis_cache_id": {"key": "linkedRedisCacheId", "type": "str"},
+        "linked_redis_cache_location": {"key": "linkedRedisCacheLocation", "type": "str"},
+        "server_role": {"key": "serverRole", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword linked_redis_cache_id: Required. Fully qualified resourceId of the linked redis cache.
         :paramtype linked_redis_cache_id: str
@@ -1538,9 +1443,9 @@ class RedisLinkedServerCreateProperties(msrest.serialization.Model):
         :paramtype server_role: str or ~azure.mgmt.redis.models.ReplicationRole
         """
         super(RedisLinkedServerCreateProperties, self).__init__(**kwargs)
-        self.linked_redis_cache_id = kwargs['linked_redis_cache_id']
-        self.linked_redis_cache_location = kwargs['linked_redis_cache_location']
-        self.server_role = kwargs['server_role']
+        self.linked_redis_cache_id = kwargs["linked_redis_cache_id"]
+        self.linked_redis_cache_location = kwargs["linked_redis_cache_location"]
+        self.server_role = kwargs["server_role"]
 
 
 class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
@@ -1562,23 +1467,20 @@ class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
     """
 
     _validation = {
-        'linked_redis_cache_id': {'required': True},
-        'linked_redis_cache_location': {'required': True},
-        'server_role': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "linked_redis_cache_id": {"required": True},
+        "linked_redis_cache_location": {"required": True},
+        "server_role": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'linked_redis_cache_id': {'key': 'linkedRedisCacheId', 'type': 'str'},
-        'linked_redis_cache_location': {'key': 'linkedRedisCacheLocation', 'type': 'str'},
-        'server_role': {'key': 'serverRole', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "linked_redis_cache_id": {"key": "linkedRedisCacheId", "type": "str"},
+        "linked_redis_cache_location": {"key": "linkedRedisCacheLocation", "type": "str"},
+        "server_role": {"key": "serverRole", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword linked_redis_cache_id: Required. Fully qualified resourceId of the linked redis cache.
         :paramtype linked_redis_cache_id: str
@@ -1616,26 +1518,23 @@ class RedisLinkedServerWithProperties(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'linked_redis_cache_id': {'key': 'properties.linkedRedisCacheId', 'type': 'str'},
-        'linked_redis_cache_location': {'key': 'properties.linkedRedisCacheLocation', 'type': 'str'},
-        'server_role': {'key': 'properties.serverRole', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "linked_redis_cache_id": {"key": "properties.linkedRedisCacheId", "type": "str"},
+        "linked_redis_cache_location": {"key": "properties.linkedRedisCacheLocation", "type": "str"},
+        "server_role": {"key": "properties.serverRole", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword linked_redis_cache_id: Fully qualified resourceId of the linked redis cache.
         :paramtype linked_redis_cache_id: str
@@ -1646,9 +1545,9 @@ class RedisLinkedServerWithProperties(ProxyResource):
         :paramtype server_role: str or ~azure.mgmt.redis.models.ReplicationRole
         """
         super(RedisLinkedServerWithProperties, self).__init__(**kwargs)
-        self.linked_redis_cache_id = kwargs.get('linked_redis_cache_id', None)
-        self.linked_redis_cache_location = kwargs.get('linked_redis_cache_location', None)
-        self.server_role = kwargs.get('server_role', None)
+        self.linked_redis_cache_id = kwargs.get("linked_redis_cache_id", None)
+        self.linked_redis_cache_location = kwargs.get("linked_redis_cache_location", None)
+        self.server_role = kwargs.get("server_role", None)
         self.provisioning_state = None
 
 
@@ -1664,24 +1563,21 @@ class RedisLinkedServerWithPropertiesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RedisLinkedServerWithProperties]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RedisLinkedServerWithProperties]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: List of linked servers (with properties) of a Redis cache.
         :paramtype value: list[~azure.mgmt.redis.models.RedisLinkedServerWithProperties]
         """
         super(RedisLinkedServerWithPropertiesList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -1697,24 +1593,21 @@ class RedisListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RedisResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RedisResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: List of Redis cache instances.
         :paramtype value: list[~azure.mgmt.redis.models.RedisResource]
         """
         super(RedisListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -1738,29 +1631,26 @@ class RedisPatchSchedule(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'schedule_entries': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "schedule_entries": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'schedule_entries': {'key': 'properties.scheduleEntries', 'type': '[ScheduleEntry]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "schedule_entries": {"key": "properties.scheduleEntries", "type": "[ScheduleEntry]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword schedule_entries: Required. List of patch schedules for a Redis cache.
         :paramtype schedule_entries: list[~azure.mgmt.redis.models.ScheduleEntry]
         """
         super(RedisPatchSchedule, self).__init__(**kwargs)
-        self.schedule_entries = kwargs['schedule_entries']
+        self.schedule_entries = kwargs["schedule_entries"]
 
 
 class RedisPatchScheduleListResult(msrest.serialization.Model):
@@ -1775,24 +1665,21 @@ class RedisPatchScheduleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RedisPatchSchedule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RedisPatchSchedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Results of the list patch schedules operation.
         :paramtype value: list[~azure.mgmt.redis.models.RedisPatchSchedule]
         """
         super(RedisPatchScheduleListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -1860,46 +1747,45 @@ class RedisProperties(RedisCreateProperties):
     """
 
     _validation = {
-        'sku': {'required': True},
-        'subnet_id': {'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
-        'static_ip': {'pattern': r'^\d+\.\d+\.\d+\.\d+$'},
-        'provisioning_state': {'readonly': True},
-        'host_name': {'readonly': True},
-        'port': {'readonly': True},
-        'ssl_port': {'readonly': True},
-        'access_keys': {'readonly': True},
-        'linked_servers': {'readonly': True},
-        'instances': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "sku": {"required": True},
+        "subnet_id": {
+            "pattern": r"^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$"
+        },
+        "static_ip": {"pattern": r"^\d+\.\d+\.\d+\.\d+$"},
+        "provisioning_state": {"readonly": True},
+        "host_name": {"readonly": True},
+        "port": {"readonly": True},
+        "ssl_port": {"readonly": True},
+        "access_keys": {"readonly": True},
+        "linked_servers": {"readonly": True},
+        "instances": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'redis_configuration': {'key': 'redisConfiguration', 'type': 'RedisCommonPropertiesRedisConfiguration'},
-        'redis_version': {'key': 'redisVersion', 'type': 'str'},
-        'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
-        'replicas_per_master': {'key': 'replicasPerMaster', 'type': 'int'},
-        'replicas_per_primary': {'key': 'replicasPerPrimary', 'type': 'int'},
-        'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'shardCount', 'type': 'int'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'static_ip': {'key': 'staticIP', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'ssl_port': {'key': 'sslPort', 'type': 'int'},
-        'access_keys': {'key': 'accessKeys', 'type': 'RedisAccessKeys'},
-        'linked_servers': {'key': 'linkedServers', 'type': '[RedisLinkedServer]'},
-        'instances': {'key': 'instances', 'type': '[RedisInstanceDetails]'},
-        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "redis_configuration": {"key": "redisConfiguration", "type": "RedisCommonPropertiesRedisConfiguration"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "enable_non_ssl_port": {"key": "enableNonSslPort", "type": "bool"},
+        "replicas_per_master": {"key": "replicasPerMaster", "type": "int"},
+        "replicas_per_primary": {"key": "replicasPerPrimary", "type": "int"},
+        "tenant_settings": {"key": "tenantSettings", "type": "{str}"},
+        "shard_count": {"key": "shardCount", "type": "int"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "static_ip": {"key": "staticIP", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "ssl_port": {"key": "sslPort", "type": "int"},
+        "access_keys": {"key": "accessKeys", "type": "RedisAccessKeys"},
+        "linked_servers": {"key": "linkedServers", "type": "[RedisLinkedServer]"},
+        "instances": {"key": "instances", "type": "[RedisInstanceDetails]"},
+        "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword redis_configuration: All Redis Settings. Few possible keys:
          rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
@@ -1963,15 +1849,12 @@ class RedisRebootParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'reboot_type': {'key': 'rebootType', 'type': 'str'},
-        'shard_id': {'key': 'shardId', 'type': 'int'},
-        'ports': {'key': 'ports', 'type': '[int]'},
+        "reboot_type": {"key": "rebootType", "type": "str"},
+        "shard_id": {"key": "shardId", "type": "int"},
+        "ports": {"key": "ports", "type": "[int]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword reboot_type: Which Redis node(s) to reboot. Depending on this value data loss is
          possible. Possible values include: "PrimaryNode", "SecondaryNode", "AllNodes".
@@ -1983,9 +1866,9 @@ class RedisRebootParameters(msrest.serialization.Model):
         :paramtype ports: list[int]
         """
         super(RedisRebootParameters, self).__init__(**kwargs)
-        self.reboot_type = kwargs.get('reboot_type', None)
-        self.shard_id = kwargs.get('shard_id', None)
-        self.ports = kwargs.get('ports', None)
+        self.reboot_type = kwargs.get("reboot_type", None)
+        self.shard_id = kwargs.get("shard_id", None)
+        self.ports = kwargs.get("ports", None)
 
 
 class RedisRegenerateKeyParameters(msrest.serialization.Model):
@@ -1999,24 +1882,21 @@ class RedisRegenerateKeyParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_type': {'required': True},
+        "key_type": {"required": True},
     }
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'str'},
+        "key_type": {"key": "keyType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword key_type: Required. The Redis access key to regenerate. Possible values include:
          "Primary", "Secondary".
         :paramtype key_type: str or ~azure.mgmt.redis.models.RedisKeyType
         """
         super(RedisRegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_type = kwargs['key_type']
+        self.key_type = kwargs["key_type"]
 
 
 class TrackedResource(Resource):
@@ -2041,24 +1921,21 @@ class TrackedResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -2066,8 +1943,8 @@ class TrackedResource(Resource):
         :paramtype location: str
         """
         super(TrackedResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs['location']
+        self.tags = kwargs.get("tags", None)
+        self.location = kwargs["location"]
 
 
 class RedisResource(TrackedResource):
@@ -2150,57 +2027,62 @@ class RedisResource(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'sku': {'required': True},
-        'subnet_id': {'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
-        'static_ip': {'pattern': r'^\d+\.\d+\.\d+\.\d+$'},
-        'provisioning_state': {'readonly': True},
-        'host_name': {'readonly': True},
-        'port': {'readonly': True},
-        'ssl_port': {'readonly': True},
-        'access_keys': {'readonly': True},
-        'linked_servers': {'readonly': True},
-        'instances': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "sku": {"required": True},
+        "subnet_id": {
+            "pattern": r"^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$"
+        },
+        "static_ip": {"pattern": r"^\d+\.\d+\.\d+\.\d+$"},
+        "provisioning_state": {"readonly": True},
+        "host_name": {"readonly": True},
+        "port": {"readonly": True},
+        "ssl_port": {"readonly": True},
+        "access_keys": {"readonly": True},
+        "linked_servers": {"readonly": True},
+        "instances": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': 'RedisCommonPropertiesRedisConfiguration'},
-        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
-        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
-        'replicas_per_master': {'key': 'properties.replicasPerMaster', 'type': 'int'},
-        'replicas_per_primary': {'key': 'properties.replicasPerPrimary', 'type': 'int'},
-        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
-        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'ssl_port': {'key': 'properties.sslPort', 'type': 'int'},
-        'access_keys': {'key': 'properties.accessKeys', 'type': 'RedisAccessKeys'},
-        'linked_servers': {'key': 'properties.linkedServers', 'type': '[RedisLinkedServer]'},
-        'instances': {'key': 'properties.instances', 'type': '[RedisInstanceDetails]'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "redis_configuration": {
+            "key": "properties.redisConfiguration",
+            "type": "RedisCommonPropertiesRedisConfiguration",
+        },
+        "redis_version": {"key": "properties.redisVersion", "type": "str"},
+        "enable_non_ssl_port": {"key": "properties.enableNonSslPort", "type": "bool"},
+        "replicas_per_master": {"key": "properties.replicasPerMaster", "type": "int"},
+        "replicas_per_primary": {"key": "properties.replicasPerPrimary", "type": "int"},
+        "tenant_settings": {"key": "properties.tenantSettings", "type": "{str}"},
+        "shard_count": {"key": "properties.shardCount", "type": "int"},
+        "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
+        "static_ip": {"key": "properties.staticIP", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "ssl_port": {"key": "properties.sslPort", "type": "int"},
+        "access_keys": {"key": "properties.accessKeys", "type": "RedisAccessKeys"},
+        "linked_servers": {"key": "properties.linkedServers", "type": "[RedisLinkedServer]"},
+        "instances": {"key": "properties.instances", "type": "[RedisInstanceDetails]"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -2248,20 +2130,20 @@ class RedisResource(TrackedResource):
         :paramtype static_ip: str
         """
         super(RedisResource, self).__init__(**kwargs)
-        self.zones = kwargs.get('zones', None)
-        self.identity = kwargs.get('identity', None)
-        self.redis_configuration = kwargs.get('redis_configuration', None)
-        self.redis_version = kwargs.get('redis_version', None)
-        self.enable_non_ssl_port = kwargs.get('enable_non_ssl_port', False)
-        self.replicas_per_master = kwargs.get('replicas_per_master', None)
-        self.replicas_per_primary = kwargs.get('replicas_per_primary', None)
-        self.tenant_settings = kwargs.get('tenant_settings', None)
-        self.shard_count = kwargs.get('shard_count', None)
-        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
-        self.public_network_access = kwargs.get('public_network_access', "Enabled")
-        self.sku = kwargs['sku']
-        self.subnet_id = kwargs.get('subnet_id', None)
-        self.static_ip = kwargs.get('static_ip', None)
+        self.zones = kwargs.get("zones", None)
+        self.identity = kwargs.get("identity", None)
+        self.redis_configuration = kwargs.get("redis_configuration", None)
+        self.redis_version = kwargs.get("redis_version", None)
+        self.enable_non_ssl_port = kwargs.get("enable_non_ssl_port", False)
+        self.replicas_per_master = kwargs.get("replicas_per_master", None)
+        self.replicas_per_primary = kwargs.get("replicas_per_primary", None)
+        self.tenant_settings = kwargs.get("tenant_settings", None)
+        self.shard_count = kwargs.get("shard_count", None)
+        self.minimum_tls_version = kwargs.get("minimum_tls_version", None)
+        self.public_network_access = kwargs.get("public_network_access", "Enabled")
+        self.sku = kwargs["sku"]
+        self.subnet_id = kwargs.get("subnet_id", None)
+        self.static_ip = kwargs.get("static_ip", None)
         self.provisioning_state = None
         self.host_name = None
         self.port = None
@@ -2309,24 +2191,24 @@ class RedisUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': 'RedisCommonPropertiesRedisConfiguration'},
-        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
-        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
-        'replicas_per_master': {'key': 'properties.replicasPerMaster', 'type': 'int'},
-        'replicas_per_primary': {'key': 'properties.replicasPerPrimary', 'type': 'int'},
-        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
-        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "redis_configuration": {
+            "key": "properties.redisConfiguration",
+            "type": "RedisCommonPropertiesRedisConfiguration",
+        },
+        "redis_version": {"key": "properties.redisVersion", "type": "str"},
+        "enable_non_ssl_port": {"key": "properties.enableNonSslPort", "type": "bool"},
+        "replicas_per_master": {"key": "properties.replicasPerMaster", "type": "int"},
+        "replicas_per_primary": {"key": "properties.replicasPerPrimary", "type": "int"},
+        "tenant_settings": {"key": "properties.tenantSettings", "type": "{str}"},
+        "shard_count": {"key": "properties.shardCount", "type": "int"},
+        "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -2363,18 +2245,18 @@ class RedisUpdateParameters(msrest.serialization.Model):
         :paramtype sku: ~azure.mgmt.redis.models.Sku
         """
         super(RedisUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.identity = kwargs.get('identity', None)
-        self.redis_configuration = kwargs.get('redis_configuration', None)
-        self.redis_version = kwargs.get('redis_version', None)
-        self.enable_non_ssl_port = kwargs.get('enable_non_ssl_port', False)
-        self.replicas_per_master = kwargs.get('replicas_per_master', None)
-        self.replicas_per_primary = kwargs.get('replicas_per_primary', None)
-        self.tenant_settings = kwargs.get('tenant_settings', None)
-        self.shard_count = kwargs.get('shard_count', None)
-        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
-        self.public_network_access = kwargs.get('public_network_access', "Enabled")
-        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get("tags", None)
+        self.identity = kwargs.get("identity", None)
+        self.redis_configuration = kwargs.get("redis_configuration", None)
+        self.redis_version = kwargs.get("redis_version", None)
+        self.enable_non_ssl_port = kwargs.get("enable_non_ssl_port", False)
+        self.replicas_per_master = kwargs.get("replicas_per_master", None)
+        self.replicas_per_primary = kwargs.get("replicas_per_primary", None)
+        self.tenant_settings = kwargs.get("tenant_settings", None)
+        self.shard_count = kwargs.get("shard_count", None)
+        self.minimum_tls_version = kwargs.get("minimum_tls_version", None)
+        self.public_network_access = kwargs.get("public_network_access", "Enabled")
+        self.sku = kwargs.get("sku", None)
 
 
 class RedisUpdateProperties(RedisCommonProperties):
@@ -2410,22 +2292,19 @@ class RedisUpdateProperties(RedisCommonProperties):
     """
 
     _attribute_map = {
-        'redis_configuration': {'key': 'redisConfiguration', 'type': 'RedisCommonPropertiesRedisConfiguration'},
-        'redis_version': {'key': 'redisVersion', 'type': 'str'},
-        'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
-        'replicas_per_master': {'key': 'replicasPerMaster', 'type': 'int'},
-        'replicas_per_primary': {'key': 'replicasPerPrimary', 'type': 'int'},
-        'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'shardCount', 'type': 'int'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "redis_configuration": {"key": "redisConfiguration", "type": "RedisCommonPropertiesRedisConfiguration"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "enable_non_ssl_port": {"key": "enableNonSslPort", "type": "bool"},
+        "replicas_per_master": {"key": "replicasPerMaster", "type": "int"},
+        "replicas_per_primary": {"key": "replicasPerPrimary", "type": "int"},
+        "tenant_settings": {"key": "tenantSettings", "type": "{str}"},
+        "shard_count": {"key": "shardCount", "type": "int"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword redis_configuration: All Redis Settings. Few possible keys:
          rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
@@ -2458,7 +2337,7 @@ class RedisUpdateProperties(RedisCommonProperties):
         :paramtype sku: ~azure.mgmt.redis.models.Sku
         """
         super(RedisUpdateProperties, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
+        self.sku = kwargs.get("sku", None)
 
 
 class ScheduleEntry(msrest.serialization.Model):
@@ -2477,20 +2356,17 @@ class ScheduleEntry(msrest.serialization.Model):
     """
 
     _validation = {
-        'day_of_week': {'required': True},
-        'start_hour_utc': {'required': True},
+        "day_of_week": {"required": True},
+        "start_hour_utc": {"required": True},
     }
 
     _attribute_map = {
-        'day_of_week': {'key': 'dayOfWeek', 'type': 'str'},
-        'start_hour_utc': {'key': 'startHourUtc', 'type': 'int'},
-        'maintenance_window': {'key': 'maintenanceWindow', 'type': 'duration'},
+        "day_of_week": {"key": "dayOfWeek", "type": "str"},
+        "start_hour_utc": {"key": "startHourUtc", "type": "int"},
+        "maintenance_window": {"key": "maintenanceWindow", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword day_of_week: Required. Day of the week when a cache can be patched. Possible values
          include: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
@@ -2502,9 +2378,9 @@ class ScheduleEntry(msrest.serialization.Model):
         :paramtype maintenance_window: ~datetime.timedelta
         """
         super(ScheduleEntry, self).__init__(**kwargs)
-        self.day_of_week = kwargs['day_of_week']
-        self.start_hour_utc = kwargs['start_hour_utc']
-        self.maintenance_window = kwargs.get('maintenance_window', None)
+        self.day_of_week = kwargs["day_of_week"]
+        self.start_hour_utc = kwargs["start_hour_utc"]
+        self.maintenance_window = kwargs.get("maintenance_window", None)
 
 
 class Sku(msrest.serialization.Model):
@@ -2524,21 +2400,18 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'family': {'required': True},
-        'capacity': {'required': True},
+        "name": {"required": True},
+        "family": {"required": True},
+        "capacity": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword name: Required. The type of Redis cache to deploy. Valid values: (Basic, Standard,
          Premium). Possible values include: "Basic", "Standard", "Premium".
@@ -2551,9 +2424,9 @@ class Sku(msrest.serialization.Model):
         :paramtype capacity: int
         """
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.family = kwargs['family']
-        self.capacity = kwargs['capacity']
+        self.name = kwargs["name"]
+        self.family = kwargs["family"]
+        self.capacity = kwargs["capacity"]
 
 
 class UpgradeNotification(msrest.serialization.Model):
@@ -2570,23 +2443,19 @@ class UpgradeNotification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'timestamp': {'readonly': True},
-        'upsell_notification': {'readonly': True},
+        "name": {"readonly": True},
+        "timestamp": {"readonly": True},
+        "upsell_notification": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'upsell_notification': {'key': 'upsellNotification', 'type': '{str}'},
+        "name": {"key": "name", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "upsell_notification": {"key": "upsellNotification", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UpgradeNotification, self).__init__(**kwargs)
         self.name = None
         self.timestamp = None
@@ -2605,21 +2474,17 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
