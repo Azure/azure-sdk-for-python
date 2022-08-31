@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:34 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:14 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13562.11 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -110,13 +110,14 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-hBjbAjb8H7MGMo_294qN0w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:34 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:14 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13562.11 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +173,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "3925ca44-43b1-4083-a9dd-fb696358d7b5",
+        "client-request-id": "8b50a9ca-6085-439e-b5b7-e421dd2d8dee",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +191,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "3925ca44-43b1-4083-a9dd-fb696358d7b5",
+        "client-request-id": "8b50a9ca-6085-439e-b5b7-e421dd2d8dee",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:34 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:14 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +202,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13481.12 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -226,9 +227,9 @@
       "ResponseHeaders": {
         "Content-Length": "17",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:36 GMT",
-        "mise-correlation-id": "b93bafc3-a54a-4f4a-8fb9-9b8b9a4e3889",
-        "traceparent": "00-c94d7578b7bf9e172b4a6a1ffef9d5c7-5478427056ae2b03-00"
+        "Date": "Wed, 31 Aug 2022 16:49:15 GMT",
+        "mise-correlation-id": "d1c47c21-06de-4189-93c5-ab1f63ae3cdf",
+        "traceparent": "00-d5a8402359bae48dab3f80f08386cacf-2cd598ca093858b6-00"
       },
       "ResponseBody": {
         "value": [

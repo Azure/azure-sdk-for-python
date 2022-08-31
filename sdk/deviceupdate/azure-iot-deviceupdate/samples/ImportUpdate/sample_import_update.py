@@ -64,6 +64,6 @@ try:
     response.wait
 
 except HttpResponseError as e:
-    print('Failed to import update: {}'.format(e.response.json()))
+    print('Failed to import update: {}'.format(e))
 
 

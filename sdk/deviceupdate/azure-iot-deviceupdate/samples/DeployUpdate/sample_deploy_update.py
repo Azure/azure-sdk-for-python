@@ -52,4 +52,4 @@ try:
     response = client.device_management.get_deployment_status(group, deployment_id)
     print(response)
 except HttpResponseError as e:
-    print('Failed to deploy update: {}'.format(e.response.json()))
+    print('Failed to deploy update: {}'.format(e))

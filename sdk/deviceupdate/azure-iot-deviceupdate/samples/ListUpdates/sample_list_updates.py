@@ -48,4 +48,4 @@ try:
     for item in response:
         print(f"  {item}")
 except HttpResponseError as e:
-    print('Failed to get data: {}'.format(e.response.json()))
+    print('Failed to get data: {}'.format(e))

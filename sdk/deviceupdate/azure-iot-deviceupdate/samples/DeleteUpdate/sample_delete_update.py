@@ -35,4 +35,4 @@ try:
     response.wait
 
 except HttpResponseError as e:
-    print('Failed to delete update: {}'.format(e.response.json()))
+    print('Failed to delete update: {}'.format(e))

@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:37 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:16 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13562.11 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:37 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:16 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13562.11 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "a173070a-e8e6-4c15-9373-47567a6b9b0e",
+        "client-request-id": "403d6bd6-94a2-4e90-b766-a30e3a643ed9",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,11 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "a173070a-e8e6-4c15-9373-47567a6b9b0e",
+        "client-request-id": "403d6bd6-94a2-4e90-b766-a30e3a643ed9",
         "Content-Length": "114",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-92ZooD1gGO153l-VXTsY7g\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:37 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:16 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +202,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13481.12 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -226,15 +227,15 @@
       "ResponseHeaders": {
         "Content-Length": "161",
         "Content-Type": "application/problem\u002Bjson; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:38 GMT",
-        "mise-correlation-id": "b5c45efe-43f7-47c4-96f5-45b30ff514e2",
-        "traceparent": "00-82777efe5f6010e4853c14280bd6a184-26c84e5482a3aa72-00"
+        "Date": "Wed, 31 Aug 2022 16:49:16 GMT",
+        "mise-correlation-id": "2af1e01e-cda0-4bf5-aa60-e6b653a07f02",
+        "traceparent": "00-397642f6763a10697727d794b2d0f1a7-c898e6489c312937-00"
       },
       "ResponseBody": {
         "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
         "title": "Not Found",
         "status": 404,
-        "traceId": "00-82777efe5f6010e4853c14280bd6a184-a0c9a292f0cea342-00"
+        "traceId": "00-397642f6763a10697727d794b2d0f1a7-e12ef0b2a8b8894d-00"
       }
     }
   ],

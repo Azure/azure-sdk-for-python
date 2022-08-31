@@ -52,4 +52,4 @@ try:
         print(f"  {item['update']['updateId']['name']}")
         print(f"  {item['update']['updateId']['version']}")
 except HttpResponseError as e:
-    print('Failed to get device message: {}'.format(e.response.json()))
+    print('Failed to get device message: {}'.format(e))

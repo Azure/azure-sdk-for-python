@@ -16,13 +16,14 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-8imSX6xDbiayObnzjDTeHA\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:40 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:19 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.12 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -110,13 +111,14 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-PHMN7muAW6YJhumHSgtu1A\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:40 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:19 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13562.11 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +174,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "cf8e8fa2-97e8-4e0f-8f22-3bcee80bfcc5",
+        "client-request-id": "dfa40646-0944-4809-b697-465a1255b1af",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +192,11 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "cf8e8fa2-97e8-4e0f-8f22-3bcee80bfcc5",
+        "client-request-id": "dfa40646-0944-4809-b697-465a1255b1af",
         "Content-Length": "114",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-S6A39xOdxZVyjbNYy4re6Q\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:40 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:19 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +204,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13481.12 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -226,15 +229,15 @@
       "ResponseHeaders": {
         "Content-Length": "161",
         "Content-Type": "application/problem\u002Bjson; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:41 GMT",
-        "mise-correlation-id": "7b3aa4c2-f9a9-49d4-98e1-998ec68b7505",
-        "traceparent": "00-cb632cab410b5d10267d19d1dc41d197-341f15946dc1fe7e-00"
+        "Date": "Wed, 31 Aug 2022 16:49:19 GMT",
+        "mise-correlation-id": "5b0a205a-71da-41eb-a9c0-4d05a096745d",
+        "traceparent": "00-94864fe5fd0ee44f553640bf0af37bb4-58e9886be1fd4ffe-00"
       },
       "ResponseBody": {
         "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
         "title": "Not Found",
         "status": 404,
-        "traceId": "00-cb632cab410b5d10267d19d1dc41d197-90239a55cee84a41-00"
+        "traceId": "00-94864fe5fd0ee44f553640bf0af37bb4-0e4410efa57bb04a-00"
       }
     }
   ],

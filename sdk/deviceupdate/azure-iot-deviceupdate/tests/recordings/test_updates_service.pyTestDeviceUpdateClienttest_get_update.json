@@ -16,13 +16,14 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-h7Zz9H9YLZPX4b7LnwThZQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:38 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.12 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +112,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:38 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:17 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13481.12 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +173,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "aee6d9fb-0f05-4c26-819e-e6f648f631f0",
+        "client-request-id": "a434fbe7-b177-4f59-8dc9-9c8ab67ee103",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,11 +191,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "aee6d9fb-0f05-4c26-819e-e6f648f631f0",
+        "client-request-id": "a434fbe7-b177-4f59-8dc9-9c8ab67ee103",
         "Content-Length": "114",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-UWlcTXtl85q8qwL9Yu84gQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027none\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:38 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:17 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -202,7 +202,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13562.11 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13622.4 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -228,10 +228,10 @@
         "Cache-Control": "max-age=60, private",
         "Content-Length": "416",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 25 Aug 2022 21:01:39 GMT",
+        "Date": "Wed, 31 Aug 2022 16:49:18 GMT",
         "ETag": "\u00220bc5c812-4d49-4166-a583-ddc0e0e21efe\u0022",
-        "mise-correlation-id": "318685ee-3eb6-4873-b6dd-1f6430a37d78",
-        "traceparent": "00-f01eb31ce7720fb3eccc14bd4e52fa14-fdd55e4e3d676bff-00"
+        "mise-correlation-id": "6d8b8a09-7496-4f74-ba0e-eb56eb958286",
+        "traceparent": "00-4a5bf1a595c3bc31ded449ac5c4f3c4a-1da1f05c4b5f5177-00"
       },
       "ResponseBody": {
         "updateId": {

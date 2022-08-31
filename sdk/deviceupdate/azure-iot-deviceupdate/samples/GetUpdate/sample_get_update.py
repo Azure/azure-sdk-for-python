@@ -33,17 +33,27 @@ client = DeviceUpdateClient(credential=DefaultAzureCredential(), endpoint=endpoi
 try:
     print(f"Get update data for provider '{update_provider}', name '{update_name}' and version '{update_version}'...")
     response = client.device_update.get_update(update_provider, update_name, update_version)
+
+    print("Update:")
+    print(f"  Provider: {response['updateId']['provider']}")
+    print(f"  Name: {response['updateId']['name']}")
+    print(f"  Version: {response['updateId']['version']}")
+    print("Metadata:")
     print(response)
 
     print(f"\nEnumerate update files:")
     response = client.device_update.list_files(update_provider, update_name, update_version)
+    file_ids = []
     for item in response:
-        print(f"  {item}")
+        file_ids.append(item)
+        print(item)
 
-    print(f"\nGet file data:")
-    response = client.device_update.list_files(update_provider, update_name, update_version)
-    for item in response:
-        print(client.device_update.get_file(update_provider, update_name, update_version, item))
+    for file_id in file_ids:
+        response = client.device_update.get_file(update_provider, update_name, update_version, file_id)
+        print("\nFile:")
+        print(f"  FileId: {response['fileId']}")
+        print("Metadata:")
+        print(response)
 
 except HttpResponseError as e:
-    print('Failed to get update: {}'.format(e.response.json()))
+    print('Failed to get update: {}'.format(e))
