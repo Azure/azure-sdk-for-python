@@ -1713,6 +1713,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             )).result()
         assert str(e.value) == "'begin_analyze_actions' is only available for API version v3.1 and up."
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsCustomPreparer()
     async def test_analyze_multiapi_validate_v3_1(self, **kwargs):
