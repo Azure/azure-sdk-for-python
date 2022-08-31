@@ -167,8 +167,9 @@ class TestStorageRetry(StorageRecordedTestCase):
             assert 'read timeout' in str(error.value.args[0]), 'Expected socket timeout but got different exception.'
 
         finally:
-            # we must make the timeout normal again to let the delete operation succeed
-            service.delete_container(container_name, connection_timeout=(11, 11))
+            # Recreate client with normal timeouts
+            service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
+            service.delete_container(container_name)
 
     @BlobPreparer()
     @recorded_by_proxy
