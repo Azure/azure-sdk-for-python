@@ -29,7 +29,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQUESTS_LOCK,
+    _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
     get_statsbeat_shutdown,
     is_statsbeat_enabled,
@@ -287,7 +287,7 @@ def _is_throttle_code(response_code: int) -> bool:
 
 def _update_requests_map(type_name, value=None):
     # value is either None, duration, status_code or exc_name
-    with _REQUESTS_LOCK:
+    with _REQUESTS_MAP_LOCK:
         if type_name in (_REQ_SUCCESS_NAME[1], "count"):  # success, count
             _REQUESTS_MAP[type_name] = _REQUESTS_MAP.get(type_name, 0) + 1
         elif type_name == _REQ_DURATION_NAME[1]:  # duration
