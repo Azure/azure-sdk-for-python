@@ -6,6 +6,7 @@
     "powershell",
     "python",
     "softwareTerms",
+    "lorem-ipsum",
     "en_us",
     "en-gb"
   ],
@@ -89,7 +90,6 @@
     "sdk/servicebus/azure-servicebus/**",
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
-    "sdk/storage/azure-storage-file-datalake/**",
     "sdk/synapse/azure-synapse-spark/**",
     "sdk/storage/azure-storage-file-share/**",
     "sdk/synapse/azure-synapse/**",
@@ -503,6 +503,29 @@
       "words": [
         "undoc"
       ]
+    },
+    {
+      "filename": "sdk/storage/azure-storage-file-datalake/**",
+      "words": ["myfile", "dlake"]
+    },
+    {
+      "filename": "sdk/storage/azure-storage-file-datalake/**/*.py",
+      "words": [
+        "rwxrwxrwx", "rwxrw", "rwxr", "ABFS", "deletionid", "saoid", "testfs",
+        "mynewfilesystems", "myleasefilesystem", "mymetadatafilesystemsync",
+        "mypathfilesystem", "myclientfilesystem", "mydirectoryfilesystem", "myfilesystemforgetclient",
+        "mynewdirectory", "mydirectory", "mynewfile", "myfilesystem", "mynewfilesystem",
+        "myfilesystemforlistpaths", "cpkfile", "dont", "fsname", "fpath", "dname", "racwdlmeop",
+        "filesys", "nonexistentfs", "testid", "cpkdirectory", "cpksubdirectory"
+      ]
+    },
+    {
+      "filename": "sdk/storage/azure-storage-file-datalake/**/*.md",
+      "words": ["thead", "tbody", "myfilesystem"]
+    },
+    {
+      "filename": "sdk/storage/**/_shared/*.py",
+      "words": ["yarl", "mday"]
     },
     {
       "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",

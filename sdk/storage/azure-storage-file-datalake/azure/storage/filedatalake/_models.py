@@ -409,7 +409,7 @@ class FileSystemSasPermissions(object):
         :param str permission: The string which dictates the read, add, create,
             write, or delete permissions.
         :return: A FileSystemSasPermissions object
-        :rtype: ~azure.storage.fildatalake.FileSystemSasPermissions
+        :rtype: ~azure.storage.filedatalake.FileSystemSasPermissions
         """
         p_read = 'r' in permission
         p_add = 'a' in permission
@@ -580,7 +580,7 @@ class FileSasPermissions(object):
         :param str permission: The string which dictates the read, add, create,
             write, or delete permissions.
         :return: A FileSasPermissions object
-        :rtype: ~azure.storage.fildatalake.FileSasPermissions
+        :rtype: ~azure.storage.filedatalake.FileSasPermissions
         """
         p_read = 'r' in permission
         p_add = 'a' in permission
