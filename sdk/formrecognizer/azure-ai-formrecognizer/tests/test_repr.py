@@ -170,12 +170,6 @@ def address_value():
     assert repr(model) == model_repr
     return model, model_repr
 
-@pytest.fixture
-def document_element(bounding_box):
-    model = _models.DocumentContentElement(content="content", kind="word", polygon=bounding_box[0])
-    model_repr = "DocumentContentElement(content=content, polygon={}, kind=word)".format(bounding_box[1])
-    assert repr(model) == model_repr
-    return model, model_repr
 
 @pytest.fixture
 def address_document_field(bounding_region, document_span, address_value):
@@ -234,12 +228,11 @@ def document_key_value_pair(document_key_value_element):
 @pytest.fixture
 def document_word(bounding_box, document_span):
     model = _models.DocumentWord(content="word", polygon=bounding_box[0], span=document_span[0], confidence=0.92)
-    model_repr = "DocumentWord(content={}, polygon={}, span={}, confidence={}, kind={})".format(
+    model_repr = "DocumentWord(content={}, polygon={}, span={}, confidence={})".format(
             "word",
             bounding_box[1],
             document_span[1],
             0.92,
-            "word",
         )
     assert repr(model) == model_repr
     return model, model_repr
@@ -280,14 +273,12 @@ def document_language(document_span):
 
 @pytest.fixture
 def document_selection_mark(bounding_box, document_span):
-    model = _models.DocumentSelectionMark(state="selected", content="", polygon=bounding_box[0], span=document_span[0], confidence=0.89)
-    model_repr = "DocumentSelectionMark(state={}, content={}, span={}, confidence={}, polygon={}, kind={})".format(
+    model = _models.DocumentSelectionMark(state="selected", polygon=bounding_box[0], span=document_span[0], confidence=0.89)
+    model_repr = "DocumentSelectionMark(state={}, span={}, confidence={}, polygon={})".format(
             "selected",
-            "",
             document_span[1],
             0.89,
             bounding_box[1],
-            "selectionMark",
         )
     assert repr(model) == model_repr
     return model, model_repr

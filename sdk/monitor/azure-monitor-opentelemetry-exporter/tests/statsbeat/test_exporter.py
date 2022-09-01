@@ -1,7 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from gc import collect
 import os
 import unittest
+from unittest import mock
 
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
@@ -18,10 +20,16 @@ class TestStatsbeatExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
-        cls._exporter = _StatsBeatExporter()
+
+    @mock.patch(
+        'azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics')
+    def test_init(self, collect_mock):
+        exporter = _StatsBeatExporter()
+        self.assertFalse(exporter._should_collect_stats())
+        collect_mock.assert_not_called()
 
     def test_point_to_envelope(self):
-        exporter = self._exporter
+        exporter = _StatsBeatExporter()
         resource = Resource.create(attributes={"asd":"test_resource"})
         scope = InstrumentationScope("test_scope")
         point=NumberDataPoint(

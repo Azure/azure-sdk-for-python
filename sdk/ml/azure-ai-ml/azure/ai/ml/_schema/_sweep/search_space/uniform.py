@@ -9,7 +9,8 @@ from marshmallow import ValidationError, fields, post_load, pre_dump
 from azure.ai.ml._schema._sweep._constants import BASE_ERROR_MESSAGE
 from azure.ai.ml._schema.core.fields import DumpableIntegerField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml.constants import TYPE, SearchSpace
+from azure.ai.ml.constants._common import TYPE
+from azure.ai.ml.constants._job.sweep import SearchSpace
 
 
 class UniformSchema(metaclass=PatchedSchemaMeta):

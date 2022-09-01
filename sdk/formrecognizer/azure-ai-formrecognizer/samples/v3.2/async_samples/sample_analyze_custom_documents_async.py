@@ -125,7 +125,7 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with document_model_admin_client:
-            poller = await document_model_admin_client.begin_build_model(
+            poller = await document_model_admin_client.begin_build_document_model(
                 ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")
             )
             model = await poller.result()

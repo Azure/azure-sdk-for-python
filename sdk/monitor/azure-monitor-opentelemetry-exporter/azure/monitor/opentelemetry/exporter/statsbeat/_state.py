@@ -3,8 +3,8 @@
 import os
 import threading
 
-_REQUESTS_LOCK = threading.Lock()
 _REQUESTS_MAP = {}
+_REQUESTS_MAP_LOCK = threading.Lock()
 
 _STATSBEAT_STATE = {
     "INITIAL_FAILURE_COUNT": 0,
@@ -14,7 +14,8 @@ _STATSBEAT_STATE = {
 _STATSBEAT_STATE_LOCK = threading.Lock()
 
 def is_statsbeat_enabled():
-    return not os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL")
+    disabled = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL")
+    return disabled is None or disabled.lower() != "true"
 
 
 def increment_statsbeat_initial_failure_count():

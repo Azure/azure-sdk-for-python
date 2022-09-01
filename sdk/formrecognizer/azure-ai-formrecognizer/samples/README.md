@@ -82,7 +82,7 @@ Please see the samples [here][v3.0.0-samples-tag].
 1. Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
 2. Clone or download this sample repository

@@ -11,6 +11,7 @@ from typing import (cast,
                     Tuple,
                     )
 from datetime import datetime
+import isodate
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
@@ -64,6 +65,20 @@ def get_current_utc_as_int():
     # type: () -> int
     current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
+
+
+def verify_datetime_format(input_datetime):
+    #type: (datetime) -> bool
+    if input_datetime is None:
+        return True
+    try:
+        if isinstance(input_datetime, str):
+            input_datetime = isodate.parse_datetime(input_datetime)
+        if isinstance(input_datetime, datetime):
+            return True
+    except:
+        raise ValueError("{} is not a valid ISO-8601 datetime format".format(input_datetime)) from None
+    return True
 
 
 def create_access_token(token):

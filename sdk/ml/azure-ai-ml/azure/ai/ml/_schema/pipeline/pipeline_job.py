@@ -2,20 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument,no-self-use,no-member
 
 import logging
 
 from marshmallow import INCLUDE, post_load, pre_dump
 
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema._utils.data_binding_expression import _add_data_binding_to_field
-from azure.ai.ml._schema.core.fields import ComputeField
+from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._schema.pipeline.component_job import _resolve_inputs_outputs
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineJobsField, _post_load_pipeline_jobs
+from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml.constants import JobType
 
 module_logger = logging.getLogger(__name__)
