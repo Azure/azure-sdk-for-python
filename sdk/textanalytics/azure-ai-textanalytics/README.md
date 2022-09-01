@@ -77,7 +77,7 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics
 ```
 
-> Note that `5.2.X` targets the Azure Cognitive Service for Language APIs which include the existing text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
+> Note that `5.2.X` targets the Azure Cognitive Service for Language APIs. These APIs also include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
 In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
@@ -401,7 +401,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 
 Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
 
-Note: The Recognize PII Entities service is available in API version v3.1 and up.
+Note: The Recognize PII Entities service is available in API version v3.1 and newer.
 
 ### Extract key phrases
 
@@ -517,7 +517,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is only available in the Standard pricing tier with API versions v3.1 and up.
+Note: The Healthcare Entities Analysis service is only available with API version v3.1 and newer.
 
 ### Multiple Analysis
 
@@ -586,7 +586,7 @@ for doc, action_results in zip(documents, document_results):
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Multiple analysis is available in API version v3.1 and up.
+Note: Multiple analysis is available in API version v3.1 and newer.
 
 ## Optional Configuration
 
