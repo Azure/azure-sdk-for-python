@@ -34,6 +34,8 @@ from azure.communication.jobrouter import (
     WorkerWeightedAllocation,
     WeightedAllocationWorkerSelectorAttachment,
     WorkerSelector,
+    FunctionRule,
+    FunctionRuleCredential,
 )
 
 
@@ -196,6 +198,43 @@ class WorkerSelectorValidator(object):
             assert actual.expedite == expected.expedite
 
 
+class RouterRuleValidator(object):
+    @staticmethod
+    def validate_function_rule(
+            actual: FunctionRule,
+            expected: FunctionRule,
+            **kwargs: Any
+    ):
+        assert actual.kind == expected.kind
+        assert actual.function_uri == expected.function_uri or actual.function_uri == 'sanitized'
+        if actual.credential:
+            assert expected.credential is not None
+
+            actual_credential: FunctionRuleCredential = actual.credential
+            if actual_credential.function_key:
+                assert actual_credential.function_key == actual.credential.function_key \
+                       or actual_credential.function_key == 'sanitized'
+            if actual_credential.app_key:
+                assert actual_credential.app_key == actual.credential.app_key \
+                       or actual_credential.app_key == 'sanitized'
+            if actual_credential.client_id:
+                assert actual_credential.client_id == actual.credential.client_id \
+                       or actual_credential.client_id == 'sanitized'
+
+    @staticmethod
+    def validate_router_rule(
+            actual,
+            expected,
+            **kwargs: Any
+    ):
+        assert type(actual) == type(expected)
+
+        if type(actual) == FunctionRule:
+            RouterRuleValidator.validate_function_rule(actual, expected)
+        else:
+            assert actual == expected
+
+
 class ClassificationPolicyValidator(object):
     @staticmethod
     def validate_id(
@@ -240,7 +279,7 @@ class ClassificationPolicyValidator(object):
             **kwargs
     ):
         assert type(entity.prioritization_rule) == type(prioritization_rule)
-        assert entity.prioritization_rule == prioritization_rule
+        RouterRuleValidator.validate_router_rule(entity.prioritization_rule, prioritization_rule)
 
     @staticmethod
     def validate_worker_selectors(

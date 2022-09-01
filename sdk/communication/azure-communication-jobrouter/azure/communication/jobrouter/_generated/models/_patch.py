@@ -28,9 +28,8 @@ from ._models import (
 
 # cSpell:ignore tzinfos
 def _convert_str_to_datetime(
-        datetime_as_str,  # type: str
-):
-    #  type: (...) -> datetime
+        datetime_as_str: str
+) -> datetime:
     dt = parse(datetime_as_str, tzinfos = [timezone.utc])
     return dt
 
