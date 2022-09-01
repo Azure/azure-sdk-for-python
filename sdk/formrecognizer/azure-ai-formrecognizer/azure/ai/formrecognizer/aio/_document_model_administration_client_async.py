@@ -40,11 +40,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     and managing models.
 
     It provides methods for building models, as well as methods for viewing and deleting models,
-    viewing document model operations, accessing account information, copying models
-    to another Form Recognizer resource, and composing a new model from a collection of existing models.
+    viewing model operations, accessing account information, copying models to another
+    Form Recognizer resource, and composing a new model from a collection of existing models.
 
     .. note:: DocumentModelAdministrationClient should be used with API versions
-        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
+        2022-08-31 and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -58,9 +58,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         Setting to an older version may result in reduced feature compatibility. To use API versions
         <=v2.1, instantiate a FormTrainingClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
-
-    .. versionadded:: 2021-09-30-preview
-        The *DocumentModelAdministrationClient* and its client methods.
 
     .. admonition:: Example:
 
