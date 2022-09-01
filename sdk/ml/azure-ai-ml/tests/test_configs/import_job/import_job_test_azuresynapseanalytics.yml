@@ -1,0 +1,10 @@
+type: import
+description: "test_description"
+display_name: "test_display_name"
+source:
+  type: azuresynapseanalytics
+  connection: azureml:my_username_password
+  query: select * from REGION
+output:
+  type: mltable
+  path: azureml://datastores/workspaceblobstore/paths/output_dir/

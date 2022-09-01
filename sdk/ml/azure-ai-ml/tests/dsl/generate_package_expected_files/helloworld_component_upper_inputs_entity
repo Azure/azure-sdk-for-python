@@ -1,0 +1,17 @@
+class _MicrosoftsamplesCommandComponentBasicInput:
+    COMPONENT_IN_NUMBER_UPPER: float
+    """A number"""
+    component_in_number: float
+    """A number"""
+
+
+class _MicrosoftsamplesCommandComponentBasicOutput:
+    component_out_path: Output
+    """uri_folder (type: uri_folder)"""
+    component_out_path_UPPER: Output
+    """uri_folder (type: uri_folder)"""
+
+
+class _MicrosoftsamplesCommandComponentBasicComponent(Command):
+    inputs: _MicrosoftsamplesCommandComponentBasicInput
+    outputs: _MicrosoftsamplesCommandComponentBasicOutput

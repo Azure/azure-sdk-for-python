@@ -1,0 +1,23 @@
+description: Awesome Assets
+name: ContosoMLMultiStorageAcManaged
+id: registry_id
+tags:
+  purpose: testing
+region_details:
+  - acr_details:
+    - existing_acr_account: some_acr_id
+    - new_acr_account:
+        acr_account_behind_vnet: False
+        acr_account_name: the_other_acr_account
+        acr_account_resource_group_name: venus_rg
+        acr_account_sku: there_is_some_sku
+    location: EastUS
+    storage_account_details:
+    - existing_storage_account: some-id
+    - new_storage_account:
+        storage_account_behind_vnet: True
+        storage_account_has_hns_enabled: False
+        storage_account_location: The Moon
+        storage_account_name: Moon Storage
+        storage_account_resource_group_name: Moon_rg_42
+        storage_account_type: Standard_RAGRS

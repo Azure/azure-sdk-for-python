@@ -8,7 +8,8 @@ from abc import ABC
 from typing import List, Union
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.ai.ml.constants import TYPE, SearchSpace
+from azure.ai.ml.constants._common import TYPE
+from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

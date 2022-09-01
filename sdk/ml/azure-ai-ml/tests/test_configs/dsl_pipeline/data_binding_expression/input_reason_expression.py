@@ -1,15 +1,15 @@
-from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml import dsl, MLClient, Input, MpiDistribution, load_component
-from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities import Data
 from pathlib import Path
+
+from azure.ai.ml import Input, MLClient, MpiDistribution, dsl, load_component
+from azure.ai.ml.entities import Data, PipelineJob
+from azure.core.exceptions import ResourceNotFoundError
 
 base_dir = str(Path(__file__).parent)
 
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    basic_func = load_component(path=base_dir + "/component.yml")
+    basic_func = load_component(source=base_dir + "/component.yml")
     uri_file_input = Input(type="uri_file", path="../../data/sample1.csv")
     uri_folder_input = Input(type="uri_folder", path="../../data")
 
@@ -31,6 +31,8 @@ def generate_dsl_pipeline() -> PipelineJob:
             component_in_string=f"{job_in_string}_{job_in_string}",
             component_in_file=f"{job_in_folder}/{output_file_name}",
         )
+        # hello_world variable is required in e2e: test_dsl_pipeline_with_data_binding_expression
+        print(hello_world)
 
     pipeline_obj = pipeline_with_data_binding(job_in_folder=uri_folder_input, job_in_file=uri_file_input)
     return pipeline_obj

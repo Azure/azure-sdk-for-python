@@ -1,12 +1,10 @@
 from pathlib import Path
-from uuid import uuid4
 from random import random
+from uuid import uuid4
 
-from mldesigner import command_component
 from azure.ai.ml import Input, Output
 from azure.ai.ml.entities import Environment
 from mldesigner import command_component
-
 
 # init customer environment with conda YAML
 # the YAML file shall be put under your code folder.
