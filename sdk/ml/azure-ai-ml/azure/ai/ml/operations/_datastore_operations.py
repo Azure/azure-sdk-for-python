@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from typing import Dict, Iterable
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient2022_05_01
 from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreSecrets, NoneDatastoreCredentials
@@ -12,6 +13,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDepend
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
+from azure.ai.ml._ml_exceptions import ValidationException, log_and_raise_error
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.logger, ops_logger.module_logger
@@ -142,12 +144,18 @@ class DatastoreOperations(_ScopeDependentOperations):
         :return: The attached datastore.
         :rtype: Datastore
         """
-        ds_request = datastore._to_rest_object()
-        datastore_resource = self._operation.create_or_update(
-            name=datastore.name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=ds_request,
-            skip_validation=True,
-        )
-        return Datastore._from_rest_object(datastore_resource)
+        try:
+            ds_request = datastore._to_rest_object()
+            datastore_resource = self._operation.create_or_update(
+                name=datastore.name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                body=ds_request,
+                skip_validation=True,
+            )
+            return Datastore._from_rest_object(datastore_resource)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex

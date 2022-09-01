@@ -9,6 +9,7 @@ import logging
 from typing import Iterable
 
 from docker.models.containers import Container
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._local_endpoints import DockerClient, EndpointStub
 from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
@@ -16,6 +17,7 @@ from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
+from azure.ai.ml._ml_exceptions import ValidationException, log_and_raise_error
 
 module_logger = logging.getLogger(__name__)
 
@@ -40,22 +42,28 @@ class _LocalEndpointHelper(object):
         :param operation_message: Output string for operation messages.
         :type operation_message: str
         """
-        if endpoint is None:
-            msg = "The entity provided for local endpoint was null. Please provide valid entity."
-            raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
-
         try:
-            self.get(endpoint_name=endpoint.name)
-            operation_message = "Updating local endpoint"
-        except LocalEndpointNotFoundError:
-            operation_message = "Creating local endpoint"
+            if endpoint is None:
+                msg = "The entity provided for local endpoint was null. Please provide valid entity."
+                raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
 
-        local_endpoint_polling_wrapper(
-            func=self._endpoint_stub.create_or_update,
-            message=f"{operation_message} ({endpoint.name}) ",
-            endpoint=endpoint,
-        )
-        return self.get(endpoint_name=endpoint.name)
+            try:
+                self.get(endpoint_name=endpoint.name)
+                operation_message = "Updating local endpoint"
+            except LocalEndpointNotFoundError:
+                operation_message = "Creating local endpoint"
+
+            local_endpoint_polling_wrapper(
+                func=self._endpoint_stub.create_or_update,
+                message=f"{operation_message} ({endpoint.name}) ",
+                endpoint=endpoint,
+            )
+            return self.get(endpoint_name=endpoint.name)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     def invoke(self, endpoint_name: str, data: dict, deployment_name: str = None) -> str:
         """Invoke a local endpoint.

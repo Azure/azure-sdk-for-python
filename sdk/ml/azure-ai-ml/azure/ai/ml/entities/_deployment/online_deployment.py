@@ -26,13 +26,7 @@ from azure.ai.ml._schema._deployment.online.online_deployment import (
 )
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
 from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled
-from azure.ai.ml.constants._common import (
-    AZUREML_PRIVATE_FEATURES_ENV_VAR,
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    TYPE,
-    ArmConstants,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, TYPE, ArmConstants
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets._artifacts.model import Model
@@ -605,7 +599,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
                 non_flat_data = {}
                 non_flat_data["data_collector"] = self.data_collector._to_dict()
                 flat_data = flatten(non_flat_data, ".")
-                for k in flat_data.keys():
+                flat_data_keys = flat_data.keys()
+                for k in flat_data_keys:
                     self.tags[k] = flat_data[k]
         # TODO: SKU name is defaulted to value "Default" since service side requires it.
         #  Should be removed once service side defaults it.
@@ -679,7 +674,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             for k in entity.tags:
                 if k.startswith("data_collector"):
                     del_key.append(k)
-            if len(del_key):
+            if len(del_key) > 0:
                 for k in del_key:
                     del entity.tags[k]
         else:

@@ -778,12 +778,3 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
         return True
-
-
-def _find_deepest_dictionary(data):
-    """Find deepest dictionary in nested dictionary"""
-    if not any([isinstance(data.get(key), dict) for key in data]):
-        return data
-    for key in data:
-        if isinstance(data.get(key), dict):
-            return _find_deepest_dictionary(data.get(key))

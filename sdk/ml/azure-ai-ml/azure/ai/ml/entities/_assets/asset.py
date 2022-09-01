@@ -7,7 +7,13 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+    log_and_raise_error,
+)
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._resource import Resource
 
@@ -43,18 +49,19 @@ class Asset(Resource):
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
 
         if not name and version is None:
-            name = _get_random_name()
+            name = str(uuid.uuid4())
             version = "1"
             self._is_anonymous = True
         elif version is not None and not name:
             msg = "If version is specified, name must be specified also."
-            raise ValidationException(
+            err = ValidationException(
                 message=msg,
                 target=ErrorTarget.ASSET,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
+            log_and_raise_error(err)
 
         super().__init__(
             name=name,
@@ -81,13 +88,15 @@ class Asset(Resource):
         if value:
             if not isinstance(value, str):
                 msg = f"Asset version must be a string, not type {type(value)}."
-                raise ValidationException(
+                err = ValidationException(
                     message=msg,
                     target=ErrorTarget.ASSET,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
+                log_and_raise_error(err)
+
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
@@ -128,7 +137,3 @@ class Asset(Resource):
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
-
-
-def _get_random_name() -> str:
-    return str(uuid.uuid4())

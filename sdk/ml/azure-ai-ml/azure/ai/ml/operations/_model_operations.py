@@ -7,6 +7,8 @@
 from os import PathLike, getcwd, path
 from typing import Dict, Iterable, Union
 
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
     _get_default_datastore_info,
@@ -23,6 +25,7 @@ from azure.ai.ml._ml_exceptions import (
     ErrorTarget,
     ValidationErrorType,
     ValidationException,
+    log_and_raise_error,
 )
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -30,7 +33,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -89,90 +92,96 @@ class ModelOperations(_ScopeDependentOperations):
         :return: Model asset object.
         :raises AssetPathException: Raised when the code asset is already linked to another asset
         """
-        name = model.name
-        if not model.version and self._registry_name:
-            msg = "Model version is required for registry"
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.MODEL,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
-        version = model.version
-
-        sas_uri = None
-
-        if self._registry_name:
-            sas_uri = get_sas_uri_for_registry_asset(
-                service_client=self._service_client,
-                name=model.name,
-                version=model.version,
-                resource_group=self._resource_group_name,
-                registry=self._registry_name,
-                body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
-            )
-            if not sas_uri:
-                module_logger.debug("Getting the existing asset name: %s, version: %s", model.name, model.version)
-                return self.get(name=model.name, version=model.version)
-
-        model, indicator_file = _check_and_upload_path(
-            artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL
-        )
-
-        model.path = resolve_short_datastore_url(model.path, self._operation_scope)
-        validate_ml_flow_folder(model.path, model.type)
-        model_version_resource = model._to_rest_object()
-        auto_increment_version = model._auto_increment_version
         try:
-            if auto_increment_version:
-                result = _create_or_update_autoincrement(
-                    name=model.name,
-                    body=model_version_resource,
-                    version_operation=self._model_versions_operation,
-                    container_operation=self._model_container_operation,
-                    workspace_name=self._workspace_name,
-                    **self._scope_kwargs,
+            name = model.name
+            if not model.version and self._registry_name:
+                msg = "Model version is required for registry"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.MODEL,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
                 )
-            else:
-                result = (
-                    self._model_versions_operation.begin_create_or_update(
-                        name=name,
-                        version=version,
+            version = model.version
+
+            sas_uri = None
+
+            if self._registry_name:
+                sas_uri = get_sas_uri_for_registry_asset(
+                    service_client=self._service_client,
+                    name=model.name,
+                    version=model.version,
+                    resource_group=self._resource_group_name,
+                    registry=self._registry_name,
+                    body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
+                )
+                if not sas_uri:
+                    module_logger.debug("Getting the existing asset name: %s, version: %s", model.name, model.version)
+                    return self.get(name=model.name, version=model.version)
+
+            model, indicator_file = _check_and_upload_path(
+                artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL
+            )
+
+            model.path = resolve_short_datastore_url(model.path, self._operation_scope)
+            validate_ml_flow_folder(model.path, model.type)
+            model_version_resource = model._to_rest_object()
+            auto_increment_version = model._auto_increment_version
+            try:
+                if auto_increment_version:
+                    result = _create_or_update_autoincrement(
+                        name=model.name,
                         body=model_version_resource,
-                        registry_name=self._registry_name,
-                        **self._scope_kwargs,
-                    ).result()
-                    if self._registry_name
-                    else self._model_versions_operation.create_or_update(
-                        name=name,
-                        version=version,
-                        body=model_version_resource,
+                        version_operation=self._model_versions_operation,
+                        container_operation=self._model_container_operation,
                         workspace_name=self._workspace_name,
                         **self._scope_kwargs,
                     )
-                )
+                else:
+                    result = (
+                        self._model_versions_operation.begin_create_or_update(
+                            name=name,
+                            version=version,
+                            body=model_version_resource,
+                            registry_name=self._registry_name,
+                            **self._scope_kwargs,
+                        ).result()
+                        if self._registry_name
+                        else self._model_versions_operation.create_or_update(
+                            name=name,
+                            version=version,
+                            body=model_version_resource,
+                            workspace_name=self._workspace_name,
+                            **self._scope_kwargs,
+                        )
+                    )
 
-            if not result and self._registry_name:
-                result = self._get(name=model.name, version=model.version)
+                if not result and self._registry_name:
+                    result = self._get(name=model.name, version=model.version)
 
-        except Exception as e:  # pylint: disable=broad-except
-            # service side raises an exception if we attempt to update an existing asset's path
-            if str(e) == ASSET_PATH_ERROR:
-                raise AssetPathException(
-                    message=CHANGED_ASSET_PATH_MSG,
-                    target=ErrorTarget.MODEL,
-                    no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            raise e
+            except Exception as e:  # pylint: disable=broad-except
+                # service side raises an exception if we attempt to update an existing asset's path
+                if str(e) == ASSET_PATH_ERROR:
+                    raise AssetPathException(
+                        message=CHANGED_ASSET_PATH_MSG,
+                        target=ErrorTarget.MODEL,
+                        no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
+                        error_category=ErrorCategory.USER_ERROR,
+                    )
+                raise e
 
-        model = Model._from_rest_object(result)
-        if auto_increment_version and indicator_file:
-            datastore_info = _get_default_datastore_info(self._datastore_operation)
-            _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
+            model = Model._from_rest_object(result)
+            if auto_increment_version and indicator_file:
+                datastore_info = _get_default_datastore_info(self._datastore_operation)
+                _update_metadata(model.name, model.version, indicator_file, datastore_info)  # update version in storage
 
-        return model
+            return model
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     def _get(self, name: str, version: str = None) -> ModelVersionData:  # name:latest
         if version:

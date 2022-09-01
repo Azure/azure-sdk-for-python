@@ -114,9 +114,9 @@ class Code(Artifact):
         if asset_artifact.is_file:
             # Code paths cannot be pointers to single files. It must be a pointer to a container
             # Skipping the setter to avoid being resolved as a local path
-            self._path = asset_artifact.subdir_path
+            self._path = asset_artifact.subdir_path  # pylint: disable=attribute-defined-outside-init
         else:
-            self._path = asset_artifact.full_storage_path
+            self._path = asset_artifact.full_storage_path  # pylint: disable=attribute-defined-outside-init
 
     def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties

@@ -298,7 +298,6 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.SPARK])
     compute = ComputeField()
     resources = NestedField(SparkResourceConfigurationSchema)
-    code = CodeField()
     entry = UnionField(
         [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
         metadata={"description": "Entry."},

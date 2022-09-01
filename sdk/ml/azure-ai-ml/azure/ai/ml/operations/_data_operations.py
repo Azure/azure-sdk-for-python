@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
@@ -20,6 +22,7 @@ from azure.ai.ml._ml_exceptions import (
     ErrorTarget,
     ValidationErrorType,
     ValidationException,
+    log_and_raise_error,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
@@ -157,16 +160,17 @@ class DataOperations(_ScopeDependentOperations):
         :type data: Data
         :return: Data asset object.
         """
-        name = data.name
-        version = data.version
-
-        referenced_uris = self._validate(data)
-        if referenced_uris:
-            data._referenced_uris = referenced_uris
-        data, _ = _check_and_upload_path(artifact=data, asset_operations=self, artifact_type=ErrorTarget.DATA)
-        data_version_resource = data._to_rest_object()
-        auto_increment_version = data._auto_increment_version
         try:
+            name = data.name
+            version = data.version
+
+            referenced_uris = self._validate(data)
+            if referenced_uris:
+                data._referenced_uris = referenced_uris
+            data, _ = _check_and_upload_path(artifact=data, asset_operations=self, artifact_type=ErrorTarget.DATA)
+            data_version_resource = data._to_rest_object()
+            auto_increment_version = data._auto_increment_version
+
             if auto_increment_version:
                 result = _create_or_update_autoincrement(
                     name=data.name,
@@ -185,18 +189,21 @@ class DataOperations(_ScopeDependentOperations):
                     body=data_version_resource,
                     **self._scope_kwargs,
                 )
-        except HttpResponseError as e:
-            # service side raises an exception if we attempt to update an existing asset's asset path
-            if str(e) == ASSET_PATH_ERROR:
-                raise AssetPathException(
-                    message=CHANGED_ASSET_PATH_MSG,
-                    target=ErrorTarget.DATA,
-                    no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            raise e
 
-        return Data._from_rest_object(result)
+            return Data._from_rest_object(result)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            elif isinstance(ex, HttpResponseError):
+                # service side raises an exception if we attempt to update an existing asset's asset path
+                if str(ex) == ASSET_PATH_ERROR:
+                    raise AssetPathException(
+                        message=CHANGED_ASSET_PATH_MSG,
+                        tartget=ErrorTarget.DATA,
+                        no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
+                        error_category=ErrorCategory.USER_ERROR,
+                    )
+            raise ex
 
     @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:

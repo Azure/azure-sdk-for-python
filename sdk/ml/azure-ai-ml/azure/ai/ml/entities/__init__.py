@@ -22,6 +22,7 @@ from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
 from ._compute.compute import Compute, NetworkSettings
 from ._compute.compute_instance import AssignedUserConfiguration, ComputeInstance, ComputeInstanceSshSettings
 from ._compute.kubernetes_compute import KubernetesCompute
+from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
 from ._compute.unsupported_compute import UnsupportedCompute
 from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
@@ -169,4 +170,7 @@ __all__ = [
     "VirtualMachineSshSettings",
     "AmlComputeSshSettings",
     "AmlComputeNodeInfo",
+    "SynapseSparkCompute",
+    "AutoScaleSettings",
+    "AutoPauseSettings",
 ]

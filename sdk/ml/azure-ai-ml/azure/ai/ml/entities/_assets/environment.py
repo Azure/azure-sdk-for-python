@@ -10,7 +10,13 @@ from typing import Dict, Optional, Union
 
 import yaml
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+    log_and_raise_error,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import BuildContext as RestBuildContext
 from azure.ai.ml._restclient.v2022_05_01.models import (
     EnvironmentContainerData,
@@ -263,31 +269,34 @@ class Environment(Asset):
     def validate(self):
         if self.name is None:
             msg = "Environment name is required"
-            raise ValidationException(
+            err = ValidationException(
                 message=msg,
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
+            log_and_raise_error(err)
         if self.image is None and self.build is None:
             msg = "Docker image or Dockerfile is required for environments"
-            raise ValidationException(
+            err = ValidationException(
                 message=msg,
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
+            log_and_raise_error(err)
         if self.image and self.build:
             msg = "Docker image or Dockerfile should be provided not both"
-            raise ValidationException(
+            err = ValidationException(
                 message=msg,
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
+            log_and_raise_error(err)
 
     def __eq__(self, other) -> bool:
         return (

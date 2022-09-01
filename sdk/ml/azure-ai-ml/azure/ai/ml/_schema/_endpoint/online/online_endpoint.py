@@ -43,12 +43,6 @@ class OnlineEndpointSchema(EndpointSchema):
         if sum(data.values()) > 100:
             raise ValidationError("Traffic rule percentages must sum to less than or equal to 100%")
 
-    @post_load
-    def make(self, data: Any, **kwargs: Any) -> Any:
-        from azure.ai.ml.entities import OnlineEndpoint
-
-        return OnlineEndpoint(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
-
 
 class KubernetesOnlineEndpointSchema(OnlineEndpointSchema):
     provisioning_state = fields.Str(metadata={"description": "status of the deployment provisioning operation"})

@@ -5,7 +5,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
@@ -104,7 +104,13 @@ class BatchEndpoint(Endpoint):
             swagger_uri=endpoint.properties.swagger_uri,
         )
 
-    def dump(self, path: Union[PathLike, str] = None) -> Dict[str, Any]:
+    def dump(
+        self,
+        *args,  # pylint: disable=unused-argument
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return BatchEndpointSchema(context=context).dump(self)  # type: ignore # pylint: disable=no-member
 

@@ -8,7 +8,15 @@ import json
 import time
 from typing import Any, Dict, Iterable, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+    log_and_raise_error,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthKeys,
@@ -18,7 +26,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     RegenerateEndpointKeysRequest,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -199,49 +207,55 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :return: A poller to track the operation status if remote, else returns None if local.
         :rtype: LROPoller
         """
-        if local:
-            return self._local_endpoint_helper.create_or_update(endpoint=endpoint)
-
-        no_wait = kwargs.get("no_wait", False)
         try:
-            location = self._get_workspace_location()
+            if local:
+                return self._local_endpoint_helper.create_or_update(endpoint=endpoint)
 
-            if endpoint.traffic:
-                endpoint.traffic = _strip_zeroes_from_traffic(endpoint.traffic)
+            no_wait = kwargs.get("no_wait", False)
+            try:
+                location = self._get_workspace_location()
 
-            if endpoint.mirror_traffic:
-                endpoint.mirror_traffic = _strip_zeroes_from_traffic(endpoint.mirror_traffic)
+                if endpoint.traffic:
+                    endpoint.traffic = _strip_zeroes_from_traffic(endpoint.traffic)
 
-            endpoint_resource = endpoint._to_rest_online_endpoint(location=location)
-            orchestrators = OperationOrchestrator(
-                operation_container=self._all_operations,
-                operation_scope=self._operation_scope,
-            )
-            if hasattr(endpoint_resource.properties, "compute"):
-                endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
-                    endpoint_resource.properties.compute,
-                    azureml_type=AzureMLResourceType.COMPUTE,
+                if endpoint.mirror_traffic:
+                    endpoint.mirror_traffic = _strip_zeroes_from_traffic(endpoint.mirror_traffic)
+
+                endpoint_resource = endpoint._to_rest_online_endpoint(location=location)
+                orchestrators = OperationOrchestrator(
+                    operation_container=self._all_operations,
+                    operation_scope=self._operation_scope,
                 )
-            poller = self._online_operation.begin_create_or_update(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                endpoint_name=endpoint.name,
-                body=endpoint_resource,
-                polling=not no_wait,
-                **self._init_kwargs,
-            )
-            if no_wait:
-                module_logger.info(
-                    """Endpoint Create/Update request initiated.
- Status can be checked using `az ml online-endpoint show -n %s`\n""",
-                    endpoint.name,
+                if hasattr(endpoint_resource.properties, "compute"):
+                    endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
+                        endpoint_resource.properties.compute,
+                        azureml_type=AzureMLResourceType.COMPUTE,
+                    )
+                poller = self._online_operation.begin_create_or_update(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    endpoint_name=endpoint.name,
+                    body=endpoint_resource,
+                    polling=not no_wait,
+                    **self._init_kwargs,
                 )
-                return poller
+                if no_wait:
+                    module_logger.info(
+                        """Endpoint Create/Update request initiated.
+    Status can be checked using `az ml online-endpoint show -n %s`\n""",
+                        endpoint.name,
+                    )
+                    return poller
 
-            return OnlineEndpoint._from_rest_object(poller.result())
+                return OnlineEndpoint._from_rest_object(poller.result())
 
+            except Exception as ex:
+                raise ex
         except Exception as ex:
-            raise ex
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(

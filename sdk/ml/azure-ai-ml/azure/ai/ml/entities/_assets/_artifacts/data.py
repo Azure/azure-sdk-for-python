@@ -10,7 +10,13 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+    log_and_raise_error,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DataContainerData,
     DataContainerDetails,
@@ -41,13 +47,14 @@ def getModelForDataAssetType(data_asset_type: str) -> Type[DataVersionBaseDetail
     model = DataAssetTypeModelMap.get(data_asset_type)
     if model is None:
         msg = "Unknown DataType {}".format(data_asset_type)
-        raise ValidationException(
+        err = ValidationException(
             message=msg,
             no_personal_data_message=msg,
             error_type=ValidationErrorType.INVALID_VALUE,
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
         )
+        log_and_raise_error(err)
     return model
 
 

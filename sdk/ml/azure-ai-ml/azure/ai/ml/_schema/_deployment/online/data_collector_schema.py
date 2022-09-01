@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-self-use
+
 import logging
 from typing import Any
 
@@ -16,7 +18,7 @@ class DataCollectorSchema(metaclass=PatchedSchemaMeta):
     enabled = fields.Bool()
 
     @post_load
-    def make(self, data: Any, **kwargs: Any) -> Any:
+    def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
         from azure.ai.ml.entities._deployment.data_collector import DataCollector
 
         return DataCollector(**data)

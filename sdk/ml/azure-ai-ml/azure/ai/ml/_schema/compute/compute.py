@@ -40,7 +40,7 @@ class NetworkSettingsSchema(PathAwareSchema):
         return NetworkSettings(**data)
 
 
-class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):
+class UserAssignedIdentitySchema(PathAwareSchema):
     resource_id = fields.Str()
     principal_id = fields.Str(dump_only=True)
     client_id = fields.Str(dump_only=True)
@@ -53,7 +53,7 @@ class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):
         return UserAssignedIdentity(**data)
 
 
-class IdentitySchema(metaclass=PatchedSchemaMeta):
+class IdentitySchema(PathAwareSchema):
     type = StringTransformedEnum(
         allowed_values=[
             ResourceIdentityType.SYSTEM_ASSIGNED,

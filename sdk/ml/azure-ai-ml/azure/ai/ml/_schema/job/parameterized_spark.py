@@ -86,7 +86,7 @@ def no_duplicates(name: str, value: List):
 
 
 class ParameterizedSparkSchema(PathAwareSchema):
-    code = CodeField(required=True)
+    code = CodeField()
     entry = UnionField(
         [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
         required=True,

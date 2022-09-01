@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, Identit
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as JobBaseData
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJobEntry as RestSparkJobEntry
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
@@ -135,6 +136,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
         outputs: Dict[str, Union[str, Output, "Output"]] = None,
         compute: str = None,
         resources: Union[Dict, SparkResourceConfiguration] = None,
+        entry: Union[Dict[str, str], SparkJobEntry, None] = None,
+        py_files: Optional[List[str]] = None,
+        jars: Optional[List[str]] = None,
+        files: Optional[List[str]] = None,
+        archives: Optional[List[str]] = None,
+        args: str = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -173,13 +180,21 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 self.dynamic_allocation_max_executors or component.dynamic_allocation_max_executors
             )
 
-        self.entry = component.entry if is_spark_component else None
-        self.py_files = component.py_files if is_spark_component else None
-        self.jars = component.jars if is_spark_component else None
-        self.files = component.files if is_spark_component else None
-        self.archives = component.archives if is_spark_component else None
+        # When create standalone job or pipeline job, following fields will always get value from component or get
+        # default None, because we will not pass those fields to Spark. But in following cases, we expect to get
+        # correct value from spark._from_rest_object() and then following fields will get from their respective
+        # keyword arguments.
+        # 1. when we call regenerated_spark_node=Spark._from_rest_object(spark_node._to_rest_object()) in local test,
+        # we expect regenerated_spark_node and spark_node are identical.
+        # 2.when get created remote job through Job._from_rest_object(result) in job operation where component is an
+        # arm_id, we expect get remote returned values.
+        self.entry = component.entry if is_spark_component else entry
+        self.py_files = component.py_files if is_spark_component else py_files
+        self.jars = component.jars if is_spark_component else jars
+        self.files = component.files if is_spark_component else files
+        self.archives = component.archives if is_spark_component else archives
+        self.args = component.args if is_spark_component else args
         self.environment = component.environment if is_spark_component else None
-        self.args = component.args if is_spark_component else None
 
         self.identity = identity
         self.resources = resources
@@ -268,20 +283,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
             resources = RestSparkResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = SparkResourceConfiguration._from_rest_object(resources)
 
-        if "entity" in obj and obj["entity"]:
-            entity = IdentityConfiguration.from_dict(obj["entity"])
-            obj["entity"] = Identity._from_rest_object(entity)
+        if "identity" in obj and obj["identity"]:
+            identity = IdentityConfiguration.from_dict(obj["identity"])
+            obj["identity"] = Identity._from_rest_object(identity)
 
-        # remove azureml: prefix in code and environment which is added in _to_rest_object
-        if "code" in obj and obj["code"] and isinstance(obj["code"], str) and obj["code"].startswith(ARM_ID_PREFIX):
-            obj["code"] = obj["code"][len(ARM_ID_PREFIX) :]
-        if (
-            "environment" in obj
-            and obj["environment"]
-            and isinstance(obj["environment"], str)
-            and obj["environment"].startswith(ARM_ID_PREFIX)
-        ):
-            obj["environment"] = obj["environment"][len(ARM_ID_PREFIX) :]
+        if "entry" in obj and obj["entry"]:
+            entry = RestSparkJobEntry.from_dict(obj["entry"])
+            obj["entry"] = SparkJobEntry._from_rest_object(entry)
 
         if "conf" in obj and obj["conf"]:
             identify_schema = UnionField(
@@ -405,8 +413,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return [
             "type",
             "resources",
-            "code",
-            "entry",
             "py_files",
             "jars",
             "files",
@@ -419,6 +425,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def _to_rest_object(self, **kwargs) -> dict:
         self._validate_fields()
         rest_obj = super()._to_rest_object(**kwargs)
+        entry = self.entry._to_rest_object() if self.entry else None
         identity = self.identity._to_rest_object() if self.identity else None
         resources = self.resources._to_rest_object() if self.resources else None
         rest_obj.update(
@@ -427,6 +434,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     componentId=self._get_component_id(),
                     identity=get_rest_dict(identity),
                     resources=get_rest_dict(resources),
+                    entry=get_rest_dict(entry),
                 )
             )
         )

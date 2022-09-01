@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Union
 
 import jwt
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
@@ -30,6 +31,7 @@ from azure.ai.ml._ml_exceptions import (
     MlException,
     ValidationErrorType,
     ValidationException,
+    log_and_raise_error,
 )
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
@@ -412,83 +414,89 @@ class JobOperations(_ScopeDependentOperations):
         :return: Created or updated job.
         :rtype: Job
         """
-        if isinstance(job, BaseNode) and not (
-            isinstance(job, Command) or isinstance(job, Spark)
-        ):  # Command/Spark objects can be used directly
-            job = job._to_job()
+        try:
+            if isinstance(job, BaseNode) and not (
+                isinstance(job, Command) or isinstance(job, Spark)
+            ):  # Command/Spark objects can be used directly
+                job = job._to_job()
 
-        # Set job properties before submission
-        if description is not None:
-            job.description = description
-        if compute is not None:
-            job.compute = compute
-        if tags is not None:
-            job.tags = tags
-        if experiment_name is not None:
-            job.experiment_name = experiment_name
+            # Set job properties before submission
+            if description is not None:
+                job.description = description
+            if compute is not None:
+                job.compute = compute
+            if tags is not None:
+                job.tags = tags
+            if experiment_name is not None:
+                job.experiment_name = experiment_name
 
-        if job.compute == LOCAL_COMPUTE_TARGET:
-            job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
+            if job.compute == LOCAL_COMPUTE_TARGET:
+                job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
 
-        if not skip_validation:
-            self._validate(job, raise_on_failure=True)
+            if not skip_validation:
+                self._validate(job, raise_on_failure=True)
 
-        # Create all dependent resources
-        self._resolve_arm_id_or_upload_dependencies(job)
+            # Create all dependent resources
+            self._resolve_arm_id_or_upload_dependencies(job)
 
-        git_props = get_git_properties()
-        # Do not add git props if they already exist in job properties.
-        # This is for update specifically-- if the user switches branches and tries to update their job, the request will fail since the git props will be repopulated.
-        # MFE does not allow existing properties to be updated, only for new props to be added
-        if not any(prop_name in job.properties for prop_name in git_props.keys()):
-            job.properties = {**job.properties, **git_props}
-        rest_job_resource = to_rest_job_object(job)
+            git_props = get_git_properties()
+            # Do not add git props if they already exist in job properties.
+            # This is for update specifically-- if the user switches branches and tries to update their job, the request will fail since the git props will be repopulated.
+            # MFE does not allow existing properties to be updated, only for new props to be added
+            if not any(prop_name in job.properties for prop_name in git_props.keys()):
+                job.properties = {**job.properties, **git_props}
+            rest_job_resource = to_rest_job_object(job)
 
-        # Make a copy of self._kwargs instead of contaminate the original one
-        kwargs = dict(**self._kwargs)
-        if hasattr(rest_job_resource.properties, "identity") and (
-            rest_job_resource.properties.identity is None
-            or isinstance(rest_job_resource.properties.identity, UserIdentity)
-        ):
-            self._set_headers_with_user_aml_token(kwargs)
-
-        result = self._operation_2022_06_preview.create_or_update(
-            id=rest_job_resource.name,  # type: ignore
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=rest_job_resource,
-            **kwargs,
-        )
-
-        if is_local_run(result):
-            ws_base_url = self._all_operations.all_operations[
-                AzureMLResourceType.WORKSPACE
-            ]._operation._client._base_url
-            snapshot_id = start_run_if_local(result, self._credential, ws_base_url)
-            # in case of local run, the first create/update call to MFE returns the
-            # request for submitting to ES. Once we request to ES and start the run, we
-            # need to put the same body to MFE to append user tags etc.
-            job_object = self._get_job(rest_job_resource.name)
-            if result.properties.tags is not None:
-                for tag_name, tag_value in rest_job_resource.properties.tags.items():
-                    job_object.properties.tags[tag_name] = tag_value
-            if result.properties.properties is not None:
-                for (
-                    prop_name,
-                    prop_value,
-                ) in rest_job_resource.properties.properties.items():
-                    job_object.properties.properties[prop_name] = prop_value
-            if snapshot_id is not None:
-                job_object.properties.properties["ContentSnapshotId"] = snapshot_id
+            # Make a copy of self._kwargs instead of contaminate the original one
+            kwargs = dict(**self._kwargs)
+            if hasattr(rest_job_resource.properties, "identity") and (
+                rest_job_resource.properties.identity is None
+                or isinstance(rest_job_resource.properties.identity, UserIdentity)
+            ):
+                self._set_headers_with_user_aml_token(kwargs)
 
             result = self._operation_2022_06_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
-                body=job_object,
+                body=rest_job_resource,
                 **kwargs,
             )
-        return self._resolve_azureml_id(Job._from_rest_object(result))
+
+            if is_local_run(result):
+                ws_base_url = self._all_operations.all_operations[
+                    AzureMLResourceType.WORKSPACE
+                ]._operation._client._base_url
+                snapshot_id = start_run_if_local(result, self._credential, ws_base_url)
+                # in case of local run, the first create/update call to MFE returns the
+                # request for submitting to ES. Once we request to ES and start the run, we
+                # need to put the same body to MFE to append user tags etc.
+                job_object = self._get_job(rest_job_resource.name)
+                if result.properties.tags is not None:
+                    for tag_name, tag_value in rest_job_resource.properties.tags.items():
+                        job_object.properties.tags[tag_name] = tag_value
+                if result.properties.properties is not None:
+                    for (
+                        prop_name,
+                        prop_value,
+                    ) in rest_job_resource.properties.properties.items():
+                        job_object.properties.properties[prop_name] = prop_value
+                if snapshot_id is not None:
+                    job_object.properties.properties["ContentSnapshotId"] = snapshot_id
+
+                result = self._operation_2022_06_preview.create_or_update(
+                    id=rest_job_resource.name,  # type: ignore
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    workspace_name=self._workspace_name,
+                    body=job_object,
+                    **kwargs,
+                )
+            return self._resolve_azureml_id(Job._from_rest_object(result))
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     def _archive_or_restore(self, name: str, is_archived: bool):
         job_object = self._get_job(name)

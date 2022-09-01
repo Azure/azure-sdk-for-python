@@ -15,8 +15,9 @@ class DataCollector:
     :type enabled: bool
     """
 
-    def __init__(self, enabled: bool, **kwargs):
+    def __init__(self, enabled: bool, **kwargs):  # pylint: disable=unused-argument
         self.enabled = enabled
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return DataCollectorSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

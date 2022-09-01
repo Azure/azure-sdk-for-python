@@ -8,9 +8,17 @@ import random
 import time
 from typing import Dict, Optional
 
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+    log_and_raise_error,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
@@ -79,70 +87,76 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :return: None
         :rtype: None | OnlineDeployment
         """
-        if vscode_debug and not local:
-            raise InvalidVSCodeRequestError(
-                msg="VSCode Debug is only support for local endpoints. Please set local to True."
-            )
-        if local:
-            return self._local_deployment_helper.create_or_update(
-                deployment=deployment,
-                local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
-            )
-
-        start_time = time.time()
-        path_format_arguments = {
-            "endpointName": deployment.name,
-            "resourceGroupName": self._resource_group_name,
-            "workspaceName": self._workspace_name,
-        }
-
-        # This get() is to ensure, the endpoint exists and fail before even start the deployment
-        module_logger.info("Check: endpoint %s exists", deployment.endpoint_name)
-        self._online_endpoint_operations.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            endpoint_name=deployment.endpoint_name,
-        )
-        orchestrators = OperationOrchestrator(
-            operation_container=self._all_operations,
-            operation_scope=self._operation_scope,
-        )
-
-        upload_dependencies(deployment, orchestrators)
         try:
-            location = self._get_workspace_location()
-            deployment_rest = deployment._to_rest_object(location=location)
+            if vscode_debug and not local:
+                raise InvalidVSCodeRequestError(
+                    msg="VSCode Debug is only support for local endpoints. Please set local to True."
+                )
+            if local:
+                return self._local_deployment_helper.create_or_update(
+                    deployment=deployment,
+                    local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
+                )
 
-            poller = self._online_deployment.begin_create_or_update(
+            start_time = time.time()
+            path_format_arguments = {
+                "endpointName": deployment.name,
+                "resourceGroupName": self._resource_group_name,
+                "workspaceName": self._workspace_name,
+            }
+
+            # This get() is to ensure, the endpoint exists and fail before even start the deployment
+            module_logger.info("Check: endpoint %s exists", deployment.endpoint_name)
+            self._online_endpoint_operations.get(
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
                 endpoint_name=deployment.endpoint_name,
-                deployment_name=deployment.name,
-                body=deployment_rest,
-                polling=AzureMLPolling(
-                    LROConfigurations.POLL_INTERVAL,
-                    path_format_arguments=path_format_arguments,
+            )
+            orchestrators = OperationOrchestrator(
+                operation_container=self._all_operations,
+                operation_scope=self._operation_scope,
+            )
+
+            upload_dependencies(deployment, orchestrators)
+            try:
+                location = self._get_workspace_location()
+                deployment_rest = deployment._to_rest_object(location=location)
+
+                poller = self._online_deployment.begin_create_or_update(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    endpoint_name=deployment.endpoint_name,
+                    deployment_name=deployment.name,
+                    body=deployment_rest,
+                    polling=AzureMLPolling(
+                        LROConfigurations.POLL_INTERVAL,
+                        path_format_arguments=path_format_arguments,
+                        **self._init_kwargs,
+                    )
+                    if not no_wait
+                    else False,
+                    polling_interval=LROConfigurations.POLL_INTERVAL,
                     **self._init_kwargs,
                 )
-                if not no_wait
-                else False,
-                polling_interval=LROConfigurations.POLL_INTERVAL,
-                **self._init_kwargs,
-            )
-            if no_wait:
-                module_logger.info(
-                    """Online deployment create/update request initiated. Status can be checked using
- `az ml online-deployment show -e %s -n %s`\n""",
-                    deployment.endpoint_name,
-                    deployment.name,
-                )
-                return poller
+                if no_wait:
+                    module_logger.info(
+                        """Online deployment create/update request initiated. Status can be checked using
+    `az ml online-deployment show -e %s -n %s`\n""",
+                        deployment.endpoint_name,
+                        deployment.name,
+                    )
+                    return poller
 
-            message = f"Creating/updating online deployment {deployment.name} "
-            polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
+                message = f"Creating/updating online deployment {deployment.name} "
+                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
+            except Exception as ex:
+                raise ex
         except Exception as ex:
-            raise ex
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, local: bool = False) -> OnlineDeployment:

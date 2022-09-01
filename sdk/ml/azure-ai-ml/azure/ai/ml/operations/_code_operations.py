@@ -6,6 +6,8 @@
 
 from typing import Dict, Union
 
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
@@ -18,6 +20,7 @@ from azure.ai.ml._ml_exceptions import (
     ErrorTarget,
     ValidationErrorType,
     ValidationException,
+    log_and_raise_error,
 )
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -66,32 +69,32 @@ class CodeOperations(_ScopeDependentOperations):
         :param code: Code asset object.
         :type code: Code
         """
-        name = code.name
-        version = code.version
-        sas_uri = None
-
-        if self._registry_name:
-            sas_uri = get_sas_uri_for_registry_asset(
-                service_client=self._service_client,
-                name=name,
-                version=version,
-                resource_group=self._resource_group_name,
-                registry=self._registry_name,
-                body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
-            )
-        code, _ = _check_and_upload_path(
-            artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
-        )
-
-        # For anonymous code, if the code already exists in storage, we reuse the name, version stored in the storage
-        # metadata so the same anonymous code won't be created again.
-        if code._is_anonymous:
+        try:
             name = code.name
             version = code.version
+            sas_uri = None
 
-        code_version_resource = code._to_rest_object()
+            if self._registry_name:
+                sas_uri = get_sas_uri_for_registry_asset(
+                    service_client=self._service_client,
+                    name=name,
+                    version=version,
+                    resource_group=self._resource_group_name,
+                    registry=self._registry_name,
+                    body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
+                )
+            code, _ = _check_and_upload_path(
+                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+            )
 
-        try:
+            # For anonymous code, if the code already exists in storage, we reuse the name, version stored in the storage
+            # metadata so the same anonymous code won't be created again.
+            if code._is_anonymous:
+                name = code.name
+                version = code.version
+
+            code_version_resource = code._to_rest_object()
+
             result = (
                 self._version_operation.begin_create_or_update(
                     name=name,
@@ -111,20 +114,23 @@ class CodeOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
             )
-        except HttpResponseError as e:
-            # service side raises an exception if we attempt to update an existing asset's asset path
-            if str(e) == ASSET_PATH_ERROR:
-                raise AssetPathException(
-                    message=CHANGED_ASSET_PATH_MSG,
-                    tartget=ErrorTarget.CODE,
-                    no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            raise e
 
-        if not result:
-            return self.get(name=name, version=version)
-        return Code._from_rest_object(result)
+            if not result:
+                return self.get(name=name, version=version)
+            return Code._from_rest_object(result)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            elif isinstance(ex, HttpResponseError):
+                # service side raises an exception if we attempt to update an existing asset's asset path
+                if str(ex) == ASSET_PATH_ERROR:
+                    raise AssetPathException(
+                        message=CHANGED_ASSET_PATH_MSG,
+                        target=ErrorTarget.CODE,
+                        no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
+                        error_category=ErrorCategory.USER_ERROR,
+                    )
+            raise ex
 
     @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:

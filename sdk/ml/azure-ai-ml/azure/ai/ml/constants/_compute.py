@@ -10,6 +10,7 @@ class ComputeType(object):
     VIRTUALMACHINE = "virtualmachine"
     KUBERNETES = "kubernetes"
     ADF = "DataFactory"
+    SYNAPSESPARK = "synapsespark"
 
 
 class ComputeTier(object):

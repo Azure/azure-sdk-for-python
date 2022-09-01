@@ -7,7 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
@@ -306,7 +306,13 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
         self.compute = compute
 
-    def dump(self, path: Union[PathLike, str] = None) -> Dict[str, Any]:
+    def dump(
+        self,
+        *args,  # pylint: disable=unused-argument
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return KubernetesOnlineEndpointSchema(context=context).dump(self)
 
@@ -391,7 +397,13 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
             **kwargs,
         )
 
-    def dump(self, path: Union[PathLike, str] = None) -> Dict[str, Any]:
+    def dump(
+        self,
+        *args,  # pylint: disable=unused-argument
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return ManagedOnlineEndpointSchema(context=context).dump(self)
 

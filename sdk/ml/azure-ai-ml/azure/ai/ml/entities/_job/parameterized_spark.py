@@ -41,7 +41,7 @@ class ParameterizedSpark(LoadableMixin, SparkJobEntryMixin):
 
     def __init__(
         self,
-        code: Union[str, os.PathLike] = None,
+        code: Union[str, os.PathLike] = ".",
         entry: Union[Dict[str, str], SparkJobEntry, None] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,

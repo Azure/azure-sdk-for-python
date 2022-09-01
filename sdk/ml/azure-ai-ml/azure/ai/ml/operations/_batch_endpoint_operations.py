@@ -22,7 +22,7 @@ from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces a
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointTrackedResourceArmPaginatedResult
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response

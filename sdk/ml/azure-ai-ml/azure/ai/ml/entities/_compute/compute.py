@@ -24,7 +24,7 @@ class Compute(Resource, RestTranslatableMixin):
     """Compute resource.
 
     :param type: The type of the compute, possible values are
-        ["amlcompute", "computeinstance", "virtualmachine", "kubernetes"]
+        ["amlcompute", "computeinstance", "virtualmachine", "kubernetes", "synapsespark"]
     :type type: str
     :param name: Name of the compute
     :type name: str
@@ -59,7 +59,7 @@ class Compute(Resource, RestTranslatableMixin):
     @property
     def type(self) -> Optional[str]:
         """The type of the compute, possible values are ["amlcompute",
-        "computeinstance", "virtualmachine", "kubernetes"]
+        "computeinstance", "virtualmachine", "kubernetes", "synapsespark"]
 
         :return: The type of the compute
         :rtype: Optional[str]
@@ -102,6 +102,7 @@ class Compute(Resource, RestTranslatableMixin):
             AmlCompute,
             ComputeInstance,
             KubernetesCompute,
+            SynapseSparkCompute,
             UnsupportedCompute,
             VirtualMachineCompute,
         )
@@ -111,6 +112,7 @@ class Compute(Resource, RestTranslatableMixin):
             ComputeType.COMPUTEINSTANCE.lower(): ComputeInstance,
             ComputeType.VIRTUALMACHINE.lower(): VirtualMachineCompute,
             ComputeType.KUBERNETES.lower(): KubernetesCompute,
+            ComputeType.SYNAPSESPARK.lower(): SynapseSparkCompute,
         }
         compute_type = obj.properties.compute_type.lower() if obj.properties.compute_type else None
 
@@ -166,7 +168,13 @@ class Compute(Resource, RestTranslatableMixin):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute, VirtualMachineCompute
+        from azure.ai.ml.entities import (
+            AmlCompute,
+            ComputeInstance,
+            KubernetesCompute,
+            SynapseSparkCompute,
+            VirtualMachineCompute,
+        )
 
         type_in_override = find_type_in_override(params_override) if params_override else None
         compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
@@ -179,6 +187,8 @@ class Compute(Resource, RestTranslatableMixin):
                 return ComputeInstance._load_from_dict(data, context, **kwargs)
             if compute_type.lower() == ComputeType.KUBERNETES:
                 return KubernetesCompute._load_from_dict(data, context, **kwargs)
+            if compute_type.lower() == ComputeType.SYNAPSESPARK:
+                return SynapseSparkCompute._load_from_dict(data, context, **kwargs)
         msg = f"Unknown compute type: {compute_type}"
         raise ValidationException(
             message=msg,
