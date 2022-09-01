@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Upgraded minimum `azure-core` version to 1.23.1
 
 ## 1.11.0b3 (2022-08-09)
 
