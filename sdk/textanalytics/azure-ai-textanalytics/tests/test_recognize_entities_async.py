@@ -686,12 +686,12 @@ class TestRecognizeEntities(TextAnalyticsTest):
 
         with pytest.raises(ValueError) as e:
             res = await client.recognize_entities(["I'm tired"], string_index_type="UnicodeCodePoint")
-        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.recognize_entities(["I'm tired"], disable_service_logs=True)
-        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.recognize_entities(["I'm tired"], string_index_type="UnicodeCodePoint", disable_service_logs=True)
-        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n'disable_service_logs' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
