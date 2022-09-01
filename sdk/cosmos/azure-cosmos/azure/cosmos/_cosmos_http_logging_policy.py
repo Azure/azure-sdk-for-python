@@ -28,6 +28,7 @@ import os
 import urllib
 import logging
 import types
+import ast
 
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
@@ -134,11 +135,11 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         logger.info("Elapsed Time: %r", ir.elapsed)
                     except AttributeError:
                         logger.info("Elapsed Time: %r", None)
-                    if http_response.status_code >= 400: # pylint: disable=eval-used
+                    if http_response.status_code >= 400:
                         sm = ir.text
                         sm.replace("true", "True")
                         sm.replace("false", "False")
-                        temp_sm = eval(sm)
+                        temp_sm = ast.literal_eval(sm)
                         temp_sm['message'] = temp_sm['message'].replace("\r", " ")
                         logger.into("Response status error message: %r", temp_sm['message'])
                     logger.info("Response headers:")
@@ -151,11 +152,11 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     log_string += "\nElapsed Time: {}".format(ir.elapsed)
                 except AttributeError:
                     log_string += "\nElapsed Time: {}".format(None)
-                if http_response.status_code >= 400: # pylint: disable=eval-used
+                if http_response.status_code >= 400:
                     sm = ir.text
                     sm.replace("true", "True")
                     sm.replace("false", "False")
-                    temp_sm = eval(sm)
+                    temp_sm = ast.literal_eval(sm)
                     temp_sm['message'] = temp_sm['message'].replace("\r", " ")
                     log_string += "\nResponse status error message: {}".format(temp_sm['message'])
                 log_string += "\nResponse headers:"
