@@ -180,9 +180,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/sample_compose_model.py
@@ -242,9 +239,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :return: A dictionary with values necessary for the copy authorization.
         :rtype: TargetAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
         """
 
         model_id = kwargs.pop("model_id", None)
@@ -379,7 +373,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     def get_resource_details(self, **kwargs: Any) -> ResourceDetails:
         """Get information about the models under the Form Recognizer resource.
 
-        :return: Summary of models under the resource - model count and limit.
+        :return: Summary of custom models under the resource - model count and limit.
         :rtype: ~azure.ai.formrecognizer.ResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 

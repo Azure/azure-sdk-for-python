@@ -117,9 +117,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2022-01-30-preview
-            The required *build_mode* parameter and *tags* keyword argument
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/async_samples/sample_build_model_async.py
@@ -185,9 +182,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/async_samples/sample_compose_model_async.py
@@ -247,9 +241,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :return: A dictionary with values necessary for the copy authorization.
         :rtype: TargetAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
         """
 
         model_id = kwargs.pop("model_id", None)
@@ -384,7 +375,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     async def get_resource_details(self, **kwargs: Any) -> ResourceDetails:
         """Get information about the models under the Form Recognizer resource.
 
-        :return: Summary of models under the resource - model count and limit.
+        :return: Summary of custom models under the resource - model count and limit.
         :rtype: ~azure.ai.formrecognizer.ResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
