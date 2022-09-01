@@ -28,8 +28,8 @@ _THROTTLE_STATUS_CODES = (
 # Statsbeat
 
 # (OpenTelemetry metric name, Statsbeat metric name)
-_ATTACH_METRIC_NAME = "Attach"
-_FEATURE_METRIC_NAME = "Feature"
+_ATTACH_METRIC_NAME = ("attach", "Attach")
+_FEATURE_METRIC_NAME = ("feature", "Feature")
 _REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception Count")
 _REQ_DURATION_NAME = ("statsbeat_duration", "Request Duration")
 _REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request Failure Count")
@@ -39,6 +39,8 @@ _REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle Count")
 
 _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
     [
+        _ATTACH_METRIC_NAME,
+        _FEATURE_METRIC_NAME,
         _REQ_DURATION_NAME,
         _REQ_EXCEPTION_NAME,
         _REQ_FAILURE_NAME,

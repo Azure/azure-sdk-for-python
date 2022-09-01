@@ -62,6 +62,7 @@ class TestBaseExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._base = BaseExporter()
         cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
 
@@ -208,6 +209,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.SUCCESS)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_200(self):
         with mock.patch.object(AzureMonitorClient, 'track') as post:
             post.return_value = TrackResponse(
@@ -248,7 +255,13 @@ class TestBaseExporter(unittest.TestCase):
             result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
         exporter.storage.put.assert_called_once()
-    
+
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_206_retry(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
@@ -300,7 +313,13 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         exporter.storage.put.assert_not_called()
-    
+
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_206_no_retry(self):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
@@ -331,6 +350,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_400(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(400, "{}")
@@ -347,6 +372,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_402(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(402, "{}")
@@ -363,6 +394,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_408(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(408, "{}")
@@ -379,6 +416,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_429(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(429, "{}")
@@ -395,6 +438,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_439(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(439, "{}")
@@ -411,6 +460,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_500(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(500, "{}")
@@ -427,6 +482,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_502(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(502, "{}")
@@ -443,6 +504,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_503(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(503, "{}")
@@ -459,6 +526,12 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch.dict(
+        os.environ,
+        {
+        "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+        }
+    )
     def test_statsbeat_504(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(504, "{}")
