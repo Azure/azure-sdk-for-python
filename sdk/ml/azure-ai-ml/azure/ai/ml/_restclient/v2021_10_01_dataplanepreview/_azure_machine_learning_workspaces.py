@@ -14,7 +14,7 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, ModelContainersOperations, ModelVersionsOperations, TemporaryDataReferencesOperations
+from .operations import CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, DataContainersOperations, DataReferencesOperations, DataVersionsOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, ModelContainersOperations, ModelVersionsOperations, ResourceManagementAssetReferenceOperations, TemporaryDataReferencesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,12 +37,24 @@ class AzureMachineLearningWorkspaces(object):
     :ivar component_versions: ComponentVersionsOperations operations
     :vartype component_versions:
      azure.mgmt.machinelearningservices.operations.ComponentVersionsOperations
+    :ivar data_containers: DataContainersOperations operations
+    :vartype data_containers:
+     azure.mgmt.machinelearningservices.operations.DataContainersOperations
+    :ivar data_versions: DataVersionsOperations operations
+    :vartype data_versions: azure.mgmt.machinelearningservices.operations.DataVersionsOperations
+    :ivar data_references: DataReferencesOperations operations
+    :vartype data_references:
+     azure.mgmt.machinelearningservices.operations.DataReferencesOperations
     :ivar environment_containers: EnvironmentContainersOperations operations
     :vartype environment_containers:
      azure.mgmt.machinelearningservices.operations.EnvironmentContainersOperations
     :ivar environment_versions: EnvironmentVersionsOperations operations
     :vartype environment_versions:
      azure.mgmt.machinelearningservices.operations.EnvironmentVersionsOperations
+    :ivar resource_management_asset_reference: ResourceManagementAssetReferenceOperations
+     operations
+    :vartype resource_management_asset_reference:
+     azure.mgmt.machinelearningservices.operations.ResourceManagementAssetReferenceOperations
     :ivar model_containers: ModelContainersOperations operations
     :vartype model_containers:
      azure.mgmt.machinelearningservices.operations.ModelContainersOperations
@@ -57,9 +69,6 @@ class AzureMachineLearningWorkspaces(object):
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
-    :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-     that overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -83,8 +92,12 @@ class AzureMachineLearningWorkspaces(object):
         self.code_versions = CodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.component_containers = ComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.component_versions = ComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_containers = DataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_versions = DataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_references = DataReferencesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.environment_containers = EnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.environment_versions = EnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_management_asset_reference = ResourceManagementAssetReferenceOperations(self._client, self._config, self._serialize, self._deserialize)
         self.model_containers = ModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.model_versions = ModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.temporary_data_references = TemporaryDataReferencesOperations(self._client, self._config, self._serialize, self._deserialize)

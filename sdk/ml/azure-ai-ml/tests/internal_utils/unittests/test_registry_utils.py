@@ -1,9 +1,11 @@
 import json
+
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._utils._registry_utils import _get_registry_discovery_uri
 from pytest_mock import MockFixture
+
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._utils._registry_utils import _get_registry_discovery_uri
+from azure.core.exceptions import HttpResponseError
 
 
 @pytest.mark.unittest

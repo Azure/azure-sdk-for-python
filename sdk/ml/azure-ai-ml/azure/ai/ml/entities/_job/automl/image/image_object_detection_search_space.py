@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=R0902,too-many-locals
+
 from typing import Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageModelDistributionSettingsObjectDetection
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageModelDistributionSettingsObjectDetection
 from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
     _convert_from_rest_object,
     _convert_to_rest_object,
@@ -54,7 +56,7 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
         For instance, passing 2 as value for 'seresnext' means
         freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
         please
-        see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.
+        see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.    # pylint: disable=line-too-long
     :type layers_to_freeze: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :type learning_rate: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution

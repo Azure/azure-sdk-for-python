@@ -4,12 +4,12 @@
 
 from marshmallow import INCLUDE, fields
 
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
-from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
-from azure.ai.ml.constants import LoggingLevel
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PathAwareSchema
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml.constants._common import LoggingLevel
 
 
 class ParameterizedParallelSchema(PathAwareSchema):
@@ -26,7 +26,7 @@ class ParameterizedParallelSchema(PathAwareSchema):
         metadata={"description": "The batch size of current job."},
     )
     input_data = fields.Str()
-    resources = NestedField(ResourceConfigurationSchema)
+    resources = NestedField(JobResourceConfigurationSchema)
     retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
     max_concurrency_per_instance = fields.Integer(
         dump_default=1,

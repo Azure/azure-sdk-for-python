@@ -1,18 +1,19 @@
-from azure.ai.ml import dsl, Input, load_component
-from azure.ai.ml.constants import AssetTypes, InputOutputModes
-from azure.ai.ml.entities import PipelineJob
 from pathlib import Path
+
+from azure.ai.ml import Input, dsl, load_component
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
+from azure.ai.ml.entities import PipelineJob
 
 parent_dir = str(Path(__file__).parent)
 
 
 def generate_dsl_pipeline() -> PipelineJob:
     # 1. Load component funcs
-    file_batch_inference = load_component(path=parent_dir + "/score.yml")
-    file_batch_inference_duplicate = load_component(path=parent_dir + "/score.yml")
-    convert_data = load_component(path=parent_dir + "/convert_data.yml")
-
+    file_batch_inference = load_component(source=parent_dir + "/score.yml")
+    file_batch_inference_duplicate = load_component(source=parent_dir + "/score.yml")
+    convert_data = load_component(source=parent_dir + "/convert_data.yml")
     # Construct pipeline
+
     @dsl.pipeline(compute="cpu-cluster")
     def parallel_in_pipeline(pipeline_job_data_path):
         file_batch_inference_node = file_batch_inference(job_data_path=pipeline_job_data_path)
