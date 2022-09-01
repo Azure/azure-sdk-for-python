@@ -5,18 +5,18 @@
 import time
 from abc import abstractmethod
 
-from ._shared.testcase import (
+from _shared.testcase import (
     CommunicationTestCase,
 )
 from azure_devtools.scenario_tests import LargeResponseBodyReplacer
-from ._recording_processors import (
+from _recording_processors import (
     RouterHeaderSanitizer,
     RouterQuerySanitizer,
     RouterURIIdentityReplacer,
     RouterScrubber
 )
 
-from ._shared.utils import get_http_logging_policy
+from _shared.utils import get_http_logging_policy
 from azure.communication.jobrouter import (
     RouterClient,
     RouterAdministrationClient,

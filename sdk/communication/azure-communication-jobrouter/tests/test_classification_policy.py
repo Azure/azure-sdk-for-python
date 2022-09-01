@@ -8,9 +8,9 @@
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-from ._router_test_case import RouterTestCase
-from ._decorators import RouterPreparers
-from ._validators import ClassificationPolicyValidator
+from _router_test_case import RouterTestCase
+from _decorators import RouterPreparers
+from _validators import ClassificationPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 from azure.communication.jobrouter import (

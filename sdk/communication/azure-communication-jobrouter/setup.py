@@ -56,7 +56,6 @@ setup(
     ],
     packages = find_packages(exclude = [
         'tests',
-        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.communication'
