@@ -1,10 +1,11 @@
 import argparse
-from pathlib import Path
-from typing_extensions import Concatenate
 import os
+from pathlib import Path
+
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from typing_extensions import Concatenate
 
 parser = argparse.ArgumentParser("prep")
 parser.add_argument("--raw_data", type=str, help="Path to raw data")

@@ -8,7 +8,8 @@ from marshmallow import fields, pre_load, validate
 
 from azure.ai.ml._schema.core.fields import UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml.constants import AssetTypes, ComponentParameterTypes, LegacyAssetTypes
+from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
+from azure.ai.ml.constants._component import ComponentParameterTypes
 
 # Here we use an adhoc way to collect all class constant attributes by checking if it's upper letter
 # because making those constants enum will fail in string serialization in marshmallow

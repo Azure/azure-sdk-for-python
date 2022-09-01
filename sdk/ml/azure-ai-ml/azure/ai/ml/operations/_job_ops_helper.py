@@ -20,8 +20,10 @@ from azure.ai.ml._restclient.v2021_10_01.models import JobBaseData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
-from azure.ai.ml._utils.utils import create_session_with_retry, download_text_from_url
-from azure.ai.ml.constants import GitProperties, JobLogPattern, JobType
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
+from azure.ai.ml.constants._common import GitProperties
+from azure.ai.ml.constants._job.job import JobLogPattern, JobType
 from azure.ai.ml.operations._dataset_dataplane_operations import DatasetDataplaneOperations
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.ai.ml.operations._model_dataplane_operations import ModelDataplaneOperations
@@ -171,6 +173,8 @@ def stream_logs_until_completion(
     job_resource: JobBaseData,
     datastore_operations: DatastoreOperations = None,
     raise_exception_on_failed_job=True,
+    *,
+    requests_pipeline: HttpPipeline
 ) -> None:
     """Stream the experiment run output to the specified file handle. By
     default the the file handle points to stdout.
@@ -216,50 +220,50 @@ def stream_logs_until_completion(
         file_handle.write("Web View: {}\n".format(studio_endpoint))
 
         _current_details: RunDetails = run_operations.get_run_details(job_name)
-        session = create_session_with_retry()
 
         processed_logs = {}
 
         poll_start_time = time.time()
-        while (
-            _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
-            or _current_details.status == JobStatus.FINALIZING
-        ):
-            file_handle.flush()
-            time.sleep(_wait_before_polling(time.time() - poll_start_time))
-            _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
-            if job_type.lower() in JobType.PIPELINE:
-                legacy_folder_name = "/logs/azureml/"
-            else:
-                legacy_folder_name = "/azureml-logs/"
-            _current_logs_dict = (
-                list_logs_in_datastore(
-                    ds_properties,
-                    prefix=prefix,
-                    legacy_log_folder_name=legacy_folder_name,
-                )
-                if ds_properties is not None
-                else _current_details.log_files
-            )
-            # Get the list of new logs available after filtering out the processed ones
-            available_logs = _get_sorted_filtered_logs(_current_logs_dict, job_type, processed_logs)
-            content = ""
-            for current_log in available_logs:
-                content = download_text_from_url(
-                    _current_logs_dict[current_log],
-                    session,
-                    timeout=RunHistoryConstants._DEFAULT_GET_CONTENT_TIMEOUT,
-                )
-
-                _incremental_print(content, processed_logs, current_log, file_handle)
-
-            # TODO: Temporary solution to wait for all the logs to be printed in the finalizing state.
-            if (
-                _current_details.status not in RunHistoryConstants.IN_PROGRESS_STATUSES
-                and _current_details.status == JobStatus.FINALIZING
-                and "The activity completed successfully. Finalizing run..." in content
+        with create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline) as session:
+            while (
+                _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+                or _current_details.status == JobStatus.FINALIZING
             ):
-                break
+                file_handle.flush()
+                time.sleep(_wait_before_polling(time.time() - poll_start_time))
+                _current_details: RunDetails = run_operations.get_run_details(job_name)  # TODO use FileWatcher
+                if job_type.lower() in JobType.PIPELINE:
+                    legacy_folder_name = "/logs/azureml/"
+                else:
+                    legacy_folder_name = "/azureml-logs/"
+                _current_logs_dict = (
+                    list_logs_in_datastore(
+                        ds_properties,
+                        prefix=prefix,
+                        legacy_log_folder_name=legacy_folder_name,
+                    )
+                    if ds_properties is not None
+                    else _current_details.log_files
+                )
+                # Get the list of new logs available after filtering out the processed ones
+                available_logs = _get_sorted_filtered_logs(_current_logs_dict, job_type, processed_logs)
+                content = ""
+                for current_log in available_logs:
+                    content = download_text_from_url(
+                        _current_logs_dict[current_log],
+                        session,
+                        timeout=RunHistoryConstants._DEFAULT_GET_CONTENT_TIMEOUT,
+                    )
+
+                    _incremental_print(content, processed_logs, current_log, file_handle)
+
+                # TODO: Temporary solution to wait for all the logs to be printed in the finalizing state.
+                if (
+                    _current_details.status not in RunHistoryConstants.IN_PROGRESS_STATUSES
+                    and _current_details.status == JobStatus.FINALIZING
+                    and "The activity completed successfully. Finalizing run..." in content
+                ):
+                    break
 
         file_handle.write("\n")
         file_handle.write("Execution Summary\n")

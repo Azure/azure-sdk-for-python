@@ -1,7 +1,7 @@
 import argparse
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 print("Get file and tabular data")
 
