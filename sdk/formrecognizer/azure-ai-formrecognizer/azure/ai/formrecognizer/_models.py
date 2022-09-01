@@ -3329,9 +3329,6 @@ class OperationDetails(OperationSummary):
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3717,9 +3714,6 @@ class DocumentModelDetails(DocumentModelSummary):
     :vartype tags: Optional[dict[str, str]]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
     :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocumentTypeDetails]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(
@@ -3795,9 +3789,6 @@ class DocumentTypeDetails:
     :vartype field_schema: dict[str, Any]
     :ivar field_confidence: Estimated confidence for each field.
     :vartype field_confidence: Optional[dict[str, float]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *build_mode* property
     """
 
     def __init__(
