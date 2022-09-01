@@ -652,7 +652,12 @@
         "unflattened",
         "unflattens",
         "subel",
-        "azuresynapseanalytics"
+        "azuresynapseanalytics",
+        "deque",
+        "fstring",
+        "vals",
+        "reprlib",
+        "wsid"
       ]
     },
     {
