@@ -99,7 +99,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             raise ValueError("Account URL must be a string.")
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -114,7 +114,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """Format the endpoint URL according to the current location
         mode hostname.
         """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}/{self._query_str}"
 
     @classmethod
     def from_connection_string(
