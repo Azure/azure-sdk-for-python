@@ -9,6 +9,7 @@ from ._settingselector import SettingSelector
 from ._user_agent import USER_AGENT
 from urllib.parse import urlparse
 import json
+import warnings
 
 
 class AzureAppConfigurationProvider:
@@ -43,6 +44,10 @@ class AzureAppConfigurationProvider:
                     # Deals with possible null value via Rest API
                     provider.dict[provider.trim(config.key)] = config.value
                 elif config.content_type == "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8":
+                    if (key_vault_options is None):
+                        warnings.warn(
+                            "Key Vault Reference found, but no Key Vault Options were provided")
+                        continue
                     j_object = json.loads(config.value)
                     uri_value = j_object['uri']
 
