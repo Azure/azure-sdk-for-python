@@ -40,7 +40,6 @@ from azure.core.pipeline.policies import (  # type: ignore
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy,
     ProxyPolicy)
 
 from . import _base as base
