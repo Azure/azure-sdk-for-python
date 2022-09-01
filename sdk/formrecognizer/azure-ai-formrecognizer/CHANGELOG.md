@@ -19,6 +19,9 @@
 - Removed `document_model_count` and `document_model_limit` properties on `ResourceDetails`.
 - Renamed `DocumentModelOperationDetails` to `OperationDetails`.
 - Renamed `DocumentModelOperationSummary` to `OperationSummary`.
+- Removed `DocumentContentElement`.
+- Removed `kind` and `content` properties from `DocumentSelectionMark`.
+- Removed `kind` from `DocumentWord`.
 
 ### Bugs Fixed
 
