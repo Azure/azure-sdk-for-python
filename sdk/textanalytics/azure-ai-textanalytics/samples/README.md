@@ -45,7 +45,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 1. Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics --pre
+pip install azure-ai-textanalytics
 ```
 For more information about how the versioning story of the SDK corresponds to the versioning story of the service's API, see [here][versioning_story_readme].
 

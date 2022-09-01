@@ -83,10 +83,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_build_model(
+    def begin_build_document_model(
         self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        """Build a custom model.
+        """Build a custom document model.
 
         The request must include a `blob_container_url` keyword parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
@@ -160,10 +160,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_compose_model(
+    def begin_compose_document_model(
         self, component_model_ids: List[str], **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        """Creates a composed model from a collection of existing models.
+        """Creates a composed document model from a collection of existing models.
 
         A composed model allows multiple models to be called with a single model ID. When a document is
         submitted to be analyzed with a composed model ID, a classification step is first performed to
@@ -232,7 +232,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
-        and the output can be passed as the `target` parameter into :func:`~begin_copy_model_to()`.
+        and the output can be passed as the `target` parameter into :func:`~begin_copy_document_model_to()`.
 
         :keyword str model_id: A unique ID for your copied model.
             If not specified, a model ID will be created for you.
@@ -264,10 +264,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return target
 
     @distributed_trace
-    def begin_copy_model_to(
+    def begin_copy_document_model_to(
         self, model_id: str, target: TargetAuthorization, **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
-        """Copy a model stored in this resource (the source) to the user specified
+        """Copy a document model stored in this resource (the source) to the user specified
         target Form Recognizer resource.
 
         This should be called with the source Form Recognizer resource
@@ -286,8 +286,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/sample_copy_model.py
-                :start-after: [START begin_copy_model_to]
-                :end-before: [END begin_copy_model_to]
+                :start-after: [START begin_copy_document_model_to]
+                :end-before: [END begin_copy_document_model_to]
                 :language: python
                 :dedent: 4
                 :caption: Copy a model from the source resource to the target resource
@@ -325,8 +325,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def delete_model(self, model_id: str, **kwargs: Any) -> None:
-        """Delete a custom model.
+    def delete_document_model(self, model_id: str, **kwargs: Any) -> None:
+        """Delete a custom document model.
 
         :param model_id: Model identifier.
         :type model_id: str
@@ -336,8 +336,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/sample_manage_models.py
-                :start-after: [START delete_model]
-                :end-before: [END delete_model]
+                :start-after: [START delete_document_model]
+                :end-before: [END delete_document_model]
                 :language: python
                 :dedent: 4
                 :caption: Delete a model.
@@ -349,7 +349,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return self._client.delete_document_model(model_id=model_id, **kwargs)
 
     @distributed_trace
-    def list_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
+    def list_document_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
         """List information for each model, including its model ID,
         description, and when it was created.
 
@@ -360,8 +360,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/sample_manage_models.py
-                :start-after: [START list_models]
-                :end-before: [END list_models]
+                :start-after: [START list_document_models]
+                :end-before: [END list_document_models]
                 :language: python
                 :dedent: 4
                 :caption: List all models that were built successfully under the Form Recognizer resource.
@@ -397,8 +397,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace
-    def get_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
-        """Get a model by its ID.
+    def get_document_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
+        """Get a document model by its ID.
 
         :param str model_id: Model identifier.
         :return: DocumentModelDetails
@@ -408,8 +408,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/sample_manage_models.py
-                :start-after: [START get_model]
-                :end-before: [END get_model]
+                :start-after: [START get_document_model]
+                :end-before: [END get_document_model]
                 :language: python
                 :dedent: 4
                 :caption: Get a model by its ID.
@@ -423,11 +423,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     @distributed_trace
     def list_operations(self, **kwargs: Any) -> ItemPaged[OperationSummary]:
-        """List information for each document model operation.
+        """List information for each operation.
 
-        Lists all document model operations associated with the Form Recognizer resource.
-        Note that operation information only persists for 24 hours. If the operation was successful,
-        the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+        Lists all operations associated with the Form Recognizer resource.
+        Note that operation information only persists for 24 hours. If a document model operation was successful,
+        the document model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :return: A pageable of OperationSummary.
         :rtype: ~azure.core.paging.ItemPaged[OperationSummary]
@@ -453,11 +453,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     @distributed_trace
     def get_operation(self, operation_id: str, **kwargs: Any) -> OperationDetails:
-        """Get a document model operation by its ID.
+        """Get an operation by its ID.
 
-        Get a document model operation associated with the Form Recognizer resource.
-        Note that operation information only persists for 24 hours. If the operation was successful,
-        the document model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+        Get an operation associated with the Form Recognizer resource.
+        Note that operation information only persists for 24 hours. If the document model operation was successful,
+        the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
         :param str operation_id: The operation ID.
         :return: OperationDetails

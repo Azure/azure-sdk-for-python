@@ -2120,9 +2120,9 @@ class CurrencyValue:
     """A currency value element.
 
     :ivar amount: The currency amount.
-    :vartype: float
+    :vartype amount: float
     :ivar symbol: The currency symbol, if found.
-    :vartype: Optional[str]
+    :vartype symbol: Optional[str]
     """
 
     def __init__(self, **kwargs):
@@ -3266,7 +3266,7 @@ class OperationSummary:
     created, and more.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+    the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
 
     :ivar operation_id: Operation ID.
@@ -3371,7 +3371,7 @@ class OperationDetails(OperationSummary):
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can also be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+    the model can also be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
     :ivar operation_id: Operation ID.
     :vartype operation_id: str

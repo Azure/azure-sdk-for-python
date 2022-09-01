@@ -32,8 +32,6 @@
     "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
-    "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-    "sdk/cognitivelanguage/azure-ai-language-conversations/**",
     "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -90,7 +88,6 @@
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
-    "sdk/synapse/azure-synapse-spark/**",
     "sdk/storage/azure-storage-file-share/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
@@ -416,6 +413,28 @@
       ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
+      "words": ["conv"],
+      "caseSensitive": false
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
+      "words": ["undoc"]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
+      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
+      "words": ["qnas", "qnamaker"],
+      "caseSensitive": false
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
+      "words": ["groovin", "Olufsen"]
+    },
+    {
       "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
@@ -509,6 +528,14 @@
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
       "words": [
         "undoc"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-spark/azure/synapse/spark/models/*.py",
+      "words": [
+        "pyspark",
+        "ename",
+        "evalue"
       ]
     },
     {
