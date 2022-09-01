@@ -575,7 +575,8 @@ class TestHealth(TextAnalyticsTest):
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'begin_analyze_healthcare_entities' is only available for API version v3.1 and up."
+        assert str(e.value) == "'TextAnalyticsClient.begin_analyze_healthcare_entities' is not available in API version v3.0. " \
+                               "Use service API version v3.1 or newer."
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
@@ -595,4 +596,4 @@ class TestHealth(TextAnalyticsTest):
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'display_name' is only available for API version 2022-05-01 and up.\n"
+        assert str(e.value) == "'display_name' is not available in API version v3.1. Use service API version 2022-05-01 or newer.\n"
