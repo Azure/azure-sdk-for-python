@@ -25,7 +25,7 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
 > Note: This version of the client library defaults to the `2022-08-31` version of the service.
