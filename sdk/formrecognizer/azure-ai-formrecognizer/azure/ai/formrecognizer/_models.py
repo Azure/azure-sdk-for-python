@@ -2169,70 +2169,6 @@ class CurrencyValue:
         )
 
 
-class DocumentContentElement:
-    """A DocumentContentElement.
-
-    :ivar content: Text content of the document content element.
-    :vartype content: str
-    :ivar polygon: Bounding polygon of the document content element.
-    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
-    :ivar span: Location of the element in the full document content.
-    :vartype span: ~azure.ai.formrecognizer.DocumentSpan
-    :ivar confidence: Confidence of accurately extracting the document content element.
-    :vartype confidence: float
-    :ivar str kind: The kind of document element. Possible kinds are "word" or "selectionMark" which
-        correspond to a :class:`~azure.ai.formrecognizer.DocumentWord` or
-        :class:`~azure.ai.formrecognizer.DocumentSelectionMark`, respectively.
-    """
-
-    def __init__(self, **kwargs):
-        self.content = kwargs.get("content", None)
-        self.polygon = kwargs.get("polygon", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
-        self.kind = kwargs.get("kind", None)
-
-    def __repr__(self):
-        return (
-            f"DocumentContentElement(content={self.content}, polygon={self.polygon}, span={self.span}, "
-            f"confidence={self.confidence}, kind={self.kind})"
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentContentElement.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "content": self.content,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "span": self.span.to_dict() if self.span else None,
-            "confidence": self.confidence,
-            "kind": self.kind,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentContentElement":
-        """Converts a dict in the shape of a DocumentContentElement to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentContentElement.
-        :return: DocumentContentElement
-        :rtype: DocumentContentElement
-        """
-        return cls(
-            content=data.get("content", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
-            confidence=data.get("confidence", None),
-            kind=data.get("kind", None),
-        )
-
-
 class DocumentLanguage:
     """An object representing the detected language for a given text span.
 
@@ -2384,7 +2320,7 @@ class DocumentField:
 
     :ivar str value_type: The type of `value` found on DocumentField. Possible types include:
      "string", "date", "time", "phoneNumber", "float", "integer", "selectionMark", "countryRegion",
-     "signature", "currency", "list", "dictionary".
+     "signature", "currency", "address", "list", "dictionary".
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
         If the value is extracted from the document, but cannot be normalized to its type,
@@ -2392,7 +2328,7 @@ class DocumentField:
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         :class:`~azure.ai.formrecognizer.CurrencyValue`, :class:`~azure.ai.formrecognizer.AddressValue`,
         dict[str, :class:`~azure.ai.formrecognizer.DocumentField`],
-        or list[:class:`~azure.ai.formrecognizer.DocumentField`]
+        list[:class:`~azure.ai.formrecognizer.DocumentField`], or None
     :ivar content: The field's content.
     :vartype content: Optional[str]
     :ivar bounding_regions: Bounding regions covering the field.
@@ -2595,7 +2531,7 @@ class DocumentKeyValuePair:
     :ivar key: Field label of the key-value pair.
     :vartype key: ~azure.ai.formrecognizer.DocumentKeyValueElement
     :ivar value: Field value of the key-value pair.
-    :vartype value: ~azure.ai.formrecognizer.DocumentKeyValueElement
+    :vartype value: Optional[~azure.ai.formrecognizer.DocumentKeyValueElement]
     :ivar confidence: Confidence of correctly extracting the key-value pair.
     :vartype confidence: float
     """
@@ -2933,14 +2869,12 @@ class DocumentPage:
         )
 
 
-class DocumentSelectionMark(DocumentContentElement):
+class DocumentSelectionMark:
     """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection.
 
     :ivar state: State of the selection mark. Possible values include: "selected",
      "unselected".
     :vartype state: str
-    :ivar content: The text content - not returned for DocumentSelectionMark.
-    :vartype content: str
     :ivar polygon: Bounding polygon of the selection mark.
     :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
     :ivar span: Location of the selection mark in the reading order concatenated
@@ -2948,11 +2882,12 @@ class DocumentSelectionMark(DocumentContentElement):
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the selection mark.
     :vartype confidence: float
-    :ivar str kind: For DocumentSelectionMark, this is "selectionMark".
     """
 
     def __init__(self, **kwargs):
-        super().__init__(kind="selectionMark", **kwargs)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
         self.state = kwargs.get("state", None)
 
     @classmethod
@@ -2968,8 +2903,8 @@ class DocumentSelectionMark(DocumentContentElement):
 
     def __repr__(self):
         return (
-            f"DocumentSelectionMark(state={self.state}, content={self.content}, span={repr(self.span)}, "
-            f"confidence={self.confidence}, polygon={self.polygon}, kind={self.kind})"
+            f"DocumentSelectionMark(state={self.state}, span={repr(self.span)}, "
+            f"confidence={self.confidence}, polygon={self.polygon})"
         )
 
     def to_dict(self) -> dict:
@@ -2980,13 +2915,11 @@ class DocumentSelectionMark(DocumentContentElement):
         """
         return {
             "state": self.state,
-            "content": self.content,
             "polygon": [f.to_dict() for f in self.polygon]
             if self.polygon
             else [],
             "span": self.span.to_dict() if self.span else None,
             "confidence": self.confidence,
-            "kind": self.kind,
         }
 
     @classmethod
@@ -2999,7 +2932,6 @@ class DocumentSelectionMark(DocumentContentElement):
         """
         return cls(
             state=data.get("state", None),
-            content=data.get("content", None),
             polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
             if len(data.get("polygon", [])) > 0
             else [],
@@ -3289,9 +3221,6 @@ class OperationSummary:
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3379,7 +3308,7 @@ class OperationDetails(OperationSummary):
         "failed", "succeeded", "canceled".
     :vartype status: str
     :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
+    :vartype percent_completed: Optional[int]
     :ivar created_on: Date and time (UTC) when the operation was created.
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Date and time (UTC) when the operation was last updated.
@@ -3400,9 +3329,6 @@ class OperationDetails(OperationSummary):
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3481,7 +3407,7 @@ class OperationDetails(OperationSummary):
         )
 
 
-class DocumentWord(DocumentContentElement):
+class DocumentWord:
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
 
@@ -3493,11 +3419,13 @@ class DocumentWord(DocumentContentElement):
     :vartype span: ~azure.ai.formrecognizer.DocumentSpan
     :ivar confidence: Confidence of correctly extracting the word.
     :vartype confidence: float
-    :ivar str kind: For DocumentWord, this is "word".
     """
 
     def __init__(self, **kwargs):
-        super().__init__(kind="word", **kwargs)
+        self.content = kwargs.get("content", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, word):
@@ -3513,7 +3441,7 @@ class DocumentWord(DocumentContentElement):
     def __repr__(self):
         return (
             f"DocumentWord(content={self.content}, polygon={self.polygon}, "
-            f"span={repr(self.span)}, confidence={self.confidence}, kind={self.kind})"
+            f"span={repr(self.span)}, confidence={self.confidence})"
         )
 
     def to_dict(self) -> dict:
@@ -3529,7 +3457,6 @@ class DocumentWord(DocumentContentElement):
             else [],
             "span": self.span.to_dict() if self.span else None,
             "confidence": self.confidence,
-            "kind": self.kind,
         }
 
     @classmethod
@@ -3576,9 +3503,6 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     :vartype styles: Optional[list[~azure.ai.formrecognizer.DocumentStyle]]
     :ivar documents: Extracted documents.
     :vartype documents: Optional[list[~azure.ai.formrecognizer.AnalyzedDocument]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *languages* property
     """
 
     def __init__(self, **kwargs):
@@ -3718,9 +3642,6 @@ class DocumentModelSummary:
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(
@@ -3793,9 +3714,6 @@ class DocumentModelDetails(DocumentModelSummary):
     :vartype tags: Optional[dict[str, str]]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
     :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocumentTypeDetails]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(
@@ -3871,9 +3789,6 @@ class DocumentTypeDetails:
     :vartype field_schema: dict[str, Any]
     :ivar field_confidence: Estimated confidence for each field.
     :vartype field_confidence: Optional[dict[str, float]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *build_mode* property
     """
 
     def __init__(
