@@ -3221,9 +3221,6 @@ class OperationSummary:
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3311,7 +3308,7 @@ class OperationDetails(OperationSummary):
         "failed", "succeeded", "canceled".
     :vartype status: str
     :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
+    :vartype percent_completed: Optional[int]
     :ivar created_on: Date and time (UTC) when the operation was created.
     :vartype created_on: ~datetime.datetime
     :ivar last_updated_on: Date and time (UTC) when the operation was last updated.
@@ -3509,9 +3506,6 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     :vartype styles: Optional[list[~azure.ai.formrecognizer.DocumentStyle]]
     :ivar documents: Extracted documents.
     :vartype documents: Optional[list[~azure.ai.formrecognizer.AnalyzedDocument]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *languages* property
     """
 
     def __init__(self, **kwargs):
@@ -3651,9 +3645,6 @@ class DocumentModelSummary:
     :vartype api_version: Optional[str]
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: Optional[dict[str, str]]
-
-    .. versionadded:: v2022-01-30-preview
-        The *api_version* and *tags* properties
     """
 
     def __init__(
