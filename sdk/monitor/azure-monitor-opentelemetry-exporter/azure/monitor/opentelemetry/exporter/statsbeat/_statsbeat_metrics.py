@@ -92,8 +92,11 @@ class _StatsbeatMetrics:
         self._ikey = instrumentation_key
         self._meter = meter_provider.get_meter(__name__)
         self._long_interval_threshold = long_interval_threshold
-        # Start interal count at the max size for initial statsbeat export
-        self._long_interval_count = sys.maxsize
+        # Start internal count at the max size for initial statsbeat export
+        self._long_interval_count_map = {
+            _ATTACH_METRIC_NAME[0]: sys.maxsize,
+            _FEATURE_METRIC_NAME[0]: sys.maxsize,
+        }
         self._long_interval_lock = threading.Lock()
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
@@ -117,20 +120,16 @@ class _StatsbeatMetrics:
             _FEATURE_METRIC_NAME[0],
             callbacks=[self._get_feature_metric],
             unit="",
-            description="Statsbeat metric tracking tracking rp information"
+            description="Statsbeat metric tracking tracking enabled features"
         )
 
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     def _get_attach_metric(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
-        with self._long_interval_lock:
-            # if long interval theshold not met, it is not time to export
-            # statsbeat metrics that are long intervals
-            if self._long_interval_count < self._long_interval_threshold:
-                return observations
-            # reset the count if long interval theshold is met
-            self._long_interval_count = 0
+        # Check if it is time to observe long interval metrics
+        if not self._meets_long_interval_threshold(_ATTACH_METRIC_NAME[0]):
+            return observations
         rp = ''
         rpId = ''
         os_type = platform.system()
@@ -195,6 +194,9 @@ class _StatsbeatMetrics:
     # pylint: disable=protected-access
     def _get_feature_metric(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
+        # Check if it is time to observe long interval metrics
+        if not self._meets_long_interval_threshold(_FEATURE_METRIC_NAME[0]):
+            return observations
         # Don't send observation if no features enabled
         if self._feature is _StatsbeatFeature.NONE:
             return observations
@@ -202,6 +204,17 @@ class _StatsbeatMetrics:
         attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
         observations.append(Observation(1, dict(attributes)))
         return observations
+
+    def _meets_long_interval_threshold(self, name) -> bool:
+        with self._long_interval_lock:
+            # if long interval theshold not met, it is not time to export
+            # statsbeat metrics that are long intervals
+            count = self._long_interval_count_map.get(name, sys.maxsize)
+            if count < self._long_interval_threshold:
+                return False
+            # reset the count if long interval theshold is met
+            self._long_interval_count_map[name] = 0
+            return True
 
     # pylint: disable=W0201
     def init_non_initial_metrics(self):
@@ -250,7 +263,8 @@ class _StatsbeatMetrics:
         # a short interval collection has happened, which is why we increment
         # the long_interval_count when it is called
         with self._long_interval_lock:
-            self._long_interval_count = self._long_interval_count + 1
+            for name, count in self._long_interval_count_map.items():
+                self._long_interval_count_map[name] = count + 1
         observations = []
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)

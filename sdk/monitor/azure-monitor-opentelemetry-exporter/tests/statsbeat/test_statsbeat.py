@@ -13,6 +13,7 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
+    _FEATURE_METRIC_NAME,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -27,6 +28,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
+    _FEATURE_TYPES,
     _StatsbeatMetrics,
     _RP_NAMES,
 )
@@ -146,6 +148,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
 
@@ -167,15 +170,26 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            0,
+            True,
+            5,
         )
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westus-1")
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_NAMES[3])
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 1)
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["type"], _FEATURE_TYPES.FEATURE)
         self.assertTrue(isinstance(metric._meter, Meter))
         self.assertEqual(metric._ikey, ikey)
+        self.assertEqual(metric._long_interval_threshold, 5)
+        self.assertTrue(metric._vm_retry)
+        self.assertEqual(len(metric._vm_data), 0)
+        self.assertEqual(metric._feature, 1)
+        for count in metric._long_interval_count_map.values():
+            self.assertEqual(count, sys.maxsize)
         self.assertTrue(isinstance(metric._attach_metric, ObservableGauge))
+        self.assertTrue(isinstance(metric._feature_metric, ObservableGauge))
         self.assertEqual(metric._attach_metric.name, _ATTACH_METRIC_NAME[0])
+        self.assertEqual(metric._feature_metric.name, _FEATURE_METRIC_NAME[0])
 
     # pylint: disable=protected-access
     def test_get_attach_metric_meet_threshold(self):
@@ -186,13 +200,14 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             2,
         )
-        metric._long_interval_count = 2
+        metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 2
         metric._vm_retry = False
         observations = metric._get_attach_metric(options=None)
         self.assertEqual(len(observations), 1)
-        self.assertEqual(metric._long_interval_count, 0)
+        self.assertEqual(metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]], 0)
 
     # pylint: disable=protected-access
     def test_get_attach_metric_does_not_meet_threshold(self):
@@ -203,12 +218,13 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             2,
         )
-        metric._long_interval_count = 1
+        metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 1
         observations = metric._get_attach_metric(options=None)
         self.assertEqual(len(observations), 0)
-        self.assertEqual(metric._long_interval_count, 1)
+        self.assertEqual(metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]], 1)
 
     # pylint: disable=protected-access
     @mock.patch.dict(
@@ -256,6 +272,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         _vm_data = {}
@@ -288,6 +305,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         _vm_data = {}
@@ -314,6 +332,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         metric._vm_retry = False
@@ -332,6 +351,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         with mock.patch('requests.get') as get:
@@ -360,6 +380,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         with mock.patch(
@@ -379,6 +400,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         with mock.patch(
@@ -398,6 +420,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         with mock.patch(
@@ -409,6 +432,82 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(len(metric._vm_data), 0)
             self.assertTrue(metric._vm_retry)
 
+    # pylint: disable=protected-access
+    def test_get_feature_metric_meet_threshold(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            2,
+        )
+        metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 2
+        observations = metric._get_feature_metric(options=None)
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]], 0)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_does_not_meet_threshold(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            2,
+        )
+        metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 1
+        observations = metric._get_feature_metric(options=None)
+        self.assertEqual(len(observations), 0)
+        self.assertEqual(metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]], 1)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+        )
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 1)
+        self.assertEqual(attributes["type"], 0)
+        observations = self._metric._get_feature_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_no_local_storage(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            False,
+            0,
+        )
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 0)
+        self.assertEqual(attributes["type"], 0)
+        observations = self._metric._get_feature_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+
     def test_init_non_initial_metrics(self):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
@@ -417,6 +516,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         metric.init_non_initial_metrics()
@@ -441,15 +541,18 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
         _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 3
-        self.assertEqual(metric._long_interval_count, sys.maxsize)
+        for count in metric._long_interval_count_map.values():
+            self.assertEqual(count, sys.maxsize)
         observations = metric._get_success_count(options=None)
-        self.assertEqual(metric._long_interval_count, sys.maxsize + 1)
+        for count in metric._long_interval_count_map.values():
+            self.assertEqual(count, sys.maxsize + 1)
         for obs in observations:
             self.assertEqual(obs.value, 3)
             self.assertEqual(obs.attributes, attributes)
@@ -463,15 +566,18 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
+            True,
             0,
         )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         attributes["statusCode"] = 200
         _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
-        self.assertEqual(metric._long_interval_count, sys.maxsize)
+        for count in metric._long_interval_count_map.values():
+            self.assertEqual(count, sys.maxsize)
         observations = metric._get_success_count(options=None)
-        self.assertEqual(metric._long_interval_count, sys.maxsize + 1)
+        for count in metric._long_interval_count_map.values():
+            self.assertEqual(count, sys.maxsize + 1)
         self.assertEqual(len(observations), 0)
 
     def test_get_average_duration(self):
