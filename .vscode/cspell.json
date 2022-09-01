@@ -564,6 +564,7 @@
         "qloguniform",
         "odict",
         "sdkv",
+        "jioindiawest",
         "levelno",
         "amlignore",
         "envvar",
@@ -644,7 +645,14 @@
         "errno",
         "firstlineno",
         "chdir",
-        "fset"
+        "fset",
+        "azuresqldb",
+        "unflat",
+        "unflatten",
+        "unflattened",
+        "unflattens",
+        "subel",
+        "azuresynapseanalytics"
       ]
     },
     {
