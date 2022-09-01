@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Updated minimum `msrest` version to 0.7.1
 
 ## 4.7.0b1 (2022-08-12)
 

@@ -1,15 +1,16 @@
-import pytest
 import os
 from pathlib import Path
 from typing import Callable
 
+import pytest
+
 from azure.ai.ml._utils._asset_utils import (
-    get_ignore_file,
     AmlIgnoreFile,
     GitIgnoreFile,
+    IgnoreFile,
+    get_ignore_file,
     get_object_hash,
     traverse_directory,
-    IgnoreFile,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 

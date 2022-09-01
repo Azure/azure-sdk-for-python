@@ -41,7 +41,7 @@ jobs:
         type: bandit
         evaluation_interval: 10
         slack_factor: 0.2
-    image_model:
+    training_parameters:
       checkpoint_frequency: 1
       early_stopping: true
       early_stopping_delay: 2

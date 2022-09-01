@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
 import os
 import shutil
 import tempfile
@@ -40,6 +41,7 @@ class _AdditionalIncludes:
             shutil.copytree(src, dst)
 
     def validate(self) -> ValidationResult:
+        # pylint: disable=too-many-return-statements
         if self._includes is None:
             return _ValidationResultBuilder.success()
         for additional_include in self._includes:

@@ -5,9 +5,8 @@ from typing import Union
 
 from marshmallow import Schema, fields
 
-from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DataBindingStr, UnionField
 
 DATA_BINDING_SUPPORTED_KEY = "_data_binding_supported"
 

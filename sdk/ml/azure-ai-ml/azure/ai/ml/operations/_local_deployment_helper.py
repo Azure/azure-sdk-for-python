@@ -9,7 +9,7 @@ import logging
 import shutil
 from pathlib import Path
 from typing import Iterable
-
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 from docker.models.containers import Container
 
 from azure.ai.ml._local_endpoints import AzureMlImageContext, DockerClient, DockerfileResolver, LocalEndpointMode
@@ -17,8 +17,10 @@ from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, Local
 from azure.ai.ml._local_endpoints.validators import CodeValidator, EnvironmentValidator, ModelValidator
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
-from azure.ai.ml.constants import AzureMLResourceType, LocalEndpointConstants
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
+from azure.ai.ml._ml_exceptions import ValidationException, log_and_raise_error
 
 module_logger = logging.getLogger(__name__)
 
@@ -52,34 +54,40 @@ class _LocalDeploymentHelper(object):
         :param local_endpoint_mode: Mode for how to create the local user container.
         :type local_endpoint_mode: LocalEndpointMode
         """
-        if deployment is None:
-            msg = "The entity provided for local endpoint was null. Please provide valid entity."
-            raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
-
-        endpoint_metadata = None
         try:
-            self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
-            endpoint_metadata = json.dumps(self._docker_client.get_endpoint(endpoint_name=deployment.endpoint_name))
-            operation_message = "Updating local deployment"
-        except LocalEndpointNotFoundError:
-            operation_message = "Creating local deployment"
+            if deployment is None:
+                msg = "The entity provided for local endpoint was null. Please provide valid entity."
+                raise InvalidLocalEndpointError(message=msg, no_personal_data_message=msg)
 
-        deployment_metadata = json.dumps(deployment._to_dict())
-        endpoint_metadata = (
-            endpoint_metadata
-            if endpoint_metadata
-            else self._get_stubbed_endpoint_metadata(endpoint_name=deployment.endpoint_name)
-        )
-        local_endpoint_polling_wrapper(
-            func=self._create_deployment,
-            message=f"{operation_message} ({deployment.endpoint_name} / {deployment.name}) ",
-            endpoint_name=deployment.endpoint_name,
-            deployment=deployment,
-            local_endpoint_mode=local_endpoint_mode,
-            endpoint_metadata=endpoint_metadata,
-            deployment_metadata=deployment_metadata,
-        )
-        return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+            endpoint_metadata = None
+            try:
+                self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+                endpoint_metadata = json.dumps(self._docker_client.get_endpoint(endpoint_name=deployment.endpoint_name))
+                operation_message = "Updating local deployment"
+            except LocalEndpointNotFoundError:
+                operation_message = "Creating local deployment"
+
+            deployment_metadata = json.dumps(deployment._to_dict())
+            endpoint_metadata = (
+                endpoint_metadata
+                if endpoint_metadata
+                else self._get_stubbed_endpoint_metadata(endpoint_name=deployment.endpoint_name)
+            )
+            local_endpoint_polling_wrapper(
+                func=self._create_deployment,
+                message=f"{operation_message} ({deployment.endpoint_name} / {deployment.name}) ",
+                endpoint_name=deployment.endpoint_name,
+                deployment=deployment,
+                local_endpoint_mode=local_endpoint_mode,
+                endpoint_metadata=endpoint_metadata,
+                deployment_metadata=deployment_metadata,
+            )
+            return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     def get_deployment_logs(self, endpoint_name: str, deployment_name: str, lines: int) -> str:
         """Get logs from a local endpoint.

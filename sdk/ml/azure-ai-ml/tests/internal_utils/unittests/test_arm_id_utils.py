@@ -1,4 +1,5 @@
 import pytest
+
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_with_version
 

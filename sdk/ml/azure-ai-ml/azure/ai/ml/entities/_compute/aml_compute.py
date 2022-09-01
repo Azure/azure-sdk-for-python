@@ -17,7 +17,8 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, ComputeDefaults, ComputeType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._util import load_from_dict
 
 from ._identity import IdentityConfiguration
@@ -128,6 +129,7 @@ class AmlCompute(Compute):
         self.ssh_settings = ssh_settings
         self.network_settings = network_settings
         self.tier = tier
+        self.subnet = None
 
     @classmethod
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "AmlCompute":
@@ -179,6 +181,7 @@ class AmlCompute(Compute):
             )
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return AmlComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod

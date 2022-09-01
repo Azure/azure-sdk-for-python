@@ -1,0 +1,8 @@
+name: testidentity
+type: synapsespark
+resource_id: /subscriptions/dummy/resourceGroups/dummy/providers/Microsoft.Synapse/workspaces/dummy/bigDataPools/dummypool
+identity:
+   type: user_assigned
+   user_assigned_identities:
+      - resource_id: /subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W35/providers/Microsoft.ManagedIdentity/userAssignedIdentities/x
+      - resource_id: /subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W35/providers/Microsoft.ManagedIdentity/userAssignedIdentities/y
