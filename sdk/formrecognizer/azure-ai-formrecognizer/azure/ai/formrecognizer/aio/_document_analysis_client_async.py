@@ -18,12 +18,13 @@ from .._models import AnalyzeResult
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     """DocumentAnalysisClient analyzes information from documents and images.
     It is the interface to use for analyzing with prebuilt models (receipts, business cards,
-    invoices, identity documents), analyzing layout from documents, analyzing general
-    document types, and analyzing custom documents with built models. It provides different
+    invoices, identity documents, among others), analyzing layout from documents, analyzing general
+    document types, and analyzing custom documents with built models (to see a full list of models
+    supported by the service, see: https://aka.ms/azsdk/formrecognizer/models). It provides different
     methods based on inputs from a URL and inputs from a stream.
 
     .. note:: DocumentAnalysisClient should be used with API versions
-        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
+        2022-08-31 and up. To use API versions <=v2.1, instantiate a FormRecognizerClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -43,14 +44,14 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
             :start-after: [START create_da_client_with_key_async]
             :end-before: [END create_da_client_with_key_async]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentAnalysisClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
             :start-after: [START create_da_client_with_aad_async]
             :end-before: [END create_da_client_with_aad_async]
             :language: python
@@ -93,14 +94,14 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_analyze_invoices_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_invoices_async.py
                 :start-after: [START analyze_invoices_async]
                 :end-before: [END analyze_invoices_async]
                 :language: python
                 :dedent: 4
                 :caption: Analyze an invoice. For more samples see the `samples` folder.
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_analyze_custom_documents_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_custom_documents_async.py
                 :start-after: [START analyze_custom_documents_async]
                 :end-before: [END analyze_custom_documents_async]
                 :language: python
@@ -159,7 +160,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_analyze_receipts_from_url_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_receipts_from_url_async.py
                 :start-after: [START analyze_receipts_from_url_async]
                 :end-before: [END analyze_receipts_from_url_async]
                 :language: python
