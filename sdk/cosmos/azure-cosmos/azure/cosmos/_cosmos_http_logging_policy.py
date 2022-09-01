@@ -20,26 +20,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+
+
 """Http Logging Policy for Azure SDK"""
 
 import os
 import urllib
-
-from azure.core.pipeline.policies import HttpLoggingPolicy
 import logging
 import types
-import platform
+
+from azure.core.pipeline.policies import HttpLoggingPolicy
+
 
 
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
-    def __init__(self, logger=None, **kwargs):
+    def __init__(self, logger=None, **kwargs): # pylint: disable=unused-argument
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", None)
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
             self.logger = logger or logging.getLogger(__name__)
 
-    def on_request(self, request):  # type: (PipelineRequest) -> None
+    def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
+        # type: (PipelineRequest) -> None
         http_request = request.http_request
         options = request.context.options
         self._enable_diagnostics_logging = request.context.setdefault(
@@ -112,7 +115,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             super().on_request(request)
 
 
-    def on_response(self, request, response):  # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request, response):  # pylint: disable=too-many-return-statements, too-many-statements
+        # type: (PipelineRequest, PipelineResponse) -> None
         if self._enable_diagnostics_logging:
             http_response = response.http_response
             ir = http_response.internal_response
@@ -130,7 +134,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         logger.info("Elapsed Time: %r", ir.elapsed)
                     except AttributeError:
                         logger.info("Elapsed Time: %r", None)
-                    if http_response.status_code >= 400:
+                    if http_response.status_code >= 400: # pylint: disable=eval-used
                         sm = ir.text
                         sm.replace("true", "True")
                         sm.replace("false", "False")
@@ -147,7 +151,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     log_string += "\nElapsed Time: {}".format(ir.elapsed)
                 except AttributeError:
                     log_string += "\nElapsed Time: {}".format(None)
-                if http_response.status_code >= 400:
+                if http_response.status_code >= 400: # pylint: disable=eval-used
                     sm = ir.text
                     sm.replace("true", "True")
                     sm.replace("false", "False")
@@ -163,14 +167,3 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         else:
             super().on_response(request, response)
 
-        # Current System info
-        def get_system_info(self):
-            ret = {}
-            ret["system"] = platform.system()
-            ret["python version"] = platform.python_version()
-            ret["architecture"] = platform.architecture()
-            ret["cpu"] = platform.processor()
-            ret["cpu count"] = os.cpu_count()
-            ret["machine"] = platform.machine()
-
-            return ret
