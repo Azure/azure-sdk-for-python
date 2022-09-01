@@ -1,6 +1,6 @@
 # Release History
 
-## 3.2.0 (2022-09-06)
+## 3.2.0 (2022-09-08)
 
 ### Features Added
 - Content type `image/heif` is supported for document analysis and building models.
