@@ -8,7 +8,7 @@
 
 from typing import Optional
 
-from azure.ai.ml.constants import LocalEndpointConstants
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 
 class Image(object):

@@ -8,13 +8,13 @@ import json
 import logging
 from typing import Iterable
 
-import requests
 from docker.models.containers import Container
 
 from azure.ai.ml._local_endpoints import DockerClient, EndpointStub
 from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
-from azure.ai.ml.constants import EndpointInvokeFields, LocalEndpointConstants
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
 
 module_logger = logging.getLogger(__name__)
@@ -27,9 +27,10 @@ class _LocalEndpointHelper(object):
     invoke, show, list, delete.
     """
 
-    def __init__(self):
+    def __init__(self, *, requests_pipeline: HttpPipeline):
         self._docker_client = DockerClient()
         self._endpoint_stub = EndpointStub()
+        self._requests_pipeline = requests_pipeline
 
     def create_or_update(self, endpoint: OnlineEndpoint) -> OnlineEndpoint:
         """Create or update an endpoint locally using Docker.
@@ -73,7 +74,7 @@ class _LocalEndpointHelper(object):
             headers = {}
             if deployment_name is not None:
                 headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
-            return requests.post(scoring_uri, json=data, headers=headers).text
+            return self._requests_pipeline.post(scoring_uri, json=data, headers=headers).text()
         endpoint_stub = self._endpoint_stub.get(endpoint_name=endpoint_name)
         if endpoint_stub:
             return self._endpoint_stub.invoke()

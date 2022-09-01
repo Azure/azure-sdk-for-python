@@ -17,7 +17,8 @@ from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, Local
 from azure.ai.ml._local_endpoints.validators import CodeValidator, EnvironmentValidator, ModelValidator
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
-from azure.ai.ml.constants import AzureMLResourceType, LocalEndpointConstants
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
 
 module_logger = logging.getLogger(__name__)

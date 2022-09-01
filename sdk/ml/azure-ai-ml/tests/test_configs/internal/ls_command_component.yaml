@@ -8,3 +8,4 @@ command: >-
   ls
 environment:
   name: AzureML-Designer
+code: ../python

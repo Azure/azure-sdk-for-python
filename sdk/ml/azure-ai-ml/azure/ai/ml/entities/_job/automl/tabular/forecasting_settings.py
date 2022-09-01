@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-instance-attributes
 
 from typing import List, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     AutoForecastHorizon,
     AutoSeasonality,
     AutoTargetLags,
@@ -17,8 +17,8 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ForecastingSettings as RestForecastingSettings
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,
     TargetRollingWindowSizeMode,
@@ -29,25 +29,33 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class ForecastingSettings(RestTranslatableMixin):
     """Forecasting settings for an AutoML Job.
 
-    :param country_or_region_for_holidays: The country/region used to generate holiday features. These should be ISO 3166 two-letter country/region code, for example 'US' or 'GB'.
+    :param country_or_region_for_holidays: The country/region used to generate holiday features. These should be ISO
+        3166 two-letter country/region code, for example 'US' or 'GB'.
     :type country_or_region_for_holidays: str
     :param forecast_horizon: The desired maximum forecast horizon in units of time-series frequency.
     :type forecast_horizon: int
-    :param target_lags: The number of past periods to lag from the target column. Use 'auto' to use the automatic heuristic based lag.
+    :param target_lags: The number of past periods to lag from the target column. Use 'auto' to use the automatic
+        heuristic based lag.
     :type target_lags: Union[str, int, List[int]]
-    :param target_rolling_window_size: The number of past periods used to create a rolling window average of the target column.
+    :param target_rolling_window_size: The number of past periods used to create a rolling window average of the
+        target column.
     :type target_rolling_window_size: int
-    :param frequency: Forecast frequency. When forecasting, this parameter represents the period with which the forecast is desired, for example daily, weekly, yearly, etc.
+    :param frequency: Forecast frequency. When forecasting, this parameter represents the period with which the
+        forecast is desired, for example daily, weekly, yearly, etc.
     :type frequency: str
     :param feature_lags: Flag for generating lags for the numeric features with 'auto'
     :type feature_lags: str
-    :param seasonality: Set time series seasonality as an integer multiple of the series frequency. Use 'auto' for automatic settings.
+    :param seasonality: Set time series seasonality as an integer multiple of the series frequency. Use 'auto' for
+        automatic settings.
     :type seasonality: Union[str, int]
-    :param use_stl: Configure STL Decomposition of the time-series target column. use_stl can take two values: 'season' - only generate season component and 'season_trend' - generate both season and trend components.
+    :param use_stl: Configure STL Decomposition of the time-series target column. use_stl can take two values:
+        'season' - only generate season component and 'season_trend' - generate both season and trend components.
     :type use_stl: str
     :param short_series_handling_config: The parameter defining how if AutoML should handle short time series.
     :type short_series_handling_config: str
-    :param target_aggregate_function: The function to be used to aggregate the time series target column to conform to a user specified frequency. If the target_aggregation_function is set, but the freq parameter is not set, the error is raised. The possible target aggregation functions are: "sum", "max", "min" and "mean".
+    :param target_aggregate_function: The function to be used to aggregate the time series target column to conform
+        to a user specified frequency. If the target_aggregation_function is set, but the freq parameter is not set,
+        the error is raised. The possible target aggregation functions are: "sum", "max", "min" and "mean".
     :type target_aggregate_function: str
     :param time_column_name: The name of the time column.
     :type time_column_name: str

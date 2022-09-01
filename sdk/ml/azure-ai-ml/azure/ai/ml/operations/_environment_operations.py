@@ -4,11 +4,10 @@
 
 # pylint: disable=protected-access
 
-import logging
 from typing import Any, Iterable, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -22,13 +21,13 @@ from azure.ai.ml._utils._asset_utils import (
     _get_latest,
     _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml.constants import ARM_ID_PREFIX, AzureMLResourceType
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -47,8 +46,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(EnvironmentOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
@@ -72,7 +70,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
         sas_uri = None
 
         if not environment.version and self._registry_name:
-            raise Exception("Environment version is required for registry")
+            msg = "Environment version is required for registry"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.ENVIRONMENT,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
+            )
 
         if self._registry_name:
             sas_uri = get_sas_uri_for_registry_asset(
@@ -187,6 +192,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if label:
@@ -199,6 +205,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         name = _preprocess_environment_name(name)
         env_version_resource = self._get(name, version)

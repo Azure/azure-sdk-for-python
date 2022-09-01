@@ -7,8 +7,7 @@ import logging
 from marshmallow import fields
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
-from azure.ai.ml._schema.core.fields import NestedField
-from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.identity import IdentitySchema
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -31,7 +30,8 @@ class EndpointSchema(PathAwareSchema):
         ],
         casing_transform=camel_to_snake,
         metadata={
-            "description": "authentication method: no auth, key based or azure ml token based. aad_token is only valid for batch endpoint."
+            "description": """authentication method: no auth, key based or azure ml token based.
+            aad_token is only valid for batch endpoint."""
         },
     )
     scoring_uri = fields.Str(metadata={"description": "The endpoint uri that can be used for scoring"})

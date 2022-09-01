@@ -4,19 +4,17 @@
 
 # pylint: disable=protected-access
 
-import logging
 from typing import Dict, Iterable
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient2022_05_01
 from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreSecrets, NoneDatastoreCredentials
 from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class DatastoreOperations(_ScopeDependentOperations):
@@ -31,8 +29,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         self, operation_scope: OperationScope, serviceclient_2022_05_01: ServiceClient2022_05_01, **kwargs: Dict
     ):
         super(DatastoreOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self._operation = serviceclient_2022_05_01.datastores
         self._credential = serviceclient_2022_05_01._config.credential
         self._init_kwargs = kwargs

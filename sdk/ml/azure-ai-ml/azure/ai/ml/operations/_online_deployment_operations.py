@@ -2,33 +2,33 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-self-use
 
-import logging
 import random
 import time
 from typing import Dict, Optional
 
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
-from azure.ai.ml.constants import AzureMLResourceType, EndpointDeploymentLogContainerType, LROConfigurations
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
 from azure.ai.ml.entities import OnlineDeployment
+from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
-from azure.identity import ChainedTokenCredential
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -45,12 +45,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_deployment_helper: _LocalDeploymentHelper,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
         super(OnlineDeploymentOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_02_2022_preview.online_deployments
         self._online_endpoint_operations = service_client_02_2022_preview.online_endpoints
@@ -98,7 +97,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         }
 
         # This get() is to ensure, the endpoint exists and fail before even start the deployment
-        module_logger.info(f"Check: endpoint {deployment.endpoint_name} exists")
+        module_logger.info("Check: endpoint %s exists", deployment.endpoint_name)
         self._online_endpoint_operations.get(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
@@ -132,12 +131,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             )
             if no_wait:
                 module_logger.info(
-                    f"Online deployment create/update request initiated. Status can be checked using `az ml online-deployment show -e {deployment.endpoint_name} -n {deployment.name}`\n"
+                    """Online deployment create/update request initiated. Status can be checked using
+ `az ml online-deployment show -e %s -n %s`\n""",
+                    deployment.endpoint_name,
+                    deployment.name,
                 )
                 return poller
-            else:
-                message = f"Creating/updating online deployment {deployment.name} "
-                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
+
+            message = f"Creating/updating online deployment {deployment.name} "
+            polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
         except Exception as ex:
             raise ex
@@ -261,12 +263,18 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         if container_type == EndpointDeploymentLogContainerType.STORAGE_INITIALIZER:
             return EndpointDeploymentLogContainerType.STORAGE_INITIALIZER_REST
 
-        msg = f"Invalid container type '{container_type}'. Supported container types are {EndpointDeploymentLogContainerType.INFERENCE_SERVER} and {EndpointDeploymentLogContainerType.STORAGE_INITIALIZER}."
+        msg = "Invalid container type '{}'. Supported container types are {} and {}"
+        msg = msg.format(
+            container_type,
+            EndpointDeploymentLogContainerType.INFERENCE_SERVER,
+            EndpointDeploymentLogContainerType.STORAGE_INITIALIZER,
+        )
         raise ValidationException(
             message=msg,
             target=ErrorTarget.ONLINE_DEPLOYMENT,
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
 
     def _get_ARM_deployment_name(self, name: str):

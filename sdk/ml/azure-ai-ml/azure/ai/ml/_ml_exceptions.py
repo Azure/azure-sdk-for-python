@@ -2,7 +2,37 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from enum import Enum
+
 from azure.core.exceptions import AzureError
+
+
+class ValidationErrorType(Enum):
+    """
+    Error types to be specified when using ValidationException class.
+    Types are then used in raise_error.py to format a detailed error message for users.
+
+    When using ValidationException, specify the type that best describes the nature of the error being captured.
+    If no type fits, add a new enum here and update raise_error.py to handle it.
+
+    INVALID_VALUE -> One or more schema fields are invalid (e.g. incorrect type or format)
+    UNKNOWN_FIELD -> A least one unrecognized schema parameter is specified
+    MISSING_FIELD -> At least one required schema parameter is missing
+    FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
+    CANNOT_SERIALIZE -> Same as "Cannot dump". One or more fields cannot be serialized by marshmallow.
+    CANNOT_PARSE -> YAML file cannot be parsed
+    RESOURCE_NOT_FOUND -> Resource could not be found
+    GENERIC -> Undefined placeholder. Avoid using.
+    """
+
+    INVALID_VALUE = "INVALID VALUE"
+    UNKNOWN_FIELD = "UNKNOWN FIELD"
+    MISSING_FIELD = "MISSING FIELD"
+    FILE_OR_FOLDER_NOT_FOUND = "FILE OR FOLDER NOT FOUND"
+    CANNOT_SERIALIZE = "CANNOT DUMP"
+    CANNOT_PARSE = "CANNOT PARSE"
+    RESOURCE_NOT_FOUND = "RESOURCE NOT FOUND"
+    GENERIC = "GENERIC"
 
 
 class ErrorCategory:
@@ -23,6 +53,7 @@ class ErrorTarget:
     ENVIRONMENT = "Environment"
     JOB = "Job"
     COMMAND_JOB = "CommandJob"
+    SPARK_JOB = "SparkJob"
     LOCAL_JOB = "LocalJob"
     MODEL = "Model"
     ONLINE_DEPLOYMENT = "OnlineDeployment"
@@ -70,7 +101,7 @@ class MlException(AzureError):
         *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         self._error_category = error_category
         self._target = target
@@ -125,7 +156,7 @@ class DeploymentException(MlException):
         *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         super(DeploymentException, self).__init__(
             message=message,
@@ -133,7 +164,7 @@ class DeploymentException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -145,7 +176,7 @@ class ComponentException(MlException):
         *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         super(ComponentException, self).__init__(
             message=message,
@@ -153,47 +184,7 @@ class ComponentException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
-        )
-
-
-class DataException(MlException):
-    def __init__(
-        self,
-        message: str,
-        no_personal_data_message: str,
-        *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
-    ):
-        super(DataException, self).__init__(
-            message=message,
-            target=target,
-            error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs
-        )
-
-
-class DatastoreException(MlException):
-    def __init__(
-        self,
-        message: str,
-        no_personal_data_message: str,
-        *args,
-        target: ErrorTarget = ErrorTarget.UNKNOWN,
-        error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
-    ):
-        super(DatastoreException, self).__init__(
-            message=message,
-            target=target,
-            error_category=error_category,
-            no_personal_data_message=no_personal_data_message,
-            *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -205,7 +196,7 @@ class JobException(MlException):
         *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         super(JobException, self).__init__(
             message=message,
@@ -213,7 +204,7 @@ class JobException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -225,7 +216,7 @@ class ModelException(MlException):
         *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         super(ModelException, self).__init__(
             message=message,
@@ -233,7 +224,7 @@ class ModelException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -245,7 +236,7 @@ class AssetException(MlException):
         no_personal_data_message: str,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         super(AssetException, self).__init__(
             message=message,
@@ -253,7 +244,7 @@ class AssetException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -262,10 +253,10 @@ class ScheduleException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
-        **kwargs
+        **kwargs,
     ):
         super(ScheduleException, self).__init__(
             message=message,
@@ -273,7 +264,7 @@ class ScheduleException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -283,18 +274,54 @@ class ValidationException(MlException):
         message: str,
         no_personal_data_message: str,
         *args,
+        error_type: ValidationErrorType = ValidationErrorType.GENERIC,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.USER_ERROR,
-        **kwargs
+        **kwargs,
     ):
+        """
+        Class for all exceptions raised as part of client-side schema validation.
+
+        :param message: A message describing the error. This is the error message the user will see.
+        :type message: str
+        :param no_personal_data_message: The error message without any personal data.
+            This will be pushed to telemetry logs.
+        :type no_personal_data_message: str
+        :param error_type: The error type, chosen from one of the values of ValidationErrorType enum class.
+        :type error_type: ValidationErrorType
+        :param target: The name of the element that caused the exception to be thrown.
+        :type target: ErrorTarget
+        :param error_category: The error category, defaults to Unknown.
+        :type error_category: ErrorCategory
+        :param error: The original exception if any.
+        :type error: Exception
+        """
         super(ValidationException, self).__init__(
             message=message,
             target=target,
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )
+
+        if error_type in list(ValidationErrorType):
+            self._error_type = error_type
+        else:
+            raise Exception(f"Error type {error_type} is not a member of the ValidationErrorType enum class.")
+
+    @property
+    def error_type(self):
+        """Return the error type.
+
+        :return: The error type.
+        :rtype: ValidationErrorType
+        """
+        return self._error_type
+
+    @error_type.setter
+    def error_type(self, value):
+        self._error_type = value
 
 
 class AssetPathException(MlException):
@@ -305,7 +332,7 @@ class AssetPathException(MlException):
         *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         super(AssetPathException, self).__init__(
             message=message,
@@ -313,7 +340,7 @@ class AssetPathException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -325,7 +352,7 @@ class ImportException(MlException):
         *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        **kwargs
+        **kwargs,
     ):
         super(ImportException, self).__init__(
             message=message,
@@ -333,5 +360,5 @@ class ImportException(MlException):
             error_category=error_category,
             no_personal_data_message=no_personal_data_message,
             *args,
-            **kwargs
+            **kwargs,
         )

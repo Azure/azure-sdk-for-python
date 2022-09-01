@@ -26,8 +26,9 @@ from azure.ai.ml._utils._workspace_utils import get_deployment_name, get_name_fo
 from azure.ai.ml.entities._assets import Model, Data
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials
 from azure.ai.ml import load_job, load_component
-
-from devtools_testutils import test_proxy, is_live, add_general_string_sanitizer, add_body_key_sanitizer, add_remove_header_sanitizer
+from azure.ai.ml._utils._asset_utils import get_object_hash
+from azure.ai.ml._utils.utils import hash_dict
+from devtools_testutils import test_proxy, is_live, add_general_string_sanitizer, add_body_key_sanitizer, add_remove_header_sanitizer, set_custom_default_matcher
 from devtools_testutils.proxy_fixtures import VariableRecorder, variable_recorder
 from devtools_testutils.fake_credentials import FakeTokenCredential
 
@@ -48,7 +49,8 @@ def fake_datastore_key() -> str:
 
 @pytest.fixture(autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
-    add_remove_header_sanitizer(headers="x-azureml-token,x-ms-meta-name,x-ms-meta-version")
+    add_remove_header_sanitizer(headers="x-azureml-token")
+    set_custom_default_matcher(excluded_headers="x-ms-meta-name,x-ms-meta-version")
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
@@ -144,10 +146,13 @@ def randstr(variable_recorder: VariableRecorder) -> Callable[[str], str]:
     return generate_random_string
 
 
-@pytest.fixture(scope="session")
-def rand_compute_name() -> Callable[[], str]:
+@pytest.fixture
+def rand_compute_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
     """return a random compute name string, e.g. testxxx"""
-    return lambda: f"test{str(random.randint(1, 10000000000))}"
+    def generate_random_string(variable_name: str):
+        random_string = f"test{str(random.randint(1, 1000000000000))}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+    return generate_random_string
 
 
 @pytest.fixture(scope="session")
@@ -312,15 +317,18 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 
 @pytest.fixture
-def mock_code_hash(mocker: MockFixture) -> None:
-    # add sanitizer for uuid value
+def mock_code_hash(request, mocker: MockFixture) -> None:
     fake_uuid = '000000000000000000000'
-    def generate_uuid(*args, **kwargs):
-        real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
-        return real_uuid
+    # add sanitizer for uuid value
+    def generate_object_hash(*args, **kwargs):
+        if 'disable_mock_code_hash' in request.keywords:
+            hashed_value = get_object_hash(*args, **kwargs)
+        else:
+            hashed_value = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=hashed_value)
+        return hashed_value
     if is_live():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_uuid)
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_object_hash)
     else:
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value=fake_uuid)
 
@@ -336,6 +344,19 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", side_effect=generate_uuid)
     else:
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
+
+
+@pytest.fixture
+def mock_component_hash(mocker: MockFixture):
+    fake_component_hash = '000000000000000000000'
+    def generate_compononent_hash(*args, **kwargs):
+        dict_hash = hash_dict(*args, **kwargs)
+        add_general_string_sanitizer(value=fake_component_hash, target=dict_hash)
+        return dict_hash
+    if is_live():
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
+    else:
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", return_value=fake_component_hash)
 
 
 @pytest.fixture

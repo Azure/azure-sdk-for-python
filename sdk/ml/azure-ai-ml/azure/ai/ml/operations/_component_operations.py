@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access
 
-import logging
 import time
 import types
 from inspect import Parameter, signature
@@ -32,7 +31,8 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
-from azure.ai.ml.constants import AzureMLResourceType, LROConfigurations
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import ValidationResult
@@ -44,9 +44,8 @@ from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):
@@ -217,7 +216,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._validate(component, raise_on_failure=raise_on_failure)
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
-    def _validate(
+    def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
@@ -418,19 +417,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
         get_arm_id_and_fill_back = OperationOrchestrator(self._all_operations, self._operation_scope).get_asset_arm_id
 
-        if hasattr(component, "code"):
-            if is_ARM_id_for_resource(component.code, AzureMLResourceType.CODE):
-                # arm id can be passed directly
-                pass
-            elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
-                # Code object & registry id need to be resolved into arm id
-                component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
-            else:
-                # local path & None (will be transformed into temp local path) will be used to create a code object
-                # before resolving
-                component._resolve_local_code(
-                    lambda code: get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
-                )
+        # resolve component's code
+        _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
 
         if hasattr(component, "environment") and not isinstance(component.environment, dict):
             component.environment = get_arm_id_and_fill_back(
@@ -440,12 +428,18 @@ class ComponentOperations(_ScopeDependentOperations):
         self._resolve_arm_id_and_inputs(component)
 
     def _resolve_inputs_for_pipeline_component_jobs(self, jobs, base_path):
-        from azure.ai.ml.entities._builders import BaseNode
+        from azure.ai.ml.entities._builders import BaseNode, Pipeline
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for _, job_instance in jobs.items():
             # resolve inputs for each job's component
-            if isinstance(job_instance, BaseNode):
+            if isinstance(job_instance, Pipeline):
+                node: Pipeline = job_instance
+                self._job_operations._resolve_pipeline_job_inputs(
+                    node,
+                    base_path,
+                )
+            elif isinstance(job_instance, BaseNode):
                 node: BaseNode = job_instance
                 self._job_operations._resolve_job_inputs(
                     map(lambda x: x._data, node.inputs.values()),
@@ -456,8 +450,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
-        from azure.ai.ml.entities import CommandComponent, ParallelComponent
+        from azure.ai.ml.entities import CommandComponent, ParallelComponent, SparkComponent
         from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._component.import_component import ImportComponent
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for key, job_instance in jobs.items():
@@ -468,7 +463,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 if (
                     isinstance(
                         job_instance.component,
-                        (CommandComponent, ParallelComponent, PipelineComponent),
+                        (CommandComponent, ParallelComponent, ImportComponent, PipelineComponent, SparkComponent),
                     )
                     and job_instance.component._is_anonymous
                     and not job_instance.component.display_name
@@ -547,3 +542,18 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         error_category=ErrorCategory.USER_ERROR,
         target=ErrorTarget.COMPONENT,
     )
+
+
+def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
+    if hasattr(component, "code"):
+        if is_ARM_id_for_resource(component.code, AzureMLResourceType.CODE):
+            # arm id can be passed directly
+            pass
+        elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
+            # Code object & registry id need to be resolved into arm id
+            component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
+        else:
+            with component._resolve_local_code() as code_path:
+                component.code = get_arm_id_and_fill_back(
+                    Code(base_path=component._base_path, path=code_path), azureml_type=AzureMLResourceType.CODE
+                )

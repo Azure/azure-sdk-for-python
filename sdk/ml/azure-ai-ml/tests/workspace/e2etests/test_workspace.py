@@ -6,7 +6,7 @@ from azure.core.paging import ItemPaged
 from azure.ai.ml.constants import PublicNetworkAccess
 from test_utilities.utils import verify_entity_load_and_dump
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.e2etest
@@ -17,6 +17,10 @@ from devtools_testutils import AzureRecordedTestCase
     "mock_workspace_dependent_resource_name_generator"
 )
 class TestWorkspace(AzureRecordedTestCase):
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording"
+    )
     def test_workspace_create_update_and_delete(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:

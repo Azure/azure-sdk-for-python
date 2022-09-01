@@ -7,22 +7,24 @@
 from abc import abstractclassmethod
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields, ComputeType
-from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
+from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
 
 
 class Compute(Resource, RestTranslatableMixin):
     """Compute resource.
 
-    :param type: The type of the compute, possible values are ["amlcompute", "computeinstance", "virtualmachine", "kubernetes"]
+    :param type: The type of the compute, possible values are
+        ["amlcompute", "computeinstance", "virtualmachine", "kubernetes"]
     :type type: str
     :param name: Name of the compute
     :type name: str
@@ -95,7 +97,7 @@ class Compute(Resource, RestTranslatableMixin):
         pass
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: ComputeResource) -> "Compute":
+    def _from_rest_object(cls, obj: ComputeResource) -> "Compute":
         from azure.ai.ml.entities import (
             AmlCompute,
             ComputeInstance,
@@ -110,13 +112,12 @@ class Compute(Resource, RestTranslatableMixin):
             ComputeType.VIRTUALMACHINE.lower(): VirtualMachineCompute,
             ComputeType.KUBERNETES.lower(): KubernetesCompute,
         }
-        compute_type = rest_obj.properties.compute_type.lower() if rest_obj.properties.compute_type else None
+        compute_type = obj.properties.compute_type.lower() if obj.properties.compute_type else None
 
         class_type = mapping.get(compute_type, None)
         if class_type:
-            return class_type._load_from_rest(rest_obj)
-        else:
-            return UnsupportedCompute._load_from_rest(rest_obj)
+            return class_type._load_from_rest(obj)
+        return UnsupportedCompute._load_from_rest(obj)
 
     @abstractclassmethod
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "Compute":
@@ -125,17 +126,30 @@ class Compute(Resource, RestTranslatableMixin):
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
         pass
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(
+        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
+    ) -> None:
         """Dump the compute content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this compute's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.'.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :param path: Deprecated path to a local file as the target, a new file
+            will be created, raises exception if the file exists.
+            It's recommended what you change 'path=' inputs to 'dest='.
+            The first unnamed input of this function will also be treated like
+            a path input.
+        :type path: Union[str, Pathlike]
         """
-
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return ComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -155,17 +169,17 @@ class Compute(Resource, RestTranslatableMixin):
         from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute, VirtualMachineCompute
 
         type_in_override = find_type_in_override(params_override) if params_override else None
-        type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
-        if type:
-            if type.lower() == ComputeType.VIRTUALMACHINE:
+        compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
+        if compute_type:
+            if compute_type.lower() == ComputeType.VIRTUALMACHINE:
                 return VirtualMachineCompute._load_from_dict(data, context, **kwargs)
-            elif type.lower() == ComputeType.AMLCOMPUTE:
+            if compute_type.lower() == ComputeType.AMLCOMPUTE:
                 return AmlCompute._load_from_dict(data, context, **kwargs)
-            elif type.lower() == ComputeType.COMPUTEINSTANCE:
+            if compute_type.lower() == ComputeType.COMPUTEINSTANCE:
                 return ComputeInstance._load_from_dict(data, context, **kwargs)
-            elif type.lower() == ComputeType.KUBERNETES:
+            if compute_type.lower() == ComputeType.KUBERNETES:
                 return KubernetesCompute._load_from_dict(data, context, **kwargs)
-        msg = f"Unknown compute type: {type}"
+        msg = f"Unknown compute type: {compute_type}"
         raise ValidationException(
             message=msg,
             target=ErrorTarget.COMPUTE,
@@ -174,7 +188,7 @@ class Compute(Resource, RestTranslatableMixin):
         )
 
     @abstractclassmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Compute":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "Compute":
         pass
 
 

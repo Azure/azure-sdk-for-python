@@ -13,6 +13,7 @@ from .credentials import DatastoreCredentials
 @experimental
 class BaseKerberosCredentials(DatastoreCredentials):
     def __init__(self, kerberos_realm: str, kerberos_kdc_address: str, kerberos_principal: str):
+        super().__init__()
         self.kerberos_realm = kerberos_realm
         self.kerberos_kdc_address = kerberos_kdc_address
         self.kerberos_principal = kerberos_principal

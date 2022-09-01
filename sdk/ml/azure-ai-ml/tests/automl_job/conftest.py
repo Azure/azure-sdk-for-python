@@ -43,7 +43,7 @@ IMAGE_OBJECT_DETECTION_VALID_DATASET_PATH = TEST_DATASETS_PATH + "/" + "image_ob
 IMAGE_SEGMENTATION_TRAIN_DATASET_PATH = TEST_DATASETS_PATH + "/" + "image_instance_segmentation/train"
 IMAGE_SEGMENTATION_VALID_DATASET_PATH = TEST_DATASETS_PATH + "/" + "image_instance_segmentation/valid"
 
-ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../.."))
+ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
 
 
 @pytest.fixture
