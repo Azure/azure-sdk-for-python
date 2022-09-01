@@ -382,6 +382,7 @@
         "dont",
         "UMLS",
         "nach",
+        "año",
         "año",
         "BRCPF",
         "abril",
@@ -629,16 +630,6 @@
         "rcwd",
         "rcwdl",
         "prevsharesnapshot",
-        "rscc",
-        "rscd",
-        "rsce",
-        "rscl",
-        "rsct",
-        "skoid",
-        "sktid",
-        "saoid",
-        "suoid",
-        "scid",
         "mydirectory",
         "myfile",
         "mydir",
@@ -649,7 +640,6 @@
         "pyacrstoragestorname",
         "pyrmtstoragestorname",
         "vhds",
-        "mday",
         "abcdefghijklmnop",
         "filetoupdate",
         "mydomain",
@@ -659,6 +649,22 @@
         "testid",
         "filea",
         "fileb"
+      ]
+    },
+    {
+      "filename": "sdk/storage/**/_shared/*.py",
+      "words": [
+        "mday",
+        "ISREG",
+        "ISLNK"
+      ]
+    },
+    {
+      "filename": "sdk/storage/azure-storage-blob/azure/storage/blob/_shared/avro/*.py",
+      "words": [
+        "struct",
+        "ints",
+        "nbytes"
       ]
     }
   ],
