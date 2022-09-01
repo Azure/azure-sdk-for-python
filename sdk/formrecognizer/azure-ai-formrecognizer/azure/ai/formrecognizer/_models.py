@@ -2120,9 +2120,9 @@ class CurrencyValue:
     """A currency value element.
 
     :ivar amount: The currency amount.
-    :vartype: float
+    :vartype amount: float
     :ivar symbol: The currency symbol, if found.
-    :vartype: Optional[str]
+    :vartype symbol: Optional[str]
     """
 
     def __init__(self, **kwargs):
@@ -3261,12 +3261,12 @@ class DocumentTableCell:
         )
 
 
-class DocumentModelOperationSummary:
+class OperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+    the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
 
     :ivar operation_id: Operation ID.
@@ -3307,14 +3307,14 @@ class DocumentModelOperationSummary:
 
     def __repr__(self):
         return (
-            f"DocumentModelOperationSummary(operation_id={self.operation_id}, status={self.status}, "
+            f"OperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, api_version={self.api_version}, tags={self.tags})"
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelOperationSummary.
+        """Returns a dict representation of OperationSummary.
 
         :return: dict
         :rtype: dict
@@ -3332,12 +3332,12 @@ class DocumentModelOperationSummary:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelOperationSummary":
-        """Converts a dict in the shape of a DocumentModelOperationSummary to the model itself.
+    def from_dict(cls, data: dict) -> "OperationSummary":
+        """Converts a dict in the shape of a OperationSummary to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelOperationSummary.
-        :return: DocumentModelOperationSummary
-        :rtype: DocumentModelOperationSummary
+        :param dict data: A dictionary in the shape of OperationSummary.
+        :return: OperationSummary
+        :rtype: OperationSummary
         """
         return cls(
             operation_id=data.get("operation_id", None),
@@ -3366,12 +3366,12 @@ class DocumentModelOperationSummary:
         )
 
 
-class DocumentModelOperationDetails(DocumentModelOperationSummary):
-    """DocumentModelOperationDetails consists of information about the model operation, including the result or
+class OperationDetails(OperationSummary):
+    """OperationDetails consists of information about the model operation, including the result or
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can also be accessed using the :func:`~get_model` or :func:`~list_models` APIs.
+    the model can also be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
 
     :ivar operation_id: Operation ID.
     :vartype operation_id: str
@@ -3412,7 +3412,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
 
     def __repr__(self):
         return (
-            f"DocumentModelOperationDetails(operation_id={self.operation_id}, status={self.status}, "
+            f"OperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
             f"last_updated_on={self.last_updated_on}, kind={self.kind}, "
             f"resource_location={self.resource_location}, result={repr(self.result)}, "
@@ -3420,7 +3420,7 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
         )
 
     def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelOperationDetails.
+        """Returns a dict representation of OperationDetails.
 
         :return: dict
         :rtype: dict
@@ -3440,12 +3440,12 @@ class DocumentModelOperationDetails(DocumentModelOperationSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelOperationDetails":
-        """Converts a dict in the shape of a DocumentModelOperationDetails to the model itself.
+    def from_dict(cls, data: dict) -> "OperationDetails":
+        """Converts a dict in the shape of a OperationDetails to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentModelOperationDetails.
-        :return: DocumentModelOperationDetails
-        :rtype: DocumentModelOperationDetails
+        :param dict data: A dictionary in the shape of OperationDetails.
+        :return: OperationDetails
+        :rtype: OperationDetails
         """
         return cls(
             operation_id=data.get("operation_id", None),

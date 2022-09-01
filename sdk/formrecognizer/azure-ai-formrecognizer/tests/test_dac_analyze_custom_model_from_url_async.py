@@ -54,7 +54,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            poller = await client.begin_build_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
             model = await poller.result()
 
 
@@ -98,7 +98,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            build_poller = await client.begin_build_model(
+            build_poller = await client.begin_build_document_model(
                 "template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url)
             model = await build_poller.result()
 
@@ -142,7 +142,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            build_poller = await client.begin_build_model("template", blob_container_url=formrecognizer_table_fixed_rows_container_sas_url)
+            build_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_table_fixed_rows_container_sas_url)
             model = await build_poller.result()
 
             poller = await da_client.begin_analyze_document_from_url(
