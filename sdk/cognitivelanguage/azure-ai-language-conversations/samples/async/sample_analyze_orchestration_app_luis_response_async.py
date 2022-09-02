@@ -64,23 +64,23 @@ async def sample_analyze_orchestration_app_luis_response_async():
         )
 
     # view result
-    print("query: {}".format(result["result"]["query"]))
-    print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
+    print(f"query: {result['result']['query']}")
+    print(f"project kind: {result['result']['prediction']['projectKind']}\n")
 
     # top intent
-    top_intent = result["result"]["prediction"]["topIntent"]
-    print("top intent: {}".format(top_intent))
-    top_intent_object = result["result"]["prediction"]["intents"][top_intent]
-    print("confidence score: {}".format(top_intent_object["confidenceScore"]))
-    print("project kind: {}".format(top_intent_object["targetProjectKind"]))
+    top_intent = result['result']['prediction']['topIntent']
+    print(f"top intent: {top_intent}")
+    top_intent_object = result['result']['prediction']['intents'][top_intent]
+    print(f"confidence score: {top_intent_object['confidenceScore']}")
+    print(f"project kind: {top_intent_object['targetProjectKind']}")
 
-    if top_intent_object["targetProjectKind"] == "Luis":
+    if top_intent_object['targetProjectKind'] == "Luis":
         print("\nluis response:")
-        luis_response = top_intent_object["result"]["prediction"]
-        print("top intent: {}".format(luis_response["topIntent"]))
+        luis_response = top_intent_object['result']['prediction']
+        print(f"top intent: {luis_response['topIntent']}")
         print("\nentities:")
-        for entity in luis_response["entities"]:
-            print("\n{}".format(entity))
+        for entity in luis_response['entities']:
+            print(f"\n{entity}")
 
     # [END analyze_orchestration_app_luis_response]
 

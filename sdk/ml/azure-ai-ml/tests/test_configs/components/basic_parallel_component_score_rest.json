@@ -56,7 +56,7 @@
             "input_data": "${{inputs.score_input}}",
             "task": {
                 "type": "run_function",
-                "code": "../python",
+                "code": "azureml:/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.MachineLearningServices/workspaces/xxx/codes/xxx/versions/1",
                 "entry_script": "pass_through.py",
                 "program_arguments": "--label ${{inputs.label}} --model ${{inputs.score_model}} --output_scored_result ${{outputs.scored_result}}",
                 "append_row_to": "${{outputs.scoring_summary}}",

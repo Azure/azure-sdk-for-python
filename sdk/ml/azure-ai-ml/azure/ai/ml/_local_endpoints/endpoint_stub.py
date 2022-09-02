@@ -36,7 +36,7 @@ class EndpointStub:
         """
         endpoint_path = self._get_endpoint_cache_file(endpoint_name=endpoint_name)
         if endpoint_path.exists():
-            return load_online_endpoint(path=endpoint_path)
+            return load_online_endpoint(source=endpoint_path)
         return None
 
     def list(self) -> Iterable[Path]:

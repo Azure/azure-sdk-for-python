@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -321,7 +321,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -452,7 +452,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -616,7 +616,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -748,7 +748,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -811,7 +811,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -874,7 +874,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -1194,7 +1194,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -1516,7 +1516,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -1836,7 +1836,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -2158,7 +2158,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -2225,7 +2225,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.search?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -2307,7 +2307,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.autocomplete?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.autocomplete?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",
@@ -2348,7 +2348,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.suggest?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs/search.post.suggest?api-version=2020-06-30",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=none",

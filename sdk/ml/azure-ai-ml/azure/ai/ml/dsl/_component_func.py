@@ -38,7 +38,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     try:
         yaml_str = entity._yaml_str if entity._yaml_str else entity._to_yaml()
         doc_string = "{0}\n\nComponent yaml:\n```yaml\n{1}\n```".format(doc_string, yaml_str)
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         pass
 
     dynamic_func = create_kw_function_from_parameters(

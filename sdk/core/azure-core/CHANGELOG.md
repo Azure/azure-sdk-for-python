@@ -1,6 +1,6 @@
 # Release History
 
-## 1.25.1 (Unreleased)
+## 1.25.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.25.1 (2022-09-01)
+
+### Bugs Fixed
+
+- Added @runtime_checkable to `TokenCredential` protocol definitions  #25187
 
 ## 1.25.0 (2022-08-04)
 

@@ -153,8 +153,8 @@ class AccountKeyDatastoreSecrets(DatastoreSecrets):
         self.key = kwargs.get('key', None)
 
 
-class AcrDetails(msrest.serialization.Model):
-    """AcrDetails.
+class AcrDetail(msrest.serialization.Model):
+    """AcrDetail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -201,7 +201,7 @@ class AcrDetails(msrest.serialization.Model):
         :keyword subscription_id:
         :paramtype subscription_id: str
         """
-        super(AcrDetails, self).__init__(**kwargs)
+        super(AcrDetail, self).__init__(**kwargs)
         self.acr_address = kwargs.get('acr_address', None)
         self.acr_name = kwargs.get('acr_name', None)
         self.acr_region = kwargs.get('acr_region', None)
@@ -405,6 +405,41 @@ class AssetContainer(ResourceBase):
         self.is_archived = kwargs.get('is_archived', False)
         self.latest_version = None
         self.next_version = None
+
+
+class AssetReferenceBase(msrest.serialization.Model):
+    """Base definition for asset references.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DataPathAssetReference, IdAssetReference, OutputPathAssetReference.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar reference_type: Required. Specifies the type of asset reference.Constant filled by
+     server. Possible values include: "Id", "DataPath", "OutputPath".
+    :vartype reference_type: str or ~azure.mgmt.machinelearningservices.models.ReferenceType
+    """
+
+    _validation = {
+        'reference_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_type': {'key': 'referenceType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'reference_type': {'DataPath': 'DataPathAssetReference', 'Id': 'IdAssetReference', 'OutputPath': 'OutputPathAssetReference'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AssetReferenceBase, self).__init__(**kwargs)
+        self.reference_type = None  # type: Optional[str]
 
 
 class Datastore(ResourceBase):
@@ -1034,6 +1069,60 @@ class BlobReferenceForConsumptionDto(msrest.serialization.Model):
         self.blob_uri = kwargs.get('blob_uri', None)
         self.credential = kwargs.get('credential', None)
         self.storage_account_arm_id = kwargs.get('storage_account_arm_id', None)
+
+
+class BlobReferenceSASRequestDto(msrest.serialization.Model):
+    """BlobReferenceSASRequestDto.
+
+    :ivar asset_id:
+    :vartype asset_id: str
+    :ivar blob_uri:
+    :vartype blob_uri: str
+    """
+
+    _attribute_map = {
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+        'blob_uri': {'key': 'blobUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword asset_id:
+        :paramtype asset_id: str
+        :keyword blob_uri:
+        :paramtype blob_uri: str
+        """
+        super(BlobReferenceSASRequestDto, self).__init__(**kwargs)
+        self.asset_id = kwargs.get('asset_id', None)
+        self.blob_uri = kwargs.get('blob_uri', None)
+
+
+class BlobReferenceSASResponseDto(msrest.serialization.Model):
+    """BlobReferenceSASResponseDto.
+
+    :ivar blob_reference_for_consumption:
+    :vartype blob_reference_for_consumption:
+     ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
+    """
+
+    _attribute_map = {
+        'blob_reference_for_consumption': {'key': 'blobReferenceForConsumption', 'type': 'BlobReferenceForConsumptionDto'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword blob_reference_for_consumption:
+        :paramtype blob_reference_for_consumption:
+         ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
+        """
+        super(BlobReferenceSASResponseDto, self).__init__(**kwargs)
+        self.blob_reference_for_consumption = kwargs.get('blob_reference_for_consumption', None)
 
 
 class BuildContext(msrest.serialization.Model):
@@ -2166,6 +2255,338 @@ class ComponentVersionResourceArmPaginatedResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class DataContainerData(Resource):
+    """Azure Resource Manager resource envelope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. Additional attributes of the entity.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.DataContainerDetails
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'DataContainerDetails'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. Additional attributes of the entity.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.DataContainerDetails
+        """
+        super(DataContainerData, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class DataContainerDetails(AssetContainer):
+    """Container for data asset versions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar is_archived: Is the asset archived?.
+    :vartype is_archived: bool
+    :ivar latest_version: The latest version inside this container.
+    :vartype latest_version: str
+    :ivar next_version: The next auto incremental version.
+    :vartype next_version: str
+    :ivar data_type: Required. Specifies the type of data. Possible values include: "uri_file",
+     "uri_folder", "mltable".
+    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
+    """
+
+    _validation = {
+        'latest_version': {'readonly': True},
+        'next_version': {'readonly': True},
+        'data_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'is_archived': {'key': 'isArchived', 'type': 'bool'},
+        'latest_version': {'key': 'latestVersion', 'type': 'str'},
+        'next_version': {'key': 'nextVersion', 'type': 'str'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: The asset description text.
+        :paramtype description: str
+        :keyword properties: The asset property dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :paramtype tags: dict[str, str]
+        :keyword is_archived: Is the asset archived?.
+        :paramtype is_archived: bool
+        :keyword data_type: Required. Specifies the type of data. Possible values include: "uri_file",
+         "uri_folder", "mltable".
+        :paramtype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
+        """
+        super(DataContainerDetails, self).__init__(**kwargs)
+        self.data_type = kwargs['data_type']
+
+
+class DataContainerResourceArmPaginatedResult(msrest.serialization.Model):
+    """A paginated list of DataContainer entities.
+
+    :ivar next_link: The link to the next page of DataContainer objects. If null, there are no
+     additional pages.
+    :vartype next_link: str
+    :ivar value: An array of objects of type DataContainer.
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.DataContainerData]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[DataContainerData]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The link to the next page of DataContainer objects. If null, there are no
+         additional pages.
+        :paramtype next_link: str
+        :keyword value: An array of objects of type DataContainer.
+        :paramtype value: list[~azure.mgmt.machinelearningservices.models.DataContainerData]
+        """
+        super(DataContainerResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
+class DataPathAssetReference(AssetReferenceBase):
+    """Reference to an asset via its path in a datastore.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar reference_type: Required. Specifies the type of asset reference.Constant filled by
+     server. Possible values include: "Id", "DataPath", "OutputPath".
+    :vartype reference_type: str or ~azure.mgmt.machinelearningservices.models.ReferenceType
+    :ivar datastore_id: ARM resource ID of the datastore where the asset is located.
+    :vartype datastore_id: str
+    :ivar path: The path of the file/directory in the datastore.
+    :vartype path: str
+    """
+
+    _validation = {
+        'reference_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_type': {'key': 'referenceType', 'type': 'str'},
+        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword datastore_id: ARM resource ID of the datastore where the asset is located.
+        :paramtype datastore_id: str
+        :keyword path: The path of the file/directory in the datastore.
+        :paramtype path: str
+        """
+        super(DataPathAssetReference, self).__init__(**kwargs)
+        self.reference_type = 'DataPath'  # type: str
+        self.datastore_id = kwargs.get('datastore_id', None)
+        self.path = kwargs.get('path', None)
+
+
+class DataVersionBaseData(Resource):
+    """Azure Resource Manager resource envelope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. Additional attributes of the entity.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.DataVersionBaseDetails
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'DataVersionBaseDetails'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. Additional attributes of the entity.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.DataVersionBaseDetails
+        """
+        super(DataVersionBaseData, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class DataVersionBaseDetails(AssetBase):
+    """Data version base definition.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: MLTableData, UriFileDataVersion, UriFolderDataVersion.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar is_anonymous: If the name version are system generated (anonymous registration).
+    :vartype is_anonymous: bool
+    :ivar is_archived: Is the asset archived?.
+    :vartype is_archived: bool
+    :ivar data_type: Required. Specifies the type of data.Constant filled by server. Possible
+     values include: "uri_file", "uri_folder", "mltable".
+    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
+    :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
+     Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+    :vartype data_uri: str
+    """
+
+    _validation = {
+        'data_type': {'required': True},
+        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
+        'is_archived': {'key': 'isArchived', 'type': 'bool'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
+        'data_uri': {'key': 'dataUri', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'data_type': {'mltable': 'MLTableData', 'uri_file': 'UriFileDataVersion', 'uri_folder': 'UriFolderDataVersion'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: The asset description text.
+        :paramtype description: str
+        :keyword properties: The asset property dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :paramtype tags: dict[str, str]
+        :keyword is_anonymous: If the name version are system generated (anonymous registration).
+        :paramtype is_anonymous: bool
+        :keyword is_archived: Is the asset archived?.
+        :paramtype is_archived: bool
+        :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
+         Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+        :paramtype data_uri: str
+        """
+        super(DataVersionBaseDetails, self).__init__(**kwargs)
+        self.data_type = 'DataVersionBaseDetails'  # type: str
+        self.data_uri = kwargs['data_uri']
+
+
+class DataVersionBaseResourceArmPaginatedResult(msrest.serialization.Model):
+    """A paginated list of DataVersionBase entities.
+
+    :ivar next_link: The link to the next page of DataVersionBase objects. If null, there are no
+     additional pages.
+    :vartype next_link: str
+    :ivar value: An array of objects of type DataVersionBase.
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.DataVersionBaseData]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[DataVersionBaseData]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The link to the next page of DataVersionBase objects. If null, there are no
+         additional pages.
+        :paramtype next_link: str
+        :keyword value: An array of objects of type DataVersionBase.
+        :paramtype value: list[~azure.mgmt.machinelearningservices.models.DataVersionBaseData]
+        """
+        super(DataVersionBaseResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
 class DistributionConfiguration(msrest.serialization.Model):
     """Base definition for job distribution configuration.
 
@@ -2660,11 +3081,46 @@ class FlavorData(msrest.serialization.Model):
         self.data = kwargs.get('data', None)
 
 
+class IdAssetReference(AssetReferenceBase):
+    """Reference to an asset via its ARM resource ID.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar reference_type: Required. Specifies the type of asset reference.Constant filled by
+     server. Possible values include: "Id", "DataPath", "OutputPath".
+    :vartype reference_type: str or ~azure.mgmt.machinelearningservices.models.ReferenceType
+    :ivar asset_id: Required. ARM resource ID of the asset.
+    :vartype asset_id: str
+    """
+
+    _validation = {
+        'reference_type': {'required': True},
+        'asset_id': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'reference_type': {'key': 'referenceType', 'type': 'str'},
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword asset_id: Required. ARM resource ID of the asset.
+        :paramtype asset_id: str
+        """
+        super(IdAssetReference, self).__init__(**kwargs)
+        self.reference_type = 'Id'  # type: str
+        self.asset_id = kwargs['asset_id']
+
+
 class ImageReferenceForConsumptionDto(msrest.serialization.Model):
     """ImageReferenceForConsumptionDto.
 
     :ivar acr_details:
-    :vartype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetails
+    :vartype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetail
     :ivar credential: Anything.
     :vartype credential: any
     :ivar image_name:
@@ -2674,7 +3130,7 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'acr_details': {'key': 'acrDetails', 'type': 'AcrDetails'},
+        'acr_details': {'key': 'acrDetails', 'type': 'AcrDetail'},
         'credential': {'key': 'credential', 'type': 'object'},
         'image_name': {'key': 'imageName', 'type': 'str'},
         'image_registry_reference': {'key': 'imageRegistryReference', 'type': 'str'},
@@ -2686,7 +3142,7 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
     ):
         """
         :keyword acr_details:
-        :paramtype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetails
+        :paramtype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetail
         :keyword credential: Anything.
         :paramtype credential: any
         :keyword image_name:
@@ -3271,6 +3727,73 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         self.policy_type = 'MedianStopping'  # type: str
 
 
+class MLTableData(DataVersionBaseDetails):
+    """MLTable data definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar is_anonymous: If the name version are system generated (anonymous registration).
+    :vartype is_anonymous: bool
+    :ivar is_archived: Is the asset archived?.
+    :vartype is_archived: bool
+    :ivar data_type: Required. Specifies the type of data.Constant filled by server. Possible
+     values include: "uri_file", "uri_folder", "mltable".
+    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
+    :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
+     Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+    :vartype data_uri: str
+    :ivar referenced_uris: Uris referenced in the MLTable definition (required for lineage).
+    :vartype referenced_uris: list[str]
+    """
+
+    _validation = {
+        'data_type': {'required': True},
+        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
+        'is_archived': {'key': 'isArchived', 'type': 'bool'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
+        'data_uri': {'key': 'dataUri', 'type': 'str'},
+        'referenced_uris': {'key': 'referencedUris', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: The asset description text.
+        :paramtype description: str
+        :keyword properties: The asset property dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :paramtype tags: dict[str, str]
+        :keyword is_anonymous: If the name version are system generated (anonymous registration).
+        :paramtype is_anonymous: bool
+        :keyword is_archived: Is the asset archived?.
+        :paramtype is_archived: bool
+        :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
+         Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+        :paramtype data_uri: str
+        :keyword referenced_uris: Uris referenced in the MLTable definition (required for lineage).
+        :paramtype referenced_uris: list[str]
+        """
+        super(MLTableData, self).__init__(**kwargs)
+        self.data_type = 'mltable'  # type: str
+        self.referenced_uris = kwargs.get('referenced_uris', None)
+
+
 class ModelContainerData(Resource):
     """Azure Resource Manager resource envelope.
 
@@ -3650,6 +4173,46 @@ class Objective(msrest.serialization.Model):
         self.primary_metric = kwargs['primary_metric']
 
 
+class OutputPathAssetReference(AssetReferenceBase):
+    """Reference to an asset via its path in a job output.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar reference_type: Required. Specifies the type of asset reference.Constant filled by
+     server. Possible values include: "Id", "DataPath", "OutputPath".
+    :vartype reference_type: str or ~azure.mgmt.machinelearningservices.models.ReferenceType
+    :ivar job_id: ARM resource ID of the job.
+    :vartype job_id: str
+    :ivar path: The path of the file/directory in the job output.
+    :vartype path: str
+    """
+
+    _validation = {
+        'reference_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_type': {'key': 'referenceType', 'type': 'str'},
+        'job_id': {'key': 'jobId', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword job_id: ARM resource ID of the job.
+        :paramtype job_id: str
+        :keyword path: The path of the file/directory in the job output.
+        :paramtype path: str
+        """
+        super(OutputPathAssetReference, self).__init__(**kwargs)
+        self.reference_type = 'OutputPath'  # type: str
+        self.job_id = kwargs.get('job_id', None)
+        self.path = kwargs.get('path', None)
+
+
 class PipelineJob(JobBase):
     """Pipeline Job definition: defines generic to MFE attributes.
 
@@ -3831,6 +4394,105 @@ class ResourceConfiguration(msrest.serialization.Model):
         self.instance_count = kwargs.get('instance_count', 1)
         self.instance_type = kwargs.get('instance_type', None)
         self.properties = kwargs.get('properties', None)
+
+
+class ResourceManagementAssetReferenceData(Resource):
+    """Azure Resource Manager resource envelope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. Additional attributes of the entity.
+    :vartype properties:
+     ~azure.mgmt.machinelearningservices.models.ResourceManagementAssetReferenceDetails
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'ResourceManagementAssetReferenceDetails'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. Additional attributes of the entity.
+        :paramtype properties:
+         ~azure.mgmt.machinelearningservices.models.ResourceManagementAssetReferenceDetails
+        """
+        super(ResourceManagementAssetReferenceData, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class ResourceManagementAssetReferenceDetails(AssetReferenceBase):
+    """Resource Management asset reference.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar reference_type: Required. Specifies the type of asset reference.Constant filled by
+     server. Possible values include: "Id", "DataPath", "OutputPath".
+    :vartype reference_type: str or ~azure.mgmt.machinelearningservices.models.ReferenceType
+    :ivar destination_name: Destination asset name for import.
+    :vartype destination_name: str
+    :ivar destination_version: Destination asset version for import.
+    :vartype destination_version: str
+    :ivar source_asset_id: Required. ARM resource ID of the source asset.
+    :vartype source_asset_id: str
+    """
+
+    _validation = {
+        'reference_type': {'required': True},
+        'source_asset_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'reference_type': {'key': 'referenceType', 'type': 'str'},
+        'destination_name': {'key': 'destinationName', 'type': 'str'},
+        'destination_version': {'key': 'destinationVersion', 'type': 'str'},
+        'source_asset_id': {'key': 'sourceAssetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword destination_name: Destination asset name for import.
+        :paramtype destination_name: str
+        :keyword destination_version: Destination asset version for import.
+        :paramtype destination_version: str
+        :keyword source_asset_id: Required. ARM resource ID of the source asset.
+        :paramtype source_asset_id: str
+        """
+        super(ResourceManagementAssetReferenceDetails, self).__init__(**kwargs)
+        self.reference_type = 'Id'  # type: str
+        self.destination_name = kwargs.get('destination_name', None)
+        self.destination_version = kwargs.get('destination_version', None)
+        self.source_asset_id = kwargs['source_asset_id']
 
 
 class Route(msrest.serialization.Model):
@@ -4530,6 +5192,128 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         super(TruncationSelectionPolicy, self).__init__(**kwargs)
         self.policy_type = 'TruncationSelection'  # type: str
         self.truncation_percentage = kwargs.get('truncation_percentage', 0)
+
+
+class UriFileDataVersion(DataVersionBaseDetails):
+    """uri-file data version entity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar is_anonymous: If the name version are system generated (anonymous registration).
+    :vartype is_anonymous: bool
+    :ivar is_archived: Is the asset archived?.
+    :vartype is_archived: bool
+    :ivar data_type: Required. Specifies the type of data.Constant filled by server. Possible
+     values include: "uri_file", "uri_folder", "mltable".
+    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
+    :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
+     Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+    :vartype data_uri: str
+    """
+
+    _validation = {
+        'data_type': {'required': True},
+        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
+        'is_archived': {'key': 'isArchived', 'type': 'bool'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
+        'data_uri': {'key': 'dataUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: The asset description text.
+        :paramtype description: str
+        :keyword properties: The asset property dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :paramtype tags: dict[str, str]
+        :keyword is_anonymous: If the name version are system generated (anonymous registration).
+        :paramtype is_anonymous: bool
+        :keyword is_archived: Is the asset archived?.
+        :paramtype is_archived: bool
+        :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
+         Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+        :paramtype data_uri: str
+        """
+        super(UriFileDataVersion, self).__init__(**kwargs)
+        self.data_type = 'uri_file'  # type: str
+
+
+class UriFolderDataVersion(DataVersionBaseDetails):
+    """uri-folder data version entity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar is_anonymous: If the name version are system generated (anonymous registration).
+    :vartype is_anonymous: bool
+    :ivar is_archived: Is the asset archived?.
+    :vartype is_archived: bool
+    :ivar data_type: Required. Specifies the type of data.Constant filled by server. Possible
+     values include: "uri_file", "uri_folder", "mltable".
+    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.DataType
+    :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
+     Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+    :vartype data_uri: str
+    """
+
+    _validation = {
+        'data_type': {'required': True},
+        'data_uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
+        'is_archived': {'key': 'isArchived', 'type': 'bool'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
+        'data_uri': {'key': 'dataUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: The asset description text.
+        :paramtype description: str
+        :keyword properties: The asset property dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :paramtype tags: dict[str, str]
+        :keyword is_anonymous: If the name version are system generated (anonymous registration).
+        :paramtype is_anonymous: bool
+        :keyword is_archived: Is the asset archived?.
+        :paramtype is_archived: bool
+        :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
+         Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
+        :paramtype data_uri: str
+        """
+        super(UriFolderDataVersion, self).__init__(**kwargs)
+        self.data_type = 'uri_folder'  # type: str
 
 
 class UriReference(msrest.serialization.Model):

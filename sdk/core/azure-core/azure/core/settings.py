@@ -31,7 +31,6 @@ from enum import Enum
 import logging
 import os
 import sys
-import six
 from azure.core.tracing import AbstractSpan
 
 try:
@@ -160,7 +159,7 @@ def convert_tracing_impl(value):
     if value is None:
         return get_opencensus_span_if_opencensus_is_imported()
 
-    if not isinstance(value, six.string_types):
+    if not isinstance(value, str):
         value = cast(Type[AbstractSpan], value)
         return value
 

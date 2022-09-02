@@ -734,7 +734,6 @@ class TestTableBatchAsync(AzureRecordedTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_delete_batch_with_bad_kwarg(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -768,7 +767,6 @@ class TestTableBatchAsync(AzureRecordedTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_batch_with_mode(self, tables_storage_account_name, tables_primary_storage_account_key):

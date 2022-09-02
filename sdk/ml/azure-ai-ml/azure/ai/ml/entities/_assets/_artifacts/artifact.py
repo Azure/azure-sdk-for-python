@@ -60,6 +60,8 @@ class Artifact(Asset):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param datastore: The datastore to upload the local artifact to.
+    :type datastore: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -72,6 +74,7 @@ class Artifact(Asset):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         path: Optional[Union[str, PathLike]] = None,
+        datastore: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(
@@ -83,6 +86,7 @@ class Artifact(Asset):
             **kwargs,
         )
         self.path = path
+        self.datastore = datastore
 
     @property
     def path(self) -> Optional[Union[str, PathLike]]:

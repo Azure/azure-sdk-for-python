@@ -13,35 +13,35 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._backup_resource_vault_configs_operations import build_get_request, build_put_request, build_update_request
+from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class BackupResourceVaultConfigsOperations:
-    """BackupResourceVaultConfigsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.recoveryservicesbackup.activestamp.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.recoveryservicesbackup.activestamp.aio.RecoveryServicesBackupClient`'s
+        :attr:`backup_resource_vault_configs` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def get(
@@ -49,7 +49,7 @@ class BackupResourceVaultConfigsOperations:
         vault_name: str,
         resource_group_name: str,
         **kwargs: Any
-    ) -> "_models.BackupResourceVaultConfigResource":
+    ) -> _models.BackupResourceVaultConfigResource:
         """Fetches resource vault config.
 
         :param vault_name: The name of the recovery services vault.
@@ -62,13 +62,16 @@ class BackupResourceVaultConfigsOperations:
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.BackupResourceVaultConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceVaultConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BackupResourceVaultConfigResource]
 
         
         request = build_get_request(
@@ -77,11 +80,13 @@ class BackupResourceVaultConfigsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -108,9 +113,9 @@ class BackupResourceVaultConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: "_models.BackupResourceVaultConfigResource",
+        parameters: _models.BackupResourceVaultConfigResource,
         **kwargs: Any
-    ) -> "_models.BackupResourceVaultConfigResource":
+    ) -> _models.BackupResourceVaultConfigResource:
         """Updates vault security config.
 
         :param vault_name: The name of the recovery services vault.
@@ -126,14 +131,17 @@ class BackupResourceVaultConfigsOperations:
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.BackupResourceVaultConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceVaultConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BackupResourceVaultConfigResource]
 
         _json = self._serialize.body(parameters, 'BackupResourceVaultConfigResource')
 
@@ -145,11 +153,13 @@ class BackupResourceVaultConfigsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -176,9 +186,9 @@ class BackupResourceVaultConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: "_models.BackupResourceVaultConfigResource",
+        parameters: _models.BackupResourceVaultConfigResource,
         **kwargs: Any
-    ) -> "_models.BackupResourceVaultConfigResource":
+    ) -> _models.BackupResourceVaultConfigResource:
         """Updates vault security config.
 
         :param vault_name: The name of the recovery services vault.
@@ -194,14 +204,17 @@ class BackupResourceVaultConfigsOperations:
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.BackupResourceVaultConfigResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupResourceVaultConfigResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BackupResourceVaultConfigResource]
 
         _json = self._serialize.body(parameters, 'BackupResourceVaultConfigResource')
 
@@ -213,11 +226,13 @@ class BackupResourceVaultConfigsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.put.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

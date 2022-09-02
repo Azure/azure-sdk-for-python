@@ -10,15 +10,13 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchClient as _SearchServiceClient
-from .models import SearchIndexerSkillset
+from ._generated.models import SearchIndexerSkillset
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
 )
 from .models import (
-    EntityRecognitionSkillVersion,
     SearchIndexerDataSourceConnection,
-    SentimentSkillVersion
 )
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
@@ -27,7 +25,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from ._generated.models import SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
+    from ._generated.models import SearchIndexer, SearchIndexerStatus
     from typing import Any, Optional, Sequence, Union
     from azure.core.credentials import TokenCredential
 
@@ -40,7 +38,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
-
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -51,6 +51,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -61,7 +62,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             )  # type: _SearchServiceClient
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
@@ -114,11 +115,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         :param indexer: The definition of the indexer to create or update.
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection.
-        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
@@ -286,30 +282,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace
-    def reset_documents(self, indexer, keys_or_ids, **kwargs):
-        # type: (Union[str, SearchIndexer], DocumentKeysOrIds, **Any) -> None
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param indexer: The indexer to reset documents for.
-        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
-        :param keys_or_ids:
-        :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
-        :return: None, or the result of cls(response)
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. The default is false.
-        :paramtype overwrite: bool
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        kwargs["keys_or_ids"] = keys_or_ids
-        try:
-            name = indexer.name
-        except AttributeError:
-            name = indexer
-        return self._client.indexers.reset_docs(name, **kwargs)
-
-    @distributed_trace
     def get_indexer_status(self, name, **kwargs):
         # type: (str, **Any) -> SearchIndexerStatus
         """Get the status of the indexer.
@@ -365,8 +337,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
         :return: The created SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
@@ -523,7 +493,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if kwargs.get('select', None):
             kwargs['select'] = ','.join(kwargs['select'])
         result = self._client.skillsets.list(**kwargs)
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
+        return result.skillsets
 
     @distributed_trace
     def get_skillset_names(self, **kwargs):
@@ -561,8 +531,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.skillsets.get(name, **kwargs)
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+        return self._client.skillsets.get(name, **kwargs)
 
     @distributed_trace
     def delete_skillset(self, skillset, **kwargs):
@@ -618,11 +587,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        _validate_skillset(skillset)
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        result = self._client.skillsets.create(skillset, **kwargs)
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+        return self._client.skillsets.create(skillset, **kwargs)
 
     @distributed_trace
     def create_or_update_skillset(self, skillset, **kwargs):
@@ -634,11 +600,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection.
-        :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created or updated SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
 
@@ -648,74 +609,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        _validate_skillset(skillset)
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
 
-        result = self._client.skillsets.create_or_update(
-            skillset_name=skillset.name,
-            skillset=skillset,
-            error_map=error_map,
-            **kwargs
+        return self._client.skillsets.create_or_update(
+            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
         )
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
-
-    @distributed_trace
-    def reset_skills(self, skillset, skill_names, **kwargs):
-        # type: (Union[str, SearchIndexerSkillset], List[str], **Any) -> None
-        """Reset an existing skillset in a search service.
-
-        :param skillset: The SearchIndexerSkillset to reset
-        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :param skill_names: the names of skills to be reset.
-        :type skill_names: list[str]
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        try:
-            name = skillset.name
-        except AttributeError:
-            name = skillset
-        return self._client.skillsets.reset_skills(name, skill_names, **kwargs)
-
-def _validate_skillset(skillset):
-    """Validates any multi-version skills in the skillset to verify that unsupported
-    parameters are not supplied by the user.
-    """
-    skills = getattr(skillset, 'skills', None)
-    if not skills:
-        return
-
-    error_strings = []
-    for skill in skills:
-        try:
-            skill_version = skill.get('skill_version')
-        except AttributeError:
-            skill_version = getattr(skill, 'skill_version', None)
-        if not skill_version:
-            continue
-
-        if skill_version == SentimentSkillVersion.V1:
-            unsupported = ['model_version', 'include_opinion_mining']
-        elif skill_version == SentimentSkillVersion.V3:
-            unsupported = []
-        elif skill_version == EntityRecognitionSkillVersion.V1:
-            unsupported = ['model_version']
-        elif skill_version == EntityRecognitionSkillVersion.V3:
-            unsupported = ['include_typeless_entities']
-
-        errors = []
-        for item in unsupported:
-            try:
-                if skill.get(item, None):
-                    errors.append(item)
-            except AttributeError:
-                if skill.__dict__.get(item, None):
-                    errors.append(item)
-        if errors:
-            error_strings.append("Unsupported parameters for skill version {}: {}".format(
-                skill_version, ", ".join(errors))
-            )
-    if error_strings:
-        raise ValueError("\n".join(error_strings))

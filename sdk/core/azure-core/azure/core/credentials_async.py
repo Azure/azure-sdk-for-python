@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Optional
-from typing_extensions import Protocol
+from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
 
+@runtime_checkable
 class AsyncTokenCredential(Protocol):
     """Protocol for classes able to provide OAuth tokens."""
 

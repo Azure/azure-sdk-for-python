@@ -1,6 +1,25 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b8 (Unreleased)
+
+### Features Added
+
+- Implement success count network statsbeat
+    ([#25752](https://github.com/Azure/azure-sdk-for-python/pull/25752))
+- Implement all network statsbeat
+    ([#25845](https://github.com/Azure/azure-sdk-for-python/pull/25845))
+- Implement attach statsbeat
+    ([#25956](https://github.com/Azure/azure-sdk-for-python/pull/25956))
+- Implement feature statsbeat
+    ([#26009](https://github.com/Azure/azure-sdk-for-python/pull/26009))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b7 (2022-08-12)
 
 ### Features Added
 
@@ -18,8 +37,6 @@
 
 - Opentelemetry span events have wrong ParentId in Azure Monitor logs
     ([#25369](https://github.com/Azure/azure-sdk-for-python/pull/25369))
-
-### Other Changes
 
 ## 1.0.0b6 (2022-06-10)
 

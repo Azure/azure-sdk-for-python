@@ -12,13 +12,16 @@ from azure.ai.ml import Output
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, CommonYamlFields, NodeType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields
+from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._builders import BaseNode, Command, Parallel, Sweep
+from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
 from azure.ai.ml.entities._builders.pipeline import Pipeline
+from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._util import extract_label
 
 
 class _PipelineNodeFactory:
@@ -33,6 +36,12 @@ class _PipelineNodeFactory:
             _type=NodeType.COMMAND,
             create_instance_func=lambda: Command.__new__(Command),
             load_from_rest_object_func=Command._from_rest_object,
+            nested_schema=None,
+        )
+        self.register_type(
+            _type=NodeType.IMPORT,
+            create_instance_func=lambda: Import.__new__(Import),
+            load_from_rest_object_func=Import._from_rest_object,
             nested_schema=None,
         )
         self.register_type(
@@ -59,9 +68,16 @@ class _PipelineNodeFactory:
             load_from_rest_object_func=self._automl_from_rest_object,
             nested_schema=None,
         )
+        self.register_type(
+            _type=NodeType.SPARK,
+            create_instance_func=lambda: Spark.__new__(Spark),
+            load_from_rest_object_func=Spark._from_rest_object,
+            nested_schema=None,
+        )
 
     @classmethod
     def _get_func(cls, _type: str, funcs):
+        _type, _ = extract_label(_type)
         if _type not in funcs:
             msg = f"Unsupported component type: {_type}."
             raise ValidationException(
@@ -105,14 +121,15 @@ class _PipelineNodeFactory:
         nested field, will be used in PipelineJobSchema.jobs.value. type
         nested_schema: Union[NestedField, List[NestedField]]
         """
+        # pylint: disable=no-member
         if create_instance_func is not None:
             self._create_instance_funcs[_type] = create_instance_func
         if load_from_rest_object_func is not None:
             self._load_from_rest_object_funcs[_type] = load_from_rest_object_func
         if nested_schema is not None:
             from azure.ai.ml._schema.core.fields import TypeSensitiveUnionField
-            from azure.ai.ml._schema.pipeline import PipelineJobSchema
             from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
+            from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 
             for declared_fields in [
                 PipelineJobSchema._declared_fields,
@@ -147,6 +164,11 @@ class _PipelineNodeFactory:
         dict param _type: The type of the node. If not specified, it
         will be inferred from the data. type _type: str
         """
+
+        # TODO: Remove in PuP with native import job/component type support in MFE/Designer
+        if "computeId" in obj and obj["computeId"] and obj["computeId"].endswith("/" + ComputeType.ADF):
+            _type = NodeType.IMPORT
+
         if _type is None:
             _type = obj[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in obj else NodeType.COMMAND
         else:
@@ -175,7 +197,7 @@ class _PipelineNodeFactory:
 
 def _generate_component_function(
     component_entity: Component,
-    override_definitions: Mapping[str, OverrideDefinition] = None,
+    override_definitions: Mapping[str, OverrideDefinition] = None,  # pylint: disable=unused-argument
 ) -> Callable[..., Union[Command, Parallel]]:
     # Generate a function which returns a component node.
     def create_component_func(**kwargs):

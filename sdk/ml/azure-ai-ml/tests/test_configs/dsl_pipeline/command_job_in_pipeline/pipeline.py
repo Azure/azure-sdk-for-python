@@ -1,6 +1,7 @@
-from azure.ai.ml import dsl, command, Input
-from azure.ai.ml.entities import PipelineJob
 from pathlib import Path
+
+from azure.ai.ml import Input, command, dsl
+from azure.ai.ml.entities import PipelineJob
 
 parent_dir = str(Path(__file__).parent)
 

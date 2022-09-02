@@ -6,7 +6,7 @@
 
 from marshmallow import fields, validate
 
-from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes
 
 from .artifact import ArtifactSchema
 from .asset import AnonymousAssetSchema

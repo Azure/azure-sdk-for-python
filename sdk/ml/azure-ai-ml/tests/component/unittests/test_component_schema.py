@@ -1,30 +1,21 @@
 import copy
-from typing import Union
+import json
+from pathlib import Path
 from unittest import mock
 
-import json
 import pydash
-import yaml
-from pathlib import Path
 import pytest
-
-from azure.ai.ml.entities._component.component_factory import component_factory
-from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER, COMPONENT_CODE_PLACEHOLDER
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from marshmallow import ValidationError
+import yaml
 
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    AssetTypes,
-    LegacyAssetTypes,
-)
-from azure.ai.ml.entities import CommandComponent, Environment, Component
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
+from azure.ai.ml.entities import CommandComponent, Component
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml._ml_exceptions import ValidationException
+from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
+from azure.ai.ml.entities._component.component_factory import component_factory
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -239,7 +230,7 @@ class TestCommandComponent:
 
     def test_command_component_str(self):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
-        component_entity = load_component(path=test_path)
+        component_entity = load_component(source=test_path)
         component_str = str(component_entity)
         assert component_entity.name in component_str
         assert component_entity.version in component_str
@@ -303,162 +294,40 @@ class TestCommandComponent:
         component_hash2 = component_entity2._get_anonymous_hash()
         assert component_hash1 != component_hash2
 
-    def test_component_name_validate(self):
-        invalid_component_names = [
-            "1",
-            "Abc",
-            "aBc",
-            "a-c",
-            "_abc",
-            "1abc",
-            ":::",
-            "hello.world",
-        ]
-        test_path = "./tests/test_configs/components/helloworld_component.yml"
-        for invalid_name in invalid_component_names:
-            params_override = [{"name": invalid_name}]
-            with pytest.raises(ValidationError) as e:
-                load_component(path=test_path, params_override=params_override)
-            err_msg = "Component name should only contain lower letter, number, underscore"
-            assert err_msg in str(e.value)
-
-        valid_component_names = ["n", "name", "n_a_m_e", "name_1"]
-        for valid_name in valid_component_names:
-            params_override = [{"name": valid_name}]
-            load_component(path=test_path, params_override=params_override)
-
-    def test_component_input_name_validate(self):
-        yaml_files = [
-            str(components_dir / "invalid/helloworld_component_with_blank_input_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_dash_input_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_special_character_input_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_start_dash_input_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_start_number_input_names.yml"),
-        ]
-        for yaml_file in yaml_files:
-            with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(path=yaml_file)
-
-    def test_component_output_name_validate(self):
-        yaml_files = [
-            str(components_dir / "invalid/helloworld_component_with_blank_output_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_dash_output_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_special_character_output_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_start_dash_output_names.yml"),
-            str(components_dir / "invalid/helloworld_component_with_start_number_output_names.yml"),
-        ]
-        for yaml_file in yaml_files:
-            with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(path=yaml_file)
-
-    @pytest.mark.parametrize(
-        "expected_location,asset_object",
-        [
-            (
-                "code",
-                Code(name="AzureML-Code", version="1"),
-            ),
-            (
-                "environment",
-                Environment(name="AzureML-Minimal", version="1"),
-            ),
-        ],
-    )
-    def test_component_validate_versioned_asset_dependencies(
-        self,
-        expected_location: str,
-        asset_object: Union[Code, Environment],
-    ) -> None:
-        component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component = load_component(path=component_path)
-        assert component._validate().passed is True, json.dumps(component._to_dict(), indent=2)
-
-        def _check_validation_result(new_asset, should_fail=False) -> None:
-            setattr(component, expected_location, new_asset)
-            validation_result = component._validate()
-            if should_fail:
-                assert validation_result.passed is False and expected_location in validation_result.messages, (
-                    f"field {expected_location} with value {str(new_asset)} should be invalid, "
-                    f"but validation message is {json.dumps(validation_result._to_dict(), indent=2)}"
-                )
-            else:
-                assert validation_result.passed, (
-                    f"field {expected_location} with value {str(new_asset)} should be valid, "
-                    f"but met unexpected error: {json.dumps(validation_result._to_dict(), indent=2)}"
-                )
-
-        # object
-        # _check_validation_result(asset_object)
-        # versioned
-        _check_validation_result("azureml:{}:1".format(asset_object.name))
-        # labelled
-        _check_validation_result("{}@latest".format(asset_object.name))
-
-        # invalid. default version is allowed for environment
-        if expected_location not in ["environment"]:
-            _check_validation_result("{}".format(asset_object.name), True)
-
-        if expected_location in ["code"]:
-            # non-existent path
-            _check_validation_result("/tmp/non-existent-path", True)
-            # existent path
-            _check_validation_result("../python")
-
-    def test_component_validate_multiple_invalid_fields(self, mock_machinelearning_client: MLClient) -> None:
-        component_path = "./tests/test_configs/components/helloworld_component.yml"
-        location_str = str(Path(component_path))
-        component: CommandComponent = load_component(path=component_path)
-        component.name = None
-        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = mock_machinelearning_client.components.validate(component)
-        assert validation_result.passed is False
-        assert validation_result._to_dict() == {
-            "errors": [
-                {
-                    "location": f"{location_str}#line 3",
-                    "message": "Missing data for required field.",
-                    "path": "name",
-                    "value": None,
-                },
-                {
-                    "location": f"{location_str}#line 28",
-                    "message": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
-                    "path": "command",
-                    "value": "echo Hello World & echo "
-                    "[${{inputs.component_in_number}}] & echo "
-                    "${{inputs.component_in_path}} & echo "
-                    "${{outputs.component_out_path}} > "
-                    "${{outputs.component_out_path}}/component_in_number & "
-                    "echo ${{inputs.non_existent}} & echo "
-                    "${{outputs.non_existent}}",
-                },
-            ],
-            "result": "Failed",
-        }
-
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestPipelineComponent:
-
-    # TODO: add rest schema test after backend ready.
     def test_inline_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(source=component_path)
 
         validation_result = component._validate()
         assert validation_result.passed is True
 
     def test_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(source=component_path)
 
         validation_result = component._validate()
         assert validation_result.passed is True
 
     def test_helloworld_nested_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
-        component: PipelineComponent = load_component(path=component_path)
+        component: PipelineComponent = load_component(source=component_path)
 
         validation_result = component._validate()
+        assert validation_result.passed is True
+
+
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
+@pytest.mark.unittest
+class TestSparkComponent:
+    def test_component_load(self):
+        # code is specified in yaml, value is respected
+        component_yaml = "./tests/test_configs/components/basic_spark_component.yml"
+        spark_component = load_component(
+            path=component_yaml,
+        )
+        validation_result = spark_component._validate()
         assert validation_result.passed is True

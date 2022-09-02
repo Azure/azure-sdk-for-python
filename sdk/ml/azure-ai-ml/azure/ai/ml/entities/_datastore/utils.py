@@ -19,13 +19,13 @@ from azure.ai.ml.entities._datastore.credentials import (
 def from_rest_datastore_credentials(rest_credentials: models.DatastoreCredentials):
     if isinstance(rest_credentials, models.AccountKeyDatastoreCredentials):
         return AccountKeyCredentials._from_rest_object(rest_credentials)
-    elif isinstance(rest_credentials, models.SasDatastoreCredentials):
+    if isinstance(rest_credentials, models.SasDatastoreCredentials):
         return SasTokenCredentials._from_rest_object(rest_credentials)
-    elif isinstance(rest_credentials, models.ServicePrincipalDatastoreCredentials):
+    if isinstance(rest_credentials, models.ServicePrincipalDatastoreCredentials):
         return ServicePrincipalCredentials._from_rest_object(rest_credentials)
-    elif isinstance(rest_credentials, models.CertificateDatastoreCredentials):
+    if isinstance(rest_credentials, models.CertificateDatastoreCredentials):
         return CertificateCredentials._from_rest_object(rest_credentials)
-    elif isinstance(rest_credentials, models.NoneDatastoreCredentials):
+    if isinstance(rest_credentials, models.NoneDatastoreCredentials):
         return NoneCredentials._from_rest_object(rest_credentials)
 
 
@@ -34,5 +34,5 @@ def _from_rest_datastore_credentials_preview(
 ):
     if isinstance(rest_credentials, models_preview.KerberosKeytabCredentials):
         return KerberosKeytabCredentials._from_rest_object(rest_credentials)
-    elif isinstance(rest_credentials, models_preview.KerberosPasswordCredentials):
+    if isinstance(rest_credentials, models_preview.KerberosPasswordCredentials):
         return KerberosPasswordCredentials._from_rest_object(rest_credentials)

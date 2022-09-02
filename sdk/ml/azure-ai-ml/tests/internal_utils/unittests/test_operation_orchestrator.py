@@ -1,29 +1,30 @@
-from unittest.mock import Mock, patch
-import pytest
 from pathlib import Path
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from unittest.mock import Mock, patch
 
-from azure.ai.ml.operations import (
-    DataOperations,
-    DatastoreOperations,
-    EnvironmentOperations,
-    ModelOperations,
-    ComponentOperations,
-    OnlineEndpointOperations,
-)
-from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
-from azure.ai.ml.operations._code_operations import CodeOperations
+import pytest
+from pytest_mock import MockFixture
+from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml.constants import (
+from azure.ai.ml.constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     AzureMLResourceType,
 )
-from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
-from pytest_mock import MockFixture
+from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._assets import Model, Code, Data, Environment
+from azure.ai.ml.operations import (
+    ComponentOperations,
+    DataOperations,
+    DatastoreOperations,
+    EnvironmentOperations,
+    ModelOperations,
+    OnlineEndpointOperations,
+)
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 
 @pytest.fixture

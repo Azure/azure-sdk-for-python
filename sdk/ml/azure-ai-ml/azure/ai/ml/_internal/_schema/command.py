@@ -1,11 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from marshmallow import fields, post_load
+from marshmallow import fields
+
 from azure.ai.ml._internal._schema.node import InternalBaseNodeSchema, NodeType
-from azure.ai.ml._schema import StringTransformedEnum, NestedField
+from azure.ai.ml._schema import NestedField, StringTransformedEnum
+from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
+from azure.ai.ml._schema.core.fields import DistributionField
 from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
-from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 
 
 class CommandSchema(InternalBaseNodeSchema):
@@ -13,20 +16,19 @@ class CommandSchema(InternalBaseNodeSchema):
     compute = fields.Str()
     environment = fields.Str()
     limits = NestedField(CommandJobLimitsSchema)
-    resources = NestedField(ResourceConfigurationSchema)
-
-    @post_load
-    def make(self, data, **kwargs):
-        from azure.ai.ml._internal.entities.command import Command
-
-        return Command(**data)
+    resources = NestedField(JobResourceConfigurationSchema)
 
 
-class DistributedSchema(InternalBaseNodeSchema):
+class DistributedSchema(CommandSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.DISTRIBUTED], casing_transform=lambda x: x)
+    distribution = DistributionField()
 
-    @post_load
-    def make(self, data, **kwargs):
-        from azure.ai.ml._internal.entities.command import Distributed
 
-        return Distributed(**data)
+class ParallelSchema(CommandSchema):
+    type = StringTransformedEnum(allowed_values=[NodeType.PARALLEL], casing_transform=lambda x: x)
+    max_concurrency_per_instance = fields.Int()
+    error_threshold = fields.Int()
+    logging_level = StringTransformedEnum(
+        allowed_values=["INFO", "WARNING", "DEBUG"], casing_transform=lambda x: x.upper()
+    )
+    retry_settings = NestedField(RetrySettingsSchema)

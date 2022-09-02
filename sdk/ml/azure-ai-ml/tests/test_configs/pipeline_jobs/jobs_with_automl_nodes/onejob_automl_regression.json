@@ -89,7 +89,7 @@
         "description": null,
         "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/7c2ff10b-206b-401c-ad65-a4a9a637fb7a/test",
         "mode": "ReadOnlyMount",
-        "jobInputType": "MLTable"
+        "job_input_type": "mltable"
       }
     },
     "outputs": {}
