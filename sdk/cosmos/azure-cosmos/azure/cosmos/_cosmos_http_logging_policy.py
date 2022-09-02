@@ -167,4 +167,3 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 logger.warning("Failed to log response: %s", repr(err))
         else:
             super().on_response(request, response)
-
