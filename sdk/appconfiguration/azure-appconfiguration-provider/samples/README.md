@@ -48,7 +48,7 @@ pip install azure-appconfiguration-provider
 |-------------|-------------|
 | aad_sample.py | demos connecting to app configuration with Azure Active Directory |
 | connection_string_sample.py | demos connecting to app configuration with a Connection String |
-| key_vault_reference_sample.py | demos resovling key vault references with App Configuration |
+| key_vault_reference_sample.py | demos resolving key vault references with App Configuration |
 
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
