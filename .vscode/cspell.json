@@ -383,7 +383,6 @@
         "UMLS",
         "nach",
         "año",
-        "año",
         "BRCPF",
         "abril",
         "zalgo",
@@ -652,16 +651,11 @@
       ]
     },
     {
-      "filename": "sdk/storage/**/_shared/*.py",
+      "filename": "sdk/storage/**/_shared/**",
       "words": [
         "mday",
         "ISREG",
-        "ISLNK"
-      ]
-    },
-    {
-      "filename": "sdk/storage/azure-storage-blob/azure/storage/blob/_shared/avro/*.py",
-      "words": [
+        "ISLNK",
         "struct",
         "ints",
         "nbytes"
