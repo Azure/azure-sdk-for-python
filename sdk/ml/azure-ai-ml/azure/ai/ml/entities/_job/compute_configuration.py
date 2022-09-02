@@ -7,7 +7,8 @@ import logging
 from typing import Any, Dict
 
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import ComputeConfiguration as RestComputeConfiguration
-from azure.ai.ml.constants import LOCAL_COMPUTE_TARGET, JobComputePropertyFields
+from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET
+from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)

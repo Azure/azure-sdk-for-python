@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from marshmallow import fields
 
-from azure.ai.ml.constants import ComputeType
+from azure.ai.ml.constants._compute import ComputeType
 
 from ..core.fields import NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema

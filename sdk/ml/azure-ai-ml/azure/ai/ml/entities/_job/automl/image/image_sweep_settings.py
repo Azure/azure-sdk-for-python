@@ -6,9 +6,9 @@
 
 from typing import Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageSweepLimitSettings
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepLimitSettings
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2022_06_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -47,7 +47,7 @@ class ImageSweepSettings(RestTranslatableMixin):
                 max_trials=self.max_trials,
             ),
             sampling_algorithm=self.sampling_algorithm,
-            early_termination=self.early_termination,
+            early_termination=self.early_termination._to_rest_object(),
         )
 
     @classmethod

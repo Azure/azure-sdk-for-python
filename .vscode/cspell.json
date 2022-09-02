@@ -32,7 +32,6 @@
     "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -435,6 +434,10 @@
       "words": ["groovin", "Olufsen"]
     },
     {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
+      "words": ["Apim", "cognituve"]
+    },
+    {
       "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
@@ -564,6 +567,7 @@
         "qloguniform",
         "odict",
         "sdkv",
+        "jioindiawest",
         "levelno",
         "amlignore",
         "envvar",
@@ -644,7 +648,19 @@
         "errno",
         "firstlineno",
         "chdir",
-        "fset"
+        "fset",
+        "azuresqldb",
+        "unflat",
+        "unflatten",
+        "unflattened",
+        "unflattens",
+        "subel",
+        "azuresynapseanalytics",
+        "deque",
+        "fstring",
+        "vals",
+        "reprlib",
+        "wsid"
       ]
     },
     {

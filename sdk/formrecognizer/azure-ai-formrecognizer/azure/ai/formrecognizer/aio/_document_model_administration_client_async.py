@@ -40,11 +40,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     and managing models.
 
     It provides methods for building models, as well as methods for viewing and deleting models,
-    viewing document model operations, accessing account information, copying models
-    to another Form Recognizer resource, and composing a new model from a collection of existing models.
+    viewing model operations, accessing account information, copying models to another
+    Form Recognizer resource, and composing a new model from a collection of existing models.
 
     .. note:: DocumentModelAdministrationClient should be used with API versions
-        2021-09-30-preview and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
+        2022-08-31 and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -59,19 +59,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         <=v2.1, instantiate a FormTrainingClient.
     :paramtype api_version: str or ~azure.ai.formrecognizer.DocumentAnalysisApiVersion
 
-    .. versionadded:: 2021-09-30-preview
-        The *DocumentModelAdministrationClient* and its client methods.
-
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
             :start-after: [START create_dt_client_with_key_async]
             :end-before: [END create_dt_client_with_key_async]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentModelAdministrationClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
             :start-after: [START create_dt_client_with_aad_async]
             :end-before: [END create_dt_client_with_aad_async]
             :language: python
@@ -120,12 +117,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2022-01-30-preview
-            The required *build_mode* parameter and *tags* keyword argument
-
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_build_model_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_build_model_async.py
                 :start-after: [START build_model_async]
                 :end-before: [END build_model_async]
                 :language: python
@@ -188,12 +182,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
-
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_compose_model_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_compose_model_async.py
                 :start-after: [START composed_model_async]
                 :end-before: [END composed_model_async]
                 :language: python
@@ -250,9 +241,6 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :return: A dictionary with values necessary for the copy authorization.
         :rtype: TargetAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
         """
 
         model_id = kwargs.pop("model_id", None)
@@ -293,7 +281,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_copy_model_to_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_copy_model_to_async.py
                 :start-after: [START begin_copy_document_model_to_async]
                 :end-before: [END begin_copy_document_model_to_async]
                 :language: python
@@ -343,7 +331,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
                 :start-after: [START delete_document_model_async]
                 :end-before: [END delete_document_model_async]
                 :language: python
@@ -367,7 +355,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
                 :start-after: [START list_document_models_async]
                 :end-before: [END list_document_models_async]
                 :language: python
@@ -387,13 +375,13 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     async def get_resource_details(self, **kwargs: Any) -> ResourceDetails:
         """Get information about the models under the Form Recognizer resource.
 
-        :return: Summary of models under the resource - model count and limit.
+        :return: Summary of custom models under the resource - model count and limit.
         :rtype: ~azure.ai.formrecognizer.ResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
                 :start-after: [START get_resource_details_async]
                 :end-before: [END get_resource_details_async]
                 :language: python
@@ -415,7 +403,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
                 :start-after: [START get_document_model_async]
                 :end-before: [END get_document_model_async]
                 :language: python
@@ -443,7 +431,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_get_operations_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_get_operations_async.py
                 :start-after: [START list_operations_async]
                 :end-before: [END list_operations_async]
                 :language: python
@@ -474,7 +462,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_get_operations_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_get_operations_async.py
                 :start-after: [START get_operation_async]
                 :end-before: [END get_operation_async]
                 :language: python

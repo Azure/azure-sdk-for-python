@@ -1,19 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-import logging
+# pylint: disable=protected-access
 from typing import Any, Iterable, Union
-
-from azure.core.polling import LROPoller
-
-from ..constants import AzureMLResourceType
-from . import JobOperations
-
-try:
-    pass
-except ImportError:
-    pass
 
 from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
@@ -23,22 +12,28 @@ from azure.ai.ml._telemetry import (
     monitor_with_activity,
     monitor_with_telemetry_mixin,
 )
+from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule
-from azure.identity import ChainedTokenCredential
+from azure.core.credentials import TokenCredential
+from azure.core.polling import LROPoller
 
+from .._utils._azureml_polling import AzureMLPolling
+from ..constants._common import AzureMLResourceType, LROConfigurations
+from . import JobOperations
 from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class ScheduleOperations(_ScopeDependentOperations):
+    # pylint: disable=too-many-instance-attributes
     """
     ScheduleOperations
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly.
+    Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -46,12 +41,11 @@ class ScheduleOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         service_client_06_2022_preview: ServiceClient062022Preview,
         all_operations: OperationsContainer,
-        credential: ChainedTokenCredential,
+        credential: TokenCredential,
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self.service_client_06_2022_preview = service_client_06_2022_preview.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
@@ -80,11 +74,33 @@ class ScheduleOperations(_ScopeDependentOperations):
         :rtype: Iterable[JobSchedule]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        def safe_from_rest_object(objs):
+            result = []
+            for obj in objs:
+                try:
+                    result.append(JobSchedule._from_rest_object(obj))
+                except Exception as e:  # pylint: disable=broad-except
+                    print(f"Translate {obj.name} to JobSchedule failed with: {e}")
+            return result
+
         return self.service_client_06_2022_preview.list(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            cls=lambda objs: [JobSchedule._from_rest_object(obj) for obj in objs],
+            cls=safe_from_rest_object,
             **self._kwargs,
+        )
+
+    def _get_polling(self, name):
+        """Return the polling with custom poll interval."""
+        path_format_arguments = {
+            "scheduleName": name,
+            "resourceGroupName": self._resource_group_name,
+            "workspaceName": self._workspace_name,
+        }
+        return AzureMLPolling(
+            LROConfigurations.POLL_INTERVAL,
+            path_format_arguments=path_format_arguments,
         )
 
     @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
@@ -106,10 +122,11 @@ class ScheduleOperations(_ScopeDependentOperations):
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             name=name,
+            polling=self._get_polling(name),
             **self._kwargs,
         )
         if no_wait:
-            module_logger.info(f"Schedule {name!r} delete request initiated.\n")
+            module_logger.info("Schedule %r delete request initiated.\n", name)
             return
         poller.result()
 
@@ -152,6 +169,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
+        schedule._validate(raise_error=True)
         if isinstance(schedule.create_job, Job):
             # Create all dependent resources for job inside schedule
             self._job_operations._resolve_arm_id_or_upload_dependencies(schedule.create_job)
@@ -163,15 +181,17 @@ class ScheduleOperations(_ScopeDependentOperations):
             name=schedule.name,
             cls=lambda _, obj, __: JobSchedule._from_rest_object(obj),
             body=schedule_data,
+            polling=self._get_polling(schedule.name),
             **self._kwargs,
         )
         if no_wait:
             module_logger.info(
-                f"Schedule create/update request initiated. Status can be checked using `az ml schedule show -n {schedule.name}`\n"
+                "Schedule create/update request initiated. "
+                "Status can be checked using `az ml schedule show -n %s`\n",
+                schedule.name,
             )
             return poller
-        else:
-            return poller.result()
+        return poller.result()
 
     @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(

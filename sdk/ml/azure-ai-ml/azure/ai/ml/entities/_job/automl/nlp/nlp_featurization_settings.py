@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     NlpVerticalFeaturizationSettings as RestNlpVerticalFeaturizationSettings,
 )
 from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings
@@ -10,13 +10,6 @@ from azure.ai.ml.entities._job.automl.featurization_settings import Featurizatio
 
 class NlpFeaturizationSettings(FeaturizationSettings):
     """Featurization settings for all AutoML NLP Verticals."""
-
-    def __init__(
-        self,
-        *,
-        dataset_language: str = None,
-    ):
-        super().__init__(dataset_language=dataset_language)
 
     def _to_rest_object(self) -> RestNlpVerticalFeaturizationSettings:
         return RestNlpVerticalFeaturizationSettings(

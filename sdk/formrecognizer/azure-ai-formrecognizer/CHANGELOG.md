@@ -1,6 +1,6 @@
 # Release History
 
-## 3.2.0b7 (Unreleased)
+## 3.2.0 (2022-09-08)
 
 ### Features Added
 - Content type `image/heif` is supported for document analysis and building models.
@@ -19,10 +19,9 @@
 - Removed `document_model_count` and `document_model_limit` properties on `ResourceDetails`.
 - Renamed `DocumentModelOperationDetails` to `OperationDetails`.
 - Renamed `DocumentModelOperationSummary` to `OperationSummary`.
-
-### Bugs Fixed
-
-### Other Changes
+- Removed `DocumentContentElement`.
+- Removed `kind` and `content` properties from `DocumentSelectionMark`.
+- Removed `kind` from `DocumentWord`.
 
 ## 3.2.0b6 (2022-08-09)
 
