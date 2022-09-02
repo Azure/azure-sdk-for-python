@@ -3,15 +3,16 @@
 # ---------------------------------------------------------
 
 
+from pathlib import Path
+
 import pytest
 from mock import Mock
-from pathlib import Path
-from azure.ai.ml.entities import ManagedOnlineDeployment, CodeConfiguration
-from azure.ai.ml.entities._assets import Code, Model
-from azure.ai.ml.entities._assets.environment import Environment, BuildContext
-from azure.ai.ml._local_endpoints.validators import CodeValidator, EnvironmentValidator, ModelValidator
 
 from azure.ai.ml._local_endpoints.errors import CloudArtifactsNotSupportedError, RequiredLocalArtifactsNotFoundError
+from azure.ai.ml._local_endpoints.validators import CodeValidator, EnvironmentValidator, ModelValidator
+from azure.ai.ml.entities import CodeConfiguration, ManagedOnlineDeployment
+from azure.ai.ml.entities._assets import Code, Model
+from azure.ai.ml.entities._assets.environment import BuildContext, Environment
 
 
 @pytest.fixture

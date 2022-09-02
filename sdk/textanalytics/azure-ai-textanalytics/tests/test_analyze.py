@@ -1606,8 +1606,10 @@ class TestAnalyze(TextAnalyticsTest):
                 ],
                 polling_interval=self._interval(),
             ).result()
-        assert str(e.value) == "'begin_analyze_actions' is only available for API version v3.1 and up."
+        assert str(e.value) == "'TextAnalyticsClient.begin_analyze_actions' is not available in API version v3.0. " \
+                               "Use service API version v3.1 or newer."
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsCustomPreparer()
     def test_analyze_multiapi_validate_v3_1(self, **kwargs):
@@ -1647,11 +1649,15 @@ class TestAnalyze(TextAnalyticsTest):
                 ],
                 polling_interval=self._interval(),
             ).result()
-        assert str(e.value) == f"'RecognizeCustomEntitiesAction' is only available for API version " \
-                               f"{version_supported} and up.\n'SingleLabelClassifyAction' is only available " \
-                               f"for API version {version_supported} and up.\n'MultiLabelClassifyAction' is " \
-                               f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
-                               f"only available for API version {version_supported} and up.\n"
+
+        assert str(e.value) == f"'RecognizeCustomEntitiesAction' is not available in API version v3.1. " \
+                               f"Use service API version {version_supported} or newer.\n" \
+                               f"'SingleLabelClassifyAction' is not available in API version v3.1. " \
+                               f"Use service API version {version_supported} or newer.\n" \
+                               f"'MultiLabelClassifyAction' is not available in API version v3.1. " \
+                               f"Use service API version {version_supported} or newer.\n" \
+                               f"'AnalyzeHealthcareEntitiesAction' is not available in API version v3.1. " \
+                               f"Use service API version {version_supported} or newer.\n"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

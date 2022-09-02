@@ -38,7 +38,7 @@ def sample_build_model():
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
-    poller = document_model_admin_client.begin_build_model(
+    poller = document_model_admin_client.begin_build_document_model(
         ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="my model description"
     )
     model = poller.result()

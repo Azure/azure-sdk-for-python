@@ -4,8 +4,8 @@
 
 import re
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants import OnlineEndpointConfigurations
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.constants._endpoint import OnlineEndpointConfigurations
 
 
 def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False) -> None:
@@ -25,14 +25,17 @@ def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False)
             target=target,
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
     if not re.match(OnlineEndpointConfigurations.NAME_REGEX_PATTERN, name):
-        msg = f"The name for {type_str} must start with an upper- or lowercase letter and only consist of '-'s and alphanumeric characters."
+        msg = f"""The name for {type_str} must start with an upper- or lowercase letter
+ and only consist of '-'s and alphanumeric characters."""
         raise ValidationException(
             message=msg,
             target=target,
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
 
 
@@ -44,4 +47,5 @@ def validate_identity_type_defined(identity: object) -> None:
             target=ErrorTarget.ENDPOINT,
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.MISSING_FIELD,
         )

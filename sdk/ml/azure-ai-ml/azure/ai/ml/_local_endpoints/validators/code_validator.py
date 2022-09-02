@@ -10,7 +10,7 @@ from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_st
 from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants import ARM_ID_PREFIX
+from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
 from azure.ai.ml.operations._code_operations import CodeOperations

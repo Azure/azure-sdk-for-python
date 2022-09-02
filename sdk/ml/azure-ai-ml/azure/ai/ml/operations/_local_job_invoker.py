@@ -19,11 +19,11 @@ from threading import Thread
 from typing import Dict, Optional, Tuple
 
 import docker
-import requests
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
-from azure.ai.ml.constants import (
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
     EXECUTION_SERVICE_URL_KEY,
@@ -32,7 +32,8 @@ from azure.ai.ml.constants import (
     INVOCATION_ZIP_FILE,
     LOCAL_JOB_FAILURE_MSG,
 )
-from azure.identity import ChainedTokenCredential
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import AzureError
 
 module_logger = logging.getLogger(__name__)
 
@@ -121,7 +122,9 @@ def invoke_command(project_temp_dir: Path) -> None:
     )
 
 
-def get_execution_service_response(job_definition: JobBaseData, token: str) -> Tuple[Dict[str, str], str]:
+def get_execution_service_response(
+    job_definition: JobBaseData, token: str, requests_pipeline: HttpPipeline
+) -> Tuple[Dict[str, str], str]:
     """Get zip file containing local run information from Execution Service.
 
     MFE will send down a mock job contract, with service 'local'.
@@ -142,10 +145,10 @@ def get_execution_service_response(job_definition: JobBaseData, token: str) -> T
         (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
         body = json.loads(body)
-        response = requests.post(url=url, json=body, headers={"Authorization": "Bearer " + token})
+        response = requests_pipeline.post(url=url, json=body, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
         return (response.content, body.get("SnapshotId", None))
-    except requests.exceptions.HTTPError as err:
+    except AzureError as err:
         raise SystemExit(err)
     except Exception:
         msg = "Failed to read in local executable job"
@@ -387,8 +390,9 @@ class CommonRuntimeHelper:
 
 def start_run_if_local(
     job_definition: JobBaseData,
-    credential: ChainedTokenCredential,
+    credential: TokenCredential,
     ws_base_url: str,
+    requests_pipeline: HttpPipeline,
 ) -> str:
     """Request execution bundle from ES and run job. If Linux or WSL
     environment, unzip and invoke job using job spec and bootstrapper.
@@ -397,14 +401,14 @@ def start_run_if_local(
     :param job_definition: Job definition data
     :type job_definition: JobBaseData
     :param credential: Credential to use for authentication
-    :type credential: ChainedTokenCredential
+    :type credential: TokenCredential
     :param ws_base_url: Base url to workspace
     :type ws_base_url: str
     :return: snapshot ID
     :rtype: str
     """
     token = credential.get_token(ws_base_url + "/.default").token
-    (zip_content, snapshot_id) = get_execution_service_response(job_definition, token)
+    (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
 
     if os.name != "nt":
         cr_helper = CommonRuntimeHelper(job_definition.name)
