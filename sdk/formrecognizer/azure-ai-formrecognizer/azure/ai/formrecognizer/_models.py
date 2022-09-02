@@ -221,7 +221,7 @@ class FormContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Point(namedtuple("Point", "x y")):
-    """The x, y coordinate of a point on a bounding box.
+    """The x, y coordinate of a point on a bounding box or polygon.
 
     :ivar float x: x-coordinate
     :ivar float y: y-coordinate
