@@ -2,10 +2,11 @@
 # Licensed under the MIT license.
 
 import os
+
 import numpy as np
 import tensorflow as tf
-from PIL import Image
 from azureml.core import Model
+from PIL import Image
 
 
 def init():

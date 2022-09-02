@@ -8,15 +8,15 @@ from typing import Dict
 
 import pytest
 import yaml
+from tests.internal._utils import PARAMETERS_TO_TEST
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
-from azure.ai.ml.entities._assets import Code
 
 
 @pytest.mark.usefixtures("enable_internal_components")
@@ -166,28 +166,24 @@ class TestComponent:
 
     @pytest.mark.parametrize(
         "yaml_path",
-        [
-            # use this file to avoid empty inputs & outputs
-            "./tests/test_configs/internal/helloworld_component_command.yml",  # Command
-            "./tests/test_configs/internal/hemera-component/component.yaml",  # Hemera
-            "./tests/test_configs/internal/hdi-component/component_spec.yaml",  # HDInsight
-            "./tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
-            "./tests/test_configs/internal/scope-component/component_spec.yaml",  # Scope
-            "./tests/test_configs/internal/data-transfer-component/component_spec.yaml",  # Data Transfer
-            "./tests/test_configs/internal/starlite-component/component_spec.yaml",  # Starlite
-        ],
+        list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
     )
-    def test_component_serialization(self, yaml_path: str):
+    def test_component_serialization(self, yaml_path):
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
 
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
+        if expected_dict["type"].endswith("@1-legacy"):
+            expected_dict["type"] = expected_dict["type"].rsplit("@", 1)[0]
+        for key in ["tags", "inputs", "outputs"]:
+            if key not in expected_dict:
+                expected_dict[key] = {}
         for input_port_name in expected_dict["inputs"]:
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if input_port["type"].lower() == "enum":
+            if isinstance(input_port["type"], str) and input_port["type"].lower() == "enum":
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
@@ -199,6 +195,10 @@ class TestComponent:
         assert InternalComponent._load_from_rest(rest_obj)._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
+
+    def test_ipp_component_serialization(self):
+        yaml_path = "./tests/test_configs/internal/ipp-component/spec.yaml"
+        load_component(yaml_path)
 
     @pytest.mark.parametrize(
         "yaml_path,expected_dict",
@@ -240,8 +240,8 @@ class TestComponent:
         ],
     )
     def test_environment_dependencies_resolve(self, yaml_path: str, expected_dict: Dict) -> None:
-        component: InternalComponent = load_component(path=yaml_path)
-        component._resolve_local_dependencies()
+        component: InternalComponent = load_component(source=yaml_path)
+        component._resolve_local_environment()
         assert component.environment == expected_dict
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
@@ -254,14 +254,14 @@ class TestComponent:
         ],
     )
     def test_invalid_environment(self, yaml_path: str, invalid_field: str) -> None:
-        component = load_component(path=yaml_path)
+        component = load_component(source=yaml_path)
         validation_result = component._customized_validate()
         assert not validation_result.passed
         assert validation_result.invalid_fields[0] == f"environment.conda.{invalid_field}"
 
     def test_environment_duplicate_dependencies_warning(self) -> None:
         yaml_path = "./tests/test_configs/internal/env-duplicate-dependencies/component_spec.yaml"
-        component = load_component(path=yaml_path)
+        component = load_component(source=yaml_path)
         validation_result = component._customized_validate()
         # pass validate with warning message
         assert validation_result.passed
@@ -271,21 +271,39 @@ class TestComponent:
         )
         assert str(validation_result._warnings[0]) == expected_warning_message
 
+    def test_resolve_local_code(self) -> None:
+        # internal component code (snapshot) default includes items in base directory when code is None,
+        # rather than COMPONENT_PLACEHOLDER in v2, this test targets to this case.
+        from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
+        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+
+        # create a mock function for param `get_arm_id_and_fill_back`
+        def mock_get_arm_id_and_fill_back(asset, *args, **kwargs):
+            return asset
+
+        yaml_path = (
+            "./tests/test_configs/internal/component_with_additional_includes/helloworld_additional_includes.yml"
+        )
+        component: InternalComponent = load_component(source=yaml_path)
+        _try_resolve_code_for_component(
+            component=component,
+            get_arm_id_and_fill_back=mock_get_arm_id_and_fill_back,
+        )
+        assert component.code.path.name != COMPONENT_PLACEHOLDER
+
     def test_additional_includes(self) -> None:
         yaml_path = (
             "./tests/test_configs/internal/component_with_additional_includes/helloworld_additional_includes.yml"
         )
-        component: InternalComponent = load_component(path=yaml_path)
+        component: InternalComponent = load_component(source=yaml_path)
         assert component._customized_validate().passed, component._customized_validate()._to_dict()
         # resolve
-        component._resolve_local_dependencies()
-        code_path = Path(Code(base_path=component._base_path, path=component.code).path)
-        assert code_path.is_dir()
-        assert (code_path / "LICENSE").exists(), component.code
-        assert (code_path / "library" / "hello.py").exists(), component.code
-        assert (code_path / "library" / "world.py").exists(), component.code
-        # cleanup
-        component._cleanup_tmp_local_dependencies()
+        with component._resolve_local_code() as code_path:
+            assert code_path.is_dir()
+            assert (code_path / "LICENSE").exists(), component.code
+            assert (code_path / "library" / "hello.py").exists(), component.code
+            assert (code_path / "library" / "world.py").exists(), component.code
+
         assert not code_path.is_dir()
 
     @pytest.mark.parametrize(
@@ -298,23 +316,21 @@ class TestComponent:
     )
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
         yaml_path = os.path.join("./tests/test_configs/internal/component_with_additional_includes/", yaml_path)
-        component: InternalComponent = load_component(path=yaml_path)
+        component: InternalComponent = load_component(source=yaml_path)
         assert component._customized_validate().passed, component._customized_validate()._to_dict()
         # resolve
-        component._resolve_local_dependencies()
-        code_path = Path(Code(base_path=component._base_path, path=component.code).path)
-        assert code_path.is_dir()
-        if has_additional_includes:
-            # additional includes is specified, code will be tmp folder and need to check each item
-            for path in os.listdir("./tests/test_configs/internal/"):
-                assert (code_path / path).exists(), component.code
-            assert (code_path / "LICENSE").exists(), component.code
-        else:
-            # additional includes not specified, code should be specified path (default yaml folder)
-            yaml_dict = load_yaml(yaml_path)
-            specified_code_path = Path(yaml_path).parent / yaml_dict.get("code", "./")
-            assert code_path.resolve() == specified_code_path.resolve()
-        component._cleanup_tmp_local_dependencies()
+        with component._resolve_local_code() as code_path:
+            assert code_path.is_dir()
+            if has_additional_includes:
+                # additional includes is specified, code will be tmp folder and need to check each item
+                for path in os.listdir("./tests/test_configs/internal/"):
+                    assert (code_path / path).exists(), component.code
+                assert (code_path / "LICENSE").exists(), component.code
+            else:
+                # additional includes not specified, code should be specified path (default yaml folder)
+                yaml_dict = load_yaml(yaml_path)
+                specified_code_path = Path(yaml_path).parent / yaml_dict.get("code", "./")
+                assert code_path.resolve() == specified_code_path.resolve()
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
@@ -336,3 +352,12 @@ class TestComponent:
         validation_result = component._customized_validate()
         assert validation_result.passed is False
         assert validation_result.messages["*"].startswith(expected_error_msg_prefix), validation_result.messages["*"]
+
+    def test_component_input_list_type(self) -> None:
+        yaml_path = "./tests/test_configs/internal/scope-component/component_spec.yaml"
+        component: InternalComponent = load_component(path=yaml_path)
+        assert component._customized_validate().passed is True
+        input_text_data_type = component._to_rest_object().properties.component_spec["inputs"]["TextData"]["type"]
+        # for list type component input, REST object should remain type list for service contract
+        assert isinstance(input_text_data_type, list)
+        assert input_text_data_type == ["AnyFile", "AnyDirectory"]

@@ -11,22 +11,24 @@ from marshmallow import INCLUDE, Schema
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils.utils import is_internal_components_enabled
-from azure.ai.ml.constants import (
+from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
     BASE_PATH_CONTEXT_KEY,
     CommonYamlFields,
-    ComponentSource,
-    NodeType,
 )
+from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.entities._component.automl_component import AutoMLComponent
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._component.automl_component import AutoMLComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml.entities._component.spark_component import SparkComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+from azure.ai.ml.entities._util import extract_label
 
 
 class _ComponentFactory:
@@ -48,6 +50,11 @@ class _ComponentFactory:
             create_schema_func=CommandComponent._create_schema_for_validation,
         )
         self.register_type(
+            _type=NodeType.IMPORT,
+            create_instance_func=lambda: ImportComponent.__new__(ImportComponent),
+            create_schema_func=ImportComponent._create_schema_for_validation,
+        )
+        self.register_type(
             _type=NodeType.PIPELINE,
             create_instance_func=lambda: PipelineComponent.__new__(PipelineComponent),
             create_schema_func=PipelineComponent._create_schema_for_validation,
@@ -56,6 +63,11 @@ class _ComponentFactory:
             _type=NodeType.AUTOML,
             create_instance_func=lambda: AutoMLComponent.__new__(AutoMLComponent),
             create_schema_func=AutoMLComponent._create_schema_for_validation,
+        )
+        self.register_type(
+            _type=NodeType.SPARK,
+            create_instance_func=lambda: SparkComponent.__new__(SparkComponent),
+            create_schema_func=SparkComponent._create_schema_for_validation,
         )
 
     def get_create_funcs(
@@ -68,6 +80,7 @@ class _ComponentFactory:
 
         try_enable_internal_components()
 
+        _type, _ = extract_label(_type)
         if _type not in self._create_instance_funcs:
             if (
                 schema
@@ -147,17 +160,6 @@ class _ComponentFactory:
         else:
             rest_component_version.component_spec[CommonYamlFields.TYPE] = _type
 
-        inputs = {
-            k: Input._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
-        }
-        outputs = {
-            k: Output._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
-        }
-
-        distribution = rest_component_version.component_spec.pop("distribution", None)
-        if distribution:
-            distribution = DistributionConfiguration._from_rest_object(distribution)
-
         # shouldn't block serialization when name is not valid
         # maybe override serialization method for name field?
         create_instance_func, create_schema_func = self.get_create_funcs(
@@ -168,6 +170,18 @@ class _ComponentFactory:
         )
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
+
+        # inputs must be set after get_create_funcs to try enable internal components before handling inputs/outputs
+        inputs = {
+            k: Input._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
+        }
+        outputs = {
+            k: Output._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
+        }
+
+        distribution = rest_component_version.component_spec.pop("distribution", None)
+        if distribution:
+            distribution = DistributionConfiguration._from_rest_object(distribution)
 
         new_instance = create_instance_func()
         init_kwargs = dict(

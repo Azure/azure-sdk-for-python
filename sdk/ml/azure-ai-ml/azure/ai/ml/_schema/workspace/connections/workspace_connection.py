@@ -18,7 +18,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     UsernamePasswordCredentialsSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 
 class WorkspaceConnectionSchema(PathAwareSchema):

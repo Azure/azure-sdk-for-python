@@ -62,7 +62,7 @@ client = QuestionAnsweringClient(
 
 ### Async operations
 
-The modern `azure-ai-language-question-answering` library includes a complete async API supported on Python 3.6+. To use it, you must first install an async transport, such as [aiohttp][aiohttp]. See [azure-core documentation][azure_core_transport] for more information.
+The modern `azure-ai-language-question-answering` library includes a complete async API supported on Python 3.7+. To use it, you must first install an async transport, such as [aiohttp][aiohttp]. See [azure-core documentation][azure_core_transport] for more information.
 
 Async operations are available on async clients, which should be closed when they're no longer needed. Each async client is an async context manager and defines an async `close` method. For example:
 

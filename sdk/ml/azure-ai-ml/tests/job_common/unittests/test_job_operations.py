@@ -1,37 +1,32 @@
+import json
 import os
 from typing import Callable
 from unittest.mock import Mock, patch
 
-from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
-from msrest import Deserializer
-import yaml
-import json
-from pytest_mock import MockFixture
-
 import pytest
 import vcr
+import yaml
+from msrest import Deserializer
+from pytest_mock import MockFixture
 
-from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.ai.ml.operations._run_operations import RunOperations
-from .test_vcr_utils import before_record_cb, vcr_header_filters
-from azure.identity import DefaultAzureCredential
 from azure.ai.ml import MLClient, load_job
-from azure.core.exceptions import HttpResponseError
-from azure.ai.ml.operations import (
-    DatastoreOperations,
-    EnvironmentOperations,
-    JobOperations,
-    WorkspaceOperations,
-)
+from azure.ai.ml._restclient.v2021_10_01 import models
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
+from azure.ai.ml.entities._builders import Command
+from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
+from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations, JobOperations, WorkspaceOperations
+from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
-from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml._restclient.v2021_10_01 import models
-from azure.ai.ml.entities._builders import Command
+from azure.ai.ml.operations._run_operations import RunOperations
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+
+from .test_vcr_utils import before_record_cb, vcr_header_filters
 
 
 @pytest.fixture
@@ -107,6 +102,7 @@ def mock_job_operation(
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -156,7 +152,7 @@ class TestJobOperations:
     @patch.object(Job, "_from_rest_object")
     def test_submit_command_job(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
-        job = load_job(path="./tests/test_configs/command_job/command_job_test.yml")
+        job = load_job(source="./tests/test_configs/command_job/command_job_test.yml")
         mock_job_operation.create_or_update(job=job)
         git_props = get_git_properties()
         assert git_props.items() <= job.properties.items()
@@ -166,11 +162,11 @@ class TestJobOperations:
     @pytest.mark.skip(reason="Function under test no longer returns Job as output")
     def test_command_job_resolver_with_virtual_cluster(self, mock_job_operation: JobOperations) -> None:
         expected = "/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/virtualclusters/testvcinmaster"
-        job = load_job(path="tests/test_configs/command_job/command_job_with_virtualcluster.yaml")
+        job = load_job(source="tests/test_configs/command_job/command_job_with_virtualcluster.yaml")
         mock_job_operation._resolve_arm_id_or_upload_dependencies(job)
         assert job.compute == expected
 
-        job = load_job(path="tests/test_configs/command_job/command_job_with_virtualcluster_2.yaml")
+        job = load_job(source="tests/test_configs/command_job/command_job_with_virtualcluster_2.yaml")
         mock_job_operation._resolve_arm_id_or_upload_dependencies(job)
         assert job.compute == expected
 

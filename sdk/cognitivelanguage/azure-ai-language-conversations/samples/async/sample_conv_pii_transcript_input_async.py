@@ -95,31 +95,31 @@ async def sample_conv_pii_transcript_input_async():
 
         # view result
         result = await poller.result()
-        task_result = result["tasks"]["items"][0]
+        task_result = result['tasks']['items'][0]
         print("... view task status ...")
-        print("status: {}".format(task_result["status"]))
-        conv_pii_result = task_result["results"]
-        if conv_pii_result["errors"]:
+        print(f"status: {task_result['status']}")
+        conv_pii_result = task_result['results']
+        if conv_pii_result['errors']:
             print("... errors occured ...")
-            for error in conv_pii_result["errors"]:
+            for error in conv_pii_result['errors']:
                 print(error)
         else:
-            conversation_result = conv_pii_result["conversations"][0]
-            if conversation_result["warnings"]:
+            conversation_result = conv_pii_result['conversations'][0]
+            if conversation_result['warnings']:
                 print("... view warnings ...")
-                for warning in conversation_result["warnings"]:
+                for warning in conversation_result['warnings']:
                     print(warning)
             else:
                 print("... view task result ...")
-                for conversation in conversation_result["conversationItems"]:
-                    print("conversation id: {}".format(conversation["id"]))
+                for conversation in conversation_result['conversationItems']:
+                    print(f"conversation id: {conversation['id']}")
                     print("... entities ...")
-                    for entity in conversation["entities"]:
-                        print("text: {}".format(entity["text"]))
-                        print("category: {}".format(entity["category"]))
-                        print("confidence: {}".format(entity["confidenceScore"]))
-                        print("offset: {}".format(entity["offset"]))
-                        print("length: {}".format(entity["length"]))
+                    for entity in conversation['entities']:
+                        print(f"text: {entity['text']}")
+                        print(f"category: {entity['category']}")
+                        print(f"confidence: {entity['confidenceScore']}")
+                        print(f"offset: {entity['offset']}")
+                        print(f"length: {entity['length']}")
 
 
     # [END analyze_conversation_app]

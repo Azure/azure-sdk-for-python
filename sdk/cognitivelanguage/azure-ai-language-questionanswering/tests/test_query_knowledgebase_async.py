@@ -133,7 +133,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
             question="Ports and connectors",
             top=3,
             answer_context=KnowledgeBaseAnswerContext(
-                previous_questiony="Meet Surface Pro 4",
+                previous_question="Meet Surface Pro 4",
                 previous_qna_id=4
             )
         )
@@ -176,7 +176,7 @@ class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
             question="Ports and connectors",
             top=3,
             answer_context=KnowledgeBaseAnswerContext(
-                previous_questiony="Meet Surface Pro 4",
+                previous_question="Meet Surface Pro 4",
                 previous_qna_id=4
             )
         )

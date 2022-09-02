@@ -4,16 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
-from devtools_testutils import AzureTestCase
 from azure.core.exceptions import (
+    AzureError,
     ResourceModifiedError,
     ResourceNotFoundError,
     ResourceExistsError,
-    AzureError,
 )
 from azure.appconfiguration import (
     ResourceReadOnlyError,
-    AzureAppConfigurationClient,
     ConfigurationSetting,
     SecretReferenceConfigurationSetting,
     FeatureFlagConfigurationSetting,
@@ -21,6 +19,7 @@ from azure.appconfiguration import (
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
 )
+from testcase import AppConfigTestCase
 from consts import (
     KEY,
     LABEL,
@@ -36,28 +35,18 @@ import datetime
 import json
 import re
 
-from wrapper import app_config_decorator
+from preparers import app_config_aad_decorator
 
 
-class AppConfigurationClientTest(AzureTestCase):
+class AppConfigurationClientAADTest(AppConfigTestCase):
     def __init__(self, method_name):
-        super(AppConfigurationClientTest, self).__init__(method_name)
+        super(AppConfigurationClientAADTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
 
-    def _delete_setting(self, client, item):
-        client.delete_configuration_setting(
-            key=item.key, label=item.label
-        )
-
-    def create_aad_client(self, base_url):
-        cred = self.get_credential(AzureAppConfigurationClient)
-        return AzureAppConfigurationClient(base_url, cred)
-
     # method: add_configuration_setting
-    @app_config_decorator
-    def test_add_configuration_setting(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_add_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-
         kv = ConfigurationSetting(
             key=KEY + "_ADD",
             label=LABEL,
@@ -66,7 +55,6 @@ class AppConfigurationClientTest(AzureTestCase):
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
         created_kv = client.add_configuration_setting(kv)
-        self._delete_setting(client, created_kv)
         assert (
             created_kv.label == kv.label
             and kv.value == kv.value
@@ -78,23 +66,27 @@ class AppConfigurationClientTest(AzureTestCase):
             and created_kv.last_modified is not None
             and created_kv.read_only is False
         )
+        client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
-    @app_config_decorator
-    def test_add_existing_configuration_setting(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_add_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
+        test_config_setting = self.create_config_setting()
+        self.add_for_test(client, test_config_setting)
         with pytest.raises(ResourceExistsError):
             client.add_configuration_setting(
                 ConfigurationSetting(
                     key=test_config_setting.key,
-                    lable=test_config_setting.label,
+                    label=test_config_setting.label,
                 )
             )
+        client.delete_configuration_setting(key=test_config_setting.key, label=test_config_setting.label)
 
     # method: set_configuration_setting
-    @app_config_decorator
-    def test_set_existing_configuration_setting_label_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_set_existing_configuration_setting_label_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_set_kv = test_config_setting
+        to_set_kv = self.create_config_setting()
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
         set_kv = client.set_configuration_setting(to_set_kv)
@@ -106,19 +98,20 @@ class AppConfigurationClientTest(AzureTestCase):
             and to_set_kv.tags == set_kv.tags
             and to_set_kv.etag != set_kv.etag
         )
+        client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
 
-    @app_config_decorator
-    def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_set_kv = test_config_setting
+        to_set_kv = self.create_config_setting()
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
         to_set_kv.etag = "wrong etag"
         with pytest.raises(ResourceModifiedError):
             client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
-    @app_config_decorator
-    def test_set_configuration_setting_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_set_configuration_setting_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         kv = ConfigurationSetting(
             key=KEY + "_SET",
@@ -131,8 +124,8 @@ class AppConfigurationClientTest(AzureTestCase):
         with pytest.raises(ResourceModifiedError):
             client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
-    @app_config_decorator
-    def test_set_configuration_setting_no_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_set_configuration_setting_no_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = ConfigurationSetting(
             key=KEY + "_SET",
@@ -142,7 +135,6 @@ class AppConfigurationClientTest(AzureTestCase):
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
         set_kv = client.set_configuration_setting(to_set_kv)
-        self._delete_setting(client, to_set_kv)
         assert (
             to_set_kv.key == set_kv.key
             and to_set_kv.label == set_kv.label
@@ -151,12 +143,14 @@ class AppConfigurationClientTest(AzureTestCase):
             and to_set_kv.tags == set_kv.tags
             and to_set_kv.etag != set_kv.etag
         )
+        client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
 
     # method: get_configuration_setting
-    @app_config_decorator
-    def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        compare_kv = test_config_setting_no_label
+        compare_kv = self.create_config_setting_no_label()
+        self.add_for_test(client, compare_kv)
         fetched_kv = client.get_configuration_setting(compare_kv.key)
         assert (
             fetched_kv.key == compare_kv.key
@@ -165,11 +159,13 @@ class AppConfigurationClientTest(AzureTestCase):
             and fetched_kv.tags == compare_kv.tags
         )
         assert fetched_kv.label is None
+        client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
-    @app_config_decorator
-    def test_get_configuration_setting_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_get_configuration_setting_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        compare_kv = test_config_setting
+        compare_kv = self.create_config_setting()
+        self.add_for_test(client, compare_kv)
         fetched_kv = client.get_configuration_setting(
             compare_kv.key, compare_kv.label
         )
@@ -180,103 +176,104 @@ class AppConfigurationClientTest(AzureTestCase):
             and fetched_kv.tags == compare_kv.tags
         )
         assert fetched_kv.label is not None
+        client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
-    @app_config_decorator
-    def test_get_non_existing_configuration_setting(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_get_non_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        compare_kv = test_config_setting
+        compare_kv = self.create_config_setting()
+        self.add_for_test(client, compare_kv)
         with pytest.raises(ResourceNotFoundError):
-            client.get_configuration_setting(
-                compare_kv.key, compare_kv.label + "a"
-            )
+            client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
+        client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     # method: delete_configuration_setting
-    @app_config_decorator
-    def test_delete_with_key_no_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_delete_with_key_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_delete_kv = test_config_setting_no_label
-        client.delete_configuration_setting(to_delete_kv.key)
-        self._delete_setting(client, to_delete_kv)
-        with pytest.raises(ResourceNotFoundError):
-            client.get_configuration_setting(to_delete_kv.key)
-
-    @app_config_decorator
-    def test_delete_with_key_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_delete_kv = test_config_setting
-        client.delete_configuration_setting(
-            to_delete_kv.key, label=to_delete_kv.label
-        )
-        self._delete_setting(client, to_delete_kv)
-        with pytest.raises(ResourceNotFoundError):
-            client.get_configuration_setting(
-                to_delete_kv.key, label=to_delete_kv.label
-            )
-
-    @app_config_decorator
-    def test_delete_non_existing(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        deleted_kv = client.delete_configuration_setting(
-            "not_exist_" + KEY
-        )
-        assert deleted_kv is None
-
-    @app_config_decorator
-    def test_delete_correct_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_delete_kv = test_config_setting_no_label
-        deleted_kv = client.delete_configuration_setting(
-            to_delete_kv.key, etag=to_delete_kv.etag
-        )
-        self._delete_setting(client, to_delete_kv)
+        to_delete_kv = self.create_config_setting_no_label()
+        self.add_for_test(client, to_delete_kv)
+        deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
         assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(to_delete_kv.key)
 
-    @app_config_decorator
-    def test_delete_wrong_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_delete_with_key_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_delete_kv = test_config_setting_no_label
+        to_delete_kv = self.create_config_setting()
+        self.add_for_test(client, to_delete_kv)
+        deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
+        assert deleted_kv is not None
+        with pytest.raises(ResourceNotFoundError):
+            client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
+
+    @app_config_aad_decorator
+    def test_delete_not_existing(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
+        deleted_kv = client.delete_configuration_setting("not_exist_" + KEY)
+        assert deleted_kv is None
+
+    @app_config_aad_decorator
+    def test_delete_correct_etag(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
+        to_delete_kv = self.create_config_setting_no_label()
+        self.add_for_test(client, to_delete_kv)
+        deleted_kv = client.delete_configuration_setting(to_delete_kv.key, etag=to_delete_kv.etag)
+        assert deleted_kv is not None
+        with pytest.raises(ResourceNotFoundError):
+            client.get_configuration_setting(to_delete_kv.key)
+
+    @app_config_aad_decorator
+    def test_delete_wrong_etag(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
+        to_delete_kv = self.create_config_setting_no_label()
+        self.add_for_test(client, to_delete_kv)
         with pytest.raises(ResourceModifiedError):
             client.delete_configuration_setting(
                 to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
             )
+        client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
 
     # method: list_configuration_settings
-    @app_config_decorator
-    def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_configuration_settings(
+    @app_config_aad_decorator
+    def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_configuration_settings(
             label_filter=LABEL, key_filter=KEY
         ))
         assert len(items) == 1
         assert all(x.key == KEY and x.label == LABEL for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_configuration_settings(label_filter=LABEL))
+    @app_config_aad_decorator
+    def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_configuration_settings(label_filter=LABEL))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_configuration_settings(key_filter=KEY))
+    @app_config_aad_decorator
+    def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_configuration_settings(key_filter=KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_configuration_settings(
+    @app_config_aad_decorator
+    def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_configuration_settings(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         ))
         assert len(items) == 1
         assert all(x.key and not x.label and x.content_type for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         resered_char_kv = ConfigurationSetting(
             key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE
@@ -292,32 +289,35 @@ class AppConfigurationClientTest(AzureTestCase):
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
         client.delete_configuration_setting(resered_char_kv.key)
 
-    @app_config_decorator
-    def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_configuration_settings(
+    @app_config_aad_decorator
+    def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_configuration_settings(
             label_filter=LABEL + "*"
         ))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_list_kv = test_config_setting
+        to_list_kv = self.create_config_setting()
+        self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
         assert len(items) == 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
+        client.delete_configuration_setting(to_list_kv.key)
 
-    @app_config_decorator
-    def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
-            delete_me = [
+            [
                 client.add_configuration_setting(
                     ConfigurationSetting(
                         key="multi_" + str(i) + KEY_UUID,
@@ -343,91 +343,101 @@ class AppConfigurationClientTest(AzureTestCase):
         except AzureError:
             pass
 
-    @app_config_decorator
-    def test_list_configuration_settings_null_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = client.list_configuration_settings(label_filter="\0")
+    @app_config_aad_decorator
+    def test_list_configuration_settings_no_label(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = self.client.list_configuration_settings(label_filter="\0")
         assert len(list(items)) > 0
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        exclude_today = client.list_configuration_settings(
+    @app_config_aad_decorator
+    def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        exclude_today = self.client.list_configuration_settings(
             accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
-        all_inclusive = client.list_configuration_settings()
+        all_inclusive = self.client.list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
+        self.tear_down()
 
     # method: list_revisions
-    @app_config_decorator
-    def test_list_revisions_key_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_list1 = test_config_setting
-        items = list(client.list_revisions(
-            label_filter=to_list1.label, key_filter=to_list1.key
+    @app_config_aad_decorator
+    def test_list_revisions_key_label(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        to_list = self.create_config_setting()
+        items = list(self.client.list_revisions(
+            label_filter=to_list.label, key_filter=to_list.key
         ))
         assert len(items) >= 2
-        assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
+        assert all(x.key == to_list.key and x.label == to_list.label for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_revisions_only_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_revisions(label_filter=LABEL))
+    @app_config_aad_decorator
+    def test_list_revisions_only_label(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_revisions(label_filter=LABEL))
         assert len(items) >= 1
         assert all(x.label == LABEL for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_revisions(key_filter=KEY))
+    @app_config_aad_decorator
+    def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_revisions_fields(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        items = list(client.list_revisions(
+    @app_config_aad_decorator
+    def test_list_revisions_fields(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        items = list(self.client.list_revisions(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         ))
         assert all(x.key and not x.label and x.content_type and not x.tags and not x.etag for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_list_kv = test_config_setting
+    @app_config_aad_decorator
+    def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        to_list_kv = self.create_config_setting()
         custom_headers = {"If-Match": to_list_kv.etag}
-        items = list(client.list_revisions(
+        items = list(self.client.list_revisions(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
         assert len(items) >= 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
+        self.tear_down()
 
-    @app_config_decorator
-    def test_read_only(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        kv = test_config_setting_no_label
+        kv = self.create_config_setting_no_label()
+        self.add_for_test(client, kv)
         read_only_kv = client.set_read_only(kv)
         assert read_only_kv.read_only
         readable_kv = client.set_read_only(read_only_kv, False)
         assert not readable_kv.read_only
+        client.delete_configuration_setting(kv.key)
 
-    @app_config_decorator
-    def test_delete_read_only(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_delete_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_delete_kv = test_config_setting_no_label
+        to_delete_kv = self.create_config_setting_no_label()
+        self.add_for_test(client, to_delete_kv)
         read_only_kv = client.set_read_only(to_delete_kv)
         with pytest.raises(ResourceReadOnlyError):
             client.delete_configuration_setting(to_delete_kv.key)
         client.set_read_only(read_only_kv, False)
         client.delete_configuration_setting(to_delete_kv.key)
-        self._delete_setting(client, to_delete_kv)
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(to_delete_kv.key)
 
-    @app_config_decorator
-    def test_set_read_only(self, appconfiguration_endpoint_string, test_config_setting, test_config_setting_no_label):
+    @app_config_aad_decorator
+    def test_set_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_set_kv = test_config_setting
+        to_set_kv = self.create_config_setting()
+        self.add_for_test(client, to_set_kv)
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
         read_only_kv = client.set_read_only(to_set_kv)
@@ -445,32 +455,14 @@ class AppConfigurationClientTest(AzureTestCase):
                 and to_set_kv.tags == set_kv.tags
                 and to_set_kv.etag != set_kv.etag
         )
+        set_kv.etag = "bad"
+        with pytest.raises(ResourceModifiedError):
+            client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+        client.delete_configuration_setting(to_set_kv.key)
 
-    def _order_dict(self, d):
-        from collections import OrderedDict
-        new = OrderedDict()
-        for k, v in d.items():
-            new[k] = str(v)
-        return new
-
-    def _assert_same_keys(self, key1, key2):
-        assert type(key1) == type(key2)
-        assert key1.key == key2.key
-        assert key1.label == key2.label
-        assert key1.content_type == key2.content_type
-        assert key1.tags == key2.tags
-        assert key1.etag != key2.etag
-        if isinstance(key1, FeatureFlagConfigurationSetting):
-            assert key1.enabled == key2.enabled
-            assert len(key1.filters) == len(key2.filters)
-        elif isinstance(key1, SecretReferenceConfigurationSetting):
-            assert key1.secret_id == key2.secret_id
-        else:
-            assert key1.value == key2.value
-
-    @app_config_decorator
-    def test_sync_tokens(self, client):
-
+    @app_config_aad_decorator
+    def test_sync_tokens_with_configuration_setting(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
         sync_token_header = self._order_dict(sync_tokens)
         sync_token_header = ",".join(str(x) for x in sync_token_header.values())
@@ -483,7 +475,7 @@ class AppConfigurationClientTest(AzureTestCase):
                 tags={"tag1": "tag1", "tag2": "tag2"},
         )
 
-        sent = client.set_configuration_setting(new)
+        client.set_configuration_setting(new)
         sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
         sync_token_header2 = self._order_dict(sync_tokens2)
         sync_token_header2 = ",".join(str(x) for x in sync_token_header2.values())
@@ -497,15 +489,85 @@ class AppConfigurationClientTest(AzureTestCase):
                 tags={"tag1": "tag1", "tag2": "tag2"},
         )
 
-        sent = client.set_configuration_setting(new)
+        client.set_configuration_setting(new)
         sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
         sync_token_header3 = self._order_dict(sync_tokens3)
         sync_token_header3 = ",".join(str(x) for x in sync_token_header3.values())
         assert sync_token_header2 != sync_token_header3
-        client.close()
 
-    @app_config_decorator
-    def test_config_setting_feature_flag(self, client):
+        client.delete_configuration_setting(new.key)
+
+    @app_config_aad_decorator
+    def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            enabled=True,
+            filters = [
+                {
+                    "name": "Microsoft.Percentage",
+                    "parameters": {
+                        "Value": 10,
+                        "User": "user1",
+                    }
+                }
+            ]
+        )
+
+        sync_tokens = copy.deepcopy(self.client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens.keys())
+        seq_num = sync_tokens[keys[0]].sequence_number
+        self.client.set_configuration_setting(new)
+
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            enabled=True,
+            filters = [
+                {
+                    u"name": FILTER_TIME_WINDOW,
+                    u"parameters": {
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                },
+            ]
+        )
+
+        self.client.set_configuration_setting(new)
+        sync_tokens2 = copy.deepcopy(self.client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens2.keys())
+        seq_num2 = sync_tokens2[keys[0]].sequence_number
+
+        new = FeatureFlagConfigurationSetting(
+            "newflag",
+            enabled=True,
+            filters=[
+                {
+                    "name": FILTER_TARGETING,
+                    "parameters": {
+                        u"Audience": {
+                            u"Users": [u"abc", u"def"],
+                            u"Groups": [u"ghi", u"jkl"],
+                            u"DefaultRolloutPercentage": 75
+                        }
+                    }
+                },
+            ]
+        )
+
+        self.client.set_configuration_setting(new)
+        sync_tokens3 = copy.deepcopy(self.client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens3.keys())
+        seq_num3 = sync_tokens3[keys[0]].sequence_number
+
+        assert seq_num < seq_num2
+        assert seq_num2 < seq_num3
+
+        self.client.delete_configuration_setting(new.key)
+
+    @app_config_aad_decorator
+    def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
@@ -533,8 +595,9 @@ class AppConfigurationClientTest(AzureTestCase):
 
         client.delete_configuration_setting(changed_flag.key)
 
-    @app_config_decorator
-    def test_config_setting_secret_reference(self, client):
+    @app_config_aad_decorator
+    def test_config_setting_secret_reference(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         secret_reference = SecretReferenceConfigurationSetting(
             "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString")
         set_flag = client.set_configuration_setting(secret_reference)
@@ -558,8 +621,9 @@ class AppConfigurationClientTest(AzureTestCase):
 
         client.delete_configuration_setting(secret_reference.key)
 
-    @app_config_decorator
-    def test_feature_filter_targeting(self, client):
+    @app_config_aad_decorator
+    def test_feature_filter_targeting(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             "newflag",
             enabled=True,
@@ -587,8 +651,7 @@ class AppConfigurationClientTest(AzureTestCase):
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
-        filters = updated_sent_config.filters
-        filters.append(
+        updated_sent_config.filters.append(
             {
                 "name": FILTER_TARGETING,
                 "parameters": {
@@ -600,8 +663,7 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             }
         )
-
-        filters.append(
+        updated_sent_config.filters.append(
             {
                 "name": FILTER_TARGETING,
                 "parameters": {
@@ -613,16 +675,15 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             }
         )
-        updated_sent_config.filters = filters
-
         sent_config = client.set_configuration_setting(updated_sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
         assert len(sent_config.filters) == 3
 
         client.delete_configuration_setting(updated_sent_config.key)
 
-    @app_config_decorator
-    def test_feature_filter_time_window(self, client):
+    @app_config_aad_decorator
+    def test_feature_filter_time_window(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             'time_window',
             enabled=True,
@@ -646,33 +707,9 @@ class AppConfigurationClientTest(AzureTestCase):
 
         client.delete_configuration_setting(new_sent.key)
 
-    @app_config_decorator
-    def test_feature_filter_time_window(self, client):
-        new = FeatureFlagConfigurationSetting(
-            'time_window',
-            enabled=True,
-            filters=[
-                {
-                    "name": FILTER_TIME_WINDOW,
-                    "parameters": {
-                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
-                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
-                    }
-                }
-            ]
-        )
-
-        sent = client.set_configuration_setting(new)
-        self._assert_same_keys(sent, new)
-
-        sent.filters[0]["parameters"]["Start"] = "Thurs, 11 Mar 2021 05:00:00 GMT"
-        new_sent = client.set_configuration_setting(sent)
-        self._assert_same_keys(sent, new_sent)
-
-        client.delete_configuration_setting(new_sent.key)
-
-    @app_config_decorator
-    def test_feature_filter_custom(self, client):
+    @app_config_aad_decorator
+    def test_feature_filter_custom(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             'custom',
             enabled=True,
@@ -696,8 +733,9 @@ class AppConfigurationClientTest(AzureTestCase):
 
         client.delete_configuration_setting(new_sent.key)
 
-    @app_config_decorator
-    def test_feature_filter_multiple(self, client):
+    @app_config_aad_decorator
+    def test_feature_filter_multiple(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             'custom',
             enabled=True,
