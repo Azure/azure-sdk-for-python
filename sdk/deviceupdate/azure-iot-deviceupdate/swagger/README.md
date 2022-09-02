@@ -13,7 +13,7 @@ no-namespace-folders: true
 python: true
 title: DeviceUpdateClient
 version-tolerant: true
-package-version: 1.0.0b4
+package-version: 1.0.0
 add-credential: true
 credential-scopes: https://api.adu.microsoft.com/.default
 ```
