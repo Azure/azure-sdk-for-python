@@ -164,7 +164,7 @@ class TestScheduleSchema:
         expected_trigger_dict = {
             "frequency": "week",
             "interval": 1,
-            "schedule": {"hours": [10], "minutes": [15], "week_days": ["monday"]},
+            "schedule": {"hours": 10, "minutes": 15, "week_days": "monday"},
             "start_time": "2022-05-10T10:15:00",
             "time_zone": "Pacific Standard Time",
             "type": "recurrence",

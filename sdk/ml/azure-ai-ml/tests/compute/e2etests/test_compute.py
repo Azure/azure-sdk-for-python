@@ -1,11 +1,11 @@
 from typing import Callable
 
-from azure.core.paging import ItemPaged
-
 import pytest
-from azure.core.polling import LROPoller
+
 from azure.ai.ml import MLClient, load_compute
 from azure.ai.ml.entities._compute.aml_compute import AmlCompute
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 
 from devtools_testutils import AzureRecordedTestCase
 

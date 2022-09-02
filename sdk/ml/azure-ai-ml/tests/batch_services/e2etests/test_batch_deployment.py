@@ -3,8 +3,8 @@ import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable
-from devtools_testutils import AzureRecordedTestCase
 
+from devtools_testutils import AzureRecordedTestCase
 import pytest
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
@@ -36,6 +36,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
 @pytest.mark.skip(
     reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
 )
+@pytest.mark.usefixtures("recorded_test")
 class TestBatchDeployment(AzureRecordedTestCase):
     @pytest.mark.e2etest
     @pytest.mark.skip(reason="TODO (1546262): Test failing constantly, so disabling it")

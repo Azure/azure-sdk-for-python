@@ -1,12 +1,15 @@
 from os import environ
+
+import pytest
 from marshmallow.exceptions import ValidationError
-from azure.ai.ml.constants import ImportSourceType, AssetTypes, AZUREML_PRIVATE_FEATURES_ENV_VAR
+
+from azure.ai.ml import load_component, load_job
+from azure.ai.ml.constants import ImportSourceType
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AssetTypes
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._inputs_outputs import Output
-from azure.ai.ml.entities._job.import_job import ImportJob, ImportSource, DatabaseImportSource, FileImportSource
-from azure.ai.ml import load_job, load_component
-import pytest
+from azure.ai.ml.entities._job.import_job import DatabaseImportSource, FileImportSource, ImportJob, ImportSource
 
 
 @pytest.mark.unittest

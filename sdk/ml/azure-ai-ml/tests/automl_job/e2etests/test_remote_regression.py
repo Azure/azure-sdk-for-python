@@ -1,13 +1,13 @@
-import pytest
+from typing import Tuple
 
-from azure.ai.ml.automl import regression
+import pytest
+from test_utilities.utils import assert_final_job_status, get_automl_job_properties
+
+from azure.ai.ml import MLClient
+from azure.ai.ml.automl import ColumnTransformer, regression
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular.regression_job import RegressionJob
-from azure.ai.ml.automl import ColumnTransformer
 from azure.ai.ml.operations._run_history_constants import JobStatus
-from test_utilities.utils import assert_final_job_status, get_automl_job_properties
-from azure.ai.ml import MLClient
-from typing import Tuple
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 

@@ -1,8 +1,10 @@
-import pytest
 from typing import Callable
-from azure.ai.ml import MLClient, Input, Output, load_job, spark
-from azure.ai.ml.entities._job.spark_job import SparkJob
+
+import pytest
+
+from azure.ai.ml import Input, MLClient, Output, load_job, spark
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken
+from azure.ai.ml.entities._job.spark_job import SparkJob
 
 from devtools_testutils import AzureRecordedTestCase
 
@@ -11,8 +13,7 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash")
 class TestSparkJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @pytest.mark.skip(reason="no way of currently testing this due to 500 InternalServerError with MFE API")
-    def test_spark_job(self, randstr: Callable[[str], str], client: MLClient) -> None:
+    def test_spark_job(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
         print(f"Creating spark job {job_name}")
 
@@ -26,16 +27,35 @@ class TestSparkJob(AzureRecordedTestCase):
 
         params_override = [{"name": job_name}]
         job = load_job(
-            source="./tests/test_configs/spark_job/spark_job_test.yml",
+            source="./tests/test_configs/spark_job/spark_job_test_hobo.yml",
             params_override=params_override,
         )
         spark_job: SparkJob = client.jobs.create_or_update(job=job)
 
         assert spark_job.name == job_name
-        assert spark_job.compute == "douglassynapse"
+        assert spark_job.description == "simply the best"
+        assert spark_job.type == "spark"
+        assert spark_job.resources.instance_type == "standard_e8s_v3"
+        assert spark_job.resources.runtime_version == "3.2"
 
     @pytest.mark.e2etest
-    @pytest.mark.skip(reason="no way of currently testing this due to 500 InternalServerError with MFE API")
+    def test_spark_job_word_count_inputs(sef, randstr: Callable[[], str], client: MLClient) -> None:
+        job_name = randstr()
+        print(f"Creating spark job {job_name}")
+        params_override = [{"name": job_name}]
+        job = load_job(
+            source="./tests/test_configs/spark_job/spark_job_word_count_test.yml",
+            params_override=params_override,
+        )
+        spark_job: SparkJob = client.jobs.create_or_update(job=job)
+
+        assert spark_job.name == job_name
+        assert spark_job.description == "submit a hobo spark job testing inputs"
+        assert spark_job.type == "spark"
+        assert spark_job.resources.instance_type == "standard_e8s_v3"
+        assert spark_job.resources.runtime_version == "3.2"
+
+    @pytest.mark.e2etest
     def test_spark_job_builder(self, client: MLClient) -> None:
         inputs = {
             "input1": Input(
@@ -51,10 +71,8 @@ class TestSparkJob(AzureRecordedTestCase):
         }
 
         node = spark(
-            name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
@@ -63,6 +81,7 @@ class TestSparkJob(AzureRecordedTestCase):
             executor_cores=2,
             executor_memory="2g",
             executor_instances=2,
+            dynamic_allocation_enabled=True,
             dynamic_allocation_min_executors=1,
             dynamic_allocation_max_executors=3,
             identity=AmlToken(),
@@ -75,8 +94,6 @@ class TestSparkJob(AzureRecordedTestCase):
             },
         )
 
-        assert node.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
-        assert node.name == "builder-spark-job"
         assert node.experiment_name == "builder-spark-experiment-name"
         assert node.identity == AmlToken()
         assert node.description == "simply spark description"
@@ -84,5 +101,17 @@ class TestSparkJob(AzureRecordedTestCase):
         result = client.create_or_update(node)
         assert result.description == "simply spark description"
         assert result.experiment_name == "builder-spark-experiment-name"
-        assert result.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert result.identity == AmlToken()
+
+    @pytest.mark.e2etest
+    def test_spark_job_with_input_output(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        # TODO: check issue with backend
+        # run failed
+        # https://msdata.visualstudio.com/Vienna/_workitems/edit/1940993
+        params_override = [{"name": randstr()}]
+        job = load_job(
+            path="./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml",
+            params_override=params_override,
+        )
+        spark_job = client.jobs.create_or_update(job=job)
+        assert spark_job.name == params_override[0]["name"]

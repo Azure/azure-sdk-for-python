@@ -2,10 +2,9 @@ from typing import Callable
 
 import pytest
 
-from azure.ai.ml import MLClient, AmlToken
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken as AmlToken06
-from azure.ai.ml.entities import PipelineJob, CronTrigger
-from azure.ai.ml.entities._load_functions import load_schedule, load_job
+from azure.ai.ml import AmlToken, MLClient
+from azure.ai.ml.entities import CronTrigger, PipelineJob
+from azure.ai.ml.entities._load_functions import load_job, load_schedule
 
 from .._util import _SCHEDULE_TIMEOUT_SECOND
 
@@ -13,7 +12,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
-@pytest.mark.unittest
+@pytest.mark.e2etest
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
@@ -38,7 +37,7 @@ class TestSchedule(AzureRecordedTestCase):
         rest_schedule = client.schedules.begin_create_or_update(schedule)
         assert rest_schedule._is_enabled is True
         job: PipelineJob = rest_schedule.create_job
-        assert isinstance(job.identity, AmlToken06)
+        assert isinstance(job.identity, AmlToken)
         # disable
         rest_schedule = client.schedules.begin_disable(schedule.name)
         assert rest_schedule._is_enabled is False
@@ -64,7 +63,7 @@ class TestSchedule(AzureRecordedTestCase):
         client.schedules.begin_disable(schedule.name, no_wait=True)
         # assert updates
         job: PipelineJob = rest_schedule.create_job
-        assert isinstance(job.identity, AmlToken06)
+        assert isinstance(job.identity, AmlToken)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):

@@ -1,15 +1,15 @@
-from typing import Callable
-import pytest
 import uuid
-from unittest.mock import patch
 from pathlib import Path
-
-from azure.ai.ml import MLClient
-from test_utilities.utils import get_arm_id
-from azure.ai.ml.entities._assets import Code
-from azure.ai.ml._ml_exceptions import ValidationException
+from typing import Callable
+from unittest.mock import patch
 
 from devtools_testutils import AzureRecordedTestCase
+import pytest
+from test_utilities.utils import get_arm_id
+
+from azure.ai.ml import MLClient
+from azure.ai.ml._ml_exceptions import ValidationException
+from azure.ai.ml.entities._assets import Code
 
 
 @pytest.fixture
@@ -22,15 +22,13 @@ def code_asset_path(tmp_path: Path) -> str:
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
 class TestCode(AzureRecordedTestCase):
-    def test_create_and_get(self,
-        client: MLClient,
-        code_asset_path: str,
-        randstr: Callable[[str], str],
-    ) -> None:
-        name = randstr("name")
+    def test_create_and_get(self, client: MLClient, code_asset_path: str, randstr: Callable[[], str]) -> None:
+        name = randstr()
         code_entity = Code(name=name, version="2", path=code_asset_path)
         assert str(code_entity.path) == str(Path(code_asset_path))
+
         code_asset_1 = client._code.create_or_update(code_entity)
+
         code_asset_2 = client._code.get(code_asset_1.name, code_asset_1.version)
 
         arm_id = get_arm_id(

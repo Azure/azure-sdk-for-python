@@ -1,13 +1,12 @@
 from datetime import datetime
 
 import pytest
+from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.constants import TimeZone
-from azure.ai.ml.entities import JobSchedule, PipelineJob, CronTrigger, RecurrenceTrigger, RecurrencePattern
-from azure.ai.ml.entities._load_functions import load_schedule, load_job
-
-from test_utilities.utils import verify_entity_load_and_dump
+from azure.ai.ml.entities import CronTrigger, JobSchedule, PipelineJob, RecurrencePattern, RecurrenceTrigger
+from azure.ai.ml.entities._load_functions import load_job, load_schedule
 
 from .._util import _SCHEDULE_TIMEOUT_SECOND
 
@@ -23,7 +22,7 @@ class TestScheduleEntity:
             assert type(schedule.create_job) == PipelineJob
             assert type(schedule.trigger) == CronTrigger
 
-        schedule = verify_entity_load_and_dump(test_path, simple_schedule_validation, test_path)[0]
+        schedule = verify_entity_load_and_dump(load_schedule, simple_schedule_validation, test_path)[0]
         actual_dict = schedule._to_rest_object().as_dict()["properties"]
         # Skip job definition
         actual_dict["action"]["job_definition"] = {}

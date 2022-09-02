@@ -1,40 +1,35 @@
-import base64
+import re
 import uuid
+from itertools import tee
+from pathlib import Path
+from time import sleep
+from typing import Callable
 
 import pydash
 import pytest
-from pathlib import Path
-from itertools import tee
-from typing import Callable
-from time import sleep
-import re
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-from azure.core.paging import ItemPaged
-
-from azure.ai.ml import MLClient, load_component
+from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ListViewType
-from azure.ai.ml import MpiDistribution, load_environment
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants import ARM_ID_PREFIX, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_COMPONENT_NAME,
+    ARM_ID_PREFIX,
+    PROVIDER_RESOURCE_ID_WITH_VERSION,
+    AzureMLResourceType,
+)
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
-from azure.ai.ml.entities import Component, CommandComponent
-from azure.ai.ml.constants import AzureMLResourceType, PROVIDER_RESOURCE_ID_WITH_VERSION
+from azure.ai.ml.entities import CommandComponent, Component
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.paging import ItemPaged
 
-from ..unittests.test_component_schema import load_component_entity_from_rest_json
 from .._util import _COMPONENT_TIMEOUT_SECOND
+from ..unittests.test_component_schema import load_component_entity_from_rest_json
+
 
 from devtools_testutils import AzureRecordedTestCase, set_default_function_settings, add_header_string_sanitizer, add_body_key_sanitizer
-
-
-def add_sanitizings_for_component_test() -> None:
-    fake_key = "this is fake key"
-    b64_key = base64.b64encode(fake_key.encode('ascii'))
-    fake_datastore_key = str(b64_key, 'ascii')
-    add_header_string_sanitizer(key="x-ms-meta-name", target=".*", value="000000000000000000000")
-    add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
 
 
 def create_component(
@@ -335,8 +330,6 @@ class TestComponent(AzureRecordedTestCase):
     def test_component_create_twice_same_code_arm_id(
         self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
-        set_default_function_settings()
-        add_sanitizings_for_component_test()
         component_name = randstr("component_name")
         # create new component to prevent the issue when same component code got created at the same time
         component_path = tmp_path / "component.yml"
@@ -698,9 +691,76 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         test_component = next(iter(components), None)
         assert isinstance(test_component, Component)
 
-    @pytest.mark.skip("Skip pipeline component register for not ready.")
-    def test_simple_pipeline_component_create(self, client: MLClient) -> None:
+    def test_simple_pipeline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
-        component: PipelineComponent = load_component(source=component_path)
-        rest_pipeline_component = client.components.create_or_update(component)
+        rest_pipeline_component = create_component(
+            client,
+            component_name=randstr("component_name"),
+            path=component_path,
+        )
         assert rest_pipeline_component is not None
+        component_dict = pydash.omit(
+            dict(rest_pipeline_component._to_dict()),
+            "name",
+            "creation_context",
+            # jobs not returned now
+            "jobs",
+            "id",
+        )
+        expected_dict = {
+            "description": "This is the basic pipeline component",
+            "tags": {"tag": "tagvalue", "owner": "sdkteam"},
+            "version": "1",
+            "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
+            "display_name": "Hello World Pipeline Component",
+            "is_deterministic": True,
+            "inputs": {
+                "component_in_path": {"type": "uri_folder", "description": "A path"},
+                "component_in_number": {
+                    "type": "number",
+                    "optional": True,
+                    "default": "10.99",
+                    "description": "A number",
+                },
+            },
+            "outputs": {},
+            "type": "pipeline",
+        }
+        assert component_dict == expected_dict
+
+    def test_helloworld_nested_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
+        rest_pipeline_component = create_component(
+            client,
+            component_name=randstr("component_name"),
+            path=component_path,
+        )
+        assert rest_pipeline_component is not None
+        component_dict = pydash.omit(
+            dict(rest_pipeline_component._to_dict()),
+            "name",
+            "creation_context",
+            # jobs not returned now
+            "jobs",
+            "id",
+        )
+        expected_dict = {
+            "description": "This is the basic pipeline component",
+            "tags": {"tag": "tagvalue", "owner": "sdkteam"},
+            "version": "1",
+            "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
+            "display_name": "Hello World Pipeline Component",
+            "is_deterministic": True,
+            "inputs": {
+                "component_in_path": {"type": "uri_folder", "description": "A path for pipeline component"},
+                "component_in_number": {
+                    "type": "number",
+                    "optional": True,
+                    "default": "10.99",
+                    "description": "A number for pipeline component",
+                },
+            },
+            "outputs": {"nested_output": {"type": "uri_folder"}, "nested_output2": {"type": "uri_folder"}},
+            "type": "pipeline",
+        }
+        assert component_dict == expected_dict

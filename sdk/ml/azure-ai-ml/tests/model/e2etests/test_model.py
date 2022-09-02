@@ -1,18 +1,19 @@
+import os
 import re
+import uuid
 from pathlib import Path
+from time import sleep
 from typing import Callable
 from unittest.mock import patch
+
 import pytest
-import uuid
 from six import Iterator
 
 from azure.ai.ml import MLClient, load_model
-from azure.core.paging import ItemPaged
-from azure.ai.ml.entities._assets import Model
-from azure.ai.ml.constants import LONG_URI_REGEX_FORMAT
-from time import sleep
-
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
+from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
+from azure.ai.ml.entities._assets import Model
+from azure.core.paging import ItemPaged
 
 from devtools_testutils import AzureRecordedTestCase
 
@@ -141,3 +142,47 @@ class TestModel(AzureRecordedTestCase):
         assert name not in get_model_list()
         client.models.restore(name=name)
         assert name in get_model_list()
+
+    def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
+        model_path = Path("./tests/test_configs/model/model_full.yml")
+        model_name = randstr("model_name")
+        model_version = "2"
+
+        model_entity = load_model(model_path)
+        model_entity.name = model_name
+        model_entity.version = model_version
+        model = registry_client.models.create_or_update(model_entity)
+        assert model.name == model_name
+        assert model.version == model_version
+        assert model.description == "this is my test model"
+        assert model.type == "mlflow_model"
+
+        model_get = registry_client.models.get(name=model_name, version=model_version)
+        assert model == model_get
+        assert model_get.name == model_name
+        assert model_get.version == model_version
+        assert model_get.description == "this is my test model"
+        assert model_get.type == "mlflow_model"
+
+        registry_client.models.download(name=model_name, version=model_version, download_path="downloaded")
+        wd = os.path.join(os.getcwd(), f"downloaded/{model_name}")
+        assert os.path.exists(wd)
+        assert os.path.exists(f"{wd}/lightgbm_mlflow_model/MLmodel")
+
+    def test_list_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
+        model_path = Path("./tests/test_configs/model/model_full.yml")
+        model_name = randstr("model_name")
+        model_version = "2"
+
+        model_entity = load_model(model_path)
+        model_entity.name = model_name
+        model_entity.version = model_version
+        model = registry_client.models.create_or_update(model_entity)
+        assert model.name == model_name
+        assert model.version == model_version
+        assert model.description == "this is my test model"
+        assert model.type == "mlflow_model"
+
+        model_list = registry_client.models.list()
+        model_list = [m.name for m in model_list if m is not None]
+        assert model.name in model_list

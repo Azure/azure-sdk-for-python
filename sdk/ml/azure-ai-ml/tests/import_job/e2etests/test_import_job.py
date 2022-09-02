@@ -1,23 +1,24 @@
 import os
 import time
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Callable
 
-import pytest
 import mock
-from azure.ai.ml import MLClient
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
-from azure.ai.ml.entities._builders.import_node import Import
-from azure.ai.ml.entities._job.import_job import ImportJob, DatabaseImportSource
-from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
-from azure.ai.ml.constants import AssetTypes, JobType, AZUREML_PRIVATE_FEATURES_ENV_VAR
+import pytest
 from mock import patch
 
-from tempfile import TemporaryDirectory
-from pathlib import Path
-from azure.ai.ml import load_job, load_component, dsl, Output
+from azure.ai.ml import MLClient, Output, dsl, load_component, load_job
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AssetTypes
+from azure.ai.ml.entities._builders.import_node import Import
+from azure.ai.ml.entities._job.import_job import DatabaseImportSource, ImportJob
+from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
+from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+
 
 from devtools_testutils import AzureRecordedTestCase
 from pytest_mock import MockFixture
@@ -32,6 +33,7 @@ def import_job_enabled(mocker: MockFixture):
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash", "mock_component_hash")
 class TestImportJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
+    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
     def test_import_job_submit_cancel(self, client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
 
@@ -84,12 +86,6 @@ class TestImportJob(AzureRecordedTestCase):
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
 
         pipeline: PipelineJob = load_job(path="./tests/test_configs/import_job/import_pipeline_test.yml")
-        self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
-
-    @pytest.mark.e2etest
-    def test_import_pipeline_component_submit_cancel(self, client: MLClient) -> None:
-
-        pipeline: PipelineJob = load_job(path="./tests/test_configs/import_job/import_pipeline_component_test.yml")
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
 
     @pytest.mark.e2etest

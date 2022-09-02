@@ -1,27 +1,24 @@
 import time
+from pathlib import Path
+from time import sleep
 from typing import Callable
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml._azure_environments import _resource_to_scopes, _get_base_url_from_metadata
-from azure.ai.ml.entities._assets._artifacts.data import Data
+
+from devtools_testutils import AzureRecordedTestCase, is_live
 import jwt
-from azure.ai.ml.constants import TID_FMT, LOCAL_COMPUTE_TARGET, COMMON_RUNTIME_ENV_VAR
+import pytest
+
+from azure.ai.ml import AmlToken, Input, MLClient, command, load_environment, load_job
+from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
+from azure.ai.ml._ml_exceptions import ValidationException
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ListViewType
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml.constants._common import COMMON_RUNTIME_ENV_VAR, LOCAL_COMPUTE_TARGET, TID_FMT, AssetTypes
+from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.distribution import MpiDistribution
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml import command, load_environment
-import pytest
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
-
-
-from azure.ai.ml import AmlToken, MLClient, Input, load_job
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._ml_exceptions import ValidationException
-
-from time import sleep
-from pathlib import Path
-from devtools_testutils import AzureRecordedTestCase, is_live
+from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 
 # These params are logged in ..\test_configs\python\simple_train.py. test_command_job_with_params asserts these parameters are
 # logged in the training script, so any changes to parameter logging in simple_train.py must preserve this logging or change it both
@@ -394,6 +391,17 @@ class TestCommandJob(AzureRecordedTestCase):
         with pytest.raises(Exception) as e:
             job = client.jobs.create_or_update(job=job)
             assert f"The datastore {invalid_datastore_name} could not be found in this workspace" in e
+
+    @pytest.mark.e2etest
+    def test_command_job_with_inputs_with_datastore_param(self, randstr: Callable[[str], str], client: MLClient) -> None:
+        job_name = randstr("job_name")
+        params_override = [{"name": job_name}, {"inputs.test1.datastore": "workspaceblobstore"}]
+
+        job: CommandJob = load_job(
+            source="./tests/test_configs/command_job/command_job_relative_inputs_test.yml",
+            params_override=params_override,
+        )
+        job = client.jobs.create_or_update(job=job)
 
 
 def check_tid_in_url(client: MLClient, job: Job) -> None:

@@ -13,5 +13,6 @@ conf:
   spark.executor.cores: 2
   spark.executor.memory: 2g
   spark.executor.instances: 1
+  spark.dynamicAllocation.enabled: True
   spark.dynamicAllocation.minExecutors: 1
   spark.dynamicAllocation.maxExecutors: 5

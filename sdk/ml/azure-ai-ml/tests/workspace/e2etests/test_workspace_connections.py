@@ -1,12 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import pytest
-from azure.ai.ml import MLClient
 from typing import Callable
-from azure.ai.ml.entities import WorkspaceConnection
+
+import pytest
+
+from azure.ai.ml import MLClient, load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType, ConnectionCategory
-from azure.ai.ml import load_workspace_connection
+from azure.ai.ml.entities import WorkspaceConnection
 
 from devtools_testutils import AzureRecordedTestCase
 

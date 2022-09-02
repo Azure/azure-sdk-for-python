@@ -1,19 +1,21 @@
+from pathlib import Path
+from time import sleep
+from typing import Callable
+
 import pytest
 import yaml
-from pathlib import Path
-from typing import Callable
-from time import sleep
 
 from azure.ai.ml import MLClient, load_data
-from azure.core.paging import ItemPaged
-from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
+from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
+from azure.core.paging import ItemPaged
+
 
 from devtools_testutils import AzureRecordedTestCase
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
-class TestData:
+class TestData(AzureRecordedTestCase):
     def test_data_upload_file(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         f = tmp_path / "data_local.yaml"
         data_path = tmp_path / "sample1.csv"

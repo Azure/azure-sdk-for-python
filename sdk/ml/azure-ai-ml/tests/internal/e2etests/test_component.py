@@ -1,13 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import pydash
-import pytest
+import json
 from typing import Callable, Dict, List
 
+import pydash
+import pytest
+from tests.internal._utils import PARAMETERS_TO_TEST
+
 from azure.ai.ml import MLClient, load_component
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 from devtools_testutils import AzureRecordedTestCase
 
@@ -26,7 +27,7 @@ def create_component(
         params_override += default_param_override
 
     command_component = load_component(
-        path=path,
+        source=path,
         params_override=params_override,
     )
     return client.components.create_or_update(command_component, is_anonymous=is_anonymous)
@@ -44,41 +45,6 @@ def load_registered_component(
     return pydash.omit(component_rest_object.properties.component_spec, *omit_fields)
 
 
-def _slim_loaded_dict_to_compare(loaded_dict: dict, yaml_dict: dict) -> None:
-    """Server returns complete component spec, which may contain more fields than yaml."""
-    keys_to_del = []
-    for key in loaded_dict:
-        if key not in yaml_dict:
-            keys_to_del.append(key)
-        elif isinstance(loaded_dict[key], dict) and isinstance(yaml_dict[key], dict):
-            _slim_loaded_dict_to_compare(loaded_dict[key], yaml_dict[key])
-
-    for key in keys_to_del:
-        del loaded_dict[key]
-
-    if "inputs" in loaded_dict:
-        for input_name, input_obj in loaded_dict["inputs"].items():
-            yaml_input = yaml_dict["inputs"][input_name]
-            # remote optional will be dropped if it is False
-            if "optional" in yaml_input and "optional" not in input_obj:
-                input_obj["optional"] = False
-            # remote default will always be a string, so convert & compare separately
-            if "default" in yaml_input:
-                if isinstance(yaml_input["default"], float):
-                    input_obj["default"] = float(input_obj["default"])
-                elif isinstance(yaml_input["default"], bool):
-                    if input_obj["default"].lower() == "true":
-                        input_obj["default"] = True
-                    elif input_obj["default"].lower() == "false":
-                        input_obj["default"] = False
-                elif isinstance(yaml_input["default"], int):
-                    input_obj["default"] = int(input_obj["default"])
-            if "type" in yaml_input and yaml_input["type"] == "enum":
-                input_obj["type"] = input_obj["type"].lower()
-                # remote enum will be a list of strings, so convert & compare separately
-                yaml_input["enum"] = list(map(str, yaml_input["enum"]))
-
-
 @pytest.mark.usefixtures(
     "recorded_test",
     "enable_internal_components",
@@ -89,30 +55,14 @@ def _slim_loaded_dict_to_compare(loaded_dict: dict, yaml_dict: dict) -> None:
 @pytest.mark.e2etest
 class TestComponent(AzureRecordedTestCase):
     @pytest.mark.parametrize(
-        "yaml_path,with_code",
-        [
-            ("./tests/test_configs/internal/ls_command_component.yaml", True),  # Command
-            ("./tests/test_configs/internal/hemera-component/component.yaml", True),  # Hemera
-            ("./tests/test_configs/internal/hdi-component/component_spec.yaml", True),  # HDInsight
-            (
-                "./tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
-                True,  # Parallel component doesn't have code?
-            ),
-            ("./tests/test_configs/internal/scope-component/component_spec.yaml", True),  # Scope
-            ("./tests/test_configs/internal/data-transfer-component/component_spec.yaml", True),  # Data Transfer
-            ("./tests/test_configs/internal/starlite-component/component_spec.yaml", True),  # Starlite
-        ],
+        "yaml_path",
+        list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
     )
-    def test_component_create(
-        self, client: MLClient, randstr: Callable[[str], str], yaml_path: str, with_code: bool
-    ) -> None:
-        component_name = randstr("component_name")
+    def test_component_create(self, client: MLClient, randstr: Callable[[], str], yaml_path: str) -> None:
+        component_name = randstr()
         component_resource = create_component(client, component_name, path=yaml_path)
         assert component_resource.name == component_name
-        if with_code:
-            assert component_resource.code
-        else:
-            assert not component_resource.code
+        assert component_resource.code
         assert component_resource.creation_context
 
         component = client.components.get(component_name, component_resource.version)
@@ -120,63 +70,28 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.creation_context
 
     @pytest.mark.parametrize(
-        "yaml_path,omit_fields",
-        [
-            (
-                # Command Component
-                "./tests/test_configs/internal/ls_command_component.yaml",
-                ["id", "creation_context", "code"],
-            ),
-            (
-                "./tests/test_configs/internal/hemera-component/component.yaml",  # Hemera
-                [
-                    "id",
-                    "creation_context",
-                    # TODO: 1871902 is_resource will be lost after load_from_rest, but is correct in creation
-                    "inputs.InitialModelDir.is_resource",
-                    "inputs.ValidationDataDir.is_resource",
-                    "inputs.TrainingDataDir.is_resource",
-                ],
-            ),
-            (
-                "./tests/test_configs/internal/hdi-component/component_spec.yaml",  # HDInsight
-                ["id", "creation_context"],
-            ),
-            (
-                "./tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
-                ["id", "creation_context"],
-            ),
-            (
-                "./tests/test_configs/internal/scope-component/component_spec.yaml",  # Scope
-                ["id", "creation_context", "code"],
-            ),
-            (
-                # Data Transfer Component
-                "./tests/test_configs/internal/data-transfer-component/component_spec.yaml",
-                ["id", "creation_context", "code"],
-            ),
-            (
-                "./tests/test_configs/internal/starlite-component/component_spec.yaml",  # Starlite
-                ["id", "creation_context", "code"],
-            ),
-        ],
+        "yaml_path",
+        list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
     )
     def test_component_load(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
         yaml_path: str,
-        omit_fields: List[str],
     ) -> None:
-        yaml_dict = dict(**load_yaml(yaml_path))
+        omit_fields = ["id", "creation_context", "code"]
         component_name = randstr("component_name")
+
         component_resource = create_component(client, component_name, path=yaml_path)
         loaded_dict = load_registered_component(client, component_name, component_resource.version, omit_fields)
-        yaml_dict["type"] = yaml_dict["type"].rsplit("@", 1)[0]
-        _slim_loaded_dict_to_compare(loaded_dict, yaml_dict)
-        yaml_dict["name"] = component_name
-        # TODO: check if loaded environment is expected to be an ordered dict
-        assert loaded_dict == pydash.omit(convert_ordered_dict_to_dict(yaml_dict), *omit_fields)
+
+        json_path = yaml_path.rsplit(".", 1)[0] + ".loaded_from_rest.json"
+        with open(json_path, "r") as f:
+            expected_dict = json.load(f)
+            expected_dict["name"] = component_name
+
+            # TODO: check if loaded environment is expected to be an ordered dict
+            assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
 
     @pytest.mark.skip(reason="Target component is not in target workspace")
     def test_load_registered_internal_scope_component(self, client: MLClient):

@@ -1,19 +1,20 @@
-from typing import Tuple
-import pytest
 import os
-import uuid
-import time
-from pathlib import Path, PurePath
 import tempfile
+import time
+import uuid
+from pathlib import Path, PurePath
+from typing import Tuple
+
+import pytest
 
 from azure.ai.ml import MLClient
-from azure.ai.ml._utils._storage_utils import get_storage_client
+from azure.ai.ml._artifacts._artifact_utilities import _update_metadata
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
-from azure.ai.ml._utils._asset_utils import get_object_hash, _parse_name_version
 from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
-from azure.ai.ml._artifacts._artifact_utilities import _update_metadata
+from azure.ai.ml._utils._asset_utils import _parse_name_version, get_object_hash
+from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._datastore.credentials import NoneCredentials
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 11.3.0b9 (Unreleased)
+## 11.3.0 (Unreleased)
 
 ### Features Added
 - Added support for other national clouds.

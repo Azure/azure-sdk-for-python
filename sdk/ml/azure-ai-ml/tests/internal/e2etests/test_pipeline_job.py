@@ -1,74 +1,183 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import time
-from typing import Callable
+import json
 from pathlib import Path
-
-import pydash
-import pytest
-from azure.ai.ml import MLClient, load_component, Output
-from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import PipelineJob
-from tests.internal._utils import PARAMETERS_TO_TEST, set_run_settings
+from typing import Callable
 
 from devtools_testutils import AzureRecordedTestCase
+import pydash
+import pytest
+from tests.internal._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
+
+from azure.ai.ml import Input, MLClient, Output, load_component
+from azure.ai.ml._internal.entities.component import InternalComponent
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.entities import Data, PipelineJob
+from azure.core.exceptions import HttpResponseError
+
+
+@pytest.fixture
+def create_internal_sample_dependent_datasets(client: MLClient):
+    for dataset_name in [
+        # folder
+        "mltable_mnist_model",
+        "mltable_mnist",
+        # file
+        "mltable_imdb_reviews_train",
+        # adls folders
+        "mltable_Adls_Tsv",
+        "mltable_aml_component_datatransfer_folder",
+        "mltable_reghits",
+        "mltable_starlite_sample_output",
+    ]:
+        try:
+            client.data.get(name=dataset_name, version=DATA_VERSION)
+        except HttpResponseError:
+            client.data.create_or_update(
+                Data(
+                    name=dataset_name,
+                    version=DATA_VERSION,
+                    type=AssetTypes.MLTABLE,  # should be MLTable
+                    skip_validation=True,
+                    path="./tests/test_configs/dataset/mnist-data",
+                )
+            )
 
 
 @pytest.mark.usefixtures(
-    "enable_internal_components",
     "recorded_test",
     "mock_code_hash",
     "mock_asset_name",
-    "mock_component_hash"
+    "mock_component_hash",
+    "enable_pipeline_private_preview_features",
+    "create_internal_sample_dependent_dataset",
+    "enable_internal_components"
 )
 @pytest.mark.e2etest
 class TestPipelineJob(AzureRecordedTestCase):
-    @pytest.mark.parametrize(
-        "yaml_path,inputs,runsettings_dict",
-        PARAMETERS_TO_TEST,
-    )
-    def test_anonymous_internal_component_in_pipeline(self, client: MLClient, yaml_path, inputs, runsettings_dict):
-        # curated env with name & version
-        node_func: InternalComponent = load_component(yaml_path)
-
+    @classmethod
+    def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client):
         @pipeline()
         def pipeline_func():
             node = node_func(**inputs)
             set_run_settings(node, runsettings_dict)
 
         dsl_pipeline: PipelineJob = pipeline_func()
-        created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
+        set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
+        result = dsl_pipeline._validate()
+        assert result._to_dict() == {"result": "Succeeded"}
 
-        node_dict = created_pipeline.jobs["node"]._to_dict()
-        for dot_key, value in runsettings_dict.items():
-            assert (
-                pydash.get(node_dict, dot_key) == value
-            ), f"{dot_key} is expected to be {value} but got {pydash.get(node_dict, dot_key)}"
-        client.jobs.cancel(created_pipeline.name)
+        created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
+        try:
+            client.jobs.cancel(created_pipeline.name)
+        except HttpResponseError as ex:
+            assert "CancelPipelineRunInTerminalStatus" in str(ex)
+
+        node_rest_dict = created_pipeline._to_rest_object().properties.jobs["node"]
+        del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
+        mismatched_runsettings = {}
+        dot_key_map = {"compute": "computeId"}
+        for dot_key, expected_value in runsettings_dict.items():
+            if dot_key in dot_key_map:
+                dot_key = dot_key_map[dot_key]
+
+            # hack: timeout will be transformed into str
+            if dot_key == "limits.timeout":
+                expected_value = "PT5M"
+            value = pydash.get(node_rest_dict, dot_key)
+            if value != expected_value:
+                mismatched_runsettings[dot_key] = (value, expected_value)
+        assert not mismatched_runsettings, "Current value:\n{}\nMismatched fields:\n{}".format(
+            json.dumps(node_rest_dict, indent=2), json.dumps(mismatched_runsettings, indent=2)
+        )
+
+    @pytest.mark.parametrize(
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
+    )
+    def test_anonymous_internal_component_in_pipeline(
+        self, client: MLClient, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict
+    ):
+        # curated env with name & version
+        node_func: InternalComponent = load_component(yaml_path)
+
+        self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
 
     @pytest.mark.skip(reason="TODO: can't find newly registered component?")
     @pytest.mark.parametrize(
-        "yaml_path,inputs,runsettings_dict",
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
     def test_created_internal_component_in_pipeline(
-        self, client: MLClient, randstr: Callable[[str], str], yaml_path, inputs, runsettings_dict
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        yaml_path,
+        inputs,
+        runsettings_dict,
+        pipeline_runsettings_dict,
     ):
-        component_to_register = load_component(yaml_path, params_override=[{"name": randstr("name")}])
-        component_name = randstr("component_name")
+        component_to_register = load_component(yaml_path, params_override=[{"name": randstr()}])
+        component_name = randstr()
         component_resource = client.components.create_or_update(component_to_register)
-        # hack to wait till the component is registered
-        time.sleep(60)
+
         created_component = client.components.get(component_name, component_resource.version)
+
+        self._test_component(created_component, inputs, runsettings_dict, pipeline_runsettings_dict, client)
+
+    @pytest.mark.parametrize(
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
+    )
+    def test_data_as_pipeline_inputs(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        yaml_path,
+        inputs,
+        runsettings_dict,
+        pipeline_runsettings_dict,
+    ):
+        # curated env with name & version
+        node_func: InternalComponent = load_component(yaml_path)
+        for input_name, input_obj in inputs.items():
+            if isinstance(input_obj, Input):
+                data_name = input_obj.path.split("@")[0]
+                inputs[input_name] = client.data.get(data_name, version=DATA_VERSION)
+
+        self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
+
+    @pytest.mark.skip(
+        reason="Skip for pipeline component compute bug: https://msdata.visualstudio.com/Vienna/_workitems/edit/1920464"
+    )
+    @pytest.mark.parametrize(
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
+    )
+    def test_internal_in_pipeline_component(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        yaml_path,
+        inputs,
+        runsettings_dict,
+        pipeline_runsettings_dict,
+    ):
+        component_func = load_component(yaml_path, params_override=[{"name": randstr()}])
+
+        @pipeline()
+        def sub_pipeline_func():
+            node = component_func(**inputs)
+            set_run_settings(node, runsettings_dict)
 
         @pipeline()
         def pipeline_func():
-            node = created_component(**inputs)
-            node.runsettings.configure(**runsettings_dict)
+            sub_pipeline_func()
 
         dsl_pipeline: PipelineJob = pipeline_func()
+        set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
         created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
         client.jobs.cancel(created_pipeline.name)
 
@@ -104,3 +213,4 @@ class TestPipelineJob(AzureRecordedTestCase):
         pipeline_job = pipeline_with_command_components(tsv_file="out.tsv", content="1\t2\t3\t4")
 
         pipeline_job = client.jobs.create_or_update(pipeline_job, experiment_name="v15_v2_interop")
+        client.jobs.cancel(pipeline_job.name)

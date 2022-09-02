@@ -1,31 +1,29 @@
 import time
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Callable
-from devtools_testutils.azure_recorded_testcase import AzureRecordedTestCase
 
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
-from azure.ai.ml import MLClient
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+
+from azure.ai.ml import MLClient, load_job
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
-
-from tempfile import TemporaryDirectory
-from pathlib import Path
-from azure.ai.ml import load_job
-from devtools_testutils import AzureRecordedTestCase, is_live
+from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 
 
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name")
 class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    def test_sweep_job_submit(self, randstr: Callable[[str], str], client: MLClient) -> None:
+    def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
 
-        job_name = randstr("job_name")
+        job_name = randstr()
 
         params_override = [{"name": job_name}]
         sweep_job = load_job(

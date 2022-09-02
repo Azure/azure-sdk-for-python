@@ -1,10 +1,12 @@
-from azure.ai.ml.entities._workspace.workspace import Workspace
-import pytest
-from azure.ai.ml import MLClient, load_workspace
 from typing import Callable
-from azure.core.paging import ItemPaged
-from azure.ai.ml.constants import PublicNetworkAccess
+
+import pytest
 from test_utilities.utils import verify_entity_load_and_dump
+
+from azure.ai.ml import MLClient, load_workspace
+from azure.ai.ml.constants._common import PublicNetworkAccess
+from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.core.paging import ItemPaged
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 

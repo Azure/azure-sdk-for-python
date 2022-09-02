@@ -1,5 +1,6 @@
-from pyspark.sql import SparkSession
 import argparse
+
+from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.getOrCreate()
 

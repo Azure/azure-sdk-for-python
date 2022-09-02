@@ -1,6 +1,7 @@
 import pytest
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml.entities._job.automl.tabular import ColumnTransformer, TabularFeaturizationSettings
@@ -30,11 +31,11 @@ class TestFeaturizationSettings:
 
     def _get_rest_obj(self) -> RestTabularFeaturizationSettings:
         tp = {
-            "imputer": [
+            "Imputer": [
                 RestColumnTransformer(fields=["col3", "col4"], parameters={"strategy": "constant", "fill_value": 0.0}),
                 RestColumnTransformer(fields=["col5"], parameters={"strategy": "median"}),
             ],
-            "hash_one_hot_encoder": [
+            "HashOneHotEncoder": [
                 RestColumnTransformer(fields=["col6"], parameters={"number_of_bits": 3}),
             ],
         }
@@ -74,8 +75,8 @@ class TestFeaturizationSettings:
             },
             dataset_language="English",
             transformer_params={
-                "imputer": [ct1, ct2],
-                "hash_one_hot_encoder": [ct3],
+                "Imputer": [ct1, ct2],
+                "HashOneHotEncoder": [ct3],
             },
             mode="custom",
             enable_dnn_featurization=True,

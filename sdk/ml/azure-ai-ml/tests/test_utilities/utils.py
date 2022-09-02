@@ -1,18 +1,21 @@
-import os
 import copy
+import os
+import signal
 import time
-import pydash
+from io import StringIO
 from typing import Dict
-import urllib3
 from zipfile import ZipFile
 from io import StringIO
 
+import pydash
+import urllib3
+
+from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml import load_job, MLClient
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 
-
+_PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
 DEFAULT_TASK_TIMEOUT = 30 * 60  # 30mins
 THREAD_WAIT_TIME_BEFORE_POLL = 60  # 1min
 

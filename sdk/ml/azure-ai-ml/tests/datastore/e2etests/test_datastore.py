@@ -1,12 +1,14 @@
 from typing import Callable, Tuple
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
-from azure.ai.ml.entities._datastore.datastore import Datastore
+
 import pytest
+
 from azure.ai.ml import MLClient, load_datastore
 from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
-from azure.mgmt.storage import StorageManagementClient
+from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.core.paging import ItemPaged
+from azure.mgmt.storage import StorageManagementClient
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 
@@ -64,6 +66,7 @@ def b64read(p):
 
 
 @pytest.mark.e2etest
+@pytest.mark.usefixtures("recorded_test")
 class TestDatastore(AzureRecordedTestCase):
     @pytest.mark.skip(reason="Disable until preview release")
     def test_hdfs_pw(

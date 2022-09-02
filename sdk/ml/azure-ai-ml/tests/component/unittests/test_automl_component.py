@@ -6,8 +6,9 @@ import pytest
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities._component.automl_component import AutoMLComponent
-from .test_component_schema import load_component_entity_from_yaml, load_component_entity_from_rest_json
+
 from .._util import _COMPONENT_TIMEOUT_SECOND
+from .test_component_schema import load_component_entity_from_rest_json, load_component_entity_from_yaml
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
