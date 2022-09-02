@@ -17,7 +17,7 @@ class AzureAppConfigurationProvider:
     def __init__(self):
         self._dict = {}
         self._trim_prefixes = []
-        self.client = None
+        self._client = None
 
     @classmethod
     def load(cls, connection_string=None, endpoint=None, credential=None, **kwargs):
@@ -34,8 +34,8 @@ class AzureAppConfigurationProvider:
 
         key_vault_options = kwargs.pop("key_vault_options", None)
 
-        provider._client = provider.buildprovider(
-            connection_string, endpoint, credential, key_vault_options)
+        provider.buildprovider(connection_string, endpoint,
+                               credential, key_vault_options)
 
         selects = kwargs.pop("selects", {SettingSelector("*", "\0")})
         provider._trim_prefixes = kwargs.pop("trimmed_key_prefixes", [])
@@ -78,9 +78,11 @@ class AzureAppConfigurationProvider:
         useragent = USER_AGENT
 
         if connection_string is not None:
-            return AzureAppConfigurationClient.from_connection_string(
+            self._client = AzureAppConfigurationClient.from_connection_string(
                 connection_string, user_agent=useragent, headers=headers)
-        return AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
+            return
+        self._client = AzureAppConfigurationClient(
+            endpoint, credential, user_agent=useragent, headers=headers)
 
     def resolve_keyvault_references(self, config, key_vault_options, secret_clients):
         if key_vault_options is None:
