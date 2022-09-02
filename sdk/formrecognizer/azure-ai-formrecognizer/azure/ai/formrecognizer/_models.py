@@ -1974,7 +1974,7 @@ class TextAppearance:
 class BoundingRegion:
     """The bounding region corresponding to a page.
 
-    :ivar Optional[Sequence[~azure.ai.formrecognizer.Point]] polygon:
+    :ivar Sequence[~azure.ai.formrecognizer.Point] polygon:
         A list of points representing the bounding polygon
         that outlines the document component. The points are listed in
         clockwise order relative to the document component orientation
