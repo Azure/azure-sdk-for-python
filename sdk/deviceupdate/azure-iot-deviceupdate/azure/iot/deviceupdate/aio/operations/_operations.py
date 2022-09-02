@@ -252,9 +252,7 @@ class DeviceUpdateOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _import_update_initial(  # pylint: disable=inconsistent-return-statements
-        self, update_to_import: Union[List[JSON], IO], **kwargs: Any
-    ) -> None:
+    async def _import_update_initial(self, update_to_import: Union[List[JSON], IO], **kwargs: Any) -> Optional[JSON]:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -262,7 +260,7 @@ class DeviceUpdateOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -292,20 +290,32 @@ class DeviceUpdateOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     async def begin_import_update(
         self, update_to_import: List[JSON], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
 
@@ -323,8 +333,8 @@ class DeviceUpdateOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -360,12 +370,77 @@ class DeviceUpdateOperations:
                         "friendlyName": "str"  # Optional. Friendly update name.
                     }
                 ]
+
+                # response body for status code(s): 200
+                response == {
+                    "compatibility": [
+                        {
+                            "str": "str"  # List of update compatibility information.
+                              Required.
+                        }
+                    ],
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was created. Required.
+                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was imported. Required.
+                    "manifestVersion": "str",  # Schema version of manifest used to import the
+                      update. Required.
+                    "updateId": {
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
+                    },
+                    "description": "str",  # Optional. Update description specified by creator.
+                    "etag": "str",  # Optional. Update ETag.
+                    "friendlyName": "str",  # Optional. Friendly update name specified by
+                      importer.
+                    "installedCriteria": "str",  # Optional. String interpreted by Device Update
+                      client to determine if the update is installed on the device. Deprecated in
+                      latest import manifest schema.
+                    "instructions": {
+                        "steps": [
+                            {
+                                "description": "str",  # Optional. Step description.
+                                "files": [
+                                    "str"  # Optional. Collection of file names
+                                      to be passed to handler during execution. Required if step type
+                                      is inline.
+                                ],
+                                "handler": "str",  # Optional. Identity of handler
+                                  that will execute this step. Required if step type is inline.
+                                "handlerProperties": {},  # Optional. Parameters to
+                                  be passed to handler during execution.
+                                "type": "inline",  # Optional. Default value is
+                                  "inline". Step type. Known values are: "Inline" and "Reference".
+                                "updateId": {
+                                    "name": "str",  # Update name. Required.
+                                    "provider": "str",  # Update provider.
+                                      Required.
+                                    "version": "str"  # Update version. Required.
+                                }
+                            }
+                        ]
+                    },
+                    "isDeployable": True,  # Optional. Default value is True. Whether the update
+                      can be deployed to a device on its own.
+                    "referencedBy": [
+                        {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    ],
+                    "scanResult": "str",  # Optional. Update aggregate scan result (calculated
+                      from payload file scan results).
+                    "updateType": "str"  # Optional. Update type. Deprecated in latest import
+                      manifest schema.
+                }
         """
 
     @overload
     async def begin_import_update(
         self, update_to_import: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[JSON]:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
 
@@ -383,13 +458,81 @@ class DeviceUpdateOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "compatibility": [
+                        {
+                            "str": "str"  # List of update compatibility information.
+                              Required.
+                        }
+                    ],
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was created. Required.
+                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was imported. Required.
+                    "manifestVersion": "str",  # Schema version of manifest used to import the
+                      update. Required.
+                    "updateId": {
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
+                    },
+                    "description": "str",  # Optional. Update description specified by creator.
+                    "etag": "str",  # Optional. Update ETag.
+                    "friendlyName": "str",  # Optional. Friendly update name specified by
+                      importer.
+                    "installedCriteria": "str",  # Optional. String interpreted by Device Update
+                      client to determine if the update is installed on the device. Deprecated in
+                      latest import manifest schema.
+                    "instructions": {
+                        "steps": [
+                            {
+                                "description": "str",  # Optional. Step description.
+                                "files": [
+                                    "str"  # Optional. Collection of file names
+                                      to be passed to handler during execution. Required if step type
+                                      is inline.
+                                ],
+                                "handler": "str",  # Optional. Identity of handler
+                                  that will execute this step. Required if step type is inline.
+                                "handlerProperties": {},  # Optional. Parameters to
+                                  be passed to handler during execution.
+                                "type": "inline",  # Optional. Default value is
+                                  "inline". Step type. Known values are: "Inline" and "Reference".
+                                "updateId": {
+                                    "name": "str",  # Update name. Required.
+                                    "provider": "str",  # Update provider.
+                                      Required.
+                                    "version": "str"  # Update version. Required.
+                                }
+                            }
+                        ]
+                    },
+                    "isDeployable": True,  # Optional. Default value is True. Whether the update
+                      can be deployed to a device on its own.
+                    "referencedBy": [
+                        {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    ],
+                    "scanResult": "str",  # Optional. Update aggregate scan result (calculated
+                      from payload file scan results).
+                    "updateType": "str"  # Optional. Update type. Deprecated in latest import
+                      manifest schema.
+                }
         """
 
     @distributed_trace_async
-    async def begin_import_update(self, update_to_import: Union[List[JSON], IO], **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_import_update(self, update_to_import: Union[List[JSON], IO], **kwargs: Any) -> AsyncLROPoller[JSON]:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
 
@@ -407,15 +550,83 @@ class DeviceUpdateOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns JSON object
+        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "compatibility": [
+                        {
+                            "str": "str"  # List of update compatibility information.
+                              Required.
+                        }
+                    ],
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was created. Required.
+                    "importedDateTime": "2020-02-20 00:00:00",  # Date and time in UTC when the
+                      update was imported. Required.
+                    "manifestVersion": "str",  # Schema version of manifest used to import the
+                      update. Required.
+                    "updateId": {
+                        "name": "str",  # Update name. Required.
+                        "provider": "str",  # Update provider. Required.
+                        "version": "str"  # Update version. Required.
+                    },
+                    "description": "str",  # Optional. Update description specified by creator.
+                    "etag": "str",  # Optional. Update ETag.
+                    "friendlyName": "str",  # Optional. Friendly update name specified by
+                      importer.
+                    "installedCriteria": "str",  # Optional. String interpreted by Device Update
+                      client to determine if the update is installed on the device. Deprecated in
+                      latest import manifest schema.
+                    "instructions": {
+                        "steps": [
+                            {
+                                "description": "str",  # Optional. Step description.
+                                "files": [
+                                    "str"  # Optional. Collection of file names
+                                      to be passed to handler during execution. Required if step type
+                                      is inline.
+                                ],
+                                "handler": "str",  # Optional. Identity of handler
+                                  that will execute this step. Required if step type is inline.
+                                "handlerProperties": {},  # Optional. Parameters to
+                                  be passed to handler during execution.
+                                "type": "inline",  # Optional. Default value is
+                                  "inline". Step type. Known values are: "Inline" and "Reference".
+                                "updateId": {
+                                    "name": "str",  # Update name. Required.
+                                    "provider": "str",  # Update provider.
+                                      Required.
+                                    "version": "str"  # Update version. Required.
+                                }
+                            }
+                        ]
+                    },
+                    "isDeployable": True,  # Optional. Default value is True. Whether the update
+                      can be deployed to a device on its own.
+                    "referencedBy": [
+                        {
+                            "name": "str",  # Update name. Required.
+                            "provider": "str",  # Update provider. Required.
+                            "version": "str"  # Update version. Required.
+                        }
+                    ],
+                    "scanResult": "str",  # Optional. Update aggregate scan result (calculated
+                      from payload file scan results).
+                    "updateType": "str"  # Optional. Update type. Deprecated in latest import
+                      manifest schema.
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -430,9 +641,15 @@ class DeviceUpdateOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),

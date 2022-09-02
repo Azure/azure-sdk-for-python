@@ -62,6 +62,7 @@ try:
 
     response = client.device_update.begin_import_update(content)
     response.wait
+    print(response.result())
 
 except HttpResponseError as e:
     print('Failed to import update: {}'.format(e))
