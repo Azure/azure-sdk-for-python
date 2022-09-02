@@ -82,7 +82,7 @@ def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, posi
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
-        time.sleep(10)
+        time.sleep(30)
         assert on_event.event_position is not None
     thread.join()
     senders[0].send(EventData(expected_result))
@@ -97,7 +97,7 @@ def test_receive_with_event_position_sync(uamqp_transport, connstr_senders, posi
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
-        time.sleep(15)
+        time.sleep(30)
         assert on_event.event.body_as_str() == expected_result
 
     thread.join()
