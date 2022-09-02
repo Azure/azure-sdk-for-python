@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2022-08-22)
+## 1.0.0b2 (2022-09-02)
 
 ### Features Added
 
@@ -20,7 +20,7 @@
 
 ### Breaking Changes
 
-  - Client name is changed
+  - Client name is changed to `AgriFoodMgmtClient`
   - Removed operation FarmBeatsModelsOperations.update
 
 ## 1.0.0b1 (2021-06-09)
