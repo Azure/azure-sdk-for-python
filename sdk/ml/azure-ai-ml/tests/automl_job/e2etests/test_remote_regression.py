@@ -14,10 +14,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 
 @pytest.mark.automle2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="Datasets downloaded by test are too large to record reliably"
-)
+@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAutoMLRegression(AzureRecordedTestCase):
     def get_regression_task(
         self, dataset: Tuple[Input, str], experiment_name: str, add_validation: bool = False

@@ -13,6 +13,7 @@ from azure.core.paging import ItemPaged
 
 from devtools_testutils import AzureRecordedTestCase
 
+
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
 class TestData(AzureRecordedTestCase):

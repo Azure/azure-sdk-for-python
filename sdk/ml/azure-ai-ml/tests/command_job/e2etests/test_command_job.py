@@ -393,7 +393,9 @@ class TestCommandJob(AzureRecordedTestCase):
             assert f"The datastore {invalid_datastore_name} could not be found in this workspace" in e
 
     @pytest.mark.e2etest
-    def test_command_job_with_inputs_with_datastore_param(self, randstr: Callable[[str], str], client: MLClient) -> None:
+    def test_command_job_with_inputs_with_datastore_param(
+        self, randstr: Callable[[str], str], client: MLClient
+    ) -> None:
         job_name = randstr("job_name")
         params_override = [{"name": job_name}, {"inputs.test1.datastore": "workspaceblobstore"}]
 

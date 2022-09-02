@@ -130,7 +130,9 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
                 assert isinstance(credentials, EndpointAuthToken)
 
             if get_obj.auth_mode == KEY:
-                client.online_endpoints.regenerate_keys(name=mir_endpoint_name, key_type=EndpointKeyType.SECONDARY_KEY_TYPE)
+                client.online_endpoints.regenerate_keys(
+                    name=mir_endpoint_name, key_type=EndpointKeyType.SECONDARY_KEY_TYPE
+                )
                 updated_credentials = client.endpoints.list_keys(name=mir_endpoint_name)
                 assert credentials.secondary_key != updated_credentials.secondary_key
                 assert credentials.primary_key == updated_credentials.primary_key
@@ -174,7 +176,6 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=mir_endpoint_name, no_wait=True)
 
-
     @pytest.mark.skip("skip for now to run e2e in eastus2. will undo this once we go back to centraluseuap")
     @pytest.mark.e2etest
     def test_online_endpoint_submit(self, client: MLClient, location: str):
@@ -209,7 +210,6 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
         finally:
             client.endpoints.begin_delete(endpoint_type=ONLINE_ENDPOINT_TYPE, name=endpoint_name)
 
-
     @pytest.mark.skip(reason="TODO: 1166616 re-enable once we know why it keeps failing")
     @pytest.mark.e2etest
     def test_online_endpoint_k8s_empty_model_e2e(
@@ -223,7 +223,6 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
             client.endpoints.begin_create(endpoint=endpoint, no_wait=False)
 
         assert EMPTY_DIRECTORY_ERROR in str(e.value)
-
 
     @pytest.mark.skip(reason="TODO: disable the mir test until we figured out a way to run it")
     @pytest.mark.e2etest

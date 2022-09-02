@@ -53,7 +53,7 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "mock_component_hash",
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_dataset",
-    "enable_internal_components"
+    "enable_internal_components",
 )
 @pytest.mark.e2etest
 class TestPipelineJob(AzureRecordedTestCase):

@@ -161,7 +161,12 @@ class TestUpload(AzureRecordedTestCase):
         assert dir_asset_id1 == dir_asset_id2
 
     def test_artifact_blob_file_upload(
-        self, storage_account_name: str, storage_account_secret: str, artifact_path: str, uuid_name: str, variable_recorder
+        self,
+        storage_account_name: str,
+        storage_account_secret: str,
+        artifact_path: str,
+        uuid_name: str,
+        variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
         file_hash = variable_recorder.get_or_record("file_hash", get_object_hash(artifact_path))
@@ -186,7 +191,12 @@ class TestUpload(AzureRecordedTestCase):
         assert (name, str(version)) == (artifact_info["name"], artifact_info["version"])
 
     def test_artifact_blob_dir_upload_and_download(
-        self, storage_account_name: str, storage_account_secret: str, artifact_path_dir: str, uuid_name: str, variable_recorder
+        self,
+        storage_account_name: str,
+        storage_account_secret: str,
+        artifact_path_dir: str,
+        uuid_name: str,
+        variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
         dir_hash = variable_recorder.get_or_record("dir_hash", get_object_hash(artifact_path_dir))
@@ -270,7 +280,12 @@ class TestUpload(AzureRecordedTestCase):
 
     @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
     def test_artifact_fileshare_file_upload(
-        self, storage_account_name: str, storage_account_secret: str, artifact_path: str, uuid_name: str, variable_recorder
+        self,
+        storage_account_name: str,
+        storage_account_secret: str,
+        artifact_path: str,
+        uuid_name: str,
+        variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
         file_hash = variable_recorder.get_or_record("file_hash", get_object_hash(artifact_path))
@@ -296,7 +311,12 @@ class TestUpload(AzureRecordedTestCase):
 
     @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
     def test_arm_id_fileshare_dir_upload(
-        self, storage_account_name: str, storage_account_secret: str, artifact_path_dir: str, uuid_name: str, variable_recorder
+        self,
+        storage_account_name: str,
+        storage_account_secret: str,
+        artifact_path_dir: str,
+        uuid_name: str,
+        variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
         dir_hash = variable_recorder.get_or_record("dir_hash", get_object_hash(artifact_path_dir))

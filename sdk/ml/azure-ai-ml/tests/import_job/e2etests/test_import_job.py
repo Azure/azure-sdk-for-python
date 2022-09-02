@@ -23,6 +23,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 from devtools_testutils import AzureRecordedTestCase
 from pytest_mock import MockFixture
 
+
 @pytest.fixture(autouse=True)
 def import_job_enabled(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.import_job.is_private_preview_enabled", return_value=True)

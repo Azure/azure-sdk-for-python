@@ -247,7 +247,8 @@ class TestDatastore(AzureRecordedTestCase):
     def test_adls_gen2_store(
         self,
         client: MLClient,
-        adls_gen2_file: str, randstr: Callable[[str], str],
+        adls_gen2_file: str,
+        randstr: Callable[[str], str],
     ) -> None:
         random_name = randstr("random_name")
         internal_adls_gen2 = load_datastore(adls_gen2_file, client._operation_scope)

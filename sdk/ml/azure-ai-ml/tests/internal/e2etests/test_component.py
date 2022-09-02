@@ -46,11 +46,7 @@ def load_registered_component(
 
 
 @pytest.mark.usefixtures(
-    "recorded_test",
-    "enable_internal_components",
-    "mock_code_hash",
-    "mock_asset_name",
-    "mock_component_hash"
+    "recorded_test", "enable_internal_components", "mock_code_hash", "mock_asset_name", "mock_component_hash"
 )
 @pytest.mark.e2etest
 class TestComponent(AzureRecordedTestCase):

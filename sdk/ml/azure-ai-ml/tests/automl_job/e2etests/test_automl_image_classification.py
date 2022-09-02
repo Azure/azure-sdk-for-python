@@ -20,12 +20,10 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 
+
 @pytest.mark.automle2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="Datasets downloaded by test are too large to record reliably"
-)
+@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAutoMLImageClassification(AzureRecordedTestCase):
     def _create_jsonl_multiclass(self, client, train_path, val_path):
 

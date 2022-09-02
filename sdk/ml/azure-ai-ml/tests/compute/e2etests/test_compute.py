@@ -46,7 +46,9 @@ class TestCompute(AzureRecordedTestCase):
         assert isinstance(outcome, LROPoller)
 
     @pytest.mark.skip(reason="not enough capacity")
-    def test_compute_instance_create_and_delete(self, client: MLClient, rand_compute_name: Callable[[str], str]) -> None:
+    def test_compute_instance_create_and_delete(
+        self, client: MLClient, rand_compute_name: Callable[[str], str]
+    ) -> None:
         compute_name = rand_compute_name("compute_name")
         params_override = [{"name": compute_name}]
         compute = load_compute(
@@ -68,7 +70,9 @@ class TestCompute(AzureRecordedTestCase):
         # so this is a preferred approach to assert
         assert isinstance(outcome, LROPoller)
 
-    def test_compute_instance_stop_start_restart(self, client: MLClient, rand_compute_name: Callable[[str], str]) -> None:
+    def test_compute_instance_stop_start_restart(
+        self, client: MLClient, rand_compute_name: Callable[[str], str]
+    ) -> None:
         compute_name = rand_compute_name("compute_name")
         params_override = [{"name": compute_name}]
         compute = load_compute(

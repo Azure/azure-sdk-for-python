@@ -55,10 +55,11 @@ def assert_job_cancel(pipeline, client: MLClient):
 
 @pytest.fixture
 def generate_weekly_fixed_job_name(job_name: str, variable_recorder) -> str:
-    def create_or_record_weekly_fixed_job_name(job_name: str)
+    def create_or_record_weekly_fixed_job_name(job_name: str):
         """Add a week postfix to job name, make it a weekly fixed name."""
         c = datetime.utcnow().isocalendar()  # follow CI workspace generate rule
         return variable_recorder.get_or_record(job_name, f"{job_name}_{c[0]}W{c[1]}")
+
     return create_or_record_weekly_fixed_job_name
 
 
@@ -79,7 +80,7 @@ def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
     "mock_asset_name",
-    "mock_component_hash"
+    "mock_component_hash",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -210,7 +211,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         self.assert_component_is_anonymous(client, created_component_id)
         assert rest_job_sources == job_sources
 
-    def test_pipeline_job_with_inline_component_file_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_pipeline_job_with_inline_component_file_create(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ) -> None:
         # Create the component used in the job
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -732,7 +735,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
-    def test_pipeline_job_download(self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]) -> None:
+    def test_pipeline_job_download(
+        self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
+    ) -> None:
         job_name = "{}_{}".format(
             generate_weekly_fixed_job_name(job_name="helloworld_pipeline_job_quick_with_output"),
             "test_pipeline_job_download",
@@ -755,7 +760,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         else:
             print("Job is canceled, not execute downloaded artifacts assertion.")
 
-    def test_pipeline_job_child_run_download(self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]) -> None:
+    def test_pipeline_job_child_run_download(
+        self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
+    ) -> None:
         job_name = "{}_{}".format(
             generate_weekly_fixed_job_name(job_name="helloworld_pipeline_job_quick_with_output"),
             "test_pipeline_job_child_run_download",
@@ -946,7 +953,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         ],
     )
     def test_pipeline_job_with_data_binding_expression(
-        self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str, expected_error: Optional[Exception]
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+        pipeline_job_path: str,
+        expected_error: Optional[Exception],
     ):
         pipeline: PipelineJob = load_job(source=pipeline_job_path, params_override=[{"name": randstr("name")}])
         if expected_error is None:
@@ -1264,7 +1275,9 @@ class TestPipelineJob(AzureRecordedTestCase):
             ],
         }
 
-    def test_pipeline_job_with_automl_image_instance_segmentation(self, client: MLClient, randstr: Callable[[str], str]):
+    def test_pipeline_job_with_automl_image_instance_segmentation(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml"
         )
@@ -1446,7 +1459,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
     "mock_asset_name",
-    "mock_component_hash"
+    "mock_component_hash",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

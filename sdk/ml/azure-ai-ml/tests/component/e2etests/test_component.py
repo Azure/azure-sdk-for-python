@@ -29,7 +29,12 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
 
-from devtools_testutils import AzureRecordedTestCase, set_default_function_settings, add_header_string_sanitizer, add_body_key_sanitizer
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    set_default_function_settings,
+    add_header_string_sanitizer,
+    add_body_key_sanitizer,
+)
 
 
 def create_component(
@@ -87,7 +92,12 @@ def tensorflow_distribution():
 
 
 def assert_component_basic_workflow(
-    client: MLClient, randstr: Callable[[str], str], path: str, expected_dict: dict, omit_fields: list, recorded_component_name: str
+    client: MLClient,
+    randstr: Callable[[str], str],
+    path: str,
+    expected_dict: dict,
+    omit_fields: list,
+    recorded_component_name: str,
 ):
     component_name = randstr(recorded_component_name)
 
@@ -148,7 +158,7 @@ class TestComponent(AzureRecordedTestCase):
             path="./tests/test_configs/components/helloworld_component.yml",
             expected_dict=expected_dict,
             omit_fields=["name", "creation_context", "id", "code", "environment"],
-            recorded_component_name="component_name"
+            recorded_component_name="component_name",
         )
 
     def test_parallel_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -179,7 +189,7 @@ class TestComponent(AzureRecordedTestCase):
             path="./tests/test_configs/components/basic_parallel_component_score.yml",
             expected_dict=expected_dict,
             omit_fields=["name", "creation_context", "id", "task"],
-            recorded_component_name="component_name"
+            recorded_component_name="component_name",
         )
 
     def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -207,7 +217,7 @@ class TestComponent(AzureRecordedTestCase):
             path="./tests/test_configs/components/automl/classification.yaml",
             expected_dict=expected_component_dict,
             omit_fields=omit_fields,
-            recorded_component_name="workspace_component_name"
+            recorded_component_name="workspace_component_name",
         )
 
         assert_component_basic_workflow(
@@ -216,7 +226,7 @@ class TestComponent(AzureRecordedTestCase):
             path="./tests/test_configs/components/automl/classification.yaml",
             expected_dict=expected_component_dict,
             omit_fields=omit_fields,
-            recorded_component_name="registry_component_name"
+            recorded_component_name="registry_component_name",
         )
 
     @pytest.mark.parametrize(
@@ -535,7 +545,9 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         # assert component_resource1.environment == component_resource2.environment
         assert component_resource1.code == component_resource2.code
 
-    def test_command_component_dependency_label_resolution(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_command_component_dependency_label_resolution(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ) -> None:
         """Checks that dependencies of the form azureml:name@label are resolved to a version"""
         environment_name = randstr("environment_name")
         environment_versions = ["foo", "bar"]

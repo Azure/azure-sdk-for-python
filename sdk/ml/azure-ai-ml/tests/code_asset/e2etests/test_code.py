@@ -39,7 +39,8 @@ class TestCode(AzureRecordedTestCase):
         )
         assert code_asset_1.id == code_asset_2.id == arm_id
 
-    def test_asset_path_update(self,
+    def test_asset_path_update(
+        self,
         client: MLClient,
         randstr: Callable[[str], str],
         code_asset_path: str,

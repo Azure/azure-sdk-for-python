@@ -73,7 +73,6 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name, no_wait=True)
 
-
     @pytest.mark.e2etest
     def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
@@ -129,7 +128,6 @@ class TestBatchDeployment(AzureRecordedTestCase):
             and resolved_environment.asset_version == environment_versions[-1]
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
-
 
     @pytest.mark.e2etest
     def test_batch_job_download(self, client: MLClient, tmp_path: Path) -> str:

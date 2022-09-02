@@ -18,7 +18,9 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceConnections(AzureRecordedTestCase):
     def test_workspace_connections_create_update_and_delete_python_feed(
-        self, client: MLClient, randstr: Callable[[], str],
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
@@ -62,7 +64,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             print(conn)
 
     def test_workspace_connections_create_update_and_delete_git_pat(
-        self, client: MLClient, randstr: Callable[[], str],
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
@@ -103,7 +107,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             print(conn)
 
     def test_workspace_connections_create_update_and_delete_cr_msi(
-        self, client: MLClient, randstr: Callable[[], str],
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
@@ -148,7 +154,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             print(conn)
 
     def test_workspace_connections_create_update_and_delete_git_user_pwd(
-        self, client: MLClient, randstr: Callable[[], str],
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
@@ -192,7 +200,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
     @pytest.mark.skip(reason="bugged test")
     def test_workspace_connections_create_update_and_delete_featurestore_service_principal(
-        self, client: MLClient, randstr: Callable[[], str],
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
