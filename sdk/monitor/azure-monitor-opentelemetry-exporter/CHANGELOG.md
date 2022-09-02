@@ -11,7 +11,7 @@
 - Implement attach statsbeat
     ([#25956](https://github.com/Azure/azure-sdk-for-python/pull/25956))
 - Implement feature statsbeat
-    ([#25956](https://github.com/Azure/azure-sdk-for-python/pull/25956))
+    ([#26009](https://github.com/Azure/azure-sdk-for-python/pull/26009))
 
 ### Breaking Changes
 
