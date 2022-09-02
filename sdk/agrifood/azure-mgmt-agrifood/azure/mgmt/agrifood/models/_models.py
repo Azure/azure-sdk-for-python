@@ -20,17 +20,14 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        self.name = kwargs.get("name", None)
+        self.type = kwargs.get("type", None)
 
 
 class CheckNameAvailabilityResponse(msrest.serialization.Model):
@@ -46,19 +43,16 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
-        self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+        self.name_available = kwargs.get("name_available", None)
+        self.reason = kwargs.get("reason", None)
+        self.message = kwargs.get("message", None)
 
 
 class DetailedInformation(msrest.serialization.Model):
@@ -77,23 +71,20 @@ class DetailedInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'api_name': {'key': 'apiName', 'type': 'str'},
-        'custom_parameters': {'key': 'customParameters', 'type': '[str]'},
-        'platform_parameters': {'key': 'platformParameters', 'type': '[str]'},
-        'units_supported': {'key': 'unitsSupported', 'type': 'UnitSystemsInfo'},
-        'api_input_parameters': {'key': 'apiInputParameters', 'type': '[str]'},
+        "api_name": {"key": "apiName", "type": "str"},
+        "custom_parameters": {"key": "customParameters", "type": "[str]"},
+        "platform_parameters": {"key": "platformParameters", "type": "[str]"},
+        "units_supported": {"key": "unitsSupported", "type": "UnitSystemsInfo"},
+        "api_input_parameters": {"key": "apiInputParameters", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DetailedInformation, self).__init__(**kwargs)
-        self.api_name = kwargs.get('api_name', None)
-        self.custom_parameters = kwargs.get('custom_parameters', None)
-        self.platform_parameters = kwargs.get('platform_parameters', None)
-        self.units_supported = kwargs.get('units_supported', None)
-        self.api_input_parameters = kwargs.get('api_input_parameters', None)
+        self.api_name = kwargs.get("api_name", None)
+        self.custom_parameters = kwargs.get("custom_parameters", None)
+        self.platform_parameters = kwargs.get("platform_parameters", None)
+        self.units_supported = kwargs.get("units_supported", None)
+        self.api_input_parameters = kwargs.get("api_input_parameters", None)
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -108,19 +99,16 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -144,25 +132,22 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -179,15 +164,12 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class Resource(msrest.serialization.Model):
@@ -206,21 +188,18 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -243,21 +222,18 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -291,35 +267,32 @@ class Extension(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'e_tag': {'readonly': True},
-        'extension_id': {'readonly': True, 'pattern': r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$'},
-        'extension_category': {'readonly': True},
-        'installed_extension_version': {'readonly': True, 'pattern': r'^([1-9]|10).\d$'},
-        'extension_auth_link': {'readonly': True},
-        'extension_api_docs_link': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "e_tag": {"readonly": True},
+        "extension_id": {"readonly": True, "pattern": r"^[A-za-z]{3,50}[.][A-za-z]{3,100}$"},
+        "extension_category": {"readonly": True},
+        "installed_extension_version": {"readonly": True, "pattern": r"^([1-9]|10).\d$"},
+        "extension_auth_link": {"readonly": True},
+        "extension_api_docs_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'extension_id': {'key': 'properties.extensionId', 'type': 'str'},
-        'extension_category': {'key': 'properties.extensionCategory', 'type': 'str'},
-        'installed_extension_version': {'key': 'properties.installedExtensionVersion', 'type': 'str'},
-        'extension_auth_link': {'key': 'properties.extensionAuthLink', 'type': 'str'},
-        'extension_api_docs_link': {'key': 'properties.extensionApiDocsLink', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "extension_id": {"key": "properties.extensionId", "type": "str"},
+        "extension_category": {"key": "properties.extensionCategory", "type": "str"},
+        "installed_extension_version": {"key": "properties.installedExtensionVersion", "type": "str"},
+        "extension_auth_link": {"key": "properties.extensionAuthLink", "type": "str"},
+        "extension_api_docs_link": {"key": "properties.extensionApiDocsLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Extension, self).__init__(**kwargs)
         self.system_data = None
         self.e_tag = None
@@ -342,20 +315,17 @@ class ExtensionListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Extension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Extension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ExtensionListResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -381,27 +351,24 @@ class TrackedResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TrackedResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs['location']
+        self.tags = kwargs.get("tags", None)
+        self.location = kwargs["location"]
 
 
 class FarmBeats(TrackedResource):
@@ -433,30 +400,27 @@ class FarmBeats(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'instance_uri': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "instance_uri": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'instance_uri': {'key': 'properties.instanceUri', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "instance_uri": {"key": "properties.instanceUri", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FarmBeats, self).__init__(**kwargs)
         self.system_data = None
         self.instance_uri = None
@@ -504,43 +468,50 @@ class FarmBeatsExtension(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'target_resource_type': {'readonly': True},
-        'farm_beats_extension_id': {'readonly': True, 'max_length': 100, 'min_length': 2, 'pattern': r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$'},
-        'farm_beats_extension_name': {'readonly': True, 'max_length': 100, 'min_length': 2},
-        'farm_beats_extension_version': {'readonly': True, 'max_length': 100, 'min_length': 2, 'pattern': r'^([1-9]|10).\d$'},
-        'publisher_id': {'readonly': True, 'max_length': 100, 'min_length': 2},
-        'description': {'readonly': True, 'max_length': 500, 'min_length': 2},
-        'extension_category': {'readonly': True, 'max_length': 100, 'min_length': 2},
-        'extension_auth_link': {'readonly': True},
-        'extension_api_docs_link': {'readonly': True},
-        'detailed_information': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "target_resource_type": {"readonly": True},
+        "farm_beats_extension_id": {
+            "readonly": True,
+            "max_length": 100,
+            "min_length": 2,
+            "pattern": r"^[A-za-z]{3,50}[.][A-za-z]{3,100}$",
+        },
+        "farm_beats_extension_name": {"readonly": True, "max_length": 100, "min_length": 2},
+        "farm_beats_extension_version": {
+            "readonly": True,
+            "max_length": 100,
+            "min_length": 2,
+            "pattern": r"^([1-9]|10).\d$",
+        },
+        "publisher_id": {"readonly": True, "max_length": 100, "min_length": 2},
+        "description": {"readonly": True, "max_length": 500, "min_length": 2},
+        "extension_category": {"readonly": True, "max_length": 100, "min_length": 2},
+        "extension_auth_link": {"readonly": True},
+        "extension_api_docs_link": {"readonly": True},
+        "detailed_information": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'target_resource_type': {'key': 'properties.targetResourceType', 'type': 'str'},
-        'farm_beats_extension_id': {'key': 'properties.farmBeatsExtensionId', 'type': 'str'},
-        'farm_beats_extension_name': {'key': 'properties.farmBeatsExtensionName', 'type': 'str'},
-        'farm_beats_extension_version': {'key': 'properties.farmBeatsExtensionVersion', 'type': 'str'},
-        'publisher_id': {'key': 'properties.publisherId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'extension_category': {'key': 'properties.extensionCategory', 'type': 'str'},
-        'extension_auth_link': {'key': 'properties.extensionAuthLink', 'type': 'str'},
-        'extension_api_docs_link': {'key': 'properties.extensionApiDocsLink', 'type': 'str'},
-        'detailed_information': {'key': 'properties.detailedInformation', 'type': '[DetailedInformation]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "target_resource_type": {"key": "properties.targetResourceType", "type": "str"},
+        "farm_beats_extension_id": {"key": "properties.farmBeatsExtensionId", "type": "str"},
+        "farm_beats_extension_name": {"key": "properties.farmBeatsExtensionName", "type": "str"},
+        "farm_beats_extension_version": {"key": "properties.farmBeatsExtensionVersion", "type": "str"},
+        "publisher_id": {"key": "properties.publisherId", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "extension_category": {"key": "properties.extensionCategory", "type": "str"},
+        "extension_auth_link": {"key": "properties.extensionAuthLink", "type": "str"},
+        "extension_api_docs_link": {"key": "properties.extensionApiDocsLink", "type": "str"},
+        "detailed_information": {"key": "properties.detailedInformation", "type": "[DetailedInformation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FarmBeatsExtension, self).__init__(**kwargs)
         self.system_data = None
         self.target_resource_type = None
@@ -567,20 +538,17 @@ class FarmBeatsExtensionListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FarmBeatsExtension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FarmBeatsExtension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FarmBeatsExtensionListResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -596,20 +564,17 @@ class FarmBeatsListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FarmBeats]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FarmBeats]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FarmBeatsListResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -623,17 +588,14 @@ class FarmBeatsUpdateRequestModel(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FarmBeatsUpdateRequestModel, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class Operation(msrest.serialization.Model):
@@ -659,28 +621,25 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
-        self.display = kwargs.get('display', None)
+        self.display = kwargs.get("display", None)
         self.origin = None
         self.action_type = None
 
@@ -705,23 +664,20 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -741,19 +697,16 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -779,25 +732,22 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = kwargs.get('created_by', None)
-        self.created_by_type = kwargs.get('created_by_type', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.last_modified_by = kwargs.get('last_modified_by', None)
-        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
-        self.last_modified_at = kwargs.get('last_modified_at', None)
+        self.created_by = kwargs.get("created_by", None)
+        self.created_by_type = kwargs.get("created_by_type", None)
+        self.created_at = kwargs.get("created_at", None)
+        self.last_modified_by = kwargs.get("last_modified_by", None)
+        self.last_modified_by_type = kwargs.get("last_modified_by_type", None)
+        self.last_modified_at = kwargs.get("last_modified_at", None)
 
 
 class UnitSystemsInfo(msrest.serialization.Model):
@@ -812,19 +762,16 @@ class UnitSystemsInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'key': {'required': True, 'max_length': 100, 'min_length': 2},
-        'values': {'required': True},
+        "key": {"required": True, "max_length": 100, "min_length": 2},
+        "values": {"required": True},
     }
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UnitSystemsInfo, self).__init__(**kwargs)
-        self.key = kwargs['key']
-        self.values = kwargs['values']
+        self.key = kwargs["key"]
+        self.values = kwargs["values"]
