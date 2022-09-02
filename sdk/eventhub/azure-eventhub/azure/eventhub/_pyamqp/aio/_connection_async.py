@@ -305,7 +305,6 @@ class Connection(object):
             await self._outgoing_open()
             await self._set_state(ConnectionState.OPENED)
         else:
-            # TODO what now...?
             self.close(error=AMQPError(
                 condition=ErrorCondition.IllegalState, 
                 description=f"connection is an illegal state: {self.state}"))
