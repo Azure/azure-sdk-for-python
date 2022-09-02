@@ -53,7 +53,7 @@ def get_polygon(field):
             for point in range(0, len(field.polygon), 2)
         ]
         if field.polygon
-        else None
+        else []
     )
 
 
