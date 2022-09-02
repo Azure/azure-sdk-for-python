@@ -147,9 +147,8 @@ what you can do with the Azure Form Recognizer client library.
 [sample_analyze_read]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_read.py
 [sample_analyze_read_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_read_async.py
 [sample_analyze_tax_us_w2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_tax_us_w2.py
-[sample_analyze_tax_us_w2_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_tax_us_w2_async.py
-[sample_get_elements_with_spans]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_get_elements_with_spans.py
-[sample_get_elements_with_spans_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_get_elements_with_spans_async.py
+[sample_analyze_tax_us_w2_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_tax_us_w2_async.py[sample_get_elements_with_spans]: https://aka.ms/azsdk/python/formrecognizer/spansamplesync
+[sample_get_elements_with_spans_async]: https://aka.ms/azsdk/python/formrecognizer/spansampleasync
 
 <!-- V3.1 links -->
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_authentication.py
