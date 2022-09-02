@@ -617,6 +617,13 @@
       "words": [
         "pysdkci"
       ]
+    },
+    {
+      "filename": "sdk/mixedreality/azure-mixedreality-authentication/**",
+      "words": [
+        "Ijoi",
+        "Iiwid"
+      ]
     }
   ],
   "allowCompoundWords": true
