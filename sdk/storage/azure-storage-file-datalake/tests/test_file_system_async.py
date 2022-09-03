@@ -1,20 +1,16 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
+
 import pytest
 import unittest
 import uuid
 from datetime import datetime, timedelta
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.pipeline.transport import AioHttpTransport
-
 from azure.storage.filedatalake import (
     AccessPolicy,
     AccountSasPermissions,
@@ -30,33 +26,20 @@ from azure.storage.filedatalake import (
 )
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
 from azure.storage.filedatalake._models import FileSasPermissions
-from multidict import CIMultiDict, CIMultiDictProxy
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
-
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
 
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class FileSystemTest(StorageTestCase):
+class TestFileSystemAsync(AsyncStorageRecordedTestCase):
     def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key,
-                                         transport=AiohttpTestTransport(), logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
         self.config = self.dsc._config
         self.test_file_systems = []
 
@@ -69,8 +52,6 @@ class FileSystemTest(StorageTestCase):
                 loop.run_until_complete(self.fsc.__aexit__())
             except:
                 pass
-
-        return super(FileSystemTest, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_file_system_reference(self, prefix=TEST_FILE_SYSTEM_PREFIX):
@@ -87,8 +68,20 @@ class FileSystemTest(StorageTestCase):
             result.append(item)
         return result
 
+    def _is_almost_equal(self, first, second, delta):
+        if first == second:
+            return True
+        diff = abs(first - second)
+        if delta is not None:
+            if diff <= delta:
+                return True
+        return False
+
+
     # --Test cases for file system ---------------------------------------------
+
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_system(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -105,6 +98,7 @@ class FileSystemTest(StorageTestCase):
         assert created
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_system_async_extra_backslash(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -121,6 +115,7 @@ class FileSystemTest(StorageTestCase):
         assert created
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_system_encryption_scope(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -140,8 +135,8 @@ class FileSystemTest(StorageTestCase):
         assert props['encryption_scope'] is not None
         assert props['encryption_scope'].default_encryption_scope == encryption_scope.default_encryption_scope
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_system_encryption_scope_account_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -149,7 +144,8 @@ class FileSystemTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
-        token = generate_account_sas(
+        token = self.generate_sas(
+            generate_account_sas,
             self.dsc.account_name,
             self.dsc.credential.account_key,
             ResourceTypes(service=True, file_system=True, object=True),
@@ -177,8 +173,8 @@ class FileSystemTest(StorageTestCase):
         assert file_props.encryption_scope is not None
         assert file_props.encryption_scope == encryption_scope.default_encryption_scope
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_system_encryption_scope_file_system_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -187,7 +183,8 @@ class FileSystemTest(StorageTestCase):
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
         file_system_name = self._get_file_system_reference()
-        token = generate_file_system_sas(
+        token = self.generate_sas(
+            generate_file_system_sas,
             self.dsc.account_name,
             file_system_name,
             self.dsc.credential.account_key,
@@ -214,8 +211,8 @@ class FileSystemTest(StorageTestCase):
         assert file_props.encryption_scope is not None
         assert file_props.encryption_scope == encryption_scope.default_encryption_scope
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_system_encryption_scope_directory_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -224,7 +221,8 @@ class FileSystemTest(StorageTestCase):
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
         file_system_name = self._get_file_system_reference()
-        token = generate_directory_sas(
+        token = self.generate_sas(
+            generate_directory_sas,
             self.dsc.account_name,
             file_system_name,
             'dir1',
@@ -247,8 +245,8 @@ class FileSystemTest(StorageTestCase):
         assert dir_props.encryption_scope is not None
         assert dir_props.encryption_scope == encryption_scope.default_encryption_scope
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_system_encryption_scope_file_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -257,7 +255,8 @@ class FileSystemTest(StorageTestCase):
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
         file_system_name = self._get_file_system_reference()
-        token = generate_file_sas(
+        token = self.generate_sas(
+            generate_file_sas,
             self.dsc.account_name,
             file_system_name,
             'dir1',
@@ -283,6 +282,7 @@ class FileSystemTest(StorageTestCase):
         assert file_props.encryption_scope == encryption_scope.default_encryption_scope
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_file_system_exists(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -300,8 +300,11 @@ class FileSystemTest(StorageTestCase):
         assert not await file_system_client2.exists()
 
     @DataLakePreparer()
-    async def test_create_file_system_with_metadata_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_create_file_system_with_metadata_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
@@ -317,6 +320,7 @@ class FileSystemTest(StorageTestCase):
         assert properties.metadata == metadata
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_file_systems(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -340,6 +344,7 @@ class FileSystemTest(StorageTestCase):
         assert file_systems[0].has_legal_hold is not None
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_file_systems_encryption_scope(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -364,8 +369,8 @@ class FileSystemTest(StorageTestCase):
         assert file_systems[0].encryption_scope.default_encryption_scope == encryption_scope.default_encryption_scope
         assert file_systems[1].encryption_scope.default_encryption_scope == encryption_scope.default_encryption_scope
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_file_systems_account_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -374,7 +379,8 @@ class FileSystemTest(StorageTestCase):
         # Arrange
         file_system_name = self._get_file_system_reference()
         file_system = await self.dsc.create_file_system(file_system_name)
-        sas_token = generate_account_sas(
+        sas_token = self.generate_sas(
+            generate_account_sas,
             datalake_storage_account_name,
             datalake_storage_account_key,
             ResourceTypes(service=True),
@@ -395,8 +401,11 @@ class FileSystemTest(StorageTestCase):
         self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
 
     @DataLakePreparer()
-    async def test_delete_file_system_with_existing_file_system_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_delete_file_system_with_existing_file_system_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -407,13 +416,13 @@ class FileSystemTest(StorageTestCase):
         # Assert
         assert deleted is None
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_system(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
-        if not self.is_playback():
-            return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
@@ -431,10 +440,13 @@ class FileSystemTest(StorageTestCase):
         props = await new_filesystem.get_file_system_properties()
         assert new_name == props.name
 
-    @pytest.mark.skip(reason="Feature not yet enabled. Record when enabled.")
+    @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @DataLakePreparer()
-    async def test_rename_file_system_with_file_system_client(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_rename_file_system_with_file_system_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
         old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
@@ -454,11 +466,13 @@ class FileSystemTest(StorageTestCase):
         new_file_system_props = await new_filesystem.get_file_system_properties()
         assert new_name == new_file_system_props.name
 
+    @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @DataLakePreparer()
-    async def test_rename_file_system_with_source_lease(
-            self, datalake_storage_account_name, datalake_storage_account_key):
-        if not self.is_playback():
-            return
+    @recorded_by_proxy_async
+    async def test_rename_file_system_with_source_lease(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         old_name = self._get_file_system_reference(prefix="old")
         new_name = self._get_file_system_reference(prefix="new")
@@ -472,16 +486,15 @@ class FileSystemTest(StorageTestCase):
         props = await new_filesystem.get_file_system_properties()
         assert new_name == props.name
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_undelete_file_system(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        datalake_storage_account_name = kwargs.pop("storage_data_lake_soft_delete_account_name")
+        datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
-        # TODO: Needs soft delete enabled account in ARM template.
-        if not self.is_playback():
-            return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        name = self._get_file_system_reference(prefix="filesystem")
+        name = self._get_file_system_reference(prefix="filesystem2")
         filesystem_client = await self.dsc.create_file_system(name)
 
         await filesystem_client.delete_file_system()
@@ -503,14 +516,16 @@ class FileSystemTest(StorageTestCase):
                 props = await restored_fs_client.get_file_system_properties()
                 assert props is not None
 
-    @pytest.mark.skip(reason="We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_restore_file_system_with_sas(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        datalake_storage_account_name = kwargs.pop("storage_data_lake_soft_delete_account_name")
+        datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        token = generate_account_sas(
+        token = self.generate_sas(
+            generate_account_sas,
             self.dsc.account_name,
             self.dsc.credential.account_key,
             ResourceTypes(service=True, file_system=True),
@@ -518,7 +533,7 @@ class FileSystemTest(StorageTestCase):
             datetime.utcnow() + timedelta(hours=1),
         )
         dsc = DataLakeServiceClient(self.dsc.url, token)
-        name = self._get_file_system_reference(prefix="filesystem")
+        name = self._get_file_system_reference(prefix="filesystem2")
         filesystem_client = await dsc.create_file_system(name)
         await filesystem_client.delete_file_system()
         # to make sure the filesystem is deleted
@@ -540,8 +555,11 @@ class FileSystemTest(StorageTestCase):
                 assert props is not None
 
     @DataLakePreparer()
-    async def test_delete_none_existing_file_system_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_delete_none_existing_file_system_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         fake_file_system_client = self.dsc.get_file_system_client("fakeclient")
 
@@ -550,8 +568,11 @@ class FileSystemTest(StorageTestCase):
             await fake_file_system_client.delete_file_system(match_condition=MatchConditions.IfMissing)
 
     @DataLakePreparer()
-    async def test_list_file_systems_with_include_metadata_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_file_systems_with_include_metadata_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -572,16 +593,20 @@ class FileSystemTest(StorageTestCase):
         assert file_systems[0].metadata == metadata
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_set_file_system_acl(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        variables = kwargs.pop('variables', {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Act
         file_system = await self._create_file_system()
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         access_policy = AccessPolicy(permission=FileSystemSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifier1 = {'testid': access_policy}
         response = await file_system.set_file_system_access_policy(
             signed_identifier1, public_access=PublicAccess.FileSystem)
@@ -600,7 +625,10 @@ class FileSystemTest(StorageTestCase):
         assert acl2['public_access'] is None
         assert len(acl2['signed_identifiers']) == 2
 
+        return variables
+
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_file_systems_by_page(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -623,8 +651,11 @@ class FileSystemTest(StorageTestCase):
         assert len(file_systems) >= 3
 
     @DataLakePreparer()
-    async def test_list_file_systems_with_public_access_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_file_systems_with_public_access_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()
@@ -648,6 +679,7 @@ class FileSystemTest(StorageTestCase):
         assert file_systems[0].public_access is PublicAccess.File
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_system_properties(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -668,8 +700,11 @@ class FileSystemTest(StorageTestCase):
         assert props.has_legal_hold is not None
 
     @DataLakePreparer()
-    async def test_service_client_session_closes_after_filesystem_creation(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_service_client_session_closes_after_filesystem_creation(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         dsc2 = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
@@ -681,6 +716,7 @@ class FileSystemTest(StorageTestCase):
         await dsc2.close()
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_paths(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -698,17 +734,19 @@ class FileSystemTest(StorageTestCase):
         assert len(paths) == 6
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_paths_create_expiry(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        variables = kwargs.pop('variables', {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
         file_client = await file_system.create_file('file1')
 
-        expires_on = datetime.utcnow() + timedelta(days=1)
-        await file_client.set_file_expiry("Absolute", expires_on=expires_on)
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(days=1))
+        await file_client.set_file_expiry("Absolute", expires_on=expiry_time)
 
         # Act
         paths = []
@@ -719,10 +757,13 @@ class FileSystemTest(StorageTestCase):
         assert 1 == len(paths)
         props = await file_client.get_file_properties()
         # Properties do not include microseconds so let them vary by 1 second
-        self.assertAlmostEqual(props.creation_time, paths[0].creation_time, delta=timedelta(seconds=1))
-        self.assertAlmostEqual(props.expiry_time, paths[0].expiry_time, delta=timedelta(seconds=1))
+        self._is_almost_equal(props.creation_time, paths[0].creation_time, delta=timedelta(seconds=1))
+        self._is_almost_equal(props.expiry_time, paths[0].expiry_time, delta=timedelta(seconds=1))
+
+        return variables
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_paths_no_expiry(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -742,8 +783,11 @@ class FileSystemTest(StorageTestCase):
         assert paths[0].expiry_time is None
 
     @DataLakePreparer()
-    async def test_list_paths_which_are_all_files_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_paths_which_are_all_files_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -757,6 +801,7 @@ class FileSystemTest(StorageTestCase):
         assert len(paths) == 6
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_system_filesystems(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -776,8 +821,11 @@ class FileSystemTest(StorageTestCase):
         assert found == True
 
     @DataLakePreparer()
-    async def test_list_paths_with_max_per_page_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_paths_with_max_per_page_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -800,8 +848,11 @@ class FileSystemTest(StorageTestCase):
         assert paths2[0].name == "dir12"
 
     @DataLakePreparer()
-    async def test_list_paths_under_specific_path_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_paths_under_specific_path_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -826,6 +877,7 @@ class FileSystemTest(StorageTestCase):
         assert paths[0].content_length == 5
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_paths_recursively(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -851,6 +903,7 @@ class FileSystemTest(StorageTestCase):
         assert len(paths) == 24
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_list_paths_pages_correctly(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -879,14 +932,13 @@ class FileSystemTest(StorageTestCase):
         assert len(paths1) == 6
         assert len(paths2) == 6
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_get_deleted_paths(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        datalake_storage_account_name = kwargs.pop("storage_data_lake_soft_delete_account_name")
+        datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
-        # TODO: Needs soft delete enabled account in ARM template.
-        if not self.is_playback():
-            return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -936,6 +988,7 @@ class FileSystemTest(StorageTestCase):
         assert len(paths2) == 4
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_path_properties_encryption_scope(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -965,8 +1018,11 @@ class FileSystemTest(StorageTestCase):
         assert paths[0].encryption_scope == encryption_scope.default_encryption_scope
 
     @DataLakePreparer()
-    async def test_create_directory_from_file_system_client_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_create_directory_from_file_system_client_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -980,8 +1036,11 @@ class FileSystemTest(StorageTestCase):
         assert paths[0].name == "dir1"
 
     @DataLakePreparer()
-    async def test_create_file_from_file_system_client_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_create_file_from_file_system_client_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = await self._create_file_system()
@@ -995,6 +1054,7 @@ class FileSystemTest(StorageTestCase):
         assert paths[2].is_directory == False
 
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_get_root_directory_client(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1011,8 +1071,10 @@ class FileSystemTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_get_access_control_using_delegation_sas_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_get_access_control_using_delegation_sas_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
         url = self.account_url(datalake_storage_account_name, 'dfs')
@@ -1031,7 +1093,8 @@ class FileSystemTest(StorageTestCase):
         delegation_key = await dsc.get_user_delegation_key(datetime.utcnow(),
                                                            datetime.utcnow() + timedelta(hours=1))
 
-        token = generate_file_system_sas(
+        token = self.generate_sas(
+            generate_file_system_sas,
             dsc.account_name,
             file_system_name,
             delegation_key,
@@ -1048,8 +1111,10 @@ class FileSystemTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_list_paths_using_file_sys_delegation_sas_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_list_paths_using_file_sys_delegation_sas_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
@@ -1064,7 +1129,8 @@ class FileSystemTest(StorageTestCase):
         delegation_key = await dsc.get_user_delegation_key(datetime.utcnow(),
                                                            datetime.utcnow() + timedelta(hours=1))
 
-        token = generate_file_system_sas(
+        token = self.generate_sas(
+            generate_file_system_sas,
             dsc.account_name,
             file_system_name,
             delegation_key,
@@ -1081,8 +1147,11 @@ class FileSystemTest(StorageTestCase):
         assert 0 == 0
 
     @DataLakePreparer()
-    async def test_file_system_sessions_closes_properly_async(
-            self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_file_system_sessions_closes_properly_async(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_client = await self._create_file_system("fs")
@@ -1096,14 +1165,13 @@ class FileSystemTest(StorageTestCase):
             async with fs_client.get_directory_client("file2") as f_client:
                 await f_client.create_directory()
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_undelete_dir_with_version_id(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        datalake_storage_account_name = kwargs.pop("storage_data_lake_soft_delete_account_name")
+        datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
-        # TODO: Needs soft delete enabled account in ARM template.
-        if not self.is_playback():
-            return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = await self._create_file_system("fs")
         dir_path = 'dir10'
@@ -1115,14 +1183,13 @@ class FileSystemTest(StorageTestCase):
         resp = await restored_dir_client.get_directory_properties()
         assert resp is not None
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_undelete_file_with_version_id(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+        datalake_storage_account_name = kwargs.pop("storage_data_lake_soft_delete_account_name")
+        datalake_storage_account_key = kwargs.pop("storage_data_lake_soft_delete_account_key")
 
-        # TODO: Needs soft delete enabled account in ARM template.
-        if not self.is_playback():
-            return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = await self._create_file_system("fs")
         file_path = 'dir10/fileŇ'

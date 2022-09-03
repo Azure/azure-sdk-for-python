@@ -3,14 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-import unittest
-import time
 from datetime import datetime, timedelta
 
+import pytest
+import unittest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-
 from azure.storage.filedatalake import (
     AccessPolicy,
     AccountSasPermissions,
@@ -28,9 +26,9 @@ from azure.storage.filedatalake import (
     ResourceTypes
 )
 from azure.storage.filedatalake._models import FileSasPermissions
-from devtools_testutils import recorded_by_proxy
 
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
@@ -535,7 +533,6 @@ class TestFileSystem(StorageRecordedTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                time.sleep(30)
                 restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version)
 
                 # to make sure the deleted filesystem is restored
