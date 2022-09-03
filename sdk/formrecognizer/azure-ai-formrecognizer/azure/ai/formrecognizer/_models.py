@@ -3674,7 +3674,7 @@ class DocumentModelSummary:
             description=model.description,
             created_on=model.created_date_time,
             api_version=model.api_version,
-            tags=model.tags,
+            tags=model.tags if model.tags else {},
         )
 
     def to_dict(self) -> dict:
@@ -3744,7 +3744,7 @@ class DocumentModelDetails(DocumentModelSummary):
             description=model.description,
             created_on=model.created_date_time,
             api_version=model.api_version,
-            tags=model.tags,
+            tags=model.tags if model.tags else {},
             doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
         )
