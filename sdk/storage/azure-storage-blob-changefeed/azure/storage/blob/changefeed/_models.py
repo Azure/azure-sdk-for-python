@@ -224,7 +224,7 @@ class Segment(object):
         self.client = client
         self.segment_path = segment_path
         self.page_size = page_size
-        self.shards = collections.deque()
+        self.shards = collections.deque() # cspell: disable-line
         self.cursor = {"ShardCursors": {}, "SegmentPath": self.segment_path}
         self._initialize(segment_cursor=segment_cursor)
         # cursor is in this format:
@@ -318,6 +318,7 @@ class Shard(object):
 
     def _initialize(self, shard_cursor=None):
         # To get all chunk file paths
+        # cspell: disable-next-line
         self.unprocessed_chunk_path_props = collections.deque(self.client.list_blobs(name_starts_with=self.shard_path))
 
         # move cursor to the expected chunk
