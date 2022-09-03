@@ -3948,9 +3948,9 @@ class ResourceDetails:
         :rtype: ResourceDetails
         """
         return cls(
-            custom_document_models=CustomDocumentModelsDetails.from_dict(data.get("custom_document_models"))  # type: ignore
-            if data.get("custom_document_models")
-            else None,
+            custom_document_models=CustomDocumentModelsDetails.from_dict(  # type: ignore
+                data.get("custom_document_models")
+            ) if data.get("custom_document_models") else None,
         )
 
 
