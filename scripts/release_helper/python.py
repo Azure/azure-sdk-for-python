@@ -11,11 +11,15 @@ from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'azure-sdk', 'msyyc'}
 _PYTHON_ASSIGNEE = {'BigCat20196', 'Wzb123456789'}
+
 # labels
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
 _7_DAY_ATTENTION = '7days attention'
+_MultiAPI = 'MultiAPI'
+_ON_TIME = 'on time'
+_HOLD_ON = 'HoldOn'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
@@ -29,6 +33,8 @@ class IssueProcessPython(IssueProcess):
         self.is_multiapi = False
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
+        self.python_tag = ''
+        self.rest_repo_hash = ''
 
     def get_delay_time(self):
         q = [comment.updated_at
@@ -36,14 +42,32 @@ class IssueProcessPython(IssueProcess):
         q.sort()
         return (datetime.now() - (self.created_time if not q else q[-1])).days
 
+    @staticmethod
+    def get_specefied_param(pattern: str, issue_body_list: List[str]) -> str:
+        for line in issue_body_list:
+            if pattern in line:
+                return line.split(":", 1)[-1].strip()
+        return ""
+
     def init_readme_link(self) -> None:
         issue_body_list = self.get_issue_body()
 
         # Get the origin link and readme tag in issue body
         origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
 
+        # Get the specified tag and rest repo hash in issue body
+        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
+        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
+
         # get readme_link
         self.get_readme_link(origin_link)
+
+    def multi_api_policy(self) -> None:
+        if self.is_multiapi:
+            if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
+                self.bot_advice.append(_MultiAPI)
+            if _MultiAPI not in self.issue_package.labels_name:
+                self.add_label(_MultiAPI)
 
     def get_package_and_output(self) -> None:
         self.init_readme_link()
@@ -53,10 +77,11 @@ class IssueProcessPython(IssueProcess):
         pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
         self.output_folder = pattern_output.search(contents).group().split('/')[1]
-        self.is_multiapi = ('MultiAPI' in self.issue_package.labels_name) or ('multi-api' in contents)
+        self.is_multiapi = (_MultiAPI in self.issue_package.labels_name) or ('multi-api' in contents)
 
     def get_edit_content(self) -> None:
-        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}'
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}' \
+                            f'\nReadme Tag: {self.target_readme_tag}'
 
     @property
     def readme_comparison(self) -> bool:
@@ -81,7 +106,9 @@ class IssueProcessPython(IssueProcess):
                 release_pipeline_url = get_python_release_pipeline(self.output_folder)
                 res_run = run_pipeline(issue_link=issue_link,
                                        pipeline_url=release_pipeline_url,
-                                       spec_readme=self.readme_link + '/readme.md'
+                                       spec_readme=self.readme_link + '/readme.md',
+                                       python_tag=self.python_tag,
+                                       rest_repo_hash=self.rest_repo_hash
                                        )
                 if res_run:
                     self.log(f'{issue_number} run pipeline successfully')
@@ -97,6 +124,14 @@ class IssueProcessPython(IssueProcess):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
+    def on_time_policy(self):
+        if _ON_TIME in self.issue_package.labels_name:
+            self.bot_advice.append('On time')
+
+    def hold_on_policy(self):
+        if _HOLD_ON in self.issue_package.labels_name:
+            self.bot_advice.append('Hold on')
+
     def remind_policy(self):
         if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
             self.comment(
@@ -111,8 +146,12 @@ class IssueProcessPython(IssueProcess):
 
     def auto_bot_advice(self):
         super().auto_bot_advice()
+        self.multi_api_policy()
         self.attention_policy()
+        self.on_time_policy()
+        self.hold_on_policy()
         self.remind_policy()
+
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
@@ -125,7 +164,7 @@ class IssueProcessPython(IssueProcess):
             self.add_label(AUTO_CLOSE_LABEL)
             self.is_open = False
             self.log(f"{self.issue_package.issue.number} has been closed!")
-            record_release(self.package_name, self.issue_package.issue, _FILE_OUT)
+            record_release(self.package_name, self.issue_package.issue, _FILE_OUT, last_version)
 
     def run(self) -> None:
         self.get_package_and_output()

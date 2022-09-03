@@ -1,33 +1,42 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 import hashlib
-import isodate
 import json
 import logging
 import os
+import random
 import re
-import pydash
-import requests
-import sys
-import yaml
 import string
+import time
+import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 from datetime import timedelta
-from requests.adapters import HTTPAdapter
-from typing import Dict, Union, Any, Optional, Tuple, Callable, List
-from urllib.parse import urlparse
-from urllib3 import Retry
-from uuid import UUID
 from functools import singledispatch, wraps
-import time
-import random
-from azure.ai.ml._scope_dependent_operations import OperationScope
 from os import PathLike
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity, ListViewType
-from azure.ai.ml.constants import API_URL_KEY, AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from pathlib import PosixPath, PureWindowsPath
+from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Tuple, Union
+from urllib.parse import urlparse
+from uuid import UUID
+
+import isodate
+import pydash
+import yaml
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml.constants._common import (
+    API_URL_KEY,
+    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+)
+from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
 
@@ -51,12 +60,11 @@ def _csv_parser(text: Optional[str], convert: Callable) -> str:
     if text:
         if "," in text:
             txts = []
-            for text in text.split(","):
-                text = convert(text.strip())
-                txts.append(text)
+            for t in text.split(","):
+                t = convert(t.strip())
+                txts.append(t)
             return ",".join(txts)
-        else:
-            return convert(text)
+        return convert(text)
 
 
 def _snake_to_pascal_convert(text: str) -> str:
@@ -81,8 +89,8 @@ def camel_to_snake(text: str) -> Optional[str]:
 # This is snake to camel back which is different from snake to camel
 # https://stackoverflow.com/questions/19053707
 def snake_to_camel(text: Optional[str]) -> Optional[str]:
+    """convert snake name to camel."""
     if text:
-        """convert snake name to camel"""
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
 
 
@@ -91,65 +99,71 @@ def _snake_to_camel(name):
     return re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), name)
 
 
-def camel_case_transformer(key, attr_desc, value):
-    """transfer string to camel case"""
+def camel_case_transformer(key, value):
+    """transfer string to camel case."""
     return (snake_to_camel(key), value)
 
 
-def create_session_with_retry(retry=3) -> requests.Session:
+def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
+    """Creates an HttpPipeline identical to the provided one, except
+       with a new override
+
+    Args:
+        requests_pipeline (HttpPipeline): Pipeline to base new one off of.
+        retry (int, optional): Number of retries. Defaults to 3.
+
+    Returns:
+        HttpPipeline: Pipeline identical to provided one, except with a new
+                     retry policy.
     """
-    Create requests.session with retry
-
-    :type retry: int
-    rtype: Response
-    """
-    retry_policy = get_retry_policy(num_retry=retry)
-
-    session = requests.Session()
-    session.mount("https://", HTTPAdapter(max_retries=retry_policy))
-    session.mount("http://", HTTPAdapter(max_retries=retry_policy))
-    return session
+    return requests_pipeline.with_policies(retry_policy=get_retry_policy(num_retry=retries))
 
 
-def get_retry_policy(num_retry=3):
+def get_retry_policy(num_retry=3) -> RetryPolicy:
     """
     :return: Returns the msrest or requests REST client retry policy.
-    :rtype: urllib3.Retry
+    :rtype: RetryPolicy
     """
     status_forcelist = [413, 429, 500, 502, 503, 504]
     backoff_factor = 0.4
-    retry_policy = Retry(
-        total=num_retry,
-        read=num_retry,
-        connect=num_retry,
-        backoff_factor=backoff_factor,
-        status_forcelist=status_forcelist,
-        # By default this is True. We set it to false to get the full error trace, including url and
-        # status code of the last retry. Otherwise, the error message is 'too many 500 error responses',
-        # which is not useful.
-        raise_on_status=False,
+    return RetryPolicy(
+        retry_total=num_retry,
+        retry_read=num_retry,
+        retry_connect=num_retry,
+        retry_backoff_factor=backoff_factor,
+        retry_on_status_codes=status_forcelist,
     )
-    return retry_policy
 
 
-def download_text_from_url(source_uri: str, session: requests.Session, timeout: tuple = None):
+def download_text_from_url(
+    source_uri: str,
+    requests_pipeline: HttpPipeline,
+    timeout: Union[float, Tuple[float, float]] = None,
+) -> str:
+    """Downloads the content from an URL
+
+    Args:
+        source_uri (str): URI to download
+        requests_pipeline (HttpPipeline):  Used to send the request
+        timeout (Union[float, Tuple[float, float]], optional): One of
+            * float that specifies the connect and read time outs
+            * a 2-tuple that specifies the connect and read time out in that order
+    Returns:
+        str: the Response text
     """
-    Downloads the content from an URL
-    Returns the Response text
-    :return:
-    :rtype: str
-    """
+    if not timeout:
+        timeout_params = {}
+    else:
+        connect_timeout, read_timeout = timeout if isinstance(timeout, tuple) else (timeout, timeout)
+        timeout_params = dict(timeout=read_timeout, connection_timeout=connect_timeout)
 
-    if session is None:
-        session = create_session_with_retry()
-    response = session.get(source_uri, timeout=timeout)
-
+    response = requests_pipeline.get(source_uri, **timeout_params)
     # Match old behavior from execution service's status API.
     if response.status_code == 404:
         return ""
 
     # _raise_request_error(response, "Retrieving content from " + uri)
-    return response.text
+    return response.text()
 
 
 def load_file(file_path: str) -> str:
@@ -163,6 +177,7 @@ def load_file(file_path: str) -> str:
             no_personal_data_message=msg.format("[file_path]"),
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
+            error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )
     return cfg
 
@@ -178,60 +193,160 @@ def load_json(file_path: Union[str, os.PathLike, None]) -> Dict:
             no_personal_data_message=msg.format("[file_path]"),
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
+            error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )
     return cfg
 
 
-def load_yaml(file_path: Union[str, os.PathLike, None]) -> Dict:
+def load_yaml(source: Union[AnyStr, PathLike, IO, None]) -> Dict:
+    # null check - just return an empty dict.
+    # Certain CLI commands rely on this behavior to produce a resource
+    # via CLI, which is then populated through CLArgs.
+    if source is None:
+        return {}
+
+    input = None  # type: IOBase
+    must_open_file = False
+    try:  # check source type by duck-typing it as an IOBase
+        readable = source.readable()
+        if not readable:  # source is misformatted stream or file
+            msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="File Permissions error",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        # source is an already-open stream or file, we can read() from it directly.
+        input = source
+    except AttributeError:
+        # source has no writable() function, assume it's a string or file path.
+        must_open_file = True
+
+    if must_open_file:  # If supplied a file path, open it.
+        try:
+            input = open(source, "r")
+        except OSError:  # FileNotFoundError introduced in Python 3
+            msg = "No such file or directory: {}"
+            raise ValidationException(
+                message=msg.format(source),
+                no_personal_data_message=msg.format("[file_path]"),
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+            )
+    # input should now be an readable file or stream. Parse it.
+    cfg = {}
     try:
-        cfg = {}
-        if file_path is not None:
-            with open(file_path, "r") as f:
-                cfg = yaml.safe_load(f)
-        return cfg
-    except OSError:  # FileNotFoundError introduced in Python 3
-        msg = "No such file or directory: {}"
-        raise ValidationException(
-            message=msg.format(file_path),
-            no_personal_data_message=msg.format("[file_path]"),
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-        )
+        cfg = yaml.safe_load(input)
     except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file: {file_path} \n\n {str(e)}"
+        msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
         raise ValidationException(
             message=msg,
             no_personal_data_message="Error while parsing yaml file",
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
+            error_type=ValidationErrorType.CANNOT_PARSE,
         )
+    finally:
+        if must_open_file:
+            input.close()
+    return cfg
+
+
+def dump_yaml(*args, **kwargs):
+    """A thin wrapper over yaml.dump which forces `OrderedDict`s to be
+    serialized as mappings
+
+    Otherwise behaves identically to yaml.dump
+    """
+
+    class OrderedDumper(yaml.Dumper):
+        """A modified yaml serializer that forces pyyaml to represent
+        an OrderedDict as a mapping instead of a sequence.
+        """
+
+    OrderedDumper.add_representer(OrderedDict, yaml.representer.SafeRepresenter.represent_dict)
+    return yaml.dump(*args, Dumper=OrderedDumper, **kwargs)
 
 
 def dump_yaml_to_file(
-    file_path: Union[str, os.PathLike, None],
-    data_dict: Dict,
-    default_flow_style=None,
+    dest: Union[AnyStr, PathLike, IO, None],
+    data_dict: Union[OrderedDict, dict],
+    default_flow_style=False,
+    path: Union[AnyStr, PathLike] = None,  # deprecated input
+    args=None,  # deprecated* input
+    **kwargs,
 ) -> None:
+    # Check for deprecated path input, either named or as first unnamed input
+    if dest is None:
+        if args is not None and len(args) > 0:
+            dest = args[0]
+        elif path is not None:
+            dest = path
+            warnings.warn(
+                "the 'path' input for dump functions is deprecated. Please use 'dest' instead.", DeprecationWarning
+            )
+        else:
+            msg = "No dump destination provided."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="No dump destination Provided",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.MISSING_FIELD,
+            )
+
+    # Check inputs
+    output = None  # type: IOBase
+    must_open_file = False
+    try:  # check dest type by duck-typing it as an IOBase
+        writable = dest.writable()
+        if not writable:  # dest is misformatted stream or file
+            msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="File Permissions error",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            )
+        # dest is an already-open stream or file, we can write() to it directly.
+        output = dest
+    except AttributeError:
+        # dest has no writable() function, assume it's a string or file path.
+        must_open_file = True
+
+    if must_open_file:  # If supplied a file path, open it.
+        try:
+            output = open(dest, "w")
+        except OSError:  # FileNotFoundError introduced in Python 3
+            msg = "No such file or directory: {}"
+            raise ValidationException(
+                message=msg.format(dest),
+                no_personal_data_message=msg.format("[file_path]"),
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+            )
+
+    # Once we have an open file pointer through either method, dump.
     try:
-        if file_path is not None:
-            with open(file_path, "w") as f:
-                yaml.dump(data_dict, f, default_flow_style=default_flow_style)
-    except OSError:  # FileNotFoundError introduced in Python 3
-        msg = "No such file or directory: {}"
-        raise ValidationException(
-            message=msg.format(file_path),
-            no_personal_data_message=msg.format("[file_path]"),
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-        )
+        dump_yaml(data_dict, output, default_flow_style=default_flow_style)
     except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file: {file_path} \n\n {str(e)}"
+        msg = f"Error while parsing yaml file \n\n {str(e)}"
         raise ValidationException(
             message=msg,
             no_personal_data_message="Error while parsing yaml file",
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
+            error_type=ValidationErrorType.CANNOT_PARSE,
         )
+    finally:
+        # close the file only if we opened it as part of this function.
+        if must_open_file:
+            output.close()
 
 
 def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
@@ -241,19 +356,9 @@ def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
 
 
 def get_http_response_and_deserialized_from_pipeline_response(
-    pipeline_response: Any, deserialized: Any, *args
+    pipeline_response: Any, deserialized: Any
 ) -> Tuple[Any, Any]:
     return pipeline_response.http_response, deserialized
-
-
-def initialize_logger_info(module_logger: logging.Logger, terminator="\n") -> None:
-    module_logger.setLevel(logging.INFO)
-    module_logger.propagate = False
-    handler = logging.StreamHandler(sys.stderr)
-    handler.setLevel(logging.INFO)
-    handler.terminator = terminator
-    handler.flush = sys.stderr.flush
-    module_logger.addHandler(handler)
 
 
 def xor(a: Any, b: Any) -> bool:
@@ -286,7 +391,8 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
     except (ValueError, ValidationException):
         pass
 
-    # If the URL is not an valid URL (e.g. a local path) or not an azureml URL (e.g. a http URL), just return the same value
+    # If the URL is not an valid URL (e.g. a local path) or not an azureml URL
+    # (e.g. a http URL), just return the same value
     return value
 
 
@@ -304,11 +410,13 @@ def validate_ml_flow_folder(path: str, model_type: string) -> None:
     path_array = path.split("/")
     if model_type != "mlflow_model" or "." not in path_array[-1]:
         return
-    else:
-        msg = "Error with path {}. Model of type mlflow_model cannot register a file."
-        raise ValidationException(
-            message=msg.format(path), no_personal_data_message=msg.format("[path]"), target=ErrorTarget.MODEL
-        )
+    msg = "Error with path {}. Model of type mlflow_model cannot register a file."
+    raise ValidationException(
+        message=msg.format(path),
+        no_personal_data_message=msg.format("[path]"),
+        target=ErrorTarget.MODEL,
+        error_type=ValidationErrorType.INVALID_VALUE,
+    )
 
 
 # modified from: https://stackoverflow.com/a/33245493/8093897
@@ -322,7 +430,7 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 
 @singledispatch
-def from_iso_duration_format(duration: Any = None) -> int:
+def from_iso_duration_format(duration: Any = None) -> int:  # pylint: disable=unused-argument
     return None
 
 
@@ -356,17 +464,31 @@ def from_iso_duration_format_ms(duration: Optional[str]) -> int:
     return from_iso_duration_format(duration) * 1000 if duration else None
 
 
-def _get_mfe_base_url_from_discovery_service(workspace_operations: Any, workspace_name: str) -> str:
+def _get_mfe_base_url_from_discovery_service(
+    workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
+) -> str:
     discovery_url = workspace_operations.get(workspace_name).discovery_url
 
-    all_urls = json.loads(download_text_from_url(discovery_url, create_session_with_retry()))
+    all_urls = json.loads(
+        download_text_from_url(
+            discovery_url,
+            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
+        )
+    )
     return f"{all_urls[API_URL_KEY]}{MFE_PATH_PREFIX}"
 
 
-def _get_mfe_base_url_from_registry_discovery_service(workspace_operations: Any, workspace_name: str) -> str:
+def _get_mfe_base_url_from_registry_discovery_service(
+    workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline
+) -> str:
     discovery_url = workspace_operations.get(workspace_name).discovery_url
 
-    all_urls = json.loads(download_text_from_url(discovery_url, create_session_with_retry()))
+    all_urls = json.loads(
+        download_text_from_url(
+            discovery_url,
+            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
+        )
+    )
     return all_urls[API_URL_KEY]
 
 
@@ -407,7 +529,9 @@ def hash_dict(items: dict, keys_to_omit=None):
     return str(UUID(object_hash.hexdigest()))
 
 
-def convert_identity_dict(identity: ManagedServiceIdentity = None) -> ManagedServiceIdentity:
+def convert_identity_dict(
+    identity: ManagedServiceIdentity = None,
+) -> ManagedServiceIdentity:
     if identity:
         if identity.type.lower() in ("system_assigned", "none"):
             identity = ManagedServiceIdentity(type="SystemAssigned")
@@ -415,12 +539,11 @@ def convert_identity_dict(identity: ManagedServiceIdentity = None) -> ManagedSer
             if identity.user_assigned_identities:
                 if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
                     return identity
-                else:
-                    ids = dict()
-                    for id in identity.user_assigned_identities:
-                        ids[id["resource_id"]] = {}
-                    identity.user_assigned_identities = ids
-                    identity.type = snake_to_camel(identity.type)
+                ids = dict()
+                for id in identity.user_assigned_identities:  # pylint: disable=redefined-builtin
+                    ids[id["resource_id"]] = {}
+                identity.user_assigned_identities = ids
+                identity.type = snake_to_camel(identity.type)
     else:
         identity = ManagedServiceIdentity(type="SystemAssigned")
     return identity
@@ -454,9 +577,8 @@ def map_single_brackets_and_warn(command: str):
 
 
 def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], exclude_keys=None) -> Dict:
-    """
-    Convert all keys of a nested dictionary according to the passed casing_transform function
-    """
+    """Convert all keys of a nested dictionary according to the passed
+    casing_transform function."""
     transformed_dict = {}
     for key in data.keys():
         # Modify the environment_variables separately: don't transform values in environment_variables.
@@ -466,16 +588,6 @@ def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], excl
         else:
             transformed_dict[casing_transform(key)] = transform_dict_keys(data[key], casing_transform)
     return transformed_dict
-
-
-def convert_ordered_dict_to_yaml_str(data: OrderedDict) -> str:
-    """Converts OrderedDict to string yaml.
-
-    :param data:
-    :type data: OrderedDict
-    :returns str:
-    """
-    return yaml.dump(data)
 
 
 def retry(
@@ -508,40 +620,27 @@ def retry(
     return retry_decorator
 
 
-def show_debug_info(response):
-    module_logger.info(f"{module_logger.name} :  Request URL: {response.request.url}")
-    module_logger.info(f"{module_logger.name} :  Request method: 'POST'")
-    module_logger.info(
-        f"{module_logger.name} :  Request headers: \n {json.dumps(dict(response.request.headers), indent=4)}"
-    )
-    module_logger.info(f"{module_logger.name} :  Request body: \n {response.request.body.decode('utf-8')}")
-    module_logger.info(f"{module_logger.name} :  Response status: {response.status_code}")
-    module_logger.info(f"{module_logger.name} :  Response headers: \n {json.dumps(dict(response.headers), indent=4)}")
-    module_logger.info(f"{module_logger.name} :  Response content: \n {response.content.decode('utf-8')}")
-
-
 def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewType:
     if include_archived and archived_only:
         raise Exception("Cannot provide both archived-only and include-archived.")
     if include_archived:
         return ListViewType.ALL
-    elif archived_only:
+    if archived_only:
         return ListViewType.ARCHIVED_ONLY
-    elif include_archived:
-        return ListViewType.ALL
-    else:
-        return ListViewType.ACTIVE_ONLY
+    return ListViewType.ACTIVE_ONLY
 
 
 def is_data_binding_expression(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> bool:
-    """Check if a value is a data-binding expression with specific binding target(prefix). Note that the function will
-    return False if the value is not a str.
-    For example, if binding_prefix is ["parent", "jobs"], then input_value is a data-binding expression only if
-    the binding target starts with "parent.jobs", like "${{parent.jobs.xxx}}"
-    if is_singular is False, return True even if input_value includes non-binding part or
-    multiple binding targets, like "${{parent.jobs.xxx}}_extra" and "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}"
+    """Check if a value is a data-binding expression with specific binding
+    target(prefix). Note that the function will return False if the value is
+    not a str. For example, if binding_prefix is ["parent", "jobs"], then
+    input_value is a data-binding expression only if the binding target starts
+    with "parent.jobs", like "${{parent.jobs.xxx}}" if is_singular is False,
+    return True even if input_value includes non-binding part or multiple
+    binding targets, like "${{parent.jobs.xxx}}_extra" and
+    "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
 
     :param value: Value to check.
     :param binding_prefix: Prefix to check for.
@@ -554,8 +653,9 @@ def is_data_binding_expression(
 def get_all_data_binding_expressions(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> List[str]:
-    """Get all data-binding expressions in a value with specific binding target(prefix). Note that the function will
-    return an empty list if the value is not a str.
+    """Get all data-binding expressions in a value with specific binding
+    target(prefix). Note that the function will return an empty list if the
+    value is not a str.
 
     :param value: Value to extract.
     :param binding_prefix: Prefix to filter.
@@ -576,9 +676,20 @@ def is_private_preview_enabled():
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
 
 
+def is_internal_components_enabled():
+    return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
+
+
+def try_enable_internal_components():
+    if is_internal_components_enabled():
+        from azure.ai.ml._internal import enable_internal_components_in_pipeline
+
+        enable_internal_components_in_pipeline()
+
+
 def is_valid_node_name(name):
-    """
-    Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
+    """Return True if the string is a valid Python identifier in lower ASCII
+    range, False otherwise.
 
     The regular expression match pattern is r"^[a-z_][a-z0-9_]*".
     """
@@ -586,7 +697,7 @@ def is_valid_node_name(name):
 
 
 def parse_args_description_from_docstring(docstring):
-    """Return arg descriptions in docstring with google style
+    """Return arg descriptions in docstring with google style.
 
     e.g.
         docstring =
@@ -625,7 +736,10 @@ def parse_args_description_from_docstring(docstring):
             while len(args_region) > 0 and ":" in args_region[0]:
                 arg_line = args_region[0]
                 colon_index = arg_line.index(":")
-                arg, description = arg_line[0:colon_index].strip(), arg_line[colon_index + 1 :].strip()
+                arg, description = (
+                    arg_line[0:colon_index].strip(),
+                    arg_line[colon_index + 1 :].strip(),
+                )
                 # handle case like "param (float) : xxx"
                 if "(" in arg:
                     arg = arg[0 : arg.index("(")].strip()
@@ -636,3 +750,31 @@ def parse_args_description_from_docstring(docstring):
                     args[arg] += " " + args_region[0]
                     args_region.pop(0)
     return args
+
+
+def convert_windows_path_to_unix(path: Union[str, PathLike]) -> PosixPath:
+    return PureWindowsPath(path).as_posix()
+
+
+def _is_user_error_from_status_code(http_status_code):
+    return 400 <= http_status_code < 500
+
+
+def _str_to_bool(s):
+    """Returns True if literal 'true' is passed, otherwise returns False.
+
+    Can be used as a type for argument in argparse, return argument's
+    boolean value according to it's literal value.
+    """
+    if not isinstance(s, str):
+        return False
+    return s.lower() == "true"
+
+
+def _is_user_error_from_exception_type(e: Union[Exception, None]):
+    """Determine whether if an exception is user error from it's exception
+    type."""
+    # Connection error happens on user's network failure, should be user error.
+    # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
+    if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
+        return True

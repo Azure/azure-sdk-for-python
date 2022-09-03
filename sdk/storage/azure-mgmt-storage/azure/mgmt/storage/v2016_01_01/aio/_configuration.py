@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class StorageManagementClientConfiguration(Configuration):
+class StorageManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for StorageManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,8 +27,12 @@ class StorageManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft
+     Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
+    :keyword api_version: Api Version. Default value is "2016-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,6 +42,8 @@ class StorageManagementClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(StorageManagementClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2016-01-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -45,7 +51,7 @@ class StorageManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2016-01-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-storage/{}'.format(VERSION))
         self._configure(**kwargs)

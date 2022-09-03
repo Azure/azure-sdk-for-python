@@ -7,12 +7,31 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CoreNetworkType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Core network type.
+class BillingSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU of the packet core control plane resource. The SKU list may change over time when a new
+    SKU gets added or an exiting SKU gets removed.
+    """
+
+    #: Evaluation package plan.
+    EVALUATION_PACKAGE = "EvaluationPackage"
+    #: Flagship starter package plan.
+    FLAGSHIP_STARTER_PACKAGE = "FlagshipStarterPackage"
+    #: Edge site 2Gbps plan.
+    EDGE_SITE2_GBPS = "EdgeSite2GBPS"
+    #: Edge site 3Gbps plan.
+    EDGE_SITE3_GBPS = "EdgeSite3GBPS"
+    #: Edge site 4Gbps plan.
+    EDGE_SITE4_GBPS = "EdgeSite4GBPS"
+    #: Medium package plan.
+    MEDIUM_PACKAGE = "MediumPackage"
+    #: Large package plan.
+    LARGE_PACKAGE = "LargePackage"
+
+class CoreNetworkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The core network technology generation (5G core or EPC / 4G core).
     """
 
     #: 5G core.
@@ -20,7 +39,7 @@ class CoreNetworkType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: EPC / 4G core.
     EPC = "EPC"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource.
     """
 
@@ -29,8 +48,18 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class NaptEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether Network Address and Port Translation is enabled.
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+class NaptEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether network address and port translation is enabled.
     """
 
     #: NAPT is enabled.
@@ -38,14 +67,26 @@ class NaptEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: NAPT is disabled.
     DISABLED = "Disabled"
 
-class PduSessionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PduSessionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PDU session type (IPv4/IPv6).
     """
 
     I_PV4 = "IPv4"
     I_PV6 = "IPv6"
 
-class PreemptionCapability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PlatformType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The platform type where packet core is deployed. The contents of this enum can change.
+    """
+
+    #: If this option is chosen, you must set one of "azureStackEdgeDevice", "connectedCluster" or
+    #: "customLocation". If multiple are set then "customLocation" will take precedence over
+    #: "connectedCluster" which takes precedence over "azureStackEdgeDevice".
+    AKS_HCI = "AKS-HCI"
+    #: If this option is chosen, you must set one of "connectedCluster" or "customLocation". If
+    #: multiple are set then "customLocation" will take precedence over "connectedCluster".
+    BASE_VM = "BaseVM"
+
+class PreemptionCapability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Preemption capability.
     """
 
@@ -54,7 +95,7 @@ class PreemptionCapability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: May preempt.
     MAY_PREEMPT = "MayPreempt"
 
-class PreemptionVulnerability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PreemptionVulnerability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Preemption vulnerability.
     """
 
@@ -63,7 +104,7 @@ class PreemptionVulnerability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     #: May be preempted.
     PREEMPTABLE = "Preemptable"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state.
     """
 
@@ -75,7 +116,17 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CANCELED = "Canceled"
     DELETED = "Deleted"
 
-class SdfDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RecommendedVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether this is the recommended version to use for new packet core control plane
+    deployments.
+    """
+
+    #: This is the recommended version to use for new packet core control plane deployments.
+    RECOMMENDED = "Recommended"
+    #: This is not the recommended version to use for new packet core control plane deployments.
+    NOT_RECOMMENDED = "NotRecommended"
+
+class SdfDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Service data flow direction.
     """
 
@@ -86,18 +137,18 @@ class SdfDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Traffic flowing both to and from the UE.
     BIDIRECTIONAL = "Bidirectional"
 
-class SimState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the sim resource.
+class SimState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the SIM resource.
     """
 
-    #: The sim is disabled because not all configuration required for enabling is present.
+    #: The SIM is disabled because not all configuration required for enabling is present.
     DISABLED = "Disabled"
-    #: The sim is enabled.
+    #: The SIM is enabled.
     ENABLED = "Enabled"
-    #: The sim cannot be enabled because some of the associated configuration is invalid.
+    #: The SIM cannot be enabled because some of the associated configuration is invalid.
     INVALID = "Invalid"
 
-class TrafficControlPermission(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TrafficControlPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Traffic control permission.
     """
 
@@ -105,3 +156,20 @@ class TrafficControlPermission(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     ENABLED = "Enabled"
     #: Traffic matching this rule is not allowed to flow.
     BLOCKED = "Blocked"
+
+class VersionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of this packet core control plane version.
+    """
+
+    #: The state of this version is unknown.
+    UNKNOWN = "Unknown"
+    #: This version is a preview and is not suitable for production use.
+    PREVIEW = "Preview"
+    #: This version is currently being validated.
+    VALIDATING = "Validating"
+    #: This version failed validation.
+    VALIDATION_FAILED = "ValidationFailed"
+    #: This version is active and suitable for production use.
+    ACTIVE = "Active"
+    #: This version is deprecated and is no longer supported.
+    DEPRECATED = "Deprecated"

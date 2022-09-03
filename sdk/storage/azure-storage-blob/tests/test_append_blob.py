@@ -1,45 +1,37 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 
-from os import (
-    path,
-    remove,
-)
-import unittest
 import uuid
 from datetime import datetime, timedelta
+from os import path, remove
 
-from azure.mgmt.storage import StorageManagementClient
-
+import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError, HttpResponseError
+from azure.mgmt.storage import StorageManagementClient
 from azure.storage.blob import (
     generate_blob_sas,
     BlobServiceClient,
-    ContainerClient,
     BlobClient,
     BlobType,
     BlobSasPermissions, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from azure.storage.blob._shared.policies import StorageContentValidation
 
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from devtools_testutils.storage import StorageTestCase
-from test_helpers import ProgressTracker
+from test_helpers import NonSeekableStream, ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 LARGE_BLOB_SIZE = 64 * 1024
-
-
 # ------------------------------------------------------------------------------
 
-class StorageAppendBlobTest(StorageTestCase):
+
+class TestStorageAppendBlob(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _setup(self, bsc):
         self.config = bsc._config
@@ -82,22 +74,15 @@ class StorageAppendBlobTest(StorageTestCase):
     def assertBlobEqual(self, blob, expected_data):
         stream = blob.download_blob()
         actual_data = stream.readall()
-        self.assertEqual(actual_data, expected_data)
-
-    class NonSeekableFile(object):
-        def __init__(self, wrapped_file):
-            self.wrapped_file = wrapped_file
-
-        def write(self, data):
-            self.wrapped_file.write(data)
-
-        def read(self, count):
-            return self.wrapped_file.read(count)
-
-    # --Test cases for block blobs --------------------------------------------
+        assert actual_data == expected_data
+    # --------------------------------------------------------------------------
 
     @BlobPreparer()
-    def test_create_blob(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
@@ -109,15 +94,22 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         blob_properties = blob.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
+        assert blob_properties is not None
+        assert blob_properties.etag == create_resp.get('etag')
+        assert blob_properties.last_modified == create_resp.get('last_modified')
 
-    @pytest.mark.playback_test_only
     @BlobPreparer()
-    def test_get_blob_properties_using_vid(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_properties_using_vid(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"),
+            versioned_storage_account_key,
+            max_block_size=4 * 1024)
+
         self._setup(bsc)
         blob_name = self._get_blob_reference()
 
@@ -125,34 +117,42 @@ class StorageAppendBlobTest(StorageTestCase):
         blob = bsc.get_blob_client(self.container_name, blob_name)
         create_resp = blob.create_append_blob()
         # create operation will return a version id
-        self.assertIsNotNone(create_resp['version_id'])
+        assert create_resp['version_id'] is not None
 
         # Assert
         blob_properties = blob.get_blob_properties(version_id=create_resp['version_id'])
-        self.assertIsNotNone(blob_properties)
-        self.assertTrue(blob_properties.is_current_version)
-        self.assertIsNotNone(blob_properties.version_id)
-        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
+        assert blob_properties is not None
+        assert blob_properties.is_current_version
+        assert blob_properties.version_id is not None
+        assert blob_properties.etag == create_resp.get('etag')
+        assert blob_properties.last_modified == create_resp.get('last_modified')
 
     @BlobPreparer()
-    def test_create_blob_with_lease_id(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_blob_with_lease_id(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
-        lease = blob.acquire_lease()
+        lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         create_resp = blob.create_append_blob(lease=lease)
 
         # Assert
         blob_properties = blob.get_blob_properties()
-        self.assertIsNotNone(blob_properties)
-        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
+        assert blob_properties is not None
+        assert blob_properties.etag == create_resp.get('etag')
+        assert blob_properties.last_modified == create_resp.get('last_modified')
 
     @BlobPreparer()
-    def test_create_blob_with_metadata(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_blob_with_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         metadata = {'hello': 'world', 'number': '42'}
@@ -164,10 +164,14 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         md = blob.get_blob_properties().metadata
-        self.assertDictEqual(md, metadata)
+        assert md == metadata
 
     @BlobPreparer()
-    def test_append_block(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -175,16 +179,20 @@ class StorageAppendBlobTest(StorageTestCase):
         # Act
         for i in range(5):
             resp = blob.append_block(u'block {0}'.format(i).encode('utf-8'))
-            self.assertEqual(int(resp['blob_append_offset']), 7 * i)
-            self.assertEqual(resp['blob_committed_block_count'], i + 1)
-            self.assertIsNotNone(resp['etag'])
-            self.assertIsNotNone(resp['last_modified'])
+            assert int(resp['blob_append_offset']) == 7 * i
+            assert resp['blob_committed_block_count'] == i + 1
+            assert resp['etag'] is not None
+            assert resp['last_modified'] is not None
 
         # Assert
         self.assertBlobEqual(blob, b'block 0block 1block 2block 3block 4')
 
     @BlobPreparer()
-    def test_append_block_unicode(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_unicode(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -193,44 +201,56 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = blob.append_block(u'啊齄丂狛狜', encoding='utf-16')
 
         # Assert
-        self.assertEqual(int(resp['blob_append_offset']), 0)
-        self.assertEqual(resp['blob_committed_block_count'], 1)
-        self.assertIsNotNone(resp['etag'])
-        self.assertIsNotNone(resp['last_modified'])
+        assert int(resp['blob_append_offset']) == 0
+        assert resp['blob_committed_block_count'] == 1
+        assert resp['etag'] is not None
+        assert resp['last_modified'] is not None
 
     @BlobPreparer()
-    def test_append_block_with_if_tags(self, blob_storage_account_name, blob_storage_account_key):
-        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key,
+    @recorded_by_proxy
+    def test_append_block_with_if_tags(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
                                 max_block_size=4 * 1024)
         self._setup(bsc)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = self._create_blob(bsc, tags=tags)
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags_match_condition="\"tag1\"='first tag'")
         resp = blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
-        self.assertEqual(int(resp['blob_append_offset']), 0)
-        self.assertEqual(resp['blob_committed_block_count'], 1)
-        self.assertIsNotNone(resp['etag'])
-        self.assertIsNotNone(resp['last_modified'])
+        assert int(resp['blob_append_offset']) == 0
+        assert resp['blob_committed_block_count'] == 1
+        assert resp['etag'] is not None
+        assert resp['last_modified'] is not None
 
     @BlobPreparer()
-    def test_append_block_with_md5(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_with_md5(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
         resp = blob.append_block(b'block', validate_content=True)
-        self.assertEqual(int(resp['blob_append_offset']), 0)
-        self.assertEqual(resp['blob_committed_block_count'], 1)
-        self.assertIsNotNone(resp['etag'])
-        self.assertIsNotNone(resp['last_modified'])
+        assert int(resp['blob_append_offset']) == 0
+        assert resp['blob_committed_block_count'] == 1
+        assert resp['etag'] is not None
+        assert resp['last_modified'] is not None
 
         # Assert
 
     @BlobPreparer()
-    def test_append_block_from_url_with_oauth(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         self._setup(bsc)
@@ -240,21 +260,26 @@ class StorageAppendBlobTest(StorageTestCase):
         token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
 
         # Assert this operation fails without a credential
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url)
         # Assert it passes after passing an oauth credential
         destination_blob_client.append_block_from_url(source_blob_client.url, source_authorization=token)
         destination_blob_data = destination_blob_client.download_blob().readall()
-        self.assertEqual(source_blob_data, destination_blob_data)
+        assert source_blob_data == destination_blob_data
 
     @BlobPreparer()
-    def test_append_block_from_url(self, blob_storage_account_name, blob_storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
-        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -270,14 +295,14 @@ class StorageAppendBlobTest(StorageTestCase):
         split = 4 * 1024
         resp = destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                              source_offset=0, source_length=split)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         destination_blob_client.set_blob_tags(tags=tags)
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=split,
                                                           source_length=LARGE_BLOB_SIZE - split,
@@ -286,32 +311,37 @@ class StorageAppendBlobTest(StorageTestCase):
                                                              source_offset=split,
                                                              source_length=LARGE_BLOB_SIZE - split,
                                                              if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
-        self.assertEqual(resp.get('blob_append_offset'), str(4 * 1024))
-        self.assertEqual(resp.get('blob_committed_block_count'), 2)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == str(4 * 1024)
+        assert resp.get('blob_committed_block_count') == 2
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Missing start range shouldn't pass the validation
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_length=LARGE_BLOB_SIZE)
 
     @BlobPreparer()
-    def test_append_block_from_url_and_validate_content_md5(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_and_validate_content_md5(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -326,32 +356,37 @@ class StorageAppendBlobTest(StorageTestCase):
         # Act part 1: make append block from url calls with correct md5
         resp = destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                              source_content_md5=src_md5)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
 
         # Act part 2: put block from url with wrong md5
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_content_md5=StorageContentValidation.get_content_md5(
                                                               b"POTATO"))
 
     @BlobPreparer()
-    def test_append_block_from_url_with_source_if_modified(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_source_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -369,34 +404,39 @@ class StorageAppendBlobTest(StorageTestCase):
                                                              source_length=LARGE_BLOB_SIZE,
                                                              source_if_modified_since=source_blob_properties.get(
                                                                  'last_modified') - timedelta(hours=15))
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           source_if_modified_since=source_blob_properties.get(
                                                               'last_modified'))
 
     @BlobPreparer()
-    def test_append_block_from_url_with_source_if_unmodified(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_source_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -413,20 +453,20 @@ class StorageAppendBlobTest(StorageTestCase):
                                                              source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                              source_if_unmodified_since=source_blob_properties.get(
                                                                  'last_modified'))
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             destination_blob_client \
                 .append_block_from_url(source_blob_client.url + '?' + sas,
                                        source_offset=0, source_length=LARGE_BLOB_SIZE,
@@ -434,14 +474,19 @@ class StorageAppendBlobTest(StorageTestCase):
                                            hours=15))
 
     @BlobPreparer()
-    def test_append_block_from_url_with_source_if_match(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_source_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -459,34 +504,39 @@ class StorageAppendBlobTest(StorageTestCase):
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   source_etag=source_blob_properties.get('etag'),
                                   source_match_condition=MatchConditions.IfNotModified)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           source_etag='0x111111111111111',
                                                           source_match_condition=MatchConditions.IfNotModified)
 
     @BlobPreparer()
-    def test_append_block_from_url_with_source_if_none_match(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_source_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_blob_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -504,33 +554,38 @@ class StorageAppendBlobTest(StorageTestCase):
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   source_etag='0x111111111111111',
                                   source_match_condition=MatchConditions.IfModified)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           source_etag=source_blob_properties.get('etag'),
                                                           source_match_condition=MatchConditions.IfModified)
 
     @BlobPreparer()
-    def test_append_block_from_url_with_if_match(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -552,33 +607,38 @@ class StorageAppendBlobTest(StorageTestCase):
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   etag=destination_blob_properties_on_creation.get('etag'),
                                   match_condition=MatchConditions.IfNotModified)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           etag='0x111111111111111',
                                                           match_condition=MatchConditions.IfNotModified)
 
     @BlobPreparer()
-    def test_append_block_from_url_with_if_none_match(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_if_none_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -595,33 +655,38 @@ class StorageAppendBlobTest(StorageTestCase):
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   etag='0x111111111111111', match_condition=MatchConditions.IfModified)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           etag=destination_blob_properties.get('etag'),
                                                           match_condition=MatchConditions.IfModified)
 
     @BlobPreparer()
-    def test_append_block_from_url_with_maxsize_condition(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_maxsize_condition(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -638,32 +703,37 @@ class StorageAppendBlobTest(StorageTestCase):
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   maxsize_condition=LARGE_BLOB_SIZE + 1)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           maxsize_condition=LARGE_BLOB_SIZE + 1)
 
     @BlobPreparer()
-    def test_append_block_from_url_with_appendpos_condition(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_appendpos_condition(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -680,33 +750,38 @@ class StorageAppendBlobTest(StorageTestCase):
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   appendpos_condition=0)
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           appendpos_condition=0)
 
     @BlobPreparer()
-    def test_append_block_from_url_with_if_modified(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_if_modified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_properties = source_blob_client.get_blob_properties()
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -723,34 +798,39 @@ class StorageAppendBlobTest(StorageTestCase):
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   if_modified_since=source_properties.get('last_modified') - timedelta(minutes=15))
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           if_modified_since=destination_blob_properties.get(
                                                               'last_modified'))
 
     @BlobPreparer()
-    def test_append_block_from_url_with_if_unmodified(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_block_from_url_with_if_unmodified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         source_properties = source_blob_client.append_block(source_blob_data)
-        sas = generate_blob_sas(
+        sas = self.generate_sas(
+            generate_blob_sas,
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
@@ -767,27 +847,31 @@ class StorageAppendBlobTest(StorageTestCase):
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_offset=0, source_length=LARGE_BLOB_SIZE,
                                   if_unmodified_since=source_properties.get('last_modified') + timedelta(minutes=15))
-        self.assertEqual(resp.get('blob_append_offset'), '0')
-        self.assertEqual(resp.get('blob_committed_block_count'), 1)
-        self.assertIsNotNone(resp.get('etag'))
-        self.assertIsNotNone(resp.get('last_modified'))
+        assert resp.get('blob_append_offset') == '0'
+        assert resp.get('blob_committed_block_count') == 1
+        assert resp.get('etag') is not None
+        assert resp.get('last_modified') is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
-        self.assertEqual(destination_blob_properties.get('etag'), resp.get('etag'))
-        self.assertEqual(destination_blob_properties.get('last_modified'), resp.get('last_modified'))
-        self.assertEqual(destination_blob_properties.get('size'), LARGE_BLOB_SIZE)
+        assert destination_blob_properties.get('etag') == resp.get('etag')
+        assert destination_blob_properties.get('last_modified') == resp.get('last_modified')
+        assert destination_blob_properties.get('size') == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
-        with self.assertRaises(ResourceModifiedError):
+        with pytest.raises(ResourceModifiedError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=0, source_length=LARGE_BLOB_SIZE,
                                                           if_unmodified_since=source_properties.get(
                                                               'last_modified') - timedelta(minutes=15))
 
     @BlobPreparer()
-    def test_create_append_blob_with_no_overwrite(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_append_blob_with_no_overwrite(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob_name = self._get_blob_reference()
@@ -815,14 +899,18 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         appended_data = data1 + data2
         self.assertBlobEqual(blob, appended_data)
-        self.assertEqual(props.etag, update_resp.get('etag'))
-        self.assertEqual(props.blob_type, BlobType.AppendBlob)
-        self.assertEqual(props.last_modified, update_resp.get('last_modified'))
-        self.assertEqual(props.metadata, {'blobdata': 'Data1'})
-        self.assertEqual(props.size, LARGE_BLOB_SIZE + LARGE_BLOB_SIZE + 512)
+        assert props.etag == update_resp.get('etag')
+        assert props.blob_type == BlobType.AppendBlob
+        assert props.last_modified == update_resp.get('last_modified')
+        assert props.metadata == {'blobdata': 'Data1'}
+        assert props.size == LARGE_BLOB_SIZE + LARGE_BLOB_SIZE + 512
 
     @BlobPreparer()
-    def test_create_append_blob_with_overwrite(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_append_blob_with_overwrite(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob_name = self._get_blob_reference()
@@ -848,14 +936,18 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data2)
-        self.assertEqual(props.etag, update_resp.get('etag'))
-        self.assertEqual(props.last_modified, update_resp.get('last_modified'))
-        self.assertEqual(props.metadata, {'blobdata': 'Data2'})
-        self.assertEqual(props.blob_type, BlobType.AppendBlob)
-        self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
+        assert props.etag == update_resp.get('etag')
+        assert props.last_modified == update_resp.get('last_modified')
+        assert props.metadata == {'blobdata': 'Data2'}
+        assert props.blob_type == BlobType.AppendBlob
+        assert props.size == LARGE_BLOB_SIZE + 512
 
     @BlobPreparer()
-    def test_append_blob_from_bytes(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_bytes(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -867,11 +959,15 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assertEqual(blob_properties.etag, append_resp['etag'])
-        self.assertEqual(blob_properties.last_modified, append_resp['last_modified'])
+        assert blob_properties.etag == append_resp['etag']
+        assert blob_properties.last_modified == append_resp['last_modified']
 
     @BlobPreparer()
-    def test_append_blob_from_0_bytes(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_0_bytes(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -883,11 +979,15 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data)
         # appending nothing should not make any network call
-        self.assertIsNone(append_resp.get('etag'))
-        self.assertIsNone(append_resp.get('last_modified'))
+        assert append_resp.get('etag') is None
+        assert append_resp.get('last_modified') is None
 
     @BlobPreparer()
-    def test_append_blob_from_bytes_with_progress(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_progress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -908,7 +1008,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @BlobPreparer()
-    def test_append_blob_from_bytes_with_index(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_index(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -921,7 +1025,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertBlobEqual(blob, data[3:])
 
     @BlobPreparer()
-    def test_append_blob_from_bytes_with_index_and_count(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_index_and_count(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -934,7 +1042,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertBlobEqual(blob, data[3:8])
 
     @BlobPreparer()
-    def test_append_blob_from_bytes_chunked_upload(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_chunked_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -946,11 +1058,15 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assertEqual(blob_properties.etag, append_resp['etag'])
-        self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
+        assert blob_properties.etag == append_resp['etag']
+        assert blob_properties.last_modified == append_resp.get('last_modified')
 
     @BlobPreparer()
-    def test_append_blob_from_bytes_with_progress_chunked_upload(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_with_progress_chunked_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -977,7 +1093,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @BlobPreparer()
-    def test_append_blob_from_bytes_chunked_upload_with_index_and_count(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_bytes_chunked_upload_with_index_and_count(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -992,7 +1112,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertBlobEqual(blob, data[index:index + blob_size])
 
     @BlobPreparer()
-    def test_append_blob_from_path_chunked_upload(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_path_chunked_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1009,12 +1133,16 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assertEqual(blob_properties.etag, append_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
+        assert blob_properties.etag == append_resp.get('etag')
+        assert blob_properties.last_modified == append_resp.get('last_modified')
         self._teardown(FILE_PATH)
 
     @BlobPreparer()
-    def test_append_blob_from_path_with_progress_chunked_upload(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_path_with_progress_chunked_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1048,7 +1176,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @BlobPreparer()
-    def test_append_blob_from_stream_chunked_upload(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_stream_chunked_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1064,12 +1196,16 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assertEqual(blob_properties.etag, append_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
+        assert blob_properties.etag == append_resp.get('etag')
+        assert blob_properties.last_modified == append_resp.get('last_modified')
         self._teardown(FILE_PATH)
 
     @BlobPreparer()
-    def test_app_blob_from_stream_nonseekable_chnked_upload_known_size(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_app_blob_from_stream_nonseekable_chnked_upload_known_size(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1081,7 +1217,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageAppendBlobTest.NonSeekableFile(stream)
+            non_seekable_file = NonSeekableStream(stream)
             blob.upload_blob(non_seekable_file, length=blob_size, blob_type=BlobType.AppendBlob)
 
         # Assert
@@ -1089,7 +1225,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @BlobPreparer()
-    def test_app_blob_from_stream_nonseekable_chnked_upload_unk_size(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_app_blob_from_stream_nonseekable_chnked_upload_unk_size(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1100,7 +1240,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageAppendBlobTest.NonSeekableFile(stream)
+            non_seekable_file = NonSeekableStream(stream)
             blob.upload_blob(non_seekable_file, blob_type=BlobType.AppendBlob)
 
         # Assert
@@ -1108,7 +1248,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @BlobPreparer()
-    def test_append_blob_from_stream_with_multiple_appends(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_stream_with_multiple_appends(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1131,7 +1275,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self._teardown(FILE_PATH)
 
     @BlobPreparer()
-    def test_append_blob_from_stream_chunked_upload_with_count(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_stream_chunked_upload_with_count(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1151,7 +1299,10 @@ class StorageAppendBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_append_blob_from_stream_chunked_upload_with_count_parallel(self, storage_account_name, storage_account_key):
+    def test_append_blob_from_stream_chunked_upload_with_count_parallel(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # parallel tests introduce random order of requests, can only run live
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
@@ -1169,12 +1320,16 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data[:blob_size])
-        self.assertEqual(blob_properties.etag, append_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
+        assert blob_properties.etag == append_resp.get('etag')
+        assert blob_properties.last_modified == append_resp.get('last_modified')
         self._teardown(FILE_PATH)
 
     @BlobPreparer()
-    def test_append_blob_from_text(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_text(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1187,11 +1342,15 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assertEqual(blob_properties.etag, append_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
+        assert blob_properties.etag == append_resp.get('etag')
+        assert blob_properties.last_modified == append_resp.get('last_modified')
 
     @BlobPreparer()
-    def test_append_blob_from_text_with_encoding(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_text_with_encoding(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1205,7 +1364,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertBlobEqual(blob, data)
 
     @BlobPreparer()
-    def test_append_blob_from_text_with_encoding_and_progress(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_text_with_encoding_and_progress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1226,7 +1389,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @BlobPreparer()
-    def test_append_blob_from_text_chunked_upload(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_from_text_chunked_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1240,7 +1407,11 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertBlobEqual(blob, encoded_data)
 
     @BlobPreparer()
-    def test_append_blob_with_md5(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_append_blob_with_md5(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1252,34 +1423,46 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
 
     @BlobPreparer()
-    def test_seal_append_blob(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_seal_append_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         resp = blob.seal_append_blob()
-        self.assertTrue(resp['blob_sealed'])
+        assert resp['blob_sealed']
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             blob.append_block("abc")
 
         blob.set_blob_metadata({'isseal': 'yes'})
         prop = blob.get_blob_properties()
 
-        self.assertEqual(prop.metadata['isseal'], 'yes')
+        assert prop.metadata['isseal'] == 'yes'
 
     @BlobPreparer()
-    def test_seal_append_blob_with_append_condition(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_seal_append_blob_with_append_condition(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             blob.seal_append_blob(appendpos_condition=1)
 
         resp = blob.seal_append_blob(appendpos_condition=0)
-        self.assertTrue(resp['blob_sealed'])
+        assert resp['blob_sealed']
 
     @BlobPreparer()
-    def test_copy_sealed_blob_will_get_a_sealed_blob(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_copy_sealed_blob_will_get_a_sealed_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1290,12 +1473,16 @@ class StorageAppendBlobTest(StorageTestCase):
         copied_blob.start_copy_from_url(blob.url)
         prop = copied_blob.get_blob_properties()
 
-        self.assertTrue(prop.is_append_blob_sealed)
-        with self.assertRaises(HttpResponseError):
+        assert prop.is_append_blob_sealed
+        with pytest.raises(HttpResponseError):
             copied_blob.append_block("abc")
 
     @BlobPreparer()
-    def test_copy_unsealed_blob_will_get_a_sealed_blob(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_copy_unsealed_blob_will_get_a_sealed_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1305,17 +1492,21 @@ class StorageAppendBlobTest(StorageTestCase):
         copied_blob2.start_copy_from_url(blob.url, seal_destination_blob=True)
         prop = copied_blob2.get_blob_properties()
 
-        self.assertTrue(prop.is_append_blob_sealed)
-        with self.assertRaises(HttpResponseError):
+        assert prop.is_append_blob_sealed
+        with pytest.raises(HttpResponseError):
             copied_blob2.append_block("abc")
 
         blobs_gen = bsc.get_container_client(self.container_name).list_blobs()
         for blob in blobs_gen:
             if blob.name == "copiedblob2":
-                self.assertTrue(blob.is_append_blob_sealed)
+                assert blob.is_append_blob_sealed
 
     @BlobPreparer()
-    def test_copy_sealed_blob_with_seal_blob_will_get_a_sealed_blob(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_copy_sealed_blob_with_seal_blob_will_get_a_sealed_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1326,11 +1517,17 @@ class StorageAppendBlobTest(StorageTestCase):
         copied_blob3.start_copy_from_url(blob.url, seal_destination_blob=False)
         prop = copied_blob3.get_blob_properties()
 
-        self.assertIsNone(prop.is_append_blob_sealed)
+        assert prop.is_append_blob_sealed is None
         copied_blob3.append_block("abc")
 
     @BlobPreparer()
-    def test_create_append_blob_with_immutability_policy(self, versioned_storage_account_name, versioned_storage_account_key, storage_resource_group_name):
+    @recorded_by_proxy
+    def test_create_append_blob_with_immutability_policy(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+        storage_resource_group_name = kwargs.pop("storage_resource_group_name")
+        variables = kwargs.pop("variables", {})
+
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
 
@@ -1342,24 +1539,24 @@ class StorageAppendBlobTest(StorageTestCase):
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
-
+    
         # Act
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
 
-        immutability_policy = ImmutabilityPolicy(expiry_time=datetime.utcnow() + timedelta(seconds=5),
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=10))
+        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.create_append_blob(immutability_policy=immutability_policy,
                                 legal_hold=True)
 
         props = blob.get_blob_properties()
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             blob.delete_blob()
 
-        self.assertTrue(props['has_legal_hold'])
-        self.assertIsNotNone(props['immutability_policy']['expiry_time'])
-        self.assertIsNotNone(props['immutability_policy']['policy_mode'])
+        assert props['has_legal_hold']
+        assert props['immutability_policy']['expiry_time'] is not None
+        assert props['immutability_policy']['policy_mode'] is not None
 
         if self.is_live:
             blob.delete_immutability_policy()
@@ -1367,8 +1564,14 @@ class StorageAppendBlobTest(StorageTestCase):
             blob.delete_blob()
             mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
+        return variables
+
     @BlobPreparer()
-    def test_upload_progress_chunked(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_upload_progress_chunked(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         self._setup(bsc)
 

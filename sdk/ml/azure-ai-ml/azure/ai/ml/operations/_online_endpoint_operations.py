@@ -2,47 +2,47 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import json
-import logging
 import time
-from typing import Dict, Iterable, Union, Any
+from typing import Any, Dict, Iterable, Union
 
-from azure.core.polling import LROPoller
-from azure.identity import ChainedTokenCredential
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._restclient.v2022_02_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
+from azure.ai.ml._ml_exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+    log_and_raise_error,
 )
-
+from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthKeys,
     EndpointAuthToken,
+    KeyType,
     OnlineEndpointTrackedResourceArmPaginatedResult,
     RegenerateEndpointKeysRequest,
-    KeyType,
 )
+from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._endpoint_utils import polling_wait, validate_response
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants._common import KEY, AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointKeyType
+from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
+from azure.ai.ml.entities._assets import Data
+from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.core.credentials import TokenCredential
+from azure.core.polling import LROPoller
+
 from ._operation_orchestrator import OperationOrchestrator
 
-from azure.ai.ml.entities._assets import Data
-from azure.ai.ml._utils._endpoint_utils import polling_wait, post_and_validate_response
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
-from azure.ai.ml.constants import (
-    KEY,
-    AzureMLResourceType,
-    EndpointInvokeFields,
-    LROConfigurations,
-    EndpointKeyType,
-)
-from azure.ai.ml.entities import OnlineEndpoint, OnlineDeployment
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
@@ -50,10 +50,11 @@ def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
 
 
 class OnlineEndpointOperations(_ScopeDependentOperations):
-    """
-    OnlineEndpointOperations
+    """OnlineEndpointOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
     """
 
     def __init__(
@@ -62,12 +63,11 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_endpoint_helper: _LocalEndpointHelper,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
         super(OnlineEndpointOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        ops_logger.update_info(kwargs)
         self._online_operation = service_client_02_2022_preview.online_endpoints
         self._online_deployment_operation = service_client_02_2022_preview.online_deployments
         self._all_operations = all_operations
@@ -75,11 +75,14 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+
     @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
     def list(self, local: bool = False) -> Iterable[OnlineEndpointTrackedResourceArmPaginatedResult]:
         """List endpoints of the workspace.
 
-        :param (bool, optional) local: a flag to indicate whether to interact with endpoints in local Docker environment. Default: False.
+        :param (bool, optional) local: Flag to indicate whether to interact with endpoints in local Docker environment.
+            Default: False
         :return: a list of endpoints
         """
         if local:
@@ -93,11 +96,12 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
     def list_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
-        """List the keys
+        """List the keys.
 
         :param name str: the endpoint name
         :raise: Exception if cannot get online credentials
-        :return Union[EndpointAuthKeys, EndpointAuthToken]: depending on the auth mode in the endpoint, returns either keys or token
+        :return Union[EndpointAuthKeys, EndpointAuthToken]: depending on the auth mode in the endpoint,
+            returns either keys or token
         """
         return self._get_online_credentials(name=name)
 
@@ -110,7 +114,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         """Get a Endpoint resource.
 
         :param str name: Name of the endpoint.
-        :param (bool, optional) local: a flag to indicate whether to interact with endpoints in local Docker environment. Default: False.
+        :param (bool, optional) local: Flag to indicate whether to interact with endpoints in local Docker environment.
+            Default: False
         :return: Endpoint object retrieved from the service.
         :rtype: OnlineEndpoint:
         """
@@ -181,20 +186,19 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
         if no_wait:
-            module_logger.info(
-                f"Delete request initiated. Status can be checked using `az ml online-endpoint show -n {name}`\n"
-            )
             return delete_poller
-        else:
-            message = f"Deleting endpoint {name} \n"
-            module_logger.warning(
-                f" Delete request initiated. If you interrupt this command or it times out while waiting for deletion to complete, status can be checked using `az ml online-endpoint show -n {name}`\n"
-            )
-            polling_wait(poller=delete_poller, start_time=start_time, message=message, timeout=None)
+
+        message = f"Deleting endpoint {name} \n"
+        polling_wait(
+            poller=delete_poller,
+            start_time=start_time,
+            message=message,
+            timeout=None,
+        )
 
     @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, local: bool = False, **kwargs: Any) -> LROPoller:
-        """Create or update an endpoint
+        """Create or update an endpoint.
 
         :param endpoint: The endpoint entity.
         :type endpoint: Endpoint
@@ -203,51 +207,61 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :return: A poller to track the operation status if remote, else returns None if local.
         :rtype: LROPoller
         """
-        if local:
-            return self._local_endpoint_helper.create_or_update(endpoint=endpoint)
-
-        no_wait = kwargs.get("no_wait", False)
         try:
-            location = self._get_workspace_location()
+            if local:
+                return self._local_endpoint_helper.create_or_update(endpoint=endpoint)
 
-            if endpoint.traffic:
-                endpoint.traffic = _strip_zeroes_from_traffic(endpoint.traffic)
+            no_wait = kwargs.get("no_wait", False)
+            try:
+                location = self._get_workspace_location()
 
-            if endpoint.mirror_traffic:
-                endpoint.mirror_traffic = _strip_zeroes_from_traffic(endpoint.mirror_traffic)
+                if endpoint.traffic:
+                    endpoint.traffic = _strip_zeroes_from_traffic(endpoint.traffic)
 
-            endpoint_resource = endpoint._to_rest_online_endpoint(location=location)
-            orchestrators = OperationOrchestrator(
-                operation_container=self._all_operations, operation_scope=self._operation_scope
-            )
-            if hasattr(endpoint_resource.properties, "compute"):
-                endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
-                    endpoint_resource.properties.compute, azureml_type=AzureMLResourceType.COMPUTE
+                if endpoint.mirror_traffic:
+                    endpoint.mirror_traffic = _strip_zeroes_from_traffic(endpoint.mirror_traffic)
+
+                endpoint_resource = endpoint._to_rest_online_endpoint(location=location)
+                orchestrators = OperationOrchestrator(
+                    operation_container=self._all_operations,
+                    operation_scope=self._operation_scope,
                 )
-            poller = self._online_operation.begin_create_or_update(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                endpoint_name=endpoint.name,
-                body=endpoint_resource,
-                polling=not no_wait,
-                **self._init_kwargs,
-            )
-            if no_wait:
-                module_logger.info(
-                    f"Endpoint Create/Update request initiated. Status can be checked using `az ml online-endpoint show -n {endpoint.name}`\n"
+                if hasattr(endpoint_resource.properties, "compute"):
+                    endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
+                        endpoint_resource.properties.compute,
+                        azureml_type=AzureMLResourceType.COMPUTE,
+                    )
+                poller = self._online_operation.begin_create_or_update(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    endpoint_name=endpoint.name,
+                    body=endpoint_resource,
+                    polling=not no_wait,
+                    **self._init_kwargs,
                 )
-                return poller
-            else:
+                if no_wait:
+                    module_logger.info(
+                        """Endpoint Create/Update request initiated.
+    Status can be checked using `az ml online-endpoint show -n %s`\n""",
+                        endpoint.name,
+                    )
+                    return poller
+
                 return OnlineEndpoint._from_rest_object(poller.result())
 
+            except Exception as ex:
+                raise ex
         except Exception as ex:
-            raise ex
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
+            else:
+                raise ex
 
     @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self, name: str, key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE, **kwargs: Any
     ) -> LROPoller:
-        """Regenerate keys for endpoint
+        """Regenerate keys for endpoint.
 
         :param name: The endpoint name.
         :type name: The endpoint type. Defaults to ONLINE_ENDPOINT_TYPE.
@@ -266,13 +280,14 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         no_wait = kwargs.get("no_wait", False)
         if endpoint.properties.auth_mode.lower() == "key":
             return self._regenerate_online_keys(name=name, key_type=key_type, no_wait=no_wait)
-        else:
-            raise ValidationException(
-                message=f"Endpoint '{name}' does not use keys for authentication.",
-                target=ErrorTarget.ONLINE_ENDPOINT,
-                no_personal_data_message="Endpoint does not use keys for authentication.",
-                error_category=ErrorCategory.USER_ERROR,
-            )
+
+        raise ValidationException(
+            message=f"Endpoint '{name}' does not use keys for authentication.",
+            target=ErrorTarget.ONLINE_ENDPOINT,
+            no_personal_data_message="Endpoint does not use keys for authentication.",
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
 
     @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
@@ -280,19 +295,21 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         endpoint_name: str,
         request_file: str = None,
         deployment_name: str = None,
-        input_data: Union[str, Data] = None,
+        input_data: Union[str, Data] = None,  # pylint: disable=unused-argument
         params_override=None,
         local: bool = False,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> str:
-        """Invokes the endpoint with the provided payload
-
+        """Invokes the endpoint with the provided payload.
 
         :param str endpoint_name: the endpoint name
-        :param (str, optional) request_file: File containing the request payload. This is only valid for online endpoint.
-        :param (str, optional) deployment_name: Name of a specific deployment to invoke. This is optional. By default requests are routed to any of the deployments according to the traffic rules.
+        :param (str, optional) request_file: File containing the request payload.
+            This is only valid for online endpoint.
+        :param (str, optional) deployment_name: Name of a specific deployment to invoke. This is optional.
+            By default requests are routed to any of the deployments according to the traffic rules.
         :param (Union[str, Data], optional) input_data: To use a pre-registered data asset, pass str in format
-        :param (bool, optional) local: a flag to indicate whether to interact with endpoints in local Docker environment. Default: False.
+        :param (bool, optional) local: Flag to indicate whether to interact with endpoints in local Docker environment.
+            Default: False.
         Returns:
             str: Prediction output for online endpoint.
         """
@@ -325,7 +342,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
-        response = post_and_validate_response(endpoint.properties.scoring_uri, json=data, headers=headers, **kwargs)
+
+        response = self._requests_pipeline.post(endpoint.properties.scoring_uri, json=data, headers=headers)
+        validate_response(response)
         return response.text
 
     def _get_workspace_location(self) -> str:
@@ -347,16 +366,19 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 endpoint_name=name,
                 **self._init_kwargs,
             )
-        else:
-            return self._online_operation.get_token(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                endpoint_name=name,
-                **self._init_kwargs,
-            )
+
+        return self._online_operation.get_token(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            endpoint_name=name,
+            **self._init_kwargs,
+        )
 
     def _regenerate_online_keys(
-        self, name: str, key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE, no_wait: bool = False
+        self,
+        name: str,
+        key_type: str = EndpointKeyType.PRIMARY_KEY_TYPE,
+        no_wait: bool = False,
     ) -> Union[LROPoller[None], None]:
         keys = self._online_operation.list_keys(
             resource_group_name=self._resource_group_name,
@@ -375,6 +397,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ONLINE_ENDPOINT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         poller = self._online_operation.begin_regenerate_keys(
@@ -386,8 +409,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
         if not no_wait:
             return polling_wait(poller=poller, message="regenerate key")
-        else:
-            return poller
+
+        return poller
 
     def _validate_deployment_name(self, endpoint_name, deployment_name):
         deployments_list = self._online_deployment_operation.list(
@@ -405,6 +428,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                     target=ErrorTarget.ONLINE_ENDPOINT,
                     no_personal_data_message="Deployment name not found for this endpoint",
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
                 )
         else:
             msg = "No deployment exists for this endpoint"
@@ -413,4 +437,5 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 target=ErrorTarget.ONLINE_ENDPOINT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
             )

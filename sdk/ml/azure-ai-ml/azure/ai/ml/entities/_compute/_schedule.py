@@ -1,105 +1,22 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from abc import ABC
-from typing import Optional, List
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    Recurrence,
-    Cron,
-    RecurrenceSchedule,
-    RecurrenceFrequency,
-    ScheduleStatus as ScheduleState,
-    TriggerType,
-    ComputePowerAction,
-    ComputeSchedules as RestComputeSchedules,
-    ComputeStartStopSchedule as RestComputeStartStopSchedule,
-)
-from azure.ai.ml.constants import TYPE
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+# pylint: disable=protected-access
+from typing import List, Optional
+
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputePowerAction
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeSchedules as RestComputeSchedules
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
-
-class BaseTrigger(ABC):
-    """Base class for trigger, can't be instantiated directly.
-
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
-    """
-
-    def __init__(self, **kwargs):
-        self._type = kwargs.pop("type", None)
-
-    @property
-    def type(self) -> Optional[str]:
-        """Type of the schedule trigger.
-
-        :return: Type of the schedule trigger.
-        :rtype: str
-        """
-        return self._type
-
-
-class CronTrigger(BaseTrigger, Cron):
-    """Cron trigger
-
-    :param start_time: The start time.
-    :type start_time: str
-    :param time_zone: The time zone.
-    :type time_zone: str
-    :param expression: The cron expression.
-    :type expression: str
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
-    """
-
-    def __init__(self, *, start_time: str = None, time_zone: str = None, expression: str = None, **kwargs):
-        kwargs[TYPE] = TriggerType.CRON
-        super().__init__(**kwargs)
-
-        self.start_time = start_time
-        self.time_zone = time_zone
-        self.expression = expression
-
-
-class RecurrenceTrigger(BaseTrigger, Recurrence):
-    """Recurrence trigger
-
-    :param start_time: The start time.
-    :type start_time: str
-    :param time_zone: The time zone.
-    :type time_zone: str
-    :param frequency: Frequency of the recurrence trigger.
-    :type frequency: RecurrenceFrequency
-    :param interval: Recurrence interval.
-    :type interval: int
-    :param schedule: Schedule of the recurrence trigger.
-    :type schedule: RecurrenceSchedule
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
-    """
-
-    def __init__(
-        self,
-        *,
-        start_time: str = None,
-        time_zone: str = None,
-        frequency: RecurrenceFrequency = None,
-        interval: int = None,
-        schedule: RecurrenceSchedule = None,
-        **kwargs
-    ):
-        kwargs[TYPE] = TriggerType.RECURRENCE
-        super().__init__(**kwargs)
-
-        self.start_time = start_time
-        self.time_zone = time_zone
-        self.frequency = frequency
-        self.interval = interval
-        self.schedule = schedule
+from .._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
 class ComputeStartStopSchedule(RestTranslatableMixin):
-    """Schedules for compute start or stop scenario
+    """Schedules for compute start or stop scenario.
 
     :param trigger: The trigger of the schedule.
     :type trigger: Trigger
@@ -114,7 +31,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        trigger: BaseTrigger = None,
+        trigger: TriggerBase = None,
         action: ComputePowerAction = None,
         state: ScheduleState = ScheduleState.ENABLED,
         **kwargs
@@ -127,7 +44,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
 
     @property
     def schedule_id(self) -> Optional[str]:
-        """Schedule id, readonly
+        """Schedule id, readonly.
 
         :return: Schedule id.
         :rtype: Optional[str]
@@ -136,7 +53,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Schedule provisioning state, readonly
+        """Schedule provisioning state, readonly.
 
         :return: Schedule provisioning state.
         :rtype: Optional[str]
@@ -151,35 +68,35 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
 
         if isinstance(self.trigger, CronTrigger):
             rest_object.trigger_type = TriggerType.CRON
-            rest_object.cron = self.trigger
+            rest_object.cron = self.trigger._to_rest_compute_cron_object()
         elif isinstance(self.trigger, RecurrenceTrigger):
             rest_object.trigger_type = TriggerType.RECURRENCE
-            rest_object.recurrence = self.trigger
+            rest_object.recurrence = self.trigger._to_rest_compute_recurrence_object()
 
         return rest_object
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestComputeStartStopSchedule) -> "ComputeStartStopSchedule":
+    def _from_rest_object(cls, obj: RestComputeStartStopSchedule) -> "ComputeStartStopSchedule":
         schedule = ComputeStartStopSchedule(
-            action=rest_obj.action,
-            state=rest_obj.status,
-            schedule_id=rest_obj.id,
-            provisioning_state=rest_obj.provisioning_status,
+            action=obj.action,
+            state=obj.status,
+            schedule_id=obj.id,
+            provisioning_state=obj.provisioning_status,
         )
 
-        if rest_obj.trigger_type == TriggerType.Cron:
+        if obj.trigger_type == TriggerType.CRON:
             schedule.trigger = CronTrigger(
-                start_time=rest_obj.cron.start_time,
-                time_zone=rest_obj.cron.time_zone,
-                expression=rest_obj.cron.expression,
+                start_time=obj.cron.start_time,
+                time_zone=obj.cron.time_zone,
+                expression=obj.cron.expression,
             )
-        elif rest_obj.trigger_type == TriggerType.Recurrence:
+        elif obj.trigger_type == TriggerType.RECURRENCE:
             schedule.trigger = RecurrenceTrigger(
-                start_time=rest_obj.recurrence.start_time,
-                time_zone=rest_obj.recurrence.time_zone,
-                frequency=rest_obj.recurrence.frequency,
-                interval=rest_obj.recurrence.interval,
-                schedule=rest_obj.recurrence.schedule,
+                start_time=obj.recurrence.start_time,
+                time_zone=obj.recurrence.time_zone,
+                frequency=obj.recurrence.frequency,
+                interval=obj.recurrence.interval,
+                schedule=obj.recurrence.schedule,
             )
 
         return schedule
@@ -187,7 +104,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
 
 @experimental
 class ComputeSchedules(RestTranslatableMixin):
-    """Compute schedules
+    """Compute schedules.
 
     :param compute_start_stop: Compute start or stop schedules.
     :type compute_start_stop: List[ComputeStartStopSchedule]
@@ -195,7 +112,7 @@ class ComputeSchedules(RestTranslatableMixin):
     :type kwargs: dict
     """
 
-    def __init__(self, *, compute_start_stop: List[ComputeStartStopSchedule] = None, **kwargs):
+    def __init__(self, *, compute_start_stop: List[ComputeStartStopSchedule] = None):
         self.compute_start_stop = compute_start_stop
 
     def _to_rest_object(self) -> RestComputeSchedules:
@@ -209,10 +126,10 @@ class ComputeSchedules(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestComputeSchedules) -> "ComputeSchedules":
+    def _from_rest_object(cls, obj: RestComputeSchedules) -> "ComputeSchedules":
         schedules: List[ComputeStartStopSchedule] = []
-        if rest_obj.compute_start_stop:
-            for schedule in rest_obj.compute_start_stop:
+        if obj.compute_start_stop:
+            for schedule in obj.compute_start_stop:
                 schedules.append(ComputeStartStopSchedule._from_rest_object(schedule))
 
         return ComputeSchedules(

@@ -1,11 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Callable, Mapping
 
+from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 
 
 def get_dynamic_input_parameter(inputs: Mapping):
@@ -13,9 +16,9 @@ def get_dynamic_input_parameter(inputs: Mapping):
     return [
         KwParameter(
             name=name,
-            annotation=input.get_python_builtin_type_str(),
+            annotation=input._get_python_builtin_type_str(),
             default=None,
-            _type=input.get_python_builtin_type_str(),
+            _type=input._get_python_builtin_type_str(),
         )
         for name, input in inputs.items()
     ]
@@ -35,7 +38,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     try:
         yaml_str = entity._yaml_str if entity._yaml_str else entity._to_yaml()
         doc_string = "{0}\n\nComponent yaml:\n```yaml\n{1}\n```".format(doc_string, yaml_str)
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         pass
 
     dynamic_func = create_kw_function_from_parameters(

@@ -7,7 +7,8 @@
 
 
 from typing import Optional
-from azure.ai.ml.constants import LocalEndpointConstants
+
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 
 class Image(object):
@@ -21,7 +22,8 @@ class Image(object):
 
 
 class Build(object):
-    """Python object representation of devcontainer build.dockerfile property."""
+    """Python object representation of devcontainer build.dockerfile
+    property."""
 
     def __init__(
         self,

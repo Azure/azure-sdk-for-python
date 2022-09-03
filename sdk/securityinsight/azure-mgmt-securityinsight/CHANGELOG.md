@@ -1,5 +1,49 @@
 # Release History
 
+## 1.0.0 (2022-07-26)
+
+**Breaking changes**
+
+  - Model Bookmark no longer has parameter entity_mappings
+  - Model Bookmark no longer has parameter tactics
+  - Model Bookmark no longer has parameter techniques
+  - Model FusionAlertRule no longer has parameter scenario_exclusion_patterns
+  - Model FusionAlertRule no longer has parameter source_settings
+  - Model FusionAlertRule no longer has parameter techniques
+  - Model FusionAlertRuleTemplate no longer has parameter source_settings
+  - Model FusionAlertRuleTemplate no longer has parameter techniques
+  - Model Incident no longer has parameter provider_incident_id
+  - Model Incident no longer has parameter provider_name
+  - Model Incident no longer has parameter team_information
+  - Model IncidentAdditionalData no longer has parameter provider_incident_url
+  - Model IncidentAdditionalData no longer has parameter techniques
+  - Model IncidentOwnerInfo no longer has parameter owner_type
+  - Model ScheduledAlertRule no longer has parameter techniques
+  - Model ScheduledAlertRuleProperties no longer has parameter techniques
+  - Model ScheduledAlertRuleTemplate no longer has parameter techniques
+  - Model Watchlist no longer has parameter source_type
+  - Parameter logic_app_resource_id of model PlaybookActionProperties is now required
+  - Removed operation DataConnectorsOperations.connect
+  - Removed operation DataConnectorsOperations.disconnect
+  - Removed operation IncidentsOperations.create_team
+  - Removed operation IncidentsOperations.run_playbook
+  - Removed operation group BookmarkOperations
+  - Removed operation group BookmarkRelationsOperations
+  - Removed operation group DataConnectorsCheckRequirementsOperations
+  - Removed operation group DomainWhoisOperations
+  - Removed operation group EntitiesGetTimelineOperations
+  - Removed operation group EntitiesOperations
+  - Removed operation group EntitiesRelationsOperations
+  - Removed operation group EntityQueriesOperations
+  - Removed operation group EntityQueryTemplatesOperations
+  - Removed operation group EntityRelationsOperations
+  - Removed operation group IPGeodataOperations
+  - Removed operation group MetadataOperations
+  - Removed operation group OfficeConsentsOperations
+  - Removed operation group ProductSettingsOperations
+  - Removed operation group SourceControlOperations
+  - Removed operation group SourceControlsOperations
+
 ## 1.0.0b2 (2022-03-30)
 
 **Features**

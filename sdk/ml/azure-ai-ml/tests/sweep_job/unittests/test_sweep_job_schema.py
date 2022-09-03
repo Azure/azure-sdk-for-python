@@ -1,38 +1,37 @@
 import json
-import yaml
-from azure.ai.ml.constants import InputOutputModes, BASE_PATH_CONTEXT_KEY, AssetTypes
-from azure.ai.ml.entities import Job, CommandJob
-from azure.ai.ml.entities._inputs_outputs import Input
 from pathlib import Path
 from typing import Any
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    InputDeliveryMode,
-    JobInputType,
-    JobOutputType,
-    OutputDeliveryMode,
-    UriFolderJobOutput as RestUriFolderJobOutput,
-    AmlToken,
-    UserIdentity,
-    ManagedIdentity,
-)
+
 import pytest
+import yaml
+
+from azure.ai.ml import AmlToken, ManagedIdentity, UserIdentity, load_job
+from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity as RestManagedIdentity
+from azure.ai.ml._restclient.v2022_06_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._schema import SweepJobSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
+from azure.ai.ml.entities import CommandJob, Job
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.sweep import (
     Choice,
     LogNormal,
+    LogUniform,
     Normal,
     QLogNormal,
-    QNormal,
-    Randint,
-    Uniform,
-    QUniform,
-    LogUniform,
     QLogUniform,
-    SweepJob,
+    QNormal,
+    QUniform,
+    Randint,
     SamplingAlgorithm,
+    SweepJob,
+    Uniform,
 )
-from azure.ai.ml._schema import SweepJobSchema
-from azure.ai.ml import load_job
 
 
 @pytest.mark.unittest
@@ -166,22 +165,15 @@ class TestSweepJobSchema:
         assert rest.properties.search_space["ss"] == expected_rest
         assert vars(sweep.search_space["ss"]) == expected_ss
 
-    @pytest.mark.parametrize(
-        "yaml_path",
-        [
-            "./tests/test_configs/command_job/command_job_input_types.yml",
-            "./tests/test_configs/sweep_job/sweep_job_input_types.yml",
-        ],
-    )
-    def test_inputs_types_sweep_job(self, yaml_path: str):
-        original_entity = load_job(Path(yaml_path))
-        rest_representation = original_entity._to_rest_object()
+    def test_inputs_types_sweep_job(self):
+        original_entity = load_job(Path("./tests/test_configs/sweep_job/sweep_job_input_types.yml"))
+        rest_representation = to_rest_job_object(original_entity)
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
-        assert original_entity.inputs["test_dataset"].mode == InputOutputModes.RO_MOUNT
+        assert original_entity.inputs["test_dataset"].mode is None
         assert rest_representation.properties.inputs["test_dataset"].job_input_type == JobInputType.URI_FOLDER
-        assert rest_representation.properties.inputs["test_dataset"].mode == InputDeliveryMode.READ_ONLY_MOUNT
-        assert reconstructed_entity.inputs["test_dataset"].mode == InputOutputModes.RO_MOUNT
+        assert rest_representation.properties.inputs["test_dataset"].mode is None
+        assert reconstructed_entity.inputs["test_dataset"].mode is None
 
         assert original_entity.inputs["test_url"].mode == InputOutputModes.RO_MOUNT
         assert original_entity.inputs["test_url"].type == AssetTypes.URI_FILE
@@ -203,23 +195,16 @@ class TestSweepJobSchema:
         assert rest_representation.properties.inputs["test_literal_valued_int"].value == "42"
         assert reconstructed_entity.inputs["test_literal_valued_int"] == "42"
 
-    @pytest.mark.parametrize(
-        "yaml_path",
-        [
-            "./tests/test_configs/command_job/command_job_output_types.yml",
-            "./tests/test_configs/sweep_job/sweep_job_output_types.yml",
-        ],
-    )
-    def test_outputs_types_standalone_jobs(self, yaml_path: str):
-        original_entity = load_job(Path(yaml_path))
-        rest_representation = original_entity._to_rest_object()
+    def test_outputs_types_standalone_jobs(self):
+        original_entity = load_job(Path("./tests/test_configs/sweep_job/sweep_job_output_types.yml"))
+        rest_representation = to_rest_job_object(original_entity)
         dummy_default = RestUriFolderJobOutput(uri="azureml://foo", mode=OutputDeliveryMode.READ_WRITE_MOUNT)
         rest_representation.properties.outputs["default"] = dummy_default
         reconstructed_entity = Job._from_rest_object(rest_representation)
 
         assert original_entity.outputs["test1"] is None
         assert rest_representation.properties.outputs["test1"].job_output_type == JobOutputType.URI_FOLDER
-        assert rest_representation.properties.outputs["test1"].mode == OutputDeliveryMode.READ_WRITE_MOUNT
+        assert rest_representation.properties.outputs["test1"].mode is None
 
         assert original_entity.outputs["test2"].mode == InputOutputModes.UPLOAD
         assert rest_representation.properties.outputs["test2"].job_output_type == JobOutputType.URI_FOLDER
@@ -324,22 +309,22 @@ class TestSweepJobSchema:
         [
             (
                 "./tests/test_configs/sweep_job/object_sampling_algorithm/sweep_job_random_sampling_algorithm_object.yml",
-                "Random",
+                "random",
             ),
             (
                 "./tests/test_configs/sweep_job/object_sampling_algorithm/sweep_job_grid_sampling_algorithm_object.yml",
-                "Grid",
+                "grid",
             ),
             (
                 "./tests/test_configs/sweep_job/object_sampling_algorithm/sweep_job_bayesian_sampling_algorithm_object.yml",
-                "Bayesian",
+                "bayesian",
             ),
         ],
     )
     def test_sampling_algorithm_object_preservation(self, yaml_path: str, expected_sampling_algorithm: str):
         sweep_entity = load_job(Path(yaml_path))
         assert isinstance(sweep_entity.sampling_algorithm, SamplingAlgorithm)
-        assert sweep_entity.sampling_algorithm.sampling_algorithm_type == expected_sampling_algorithm
+        assert sweep_entity.sampling_algorithm.type == expected_sampling_algorithm
 
     @pytest.mark.parametrize(
         "yaml_path,property_name,expected_value",
@@ -354,10 +339,14 @@ class TestSweepJobSchema:
         assert sweep_entity.sampling_algorithm.__dict__[property_name] == expected_value
 
     @pytest.mark.parametrize(
-        "identity",
-        [AmlToken(), UserIdentity(), ManagedIdentity()],
+        ("identity", "rest_identity"),
+        [
+            (AmlToken(), RestAmlToken()),
+            (UserIdentity(), RestUserIdentity()),
+            (ManagedIdentity(), RestManagedIdentity()),
+        ],
     )
-    def test_identity_to_rest(self, identity):
+    def test_identity_to_rest(self, identity, rest_identity):
         command_job = CommandJob(
             code="./src",
             command="python train.py --lr 0.01",
@@ -374,4 +363,4 @@ class TestSweepJobSchema:
         )
         rest = sweep._to_rest_object()
 
-        assert rest.properties.identity == identity
+        assert rest.properties.identity == rest_identity

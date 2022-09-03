@@ -4,35 +4,40 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from .core.schema_meta import PatchedSchemaMeta
-from .core.schema import PathAwareSchema, YamlFileSchema
+from ._sweep import SweepJobSchema
+from .assets.code_asset import AnonymousCodeAssetSchema, CodeAssetSchema
+from .assets.data import DataSchema
+from .assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
+from .assets.model import ModelSchema
+from .component import CommandComponentSchema
 from .core.fields import (
-    NestedField,
-    UnionField,
     ArmStr,
     ArmVersionedStr,
-    StringTransformedEnum,
     ExperimentalField,
+    NestedField,
     RegistryStr,
+    StringTransformedEnum,
+    UnionField,
 )
-from .job import CommandJobSchema, ParallelJobSchema
-from .assets.code_asset import CodeAssetSchema, AnonymousCodeAssetSchema
-from .assets.environment import EnvironmentSchema, AnonymousEnvironmentSchema
-from .assets.model import ModelSchema
-from .assets.data import DataSchema
-from .assets.dataset import DatasetSchema
-from ._sweep import SweepJobSchema
-from .component import CommandComponentSchema
+from .core.schema import PathAwareSchema, YamlFileSchema
+from .core.schema_meta import PatchedSchemaMeta
+from .job import CommandJobSchema, ParallelJobSchema, SparkJobSchema
+
+# TODO: enable in PuP
+# from .job import ImportJobSchema
+# from .component import ImportComponentSchema
 
 __all__ = [
+    # "ImportJobSchema",
+    # "ImportComponentSchema",
     "ArmStr",
     "ArmVersionedStr",
     "DataSchema",
     "StringTransformedEnum",
     "CodeAssetSchema",
     "CommandJobSchema",
+    "SparkJobSchema",
     "ParallelJobSchema",
-    "DatasetSchema",
     "EnvironmentSchema",
     "AnonymousEnvironmentSchema",
     "NestedField",

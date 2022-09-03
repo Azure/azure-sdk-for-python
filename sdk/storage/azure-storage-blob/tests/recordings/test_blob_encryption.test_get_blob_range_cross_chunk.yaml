@@ -1,0 +1,451 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer37091561?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      etag:
+      - '"0x8DA74D1EF64745E"'
+      last-modified:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2021-08-06'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: !!binary |
+      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
+      HJMq1AyjS6TAcQ==
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3088'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "NtKKTonwOnocIf25fskNDY7h4c/J3F2j51ffSt3pqhwOzw4LpaEPMA==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "6JGIVNo3uj0EMfk3Wysliw==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0"}, "EncryptionMode": "FullBlob"}'
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer37091561/encryption_block_blob37091561
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - p5L/kS8tre+p4ROspk9s4A==
+      date:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      etag:
+      - '"0x8DA74D1EF7506ED"'
+      last-modified:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - gXgcv0mu+Hk=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-08-06'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer37091561/encryption_block_blob37091561
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '3088'
+      content-md5:
+      - p5L/kS8tre+p4ROspk9s4A==
+      content-type:
+      - application/octet-stream
+      date:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      etag:
+      - '"0x8DA74D1EF7506ED"'
+      last-modified:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "NtKKTonwOnocIf25fskNDY7h4c/J3F2j51ffSt3pqhwOzw4LpaEPMA==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "6JGIVNo3uj0EMfk3Wysliw==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-08-06'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-range:
+      - bytes=480-1535
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer37091561/encryption_block_blob37091561
+  response:
+    body:
+      string: !!binary |
+        ss9175K7zkse+OlWGpP08oVh54QoUSXXWKWD6V1KLXleSlWjXRmCRh6/40NRfYm9Jv8t1gySe0qZ
+        HXDYLi0STDJUYhK+1R6Q0JPSiH/SO/mpFHrDxXFjJEX0qinpyARgv7cn7reFEYH4pJzTmaqeFC6K
+        2eePgp0H7l1Q8LVW68k7HbMjcgxbJ+RDze+eYTsbFh8cgU3AU5F2RdRwQ+/6b5TnoDqeUjO8KDYN
+        o9UWpfMuq8m8BjYAfF4rd2Q31c3y5gqSfkfuwIkcAqloUykN598Xx9pma2Ml8CSiIjG7042Du1Bm
+        BluN5pre/haNycTQYJmeZesqh6xBDFHSBPxMKyq2sJfsL7w+lojS6BdGE6irnFJ1vvtjalsSQU6b
+        4OynRtGWTD4nWXUzjUVrTOq4Fa12cMgnjYeNN6MG+wap539jj77uhuod0ryARYtEeFSS6lMohkLc
+        xnxZgZnmWx9KG/eIeaRSCf2Lr+/FgyC6apfZYdLU2EWxZmGDBGmWXheaox2oQhWRPPjqjck8o2c0
+        L2hMPz+qKcVEvLxv4yBmgmt0DDpPEKTm5TVlOeY86u80xwMk6yXH8fS7CZl5dgXMKgKekdtWYeDc
+        GbJqIJmp8g5rKSw7t0j1hSpA8N1Sh/BzFKcUW/Gz+RBr8CYW86aBHeudkFI2xkn1HjJPWNyXHcKq
+        uLxhfgNIYtl+9f9iNCMjRm74yCUp3+nU8nDHjSGIv9cxDKLonEwQYLTIY1DMi5CgCs++37hxxze/
+        5Ttuq/8JQfnZevR0C4KHDJDeWhi19UltS6GYwQkJ9Njnf/o3YPxkHJOYsUg3MjR0D1ykOKwtkxMG
+        9PeOdBwNx0Z1p0QBQ30cRoaK7EWRmOS3/d5cjjEmjHVpxzl1Vn2Rkg8SqsHPoRGu+bpRKRnkT/V4
+        jw0tn7alNkRVLL+t+cCB5qJcz0lkIu1iX7C2CbATovyjn04zXDQlnJ0ZM3k6AbdITJYaIgPLZBxZ
+        63QXyBk4ak/pr5eSzziDPdD1lKIlJKeeBzaJVLhWvAyVexaHGGWZptTF23Ff4QUJ2vtvkuW7R3+s
+        C7y51oe4+ijU0pELdigMoiXXotLZWy+D6sT8cM/LzV/p3L3jo4In7Z0rC6nOngWhdfddHH8PSdig
+        uu00exR1sssHwZW5Iekb4FvsoGcIJFYxDZ5m6ODecg0vHqrY+qICeFEk9crXaA7syqDaJTTulORH
+        HI1QpXWKEfHxWf8NXH5mtYkoH3AIRKvFDXGP2iqZCHYbUMbNAAAKX+YdqyQjYeizDzFLm068VCxu
+        Ce5ScCYaVrgukF/SU5WtjcksE4+0w4biTpCloVOu2FWvTO9Dq5YXQ9kJzyuWWOFGv9gN2aka+96D
+        0eTdkHYz3RMg2G5ddZLhh61TVXXxdA1naHKe4UbU
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '1056'
+      content-range:
+      - bytes 480-1535/3088
+      content-type:
+      - application/octet-stream
+      date:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      etag:
+      - '"0x8DA74D1EF7506ED"'
+      last-modified:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
+      x-ms-blob-content-md5:
+      - p5L/kS8tre+p4ROspk9s4A==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "NtKKTonwOnocIf25fskNDY7h4c/J3F2j51ffSt3pqhwOzw4LpaEPMA==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "6JGIVNo3uj0EMfk3Wysliw==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-08-06'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      If-Match:
+      - '"0x8DA74D1EF7506ED"'
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-range:
+      - bytes=1504-2559
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer37091561/encryption_block_blob37091561
+  response:
+    body:
+      string: !!binary |
+        3oPR5N2QdjPdEyDYbl11kuGHrVNVdfF0DWdocp7hRtRHhOcnYhfjOj+76naqB3qZ/G8oJU1k/1oh
+        oT4Bie3Z0qDQdD4BfXYyfexu1rMiIA/D7XIqhacikv9GhZpgk8huKXDy+uj5OH5Ocg/l2ymKgskR
+        9pDbgsfnNv5ocF/4WjhKUQunmJX+OsXIfOcBEVf4XHDFQOsyG7gxrGRHjGG25JIWP9/5HkEwPauP
+        BMdGSPDKBP39zYHiqYVM+H/LmLBy4yROjf/sYLXq9Fdg+K+hc8pnc2EBpEZM320VPo4bRBe/+6fr
+        1DatSNnZwDE2md7WvX75+Dq9GcGvXUH40zVu57m8FiBnHBryJOiRevUzArq79zlkudAWeQbvfvKO
+        BlRLUKf3bRp42fZPCDkpvObzRsdxMUaB/vsG9mdgtu8c1gComkHOVvpQUXV7FGql9nx+WVm5dseT
+        J5+XF7T+i0snizZwyoIe667JqbbCaJRMbF/oOtwpueSJ3jwdQ8PSmR6e1p1lkJfuPdHn0cgnNsLu
+        xkUof61aJxx/uCf3iK6Nmlh2doCgbL6CG+ft9IKozIyku+heArBRIuEwV0OS1vTVZ1RK8kjxf9ZQ
+        ePdwU8Gnhy+GQe/Msip65m3J1J53nIW9vb2uq7a3HADUgAiBY2rC4xyPnzqTYP6MaTP0YL5dq7k/
+        0ytAjXgRlO9MwULvdwgxGm5JzwVHIOV5sfX5HheG1udcTenZjbhbNlDPl23/rY3DK4r8+68C+Byb
+        hMcbq8FUStVwcX1bnzATkU655yGqBxHsMnyioxP8hq/iVKsJtvQguASVixu8CqSxNX5++BV15yu9
+        T2ReCOlHzc8TupeqnEMyl5ZODZzKrDQY7dAoF7R9Z4QjiICJXuz6Tk6HR7/M/Y7Qcwn4PxMSDvQT
+        9izntAUvM1R5iNfX6frEUhFMq9BHxhgA27yq7SU6Qloc94kKUI8+as5CnBujWpLDH1HszgufPw/n
+        Yi14X5H2BSYB52NHMp80GMim4uMRSycAxWSrfmuf70e79zpdnzygfUbFQ8OuPi5OJ5z/6Zk4RpRx
+        753bVHrGaosFo5OeeCFvYkx2t9BmkYnRhXZfYhUehXgqm3gWaWF+YNeVO+cz0A1exrYGcO6Djgad
+        Zb966Rzf0pLmdtMy484YinIhoTvBvZYdgW2alVZJFqTyxQ1H4NTfwDjLMnJja7HP0yaNoOQx4Tz0
+        Fj5PeDWUw+E2c0fPYAym2hg5C9NKfP/IZ8uHCAlSdF8OHfk+GE+IOD9eGB1nLu0rGR67IS08CWRQ
+        cXxcK68CFflYTyhuw0Vcd8pRHBDGEKIOEvNZt0+nDkaYPyPTkF/uojxp/yd7AnWB8Rsd3WS9zfR+
+        C69BU86+TjwBbyNY1I/cxpJxxTpLKOUMf7xuxx/i
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '1056'
+      content-range:
+      - bytes 1504-2559/3088
+      content-type:
+      - application/octet-stream
+      date:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      etag:
+      - '"0x8DA74D1EF7506ED"'
+      last-modified:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
+      x-ms-blob-content-md5:
+      - p5L/kS8tre+p4ROspk9s4A==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "NtKKTonwOnocIf25fskNDY7h4c/J3F2j51ffSt3pqhwOzw4LpaEPMA==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "6JGIVNo3uj0EMfk3Wysliw==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-08-06'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      If-Match:
+      - '"0x8DA74D1EF7506ED"'
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0 Python/3.10.5 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-range:
+      - bytes=2528-3007
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer37091561/encryption_block_blob37091561
+  response:
+    body:
+      string: !!binary |
+        9H4Lr0FTzr5OPAFvI1jUj9zGknHFOkso5Qx/vG7HH+L/uubqtWWOF3jjjU4EC1/KcUVtWsscNGI5
+        sctH9FGjGH3d6gMTBUdFYp5wlSDK0ltAyvlBpFua7ieliUB7phqC70uexfmfkYCOKiX2ZzD0Xbr4
+        5bNf7nN9WElCQ06amsbOMoPVhh9VqEaLlIpMzlGAjcbhpQ+ZxKuo5AMzOho6nzzPTItnZhZ2EwgB
+        YfELPh4tTCQwhji46WAfuFLjtNqMeghwa1BttxfM6jT8+7aDDIzXyZcObWw80n5cvcJVgHtlpkjx
+        VrW08EvRNEhNkZ8F/bC4CDsbFY4x/djQW2aDxredYieowWJbf2YZjI4qnh28QJM6BhWHFKpj1wsS
+        qoh+X3NR3GsHnYTXJiznbQTPPnKnUpU56WL1wL0jgM0/eTf1FIBzMgSa1TSYXWT7Cv325TuCdQwL
+        5K5XC3cWOVlrsR3y4O3OscFctkgIpEtu4sc34VYxfJnKiREfnexOPQiBy7Kn6kqzUeviGpxa2amN
+        WtGZ5i8aOo7HhZbTQUA43mMBxbXoAIqGKWSYavkXWriipvYUhDngYzbNSDJMGSUw4DyYNnMWlciy
+        v4j8x+N47G53IQpbxi80/h+Jrv02JmWV
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '480'
+      content-range:
+      - bytes 2528-3007/3088
+      content-type:
+      - application/octet-stream
+      date:
+      - Tue, 02 Aug 2022 21:57:03 GMT
+      etag:
+      - '"0x8DA74D1EF7506ED"'
+      last-modified:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
+      x-ms-blob-content-md5:
+      - p5L/kS8tre+p4ROspk9s4A==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Tue, 02 Aug 2022 21:57:04 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "NtKKTonwOnocIf25fskNDY7h4c/J3F2j51ffSt3pqhwOzw4LpaEPMA==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "6JGIVNo3uj0EMfk3Wysliw==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.13.0"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-08-06'
+    status:
+      code: 206
+      message: Partial Content
+version: 1

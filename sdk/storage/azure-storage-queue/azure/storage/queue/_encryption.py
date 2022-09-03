@@ -41,7 +41,7 @@ _ERROR_OBJECT_INVALID = \
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise ValueError('{0} should not be None.'.format(param_name))
+        raise ValueError(f'{param_name} should not be None.')
 
 
 def _validate_key_encryption_key_wrap(kek):

@@ -25,7 +25,7 @@ import os
 import asyncio
 
 
-async def sample_extract_key_phrases_async():
+async def sample_extract_key_phrases_async() -> None:
     print(
         "In this sample, we want to find the articles that mention Microsoft to read."
     )

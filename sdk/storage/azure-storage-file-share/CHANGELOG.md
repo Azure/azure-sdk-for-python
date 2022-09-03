@@ -1,5 +1,17 @@
 # Release History
 
+## 12.10.0 (Unreleased)
+
+### Features Added
+- Stable release of features from 12.10.0b1.
+
+## 12.10.0b1 (2022-08-23)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
 ## 12.9.0 (2022-07-07)
 
 ### Features Added

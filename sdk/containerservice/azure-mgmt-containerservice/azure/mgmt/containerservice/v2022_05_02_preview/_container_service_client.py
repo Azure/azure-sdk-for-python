@@ -9,20 +9,32 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
-from .operations import AgentPoolsOperations, MaintenanceConfigurationsOperations, ManagedClusterSnapshotsOperations, ManagedClustersOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, ResolvePrivateLinkServiceIdOperations, SnapshotsOperations, TrustedAccessRoleBindingsOperations, TrustedAccessRolesOperations
+from .operations import (
+    AgentPoolsOperations,
+    MaintenanceConfigurationsOperations,
+    ManagedClusterSnapshotsOperations,
+    ManagedClustersOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    ResolvePrivateLinkServiceIdOperations,
+    SnapshotsOperations,
+    TrustedAccessRoleBindingsOperations,
+    TrustedAccessRolesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class ContainerServiceClient:    # pylint: disable=too-many-instance-attributes
+
+class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The Container Service Client.
 
     :ivar operations: Operations operations
@@ -57,9 +69,9 @@ class ContainerServiceClient:    # pylint: disable=too-many-instance-attributes
     :ivar trusted_access_role_bindings: TrustedAccessRoleBindingsOperations operations
     :vartype trusted_access_role_bindings:
      azure.mgmt.containerservice.v2022_05_02_preview.operations.TrustedAccessRoleBindingsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -77,7 +89,9 @@ class ContainerServiceClient:    # pylint: disable=too-many-instance-attributes
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ContainerServiceClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ContainerServiceClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -85,23 +99,34 @@ class ContainerServiceClient:    # pylint: disable=too-many-instance-attributes
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_clusters = ManagedClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.maintenance_configurations = MaintenanceConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_clusters = ManagedClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.maintenance_configurations = MaintenanceConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_cluster_snapshots = ManagedClusterSnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.trusted_access_roles = TrustedAccessRolesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.trusted_access_role_bindings = TrustedAccessRoleBindingsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_cluster_snapshots = ManagedClusterSnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trusted_access_roles = TrustedAccessRolesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trusted_access_role_bindings = TrustedAccessRoleBindingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -110,7 +135,7 @@ class ContainerServiceClient:    # pylint: disable=too-many-instance-attributes
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

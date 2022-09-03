@@ -32,9 +32,6 @@
     "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
-    "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-    "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -58,7 +55,6 @@
     "sdk/confidentialledger/azure-confidentialledger/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
-    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-core/**",
     "sdk/cosmos/azure-cosmos/**",
@@ -78,13 +74,10 @@
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
-    "sdk/mixedreality/azure-mixedreality-authentication/**",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-opentelemetry-exporter/**",
     "sdk/monitor/azure-monitor-query/**",
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
-    "sdk/remoterendering/azure-mixedreality-remoterendering/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -92,7 +85,6 @@
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
-    "sdk/synapse/azure-synapse-spark/**",
     "sdk/storage/azure-storage-file-share/**",
     "sdk/synapse/azure-synapse/**",
     "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
@@ -105,12 +97,16 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/loadtestservice/azure-developer-loadtesting/**",
+    "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore"
+    ".gitignore",
+    "tools/azure-sdk-tools/packaging_tools/**",
+    "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
     "pyyaml",
@@ -125,6 +121,7 @@
     "adls",
     "aiohttp",
     "amqp",
+    "amqps",
     "apim",
     "Asal",
     "asyncio",
@@ -161,6 +158,8 @@
     "docfx",
     "dotenv",
     "dpkg",
+    "dtlk",
+    "dtlksd",
     "DWORD",
     "eastus",
     "eckey",
@@ -183,7 +182,10 @@
     "hexlify",
     "himds",
     "hmac",
+    "hnstestscope",
     "howto",
+    "Hololens",
+    "httpx",
     "illumos",
     "imds",
     "inotify",
@@ -192,6 +194,7 @@
     "ipconfiguration",
     "ipconfigurations",
     "iqmp",
+    "isclass",
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
@@ -203,6 +206,7 @@
     "kubeconfigs",
     "Kubernetes",
     "Kusto",
+    "kvlt",
     "livekvtest",
     "livekvtestcertprg",
     "livekvtestcertrec",
@@ -230,6 +234,7 @@
     "myacr",
     "nazsdk",
     "noarch",
+    "NOPERM",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -244,6 +249,7 @@
     "PCREDENTIAL",
     "perfmon",
     "perfstress",
+    "perfstressdebug",
     "personalizer",
     "pkce",
     "pkey",
@@ -251,8 +257,10 @@
     "pluggy",
     "popen",
     "prebuilts",
+    "premf",
     "pschema",
     "PSECRET",
+    "pyfuncitem",
     "pygobject",
     "parameterizing",
     "pytyped",
@@ -277,14 +285,17 @@
     "SECG",
     "SECP",
     "setfacl",
+    "sftdl",
     "signalr",
     "signup",
     "simplifiable",
     "skipif",
+    "sktid",
     "skus",
     "southcentralus",
     "ssis",
     "substringof",
+    "systemperf",
     "tenvparallel",
     "Teradata",
     "timegm",
@@ -324,7 +335,20 @@
     "westcentralus",
     "westus",
     "wfile",
-    "westus"
+    "westus",
+    "BUILDID",
+    "documentdb",
+    "chdir",
+    "reqs",
+    "rgpy",
+    "swaggertosdk",
+    "rgname",
+    "mtype",
+    "venvtools",
+    "ispkg",
+    "openpyxl",
+    "deps",
+    "prnumber"
   ],
   "overrides": [
     {
@@ -387,14 +411,45 @@
       ]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
+      "words": ["conv"],
+      "caseSensitive": false
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
+      "words": ["undoc"]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
+      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
+      "words": ["qnas", "qnamaker"],
+      "caseSensitive": false
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
+      "words": ["groovin", "Olufsen"]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
+      "words": ["Apim", "cognituve"]
+    },
+    {
+      "filename": "sdk/communication/**",
       "words": [
         "XVCJ",
+        "PBOF"
+      ]
+    },
+    {
+      "filename": "sdk/communication/azure-communication-identity/tests/**",
+      "words": [
         "Njgw",
         "FNNHHJT",
         "Zwiz",
         "nypg",
-        "PBOF",
         "tzutc",
         "gettz"
       ]
@@ -423,7 +478,37 @@
         "allinone",
         "dmac",
         "ierr",
-        "mymodel"
+        "mymodel",
+        "heif"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/test-resources.json",
+      "words": [
+        "azconfig",
+        "azmonitordce",
+        "euap",
+        "azmonitordcr",
+        "azmonitorlogsws",
+        "authr",
+        "dcrrole",
+        "pergb"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
+      "words": [
+        "ikey",
+        "semconv"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
+      "words": [
+        "otel",
+        "OTLP",
+        "otlp",
+        "grpc"
       ]
     },
     {
@@ -448,6 +533,20 @@
       ]
     },
     {
+      "filename": "sdk/synapse/azure-synapse-spark/azure/synapse/spark/models/*.py",
+      "words": [
+        "pyspark",
+        "ename",
+        "evalue"
+      ]
+    },
+    {
+      "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
+      "words":[
+        "vusers"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -467,6 +566,7 @@
         "qloguniform",
         "odict",
         "sdkv",
+        "jioindiawest",
         "levelno",
         "amlignore",
         "envvar",
@@ -515,7 +615,64 @@
         "kwonlyargcount",
         "dcid",
         "startf",
-        "dpkg"
+        "dpkg",
+        "isreused",
+        "reusedrunid",
+        "strictyaml",
+        "funcs",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "isfolder",
+        "mylist",
+        "unioned",
+        "adamw",
+        "yolov",
+        "xdist",
+        "adla",
+        "listxattr",
+        "copyxattr",
+        "curatedenv",
+        "cuda",
+        "mkdtemp",
+        "runit",
+        "delim",
+        "curr",
+        "vendored",
+        "wasb",
+        "cgitb",
+        "isclass",
+        "isfunction",
+        "errno",
+        "firstlineno",
+        "chdir",
+        "fset",
+        "azuresqldb",
+        "unflat",
+        "unflatten",
+        "unflattened",
+        "unflattens",
+        "subel",
+        "azuresynapseanalytics",
+        "deque",
+        "fstring",
+        "vals",
+        "reprlib",
+        "wsid"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/test-resources.bicep",
+      "words": [
+        "pysdkci"
+      ]
+    },
+    {
+      "filename": "sdk/mixedreality/azure-mixedreality-authentication/**",
+      "words": [
+        "Ijoi",
+        "Iiwid"
       ]
     }
   ],

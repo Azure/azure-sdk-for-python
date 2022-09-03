@@ -41,6 +41,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorTraceExporter()
 
     @classmethod
@@ -307,6 +308,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "www.wikipedia.org")
 
         # url
+        # spell-checker:ignore ddds
         span._attributes = {
             "http.method": "GET",
             "http.scheme": "https",
@@ -644,6 +646,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "messaging")
 
         # azure specific
+        # spell-checker:ignore myeventhub
         span._attributes = {
             "az.namespace": "Microsoft.EventHub",
             "peer.address": "Test_peer",
@@ -1054,7 +1057,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             ),
             parent=SpanContext(
                 trace_id=36873507687745823477771305566750195432,
-                span_id=12030755672171557337,
+                span_id=12030755672171557338,
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,
@@ -1108,7 +1111,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             ),
             parent=SpanContext(
                 trace_id=36873507687745823477771305566750195432,
-                span_id=12030755672171557337,
+                span_id=12030755672171557338,
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,

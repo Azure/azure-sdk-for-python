@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccountStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status indicating whether the primary location of the storage account is available or
     unavailable.
     """
@@ -19,7 +18,7 @@ class AccountStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
-class AccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name. Required for account creation; optional for update. Note that in older versions,
     sku name was called accountType.
     """
@@ -30,7 +29,7 @@ class AccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_RAGRS = "Standard_RAGRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the storage account at the time the operation was called.
     """
 
@@ -38,7 +37,7 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
 
-class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason that a storage account name could not be used. The Reason element is only returned
     if NameAvailable is false.
     """
@@ -46,7 +45,7 @@ class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of measurement.
     """
 

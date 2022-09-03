@@ -356,7 +356,6 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14303656/")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -414,7 +413,6 @@ class TestHealth(TextAnalyticsTest):
         assert actual_string_index_type == "TextElement_v8"
         poller.result()
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14243209/")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -525,7 +523,7 @@ class TestHealth(TextAnalyticsTest):
             polling_interval=self._interval(),
         )
         response = poller.result()
-
+        assert isinstance(poller, AnalyzeHealthcareEntitiesLROPoller)
         results = list(response)
         document_order = ["1", "2", "3", "4"]
         for doc_idx, result in enumerate(results):
@@ -577,7 +575,8 @@ class TestHealth(TextAnalyticsTest):
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'begin_analyze_healthcare_entities' is only available for API version v3.1 and up."
+        assert str(e.value) == "'TextAnalyticsClient.begin_analyze_healthcare_entities' is not available in API version v3.0. " \
+                               "Use service API version v3.1 or newer."
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
@@ -597,4 +596,4 @@ class TestHealth(TextAnalyticsTest):
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'display_name' is only available for API version 2022-05-01 and up.\n"
+        assert str(e.value) == "'display_name' is not available in API version v3.1. Use service API version 2022-05-01 or newer.\n"
