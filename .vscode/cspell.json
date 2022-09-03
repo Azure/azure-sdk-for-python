@@ -26,7 +26,6 @@
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
 
-    "sdk/anomalydetector/azure-ai-anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/agrifood/azure-agrifood-farming/**",
@@ -198,6 +197,7 @@
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
+    "iterrows",
     "ivar",
     "jwks",
     "keybak",
