@@ -81,7 +81,7 @@ def adjust_confidence(score):
 
 
 def adjust_text_angle(text_angle):
-    """Adjust to (-180, 180]"""
+    """Adjust to (-180, 180)"""
     if text_angle > 180:
         text_angle -= 360
     return text_angle
