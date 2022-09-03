@@ -11,61 +11,61 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class GrantStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Grant status
-    """
+    """Grant status."""
 
     ACTIVE = "Active"
     INACTIVE = "Inactive"
 
+
 class GrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Grant Offer Type
-    """
+    """Grant Offer Type."""
 
     STUDENT = "Student"
     ACADEMIC = "Academic"
 
+
 class JoinRequestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Join request status
-    """
+    """Join request status."""
 
     PENDING = "Pending"
     DENIED = "Denied"
 
+
 class LabStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of this lab
-    """
+    """The status of this lab."""
 
     ACTIVE = "Active"
     DELETED = "Deleted"
     PENDING = "Pending"
 
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
+
 class StudentLabStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Student Lab Status
-    """
+    """Student Lab Status."""
 
     ACTIVE = "Active"
     DISABLED = "Disabled"
@@ -73,9 +73,9 @@ class StudentLabStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PENDING = "Pending"
     DELETED = "Deleted"
 
+
 class StudentRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Student Role
-    """
+    """Student Role."""
 
     STUDENT = "Student"
     ADMIN = "Admin"
