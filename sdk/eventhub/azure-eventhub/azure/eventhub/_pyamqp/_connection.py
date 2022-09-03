@@ -231,9 +231,9 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
          descriptor and field values.
         """
         if self._can_read():
-            if wait is False: # pylint:disable=no-else-return
-                return self._transport.receive_frame(**kwargs)
-            elif wait is True:
+            if wait is False:
+                wait = 0.1
+            if wait is True:
                 with self._transport.block():
                     return self._transport.receive_frame(**kwargs)
             else:
