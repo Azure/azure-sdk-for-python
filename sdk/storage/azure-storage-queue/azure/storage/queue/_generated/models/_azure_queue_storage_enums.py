@@ -7,21 +7,19 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class GeoReplicationStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the secondary location
-    """
+class GeoReplicationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the secondary location."""
 
     LIVE = "live"
     BOOTSTRAP = "bootstrap"
     UNAVAILABLE = "unavailable"
 
-class StorageErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Error codes returned by the service
-    """
+
+class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error codes returned by the service."""
 
     ACCOUNT_ALREADY_EXISTS = "AccountAlreadyExists"
     ACCOUNT_BEING_CREATED = "AccountBeingCreated"

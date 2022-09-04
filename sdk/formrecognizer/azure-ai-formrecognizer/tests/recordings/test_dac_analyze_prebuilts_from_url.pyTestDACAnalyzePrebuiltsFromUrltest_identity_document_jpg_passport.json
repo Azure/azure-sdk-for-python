@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-08-31",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,56 +9,52 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "494b37dd-9b4e-11ec-bd92-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "744ed7ae-cf0d-4558-a932-08daab1df1f6",
+        "apim-request-id": "fe8b1133-7b7d-4e7f-8de3-d77c4553409d",
         "Content-Length": "0",
-        "Date": "Fri, 04 Mar 2022 00:01:48 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/744ed7ae-cf0d-4558-a932-08daab1df1f6?api-version=2022-01-30-preview",
-        "Server": "istio-envoy",
+        "Date": "Wed, 17 Aug 2022 01:43:25 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/fe8b1133-7b7d-4e7f-8de3-d77c4553409d?api-version=2022-08-31",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1036"
+        "x-envoy-upstream-service-time": "302"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/744ed7ae-cf0d-4558-a932-08daab1df1f6?api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-idDocument/analyzeResults/fe8b1133-7b7d-4e7f-8de3-d77c4553409d?api-version=2022-08-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "494b37dd-9b4e-11ec-bd92-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "5b198787-62f8-444b-a2ed-126281082b04",
+        "apim-request-id": "335740b1-9405-4b23-a64f-2bb33106b47a",
+        "Content-Length": "24863",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Mar 2022 00:01:54 GMT",
-        "Server": "istio-envoy",
+        "Date": "Wed, 17 Aug 2022 01:43:31 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "363"
+        "x-envoy-upstream-service-time": "37"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2022-03-04T00:01:48Z",
-        "lastUpdatedDateTime": "2022-03-04T00:01:51Z",
+        "createdDateTime": "2022-08-17T01:43:26Z",
+        "lastUpdatedDateTime": "2022-08-17T01:43:29Z",
         "analyzeResult": {
-          "apiVersion": "2022-01-30-preview",
+          "apiVersion": "2022-08-31",
           "modelId": "prebuilt-idDocument",
           "stringIndexType": "unicodeCodePoint",
-          "content": "ENDORSEMENTS AND LIMITATIONS\nThis passport isvalid for all countries inless\nenhverelse spechled The-besser must comply\nwith any wia or other only meglioons\nof the cinintries to be sivted\nSEL COGLIEATIONS BEGINNING ON\nPAGE S OF APPLICARLOY\nMENTIONS ET RESTRICTIONS\nCh pesarport ral elatie pour lovs\nVOIR LES OESENIVA SOINS OCHUTANT A\nSPECIMEN\nSignature of bearer - Signature du titulaire\n76.00225\nPASSPORT\nPASSEPORT\n1\n3027\ns\nCANADA\nType/Type\nIssuing Country Pays \u00E9metteur\nP\nCAN\nSumame/Nom\nMARTIN\nGiven names/Pr\u00E9noms\nSARAH\nNationality/Nationalin\u011B\nCANADIAN /CANADIENNE\nDate of birth/Date de naissance\nPasaport No./N\u00BA de passeport\nZE000509\nEMIEN\n220027\u003E\nDate of issue/Data de obivrand\n14 JAN / JAN\n13\nDate of expiry Date d\u0027expiration\n14 JAN / JAN\n23\nIssuing AuthorityAutoriil de d\u00E9livrance\nSarah Martin\nGATINEAU\nP\u003CCANMARTIN \u003C\u003C SARAH \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\nZE000509\u003C9CAN8501019F2301147 \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C 08",
+          "content": "ENDORSEMENTS AND LIMITATIONS\nSIE COLLINABONS BEGINNING ON PACE S OF APPLICARLO\nMENTIONS ET RESTRICTIONS\nVOIR LES ORSENNA SONG OUIUITANT A\n46T00\n-\nSignature of bearer - Signature du titulaire\nSPECIMEN\nPASSPORT PASSEPORT\nCANADA\nType/Type P Sumame/Nom MARTIN Given names/Prinoms SARAH Nationality/Nationalins CANADIAN/CANADIENNE Date of birth Date de naissance 01 JAN 7JAN 85 Sex Sexe\nIssuing Country Pays \u00E9metteur\nCAN\nPassport No./N\u0022 de passeport ZE000509\nMEN\n\u003CLZOOZZA\nPlace of birth/Lieu de nais\nOTTAWA CAN Date of issue/Data de olivranda 14 JAN /JAN 13 Date of expiry Date d\u0027expiration 14 JAN / JAN 23 Issuing Almority/Autorita de d\u00E9livrance GATINEAU\nSanal Martin\nP\u003CCANMARTIN \u003C\u003C SARAH \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C ZE000509\u003C9CAN8501019F2301147 \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C 08",
           "pages": [
             {
               "pageNumber": 1,
@@ -69,17 +65,17 @@
               "words": [
                 {
                   "content": "ENDORSEMENTS",
-                  "boundingBox": [
-                    13,
+                  "polygon": [
+                    14,
                     15,
-                    64,
+                    65,
                     14,
                     65,
-                    22,
-                    13,
+                    21,
+                    14,
                     21
                   ],
-                  "confidence": 0.932,
+                  "confidence": 0.969,
                   "span": {
                     "offset": 0,
                     "length": 12
@@ -87,17 +83,17 @@
                 },
                 {
                   "content": "AND",
-                  "boundingBox": [
+                  "polygon": [
                     66,
                     14,
                     79,
                     14,
-                    80,
-                    22,
+                    79,
+                    21,
                     66,
-                    22
+                    21
                   ],
-                  "confidence": 0.995,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 13,
                     "length": 3
@@ -105,359 +101,377 @@
                 },
                 {
                   "content": "LIMITATIONS",
-                  "boundingBox": [
+                  "polygon": [
                     81,
                     14,
                     123,
-                    15,
+                    14,
                     123,
                     21,
-                    82,
-                    22
+                    81,
+                    21
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.981,
                   "span": {
                     "offset": 17,
                     "length": 11
                   }
                 },
                 {
-                  "content": "This",
-                  "boundingBox": [
+                  "content": "SIE",
+                  "polygon": [
                     14,
-                    22,
-                    22,
-                    22,
-                    22,
-                    28,
+                    47,
+                    21,
+                    47,
+                    21,
+                    53,
                     14,
-                    28
+                    53
                   ],
-                  "confidence": 0.637,
+                  "confidence": 0.004,
                   "span": {
                     "offset": 29,
-                    "length": 4
+                    "length": 3
                   }
                 },
                 {
-                  "content": "passport",
-                  "boundingBox": [
-                    23,
+                  "content": "COLLINABONS",
+                  "polygon": [
                     22,
-                    42,
-                    21,
-                    42,
-                    27,
-                    23,
-                    28
+                    47,
+                    56,
+                    48,
+                    55,
+                    53,
+                    22,
+                    53
                   ],
-                  "confidence": 0.178,
+                  "confidence": 0.061,
                   "span": {
-                    "offset": 34,
-                    "length": 8
+                    "offset": 33,
+                    "length": 11
                   }
                 },
                 {
-                  "content": "isvalid",
-                  "boundingBox": [
-                    43,
-                    21,
-                    58,
-                    21,
-                    58,
-                    27,
-                    43,
-                    27
+                  "content": "BEGINNING",
+                  "polygon": [
+                    57,
+                    48,
+                    82,
+                    48,
+                    81,
+                    53,
+                    56,
+                    53
                   ],
-                  "confidence": 0.404,
+                  "confidence": 0.611,
                   "span": {
-                    "offset": 43,
-                    "length": 7
-                  }
-                },
-                {
-                  "content": "for",
-                  "boundingBox": [
-                    59,
-                    21,
-                    65,
-                    21,
-                    65,
-                    27,
-                    59,
-                    27
-                  ],
-                  "confidence": 0.114,
-                  "span": {
-                    "offset": 51,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "all",
-                  "boundingBox": [
-                    66,
-                    21,
-                    71,
-                    21,
-                    71,
-                    27,
-                    66,
-                    27
-                  ],
-                  "confidence": 0.712,
-                  "span": {
-                    "offset": 55,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "countries",
-                  "boundingBox": [
-                    72,
-                    21,
-                    92,
-                    21,
-                    92,
-                    27,
-                    72,
-                    27
-                  ],
-                  "confidence": 0.364,
-                  "span": {
-                    "offset": 59,
+                    "offset": 45,
                     "length": 9
                   }
                 },
                 {
-                  "content": "inless",
-                  "boundingBox": [
-                    93,
-                    21,
-                    108,
-                    21,
-                    107,
-                    27,
-                    93,
-                    27
+                  "content": "ON",
+                  "polygon": [
+                    83,
+                    48,
+                    90,
+                    48,
+                    90,
+                    53,
+                    83,
+                    53
                   ],
-                  "confidence": 0.272,
+                  "confidence": 0.991,
                   "span": {
-                    "offset": 69,
-                    "length": 6
-                  }
-                },
-                {
-                  "content": "enhverelse",
-                  "boundingBox": [
-                    14,
-                    28,
-                    35,
-                    28,
-                    35,
-                    33,
-                    14,
-                    33
-                  ],
-                  "confidence": 0.128,
-                  "span": {
-                    "offset": 76,
-                    "length": 10
-                  }
-                },
-                {
-                  "content": "spechled",
-                  "boundingBox": [
-                    36,
-                    28,
-                    56,
-                    28,
-                    56,
-                    33,
-                    36,
-                    33
-                  ],
-                  "confidence": 0.156,
-                  "span": {
-                    "offset": 87,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "The-besser",
-                  "boundingBox": [
-                    57,
-                    28,
-                    81,
-                    27,
-                    81,
-                    33,
-                    57,
-                    33
-                  ],
-                  "confidence": 0.562,
-                  "span": {
-                    "offset": 96,
-                    "length": 10
-                  }
-                },
-                {
-                  "content": "must",
-                  "boundingBox": [
-                    82,
-                    27,
-                    93,
-                    27,
-                    93,
-                    33,
-                    82,
-                    33
-                  ],
-                  "confidence": 0.301,
-                  "span": {
-                    "offset": 107,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "comply",
-                  "boundingBox": [
-                    94,
-                    27,
-                    110,
-                    27,
-                    110,
-                    33,
-                    94,
-                    33
-                  ],
-                  "confidence": 0.639,
-                  "span": {
-                    "offset": 112,
-                    "length": 6
-                  }
-                },
-                {
-                  "content": "with",
-                  "boundingBox": [
-                    14,
-                    33,
-                    23,
-                    33,
-                    23,
-                    39,
-                    15,
-                    39
-                  ],
-                  "confidence": 0.633,
-                  "span": {
-                    "offset": 119,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "any",
-                  "boundingBox": [
-                    24,
-                    33,
-                    31,
-                    33,
-                    32,
-                    39,
-                    24,
-                    39
-                  ],
-                  "confidence": 0.591,
-                  "span": {
-                    "offset": 124,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "wia",
-                  "boundingBox": [
-                    33,
-                    33,
-                    41,
-                    33,
-                    41,
-                    40,
-                    33,
-                    39
-                  ],
-                  "confidence": 0.045,
-                  "span": {
-                    "offset": 128,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "or",
-                  "boundingBox": [
-                    42,
-                    33,
-                    47,
-                    33,
-                    47,
-                    40,
-                    42,
-                    40
-                  ],
-                  "confidence": 0.673,
-                  "span": {
-                    "offset": 132,
+                    "offset": 55,
                     "length": 2
                   }
                 },
                 {
-                  "content": "other",
-                  "boundingBox": [
-                    48,
-                    33,
-                    60,
-                    33,
-                    60,
-                    40,
-                    48,
-                    40
+                  "content": "PACE",
+                  "polygon": [
+                    13,
+                    53,
+                    25,
+                    53,
+                    25,
+                    59,
+                    14,
+                    59
                   ],
-                  "confidence": 0.775,
+                  "confidence": 0.796,
                   "span": {
-                    "offset": 135,
-                    "length": 5
-                  }
-                },
-                {
-                  "content": "only",
-                  "boundingBox": [
-                    61,
-                    33,
-                    72,
-                    33,
-                    72,
-                    39,
-                    61,
-                    40
-                  ],
-                  "confidence": 0.118,
-                  "span": {
-                    "offset": 141,
+                    "offset": 58,
                     "length": 4
                   }
                 },
                 {
-                  "content": "meglioons",
-                  "boundingBox": [
-                    73,
-                    33,
-                    99,
-                    34,
-                    99,
-                    39,
-                    73,
-                    39
+                  "content": "S",
+                  "polygon": [
+                    26,
+                    53,
+                    29,
+                    53,
+                    29,
+                    59,
+                    26,
+                    59
                   ],
-                  "confidence": 0.06,
+                  "confidence": 0.668,
+                  "span": {
+                    "offset": 63,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "OF",
+                  "polygon": [
+                    30,
+                    53,
+                    35,
+                    53,
+                    35,
+                    59,
+                    30,
+                    59
+                  ],
+                  "confidence": 0.688,
+                  "span": {
+                    "offset": 65,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "APPLICARLO",
+                  "polygon": [
+                    36,
+                    53,
+                    63,
+                    53,
+                    63,
+                    59,
+                    36,
+                    59
+                  ],
+                  "confidence": 0.086,
+                  "span": {
+                    "offset": 68,
+                    "length": 10
+                  }
+                },
+                {
+                  "content": "MENTIONS",
+                  "polygon": [
+                    301,
+                    14,
+                    334,
+                    14,
+                    335,
+                    21,
+                    301,
+                    21
+                  ],
+                  "confidence": 0.972,
+                  "span": {
+                    "offset": 79,
+                    "length": 8
+                  }
+                },
+                {
+                  "content": "ET",
+                  "polygon": [
+                    336,
+                    14,
+                    343,
+                    14,
+                    344,
+                    21,
+                    336,
+                    21
+                  ],
+                  "confidence": 0.993,
+                  "span": {
+                    "offset": 88,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "RESTRICTIONS",
+                  "polygon": [
+                    345,
+                    14,
+                    390,
+                    14,
+                    390,
+                    21,
+                    345,
+                    21
+                  ],
+                  "confidence": 0.959,
+                  "span": {
+                    "offset": 91,
+                    "length": 12
+                  }
+                },
+                {
+                  "content": "VOIR",
+                  "polygon": [
+                    308,
+                    53,
+                    317,
+                    53,
+                    317,
+                    59,
+                    308,
+                    59
+                  ],
+                  "confidence": 0.344,
+                  "span": {
+                    "offset": 104,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "LES",
+                  "polygon": [
+                    318,
+                    53,
+                    325,
+                    53,
+                    326,
+                    59,
+                    319,
+                    59
+                  ],
+                  "confidence": 0.581,
+                  "span": {
+                    "offset": 109,
+                    "length": 3
+                  }
+                },
+                {
+                  "content": "ORSENNA",
+                  "polygon": [
+                    327,
+                    53,
+                    347,
+                    52,
+                    347,
+                    59,
+                    327,
+                    59
+                  ],
+                  "confidence": 0.018,
+                  "span": {
+                    "offset": 113,
+                    "length": 7
+                  }
+                },
+                {
+                  "content": "SONG",
+                  "polygon": [
+                    348,
+                    52,
+                    360,
+                    52,
+                    361,
+                    59,
+                    348,
+                    59
+                  ],
+                  "confidence": 0.018,
+                  "span": {
+                    "offset": 121,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "OUIUITANT",
+                  "polygon": [
+                    362,
+                    52,
+                    386,
+                    51,
+                    386,
+                    58,
+                    362,
+                    59
+                  ],
+                  "confidence": 0.535,
+                  "span": {
+                    "offset": 126,
+                    "length": 9
+                  }
+                },
+                {
+                  "content": "A",
+                  "polygon": [
+                    387,
+                    51,
+                    391,
+                    51,
+                    391,
+                    58,
+                    387,
+                    58
+                  ],
+                  "confidence": 0.406,
+                  "span": {
+                    "offset": 136,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "46T00",
+                  "polygon": [
+                    42,
+                    77,
+                    44,
+                    168,
+                    13,
+                    169,
+                    11,
+                    78
+                  ],
+                  "confidence": 0.36,
+                  "span": {
+                    "offset": 138,
+                    "length": 5
+                  }
+                },
+                {
+                  "content": "-",
+                  "polygon": [
+                    388,
+                    106,
+                    390,
+                    106,
+                    390,
+                    110,
+                    388,
+                    110
+                  ],
+                  "confidence": 0.419,
+                  "span": {
+                    "offset": 144,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "Signature",
+                  "polygon": [
+                    43,
+                    115,
+                    72,
+                    115,
+                    73,
+                    123,
+                    43,
+                    123
+                  ],
+                  "confidence": 0.942,
                   "span": {
                     "offset": 146,
                     "length": 9
@@ -465,1069 +479,349 @@
                 },
                 {
                   "content": "of",
-                  "boundingBox": [
-                    14,
-                    39,
-                    17,
-                    39,
-                    17,
-                    45,
-                    14,
-                    46
+                  "polygon": [
+                    74,
+                    115,
+                    79,
+                    115,
+                    80,
+                    123,
+                    74,
+                    123
                   ],
-                  "confidence": 0.424,
+                  "confidence": 0.991,
                   "span": {
                     "offset": 156,
                     "length": 2
                   }
                 },
                 {
-                  "content": "the",
-                  "boundingBox": [
-                    18,
-                    39,
-                    25,
-                    39,
-                    26,
-                    45,
-                    19,
-                    45
-                  ],
-                  "confidence": 0.994,
-                  "span": {
-                    "offset": 159,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "cinintries",
-                  "boundingBox": [
-                    26,
-                    39,
-                    47,
-                    38,
-                    47,
-                    45,
-                    27,
-                    45
-                  ],
-                  "confidence": 0.581,
-                  "span": {
-                    "offset": 163,
-                    "length": 10
-                  }
-                },
-                {
-                  "content": "to",
-                  "boundingBox": [
-                    49,
-                    38,
-                    52,
-                    38,
-                    52,
-                    45,
-                    49,
-                    45
-                  ],
-                  "confidence": 0.725,
-                  "span": {
-                    "offset": 174,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "be",
-                  "boundingBox": [
-                    54,
-                    38,
-                    60,
-                    38,
-                    60,
-                    45,
-                    54,
-                    45
-                  ],
-                  "confidence": 0.939,
-                  "span": {
-                    "offset": 177,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "sivted",
-                  "boundingBox": [
-                    61,
-                    38,
-                    76,
-                    39,
-                    76,
-                    45,
-                    61,
-                    45
-                  ],
-                  "confidence": 0.096,
-                  "span": {
-                    "offset": 180,
-                    "length": 6
-                  }
-                },
-                {
-                  "content": "SEL",
-                  "boundingBox": [
-                    14,
-                    48,
-                    21,
-                    48,
-                    21,
-                    54,
-                    14,
-                    54
-                  ],
-                  "confidence": 0.002,
-                  "span": {
-                    "offset": 187,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "COGLIEATIONS",
-                  "boundingBox": [
-                    22,
-                    48,
-                    56,
-                    47,
-                    55,
-                    53,
-                    22,
-                    54
-                  ],
-                  "confidence": 0.074,
-                  "span": {
-                    "offset": 191,
-                    "length": 12
-                  }
-                },
-                {
-                  "content": "BEGINNING",
-                  "boundingBox": [
-                    57,
-                    47,
+                  "content": "bearer",
+                  "polygon": [
                     81,
-                    47,
+                    115,
+                    102,
+                    115,
+                    102,
+                    123,
                     81,
-                    54,
-                    57,
-                    53
-                  ],
-                  "confidence": 0.459,
-                  "span": {
-                    "offset": 204,
-                    "length": 9
-                  }
-                },
-                {
-                  "content": "ON",
-                  "boundingBox": [
-                    82,
-                    47,
-                    90,
-                    47,
-                    90,
-                    54,
-                    82,
-                    54
-                  ],
-                  "confidence": 0.965,
-                  "span": {
-                    "offset": 214,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "PAGE",
-                  "boundingBox": [
-                    13,
-                    54,
-                    25,
-                    54,
-                    26,
-                    60,
-                    13,
-                    60
-                  ],
-                  "confidence": 0.664,
-                  "span": {
-                    "offset": 217,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "S",
-                  "boundingBox": [
-                    26,
-                    54,
-                    28,
-                    54,
-                    29,
-                    60,
-                    27,
-                    60
-                  ],
-                  "confidence": 0.644,
-                  "span": {
-                    "offset": 222,
-                    "length": 1
-                  }
-                },
-                {
-                  "content": "OF",
-                  "boundingBox": [
-                    30,
-                    54,
-                    36,
-                    54,
-                    36,
-                    60,
-                    30,
-                    60
-                  ],
-                  "confidence": 0.602,
-                  "span": {
-                    "offset": 224,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "APPLICARLOY",
-                  "boundingBox": [
-                    37,
-                    54,
-                    67,
-                    54,
-                    66,
-                    60,
-                    37,
-                    60
-                  ],
-                  "confidence": 0.233,
-                  "span": {
-                    "offset": 227,
-                    "length": 11
-                  }
-                },
-                {
-                  "content": "MENTIONS",
-                  "boundingBox": [
-                    302,
-                    14,
-                    335,
-                    13,
-                    335,
-                    21,
-                    302,
-                    20
+                    123
                   ],
                   "confidence": 0.993,
                   "span": {
-                    "offset": 239,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "ET",
-                  "boundingBox": [
-                    336,
-                    13,
-                    344,
-                    13,
-                    344,
-                    21,
-                    336,
-                    21
-                  ],
-                  "confidence": 0.994,
-                  "span": {
-                    "offset": 248,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "RESTRICTIONS",
-                  "boundingBox": [
-                    345,
-                    13,
-                    391,
-                    13,
-                    391,
-                    21,
-                    345,
-                    21
-                  ],
-                  "confidence": 0.984,
-                  "span": {
-                    "offset": 251,
-                    "length": 12
-                  }
-                },
-                {
-                  "content": "Ch",
-                  "boundingBox": [
-                    297,
-                    21,
-                    303,
-                    21,
-                    303,
-                    27,
-                    297,
-                    27
-                  ],
-                  "confidence": 0.558,
-                  "span": {
-                    "offset": 264,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "pesarport",
-                  "boundingBox": [
-                    304,
-                    21,
-                    325,
-                    21,
-                    325,
-                    26,
-                    304,
-                    27
-                  ],
-                  "confidence": 0.364,
-                  "span": {
-                    "offset": 267,
-                    "length": 9
-                  }
-                },
-                {
-                  "content": "ral",
-                  "boundingBox": [
-                    327,
-                    21,
-                    334,
-                    20,
-                    334,
-                    26,
-                    326,
-                    26
-                  ],
-                  "confidence": 0.021,
-                  "span": {
-                    "offset": 277,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "elatie",
-                  "boundingBox": [
-                    337,
-                    20,
-                    349,
-                    20,
-                    349,
-                    26,
-                    337,
-                    26
-                  ],
-                  "confidence": 0.183,
-                  "span": {
-                    "offset": 281,
-                    "length": 6
-                  }
-                },
-                {
-                  "content": "pour",
-                  "boundingBox": [
-                    350,
-                    20,
-                    361,
-                    20,
-                    360,
-                    26,
-                    350,
-                    26
-                  ],
-                  "confidence": 0.76,
-                  "span": {
-                    "offset": 288,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "lovs",
-                  "boundingBox": [
-                    362,
-                    20,
-                    373,
-                    20,
-                    372,
-                    27,
-                    362,
-                    26
-                  ],
-                  "confidence": 0.029,
-                  "span": {
-                    "offset": 293,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "VOIR",
-                  "boundingBox": [
-                    307,
-                    53,
-                    317,
-                    52,
-                    317,
-                    59,
-                    308,
-                    59
-                  ],
-                  "confidence": 0.551,
-                  "span": {
-                    "offset": 298,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "LES",
-                  "boundingBox": [
-                    318,
-                    52,
-                    325,
-                    52,
-                    326,
-                    59,
-                    319,
-                    59
-                  ],
-                  "confidence": 0.573,
-                  "span": {
-                    "offset": 303,
-                    "length": 3
-                  }
-                },
-                {
-                  "content": "OESENIVA",
-                  "boundingBox": [
-                    327,
-                    52,
-                    347,
-                    52,
-                    347,
-                    59,
-                    327,
-                    59
-                  ],
-                  "confidence": 0.051,
-                  "span": {
-                    "offset": 307,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "SOINS",
-                  "boundingBox": [
-                    348,
-                    52,
-                    361,
-                    52,
-                    361,
-                    59,
-                    348,
-                    59
-                  ],
-                  "confidence": 0.365,
-                  "span": {
-                    "offset": 316,
-                    "length": 5
-                  }
-                },
-                {
-                  "content": "OCHUTANT",
-                  "boundingBox": [
-                    363,
-                    52,
-                    386,
-                    51,
-                    386,
-                    59,
-                    362,
-                    59
-                  ],
-                  "confidence": 0.566,
-                  "span": {
-                    "offset": 322,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "A",
-                  "boundingBox": [
-                    388,
-                    51,
-                    392,
-                    51,
-                    391,
-                    59,
-                    387,
-                    59
-                  ],
-                  "confidence": 0.732,
-                  "span": {
-                    "offset": 331,
-                    "length": 1
-                  }
-                },
-                {
-                  "content": "SPECIMEN",
-                  "boundingBox": [
-                    21,
-                    194,
-                    349,
-                    47,
-                    370,
-                    105,
-                    40,
-                    254
-                  ],
-                  "confidence": 0.263,
-                  "span": {
-                    "offset": 333,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "Signature",
-                  "boundingBox": [
-                    43,
-                    116,
-                    72,
-                    115,
-                    72,
-                    123,
-                    44,
-                    123
-                  ],
-                  "confidence": 0.967,
-                  "span": {
-                    "offset": 342,
-                    "length": 9
-                  }
-                },
-                {
-                  "content": "of",
-                  "boundingBox": [
-                    74,
-                    115,
-                    80,
-                    115,
-                    80,
-                    123,
-                    74,
-                    123
-                  ],
-                  "confidence": 0.994,
-                  "span": {
-                    "offset": 352,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "bearer",
-                  "boundingBox": [
-                    81,
-                    115,
-                    102,
-                    115,
-                    102,
-                    123,
-                    82,
-                    123
-                  ],
-                  "confidence": 0.994,
-                  "span": {
-                    "offset": 355,
+                    "offset": 159,
                     "length": 6
                   }
                 },
                 {
                   "content": "-",
-                  "boundingBox": [
+                  "polygon": [
                     103,
                     115,
                     105,
                     115,
-                    105,
+                    106,
                     123,
                     103,
                     123
                   ],
-                  "confidence": 0.753,
+                  "confidence": 0.89,
                   "span": {
-                    "offset": 362,
+                    "offset": 166,
                     "length": 1
                   }
                 },
                 {
                   "content": "Signature",
-                  "boundingBox": [
+                  "polygon": [
                     107,
                     115,
-                    137,
+                    136,
                     115,
                     137,
                     123,
                     107,
                     123
                   ],
-                  "confidence": 0.66,
+                  "confidence": 0.797,
                   "span": {
-                    "offset": 364,
+                    "offset": 168,
                     "length": 9
                   }
                 },
                 {
                   "content": "du",
-                  "boundingBox": [
+                  "polygon": [
                     138,
                     115,
+                    146,
+                    115,
                     147,
-                    114,
-                    147,
-                    123,
+                    122,
                     138,
-                    123
+                    122
                   ],
-                  "confidence": 0.949,
+                  "confidence": 0.98,
                   "span": {
-                    "offset": 374,
+                    "offset": 178,
                     "length": 2
                   }
                 },
                 {
                   "content": "titulaire",
-                  "boundingBox": [
+                  "polygon": [
                     148,
-                    114,
+                    115,
                     174,
                     114,
                     174,
-                    123,
+                    122,
                     148,
-                    123
+                    122
                   ],
-                  "confidence": 0.799,
+                  "confidence": 0.671,
                   "span": {
-                    "offset": 377,
+                    "offset": 181,
                     "length": 9
                   }
                 },
                 {
-                  "content": "76.00225",
-                  "boundingBox": [
-                    394,
-                    105,
-                    394,
-                    200,
-                    386,
-                    200,
-                    385,
-                    105
+                  "content": "SPECIMEN",
+                  "polygon": [
+                    18,
+                    196,
+                    345,
+                    49,
+                    365,
+                    107,
+                    38,
+                    256
                   ],
-                  "confidence": 0.103,
+                  "confidence": 0.149,
                   "span": {
-                    "offset": 387,
+                    "offset": 191,
                     "length": 8
                   }
                 },
                 {
                   "content": "PASSPORT",
-                  "boundingBox": [
-                    51,
+                  "polygon": [
+                    50,
                     302,
-                    94,
+                    95,
                     302,
                     94,
                     311,
-                    51,
+                    50,
                     311
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.995,
                   "span": {
-                    "offset": 396,
+                    "offset": 200,
                     "length": 8
                   }
                 },
                 {
                   "content": "PASSEPORT",
-                  "boundingBox": [
-                    49,
+                  "polygon": [
+                    48,
                     313,
                     98,
                     313,
-                    98,
+                    97,
                     322,
-                    49,
+                    48,
                     322
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.993,
                   "span": {
-                    "offset": 405,
+                    "offset": 209,
                     "length": 9
                   }
                 },
                 {
-                  "content": "1",
-                  "boundingBox": [
-                    274,
-                    249,
-                    279,
-                    249,
-                    279,
-                    257,
-                    274,
-                    257
-                  ],
-                  "confidence": 0.943,
-                  "span": {
-                    "offset": 415,
-                    "length": 1
-                  }
-                },
-                {
-                  "content": "3027",
-                  "boundingBox": [
-                    310,
-                    251,
-                    341,
-                    248,
-                    342,
-                    256,
-                    313,
-                    259
-                  ],
-                  "confidence": 0.424,
-                  "span": {
-                    "offset": 417,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "s",
-                  "boundingBox": [
-                    283,
-                    251,
-                    291,
-                    251,
-                    291,
-                    264,
-                    283,
-                    264
-                  ],
-                  "confidence": 0.854,
-                  "span": {
-                    "offset": 422,
-                    "length": 1
-                  }
-                },
-                {
                   "content": "CANADA",
-                  "boundingBox": [
+                  "polygon": [
                     178,
-                    299,
-                    256,
                     298,
-                    256,
-                    313,
+                    258,
+                    298,
+                    258,
+                    314,
                     178,
                     314
                   ],
-                  "confidence": 1,
+                  "confidence": 0.993,
                   "span": {
-                    "offset": 424,
+                    "offset": 219,
                     "length": 6
                   }
                 },
                 {
                   "content": "Type/Type",
-                  "boundingBox": [
-                    136,
-                    324,
+                  "polygon": [
+                    135,
+                    323,
                     166,
                     323,
-                    165,
-                    331,
-                    137,
+                    166,
+                    332,
+                    136,
                     332
                   ],
-                  "confidence": 0.904,
+                  "confidence": 0.805,
                   "span": {
-                    "offset": 431,
+                    "offset": 226,
                     "length": 9
                   }
                 },
                 {
-                  "content": "Issuing",
-                  "boundingBox": [
-                    184,
-                    323,
-                    203,
-                    323,
-                    202,
-                    331,
-                    183,
-                    331
-                  ],
-                  "confidence": 0.713,
-                  "span": {
-                    "offset": 441,
-                    "length": 7
-                  }
-                },
-                {
-                  "content": "Country",
-                  "boundingBox": [
-                    205,
-                    323,
-                    227,
-                    323,
-                    226,
-                    332,
-                    204,
-                    331
-                  ],
-                  "confidence": 0.967,
-                  "span": {
-                    "offset": 449,
-                    "length": 7
-                  }
-                },
-                {
-                  "content": "Pays",
-                  "boundingBox": [
-                    228,
-                    323,
-                    242,
-                    323,
-                    241,
-                    332,
-                    228,
-                    332
-                  ],
-                  "confidence": 0.9,
-                  "span": {
-                    "offset": 457,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "\u00E9metteur",
-                  "boundingBox": [
-                    243,
-                    323,
-                    271,
-                    323,
-                    271,
-                    332,
-                    243,
-                    332
-                  ],
-                  "confidence": 0.431,
-                  "span": {
-                    "offset": 462,
-                    "length": 8
-                  }
-                },
-                {
                   "content": "P",
-                  "boundingBox": [
-                    138,
-                    332,
+                  "polygon": [
+                    137,
+                    333,
                     142,
-                    332,
+                    333,
                     142,
-                    340,
+                    341,
                     138,
-                    340
+                    341
                   ],
-                  "confidence": 0.888,
+                  "confidence": 0.994,
                   "span": {
-                    "offset": 471,
+                    "offset": 236,
                     "length": 1
                   }
                 },
                 {
-                  "content": "CAN",
-                  "boundingBox": [
-                    187,
-                    332,
-                    205,
-                    332,
-                    205,
-                    341,
-                    186,
-                    340
-                  ],
-                  "confidence": 0.997,
-                  "span": {
-                    "offset": 473,
-                    "length": 3
-                  }
-                },
-                {
                   "content": "Sumame/Nom",
-                  "boundingBox": [
+                  "polygon": [
                     135,
                     343,
-                    174,
+                    175,
                     343,
                     174,
                     350,
                     135,
                     350
                   ],
-                  "confidence": 0.664,
+                  "confidence": 0.724,
                   "span": {
-                    "offset": 477,
+                    "offset": 238,
                     "length": 10
                   }
                 },
                 {
                   "content": "MARTIN",
-                  "boundingBox": [
+                  "polygon": [
                     137,
                     352,
                     176,
                     352,
-                    176,
-                    361,
+                    175,
+                    360,
                     137,
                     361
                   ],
-                  "confidence": 1,
+                  "confidence": 0.994,
                   "span": {
-                    "offset": 488,
+                    "offset": 249,
                     "length": 6
                   }
                 },
                 {
                   "content": "Given",
-                  "boundingBox": [
+                  "polygon": [
                     136,
-                    363,
+                    362,
                     151,
-                    363,
+                    362,
                     151,
                     370,
-                    136,
-                    369
+                    135,
+                    370
                   ],
-                  "confidence": 0.955,
+                  "confidence": 0.982,
                   "span": {
-                    "offset": 495,
+                    "offset": 256,
                     "length": 5
                   }
                 },
                 {
-                  "content": "names/Pr\u00E9noms",
-                  "boundingBox": [
-                    152,
-                    363,
-                    199,
+                  "content": "names/Prinoms",
+                  "polygon": [
+                    153,
+                    362,
+                    200,
                     363,
                     199,
                     369,
                     152,
                     370
                   ],
-                  "confidence": 0.183,
+                  "confidence": 0.746,
                   "span": {
-                    "offset": 501,
+                    "offset": 262,
                     "length": 13
                   }
                 },
                 {
                   "content": "SARAH",
-                  "boundingBox": [
+                  "polygon": [
                     138,
-                    371,
+                    372,
                     169,
                     371,
                     169,
                     380,
-                    137,
+                    138,
                     380
                   ],
-                  "confidence": 0.996,
+                  "confidence": 0.993,
                   "span": {
-                    "offset": 515,
+                    "offset": 276,
                     "length": 5
                   }
                 },
                 {
-                  "content": "Nationality/Nationalin\u011B",
-                  "boundingBox": [
-                    135,
+                  "content": "Nationality/Nationalins",
+                  "polygon": [
+                    136,
                     382,
                     197,
                     382,
                     196,
                     389,
-                    135,
+                    136,
                     389
                   ],
-                  "confidence": 0.111,
+                  "confidence": 0.115,
                   "span": {
-                    "offset": 521,
+                    "offset": 282,
                     "length": 23
                   }
                 },
                 {
-                  "content": "CANADIAN",
-                  "boundingBox": [
-                    137,
-                    391,
-                    189,
+                  "content": "CANADIAN/CANADIENNE",
+                  "polygon": [
+                    138,
                     390,
-                    190,
-                    399,
-                    137,
+                    263,
+                    390,
+                    266,
+                    400,
+                    138,
                     400
                   ],
-                  "confidence": 0.997,
+                  "confidence": 0.991,
                   "span": {
-                    "offset": 545,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "/CANADIENNE",
-                  "boundingBox": [
-                    192,
-                    390,
-                    264,
-                    390,
-                    265,
-                    400,
-                    192,
-                    399
-                  ],
-                  "confidence": 0.99,
-                  "span": {
-                    "offset": 554,
-                    "length": 11
+                    "offset": 306,
+                    "length": 19
                   }
                 },
                 {
                   "content": "Date",
-                  "boundingBox": [
+                  "polygon": [
                     136,
                     401,
                     148,
@@ -1537,323 +831,665 @@
                     136,
                     409
                   ],
-                  "confidence": 0.89,
+                  "confidence": 0.999,
                   "span": {
-                    "offset": 566,
+                    "offset": 326,
                     "length": 4
                   }
                 },
                 {
                   "content": "of",
-                  "boundingBox": [
-                    150,
+                  "polygon": [
+                    149,
                     401,
                     155,
                     401,
                     155,
                     409,
-                    150,
+                    149,
                     409
                   ],
-                  "confidence": 0.995,
+                  "confidence": 1,
                   "span": {
-                    "offset": 571,
+                    "offset": 331,
                     "length": 2
                   }
                 },
                 {
-                  "content": "birth/Date",
-                  "boundingBox": [
-                    157,
+                  "content": "birth",
+                  "polygon": [
+                    156,
                     401,
-                    184,
-                    402,
-                    184,
+                    169,
+                    401,
+                    169,
                     409,
                     156,
                     409
                   ],
-                  "confidence": 0.876,
+                  "confidence": 1,
                   "span": {
-                    "offset": 574,
-                    "length": 10
+                    "offset": 334,
+                    "length": 5
+                  }
+                },
+                {
+                  "content": "Date",
+                  "polygon": [
+                    170,
+                    401,
+                    184,
+                    401,
+                    184,
+                    409,
+                    170,
+                    409
+                  ],
+                  "confidence": 0.999,
+                  "span": {
+                    "offset": 340,
+                    "length": 4
                   }
                 },
                 {
                   "content": "de",
-                  "boundingBox": [
-                    186,
-                    402,
+                  "polygon": [
+                    185,
+                    401,
                     192,
-                    402,
+                    401,
                     192,
                     409,
                     185,
                     409
                   ],
-                  "confidence": 0.977,
+                  "confidence": 1,
                   "span": {
-                    "offset": 585,
+                    "offset": 345,
                     "length": 2
                   }
                 },
                 {
                   "content": "naissance",
-                  "boundingBox": [
+                  "polygon": [
                     193,
-                    402,
+                    401,
                     223,
                     402,
-                    222,
-                    408,
+                    223,
+                    409,
                     193,
-                    408
+                    409
                   ],
-                  "confidence": 0.696,
+                  "confidence": 1,
                   "span": {
-                    "offset": 588,
+                    "offset": 348,
                     "length": 9
                   }
                 },
                 {
-                  "content": "Pasaport",
-                  "boundingBox": [
-                    304,
-                    325,
-                    327,
-                    324,
-                    328,
-                    332,
-                    305,
-                    332
-                  ],
-                  "confidence": 0.722,
-                  "span": {
-                    "offset": 598,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "No./N\u00BA",
-                  "boundingBox": [
-                    329,
-                    324,
-                    348,
-                    324,
-                    348,
-                    332,
-                    330,
-                    332
-                  ],
-                  "confidence": 0.652,
-                  "span": {
-                    "offset": 607,
-                    "length": 6
-                  }
-                },
-                {
-                  "content": "de",
-                  "boundingBox": [
-                    349,
-                    324,
-                    356,
-                    324,
-                    356,
-                    332,
-                    349,
-                    332
-                  ],
-                  "confidence": 0.917,
-                  "span": {
-                    "offset": 614,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "passeport",
-                  "boundingBox": [
-                    357,
-                    324,
-                    387,
-                    324,
-                    387,
-                    331,
-                    357,
-                    332
-                  ],
-                  "confidence": 0.652,
-                  "span": {
-                    "offset": 617,
-                    "length": 9
-                  }
-                },
-                {
-                  "content": "ZE000509",
-                  "boundingBox": [
-                    307,
-                    333,
-                    380,
-                    332,
-                    380,
-                    344,
-                    307,
-                    346
-                  ],
-                  "confidence": 0.99,
-                  "span": {
-                    "offset": 627,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "EMIEN",
-                  "boundingBox": [
-                    171,
-                    386,
-                    346,
-                    337,
-                    366,
-                    397,
-                    179,
-                    455
-                  ],
-                  "confidence": 0.175,
-                  "span": {
-                    "offset": 636,
-                    "length": 5
-                  }
-                },
-                {
-                  "content": "220027\u003E",
-                  "boundingBox": [
-                    383,
-                    447,
-                    374,
-                    384,
-                    384,
-                    382,
-                    392,
-                    446
-                  ],
-                  "confidence": 0.661,
-                  "span": {
-                    "offset": 642,
-                    "length": 7
-                  }
-                },
-                {
-                  "content": "Date",
-                  "boundingBox": [
-                    135,
-                    438,
-                    148,
-                    439,
-                    148,
-                    447,
-                    136,
-                    446
-                  ],
-                  "confidence": 0.625,
-                  "span": {
-                    "offset": 650,
-                    "length": 4
-                  }
-                },
-                {
-                  "content": "of",
-                  "boundingBox": [
-                    149,
-                    439,
-                    155,
-                    439,
-                    155,
-                    447,
+                  "content": "01",
+                  "polygon": [
+                    137,
+                    410,
                     150,
-                    447
-                  ],
-                  "confidence": 0.962,
-                  "span": {
-                    "offset": 655,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "issue/Data",
-                  "boundingBox": [
-                    156,
-                    439,
-                    186,
-                    440,
-                    186,
-                    447,
-                    157,
-                    447
-                  ],
-                  "confidence": 0.076,
-                  "span": {
-                    "offset": 658,
-                    "length": 10
-                  }
-                },
-                {
-                  "content": "de",
-                  "boundingBox": [
-                    187,
-                    440,
-                    194,
-                    440,
-                    194,
-                    447,
-                    187,
-                    447
-                  ],
-                  "confidence": 0.904,
-                  "span": {
-                    "offset": 669,
-                    "length": 2
-                  }
-                },
-                {
-                  "content": "obivrand",
-                  "boundingBox": [
-                    196,
-                    440,
-                    223,
-                    440,
-                    222,
-                    447,
-                    196,
-                    447
-                  ],
-                  "confidence": 0.367,
-                  "span": {
-                    "offset": 672,
-                    "length": 8
-                  }
-                },
-                {
-                  "content": "14",
-                  "boundingBox": [
-                    138,
-                    449,
+                    410,
                     150,
-                    448,
-                    149,
-                    458,
-                    138,
-                    459
+                    419,
+                    137,
+                    418
                   ],
-                  "confidence": 0.722,
+                  "confidence": 0.995,
                   "span": {
-                    "offset": 681,
+                    "offset": 358,
                     "length": 2
                   }
                 },
                 {
                   "content": "JAN",
-                  "boundingBox": [
-                    158,
+                  "polygon": [
+                    157,
+                    410,
+                    175,
+                    410,
+                    176,
+                    419,
+                    157,
+                    419
+                  ],
+                  "confidence": 0.997,
+                  "span": {
+                    "offset": 361,
+                    "length": 3
+                  }
+                },
+                {
+                  "content": "7JAN",
+                  "polygon": [
+                    184,
+                    410,
+                    210,
+                    409,
+                    210,
+                    420,
+                    185,
+                    419
+                  ],
+                  "confidence": 0.774,
+                  "span": {
+                    "offset": 365,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "85",
+                  "polygon": [
+                    224,
+                    409,
+                    237,
+                    409,
+                    238,
+                    420,
+                    225,
+                    420
+                  ],
+                  "confidence": 0.997,
+                  "span": {
+                    "offset": 370,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "Sex",
+                  "polygon": [
+                    136,
+                    420,
+                    146,
+                    420,
+                    146,
+                    427,
+                    136,
+                    427
+                  ],
+                  "confidence": 0.829,
+                  "span": {
+                    "offset": 373,
+                    "length": 3
+                  }
+                },
+                {
+                  "content": "Sexe",
+                  "polygon": [
+                    148,
+                    420,
+                    163,
+                    421,
+                    163,
+                    428,
+                    148,
+                    427
+                  ],
+                  "confidence": 0.633,
+                  "span": {
+                    "offset": 377,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "Issuing",
+                  "polygon": [
+                    184,
+                    323,
+                    202,
+                    323,
+                    203,
+                    331,
+                    185,
+                    331
+                  ],
+                  "confidence": 0.666,
+                  "span": {
+                    "offset": 382,
+                    "length": 7
+                  }
+                },
+                {
+                  "content": "Country",
+                  "polygon": [
+                    204,
+                    323,
+                    227,
+                    323,
+                    227,
+                    332,
+                    204,
+                    331
+                  ],
+                  "confidence": 0.711,
+                  "span": {
+                    "offset": 390,
+                    "length": 7
+                  }
+                },
+                {
+                  "content": "Pays",
+                  "polygon": [
+                    228,
+                    323,
+                    242,
+                    323,
+                    242,
+                    332,
+                    228,
+                    332
+                  ],
+                  "confidence": 0.886,
+                  "span": {
+                    "offset": 398,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "\u00E9metteur",
+                  "polygon": [
+                    244,
+                    323,
+                    271,
+                    323,
+                    271,
+                    332,
+                    243,
+                    332
+                  ],
+                  "confidence": 0.618,
+                  "span": {
+                    "offset": 403,
+                    "length": 8
+                  }
+                },
+                {
+                  "content": "CAN",
+                  "polygon": [
+                    186,
+                    331,
+                    204,
+                    332,
+                    204,
+                    341,
+                    186,
+                    340
+                  ],
+                  "confidence": 0.997,
+                  "span": {
+                    "offset": 412,
+                    "length": 3
+                  }
+                },
+                {
+                  "content": "Passport",
+                  "polygon": [
+                    304,
+                    324,
+                    328,
+                    324,
+                    328,
+                    331,
+                    305,
+                    332
+                  ],
+                  "confidence": 0.761,
+                  "span": {
+                    "offset": 416,
+                    "length": 8
+                  }
+                },
+                {
+                  "content": "No./N\u0022",
+                  "polygon": [
+                    329,
+                    324,
+                    348,
+                    324,
+                    348,
+                    331,
+                    330,
+                    331
+                  ],
+                  "confidence": 0.71,
+                  "span": {
+                    "offset": 425,
+                    "length": 6
+                  }
+                },
+                {
+                  "content": "de",
+                  "polygon": [
+                    349,
+                    324,
+                    356,
+                    324,
+                    356,
+                    331,
+                    349,
+                    331
+                  ],
+                  "confidence": 0.861,
+                  "span": {
+                    "offset": 432,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "passeport",
+                  "polygon": [
+                    357,
+                    324,
+                    388,
+                    324,
+                    388,
+                    331,
+                    357,
+                    331
+                  ],
+                  "confidence": 0.852,
+                  "span": {
+                    "offset": 435,
+                    "length": 9
+                  }
+                },
+                {
+                  "content": "ZE000509",
+                  "polygon": [
+                    306,
+                    333,
+                    379,
+                    332,
+                    380,
+                    344,
+                    307,
+                    345
+                  ],
+                  "confidence": 0.916,
+                  "span": {
+                    "offset": 445,
+                    "length": 8
+                  }
+                },
+                {
+                  "content": "MEN",
+                  "polygon": [
+                    225,
+                    402,
+                    340,
+                    343,
+                    356,
+                    392,
+                    239,
+                    439
+                  ],
+                  "confidence": 0.618,
+                  "span": {
+                    "offset": 454,
+                    "length": 3
+                  }
+                },
+                {
+                  "content": "\u003CLZOOZZA",
+                  "polygon": [
+                    385,
+                    380,
+                    391,
+                    452,
+                    383,
+                    453,
+                    375,
+                    381
+                  ],
+                  "confidence": 0.482,
+                  "span": {
+                    "offset": 458,
+                    "length": 8
+                  }
+                },
+                {
+                  "content": "Place",
+                  "polygon": [
+                    174,
+                    420,
+                    189,
+                    420,
+                    189,
+                    428,
+                    173,
+                    428
+                  ],
+                  "confidence": 0.947,
+                  "span": {
+                    "offset": 467,
+                    "length": 5
+                  }
+                },
+                {
+                  "content": "of",
+                  "polygon": [
+                    191,
+                    420,
+                    196,
+                    420,
+                    196,
+                    428,
+                    191,
+                    428
+                  ],
+                  "confidence": 0.806,
+                  "span": {
+                    "offset": 473,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "birth/Lieu",
+                  "polygon": [
+                    198,
+                    420,
+                    223,
+                    420,
+                    224,
+                    428,
+                    198,
+                    428
+                  ],
+                  "confidence": 0.255,
+                  "span": {
+                    "offset": 476,
+                    "length": 10
+                  }
+                },
+                {
+                  "content": "de",
+                  "polygon": [
+                    225,
+                    420,
+                    232,
+                    421,
+                    233,
+                    428,
+                    226,
+                    428
+                  ],
+                  "confidence": 0.622,
+                  "span": {
+                    "offset": 487,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "nais",
+                  "polygon": [
+                    233,
+                    421,
+                    245,
+                    421,
+                    246,
+                    429,
+                    234,
+                    428
+                  ],
+                  "confidence": 0.686,
+                  "span": {
+                    "offset": 490,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "OTTAWA",
+                  "polygon": [
+                    175,
+                    428,
+                    214,
+                    429,
+                    215,
+                    439,
+                    175,
+                    438
+                  ],
+                  "confidence": 0.994,
+                  "span": {
+                    "offset": 495,
+                    "length": 6
+                  }
+                },
+                {
+                  "content": "CAN",
+                  "polygon": [
+                    222,
+                    429,
+                    241,
+                    427,
+                    242,
+                    438,
+                    223,
+                    439
+                  ],
+                  "confidence": 0.997,
+                  "span": {
+                    "offset": 502,
+                    "length": 3
+                  }
+                },
+                {
+                  "content": "Date",
+                  "polygon": [
+                    135,
+                    440,
+                    148,
+                    440,
+                    148,
+                    447,
+                    135,
+                    447
+                  ],
+                  "confidence": 0.65,
+                  "span": {
+                    "offset": 506,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "of",
+                  "polygon": [
+                    150,
+                    440,
+                    155,
+                    440,
+                    155,
+                    447,
+                    150,
+                    447
+                  ],
+                  "confidence": 0.781,
+                  "span": {
+                    "offset": 511,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "issue/Data",
+                  "polygon": [
+                    156,
+                    440,
+                    186,
+                    440,
+                    186,
                     448,
+                    156,
+                    447
+                  ],
+                  "confidence": 0.106,
+                  "span": {
+                    "offset": 514,
+                    "length": 10
+                  }
+                },
+                {
+                  "content": "de",
+                  "polygon": [
+                    187,
+                    440,
+                    194,
+                    440,
+                    194,
+                    448,
+                    188,
+                    448
+                  ],
+                  "confidence": 0.755,
+                  "span": {
+                    "offset": 525,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "olivranda",
+                  "polygon": [
+                    195,
+                    440,
+                    226,
+                    439,
+                    226,
+                    447,
+                    196,
+                    448
+                  ],
+                  "confidence": 0.119,
+                  "span": {
+                    "offset": 528,
+                    "length": 9
+                  }
+                },
+                {
+                  "content": "14",
+                  "polygon": [
+                    137,
+                    449,
+                    150,
+                    449,
+                    150,
+                    458,
+                    137,
+                    458
+                  ],
+                  "confidence": 0.813,
+                  "span": {
+                    "offset": 538,
+                    "length": 2
+                  }
+                },
+                {
+                  "content": "JAN",
+                  "polygon": [
+                    158,
+                    449,
                     176,
                     448,
                     176,
@@ -1863,249 +1499,231 @@
                   ],
                   "confidence": 0.997,
                   "span": {
-                    "offset": 684,
+                    "offset": 541,
                     "length": 3
                   }
                 },
                 {
-                  "content": "/",
-                  "boundingBox": [
-                    186,
-                    448,
-                    190,
-                    448,
-                    190,
-                    458,
+                  "content": "/JAN",
+                  "polygon": [
                     185,
-                    458
-                  ],
-                  "confidence": 0.985,
-                  "span": {
-                    "offset": 688,
-                    "length": 1
-                  }
-                },
-                {
-                  "content": "JAN",
-                  "boundingBox": [
-                    192,
                     448,
-                    211,
+                    210,
                     448,
                     210,
                     458,
-                    192,
-                    458
+                    185,
+                    459
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.959,
                   "span": {
-                    "offset": 690,
-                    "length": 3
+                    "offset": 545,
+                    "length": 4
                   }
                 },
                 {
                   "content": "13",
-                  "boundingBox": [
+                  "polygon": [
                     226,
-                    447,
-                    238,
-                    447,
-                    238,
-                    457,
+                    448,
+                    237,
+                    448,
+                    237,
+                    458,
                     226,
-                    457
+                    458
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.997,
                   "span": {
-                    "offset": 694,
+                    "offset": 550,
                     "length": 2
                   }
                 },
                 {
                   "content": "Date",
-                  "boundingBox": [
-                    135,
-                    459,
+                  "polygon": [
+                    136,
+                    458,
                     148,
                     459,
                     148,
                     467,
-                    135,
+                    136,
                     467
                   ],
-                  "confidence": 0.999,
+                  "confidence": 0.66,
                   "span": {
-                    "offset": 697,
+                    "offset": 553,
                     "length": 4
                   }
                 },
                 {
                   "content": "of",
-                  "boundingBox": [
+                  "polygon": [
                     150,
                     459,
-                    155,
+                    154,
                     459,
-                    155,
+                    154,
                     467,
                     150,
                     467
                   ],
-                  "confidence": 1,
+                  "confidence": 0.846,
                   "span": {
-                    "offset": 702,
+                    "offset": 558,
                     "length": 2
                   }
                 },
                 {
                   "content": "expiry",
-                  "boundingBox": [
+                  "polygon": [
                     156,
                     459,
-                    174,
+                    173,
                     459,
                     173,
                     467,
                     156,
                     467
                   ],
-                  "confidence": 1,
+                  "confidence": 0.268,
                   "span": {
-                    "offset": 705,
+                    "offset": 561,
                     "length": 6
                   }
                 },
                 {
                   "content": "Date",
-                  "boundingBox": [
+                  "polygon": [
                     175,
                     459,
                     188,
                     459,
                     188,
                     467,
-                    175,
+                    174,
                     467
                   ],
-                  "confidence": 0.996,
+                  "confidence": 0.44,
                   "span": {
-                    "offset": 712,
+                    "offset": 568,
                     "length": 4
                   }
                 },
                 {
                   "content": "d\u0027expiration",
-                  "boundingBox": [
+                  "polygon": [
                     190,
                     459,
-                    222,
-                    460,
+                    223,
+                    459,
                     222,
                     467,
                     189,
                     467
                   ],
-                  "confidence": 0.376,
+                  "confidence": 0.678,
                   "span": {
-                    "offset": 717,
+                    "offset": 573,
                     "length": 12
                   }
                 },
                 {
                   "content": "14",
-                  "boundingBox": [
-                    139,
+                  "polygon": [
+                    138,
                     467,
                     149,
                     467,
                     149,
                     477,
-                    139,
+                    138,
                     477
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.994,
                   "span": {
-                    "offset": 730,
+                    "offset": 586,
                     "length": 2
                   }
                 },
                 {
                   "content": "JAN",
-                  "boundingBox": [
-                    158,
+                  "polygon": [
+                    157,
                     467,
-                    177,
+                    176,
                     467,
                     176,
                     477,
                     158,
                     477
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.997,
                   "span": {
-                    "offset": 733,
+                    "offset": 589,
                     "length": 3
                   }
                 },
                 {
                   "content": "/",
-                  "boundingBox": [
-                    185,
+                  "polygon": [
+                    184,
                     467,
-                    190,
+                    189,
                     467,
-                    190,
+                    189,
                     477,
                     185,
                     477
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.997,
                   "span": {
-                    "offset": 737,
+                    "offset": 593,
                     "length": 1
                   }
                 },
                 {
                   "content": "JAN",
-                  "boundingBox": [
-                    192,
+                  "polygon": [
+                    191,
                     467,
-                    211,
-                    468,
+                    210,
+                    467,
                     210,
                     477,
                     191,
                     477
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.998,
                   "span": {
-                    "offset": 739,
+                    "offset": 595,
                     "length": 3
                   }
                 },
                 {
                   "content": "23",
-                  "boundingBox": [
-                    226,
-                    468,
-                    238,
-                    468,
+                  "polygon": [
+                    225,
+                    467,
                     237,
-                    476,
-                    226,
-                    475
+                    467,
+                    238,
+                    477,
+                    225,
+                    477
                   ],
-                  "confidence": 0.996,
+                  "confidence": 0.997,
                   "span": {
-                    "offset": 743,
+                    "offset": 599,
                     "length": 2
                   }
                 },
                 {
                   "content": "Issuing",
-                  "boundingBox": [
+                  "polygon": [
                     135,
-                    478,
+                    479,
                     155,
                     478,
                     155,
@@ -2113,53 +1731,53 @@
                     135,
                     486
                   ],
-                  "confidence": 0.742,
+                  "confidence": 0.763,
                   "span": {
-                    "offset": 746,
+                    "offset": 602,
                     "length": 7
                   }
                 },
                 {
-                  "content": "AuthorityAutoriil",
-                  "boundingBox": [
+                  "content": "Almority/Autorita",
+                  "polygon": [
                     156,
                     478,
                     204,
-                    478,
+                    479,
                     204,
                     486,
-                    157,
+                    156,
                     486
                   ],
-                  "confidence": 0.43,
+                  "confidence": 0.2,
                   "span": {
-                    "offset": 754,
+                    "offset": 610,
                     "length": 17
                   }
                 },
                 {
                   "content": "de",
-                  "boundingBox": [
-                    206,
-                    478,
-                    213,
-                    478,
-                    213,
+                  "polygon": [
+                    205,
+                    479,
+                    212,
+                    479,
+                    212,
                     486,
-                    206,
+                    205,
                     486
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.991,
                   "span": {
-                    "offset": 772,
+                    "offset": 628,
                     "length": 2
                   }
                 },
                 {
                   "content": "d\u00E9livrance",
-                  "boundingBox": [
+                  "polygon": [
                     214,
-                    478,
+                    479,
                     244,
                     480,
                     244,
@@ -2167,177 +1785,177 @@
                     214,
                     486
                   ],
-                  "confidence": 0.262,
+                  "confidence": 0.165,
                   "span": {
-                    "offset": 775,
+                    "offset": 631,
                     "length": 10
                   }
                 },
                 {
-                  "content": "Sarah",
-                  "boundingBox": [
-                    263,
-                    466,
-                    316,
-                    464,
-                    316,
-                    492,
-                    264,
-                    491
+                  "content": "GATINEAU",
+                  "polygon": [
+                    137,
+                    488,
+                    189,
+                    487,
+                    189,
+                    497,
+                    138,
+                    496
                   ],
-                  "confidence": 0.602,
+                  "confidence": 0.993,
                   "span": {
-                    "offset": 786,
+                    "offset": 642,
+                    "length": 8
+                  }
+                },
+                {
+                  "content": "Sanal",
+                  "polygon": [
+                    257,
+                    462,
+                    312,
+                    462,
+                    312,
+                    495,
+                    256,
+                    494
+                  ],
+                  "confidence": 0.329,
+                  "span": {
+                    "offset": 651,
                     "length": 5
                   }
                 },
                 {
                   "content": "Martin",
-                  "boundingBox": [
-                    323,
-                    464,
-                    382,
-                    464,
-                    383,
-                    491,
-                    323,
-                    492
+                  "polygon": [
+                    319,
+                    462,
+                    389,
+                    458,
+                    390,
+                    495,
+                    319,
+                    495
                   ],
-                  "confidence": 0.577,
+                  "confidence": 0.629,
                   "span": {
-                    "offset": 792,
+                    "offset": 657,
                     "length": 6
                   }
                 },
                 {
-                  "content": "GATINEAU",
-                  "boundingBox": [
-                    137,
-                    487,
-                    190,
-                    487,
-                    190,
-                    497,
-                    138,
-                    498
-                  ],
-                  "confidence": 0.995,
-                  "span": {
-                    "offset": 799,
-                    "length": 8
-                  }
-                },
-                {
                   "content": "P\u003CCANMARTIN",
-                  "boundingBox": [
+                  "polygon": [
                     23,
-                    516,
-                    110,
                     515,
                     109,
-                    527,
-                    22,
-                    528
+                    514,
+                    109,
+                    528,
+                    23,
+                    529
                   ],
-                  "confidence": 0.989,
+                  "confidence": 0.98,
                   "span": {
-                    "offset": 808,
+                    "offset": 664,
                     "length": 11
                   }
                 },
                 {
                   "content": "\u003C\u003C",
-                  "boundingBox": [
-                    112,
-                    515,
-                    126,
-                    515,
-                    125,
+                  "polygon": [
+                    111,
+                    514,
+                    124,
+                    514,
+                    124,
                     527,
-                    112,
-                    527
+                    111,
+                    528
                   ],
                   "confidence": 0.997,
                   "span": {
-                    "offset": 820,
+                    "offset": 676,
                     "length": 2
                   }
                 },
                 {
                   "content": "SARAH",
-                  "boundingBox": [
-                    128,
-                    515,
-                    167,
+                  "polygon": [
+                    126,
                     514,
-                    166,
+                    165,
+                    514,
+                    165,
                     527,
-                    128,
+                    126,
                     527
                   ],
                   "confidence": 0.997,
                   "span": {
-                    "offset": 823,
+                    "offset": 679,
                     "length": 5
                   }
                 },
                 {
                   "content": "\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C",
-                  "boundingBox": [
-                    169,
+                  "polygon": [
+                    168,
                     514,
-                    379,
+                    378,
                     514,
-                    379,
+                    378,
                     527,
-                    169,
+                    167,
                     527
                   ],
-                  "confidence": 0.965,
+                  "confidence": 0.98,
                   "span": {
-                    "offset": 829,
+                    "offset": 685,
                     "length": 26
                   }
                 },
                 {
                   "content": "ZE000509\u003C9CAN8501019F2301147",
-                  "boundingBox": [
-                    23,
-                    536,
-                    247,
-                    535,
-                    247,
-                    549,
+                  "polygon": [
                     22,
-                    549
+                    534,
+                    246,
+                    534,
+                    246,
+                    548,
+                    22,
+                    550
                   ],
-                  "confidence": 0.97,
+                  "confidence": 0.907,
                   "span": {
-                    "offset": 856,
+                    "offset": 712,
                     "length": 28
                   }
                 },
                 {
                   "content": "\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C",
-                  "boundingBox": [
-                    250,
-                    535,
+                  "polygon": [
+                    249,
+                    534,
                     360,
                     535,
-                    360,
+                    359,
                     548,
                     249,
-                    549
+                    548
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.955,
                   "span": {
-                    "offset": 885,
+                    "offset": 741,
                     "length": 14
                   }
                 },
                 {
                   "content": "08",
-                  "boundingBox": [
+                  "polygon": [
                     362,
                     535,
                     379,
@@ -2347,9 +1965,9 @@
                     362,
                     548
                   ],
-                  "confidence": 0.996,
+                  "confidence": 0.997,
                   "span": {
-                    "offset": 900,
+                    "offset": 756,
                     "length": 2
                   }
                 }
@@ -2357,14 +1975,14 @@
               "lines": [
                 {
                   "content": "ENDORSEMENTS AND LIMITATIONS",
-                  "boundingBox": [
-                    11,
+                  "polygon": [
+                    13,
                     14,
-                    123,
-                    14,
-                    123,
-                    21,
-                    11,
+                    124,
+                    13,
+                    124,
+                    20,
+                    13,
                     21
                   ],
                   "spans": [
@@ -2375,809 +1993,714 @@
                   ]
                 },
                 {
-                  "content": "This passport isvalid for all countries inless",
-                  "boundingBox": [
-                    14,
-                    21,
-                    107,
-                    20,
-                    107,
-                    26,
-                    14,
-                    27
+                  "content": "SIE COLLINABONS BEGINNING ON",
+                  "polygon": [
+                    13,
+                    46,
+                    92,
+                    47,
+                    92,
+                    53,
+                    13,
+                    52
                   ],
                   "spans": [
                     {
                       "offset": 29,
-                      "length": 46
+                      "length": 28
                     }
                   ]
                 },
                 {
-                  "content": "enhverelse spechled The-besser must comply",
-                  "boundingBox": [
+                  "content": "PACE S OF APPLICARLO",
+                  "polygon": [
                     13,
-                    27,
-                    109,
-                    26,
-                    109,
-                    33,
-                    13,
-                    33
-                  ],
-                  "spans": [
-                    {
-                      "offset": 76,
-                      "length": 42
-                    }
-                  ]
-                },
-                {
-                  "content": "with any wia or other only meglioons",
-                  "boundingBox": [
-                    14,
-                    33,
-                    99,
-                    33,
-                    99,
-                    39,
-                    14,
-                    39
-                  ],
-                  "spans": [
-                    {
-                      "offset": 119,
-                      "length": 36
-                    }
-                  ]
-                },
-                {
-                  "content": "of the cinintries to be sivted",
-                  "boundingBox": [
-                    13,
-                    38,
-                    78,
-                    38,
-                    78,
-                    44,
-                    13,
-                    45
-                  ],
-                  "spans": [
-                    {
-                      "offset": 156,
-                      "length": 30
-                    }
-                  ]
-                },
-                {
-                  "content": "SEL COGLIEATIONS BEGINNING ON",
-                  "boundingBox": [
-                    14,
-                    47,
-                    91,
-                    46,
-                    91,
-                    53,
-                    14,
-                    54
-                  ],
-                  "spans": [
-                    {
-                      "offset": 187,
-                      "length": 29
-                    }
-                  ]
-                },
-                {
-                  "content": "PAGE S OF APPLICARLOY",
-                  "boundingBox": [
-                    12,
                     53,
                     67,
                     53,
                     67,
                     59,
-                    12,
-                    60
+                    13,
+                    59
                   ],
                   "spans": [
                     {
-                      "offset": 217,
-                      "length": 21
+                      "offset": 58,
+                      "length": 20
                     }
                   ]
                 },
                 {
                   "content": "MENTIONS ET RESTRICTIONS",
-                  "boundingBox": [
-                    300,
+                  "polygon": [
+                    298,
                     13,
-                    391,
+                    392,
                     13,
-                    391,
+                    392,
                     20,
-                    300,
-                    20
+                    298,
+                    21
                   ],
                   "spans": [
                     {
-                      "offset": 239,
+                      "offset": 79,
                       "length": 24
                     }
                   ]
                 },
                 {
-                  "content": "Ch pesarport ral elatie pour lovs",
-                  "boundingBox": [
-                    296,
-                    20,
-                    374,
-                    20,
-                    374,
-                    26,
-                    296,
-                    26
+                  "content": "VOIR LES ORSENNA SONG OUIUITANT A",
+                  "polygon": [
+                    307,
+                    52,
+                    392,
+                    51,
+                    392,
+                    58,
+                    307,
+                    59
                   ],
                   "spans": [
                     {
-                      "offset": 264,
+                      "offset": 104,
                       "length": 33
                     }
                   ]
                 },
                 {
-                  "content": "VOIR LES OESENIVA SOINS OCHUTANT A",
-                  "boundingBox": [
-                    306,
-                    51,
-                    392,
-                    51,
-                    392,
-                    58,
-                    306,
-                    59
+                  "content": "46T00",
+                  "polygon": [
+                    41,
+                    77,
+                    43,
+                    168,
+                    12,
+                    169,
+                    11,
+                    76
                   ],
                   "spans": [
                     {
-                      "offset": 298,
-                      "length": 34
+                      "offset": 138,
+                      "length": 5
                     }
                   ]
                 },
                 {
-                  "content": "SPECIMEN",
-                  "boundingBox": [
-                    19,
-                    195,
-                    366,
-                    39,
-                    391,
-                    93,
-                    39,
-                    254
+                  "content": "-",
+                  "polygon": [
+                    386,
+                    106,
+                    393,
+                    106,
+                    393,
+                    110,
+                    387,
+                    110
                   ],
                   "spans": [
                     {
-                      "offset": 333,
-                      "length": 8
+                      "offset": 144,
+                      "length": 1
                     }
                   ]
                 },
                 {
                   "content": "Signature of bearer - Signature du titulaire",
-                  "boundingBox": [
+                  "polygon": [
                     43,
                     114,
-                    175,
-                    113,
-                    175,
+                    174,
+                    114,
+                    174,
                     122,
                     43,
                     123
                   ],
                   "spans": [
                     {
-                      "offset": 342,
+                      "offset": 146,
                       "length": 44
                     }
                   ]
                 },
                 {
-                  "content": "76.00225",
-                  "boundingBox": [
-                    394,
-                    104,
-                    394,
-                    202,
-                    385,
-                    202,
-                    385,
-                    104
+                  "content": "SPECIMEN",
+                  "polygon": [
+                    17,
+                    198,
+                    364,
+                    39,
+                    387,
+                    93,
+                    38,
+                    256
                   ],
                   "spans": [
                     {
-                      "offset": 387,
+                      "offset": 191,
                       "length": 8
                     }
                   ]
                 },
                 {
                   "content": "PASSPORT",
-                  "boundingBox": [
-                    51,
+                  "polygon": [
+                    50,
                     302,
                     95,
                     302,
                     95,
                     310,
-                    51,
+                    50,
                     310
                   ],
                   "spans": [
                     {
-                      "offset": 396,
+                      "offset": 200,
                       "length": 8
                     }
                   ]
                 },
                 {
                   "content": "PASSEPORT",
-                  "boundingBox": [
+                  "polygon": [
                     48,
-                    313,
+                    312,
                     98,
                     312,
                     98,
-                    321,
+                    322,
                     48,
                     322
                   ],
                   "spans": [
                     {
-                      "offset": 405,
+                      "offset": 209,
                       "length": 9
                     }
                   ]
                 },
                 {
-                  "content": "1",
-                  "boundingBox": [
-                    273,
-                    249,
-                    282,
-                    249,
-                    282,
-                    257,
-                    273,
-                    257
-                  ],
-                  "spans": [
-                    {
-                      "offset": 415,
-                      "length": 1
-                    }
-                  ]
-                },
-                {
-                  "content": "3027",
-                  "boundingBox": [
-                    310,
-                    249,
-                    346,
-                    247,
-                    347,
-                    256,
-                    310,
-                    258
-                  ],
-                  "spans": [
-                    {
-                      "offset": 417,
-                      "length": 4
-                    }
-                  ]
-                },
-                {
-                  "content": "s",
-                  "boundingBox": [
-                    279,
-                    251,
-                    292,
-                    251,
-                    292,
-                    264,
-                    279,
-                    264
-                  ],
-                  "spans": [
-                    {
-                      "offset": 422,
-                      "length": 1
-                    }
-                  ]
-                },
-                {
                   "content": "CANADA",
-                  "boundingBox": [
+                  "polygon": [
                     177,
                     298,
                     261,
                     298,
-                    262,
-                    313,
+                    261,
+                    314,
                     177,
-                    314
+                    313
                   ],
                   "spans": [
                     {
-                      "offset": 424,
+                      "offset": 219,
                       "length": 6
                     }
                   ]
                 },
                 {
                   "content": "Type/Type",
-                  "boundingBox": [
-                    136,
+                  "polygon": [
+                    134,
                     323,
-                    166,
+                    167,
                     323,
                     167,
                     331,
-                    136,
+                    134,
                     331
                   ],
                   "spans": [
                     {
-                      "offset": 431,
+                      "offset": 226,
                       "length": 9
                     }
                   ]
                 },
                 {
-                  "content": "Issuing Country Pays \u00E9metteur",
-                  "boundingBox": [
-                    182,
-                    322,
-                    270,
-                    323,
-                    270,
-                    332,
-                    182,
-                    331
-                  ],
-                  "spans": [
-                    {
-                      "offset": 441,
-                      "length": 29
-                    }
-                  ]
-                },
-                {
                   "content": "P",
-                  "boundingBox": [
+                  "polygon": [
                     137,
-                    332,
+                    333,
                     144,
-                    332,
+                    333,
                     144,
                     340,
-                    136,
-                    340
+                    137,
+                    341
                   ],
                   "spans": [
                     {
-                      "offset": 471,
+                      "offset": 236,
                       "length": 1
                     }
                   ]
                 },
                 {
-                  "content": "CAN",
-                  "boundingBox": [
-                    186,
-                    332,
-                    207,
-                    333,
-                    207,
-                    341,
-                    185,
-                    341
-                  ],
-                  "spans": [
-                    {
-                      "offset": 473,
-                      "length": 3
-                    }
-                  ]
-                },
-                {
                   "content": "Sumame/Nom",
-                  "boundingBox": [
+                  "polygon": [
                     134,
                     342,
-                    176,
+                    177,
                     342,
-                    176,
-                    349,
+                    177,
+                    350,
                     134,
                     349
                   ],
                   "spans": [
                     {
-                      "offset": 477,
+                      "offset": 238,
                       "length": 10
                     }
                   ]
                 },
                 {
                   "content": "MARTIN",
-                  "boundingBox": [
-                    137,
+                  "polygon": [
+                    136,
                     351,
-                    179,
+                    178,
                     351,
-                    179,
+                    178,
                     360,
-                    137,
+                    136,
                     360
                   ],
                   "spans": [
                     {
-                      "offset": 488,
+                      "offset": 249,
                       "length": 6
                     }
                   ]
                 },
                 {
-                  "content": "Given names/Pr\u00E9noms",
-                  "boundingBox": [
-                    136,
+                  "content": "Given names/Prinoms",
+                  "polygon": [
+                    135,
                     362,
                     200,
                     362,
                     200,
                     369,
-                    136,
+                    135,
                     369
                   ],
                   "spans": [
                     {
-                      "offset": 495,
+                      "offset": 256,
                       "length": 19
                     }
                   ]
                 },
                 {
                   "content": "SARAH",
-                  "boundingBox": [
-                    136,
+                  "polygon": [
+                    137,
                     371,
-                    171,
-                    371,
-                    171,
+                    174,
+                    370,
+                    174,
                     379,
-                    136,
+                    137,
                     380
                   ],
                   "spans": [
                     {
-                      "offset": 515,
+                      "offset": 276,
                       "length": 5
                     }
                   ]
                 },
                 {
-                  "content": "Nationality/Nationalin\u011B",
-                  "boundingBox": [
-                    135,
+                  "content": "Nationality/Nationalins",
+                  "polygon": [
+                    136,
                     381,
-                    198,
+                    197,
                     381,
-                    198,
-                    389,
-                    135,
-                    389
+                    197,
+                    388,
+                    136,
+                    388
                   ],
                   "spans": [
                     {
-                      "offset": 521,
+                      "offset": 282,
                       "length": 23
                     }
                   ]
                 },
                 {
-                  "content": "CANADIAN /CANADIENNE",
-                  "boundingBox": [
-                    136,
+                  "content": "CANADIAN/CANADIENNE",
+                  "polygon": [
+                    137,
                     390,
-                    268,
+                    270,
                     390,
-                    268,
-                    399,
-                    136,
-                    400
+                    270,
+                    400,
+                    137,
+                    399
                   ],
                   "spans": [
                     {
-                      "offset": 545,
-                      "length": 20
+                      "offset": 306,
+                      "length": 19
                     }
                   ]
                 },
                 {
-                  "content": "Date of birth/Date de naissance",
-                  "boundingBox": [
-                    134,
+                  "content": "Date of birth Date de naissance",
+                  "polygon": [
+                    135,
                     401,
                     229,
                     401,
                     229,
-                    408,
-                    134,
+                    409,
+                    135,
                     408
                   ],
                   "spans": [
                     {
-                      "offset": 566,
+                      "offset": 326,
                       "length": 31
                     }
                   ]
                 },
                 {
-                  "content": "Pasaport No./N\u00BA de passeport",
-                  "boundingBox": [
+                  "content": "01 JAN 7JAN 85",
+                  "polygon": [
+                    136,
+                    408,
+                    245,
+                    408,
+                    245,
+                    420,
+                    136,
+                    419
+                  ],
+                  "spans": [
+                    {
+                      "offset": 358,
+                      "length": 14
+                    }
+                  ]
+                },
+                {
+                  "content": "Sex Sexe",
+                  "polygon": [
+                    135,
+                    419,
+                    166,
+                    420,
+                    166,
+                    427,
+                    135,
+                    426
+                  ],
+                  "spans": [
+                    {
+                      "offset": 373,
+                      "length": 8
+                    }
+                  ]
+                },
+                {
+                  "content": "Issuing Country Pays \u00E9metteur",
+                  "polygon": [
+                    184,
+                    322,
+                    271,
+                    322,
+                    271,
+                    331,
+                    184,
+                    331
+                  ],
+                  "spans": [
+                    {
+                      "offset": 382,
+                      "length": 29
+                    }
+                  ]
+                },
+                {
+                  "content": "CAN",
+                  "polygon": [
+                    186,
+                    331,
+                    206,
+                    332,
+                    206,
+                    341,
+                    186,
+                    340
+                  ],
+                  "spans": [
+                    {
+                      "offset": 412,
+                      "length": 3
+                    }
+                  ]
+                },
+                {
+                  "content": "Passport No./N\u0022 de passeport",
+                  "polygon": [
                     303,
+                    324,
+                    388,
                     323,
-                    387,
-                    323,
-                    387,
+                    388,
                     331,
                     303,
                     331
                   ],
                   "spans": [
                     {
-                      "offset": 598,
+                      "offset": 416,
                       "length": 28
                     }
                   ]
                 },
                 {
                   "content": "ZE000509",
-                  "boundingBox": [
-                    305,
+                  "polygon": [
+                    306,
                     332,
                     381,
                     331,
                     382,
                     344,
-                    305,
+                    306,
                     345
                   ],
                   "spans": [
                     {
-                      "offset": 627,
+                      "offset": 445,
                       "length": 8
                     }
                   ]
                 },
                 {
-                  "content": "EMIEN",
-                  "boundingBox": [
-                    169,
-                    390,
-                    369,
-                    328,
-                    391,
-                    391,
-                    177,
-                    455
+                  "content": "MEN",
+                  "polygon": [
+                    215,
+                    402,
+                    364,
+                    332,
+                    382,
+                    378,
+                    232,
+                    443
                   ],
                   "spans": [
                     {
-                      "offset": 636,
-                      "length": 5
+                      "offset": 454,
+                      "length": 3
                     }
                   ]
                 },
                 {
-                  "content": "220027\u003E",
-                  "boundingBox": [
-                    381,
-                    456,
-                    372,
-                    377,
-                    385,
-                    376,
+                  "content": "\u003CLZOOZZA",
+                  "polygon": [
+                    386,
+                    380,
                     392,
-                    454
+                    453,
+                    382,
+                    454,
+                    374,
+                    380
                   ],
                   "spans": [
                     {
-                      "offset": 642,
-                      "length": 7
+                      "offset": 458,
+                      "length": 8
                     }
                   ]
                 },
                 {
-                  "content": "Date of issue/Data de obivrand",
-                  "boundingBox": [
-                    133,
+                  "content": "Place of birth/Lieu de nais",
+                  "polygon": [
+                    169,
+                    419,
+                    246,
+                    420,
+                    246,
+                    429,
+                    169,
+                    428
+                  ],
+                  "spans": [
+                    {
+                      "offset": 467,
+                      "length": 27
+                    }
+                  ]
+                },
+                {
+                  "content": "OTTAWA CAN",
+                  "polygon": [
+                    170,
+                    426,
+                    248,
+                    426,
+                    248,
                     438,
-                    224,
-                    439,
-                    224,
-                    447,
-                    133,
-                    446
+                    170,
+                    438
                   ],
                   "spans": [
                     {
-                      "offset": 650,
-                      "length": 30
+                      "offset": 495,
+                      "length": 10
                     }
                   ]
                 },
                 {
-                  "content": "14 JAN / JAN",
-                  "boundingBox": [
-                    132,
-                    448,
-                    214,
+                  "content": "Date of issue/Data de olivranda",
+                  "polygon": [
+                    134,
+                    439,
+                    229,
+                    438,
+                    229,
                     447,
-                    214,
-                    457,
-                    132,
+                    134,
+                    447
+                  ],
+                  "spans": [
+                    {
+                      "offset": 506,
+                      "length": 31
+                    }
+                  ]
+                },
+                {
+                  "content": "14 JAN /JAN 13",
+                  "polygon": [
+                    131,
+                    448,
+                    239,
+                    447,
+                    239,
+                    458,
+                    131,
                     458
                   ],
                   "spans": [
                     {
-                      "offset": 681,
-                      "length": 12
-                    }
-                  ]
-                },
-                {
-                  "content": "13",
-                  "boundingBox": [
-                    226,
-                    448,
-                    239,
-                    447,
-                    239,
-                    457,
-                    226,
-                    457
-                  ],
-                  "spans": [
-                    {
-                      "offset": 694,
-                      "length": 2
+                      "offset": 538,
+                      "length": 14
                     }
                   ]
                 },
                 {
                   "content": "Date of expiry Date d\u0027expiration",
-                  "boundingBox": [
-                    134,
+                  "polygon": [
+                    135,
                     458,
-                    223,
-                    459,
-                    223,
+                    225,
+                    458,
+                    225,
                     467,
-                    134,
-                    466
+                    135,
+                    467
                   ],
                   "spans": [
                     {
-                      "offset": 697,
+                      "offset": 553,
                       "length": 32
                     }
                   ]
                 },
                 {
-                  "content": "14 JAN / JAN",
-                  "boundingBox": [
-                    136,
-                    467,
-                    217,
-                    467,
-                    217,
+                  "content": "14 JAN / JAN 23",
+                  "polygon": [
+                    137,
+                    466,
+                    241,
+                    466,
+                    241,
                     477,
-                    136,
+                    137,
                     477
                   ],
                   "spans": [
                     {
-                      "offset": 730,
-                      "length": 12
+                      "offset": 586,
+                      "length": 15
                     }
                   ]
                 },
                 {
-                  "content": "23",
-                  "boundingBox": [
-                    225,
-                    468,
-                    239,
-                    468,
-                    238,
-                    476,
-                    225,
-                    475
-                  ],
-                  "spans": [
-                    {
-                      "offset": 743,
-                      "length": 2
-                    }
-                  ]
-                },
-                {
-                  "content": "Issuing AuthorityAutoriil de d\u00E9livrance",
-                  "boundingBox": [
+                  "content": "Issuing Almority/Autorita de d\u00E9livrance",
+                  "polygon": [
                     134,
-                    477,
-                    243,
                     478,
-                    243,
+                    244,
+                    478,
+                    244,
                     486,
                     134,
                     485
                   ],
                   "spans": [
                     {
-                      "offset": 746,
+                      "offset": 602,
                       "length": 39
                     }
                   ]
                 },
                 {
-                  "content": "Sarah Martin",
-                  "boundingBox": [
-                    255,
-                    464,
-                    389,
-                    463,
-                    389,
-                    490,
-                    255,
-                    491
-                  ],
-                  "spans": [
-                    {
-                      "offset": 786,
-                      "length": 12
-                    }
-                  ]
-                },
-                {
                   "content": "GATINEAU",
-                  "boundingBox": [
+                  "polygon": [
                     137,
                     487,
-                    191,
-                    486,
-                    191,
+                    192,
+                    487,
+                    192,
                     496,
                     137,
-                    497
+                    496
                   ],
                   "spans": [
                     {
-                      "offset": 799,
+                      "offset": 642,
                       "length": 8
                     }
                   ]
                 },
                 {
+                  "content": "Sanal Martin",
+                  "polygon": [
+                    255,
+                    459,
+                    389,
+                    458,
+                    389,
+                    494,
+                    255,
+                    495
+                  ],
+                  "spans": [
+                    {
+                      "offset": 651,
+                      "length": 12
+                    }
+                  ]
+                },
+                {
                   "content": "P\u003CCANMARTIN \u003C\u003C SARAH \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C",
-                  "boundingBox": [
+                  "polygon": [
                     22,
                     514,
-                    380,
+                    381,
                     513,
                     381,
                     527,
@@ -3186,16 +2709,16 @@
                   ],
                   "spans": [
                     {
-                      "offset": 808,
+                      "offset": 664,
                       "length": 47
                     }
                   ]
                 },
                 {
                   "content": "ZE000509\u003C9CAN8501019F2301147 \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C 08",
-                  "boundingBox": [
+                  "polygon": [
                     21,
-                    535,
+                    534,
                     380,
                     534,
                     380,
@@ -3205,7 +2728,7 @@
                   ],
                   "spans": [
                     {
-                      "offset": 856,
+                      "offset": 712,
                       "length": 46
                     }
                   ]
@@ -3214,31 +2737,514 @@
               "spans": [
                 {
                   "offset": 0,
-                  "length": 902
+                  "length": 758
                 }
-              ]
+              ],
+              "kind": "document"
+            }
+          ],
+          "paragraphs": [
+            {
+              "spans": [
+                {
+                  "offset": 0,
+                  "length": 28
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    13,
+                    14,
+                    124,
+                    13,
+                    124,
+                    20,
+                    13,
+                    21
+                  ]
+                }
+              ],
+              "content": "ENDORSEMENTS AND LIMITATIONS"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 29,
+                  "length": 49
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    13,
+                    46,
+                    92,
+                    46,
+                    92,
+                    59,
+                    13,
+                    59
+                  ]
+                }
+              ],
+              "content": "SIE COLLINABONS BEGINNING ON PACE S OF APPLICARLO"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 79,
+                  "length": 24
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    298,
+                    13,
+                    392,
+                    13,
+                    392,
+                    21,
+                    298,
+                    21
+                  ]
+                }
+              ],
+              "content": "MENTIONS ET RESTRICTIONS"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 104,
+                  "length": 33
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    307,
+                    52,
+                    392,
+                    51,
+                    392,
+                    58,
+                    307,
+                    59
+                  ]
+                }
+              ],
+              "content": "VOIR LES ORSENNA SONG OUIUITANT A"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 138,
+                  "length": 5
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    11,
+                    76,
+                    42,
+                    76,
+                    43,
+                    169,
+                    12,
+                    169
+                  ]
+                }
+              ],
+              "content": "46T00"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 144,
+                  "length": 1
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    386,
+                    106,
+                    393,
+                    106,
+                    393,
+                    110,
+                    386,
+                    110
+                  ]
+                }
+              ],
+              "content": "-"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 146,
+                  "length": 44
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    43,
+                    114,
+                    174,
+                    114,
+                    174,
+                    123,
+                    43,
+                    123
+                  ]
+                }
+              ],
+              "content": "Signature of bearer - Signature du titulaire"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 191,
+                  "length": 8
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    364,
+                    39,
+                    390,
+                    95,
+                    38,
+                    256,
+                    12,
+                    200
+                  ]
+                }
+              ],
+              "content": "SPECIMEN"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 200,
+                  "length": 18
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    48,
+                    302,
+                    98,
+                    302,
+                    98,
+                    322,
+                    48,
+                    322
+                  ]
+                }
+              ],
+              "content": "PASSPORT PASSEPORT"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 219,
+                  "length": 6
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    177,
+                    298,
+                    261,
+                    298,
+                    261,
+                    314,
+                    177,
+                    314
+                  ]
+                }
+              ],
+              "content": "CANADA"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 226,
+                  "length": 155
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    134,
+                    323,
+                    269,
+                    321,
+                    270,
+                    426,
+                    135,
+                    427
+                  ]
+                }
+              ],
+              "content": "Type/Type P Sumame/Nom MARTIN Given names/Prinoms SARAH Nationality/Nationalins CANADIAN/CANADIENNE Date of birth Date de naissance 01 JAN 7JAN 85 Sex Sexe"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 382,
+                  "length": 29
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    184,
+                    322,
+                    271,
+                    322,
+                    271,
+                    331,
+                    184,
+                    331
+                  ]
+                }
+              ],
+              "content": "Issuing Country Pays \u00E9metteur"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 412,
+                  "length": 3
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    186,
+                    331,
+                    206,
+                    332,
+                    206,
+                    341,
+                    186,
+                    340
+                  ]
+                }
+              ],
+              "content": "CAN"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 416,
+                  "length": 37
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    303,
+                    324,
+                    388,
+                    323,
+                    388,
+                    344,
+                    303,
+                    345
+                  ]
+                }
+              ],
+              "content": "Passport No./N\u0022 de passeport ZE000509"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 454,
+                  "length": 3
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    364,
+                    332,
+                    384,
+                    377,
+                    232,
+                    443,
+                    212,
+                    398
+                  ]
+                }
+              ],
+              "content": "MEN"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 458,
+                  "length": 8
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    374,
+                    380,
+                    386,
+                    379,
+                    393,
+                    453,
+                    381,
+                    454
+                  ]
+                }
+              ],
+              "content": "\u003CLZOOZZA"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 467,
+                  "length": 27
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    169,
+                    419,
+                    246,
+                    420,
+                    246,
+                    429,
+                    169,
+                    428
+                  ]
+                }
+              ],
+              "content": "Place of birth/Lieu de nais"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 495,
+                  "length": 155
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    131,
+                    426,
+                    248,
+                    426,
+                    248,
+                    496,
+                    131,
+                    496
+                  ]
+                }
+              ],
+              "content": "OTTAWA CAN Date of issue/Data de olivranda 14 JAN /JAN 13 Date of expiry Date d\u0027expiration 14 JAN / JAN 23 Issuing Almority/Autorita de d\u00E9livrance GATINEAU"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 651,
+                  "length": 12
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    255,
+                    459,
+                    389,
+                    458,
+                    389,
+                    494,
+                    255,
+                    495
+                  ]
+                }
+              ],
+              "content": "Sanal Martin"
+            },
+            {
+              "spans": [
+                {
+                  "offset": 664,
+                  "length": 94
+                }
+              ],
+              "boundingRegions": [
+                {
+                  "pageNumber": 1,
+                  "polygon": [
+                    21,
+                    514,
+                    381,
+                    513,
+                    381,
+                    548,
+                    21,
+                    549
+                  ]
+                }
+              ],
+              "content": "P\u003CCANMARTIN \u003C\u003C SARAH \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C ZE000509\u003C9CAN8501019F2301147 \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C 08"
             }
           ],
           "styles": [
             {
-              "isHandwritten": true,
-              "confidence": 0.4,
+              "confidence": 0.8,
               "spans": [
                 {
-                  "offset": 422,
+                  "offset": 144,
                   "length": 1
                 }
-              ]
+              ],
+              "isHandwritten": true
             },
             {
-              "isHandwritten": true,
-              "confidence": 0.9,
+              "confidence": 1,
               "spans": [
                 {
-                  "offset": 786,
+                  "offset": 651,
                   "length": 12
                 }
-              ]
+              ],
+              "isHandwritten": true
             }
           ],
           "documents": [
@@ -3247,7 +3253,7 @@
               "boundingRegions": [
                 {
                   "pageNumber": 1,
-                  "boundingBox": [
+                  "polygon": [
                     0,
                     0,
                     410,
@@ -3260,6 +3266,248 @@
                 }
               ],
               "fields": {
+                "CountryRegion": {
+                  "type": "countryRegion",
+                  "valueCountryRegion": "CAN",
+                  "content": "CAN",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        186,
+                        331,
+                        204,
+                        332,
+                        204,
+                        341,
+                        186,
+                        340
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 412,
+                      "length": 3
+                    }
+                  ]
+                },
+                "DateOfBirth": {
+                  "type": "date",
+                  "valueDate": "1985-01-01",
+                  "content": "01 JAN 7JAN 85",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        137,
+                        409,
+                        238,
+                        409,
+                        238,
+                        420,
+                        137,
+                        420
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 358,
+                      "length": 14
+                    }
+                  ]
+                },
+                "DateOfExpiration": {
+                  "type": "date",
+                  "valueDate": "2023-01-14",
+                  "content": "14 JAN / JAN 23",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        138,
+                        467,
+                        238,
+                        467,
+                        238,
+                        477,
+                        138,
+                        477
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 586,
+                      "length": 15
+                    }
+                  ]
+                },
+                "DateOfIssue": {
+                  "type": "date",
+                  "content": "14 JAN /JAN 13",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        137,
+                        448,
+                        237,
+                        448,
+                        237,
+                        459,
+                        137,
+                        459
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 538,
+                      "length": 14
+                    }
+                  ]
+                },
+                "DocumentNumber": {
+                  "type": "string",
+                  "valueString": "ZE000509",
+                  "content": "ZE000509",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        306,
+                        333,
+                        379,
+                        332,
+                        380,
+                        344,
+                        307,
+                        345
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 445,
+                      "length": 8
+                    }
+                  ]
+                },
+                "DocumentType": {
+                  "type": "string",
+                  "valueString": "P",
+                  "content": "P",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        137,
+                        333,
+                        142,
+                        333,
+                        142,
+                        341,
+                        138,
+                        341
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 236,
+                      "length": 1
+                    }
+                  ]
+                },
+                "FirstName": {
+                  "type": "string",
+                  "valueString": "SARAH",
+                  "content": "SARAH",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        138,
+                        372,
+                        169,
+                        371,
+                        169,
+                        380,
+                        138,
+                        380
+                      ]
+                    }
+                  ],
+                  "confidence": 0.995,
+                  "spans": [
+                    {
+                      "offset": 276,
+                      "length": 5
+                    }
+                  ]
+                },
+                "IssuingAuthority": {
+                  "type": "string",
+                  "valueString": "GATINEAU",
+                  "content": "GATINEAU",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        137,
+                        488,
+                        189,
+                        487,
+                        189,
+                        497,
+                        138,
+                        496
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 642,
+                      "length": 8
+                    }
+                  ]
+                },
+                "LastName": {
+                  "type": "string",
+                  "valueString": "MARTIN",
+                  "content": "MARTIN",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        137,
+                        352,
+                        176,
+                        352,
+                        175,
+                        360,
+                        137,
+                        361
+                      ]
+                    }
+                  ],
+                  "confidence": 0.995,
+                  "spans": [
+                    {
+                      "offset": 249,
+                      "length": 6
+                    }
+                  ]
+                },
                 "MachineReadableZone": {
                   "type": "object",
                   "valueObject": {
@@ -3304,17 +3552,17 @@
                       "content": "F"
                     }
                   },
-                  "content": "P\u003CCANMARTIN\u003C\u003CSARAH\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C ZE000509\u003C9CAN8501019F2301147\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C08",
+                  "content": "P\u003CCANMARTIN \u003C\u003C SARAH \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C ZE000509\u003C9CAN8501019F2301147 \u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C\u003C 08",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
-                      "boundingBox": [
+                      "polygon": [
                         22,
                         514,
                         379,
                         514,
                         379,
-                        549,
+                        550,
                         22,
                         550
                       ]
@@ -3323,8 +3571,62 @@
                   "confidence": 0.99,
                   "spans": [
                     {
-                      "offset": 808,
+                      "offset": 664,
                       "length": 94
+                    }
+                  ]
+                },
+                "Nationality": {
+                  "type": "countryRegion",
+                  "valueCountryRegion": "CAN",
+                  "content": "CANADIAN/CANADIENNE",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        138,
+                        390,
+                        263,
+                        390,
+                        266,
+                        400,
+                        138,
+                        400
+                      ]
+                    }
+                  ],
+                  "confidence": 0.99,
+                  "spans": [
+                    {
+                      "offset": 306,
+                      "length": 19
+                    }
+                  ]
+                },
+                "PlaceOfBirth": {
+                  "type": "string",
+                  "valueString": "OTTAWA CAN",
+                  "content": "OTTAWA CAN",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "polygon": [
+                        175,
+                        425,
+                        242,
+                        427,
+                        242,
+                        440,
+                        175,
+                        438
+                      ]
+                    }
+                  ],
+                  "confidence": 0.969,
+                  "spans": [
+                    {
+                      "offset": 495,
+                      "length": 10
                     }
                   ]
                 }
@@ -3333,7 +3635,7 @@
               "spans": [
                 {
                   "offset": 0,
-                  "length": 902
+                  "length": 758
                 }
               ]
             }

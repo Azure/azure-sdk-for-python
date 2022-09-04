@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -16,11 +16,11 @@ import msrest.serialization
 class DigitalTwinModelsAddOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -35,6 +35,13 @@ class DigitalTwinModelsAddOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinModelsAddOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -43,11 +50,11 @@ class DigitalTwinModelsAddOptions(msrest.serialization.Model):
 class DigitalTwinModelsDeleteOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -62,6 +69,13 @@ class DigitalTwinModelsDeleteOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinModelsDeleteOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -70,11 +84,11 @@ class DigitalTwinModelsDeleteOptions(msrest.serialization.Model):
 class DigitalTwinModelsGetByIdOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -89,6 +103,13 @@ class DigitalTwinModelsGetByIdOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinModelsGetByIdOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -97,14 +118,14 @@ class DigitalTwinModelsGetByIdOptions(msrest.serialization.Model):
 class DigitalTwinModelsListOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param max_items_per_page: The maximum number of items to retrieve per request. The server may
+    :vartype tracestate: str
+    :ivar max_items_per_page: The maximum number of items to retrieve per request. The server may
      choose to return less than the requested number.
-    :type max_items_per_page: int
+    :vartype max_items_per_page: int
     """
 
     _attribute_map = {
@@ -121,6 +142,16 @@ class DigitalTwinModelsListOptions(msrest.serialization.Model):
         max_items_per_page: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
+         may choose to return less than the requested number.
+        :paramtype max_items_per_page: int
+        """
         super(DigitalTwinModelsListOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -130,11 +161,11 @@ class DigitalTwinModelsListOptions(msrest.serialization.Model):
 class DigitalTwinModelsUpdateOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -149,6 +180,13 @@ class DigitalTwinModelsUpdateOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinModelsUpdateOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -157,13 +195,13 @@ class DigitalTwinModelsUpdateOptions(msrest.serialization.Model):
 class DigitalTwinsAddOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param if_none_match: Only perform the operation if the entity does not already exist.
-    :type if_none_match: str
+    :vartype tracestate: str
+    :ivar if_none_match: Only perform the operation if the entity does not already exist.
+    :vartype if_none_match: str
     """
 
     _attribute_map = {
@@ -180,6 +218,15 @@ class DigitalTwinsAddOptions(msrest.serialization.Model):
         if_none_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword if_none_match: Only perform the operation if the entity does not already exist.
+        :paramtype if_none_match: str
+        """
         super(DigitalTwinsAddOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -189,13 +236,13 @@ class DigitalTwinsAddOptions(msrest.serialization.Model):
 class DigitalTwinsAddRelationshipOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param if_none_match: Only perform the operation if the entity does not already exist.
-    :type if_none_match: str
+    :vartype tracestate: str
+    :ivar if_none_match: Only perform the operation if the entity does not already exist.
+    :vartype if_none_match: str
     """
 
     _attribute_map = {
@@ -212,6 +259,15 @@ class DigitalTwinsAddRelationshipOptions(msrest.serialization.Model):
         if_none_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword if_none_match: Only perform the operation if the entity does not already exist.
+        :paramtype if_none_match: str
+        """
         super(DigitalTwinsAddRelationshipOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -221,14 +277,14 @@ class DigitalTwinsAddRelationshipOptions(msrest.serialization.Model):
 class DigitalTwinsDeleteOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+    :vartype tracestate: str
+    :ivar if_match: Only perform the operation if the entity's etag matches one of the etags
      provided or * is provided.
-    :type if_match: str
+    :vartype if_match: str
     """
 
     _attribute_map = {
@@ -245,6 +301,16 @@ class DigitalTwinsDeleteOptions(msrest.serialization.Model):
         if_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword if_match: Only perform the operation if the entity's etag matches one of the etags
+         provided or * is provided.
+        :paramtype if_match: str
+        """
         super(DigitalTwinsDeleteOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -254,14 +320,14 @@ class DigitalTwinsDeleteOptions(msrest.serialization.Model):
 class DigitalTwinsDeleteRelationshipOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+    :vartype tracestate: str
+    :ivar if_match: Only perform the operation if the entity's etag matches one of the etags
      provided or * is provided.
-    :type if_match: str
+    :vartype if_match: str
     """
 
     _attribute_map = {
@@ -278,6 +344,16 @@ class DigitalTwinsDeleteRelationshipOptions(msrest.serialization.Model):
         if_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword if_match: Only perform the operation if the entity's etag matches one of the etags
+         provided or * is provided.
+        :paramtype if_match: str
+        """
         super(DigitalTwinsDeleteRelationshipOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -293,11 +369,11 @@ class DigitalTwinsEventRoute(msrest.serialization.Model):
 
     :ivar id: The id of the event route.
     :vartype id: str
-    :param endpoint_name: Required. The name of the endpoint this event route is bound to.
-    :type endpoint_name: str
-    :param filter: Required. An expression which describes the events which are routed to the
+    :ivar endpoint_name: Required. The name of the endpoint this event route is bound to.
+    :vartype endpoint_name: str
+    :ivar filter: Required. An expression which describes the events which are routed to the
      endpoint.
-    :type filter: str
+    :vartype filter: str
     """
 
     _validation = {
@@ -319,6 +395,13 @@ class DigitalTwinsEventRoute(msrest.serialization.Model):
         filter: str,
         **kwargs
     ):
+        """
+        :keyword endpoint_name: Required. The name of the endpoint this event route is bound to.
+        :paramtype endpoint_name: str
+        :keyword filter: Required. An expression which describes the events which are routed to the
+         endpoint.
+        :paramtype filter: str
+        """
         super(DigitalTwinsEventRoute, self).__init__(**kwargs)
         self.id = None
         self.endpoint_name = endpoint_name
@@ -328,11 +411,11 @@ class DigitalTwinsEventRoute(msrest.serialization.Model):
 class DigitalTwinsGetByIdOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -347,6 +430,13 @@ class DigitalTwinsGetByIdOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinsGetByIdOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -355,11 +445,11 @@ class DigitalTwinsGetByIdOptions(msrest.serialization.Model):
 class DigitalTwinsGetComponentOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -374,6 +464,13 @@ class DigitalTwinsGetComponentOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinsGetComponentOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -382,11 +479,11 @@ class DigitalTwinsGetComponentOptions(msrest.serialization.Model):
 class DigitalTwinsGetRelationshipByIdOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -401,6 +498,13 @@ class DigitalTwinsGetRelationshipByIdOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinsGetRelationshipByIdOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -409,11 +513,11 @@ class DigitalTwinsGetRelationshipByIdOptions(msrest.serialization.Model):
 class DigitalTwinsListIncomingRelationshipsOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -428,6 +532,13 @@ class DigitalTwinsListIncomingRelationshipsOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinsListIncomingRelationshipsOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -436,11 +547,11 @@ class DigitalTwinsListIncomingRelationshipsOptions(msrest.serialization.Model):
 class DigitalTwinsListRelationshipsOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -455,6 +566,13 @@ class DigitalTwinsListRelationshipsOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinsListRelationshipsOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -465,21 +583,21 @@ class DigitalTwinsModelData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param display_name: A language map that contains the localized display names as specified in
+    :ivar display_name: A language map that contains the localized display names as specified in
      the model definition.
-    :type display_name: dict[str, str]
-    :param description: A language map that contains the localized descriptions as specified in the
+    :vartype display_name: dict[str, str]
+    :ivar description: A language map that contains the localized descriptions as specified in the
      model definition.
-    :type description: dict[str, str]
-    :param id: Required. The id of the model as specified in the model definition.
-    :type id: str
-    :param upload_time: The time the model was uploaded to the service.
-    :type upload_time: ~datetime.datetime
-    :param decommissioned: Indicates if the model is decommissioned. Decommissioned models cannot
-     be referenced by newly created digital twins.
-    :type decommissioned: bool
-    :param model: The model definition.
-    :type model: object
+    :vartype description: dict[str, str]
+    :ivar id: Required. The id of the model as specified in the model definition.
+    :vartype id: str
+    :ivar upload_time: The time the model was uploaded to the service.
+    :vartype upload_time: ~datetime.datetime
+    :ivar decommissioned: Indicates if the model is decommissioned. Decommissioned models cannot be
+     referenced by newly created digital twins.
+    :vartype decommissioned: bool
+    :ivar model: The model definition.
+    :vartype model: any
     """
 
     _validation = {
@@ -503,9 +621,26 @@ class DigitalTwinsModelData(msrest.serialization.Model):
         description: Optional[Dict[str, str]] = None,
         upload_time: Optional[datetime.datetime] = None,
         decommissioned: Optional[bool] = False,
-        model: Optional[object] = None,
+        model: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: A language map that contains the localized display names as specified in
+         the model definition.
+        :paramtype display_name: dict[str, str]
+        :keyword description: A language map that contains the localized descriptions as specified in
+         the model definition.
+        :paramtype description: dict[str, str]
+        :keyword id: Required. The id of the model as specified in the model definition.
+        :paramtype id: str
+        :keyword upload_time: The time the model was uploaded to the service.
+        :paramtype upload_time: ~datetime.datetime
+        :keyword decommissioned: Indicates if the model is decommissioned. Decommissioned models cannot
+         be referenced by newly created digital twins.
+        :paramtype decommissioned: bool
+        :keyword model: The model definition.
+        :paramtype model: any
+        """
         super(DigitalTwinsModelData, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
@@ -518,11 +653,11 @@ class DigitalTwinsModelData(msrest.serialization.Model):
 class DigitalTwinsSendComponentTelemetryOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -537,6 +672,13 @@ class DigitalTwinsSendComponentTelemetryOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinsSendComponentTelemetryOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -545,11 +687,11 @@ class DigitalTwinsSendComponentTelemetryOptions(msrest.serialization.Model):
 class DigitalTwinsSendTelemetryOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -564,6 +706,13 @@ class DigitalTwinsSendTelemetryOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(DigitalTwinsSendTelemetryOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -572,14 +721,14 @@ class DigitalTwinsSendTelemetryOptions(msrest.serialization.Model):
 class DigitalTwinsUpdateComponentOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+    :vartype tracestate: str
+    :ivar if_match: Only perform the operation if the entity's etag matches one of the etags
      provided or * is provided.
-    :type if_match: str
+    :vartype if_match: str
     """
 
     _attribute_map = {
@@ -596,6 +745,16 @@ class DigitalTwinsUpdateComponentOptions(msrest.serialization.Model):
         if_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword if_match: Only perform the operation if the entity's etag matches one of the etags
+         provided or * is provided.
+        :paramtype if_match: str
+        """
         super(DigitalTwinsUpdateComponentOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -605,14 +764,14 @@ class DigitalTwinsUpdateComponentOptions(msrest.serialization.Model):
 class DigitalTwinsUpdateOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+    :vartype tracestate: str
+    :ivar if_match: Only perform the operation if the entity's etag matches one of the etags
      provided or * is provided.
-    :type if_match: str
+    :vartype if_match: str
     """
 
     _attribute_map = {
@@ -629,6 +788,16 @@ class DigitalTwinsUpdateOptions(msrest.serialization.Model):
         if_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword if_match: Only perform the operation if the entity's etag matches one of the etags
+         provided or * is provided.
+        :paramtype if_match: str
+        """
         super(DigitalTwinsUpdateOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -638,14 +807,14 @@ class DigitalTwinsUpdateOptions(msrest.serialization.Model):
 class DigitalTwinsUpdateRelationshipOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+    :vartype tracestate: str
+    :ivar if_match: Only perform the operation if the entity's etag matches one of the etags
      provided or * is provided.
-    :type if_match: str
+    :vartype if_match: str
     """
 
     _attribute_map = {
@@ -662,6 +831,16 @@ class DigitalTwinsUpdateRelationshipOptions(msrest.serialization.Model):
         if_match: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword if_match: Only perform the operation if the entity's etag matches one of the etags
+         provided or * is provided.
+        :paramtype if_match: str
+        """
         super(DigitalTwinsUpdateRelationshipOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -679,9 +858,9 @@ class Error(msrest.serialization.Model):
     :vartype message: str
     :ivar details: Internal error details.
     :vartype details: list[~azure.digitaltwins.core.models.Error]
-    :param innererror: An object containing more specific information than the current object about
+    :ivar innererror: An object containing more specific information than the current object about
      the error.
-    :type innererror: ~azure.digitaltwins.core.models.InnerError
+    :vartype innererror: ~azure.digitaltwins.core.models.InnerError
     """
 
     _validation = {
@@ -703,6 +882,11 @@ class Error(msrest.serialization.Model):
         innererror: Optional["InnerError"] = None,
         **kwargs
     ):
+        """
+        :keyword innererror: An object containing more specific information than the current object
+         about the error.
+        :paramtype innererror: ~azure.digitaltwins.core.models.InnerError
+        """
         super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -713,8 +897,8 @@ class Error(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
-    :param error: The error details.
-    :type error: ~azure.digitaltwins.core.models.Error
+    :ivar error: The error details.
+    :vartype error: ~azure.digitaltwins.core.models.Error
     """
 
     _attribute_map = {
@@ -727,6 +911,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["Error"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.digitaltwins.core.models.Error
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -734,10 +922,10 @@ class ErrorResponse(msrest.serialization.Model):
 class EventRouteCollection(msrest.serialization.Model):
     """A collection of EventRoute objects.
 
-    :param value: The EventRoute objects.
-    :type value: list[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
-    :param next_link: A URI to retrieve the next page of results.
-    :type next_link: str
+    :ivar value: The EventRoute objects.
+    :vartype value: list[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
+    :ivar next_link: A URI to retrieve the next page of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -752,6 +940,12 @@ class EventRouteCollection(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The EventRoute objects.
+        :paramtype value: list[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
+        :keyword next_link: A URI to retrieve the next page of results.
+        :paramtype next_link: str
+        """
         super(EventRouteCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -760,11 +954,11 @@ class EventRouteCollection(msrest.serialization.Model):
 class EventRoutesAddOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -779,6 +973,13 @@ class EventRoutesAddOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(EventRoutesAddOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -787,11 +988,11 @@ class EventRoutesAddOptions(msrest.serialization.Model):
 class EventRoutesDeleteOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -806,6 +1007,13 @@ class EventRoutesDeleteOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(EventRoutesDeleteOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -814,11 +1022,11 @@ class EventRoutesDeleteOptions(msrest.serialization.Model):
 class EventRoutesGetByIdOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
+    :vartype tracestate: str
     """
 
     _attribute_map = {
@@ -833,6 +1041,13 @@ class EventRoutesGetByIdOptions(msrest.serialization.Model):
         tracestate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
         super(EventRoutesGetByIdOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -841,14 +1056,14 @@ class EventRoutesGetByIdOptions(msrest.serialization.Model):
 class EventRoutesListOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param max_items_per_page: The maximum number of items to retrieve per request. The server may
+    :vartype tracestate: str
+    :ivar max_items_per_page: The maximum number of items to retrieve per request. The server may
      choose to return less than the requested number.
-    :type max_items_per_page: int
+    :vartype max_items_per_page: int
     """
 
     _attribute_map = {
@@ -865,6 +1080,16 @@ class EventRoutesListOptions(msrest.serialization.Model):
         max_items_per_page: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
+         may choose to return less than the requested number.
+        :paramtype max_items_per_page: int
+        """
         super(EventRoutesListOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -874,16 +1099,16 @@ class EventRoutesListOptions(msrest.serialization.Model):
 class IncomingRelationship(msrest.serialization.Model):
     """An incoming relationship.
 
-    :param relationship_id: A user-provided string representing the id of this relationship, unique
+    :ivar relationship_id: A user-provided string representing the id of this relationship, unique
      in the context of the source digital twin, i.e. sourceId + relationshipId is unique in the
      context of the service.
-    :type relationship_id: str
-    :param source_id: The id of the source digital twin.
-    :type source_id: str
-    :param relationship_name: The name of the relationship.
-    :type relationship_name: str
-    :param relationship_link: Link to the relationship, to be used for deletion.
-    :type relationship_link: str
+    :vartype relationship_id: str
+    :ivar source_id: The id of the source digital twin.
+    :vartype source_id: str
+    :ivar relationship_name: The name of the relationship.
+    :vartype relationship_name: str
+    :ivar relationship_link: Link to the relationship, to be used for deletion.
+    :vartype relationship_link: str
     """
 
     _attribute_map = {
@@ -902,6 +1127,18 @@ class IncomingRelationship(msrest.serialization.Model):
         relationship_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword relationship_id: A user-provided string representing the id of this relationship,
+         unique in the context of the source digital twin, i.e. sourceId + relationshipId is unique in
+         the context of the service.
+        :paramtype relationship_id: str
+        :keyword source_id: The id of the source digital twin.
+        :paramtype source_id: str
+        :keyword relationship_name: The name of the relationship.
+        :paramtype relationship_name: str
+        :keyword relationship_link: Link to the relationship, to be used for deletion.
+        :paramtype relationship_link: str
+        """
         super(IncomingRelationship, self).__init__(**kwargs)
         self.relationship_id = relationship_id
         self.source_id = source_id
@@ -912,10 +1149,10 @@ class IncomingRelationship(msrest.serialization.Model):
 class IncomingRelationshipCollection(msrest.serialization.Model):
     """A collection of incoming relationships which relate digital twins together.
 
-    :param value:
-    :type value: list[~azure.digitaltwins.core.models.IncomingRelationship]
-    :param next_link: A URI to retrieve the next page of objects.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.digitaltwins.core.models.IncomingRelationship]
+    :ivar next_link: A URI to retrieve the next page of objects.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -930,6 +1167,12 @@ class IncomingRelationshipCollection(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.digitaltwins.core.models.IncomingRelationship]
+        :keyword next_link: A URI to retrieve the next page of objects.
+        :paramtype next_link: str
+        """
         super(IncomingRelationshipCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -938,11 +1181,11 @@ class IncomingRelationshipCollection(msrest.serialization.Model):
 class InnerError(msrest.serialization.Model):
     """A more specific error description than was provided by the containing error.
 
-    :param code: A more specific error code than was provided by the containing error.
-    :type code: str
-    :param innererror: An object containing more specific information than the current object about
+    :ivar code: A more specific error code than was provided by the containing error.
+    :vartype code: str
+    :ivar innererror: An object containing more specific information than the current object about
      the error.
-    :type innererror: ~azure.digitaltwins.core.models.InnerError
+    :vartype innererror: ~azure.digitaltwins.core.models.InnerError
     """
 
     _attribute_map = {
@@ -957,6 +1200,13 @@ class InnerError(msrest.serialization.Model):
         innererror: Optional["InnerError"] = None,
         **kwargs
     ):
+        """
+        :keyword code: A more specific error code than was provided by the containing error.
+        :paramtype code: str
+        :keyword innererror: An object containing more specific information than the current object
+         about the error.
+        :paramtype innererror: ~azure.digitaltwins.core.models.InnerError
+        """
         super(InnerError, self).__init__(**kwargs)
         self.code = code
         self.innererror = innererror
@@ -965,10 +1215,10 @@ class InnerError(msrest.serialization.Model):
 class PagedDigitalTwinsModelDataCollection(msrest.serialization.Model):
     """A collection of DigitalTwinsModelData objects.
 
-    :param value: The DigitalTwinsModelData objects.
-    :type value: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
-    :param next_link: A URI to retrieve the next page of objects.
-    :type next_link: str
+    :ivar value: The DigitalTwinsModelData objects.
+    :vartype value: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
+    :ivar next_link: A URI to retrieve the next page of objects.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -983,6 +1233,12 @@ class PagedDigitalTwinsModelDataCollection(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The DigitalTwinsModelData objects.
+        :paramtype value: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
+        :keyword next_link: A URI to retrieve the next page of objects.
+        :paramtype next_link: str
+        """
         super(PagedDigitalTwinsModelDataCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -991,11 +1247,11 @@ class PagedDigitalTwinsModelDataCollection(msrest.serialization.Model):
 class QueryResult(msrest.serialization.Model):
     """The results of a query operation and an optional continuation token.
 
-    :param value: The query results.
-    :type value: list[object]
-    :param continuation_token: A token which can be used to construct a new QuerySpecification to
+    :ivar value: The query results.
+    :vartype value: list[any]
+    :ivar continuation_token: A token which can be used to construct a new QuerySpecification to
      retrieve the next set of results.
-    :type continuation_token: str
+    :vartype continuation_token: str
     """
 
     _attribute_map = {
@@ -1006,10 +1262,17 @@ class QueryResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List[object]] = None,
+        value: Optional[List[Any]] = None,
         continuation_token: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The query results.
+        :paramtype value: list[any]
+        :keyword continuation_token: A token which can be used to construct a new QuerySpecification to
+         retrieve the next set of results.
+        :paramtype continuation_token: str
+        """
         super(QueryResult, self).__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token
@@ -1018,11 +1281,11 @@ class QueryResult(msrest.serialization.Model):
 class QuerySpecification(msrest.serialization.Model):
     """A query specification containing either a query statement or a continuation token from a previous query result.
 
-    :param query: The query to execute. This value is ignored if a continuation token is provided.
-    :type query: str
-    :param continuation_token: A token which is used to retrieve the next set of results from a
+    :ivar query: The query to execute. This value is ignored if a continuation token is provided.
+    :vartype query: str
+    :ivar continuation_token: A token which is used to retrieve the next set of results from a
      previous query.
-    :type continuation_token: str
+    :vartype continuation_token: str
     """
 
     _attribute_map = {
@@ -1037,6 +1300,14 @@ class QuerySpecification(msrest.serialization.Model):
         continuation_token: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword query: The query to execute. This value is ignored if a continuation token is
+         provided.
+        :paramtype query: str
+        :keyword continuation_token: A token which is used to retrieve the next set of results from a
+         previous query.
+        :paramtype continuation_token: str
+        """
         super(QuerySpecification, self).__init__(**kwargs)
         self.query = query
         self.continuation_token = continuation_token
@@ -1045,14 +1316,14 @@ class QuerySpecification(msrest.serialization.Model):
 class QueryTwinsOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param traceparent: Identifies the request in a distributed tracing system.
-    :type traceparent: str
-    :param tracestate: Provides vendor-specific trace identification information and is a companion
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
-    :type tracestate: str
-    :param max_items_per_page: The maximum number of items to retrieve per request. The server may
+    :vartype tracestate: str
+    :ivar max_items_per_page: The maximum number of items to retrieve per request. The server may
      choose to return less than the requested number.
-    :type max_items_per_page: int
+    :vartype max_items_per_page: int
     """
 
     _attribute_map = {
@@ -1069,6 +1340,16 @@ class QueryTwinsOptions(msrest.serialization.Model):
         max_items_per_page: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
+         may choose to return less than the requested number.
+        :paramtype max_items_per_page: int
+        """
         super(QueryTwinsOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
@@ -1078,10 +1359,10 @@ class QueryTwinsOptions(msrest.serialization.Model):
 class RelationshipCollection(msrest.serialization.Model):
     """A collection of relationships which relate digital twins together.
 
-    :param value: The relationship objects.
-    :type value: list[object]
-    :param next_link: A URI to retrieve the next page of objects.
-    :type next_link: str
+    :ivar value: The relationship objects.
+    :vartype value: list[any]
+    :ivar next_link: A URI to retrieve the next page of objects.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1092,10 +1373,16 @@ class RelationshipCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List[object]] = None,
+        value: Optional[List[Any]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The relationship objects.
+        :paramtype value: list[any]
+        :keyword next_link: A URI to retrieve the next page of objects.
+        :paramtype next_link: str
+        """
         super(RelationshipCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

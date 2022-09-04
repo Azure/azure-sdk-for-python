@@ -13,12 +13,25 @@ def generate_main():
     parser = argparse.ArgumentParser(description="Build package.", formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("--pr-number", "-p", dest="pr_number", type=int, required=True, help="PR number")
     parser.add_argument(
-        "--repo", "-r", dest="repo_id", default="Azure/azure-sdk-for-python", help="Repo id. [default: %(default)s]"
+        "--repo",
+        "-r",
+        dest="repo_id",
+        default="Azure/azure-sdk-for-python",
+        help="Repo id. [default: %(default)s]",
     )
     parser.add_argument(
-        "--with-comment", dest="with_comment", action="store_true", help="Do a comment to the original PR with info."
+        "--with-comment",
+        dest="with_comment",
+        action="store_true",
+        help="Do a comment to the original PR with info.",
     )
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Verbosity in INFO mode",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
 
     parser.add_argument(

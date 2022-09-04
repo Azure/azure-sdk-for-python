@@ -29,7 +29,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -88,7 +88,7 @@ class Operations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.OperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationsListResult"]
         error_map = {

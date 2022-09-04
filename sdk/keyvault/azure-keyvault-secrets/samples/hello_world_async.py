@@ -7,16 +7,15 @@ import os
 import asyncio
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(secret) resource for Azure Key Vault
@@ -32,9 +31,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a secret client that will be used to call the service.
-    # Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-    # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = SecretClient(vault_url=VAULT_URL, credential=credential)
@@ -43,7 +40,7 @@ async def run_sample():
     # if the secret already exists in the key vault, then a new version of the secret is created.
     print("\n.. Create Secret")
     expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-    secret = await client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires_on=expires_on)
+    secret = await client.set_secret("helloWorldSecretNameAsync", "helloWorldSecretValue", expires_on=expires_on)
     print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
     print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires_on))
 
@@ -72,7 +69,7 @@ async def run_sample():
     # Bank forced a password update for security purposes. Let's change the value of the secret in the key vault.
     # To achieve this, we need to create a new version of the secret in the key vault. The update operation cannot
     # change the value of the secret.
-    new_secret = await client.set_secret(secret.name, "newSecretValue")
+    new_secret = await client.set_secret(secret.name, "newSecretValueAsync")
     print("Secret with name '{0}' created with value '{1}'".format(new_secret.name, new_secret.value))
 
     # The bank account was closed, need to delete its credentials from the Key Vault.

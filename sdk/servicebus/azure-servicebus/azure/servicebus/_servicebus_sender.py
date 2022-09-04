@@ -65,7 +65,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class SenderMixin(object):
-    def _create_attribute(self):
+    def _create_attribute(self, **kwargs):
         self._auth_uri = "sb://{}/{}".format(
             self.fully_qualified_namespace, self._entity_name
         )
@@ -75,7 +75,7 @@ class SenderMixin(object):
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total
         )
-        self._name = "SBSender-{}".format(uuid.uuid4())
+        self._name = kwargs.get("client_identifier","SBSender-{}".format(uuid.uuid4()))
         self._max_message_size_on_link = 0
         self.entity_name = self._entity_name
 
@@ -151,6 +151,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
+     Service Bus will associate it with some error messages for easier correlation of errors.
+     If not specified, a unique id will be generated.
     """
 
     def __init__(
@@ -188,7 +191,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
         self._max_message_size_on_link = 0
-        self._create_attribute()
+        self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
     @classmethod
@@ -487,3 +490,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )
+
+    @property
+    def client_identifier(self) -> str:
+        """
+        Get the ServiceBusSender client_identifier associated with the sender instance.
+
+        :rtype: str
+        """
+        return self._name
+
+    def __str__(self) -> str:
+        return f"Sender client id: {self.client_identifier}, entity: {self.entity_name}"

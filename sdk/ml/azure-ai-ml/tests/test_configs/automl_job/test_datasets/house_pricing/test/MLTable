@@ -1,0 +1,7 @@
+paths:
+  - file: ./house_pricing_test.csv
+transformations:
+  - read_delimited:
+      delimiter: ','
+      encoding: 'ascii'
+      empty_as_string: false

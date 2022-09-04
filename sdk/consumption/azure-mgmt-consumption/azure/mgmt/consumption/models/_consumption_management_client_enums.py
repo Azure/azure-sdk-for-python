@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class BillingFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The billing frequency.
     """
 
@@ -19,26 +18,26 @@ class BillingFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     QUARTER = "Quarter"
     YEAR = "Year"
 
-class BudgetOperatorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BudgetOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operator to use for comparison.
     """
 
     IN_ENUM = "In"
 
-class CategoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The category of the budget, whether the budget tracks cost or usage.
     """
 
     COST = "Cost"
 
-class ChargeSummaryKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ChargeSummaryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the kind of charge summary.
     """
 
     LEGACY = "legacy"
     MODERN = "modern"
 
-class CultureCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CultureCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Language in which the recipient will receive the notification
     """
 
@@ -64,14 +63,14 @@ class CultureCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PT_PT = "pt-pt"
     SV_SE = "sv-se"
 
-class Datagrain(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Datagrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: Daily grain of data.
     DAILY_GRAIN = "daily"
     #: Monthly grain of data.
     MONTHLY_GRAIN = "monthly"
 
-class EventType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifies the type of the event.
     """
 
@@ -82,8 +81,9 @@ class EventType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PENDING_EXPIRED_CREDIT = "PendingExpiredCredit"
     UN_KNOWN = "UnKnown"
     NEW_CREDIT = "NewCredit"
+    CREDIT_EXPIRED = "CreditExpired"
 
-class LookBackPeriod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LookBackPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: Use 7 days of data for recommendations.
     LAST07_DAYS = "Last7Days"
@@ -92,7 +92,7 @@ class LookBackPeriod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Use 60 days of data for recommendations.
     LAST60_DAYS = "Last60Days"
 
-class LotSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LotSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The source of the lot.
     """
 
@@ -100,7 +100,7 @@ class LotSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PROMOTIONAL_CREDIT = "PromotionalCredit"
     CONSUMPTION_COMMITMENT = "ConsumptionCommitment"
 
-class Metrictype(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Metrictype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: Actual cost data.
     ACTUAL_COST_METRIC_TYPE = "actualcost"
@@ -109,7 +109,7 @@ class Metrictype(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Usage data.
     USAGE_METRIC_TYPE = "usage"
 
-class OperatorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The comparison operator.
     """
 
@@ -117,7 +117,7 @@ class OperatorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL_TO = "GreaterThanOrEqualTo"
 
-class PricingModelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PricingModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifier that indicates how the meter is priced.
     """
 
@@ -125,19 +125,19 @@ class PricingModelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RESERVATION = "Reservation"
     SPOT = "Spot"
 
-class ReservationRecommendationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ReservationRecommendationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the kind of reservation recommendation.
     """
 
     LEGACY = "legacy"
     MODERN = "modern"
 
-class Scope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SINGLE = "Single"
     SHARED = "Shared"
 
-class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the lot.
     """
 
@@ -148,21 +148,21 @@ class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     COMPLETE = "Complete"
     CANCELED = "Canceled"
 
-class Term(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Term(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: 1 year reservation term.
     P1_Y = "P1Y"
     #: 3 year reservation term.
     P3_Y = "P3Y"
 
-class ThresholdType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of threshold
     """
 
     ACTUAL = "Actual"
     FORECASTED = "Forecasted"
 
-class TimeGrainType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TimeGrainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The time covered by a budget. Tracking of the amount will be reset based on the time grain.
     BillingMonth, BillingQuarter, and BillingAnnual are only supported by WD customers
     """
@@ -174,7 +174,7 @@ class TimeGrainType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BILLING_QUARTER = "BillingQuarter"
     BILLING_ANNUAL = "BillingAnnual"
 
-class UsageDetailsKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UsageDetailsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the kind of usage details.
     """
 

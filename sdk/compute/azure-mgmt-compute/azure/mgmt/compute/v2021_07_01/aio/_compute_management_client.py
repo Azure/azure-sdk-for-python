@@ -165,45 +165,123 @@ class ComputeManagementClient:    # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.availability_sets = AvailabilitySetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.proximity_placement_groups = ProximityPlacementGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dedicated_host_groups = DedicatedHostGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dedicated_hosts = DedicatedHostsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ssh_public_keys = SshPublicKeysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_extensions = VirtualMachineExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_images = VirtualMachineImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_images_edge_zone = VirtualMachineImagesEdgeZoneOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_sizes = VirtualMachineSizesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restore_point_collections = RestorePointCollectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.restore_points = RestorePointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.capacity_reservation_groups = CapacityReservationGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.capacity_reservations = CapacityReservationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.log_analytics = LogAnalyticsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_image_versions = GalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_applications = GalleryApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_application_versions = GalleryApplicationVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_sharing_profile = GallerySharingProfileOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_galleries = SharedGalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_gallery_images = SharedGalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_galleries = CommunityGalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_gallery_images = CommunityGalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.availability_sets = AvailabilitySetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.proximity_placement_groups = ProximityPlacementGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dedicated_host_groups = DedicatedHostGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dedicated_hosts = DedicatedHostsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ssh_public_keys = SshPublicKeysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_images = VirtualMachineImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_images_edge_zone = VirtualMachineImagesEdgeZoneOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usage = UsageOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machines = VirtualMachinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_sizes = VirtualMachineSizesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.images = ImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restore_point_collections = RestorePointCollectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restore_points = RestorePointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.capacity_reservation_groups = CapacityReservationGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.capacity_reservations = CapacityReservationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.log_analytics = LogAnalyticsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resource_skus = ResourceSkusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.galleries = GalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_images = GalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_image_versions = GalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_applications = GalleryApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_application_versions = GalleryApplicationVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_sharing_profile = GallerySharingProfileOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_galleries = SharedGalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_images = SharedGalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_galleries = CommunityGalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_gallery_images = CommunityGalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

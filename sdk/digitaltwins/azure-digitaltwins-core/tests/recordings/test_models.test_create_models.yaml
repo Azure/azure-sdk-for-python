@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ATempModelbeb90c48%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ATempModelbeb90c48%3B1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,9 +23,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:16 GMT
+      - Thu, 26 May 2022 07:28:23 GMT
+      mise-correlation-id:
+      - a9f4a16c-d155-4472-9ea3-1b918f921ac9
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-a17ee89dab93bf428860ca79b01f887a-04a54f9497e45248-01
     status:
       code: 404
       message: Not Found
@@ -39,9 +43,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelbeb90c48%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelbeb90c48%3B1?includeModelDefinition=false&api-version=2022-05-31
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -53,9 +57,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:16 GMT
+      - Thu, 26 May 2022 07:28:23 GMT
+      mise-correlation-id:
+      - af2bcdc6-e075-4964-bc4b-ccf146302db6
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-a8c80235309dd24f856c5ca1940688a6-0ca5c9c17b3d3c44-01
     status:
       code: 404
       message: Not Found
@@ -81,21 +89,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2022-05-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:17.1642697+00:00"},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:17.1643037+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en-US":"Component1"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:24.8731908+00:00"},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en-US":"TempModel"},"decommissioned":false,"uploadTime":"2022-05-26T07:28:24.8732165+00:00"}]'
     headers:
       content-length:
-      - '343'
+      - '349'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:16 GMT
+      - Thu, 26 May 2022 07:28:24 GMT
+      mise-correlation-id:
+      - dc59c055-90d9-47d2-b1d4-5de3de5d2b4a
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-58d2fbe036751c409553e09f83382641-8b14f355247cd647-01
     status:
       code: 201
       message: Created

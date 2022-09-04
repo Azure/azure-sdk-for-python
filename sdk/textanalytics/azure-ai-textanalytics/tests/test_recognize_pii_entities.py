@@ -671,7 +671,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
@@ -696,7 +696,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_explicit_set_string_index_type_body_param(self, client):
         def callback(response):
@@ -721,7 +721,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_disable_service_logs_body_param(self, client):
         def callback(resp):
@@ -741,4 +741,5 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             client.recognize_pii_entities(
                 documents=["Test"]
             )
-        assert str(e.value) == "'recognize_pii_entities' is only available for API version v3.1 and up."
+        assert str(e.value) == "'TextAnalyticsClient.recognize_pii_entities' is not available in API version v3.0. " \
+                               "Use service API version v3.1 or newer."

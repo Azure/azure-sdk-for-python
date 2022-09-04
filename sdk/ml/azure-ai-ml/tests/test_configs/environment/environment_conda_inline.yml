@@ -1,0 +1,17 @@
+image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+name: myTestEnv
+version: 1
+description: Environment with inline conda definition
+conda_file:
+  name: example-environment
+  channels:
+    - conda-forge
+  dependencies:
+    - python=3.6.1
+    - pip
+    - pip:
+        - nbgitpuller
+        - sphinx-gallery
+        - pandas
+        - matplotlib
+        - mlflow

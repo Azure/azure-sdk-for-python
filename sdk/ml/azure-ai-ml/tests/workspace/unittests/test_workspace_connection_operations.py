@@ -1,13 +1,14 @@
 from typing import Callable
-
+from unittest.mock import Mock, patch
 
 import pytest
-from unittest.mock import Mock, patch
-from azure.ai.ml._operations import WorkspaceConnectionsOperations
-from azure.ai.ml._scope_dependent_operations import OperationScope
+
+from azure.ai.ml import load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
+from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.credentials import PatTokenCredentials
+from azure.ai.ml.operations import WorkspaceConnectionsOperations
 
 
 @pytest.fixture
@@ -68,8 +69,8 @@ class TestWorkspaceConnectionsOperation:
             name="dummy_connection",
             metadata=None,
         )
-        workspace_connection = WorkspaceConnection.load(
-            path="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
+        workspace_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
         )
         mock_workspace_connection_operation.create_or_update(workspace_connection=workspace_connection)
         mock_workspace_connection_operation._operation.create.assert_called_once()

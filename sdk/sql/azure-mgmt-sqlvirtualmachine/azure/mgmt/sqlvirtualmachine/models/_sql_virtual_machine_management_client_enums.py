@@ -11,6 +11,28 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AssessmentDayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Day of the week to run assessment.
+    """
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+
+class AutoBackupDaysOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+
 class BackupScheduleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Backup schedule type.
     """
@@ -59,16 +81,7 @@ class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Day of week to apply the patch on.
     """
 
-    MONDAY = "Monday"
-    TUESDAY = "Tuesday"
-    WEDNESDAY = "Wednesday"
-    THURSDAY = "Thursday"
-    FRIDAY = "Friday"
-    SATURDAY = "Saturday"
-    SUNDAY = "Sunday"
-
-class DaysOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
+    EVERYDAY = "Everyday"
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
     WEDNESDAY = "Wednesday"

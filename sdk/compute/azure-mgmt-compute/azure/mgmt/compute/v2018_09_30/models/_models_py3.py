@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._compute_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccessUri(msrest.serialization.Model):
@@ -45,8 +47,8 @@ class CreationData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar create_option: Required. This enumerates the possible sources of a disk's creation.
-     Possible values include: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
+    :ivar create_option: Required. This enumerates the possible sources of a disk's creation. Known
+     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
     :vartype create_option: str or ~azure.mgmt.compute.v2018_09_30.models.DiskCreateOption
     :ivar storage_account_id: If createOption is Import, the Azure Resource Manager identifier of
      the storage account containing the blob to import as a disk. Required only if the blob is in a
@@ -77,16 +79,16 @@ class CreationData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        create_option: Union[str, "DiskCreateOption"],
+        create_option: Union[str, "_models.DiskCreateOption"],
         storage_account_id: Optional[str] = None,
-        image_reference: Optional["ImageDiskReference"] = None,
+        image_reference: Optional["_models.ImageDiskReference"] = None,
         source_uri: Optional[str] = None,
         source_resource_id: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword create_option: Required. This enumerates the possible sources of a disk's creation.
-         Possible values include: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
+         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload".
         :paramtype create_option: str or ~azure.mgmt.compute.v2018_09_30.models.DiskCreateOption
         :keyword storage_account_id: If createOption is Import, the Azure Resource Manager identifier
          of the storage account containing the blob to import as a disk. Required only if the blob is in
@@ -190,10 +192,10 @@ class Disk(Resource):
     :vartype zones: list[str]
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :ivar os_type: The Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: The Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2018_09_30.models.HyperVGeneration
     :ivar creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -216,7 +218,7 @@ class Disk(Resource):
      disks. MBps means millions of bytes per second - MB here uses the ISO notation, of powers of
      10.
     :vartype disk_m_bps_read_write: int
-    :ivar disk_state: The state of the disk. Possible values include: "Unattached", "Attached",
+    :ivar disk_state: The state of the disk. Known values are: "Unattached", "Attached",
      "Reserved", "ActiveSAS", "ReadyToUpload", "ActiveUpload".
     :vartype disk_state: str or ~azure.mgmt.compute.v2018_09_30.models.DiskState
     """
@@ -258,13 +260,13 @@ class Disk(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["DiskSku"] = None,
+        sku: Optional["_models.DiskSku"] = None,
         zones: Optional[List[str]] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        creation_data: Optional["CreationData"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        creation_data: Optional["_models.CreationData"] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
         **kwargs
@@ -279,10 +281,10 @@ class Disk(Resource):
         :paramtype sku: ~azure.mgmt.compute.v2018_09_30.models.DiskSku
         :keyword zones: The Logical zone list for Disk.
         :paramtype zones: list[str]
-        :keyword os_type: The Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: The Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2018_09_30.models.HyperVGeneration
         :keyword creation_data: Disk source information. CreationData information cannot be changed
          after the disk has been created.
@@ -344,7 +346,7 @@ class DiskList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Disk"],
+        value: List["_models.Disk"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -365,8 +367,8 @@ class DiskSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
-     "StandardSSD_LRS", "UltraSSD_LRS".
+    :ivar name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS",
+     "UltraSSD_LRS".
     :vartype name: str or ~azure.mgmt.compute.v2018_09_30.models.DiskStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -384,11 +386,11 @@ class DiskSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "DiskStorageAccountTypes"]] = None,
+        name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
+        :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS",
          "StandardSSD_LRS", "UltraSSD_LRS".
         :paramtype name: str or ~azure.mgmt.compute.v2018_09_30.models.DiskStorageAccountTypes
         """
@@ -405,7 +407,7 @@ class DiskUpdate(msrest.serialization.Model):
     :ivar sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
      UltraSSD_LRS.
     :vartype sku: ~azure.mgmt.compute.v2018_09_30.models.DiskSku
-    :ivar os_type: the Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: the Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :ivar disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the VHD to create. If this field is present for updates or creation with
@@ -439,10 +441,10 @@ class DiskUpdate(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["DiskSku"] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        sku: Optional["_models.DiskSku"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
         **kwargs
@@ -453,7 +455,7 @@ class DiskUpdate(msrest.serialization.Model):
         :keyword sku: The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
          UltraSSD_LRS.
         :paramtype sku: ~azure.mgmt.compute.v2018_09_30.models.DiskSku
-        :keyword os_type: the Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: the Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
         :keyword disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
          indicates the size of the VHD to create. If this field is present for updates or creation with
@@ -510,7 +512,7 @@ class EncryptionSettingsCollection(msrest.serialization.Model):
         self,
         *,
         enabled: bool,
-        encryption_settings: Optional[List["EncryptionSettingsElement"]] = None,
+        encryption_settings: Optional[List["_models.EncryptionSettingsElement"]] = None,
         **kwargs
     ):
         """
@@ -546,8 +548,8 @@ class EncryptionSettingsElement(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        disk_encryption_key: Optional["KeyVaultAndSecretReference"] = None,
-        key_encryption_key: Optional["KeyVaultAndKeyReference"] = None,
+        disk_encryption_key: Optional["_models.KeyVaultAndSecretReference"] = None,
+        key_encryption_key: Optional["_models.KeyVaultAndKeyReference"] = None,
         **kwargs
     ):
         """
@@ -568,7 +570,7 @@ class GrantAccessData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar access: Required. Possible values include: "None", "Read", "Write".
+    :ivar access: Required. Known values are: "None", "Read", "Write".
     :vartype access: str or ~azure.mgmt.compute.v2018_09_30.models.AccessLevel
     :ivar duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
     :vartype duration_in_seconds: int
@@ -587,12 +589,12 @@ class GrantAccessData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        access: Union[str, "AccessLevel"],
+        access: Union[str, "_models.AccessLevel"],
         duration_in_seconds: int,
         **kwargs
     ):
         """
-        :keyword access: Required. Possible values include: "None", "Read", "Write".
+        :keyword access: Required. Known values are: "None", "Read", "Write".
         :paramtype access: str or ~azure.mgmt.compute.v2018_09_30.models.AccessLevel
         :keyword duration_in_seconds: Required. Time duration in seconds until the SAS access expires.
         :paramtype duration_in_seconds: int
@@ -668,7 +670,7 @@ class KeyVaultAndKeyReference(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_vault: "SourceVault",
+        source_vault: "_models.SourceVault",
         key_url: str,
         **kwargs
     ):
@@ -707,7 +709,7 @@ class KeyVaultAndSecretReference(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_vault: "SourceVault",
+        source_vault: "_models.SourceVault",
         secret_url: str,
         **kwargs
     ):
@@ -745,10 +747,10 @@ class Snapshot(Resource):
     :vartype sku: ~azure.mgmt.compute.v2018_09_30.models.SnapshotSku
     :ivar time_created: The time when the disk was created.
     :vartype time_created: ~datetime.datetime
-    :ivar os_type: The Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: The Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-     disks only. Possible values include: "V1", "V2".
+     disks only. Known values are: "V1", "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.v2018_09_30.models.HyperVGeneration
     :ivar creation_data: Disk source information. CreationData information cannot be changed after
      the disk has been created.
@@ -798,12 +800,12 @@ class Snapshot(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["SnapshotSku"] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
-        hyper_v_generation: Optional[Union[str, "HyperVGeneration"]] = None,
-        creation_data: Optional["CreationData"] = None,
+        sku: Optional["_models.SnapshotSku"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
+        hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
+        creation_data: Optional["_models.CreationData"] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         **kwargs
     ):
         """
@@ -813,10 +815,10 @@ class Snapshot(Resource):
         :paramtype tags: dict[str, str]
         :keyword sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
         :paramtype sku: ~azure.mgmt.compute.v2018_09_30.models.SnapshotSku
-        :keyword os_type: The Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: The Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
-         disks only. Possible values include: "V1", "V2".
+         disks only. Known values are: "V1", "V2".
         :paramtype hyper_v_generation: str or ~azure.mgmt.compute.v2018_09_30.models.HyperVGeneration
         :keyword creation_data: Disk source information. CreationData information cannot be changed
          after the disk has been created.
@@ -867,7 +869,7 @@ class SnapshotList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["Snapshot"],
+        value: List["_models.Snapshot"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -888,8 +890,7 @@ class SnapshotSku(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
-     "Standard_ZRS".
+    :ivar name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "Standard_ZRS".
     :vartype name: str or ~azure.mgmt.compute.v2018_09_30.models.SnapshotStorageAccountTypes
     :ivar tier: The sku tier.
     :vartype tier: str
@@ -907,12 +908,11 @@ class SnapshotSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[Union[str, "SnapshotStorageAccountTypes"]] = None,
+        name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword name: The sku name. Possible values include: "Standard_LRS", "Premium_LRS",
-         "Standard_ZRS".
+        :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", "Standard_ZRS".
         :paramtype name: str or ~azure.mgmt.compute.v2018_09_30.models.SnapshotStorageAccountTypes
         """
         super(SnapshotSku, self).__init__(**kwargs)
@@ -927,7 +927,7 @@ class SnapshotUpdate(msrest.serialization.Model):
     :vartype tags: dict[str, str]
     :ivar sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
     :vartype sku: ~azure.mgmt.compute.v2018_09_30.models.SnapshotSku
-    :ivar os_type: the Operating System type. Possible values include: "Windows", "Linux".
+    :ivar os_type: the Operating System type. Known values are: "Windows", "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
     :ivar disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
      indicates the size of the VHD to create. If this field is present for updates or creation with
@@ -952,10 +952,10 @@ class SnapshotUpdate(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["SnapshotSku"] = None,
-        os_type: Optional[Union[str, "OperatingSystemTypes"]] = None,
+        sku: Optional["_models.SnapshotSku"] = None,
+        os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         disk_size_gb: Optional[int] = None,
-        encryption_settings_collection: Optional["EncryptionSettingsCollection"] = None,
+        encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         **kwargs
     ):
         """
@@ -963,7 +963,7 @@ class SnapshotUpdate(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword sku: The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
         :paramtype sku: ~azure.mgmt.compute.v2018_09_30.models.SnapshotSku
-        :keyword os_type: the Operating System type. Possible values include: "Windows", "Linux".
+        :keyword os_type: the Operating System type. Known values are: "Windows", "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2018_09_30.models.OperatingSystemTypes
         :keyword disk_size_gb: If creationData.createOption is Empty, this field is mandatory and it
          indicates the size of the VHD to create. If this field is present for updates or creation with

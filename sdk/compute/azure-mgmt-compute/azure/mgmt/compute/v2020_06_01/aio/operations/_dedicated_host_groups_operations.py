@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,35 +25,33 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class DedicatedHostGroupsOperations:
-    """DedicatedHostGroupsOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.compute.v2020_06_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.v2020_06_01.aio.ComputeManagementClient`'s
+        :attr:`dedicated_host_groups` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create_or_update(
         self,
         resource_group_name: str,
         host_group_name: str,
-        parameters: "_models.DedicatedHostGroup",
+        parameters: _models.DedicatedHostGroup,
         **kwargs: Any
-    ) -> "_models.DedicatedHostGroup":
+    ) -> _models.DedicatedHostGroup:
         """Create or update a dedicated host group. For details of Dedicated Host and Dedicated Host
         Groups please see [Dedicated Host Documentation]
         (https://go.microsoft.com/fwlink/?linkid=2082596).
@@ -68,14 +67,17 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2020-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DedicatedHostGroup]
 
         _json = self._serialize.body(parameters, 'DedicatedHostGroup')
 
@@ -87,11 +89,13 @@ class DedicatedHostGroupsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -121,9 +125,9 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        parameters: "_models.DedicatedHostGroupUpdate",
+        parameters: _models.DedicatedHostGroupUpdate,
         **kwargs: Any
-    ) -> "_models.DedicatedHostGroup":
+    ) -> _models.DedicatedHostGroup:
         """Update an dedicated host group.
 
         :param resource_group_name: The name of the resource group.
@@ -137,14 +141,17 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2020-06-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-06-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DedicatedHostGroup]
 
         _json = self._serialize.body(parameters, 'DedicatedHostGroupUpdate')
 
@@ -156,11 +163,13 @@ class DedicatedHostGroupsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -199,13 +208,16 @@ class DedicatedHostGroupsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2020-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -214,11 +226,13 @@ class DedicatedHostGroupsOperations:
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -242,7 +256,7 @@ class DedicatedHostGroupsOperations:
         host_group_name: str,
         expand: Optional[str] = "instanceView",
         **kwargs: Any
-    ) -> "_models.DedicatedHostGroup":
+    ) -> _models.DedicatedHostGroup:
         """Retrieves information about a dedicated host group.
 
         :param resource_group_name: The name of the resource group.
@@ -250,7 +264,7 @@ class DedicatedHostGroupsOperations:
         :param host_group_name: The name of the dedicated host group.
         :type host_group_name: str
         :param expand: The expand expression to apply on the operation. The response shows the list of
-         instance view of the dedicated hosts under the dedicated host group. Possible values are
+         instance view of the dedicated hosts under the dedicated host group. Known values are
          "instanceView" or None. Default value is "instanceView".
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -258,13 +272,16 @@ class DedicatedHostGroupsOperations:
         :rtype: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2020-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DedicatedHostGroup]
 
         
         request = build_get_request(
@@ -274,11 +291,13 @@ class DedicatedHostGroupsOperations:
             api_version=api_version,
             expand=expand,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -304,7 +323,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.DedicatedHostGroupListResult"]:
+    ) -> AsyncIterable[_models.DedicatedHostGroupListResult]:
         """Lists all of the dedicated host groups in the specified resource group. Use the nextLink
         property in the response to get the next page of dedicated host groups.
 
@@ -317,13 +336,16 @@ class DedicatedHostGroupsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2020-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DedicatedHostGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -332,9 +354,11 @@ class DedicatedHostGroupsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -343,9 +367,11 @@ class DedicatedHostGroupsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -382,7 +408,7 @@ class DedicatedHostGroupsOperations:
     def list_by_subscription(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.DedicatedHostGroupListResult"]:
+    ) -> AsyncIterable[_models.DedicatedHostGroupListResult]:
         """Lists all of the dedicated host groups in the subscription. Use the nextLink property in the
         response to get the next page of dedicated host groups.
 
@@ -393,13 +419,16 @@ class DedicatedHostGroupsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2020-06-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-06-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DedicatedHostGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -407,9 +436,11 @@ class DedicatedHostGroupsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -417,9 +448,11 @@ class DedicatedHostGroupsOperations:
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

@@ -1,0 +1,101 @@
+type: pipeline
+
+name: simplePipelineJobWithCommandJobInputs
+description: The hello world pipeline job with inline command job having inputs
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_data:
+    type: uri_file
+    path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    mode: ro_mount
+  job_data_uri:
+    type: uri_file
+    path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
+    mode: ro_mount
+  job_literal_input: 5
+
+outputs:
+  job_out_path_1:
+    mode: mount
+
+
+jobs:
+  hello_world_component_before:
+    type: command
+    component:
+      command: echo Hello World &
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      inputs:
+        component_in_number:
+          type: integer
+        component_in_path_1:
+          type: mltable
+        component_in_path_2:
+          type: uri_file
+      outputs:
+        test1:
+          type: uri_file
+    inputs:
+      component_in_number: ${{parent.inputs.job_literal_input}}
+      component_in_path_1: ${{parent.inputs.job_data}}
+      component_in_path_2: ${{parent.inputs.job_data_uri}}
+
+  hello_world_inline_commandjob_1:
+    type: command
+
+    command: pip freeze && echo ${{inputs.literal_input}}
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    inputs:
+      "test1": "${{parent.inputs.job_data}}"
+      "test2": "${{parent.inputs.job_data_uri}}"
+      "literal_input": "${{parent.inputs.job_literal_input}}"
+    outputs:
+      test1: "${{parent.outputs.job_out_path_1}}"
+
+  hello_world_inline_commandjob_2:
+    type: command
+
+    command: pip freeze && echo ${{inputs.test1}}
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    inputs:
+      "test1": "${{parent.inputs.job_data}}"
+      "test2": "${{parent.jobs.hello_world_inline_commandjob_1.outputs.test1}}"
+      "test3": "${{parent.jobs.hello_world_inline_commandjob_3.outputs.test1}}"
+
+  hello_world_inline_commandjob_3:
+    type: command
+
+    command: pip freeze && echo ${{inputs.test1}}
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    inputs:
+      "test1": "${{parent.inputs.job_data}}"
+      "test2": "${{parent.jobs.hello_world_component_before.outputs.test1}}"
+      "test3": "${{parent.jobs.hello_world_component_after.outputs.test1}}"
+    outputs:
+      test1:
+        type: uri_file
+
+  hello_world_component_after:
+    type: command
+    component:
+      command: echo Hello World
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      inputs:
+        component_in_number:
+          type: integer
+        component_in_path_1:
+          type: uri_file
+        component_in_path_2:
+          type: uri_file
+      outputs:
+        test1:
+          type: mltable
+    inputs:
+      component_in_number: ${{parent.inputs.job_literal_input}}
+      component_in_path_1: ${{parent.inputs.job_data}}
+      component_in_path_2: ${{parent.inputs.job_data_uri}}

@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import ApplicationInsightsManagementClientConfiguration
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class ApplicationInsightsManagementClient:
+class ApplicationInsightsManagementClient:    # pylint: disable=too-many-instance-attributes
     """Composite Swagger for Application Insights Management Client.
 
     :ivar operations: Operations operations
@@ -77,8 +78,11 @@ class ApplicationInsightsManagementClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2015-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(

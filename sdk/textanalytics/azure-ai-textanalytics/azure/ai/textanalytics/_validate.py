@@ -4,7 +4,12 @@
 # ------------------------------------
 
 import functools
+import typing
+from typing_extensions import ParamSpec
 from ._version import VERSIONS_SUPPORTED
+
+P = ParamSpec("P")
+T = typing.TypeVar("T")
 
 
 def check_for_unsupported_actions_types(*args, **kwargs):
@@ -22,12 +27,11 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         return
 
     actions_version_mapping = {
-        "2022-04-01-preview":
+        "2022-05-01":
         [
-            "ExtractSummaryAction",
             "RecognizeCustomEntitiesAction",
-            "SingleCategoryClassifyAction",
-            "MultiCategoryClassifyAction",
+            "SingleLabelClassifyAction",
+            "MultiLabelClassifyAction",
             "AnalyzeHealthcareEntitiesAction"
         ]
     }
@@ -43,20 +47,21 @@ def check_for_unsupported_actions_types(*args, **kwargs):
 
     if unsupported:
         error_strings = [
-            f"'{param}' is only available for API version {version} and up.\n"
-            for param, version in unsupported.items()
+            f"'{action_type}' is not available in API version {selected_api_version}. "
+            f"Use service API version {version} or newer.\n"
+            for action_type, version in unsupported.items()
         ]
         raise ValueError("".join(error_strings))
 
 
-def validate_multiapi_args(**kwargs):
+def validate_multiapi_args(**kwargs: typing.Any) -> typing.Callable[[typing.Callable[P, T]], typing.Callable[P, T]]:
     args_mapping = kwargs.pop("args_mapping", None)
     version_method_added = kwargs.pop("version_method_added", None)
     custom_wrapper = kwargs.pop("custom_wrapper", None)
 
-    def decorator(func):
+    def decorator(func: typing.Callable[P, T]) -> typing.Callable[P, T]:
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> T:
             try:
                 # this assumes the client has an _api_version attribute
                 client = args[0]
@@ -70,7 +75,10 @@ def validate_multiapi_args(**kwargs):
 
             if version_method_added and version_method_added != selected_api_version and \
                     VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version_method_added):
-                raise ValueError(f"'{func.__name__}' is only available for API version {version_method_added} and up.")
+                raise ValueError(
+                    f"'{client.__class__.__name__}.{func.__name__}' is not available in API version "
+                    f"{selected_api_version}. Use service API version {version_method_added} or newer."
+                )
 
             if args_mapping:
                 unsupported = {
@@ -81,9 +89,11 @@ def validate_multiapi_args(**kwargs):
                     and selected_api_version != version
                     and VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version)
                 }
+
                 if unsupported:
                     error_strings = [
-                        f"'{param}' is only available for API version {version} and up.\n"
+                        f"'{param}' is not available in API version {selected_api_version}. "
+                        f"Use service API version {version} or newer.\n"
                         for param, version in unsupported.items()
                     ]
                     raise ValueError("".join(error_strings))

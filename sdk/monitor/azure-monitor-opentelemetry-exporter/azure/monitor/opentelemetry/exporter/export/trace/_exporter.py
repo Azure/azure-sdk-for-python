@@ -29,6 +29,21 @@ _logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]
 
+_STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
+    "http.",
+    "db.",
+    "message.",
+    "messaging.",
+    "rpc.",
+    "enduser.",
+    "net.",
+    "peer.",
+    "exception.",
+    "thread.",
+    "fass.",
+    "code.",
+]
+
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
@@ -45,12 +60,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             envelopes.extend(self._span_events_to_envelopes(span))
         try:
             result = self._transmit(envelopes)
-            if result == ExportResult.FAILED_RETRYABLE:
-                envelopes_to_store = [x.as_dict() for x in envelopes]
-                self.storage.put(envelopes_to_store, 1)
-            if result == ExportResult.SUCCESS:
-                # Try to send any cached events
-                self._transmit_from_storage()
+            self._handle_transmit_from_storage(envelopes, result)
             return _get_trace_export_result(result)
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")
@@ -402,11 +412,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
             data.name = data.name[:1024]
     for key, val in span.attributes.items():
         # Remove Opentelemetry related span attributes from custom dimensions
-        if key.startswith("http.") or \
-                key.startswith("db.") or \
-                key.startswith("rpc.") or \
-                key.startswith("net.") or \
-                key.startswith("messaging."):
+        if _is_opentelemetry_standard_attribute(key):
             continue
         # Apply truncation rules
         # Max key length is 150, value is 8192
@@ -433,11 +439,20 @@ def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
         envelope = _utils._create_telemetry_item(event.timestamp)
         envelope.tags.update(_utils._populate_part_a_fields(span.resource))
         envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
-        if span.parent and span.parent.span_id:
+        if span.context and span.context.span_id:
             envelope.tags["ai.operation.parentId"] = "{:016x}".format(
-                span.parent.span_id
+                span.context.span_id
             )
         properties = {}
+        for key, val in event.attributes.items():
+            # Remove Opentelemetry related event attributes from custom dimensions
+            if _is_opentelemetry_standard_attribute(key):
+                continue
+            # Apply truncation rules
+            # Max key length is 150, value is 8192
+            if not key or len(key) > 150 or val is None:
+                continue
+            properties[key] = val[:8192]
         if event.name == "exception":
             envelope.name = 'Microsoft.ApplicationInsights.Exception'
             exc_type = event.attributes.get(SpanAttributes.EXCEPTION_TYPE)
@@ -445,8 +460,6 @@ def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
             if exc_message is None or not exc_message:
                 exc_message = "Exception"
             stack_trace = event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
-            escaped = event.attributes.get(SpanAttributes.EXCEPTION_ESCAPED)
-            properties[SpanAttributes.EXCEPTION_ESCAPED] = escaped
             has_full_stack = stack_trace is not None
             exc_details = TelemetryExceptionDetails(
                 type_name=exc_type,
@@ -474,27 +487,27 @@ def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
     return envelopes
 
 # pylint:disable=too-many-return-statements
-def _get_default_port_db(dbsystem: str) -> int:
-    if dbsystem == DbSystemValues.POSTGRESQL.value:
+def _get_default_port_db(db_system: str) -> int:
+    if db_system == DbSystemValues.POSTGRESQL.value:
         return 5432
-    if dbsystem == DbSystemValues.CASSANDRA.value:
+    if db_system == DbSystemValues.CASSANDRA.value:
         return 9042
-    if dbsystem in (DbSystemValues.MARIADB.value, DbSystemValues.MYSQL.value):
+    if db_system in (DbSystemValues.MARIADB.value, DbSystemValues.MYSQL.value):
         return 3306
-    if dbsystem == DbSystemValues.MSSQL.value:
+    if db_system == DbSystemValues.MSSQL.value:
         return 1433
     # TODO: Add in memcached
-    if dbsystem == "memcached":
+    if db_system == "memcached":
         return 11211
-    if dbsystem == DbSystemValues.DB2.value:
+    if db_system == DbSystemValues.DB2.value:
         return 50000
-    if dbsystem == DbSystemValues.ORACLE.value:
+    if db_system == DbSystemValues.ORACLE.value:
         return 1521
-    if dbsystem == DbSystemValues.H2.value:
+    if db_system == DbSystemValues.H2.value:
         return 8082
-    if dbsystem == DbSystemValues.DERBY.value:
+    if db_system == DbSystemValues.DERBY.value:
         return 1527
-    if dbsystem == DbSystemValues.REDIS.value:
+    if db_system == DbSystemValues.REDIS.value:
         return 6379
     return 0
 
@@ -507,8 +520,8 @@ def _get_default_port_http(scheme: str) -> int:
     return 0
 
 
-def _is_sql_db(dbsystem: str) -> bool:
-    return dbsystem in (
+def _is_sql_db(db_system: str) -> bool:
+    return db_system in (
         DbSystemValues.DB2.value,
         DbSystemValues.DERBY.value,
         DbSystemValues.MARIADB.value,
@@ -516,10 +529,17 @@ def _is_sql_db(dbsystem: str) -> bool:
         DbSystemValues.ORACLE.value,
         DbSystemValues.SQLITE.value,
         DbSystemValues.OTHER_SQL.value,
+        # spell-checker:ignore HSQLDB
         DbSystemValues.HSQLDB.value,
         DbSystemValues.H2.value,
       )
 
+
+def _is_opentelemetry_standard_attribute(attribute: str) -> bool:
+    for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
+        if attribute.startswith(prefix):
+            return True
+    return False
 
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub

@@ -2,9 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 from urllib.parse import urlparse
 from unittest.mock import Mock, patch
+from test_certificate_credential import PEM_CERT_PATH
 
+from devtools_testutils import is_live
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
@@ -12,15 +16,54 @@ from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import OnBehalfOfCredential
 import pytest
 
-from helpers import build_aad_response, get_discovery_response, mock_response
+from helpers import build_aad_response, get_discovery_response, mock_response, FAKE_CLIENT_ID
 from helpers_async import AsyncMockTransport
 from recorded_test_case import RecordedTestCase
-from test_obo import OboRecordedTestCase
+
+missing_variables = [
+    var
+    for var in (
+        "OBO_CERT_BYTES",
+        "OBO_CLIENT_ID",
+        "OBO_CLIENT_SECRET",
+        "OBO_PASSWORD",
+        "OBO_SCOPE",
+        "OBO_TENANT_ID",
+        "OBO_USERNAME",
+    )
+    if var not in os.environ
+]
+
+class TestOboAsync(RecordedTestCase):
+    def load_settings(self):
+        if is_live():
+            self.obo_settings = {
+                "cert_bytes": os.environ["OBO_CERT_BYTES"],
+                "client_id": os.environ["OBO_CLIENT_ID"],
+                "client_secret": os.environ["OBO_CLIENT_SECRET"],
+                "password": os.environ["OBO_PASSWORD"],
+                "scope": os.environ["OBO_SCOPE"],
+                "tenant_id": os.environ["OBO_TENANT_ID"],
+                "username": os.environ["OBO_USERNAME"],
+            }
+        else:
+            self.obo_settings = {
+                "cert_bytes": open(PEM_CERT_PATH, "rb").read(),
+                "client_id": FAKE_CLIENT_ID,
+                "client_secret": "secret",
+                "password": "fake-password",
+                "scope": "api://scope",
+                "tenant_id": "tenant",
+                "username": "username",
+            }
 
 
-class RecordedTests(OboRecordedTestCase):
+    @pytest.mark.manual
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @RecordedTestCase.await_prepared_test
+    @recorded_by_proxy_async
     async def test_obo(self):
+        self.load_settings()
         client_id = self.obo_settings["client_id"]
         client_secret = self.obo_settings["client_secret"]
         tenant_id = self.obo_settings["tenant_id"]
@@ -32,8 +75,12 @@ class RecordedTests(OboRecordedTestCase):
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=client_secret, user_assertion=assertion)
         await credential.get_token(self.obo_settings["scope"])
 
+    @pytest.mark.manual
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @RecordedTestCase.await_prepared_test
+    @recorded_by_proxy_async
     async def test_obo_cert(self):
+        self.load_settings()
         client_id = self.obo_settings["client_id"]
         tenant_id = self.obo_settings["tenant_id"]
 

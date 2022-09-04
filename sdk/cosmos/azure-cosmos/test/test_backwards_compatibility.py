@@ -68,28 +68,10 @@ class TestBackwardsCompatibility(unittest.TestCase):
         self.assertTrue(args[2][http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] is True)
         raise StopIteration
 
-    def side_effect_populate_query_metrics(self, *args, **kwargs):
-        # Extract request headers from args
-        self.assertTrue(args[2][http_constants.HttpHeaders.PopulateQueryMetrics] is True)
-        raise StopIteration
-
     def side_effect_populate_quota_info(self, *args, **kwargs):
         # Extract request headers from args
         self.assertTrue(args[2][http_constants.HttpHeaders.PopulateQuotaInfo] is True)
         raise StopIteration
-
-    def test_populate_query_metrics(self):
-        cosmos_client_connection = self.containerForTest.client_connection
-        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
-            side_effect=self.side_effect_populate_query_metrics)
-        try:
-            self.containerForTest.read(populate_query_metrics=True)
-        except StopIteration:
-            pass
-        try:
-            self.containerForTest.read(True)
-        except StopIteration:
-            pass
 
     def test_populate_quota_info(self):
         cosmos_client_connection = self.containerForTest.client_connection
@@ -100,7 +82,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         except StopIteration:
             pass
         try:
-            self.containerForTest.read(False, True)
+            self.containerForTest.read(False, False, True)
         except StopIteration:
             pass
 
@@ -113,7 +95,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         except StopIteration:
             pass
         try:
-            self.containerForTest.read(False, False, True)
+            self.containerForTest.read(False, True)
         except StopIteration:
             pass
 

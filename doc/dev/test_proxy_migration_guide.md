@@ -40,7 +40,7 @@ class TestExample(AzureTestCase):
         ...
 
     @ExamplePreparer()
-    def test_example_with_preparer(self):
+    def test_example_with_preparer(self, example_variable, **kwargs):
         ...
 ```
 
@@ -60,12 +60,18 @@ class TestExample(AzureRecordedTestCase):
 
     @ExamplePreparer()
     @recorded_by_proxy
-    def test_example_with_preparer(self):
+    def test_example_with_preparer(self, **kwargs):
+        example_variable = kwargs.pop("example_variable")
         ...
 ```
 
 For async tests, import the `recorded_by_proxy_async` decorator from `devtools_testutils.aio` and use it in the same
 way as `recorded_by_proxy`.
+
+Because test proxy tests use pure `pytest`, any positional parameter in a test method is assumed to be a reference to
+a fixture (see `pytest`'s [How to use fixtures][pytest_using_fixtures] documentation). So, arguments that are passed
+to a test by a preparer -- for example, `example_variable` in `test_example_with_preparer` above -- should be
+accepted via `**kwargs` and popped off at the start of a test.
 
 > **Note:** since AzureRecordedTestCase doesn't inherit from `unittest.TestCase`, test class names need to start
 > with "Test" in order to be properly collected by pytest by default. For more information, please refer to
@@ -287,11 +293,6 @@ the example above (note that the method-style `tables_decorator` is used without
 Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
 values will automatically have sanitizers registered with the test proxy.
 
-> **Note:** For tests that are decorated by `@recorded_by_proxy` or `@recorded_by_proxy_async`, the keyword arguments
-> passed by EnvironmentVariableLoader can be listed as positional arguments instead of using `**kwargs`. However, tests
-> without these decorators can only accept arguments through `**kwargs`. It's therefore recommended that you use
-> `**kwargs` in all cases so that tests run successfully with or without `@recorded_by_proxy` decorators.
-
 ### Record test variables
 
 To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
@@ -315,19 +316,24 @@ class TestExample(AzureRecordedTestCase):
 
     @recorded_by_proxy
     def test_example(self, **kwargs):
-        # in live mode, variables is an empty dictionary
-        # in playback mode, the value of variables is {"table_name": "random-value"}
-        variables = kwargs.pop("variables")
-        if self.is_live:
-            table_name = "random-value"
-            variables = {"table_name": table_name}
+        # In live mode, variables is an empty dictionary
+        # In playback mode, the value of variables is {"table_name": "random-value"}
+        variables = kwargs.pop("variables", {})
+ 
+        # To fetch variable values, use the `setdefault` method to look for a key ("table_name")
+        # and set a real value for that key if it's not present ("random-value")
+        table_name = variables.setdefault("table_name", "random-value")
 
         # use variables["table_name"] when using the table name throughout the test
         ...
 
-        # return the variables at the end of the test
+        # return the variables at the end of the test to record them
         return variables
 ```
+
+> **Note:** `variables` will be passed as a named argument to any test that accepts `kwargs` by the test proxy. In
+> environments that don't use the test proxy, though -- like live test pipelines -- `variables` won't be provided.
+> To avoid a KeyError, providing an empty dictionary as the default value to `kwargs.pop` is recommended.
 
 ## Migrate management-plane tests
 
@@ -414,12 +420,17 @@ container if it's not already running.
 
 For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
 
+
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [docker_install]: https://docs.docker.com/get-docker/
 [docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
+
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
+
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
@@ -427,12 +438,17 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_fixtures]: https://docs.pytest.org/latest/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 [pytest_setup]: https://docs.pytest.org/xunit_setup.html
+[pytest_using_fixtures]: https://docs.pytest.org/latest/how-to/fixtures.html#how-to-fixtures
+
 [rg_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py
+
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
 [start_test_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/63a35890a0188dfcac094aa7dc1ec7cc730945cd/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L111
 [stop_test_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/63a35890a0188dfcac094aa7dc1ec7cc730945cd/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L149
+
 [tables_preparers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/preparers.py
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
 [troubleshooting]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md
+
 [variables_api]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy#storing-variables
 [vcrpy]: https://vcrpy.readthedocs.io

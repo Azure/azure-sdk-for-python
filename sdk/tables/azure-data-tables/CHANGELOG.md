@@ -1,14 +1,18 @@
 # Release History
 
-## 12.4.1 (Unreleased)
+## 12.5.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+* Fix handling of client-side exceptions that get raised during service requests (such as [#21416](https://github.com/Azure/azure-sdk-for-python/issues/21416)) ([#24788](https://github.com/Azure/azure-sdk-for-python/pull/24788))
 
 ### Other Changes
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+* Bumped minimum dependency on `azure-core` to `>=1.24.0`
+* Bumped minimum dependency on `msrest` to `>=0.7.1`
 
 ## 12.4.0 (2022-05-10)
 

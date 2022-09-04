@@ -1,5 +1,38 @@
 # Release History
 
+## 27.2.0 (2022-06-29)
+
+**Features**
+
+  - Model CloudService has a new parameter system_data
+  - Model CloudServiceNetworkProfile has a new parameter slot_type
+
+## 27.1.0 (2022-06-09)
+
+**Features**
+
+  - Added operation CommunityGalleryImageVersionsOperations.list
+  - Added operation CommunityGalleryImagesOperations.list
+  - Added operation VirtualMachineImagesOperations.list_by_edge_zone
+  - Model CommunityGalleryImage has a new parameter architecture
+  - Model CommunityGalleryImage has a new parameter eula
+  - Model CommunityGalleryImage has a new parameter privacy_statement_uri
+  - Model CommunityGalleryImageVersion has a new parameter exclude_from_latest
+  - Model CommunityGalleryImageVersion has a new parameter storage_profile
+  - Model DiskEncryptionSet has a new parameter federated_client_id
+  - Model DiskEncryptionSetUpdate has a new parameter federated_client_id
+  - Model DiskRestorePoint has a new parameter security_profile
+  - Model EncryptionSetIdentity has a new parameter user_assigned_identities
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter advanced_settings
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter settings
+  - Model ImageDiskReference has a new parameter community_gallery_image_id
+  - Model ImageDiskReference has a new parameter shared_gallery_image_id
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model SharedGalleryImage has a new parameter architecture
+  - Model SharedGalleryImageVersion has a new parameter exclude_from_latest
+  - Model SharedGalleryImageVersion has a new parameter storage_profile
+  - Model Snapshot has a new parameter copy_completion_error
+
 ## 27.0.0 (2022-05-17)
 
 **Features**

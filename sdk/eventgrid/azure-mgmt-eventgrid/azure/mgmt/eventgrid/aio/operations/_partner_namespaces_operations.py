@@ -73,7 +73,7 @@ class PartnerNamespacesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_request(
@@ -120,7 +120,7 @@ class PartnerNamespacesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_namespace_info, 'PartnerNamespace')
@@ -189,7 +189,7 @@ class PartnerNamespacesOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerNamespace"]
@@ -244,7 +244,7 @@ class PartnerNamespacesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -301,7 +301,7 @@ class PartnerNamespacesOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -351,7 +351,7 @@ class PartnerNamespacesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_namespace_update_parameters, 'PartnerNamespaceUpdateParameters')
@@ -423,7 +423,7 @@ class PartnerNamespacesOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerNamespace"]
@@ -496,7 +496,7 @@ class PartnerNamespacesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.PartnerNamespacesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerNamespacesListResult"]
         error_map = {
@@ -592,7 +592,7 @@ class PartnerNamespacesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.PartnerNamespacesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerNamespacesListResult"]
         error_map = {
@@ -683,7 +683,7 @@ class PartnerNamespacesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_list_shared_access_keys_request(
@@ -746,7 +746,7 @@ class PartnerNamespacesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(regenerate_key_request, 'PartnerNamespaceRegenerateKeyRequest')

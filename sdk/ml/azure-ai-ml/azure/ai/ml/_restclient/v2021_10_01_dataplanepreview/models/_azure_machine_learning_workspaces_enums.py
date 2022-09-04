@@ -45,6 +45,14 @@ class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_DATA_LAKE_GEN2 = "AzureDataLakeGen2"
     AZURE_FILE = "AzureFile"
 
+class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the type of data.
+    """
+
+    URI_FILE = "uri_file"
+    URI_FOLDER = "uri_folder"
+    MLTABLE = "mltable"
+
 class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the job distribution type.
     """
@@ -142,15 +150,6 @@ class ListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
 
-class ModelFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The async operation state.
-    """
-
-    CUSTOM = "Custom"
-    ML_FLOW = "MLFlow"
-    TRITON = "Triton"
-    OPEN_AI = "OpenAI"
-
 class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of operating system.
     """
@@ -164,6 +163,14 @@ class OutputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"
+
+class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine which reference method to use for an asset.
+    """
+
+    ID = "Id"
+    DATA_PATH = "DataPath"
+    OUTPUT_PATH = "OutputPath"
 
 class SamplingAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 

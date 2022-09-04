@@ -7,6 +7,10 @@ import pytest
 import platform
 import functools
 import json
+import sys
+import asyncio
+import functools
+from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -24,6 +28,36 @@ from testcase import TextAnalyticsTest
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
+
+def get_completed_future(result=None):
+    future = asyncio.Future()
+    future.set_result(result)
+    return future
+
+
+def wrap_in_future(fn):
+    """Return a completed Future whose result is the return of fn.
+    Added to simplify using unittest.Mock in async code. Python 3.8's AsyncMock would be preferable.
+    """
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        result = fn(*args, **kwargs)
+        return get_completed_future(result)
+    return wrapper
+
+
+class AsyncMockTransport(mock.MagicMock):
+    """Mock with do-nothing aenter/exit for mocking async transport.
+    This is unnecessary on 3.8+, where MagicMocks implement aenter/exit.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if sys.version_info < (3, 8):
+            self.__aenter__ = mock.Mock(return_value=get_completed_future())
+            self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
 
 class TestAnalyzeSentiment(TextAnalyticsTest):
@@ -737,15 +771,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert not document.sentences[0].mined_opinions
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    async def test_opinion_mining_v3(self, **kwargs):
-        client = kwargs.pop("client")
-        with pytest.raises(ValueError) as excinfo:
-            await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
-
-        assert "'show_opinion_mining' is only available for API version v3.1 and up" in str(excinfo.value)
-
-    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_offset(self, client):
@@ -784,7 +809,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
     async def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
@@ -809,7 +834,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
     async def test_explicit_set_string_index_type_body_param(self, client):
         def callback(response):
@@ -834,7 +859,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_04_01_PREVIEW})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
     async def test_disable_service_logs_body_param(self, client):
         def callback(resp):
@@ -852,16 +877,39 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], string_index_type="UnicodeCodePoint")
-        assert str(e.value) == "'string_index_type' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], show_opinion_mining=True)
-        assert str(e.value) == "'show_opinion_mining' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'show_opinion_mining' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], disable_service_logs=True)
-        assert str(e.value) == "'disable_service_logs' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
 
         with pytest.raises(ValueError) as e:
             res = await client.analyze_sentiment(["I'm tired"], show_opinion_mining=True, disable_service_logs=True, string_index_type="UnicodeCodePoint")
-        assert str(e.value) == "'show_opinion_mining' is only available for API version v3.1 and up.\n'disable_service_logs' is only available for API version v3.1 and up.\n'string_index_type' is only available for API version v3.1 and up.\n"
+        assert str(e.value) == "'show_opinion_mining' is not available in API version v3.0. Use service API version v3.1 or newer.\n'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+
+    @TextAnalyticsPreparer()
+    async def test_mock_quota_exceeded(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
+
+        response = mock.Mock(
+            status_code=403,
+            headers={"Retry-After": 186688, "Content-Type": "application/json"},
+            reason="Bad Request"
+        )
+        response.text = lambda encoding=None: json.dumps(
+            {"error": {"code": "403", "message": "Out of call volume quota for TextAnalytics F0 pricing tier. Please retry after 15 days. To increase your call volume switch to a paid tier."}}
+        )
+        response.content_type = "application/json"
+        transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
+
+        client = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), transport=transport)
+
+        with pytest.raises(HttpResponseError) as e:
+            result = await client.analyze_sentiment(["I'm tired"])
+        assert e.value.status_code == 403
+        assert e.value.error.message == 'Out of call volume quota for TextAnalytics F0 pricing tier. Please retry after 15 days. To increase your call volume switch to a paid tier.'

@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import StorageCacheManagementClientConfiguration
@@ -21,33 +22,37 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class StorageCacheManagementClient:
-    """A Storage Cache provides scalable caching service for NAS clients, serving data from either NFSv3 or Blob at-rest storage (referred to as "Storage Targets"). These operations allow you to manage Caches.
+class StorageCacheManagementClient:    # pylint: disable=too-many-instance-attributes
+    """A Storage Cache provides scalable caching service for NAS clients, serving data from either
+    NFSv3 or Blob at-rest storage (referred to as "Storage Targets"). These operations allow you to
+    manage Caches.
 
     :ivar operations: Operations operations
-    :vartype operations: storage_cache_management_client.aio.operations.Operations
+    :vartype operations: azure.mgmt.storagecache.aio.operations.Operations
     :ivar skus: SkusOperations operations
-    :vartype skus: storage_cache_management_client.aio.operations.SkusOperations
+    :vartype skus: azure.mgmt.storagecache.aio.operations.SkusOperations
     :ivar usage_models: UsageModelsOperations operations
-    :vartype usage_models: storage_cache_management_client.aio.operations.UsageModelsOperations
+    :vartype usage_models: azure.mgmt.storagecache.aio.operations.UsageModelsOperations
     :ivar asc_operations: AscOperationsOperations operations
-    :vartype asc_operations: storage_cache_management_client.aio.operations.AscOperationsOperations
+    :vartype asc_operations: azure.mgmt.storagecache.aio.operations.AscOperationsOperations
     :ivar asc_usages: AscUsagesOperations operations
-    :vartype asc_usages: storage_cache_management_client.aio.operations.AscUsagesOperations
+    :vartype asc_usages: azure.mgmt.storagecache.aio.operations.AscUsagesOperations
     :ivar caches: CachesOperations operations
-    :vartype caches: storage_cache_management_client.aio.operations.CachesOperations
+    :vartype caches: azure.mgmt.storagecache.aio.operations.CachesOperations
     :ivar storage_targets: StorageTargetsOperations operations
-    :vartype storage_targets:
-     storage_cache_management_client.aio.operations.StorageTargetsOperations
+    :vartype storage_targets: azure.mgmt.storagecache.aio.operations.StorageTargetsOperations
     :ivar storage_target: StorageTargetOperations operations
-    :vartype storage_target: storage_cache_management_client.aio.operations.StorageTargetOperations
+    :vartype storage_target: azure.mgmt.storagecache.aio.operations.StorageTargetOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -66,14 +71,30 @@ class StorageCacheManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.usage_models = UsageModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.asc_operations = AscOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.asc_usages = AscUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.caches = CachesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.storage_targets = StorageTargetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.storage_target = StorageTargetOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.skus = SkusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.usage_models = UsageModelsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.asc_operations = AscOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.asc_usages = AscUsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.caches = CachesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.storage_targets = StorageTargetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.storage_target = StorageTargetOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

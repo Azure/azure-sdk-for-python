@@ -16,12 +16,12 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
-JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -32,14 +32,17 @@ def build_create_or_update_request(
     name: str,
     subscription_id: str,
     *,
-    json: JSONType = None,
+    json: Optional[_models.AvailabilitySet] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -51,20 +54,18 @@ def build_create_or_update_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         json=json,
         content=content,
         **kwargs
@@ -77,9 +78,12 @@ def build_delete_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -91,18 +95,16 @@ def build_delete_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -113,9 +115,12 @@ def build_get_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -127,18 +132,16 @@ def build_get_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -148,9 +151,12 @@ def build_list_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -161,18 +167,16 @@ def build_list_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -183,9 +187,12 @@ def build_list_available_sizes_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}/vmSizes")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -197,51 +204,47 @@ def build_list_available_sizes_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
-class AvailabilitySetsOperations(object):
-    """AvailabilitySetsOperations operations.
+class AvailabilitySetsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.compute.v2015_06_15.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.v2015_06_15.ComputeManagementClient`'s
+        :attr:`availability_sets` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def create_or_update(
         self,
         resource_group_name: str,
         name: str,
-        parameters: "_models.AvailabilitySet",
+        parameters: _models.AvailabilitySet,
         **kwargs: Any
-    ) -> "_models.AvailabilitySet":
+    ) -> _models.AvailabilitySet:
         """Create or update an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -255,14 +258,17 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySet]
 
         _json = self._serialize.body(parameters, 'AvailabilitySet')
 
@@ -274,11 +280,13 @@ class AvailabilitySetsOperations(object):
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -305,7 +313,7 @@ class AvailabilitySetsOperations(object):
         resource_group_name: str,
         availability_set_name: str,
         **kwargs: Any
-    ) -> Optional["_models.OperationStatusResponse"]:
+    ) -> Optional[_models.OperationStatusResponse]:
         """Delete an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -317,13 +325,16 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.OperationStatusResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.OperationStatusResponse]]
 
         
         request = build_delete_request(
@@ -332,11 +343,13 @@ class AvailabilitySetsOperations(object):
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -365,7 +378,7 @@ class AvailabilitySetsOperations(object):
         resource_group_name: str,
         availability_set_name: str,
         **kwargs: Any
-    ) -> "_models.AvailabilitySet":
+    ) -> _models.AvailabilitySet:
         """Retrieves information about an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -377,13 +390,16 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.mgmt.compute.v2015_06_15.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySet]
 
         
         request = build_get_request(
@@ -392,11 +408,13 @@ class AvailabilitySetsOperations(object):
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -422,7 +440,7 @@ class AvailabilitySetsOperations(object):
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.AvailabilitySetListResult"]:
+    ) -> Iterable[_models.AvailabilitySetListResult]:
         """Lists all availability sets in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -434,13 +452,16 @@ class AvailabilitySetsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2015_06_15.models.AvailabilitySetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySetListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AvailabilitySetListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -449,9 +470,11 @@ class AvailabilitySetsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -460,9 +483,11 @@ class AvailabilitySetsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -501,7 +526,7 @@ class AvailabilitySetsOperations(object):
         resource_group_name: str,
         availability_set_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.VirtualMachineSizeListResult"]:
+    ) -> Iterable[_models.VirtualMachineSizeListResult]:
         """Lists all available virtual machine sizes that can be used to create a new virtual machine in
         an existing availability set.
 
@@ -516,13 +541,16 @@ class AvailabilitySetsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2015_06_15.models.VirtualMachineSizeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2015-06-15")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineSizeListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-06-15"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.VirtualMachineSizeListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -532,9 +560,11 @@ class AvailabilitySetsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_available_sizes.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -544,9 +574,11 @@ class AvailabilitySetsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

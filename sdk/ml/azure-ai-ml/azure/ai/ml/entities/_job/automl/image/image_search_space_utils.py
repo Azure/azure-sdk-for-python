@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import re
+# pylint: disable=protected-access
 
+import re
 from typing import Union
 
-from azure.ai.ml.constants import SearchSpace
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 
 def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, SweepDistribution]) -> str:
@@ -57,13 +58,13 @@ def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, Swe
                 target=ErrorTarget.AUTOML,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        for idx, value in enumerate(rest_object[1][0]):
+        for value in rest_object[1][0]:
             if isinstance(value, str):
                 sweep_distribution_args.append("'" + value + "'")
             else:
                 sweep_distribution_args.append(str(value))
     else:
-        for idx, value in enumerate(rest_object[1]):
+        for value in rest_object[1]:
             sweep_distribution_args.append(str(value))
 
     sweep_distribution_str = sweep_distribution_type + "("
@@ -93,18 +94,19 @@ def _get_type_inferred_value(value: str) -> Union[bool, int, float, str]:
     if _is_int(value):
         # Int
         return int(value)
-    elif _is_float(value):
+    if _is_float(value):
         # Float
         return float(value)
-    elif value in ["True", "False"]:
+    if value in ["True", "False"]:
         # Convert "True", "False" to python boolean literals
         return value == "True"
-    else:
-        # string value. Remove quotes before returning.
-        return value.strip("'\"")
+    # string value. Remove quotes before returning.
+    return value.strip("'\"")
 
 
-def _convert_from_rest_object(sweep_distribution_str: str) -> Union[bool, int, float, str, SweepDistribution]:
+def _convert_from_rest_object(
+    sweep_distribution_str: str,
+) -> Union[bool, int, float, str, SweepDistribution]:
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')" or
     # a single value like "True", "1", "1.0567", "vitb16r224"
 

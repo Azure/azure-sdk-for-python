@@ -4,6 +4,7 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: monitor
+      TestProxy: true
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-monitor-*
       EnvVars:

@@ -16,12 +16,12 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
-JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -32,14 +32,17 @@ def build_create_or_update_request(
     proximity_placement_group_name: str,
     subscription_id: str,
     *,
-    json: JSONType = None,
+    json: Optional[_models.ProximityPlacementGroup] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/proximityPlacementGroups/{proximityPlacementGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -51,20 +54,18 @@ def build_create_or_update_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         json=json,
         content=content,
         **kwargs
@@ -76,14 +77,17 @@ def build_update_request(
     proximity_placement_group_name: str,
     subscription_id: str,
     *,
-    json: JSONType = None,
+    json: Optional[_models.ProximityPlacementGroupUpdate] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/proximityPlacementGroups/{proximityPlacementGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -95,20 +99,18 @@ def build_update_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         json=json,
         content=content,
         **kwargs
@@ -121,8 +123,9 @@ def build_delete_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/proximityPlacementGroups/{proximityPlacementGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -134,13 +137,12 @@ def build_delete_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=_url,
-        params=_query_parameters,
+        params=_params,
         **kwargs
     )
 
@@ -151,9 +153,12 @@ def build_get_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/proximityPlacementGroups/{proximityPlacementGroupName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -165,18 +170,16 @@ def build_get_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -185,9 +188,12 @@ def build_list_by_subscription_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/proximityPlacementGroups")
     path_format_arguments = {
@@ -197,18 +203,16 @@ def build_list_by_subscription_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -218,9 +222,12 @@ def build_list_by_resource_group_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/proximityPlacementGroups")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -231,51 +238,47 @@ def build_list_by_resource_group_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
-class ProximityPlacementGroupsOperations(object):
-    """ProximityPlacementGroupsOperations operations.
+class ProximityPlacementGroupsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.compute.v2018_10_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.v2018_10_01.ComputeManagementClient`'s
+        :attr:`proximity_placement_groups` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def create_or_update(
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        parameters: "_models.ProximityPlacementGroup",
+        parameters: _models.ProximityPlacementGroup,
         **kwargs: Any
-    ) -> "_models.ProximityPlacementGroup":
+    ) -> _models.ProximityPlacementGroup:
         """Create or update a proximity placement group.
 
         :param resource_group_name: The name of the resource group.
@@ -289,14 +292,17 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_10_01.models.ProximityPlacementGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ProximityPlacementGroup]
 
         _json = self._serialize.body(parameters, 'ProximityPlacementGroup')
 
@@ -308,11 +314,13 @@ class ProximityPlacementGroupsOperations(object):
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -342,9 +350,9 @@ class ProximityPlacementGroupsOperations(object):
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        parameters: "_models.ProximityPlacementGroupUpdate",
+        parameters: _models.ProximityPlacementGroupUpdate,
         **kwargs: Any
-    ) -> "_models.ProximityPlacementGroup":
+    ) -> _models.ProximityPlacementGroup:
         """Update a proximity placement group.
 
         :param resource_group_name: The name of the resource group.
@@ -358,14 +366,17 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_10_01.models.ProximityPlacementGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ProximityPlacementGroup]
 
         _json = self._serialize.body(parameters, 'ProximityPlacementGroupUpdate')
 
@@ -377,11 +388,13 @@ class ProximityPlacementGroupsOperations(object):
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -420,13 +433,16 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_delete_request(
@@ -435,11 +451,13 @@ class ProximityPlacementGroupsOperations(object):
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -462,7 +480,7 @@ class ProximityPlacementGroupsOperations(object):
         resource_group_name: str,
         proximity_placement_group_name: str,
         **kwargs: Any
-    ) -> "_models.ProximityPlacementGroup":
+    ) -> _models.ProximityPlacementGroup:
         """Retrieves information about a proximity placement group .
 
         :param resource_group_name: The name of the resource group.
@@ -474,13 +492,16 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_10_01.models.ProximityPlacementGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ProximityPlacementGroup]
 
         
         request = build_get_request(
@@ -489,11 +510,13 @@ class ProximityPlacementGroupsOperations(object):
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -518,7 +541,7 @@ class ProximityPlacementGroupsOperations(object):
     def list_by_subscription(
         self,
         **kwargs: Any
-    ) -> Iterable["_models.ProximityPlacementGroupListResult"]:
+    ) -> Iterable[_models.ProximityPlacementGroupListResult]:
         """Lists all proximity placement groups in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -528,13 +551,16 @@ class ProximityPlacementGroupsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2018_10_01.models.ProximityPlacementGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ProximityPlacementGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -542,9 +568,11 @@ class ProximityPlacementGroupsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -552,9 +580,11 @@ class ProximityPlacementGroupsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -592,7 +622,7 @@ class ProximityPlacementGroupsOperations(object):
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.ProximityPlacementGroupListResult"]:
+    ) -> Iterable[_models.ProximityPlacementGroupListResult]:
         """Lists all proximity placement groups in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -604,13 +634,16 @@ class ProximityPlacementGroupsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2018_10_01.models.ProximityPlacementGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroupListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ProximityPlacementGroupListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -619,9 +652,11 @@ class ProximityPlacementGroupsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_by_resource_group.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -630,9 +665,11 @@ class ProximityPlacementGroupsOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

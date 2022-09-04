@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataSourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Datasource kind
     """
 
@@ -19,14 +18,14 @@ class DataSourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ETW_PROVIDERS = "ETWProviders"
     WINDOWS_EVENT_LOGS = "WindowsEventLogs"
 
-class GuestDiagnosticSettingsOsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class GuestDiagnosticSettingsOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operating system type for the configuration
     """
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class SinkConfigurationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SinkConfigurationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EVENT_HUB = "EventHub"
     APPLICATION_INSIGHTS = "ApplicationInsights"

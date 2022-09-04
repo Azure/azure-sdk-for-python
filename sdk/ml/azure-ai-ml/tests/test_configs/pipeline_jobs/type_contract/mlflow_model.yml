@@ -1,0 +1,37 @@
+type: pipeline
+
+name: simplePipelineJobWithPathInputOutput
+description: The hello world pipeline job with input/output type of path
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_in_mlflow_model_azure:
+    type: mlflow_model
+    path: azureml:foo_model:2
+
+  job_in_mlflow_model_uri:
+    type: mlflow_model
+    path: https://azuremlexamples.blob.core.windows.net/datasets/
+outputs:
+  job_out_mlflow_model:
+    type: mlflow_model
+
+jobs:
+  hello_world_component:
+    type: command
+    component: file:../../components/type_contract/mlflow_model.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_mlflow_model_azure:
+        type: mlflow_model
+        path: azureml:foo_model:2
+      component_in_mlflow_model_uri:
+        type: mlflow_model
+        path: https://azuremlexamples.blob.core.windows.net/datasets/
+    outputs:
+      component_out_mlflow_model:
+        type: mlflow_model

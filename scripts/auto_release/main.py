@@ -54,9 +54,9 @@ def preview_version_plus(preview_label: str, last_version: str) -> str:
 
 def stable_version_plus(changelog: str, last_version: str):
     flag = [False, False, False]  # breaking, feature, bugfix
-    flag[0] = '**Breaking changes**' in changelog
-    flag[1] = '**Features**' in changelog
-    flag[2] = '**Bugfixes**' in changelog
+    flag[0] = '### Breaking Changes' in changelog
+    flag[1] = '### Features Added' in changelog
+    flag[2] = '### Bugs Fixed' in changelog
 
     num = last_version.split('.')
     if flag[0]:
@@ -78,14 +78,6 @@ def all_files(path: str, files: List[str]):
             all_files(folder, files)
         else:
             files.append(folder)
-
-
-def checkout_azure_default_branch():
-    usr = 'Azure'
-    branch = 'main'
-    print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
-    print_check(f'git fetch {usr} {branch}')
-    print_check(f'git checkout {usr}/{branch}')
 
 
 def modify_file(file_path: str, func: Any):
@@ -132,7 +124,6 @@ class CodegenTestPR:
 
     def __init__(self):
         self.issue_link = os.getenv('ISSUE_LINK')
-        self.usr_token = os.getenv('USR_TOKEN')
         self.pipeline_link = os.getenv('PIPELINE_LINK')
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
@@ -169,8 +160,27 @@ class CodegenTestPR:
         generate_result = self.get_autorest_result()
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
+    @staticmethod
+    def checkout_branch(env_key: str, repo: str):
+        env_var = os.getenv(env_key, "")
+        usr = env_var.split(":")[0] or "Azure"
+        branch = env_var.split(":")[-1] or "main"
+        print_exec(f'git remote add {usr} https://github.com/{usr}/{repo}.git')
+        print_check(f'git fetch {usr} {branch}')
+        print_check(f'git checkout {usr}/{branch}')
+
+    @return_origin_path
+    def checkout_azure_default_branch(self):
+        # checkout branch in sdk repo
+        self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
+
+        # checkout branch in rest repo
+        if self.spec_repo:
+            os.chdir(Path(self.spec_repo))
+            self.checkout_branch("DEBUG_REST_BRANCH", "azure-rest-api-specs")
+
     def generate_code(self):
-        checkout_azure_default_branch()
+        self.checkout_azure_default_branch()
 
         # prepare input data
         input_data = {
@@ -179,6 +189,9 @@ class CodegenTestPR:
             'specFolder': self.spec_repo,
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
+        # if Python tag exists
+        if os.getenv('PYTHON_TAG'):
+            input_data['python_tag'] = os.getenv('PYTHON_TAG')
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
         with open(self.autorest_result, 'w') as file:
@@ -196,7 +209,7 @@ class CodegenTestPR:
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
-        self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
+        self.package_name = generate_result["packages"][0]["packageName"].split('-', 2)[-1]
 
     def prepare_branch_with_readme(self):
         self.generate_code()
@@ -254,15 +267,6 @@ class CodegenTestPR:
 
         modify_file(sdk_readme, edit_sdk_readme)
 
-    def check_sdk_setup(self):
-        def edit_sdk_setup(content: List[str]):
-            for i in range(0, len(content)):
-                content[i] = content[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-                content[i] = content[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
-
-        modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
-
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
@@ -292,7 +296,8 @@ class CodegenTestPR:
         preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == '':
-            return '0.0.0'
+            msg = 'it should be stable' if self.tag_is_stable else 'it should be perview'
+            return f'0.0.0 ({msg})'
         preview_version = 'rc' in last_version or 'b' in last_version
         #                                           |   preview tag                     | stable tag
         # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
@@ -373,27 +378,55 @@ class CodegenTestPR:
         else:
             self.edit_changelog()
 
+    @staticmethod
+    def get_need_dependency():
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        with open(template_path, 'r') as fr:
+            content = fr.readlines()
+            for line in content:
+                if 'msrest>' in line:
+                    target_msrest = line.strip().strip(',').strip('\'')
+                    yield target_msrest
+                if 'azure-mgmt-core' in line:
+                    target_mgmt_core = line.strip().strip(',').strip('\'')
+                    yield target_mgmt_core
+
+    @staticmethod
+    def insert_line_num(content: List[str]) -> int:
+        start_num = 0
+        end_num = len(content)
+        for i in range(end_num):
+            if content[i].find("#override azure-mgmt-") > -1:
+                start_num = i
+                break
+        return (int(str(time.time()).split('.')[-1]) % max(end_num - start_num, 1)) + start_num
+
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
+            dependency_name = dependency.split('>')[0]
             for i in range(len(content)):
                 if new_line in content[i]:
                     return
+                if f'azure-mgmt-{self.package_name} {dependency_name}' in content[i]:
+                    content[i] = new_line + '\n'
+                    return
             prefix = '' if '\n' in content[-1] else '\n'
-            content.append(prefix + new_line + '\n')
+            content.insert(self.insert_line_num(content), prefix + new_line + '\n')
 
         modify_file(str(Path('shared_requirements.txt')), edit_ci_file)
         print_exec('git add shared_requirements.txt')
 
     def check_ci_file(self):
-        self.check_ci_file_proc('msrest>=0.6.21')
-        self.check_ci_file_proc('azure-mgmt-core>=1.3.0,<2.0.0')
+        # eg: target_msrest = 'msrest>=0.6.21', target_mgmt_core = 'azure-mgmt-core>=1.3.0,<2.0.0'
+        target_msrest, target_mgmt_core = list(self.get_need_dependency())
+        self.check_ci_file_proc(target_msrest)
+        self.check_ci_file_proc(target_mgmt_core)
 
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
-        self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
@@ -446,7 +479,7 @@ class CodegenTestPR:
         self.run_test_proc()
 
     def create_pr_proc(self):
-        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.usr_token)
+        api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
         pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'
@@ -461,7 +494,7 @@ class CodegenTestPR:
         self.pr_number = res_create.number
 
     def zero_version_policy(self):
-        if self.next_version == '0.0.0':
+        if re.match(re.compile('0\.0\.0'), self.next_version):
             api_request = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
             issue_number = int(self.issue_link.split('/')[-1])
             api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])

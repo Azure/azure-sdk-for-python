@@ -2,31 +2,36 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._constants import DEFAULT_AUTHORITY_URL
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+# pylint: disable=protected-access,redefined-builtin
+
+from abc import ABC
+
+from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials,
     AccountKeyDatastoreSecrets,
+    CertificateDatastoreCredentials,
+    CertificateDatastoreSecrets,
+    CredentialsType,
+    NoneDatastoreCredentials,
     SasDatastoreCredentials,
     SasDatastoreSecrets,
     ServicePrincipalDatastoreCredentials,
     ServicePrincipalDatastoreSecrets,
-    CertificateDatastoreCredentials,
-    CertificateDatastoreSecrets,
-    NoneDatastoreCredentials,
-    CredentialsType,
 )
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-class DatastoreCredentials(RestTranslatableMixin):
-    def __init__(self, type: str = None):
-        self.type = type
+class DatastoreCredentials(RestTranslatableMixin, ABC):
+    def __init__(self):
+        self.type = None
 
 
 class NoneCredentials(DatastoreCredentials):
     def __init__(
         self,
     ):
+        super().__init__()
         self.type = CredentialsType.NONE
 
     def _to_rest_object(self) -> NoneDatastoreCredentials:
@@ -51,6 +56,7 @@ class AccountKeyCredentials(DatastoreCredentials):
         *,
         account_key: str,
     ):
+        super().__init__()
         self.type = CredentialsType.ACCOUNT_KEY
         self.account_key = account_key
 
@@ -77,6 +83,7 @@ class SasTokenCredentials(DatastoreCredentials):
         *,
         sas_token: str,
     ):
+        super().__init__()
         self.type = CredentialsType.SAS
         self.sas_token = sas_token
 
@@ -100,11 +107,12 @@ class SasTokenCredentials(DatastoreCredentials):
 class BaseTenantCredentials(DatastoreCredentials):
     def __init__(
         self,
-        authority_url: str = DEFAULT_AUTHORITY_URL,
+        authority_url: str = _get_active_directory_url_from_metadata(),
         resource_url: str = None,
         tenant_id: str = None,
         client_id: str = None,
     ):
+        super().__init__()
         self.authority_url = authority_url
         self.resource_url = resource_url
         self.tenant_id = tenant_id
@@ -161,13 +169,13 @@ class CertificateCredentials(BaseTenantCredentials):
     def __init__(
         self,
         certificate: str = None,
-        thumprint: str = None,
+        thumbprint: str = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.type = CredentialsType.CERTIFICATE
         self.certificate = certificate
-        self.thumbprint = thumprint
+        self.thumbprint = thumbprint
 
     def _to_rest_object(self) -> CertificateDatastoreCredentials:
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)

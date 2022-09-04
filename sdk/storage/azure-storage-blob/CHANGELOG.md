@@ -1,14 +1,51 @@
 # Release History
 
-## 12.12.1 (Unreleased)
+## 12.14.0 (Unreleased)
 
 ### Features Added
+- Stable release of features from 12.14.0b1 and 12.14.0b2.
 
-### Breaking Changes
+## 12.14.0b2 (2022-08-30)
+
+### Features Added
+- Added a new API, `list_blob_names`, to `ContainerClient` that lists only the names of the blobs in the respective
+container. This API is significantly faster than the traditional `list_blobs` and can be used if only the blob names
+are desired. It does not return any additional properties or metadata for the blobs.
+
+## 12.14.0b1 (2022-08-23)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added standard `read` method to `StorageStreamDownloader`.
+- Added support for async streams (classes with an async `read` method) to async `upload_blob`.
 
 ### Bugs Fixed
+- Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`.
+- Updated exception catching of `azure.storage.blob.StorageStreamDownloader`'s retry mechanism.
+- Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
+- Fixed a bug where uploading an empty blob via `upload_blob` would fail with `validate_content=True`.
 
-### Other Changes
+## 12.13.1 (2022-08-04)
+
+### Bugs Fixed
+- Fixed two rare issues with ranged blob download when using client-side encryption V1 or V2.
+
+## 12.13.0 (2022-07-07)
+
+### Bugs Fixed
+- Stable release of features from 12.13.0b1.
+- Added support for deleting versions in `delete_blobs` by supplying `version_id`.
+
+## 12.13.0b1 (2022-06-15)
+
+### Features Added
+- Added support for service version 2021-08-06.
+- Added a new version of client-side encryption for blobs (version 2.0) which utilizes AES-GCM-256 encryption.
+If you are currently using client-side encryption, it is **highly recommended** to switch to a form of server-side
+encryption (Customer-Provided Key, Encryption Scope, etc.) or version 2.0 of client-side encryption. The encryption
+version can be specified on any client constructor via the `encryption_version` keyword (`encryption_version='2.0'`).
 
 ## 12.12.0 (2022-05-09)
 
@@ -16,7 +53,7 @@
 - Stable release of features from 12.12.0b1.
 - Added support for progress tracking to `upload_blob()` and `download_blob()` via a new optional callback,`progress_hook`.
 
-### Bugs Fixed:
+### Bugs Fixed
 - Fixed a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
 message if they pass an incorrect URL without a full `/container/blob` path.
 - Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use

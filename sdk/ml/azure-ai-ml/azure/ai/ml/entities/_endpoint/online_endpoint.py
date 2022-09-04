@@ -2,43 +2,40 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-member
+
 import logging
-from pathlib import Path
 from os import PathLike
-from typing import Any, Dict, Optional, Union
+from pathlib import Path
+from typing import IO, Any, AnyStr, Dict, Optional, Union
+
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    OnlineEndpointData,
-    IdentityConfiguration as IdentityConfiguration,
-    OnlineEndpointDetails as RestOnlineEndpoint,
     EndpointAuthMode,
+    IdentityConfiguration,
+    OnlineEndpointData,
 )
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
-from azure.ai.ml._utils.utils import dict_eq, convert_identity_dict, load_yaml
-from azure.ai.ml.constants import (
+from azure.ai.ml._utils.utils import convert_identity_dict, dict_eq
+from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
     AML_TOKEN_YAML,
     BASE_PATH_CONTEXT_KEY,
     KEY,
-    ONLINE_ENDPOINT_TYPE,
-    TYPE,
     PARAMS_OVERRIDE_KEY,
-    EndpointYamlFields,
-    CommonYamlFields,
 )
+from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
 
-from azure.ai.ml.entities._util import load_from_dict
-from ._endpoint_helpers import (
-    validate_endpoint_or_deployment_name,
-    validate_identity_type_defined,
-)
+from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
 
 class OnlineEndpoint(Endpoint):
-    """Online endpoint entity
+    """Online endpoint entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -103,7 +100,7 @@ class OnlineEndpoint(Endpoint):
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Endpoint provisioning state, readonly
+        """Endpoint provisioning state, readonly.
 
         :return: Endpoint provisioning state.
         :rtype: Optional[str]
@@ -124,7 +121,12 @@ class OnlineEndpoint(Endpoint):
 
         if hasattr(self, "public_network_access") and self.public_network_access:
             properties.public_network_access = self.public_network_access
-        return OnlineEndpointData(location=location, properties=properties, identity=self.identity, tags=self.tags)
+        return OnlineEndpointData(
+            location=location,
+            properties=properties,
+            identity=self.identity,
+            tags=self.tags,
+        )
 
     def _to_rest_online_endpoint_traffic_update(self, location: str, no_validation: bool = False) -> OnlineEndpointData:
         if not no_validation:
@@ -138,7 +140,12 @@ class OnlineEndpoint(Endpoint):
             traffic=self.traffic,
             properties=self.properties,
         )
-        return OnlineEndpointData(location=location, properties=properties, identity=self.identity, tags=self.tags)
+        return OnlineEndpointData(
+            location=location,
+            properties=properties,
+            identity=self.identity,
+            tags=self.tags,
+        )
 
     @classmethod
     def _rest_auth_mode_to_yaml_auth_mode(cls, rest_auth_mode: str) -> str:
@@ -163,12 +170,7 @@ class OnlineEndpoint(Endpoint):
         return switcher.get(yaml_auth_mode, yaml_auth_mode)
 
     @classmethod
-    def _from_rest_object(
-        cls,
-        resource: OnlineEndpointData,
-    ):
-
-        from azure.ai.ml.entities import KubernetesOnlineEndpoint, ManagedOnlineEndpoint
+    def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
 
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
         if resource.properties.compute:
@@ -227,38 +229,28 @@ class OnlineEndpoint(Endpoint):
         return not self.__eq__(other)
 
     @classmethod
-    def load(
+    def _load(
         cls,
-        path: Union[PathLike, str] = None,
+        data: Dict = None,
+        yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "Endpoint":
-        params_override = params_override or []
-        data = load_yaml(path)
-        return OnlineEndpoint.load_from_dict(data=data, path=path, params_override=params_override)
-
-    @classmethod
-    def load_from_dict(
-        cls,
-        data: dict,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
-    ) -> "Endpoint":
+        data = data or {}
         params_override = params_override or []
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        if data.get(EndpointYamlFields.COMPUTE):
+        if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(params_override):
             return load_from_dict(KubernetesOnlineEndpointSchema, data, context)
-        else:
-            return load_from_dict(ManagedOnlineEndpointSchema, data, context)
+
+        return load_from_dict(ManagedOnlineEndpointSchema, data, context)
 
 
 class KubernetesOnlineEndpoint(OnlineEndpoint):
-    """K8s Online endpoint entity
+    """K8s Online endpoint entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -314,7 +306,13 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
         self.compute = compute
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(
+        self,
+        *args,  # pylint: disable=unused-argument
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return KubernetesOnlineEndpointSchema(context=context).dump(self)
 
@@ -346,7 +344,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
 
 class ManagedOnlineEndpoint(OnlineEndpoint):
-    """Managed Online endpoint entity
+    """Managed Online endpoint entity.
 
     :param name: Name of the resource.
     :type name: str
@@ -399,7 +397,13 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
             **kwargs,
         )
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(
+        self,
+        *args,  # pylint: disable=unused-argument
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return ManagedOnlineEndpointSchema(context=context).dump(self)
 

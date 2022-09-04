@@ -1,0 +1,16 @@
+name: eval
+version: 31
+display_name: Eval
+type: command
+inputs:
+  scoring_result:
+    type: uri_folder
+outputs:
+  eval_output:
+    type: uri_folder
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+code: ./eval_src
+command: >-
+  python eval.py
+  --scoring_result ${{inputs.scoring_result}}
+  --eval_output ${{outputs.eval_output}}

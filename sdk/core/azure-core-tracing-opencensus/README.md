@@ -39,7 +39,7 @@ exporter = AzureExporter(
 tracer = Tracer(exporter=exporter, sampler=AlwaysOnSampler())
 with tracer.span(name="MyApplication") as span:
     client = BlobServiceClient.from_connection_string('connectionstring')
-    client.delete_container('mycontainer')  # Call will be traced
+    client.delete_container('my_container')  # Call will be traced
 ```
 
 

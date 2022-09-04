@@ -41,7 +41,7 @@ def _lookup_trie(root, path, path_index):
     if path_index == len(path) - 1:
         return root.get(path[path_index])
     if path[path_index] in root:
-        return _lookup_trie(root.children[path[path_index]], path, path_index+1)
+        return _lookup_trie(root.children[path[path_index]], path, path_index + 1)
     return None
 
 
@@ -84,21 +84,33 @@ class _DictTrie(object):
 
 
 class InMemoryCheckpointStore(CheckpointStore):
-    def __init__(
-        self
-    ):
+    def __init__(self):
         self._ownerships_trie = _DictTrie(
             "ownerships_trie",
-            keys_path=("fully_qualified_namespace", "eventhub_name", "consumer_group", "partition_id")
+            keys_path=(
+                "fully_qualified_namespace",
+                "eventhub_name",
+                "consumer_group",
+                "partition_id",
+            ),
         )
         self._checkpoints_trie = _DictTrie(
             "checkpoints_trie",
-            keys_path=("fully_qualified_namespace", "eventhub_name", "consumer_group", "partition_id")
+            keys_path=(
+                "fully_qualified_namespace",
+                "eventhub_name",
+                "consumer_group",
+                "partition_id",
+            ),
         )
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs):
+    def list_ownership(
+        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
+    ):
         # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
-        consumer_group_node = self._ownerships_trie.lookup((fully_qualified_namespace, eventhub_name, consumer_group))
+        consumer_group_node = self._ownerships_trie.lookup(
+            (fully_qualified_namespace, eventhub_name, consumer_group)
+        )
         return self._ownerships_trie.list_leaves(consumer_group_node)
 
     def claim_ownership(self, ownership_list, **kwargs):
@@ -119,15 +131,15 @@ class InMemoryCheckpointStore(CheckpointStore):
                     ownership["etag"] = str(uuid.uuid4())
                     ownership["last_modified_time"] = time.time()
                     old_ownership["etag"] = ownership["etag"]
-                    old_ownership["last_modified_time"] = ownership["last_modified_time"]
+                    old_ownership["last_modified_time"] = ownership[
+                        "last_modified_time"
+                    ]
                     old_ownership["owner_id"] = ownership["owner_id"]
                     result.append(old_ownership)
             else:
                 ownership["etag"] = str(uuid.uuid4())
                 ownership["last_modified_time"] = time.time()
-                self._ownerships_trie.set_ele(
-                    ownership
-                )
+                self._ownerships_trie.set_ele(ownership)
                 result.append(ownership)
         return result
 
@@ -136,7 +148,9 @@ class InMemoryCheckpointStore(CheckpointStore):
         return self._checkpoints_trie.set_ele(checkpoint)
 
     def list_checkpoints(
-            self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
+        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
     ):
-        consumer_group_node = self._checkpoints_trie.lookup((fully_qualified_namespace, eventhub_name, consumer_group))
+        consumer_group_node = self._checkpoints_trie.lookup(
+            (fully_qualified_namespace, eventhub_name, consumer_group)
+        )
         return self._checkpoints_trie.list_leaves(consumer_group_node)

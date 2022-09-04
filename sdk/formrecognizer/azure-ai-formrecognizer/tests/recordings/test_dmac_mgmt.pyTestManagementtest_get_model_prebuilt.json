@@ -1,29 +1,28 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice?api-version=2022-01-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-invoice?api-version=2022-08-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0623b480-7f2b-11ec-b42f-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6b266833-8a4d-4bd3-b1f6-1b03887c2988",
+        "apim-request-id": "00828352-c43c-4fe2-9f0c-abe4ba14e72a",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 27 Jan 2022 04:38:50 GMT",
+        "Date": "Thu, 18 Aug 2022 21:42:20 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3"
+        "x-envoy-upstream-service-time": "4"
       },
       "ResponseBody": {
         "docTypes": {
-          "prebuilt:invoice": {
+          "invoice": {
             "fieldSchema": {
               "CustomerName": {
                 "type": "string",
@@ -61,7 +60,7 @@
                 "example": "CONTOSO LTD."
               },
               "VendorAddress": {
-                "type": "string",
+                "type": "address",
                 "description": "Mailing address for the Vendor",
                 "example": "123 456th St New York, NY, 10001"
               },
@@ -71,7 +70,7 @@
                 "example": "Contoso Headquarters"
               },
               "CustomerAddress": {
-                "type": "string",
+                "type": "address",
                 "description": "Mailing address for the Customer",
                 "example": "123 Other St, Redmond WA, 98052"
               },
@@ -81,7 +80,7 @@
                 "example": "Microsoft Corp"
               },
               "BillingAddress": {
-                "type": "string",
+                "type": "address",
                 "description": "Explicit billing address for the customer",
                 "example": "123 Bill St, Redmond WA, 98052"
               },
@@ -91,7 +90,7 @@
                 "example": "Microsoft Services"
               },
               "ShippingAddress": {
-                "type": "string",
+                "type": "address",
                 "description": "Explicit shipping address for the customer",
                 "example": "123 Ship St, Redmond WA, 98052"
               },
@@ -101,32 +100,32 @@
                 "example": "Microsoft Delivery"
               },
               "SubTotal": {
-                "type": "number",
+                "type": "currency",
                 "description": "Subtotal field identified on this invoice",
                 "example": "$100.00"
               },
               "TotalTax": {
-                "type": "number",
+                "type": "currency",
                 "description": "Total tax field identified on this invoice",
                 "example": "$10.00"
               },
               "InvoiceTotal": {
-                "type": "number",
+                "type": "currency",
                 "description": "Total new charges associated with this invoice",
                 "example": "$110.00"
               },
               "AmountDue": {
-                "type": "number",
+                "type": "currency",
                 "description": "Total Amount Due to the vendor",
                 "example": "$610.00"
               },
               "PreviousUnpaidBalance": {
-                "type": "number",
+                "type": "currency",
                 "description": "Explicit previously unpaid balance",
                 "example": "$500.00"
               },
               "RemittanceAddress": {
-                "type": "string",
+                "type": "address",
                 "description": "Explicit remittance or payment address for the customer",
                 "example": "123 Remit St New York, NY, 10001"
               },
@@ -141,7 +140,7 @@
                 "example": "123 Service St, Redmond WA, 98052"
               },
               "ServiceAddressRecipient": {
-                "type": "string",
+                "type": "address",
                 "description": "Name associated with the ServiceAddress",
                 "example": "Microsoft Services"
               },
@@ -155,13 +154,28 @@
                 "description": "End date for the service period (for example, a utility bill service period)",
                 "example": "11/14/2019"
               },
+              "VendorTaxId": {
+                "type": "string",
+                "description": "The government ID number associated with the vendor",
+                "example": "123456-7"
+              },
+              "CustomerTaxId": {
+                "type": "string",
+                "description": "The government ID number associated with the customer",
+                "example": "765432-1"
+              },
+              "PaymentTerm": {
+                "type": "string",
+                "description": "The terms under which the payment is meant to be paid",
+                "example": "Net90"
+              },
               "Items": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
                     "Amount": {
-                      "type": "number",
+                      "type": "currency",
                       "description": "The amount of the line item",
                       "example": "$60.00"
                     },
@@ -186,9 +200,9 @@
                       "example": "A123"
                     },
                     "Tax": {
-                      "type": "number",
+                      "type": "currency",
                       "description": "Tax associated with each line item. Possible values include tax amount, tax %, and tax Y/N",
-                      "example": "10%"
+                      "example": "$6.00"
                     },
                     "Unit": {
                       "type": "string",
@@ -196,7 +210,7 @@
                       "example": "hours"
                     },
                     "UnitPrice": {
-                      "type": "number",
+                      "type": "currency",
                       "description": "The net or gross price (depending on the gross invoice setting of the invoice) of one unit of this item",
                       "example": "$30.00"
                     }
@@ -211,9 +225,9 @@
           }
         },
         "modelId": "prebuilt-invoice",
-        "createdDateTime": "2022-01-30T00:00:00Z",
-        "apiVersion": "2022-01-30-preview",
-        "description": "Prebuilt model to extract key information from English invoices, including customer, vendor, invoice ID, due date, total, and more."
+        "createdDateTime": "2022-08-31T00:00:00Z",
+        "apiVersion": "2022-08-31",
+        "description": "Extract key information from invoices."
       }
     }
   ],

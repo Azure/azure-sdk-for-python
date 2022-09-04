@@ -1,0 +1,340 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "954",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component.",
+              "language": "en"
+            },
+            {
+              "id": "3",
+              "text": "I need a reservation for an indoor restaurant in China. Please don\u0027t stop the music. Play music and add it to my playlist",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "CustomEntityRecognition",
+            "parameters": {
+              "projectName": "custom_entities_project_name",
+              "deploymentName": "custom_entities_project_name",
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "04d1e713-2dae-4ce5-8fd5-1e6ad44c73e5",
+        "Content-Length": "0",
+        "Date": "Thu, 23 Jun 2022 01:22:50 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ef16dc84-b18a-4fb2-8fc5-b72b5a1c03b0?api-version=2022-05-01",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "209"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ef16dc84-b18a-4fb2-8fc5-b72b5a1c03b0?api-version=2022-05-01\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d4413897-6f1a-4a3d-91f0-2b9479b6cf2c",
+        "Content-Length": "3488",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 23 Jun 2022 01:22:56 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "51"
+      },
+      "ResponseBody": {
+        "jobId": "ef16dc84-b18a-4fb2-8fc5-b72b5a1c03b0",
+        "lastUpdatedDateTime": "2022-06-23T01:22:51Z",
+        "createdDateTime": "2022-06-23T01:22:51Z",
+        "expirationDateTime": "2022-06-24T01:22:51Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "CustomEntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-06-23T01:22:51.9516981Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 3,
+                  "validDocumentsCount": 3,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 3
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "Government",
+                        "category": "restaurant_name",
+                        "offset": 23,
+                        "length": 10,
+                        "confidenceScore": 0.05
+                      },
+                      {
+                        "text": "Office",
+                        "category": "restaurant_name",
+                        "offset": 49,
+                        "length": 6,
+                        "confidenceScore": 0.11
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "restaurant_name",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "Accountability",
+                        "category": "geographic_poi",
+                        "offset": 34,
+                        "length": 14,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "natural",
+                        "category": "geographic_poi",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "dramatic",
+                        "category": "sort",
+                        "offset": 77,
+                        "length": 8,
+                        "confidenceScore": 0.03
+                      },
+                      {
+                        "text": "oil",
+                        "category": "restaurant_type",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.03
+                      },
+                      {
+                        "text": "gas",
+                        "category": "restaurant_type",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.09
+                      },
+                      {
+                        "text": "and",
+                        "category": "served_dish",
+                        "offset": 102,
+                        "length": 3,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "development",
+                        "category": "object_type",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.06
+                      },
+                      {
+                        "text": "federal",
+                        "category": "state",
+                        "offset": 133,
+                        "length": 7,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "protection",
+                        "category": "state",
+                        "offset": 267,
+                        "length": 10,
+                        "confidenceScore": 0.05
+                      },
+                      {
+                        "text": "lands",
+                        "category": "poi",
+                        "offset": 141,
+                        "length": 5,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "poi",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "the",
+                        "category": "timeRange",
+                        "offset": 152,
+                        "length": 3,
+                        "confidenceScore": 0.24
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "timeRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.54
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "statistics": {
+                      "charactersCount": 158,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "David Schmidt",
+                        "category": "artist",
+                        "offset": 0,
+                        "length": 13,
+                        "confidenceScore": 0.8
+                      },
+                      {
+                        "text": "Food",
+                        "category": "service",
+                        "offset": 38,
+                        "length": 4,
+                        "confidenceScore": 0.03
+                      },
+                      {
+                        "text": "Safety",
+                        "category": "geographic_poi",
+                        "offset": 43,
+                        "length": 6,
+                        "confidenceScore": 0.06
+                      },
+                      {
+                        "text": "International Food",
+                        "category": "geographic_poi",
+                        "offset": 51,
+                        "length": 18,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "IFIC",
+                        "category": "geographic_poi",
+                        "offset": 91,
+                        "length": 4,
+                        "confidenceScore": 0.05
+                      },
+                      {
+                        "text": "Information Council",
+                        "category": "restaurant_name",
+                        "offset": 70,
+                        "length": 19,
+                        "confidenceScore": 0.1
+                      },
+                      {
+                        "text": "Washington, D.C.",
+                        "category": "state",
+                        "offset": 98,
+                        "length": 16,
+                        "confidenceScore": 0.49
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "statistics": {
+                      "charactersCount": 121,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "indoor",
+                        "category": "facility",
+                        "offset": 28,
+                        "length": 6,
+                        "confidenceScore": 0.57
+                      },
+                      {
+                        "text": "restaurant",
+                        "category": "restaurant_type",
+                        "offset": 35,
+                        "length": 10,
+                        "confidenceScore": 0.95
+                      },
+                      {
+                        "text": "China",
+                        "category": "country",
+                        "offset": 49,
+                        "length": 5,
+                        "confidenceScore": 0.48
+                      },
+                      {
+                        "text": "music",
+                        "category": "music_item",
+                        "offset": 78,
+                        "length": 5,
+                        "confidenceScore": 0.63
+                      },
+                      {
+                        "text": "my",
+                        "category": "playlist_owner",
+                        "offset": 110,
+                        "length": 2,
+                        "confidenceScore": 0.84
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

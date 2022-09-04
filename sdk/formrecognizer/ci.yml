@@ -5,7 +5,6 @@ trigger:
     include:
     - main
     - hotfix/*
-    - feature/*
     - release/*
   paths:
     include:

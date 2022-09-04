@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Access(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Access(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The network traffic is allowed or denied.
     """
 
     ALLOW = "allow"
     DENY = "deny"
 
-class ClusterState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current state of the cluster.
     """
 
@@ -53,7 +38,7 @@ class ClusterState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Indicates that the cluster is in a stable state.
     READY = "Ready"
 
-class ClusterUpgradeCadence(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterUpgradeCadence(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates when new cluster runtime version upgrades will be applied after they are released. By
     default is Wave0.
     """
@@ -68,7 +53,7 @@ class ClusterUpgradeCadence(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: clusters.
     WAVE2 = "Wave2"
 
-class ClusterUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusterUpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The upgrade mode of the cluster when new Service Fabric runtime version is available.
     """
 
@@ -80,14 +65,14 @@ class ClusterUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster resource.
     MANUAL = "Manual"
 
-class Direction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Direction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Network security rule direction.
     """
 
     INBOUND = "inbound"
     OUTBOUND = "outbound"
 
-class DiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DiskType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Managed data disk type. IOPS and throughput are given by the disk size, to see more information
     go to https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types.
     """
@@ -100,7 +85,7 @@ class DiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
     PREMIUM_LRS = "Premium_LRS"
 
-class FailureAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FailureAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The compensating action to perform when a Monitored upgrade encounters monitoring policy or
     health policy violations. Invalid indicates the failure action is invalid. Rollback specifies
     that the upgrade will start rolling back automatically. Manual indicates that the upgrade will
@@ -114,15 +99,31 @@ class FailureAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: fails. Service Fabric will not proceed to the next upgrade domain automatically.
     MANUAL = "Manual"
 
-class ManagedClusterAddOnFeature(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IPAddressType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The IP address type.
+    """
+
+    #: IPv4 address type.
+    I_PV4 = "IPv4"
+    #: IPv6 address type.
+    I_PV6 = "IPv6"
+
+class ManagedClusterAddOnFeature(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Available cluster add-on features
     """
 
+    #: Dns service.
     DNS_SERVICE = "DnsService"
+    #: Backup and restore service.
     BACKUP_RESTORE_SERVICE = "BackupRestoreService"
+    #: Resource monitor service.
     RESOURCE_MONITOR_SERVICE = "ResourceMonitorService"
 
-class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedClusterVersionEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    WINDOWS = "Windows"
+
+class ManagedIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of managed identity for the resource.
     """
 
@@ -136,7 +137,7 @@ class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: resource.
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
-class ManagedResourceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedResourceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the managed resource.
     """
 
@@ -151,7 +152,7 @@ class ManagedResourceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, 
     DELETED = "Deleted"
     OTHER = "Other"
 
-class MoveCost(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MoveCost(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the move cost for the service.
     """
 
@@ -164,7 +165,18 @@ class MoveCost(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Specifies the move cost of the service as High. The value is 3.
     HIGH = "High"
 
-class NsgProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NodeTypeSkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Node type capacity scale type.
+    """
+
+    #: Node count is not adjustable in any way (e.g. it is fixed).
+    NONE = "None"
+    #: The user must manually scale out/in.
+    MANUAL = "Manual"
+    #: Automatic scale is allowed.
+    AUTOMATIC = "Automatic"
+
+class NsgProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Network protocol this rule applies to.
     """
 
@@ -176,7 +188,14 @@ class NsgProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AH = "ah"
     ESP = "esp"
 
-class PartitionScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Cluster operating system, the default will be Windows
+    """
+
+    #: Indicates os is Windows.
+    WINDOWS = "Windows"
+
+class PartitionScheme(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates the ways that a service can be partitioned.
     """
 
@@ -190,7 +209,21 @@ class PartitionScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The value is 2.
     NAMED = "Named"
 
-class ProbeProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointNetworkPolicies(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enable or Disable apply network policies on private end point in the subnet.
+    """
+
+    ENABLED = "enabled"
+    DISABLED = "disabled"
+
+class PrivateLinkServiceNetworkPolicies(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enable or Disable apply network policies on private link service in the subnet.
+    """
+
+    ENABLED = "enabled"
+    DISABLED = "disabled"
+
+class ProbeProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """the reference to the load balancer probe used by the load balancing rule.
     """
 
@@ -198,14 +231,14 @@ class ProbeProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HTTP = "http"
     HTTPS = "https"
 
-class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reference to the transport protocol used by the load balancing rule.
     """
 
     TCP = "tcp"
     UDP = "udp"
 
-class RollingUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RollingUpgradeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The mode used to monitor health during a rolling upgrade. The values are Monitored, and
     UnmonitoredAuto.
     """
@@ -217,7 +250,7 @@ class RollingUpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: 1.
     UNMONITORED_AUTO = "UnmonitoredAuto"
 
-class ServiceCorrelationScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceCorrelationScheme(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The service correlation scheme.
     """
 
@@ -230,7 +263,7 @@ class ServiceCorrelationScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     #: be collocated. The value is 1.
     NON_ALIGNED_AFFINITY = "NonAlignedAffinity"
 
-class ServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of service (Stateless or Stateful).
     """
 
@@ -240,7 +273,7 @@ class ServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: value is 1.
     STATEFUL = "Stateful"
 
-class ServiceLoadMetricWeight(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceLoadMetricWeight(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Determines the metric weight relative to the other metrics that are configured for this
     service. During runtime, if two metrics end up in conflict, the Cluster Resource Manager
     prefers the metric with the higher weight.
@@ -255,7 +288,7 @@ class ServiceLoadMetricWeight(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: Specifies the metric weight of the service load as High. The value is 3.
     HIGH = "High"
 
-class ServicePackageActivationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServicePackageActivationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The activation Mode of the service package
     """
 
@@ -264,7 +297,7 @@ class ServicePackageActivationMode(with_metaclass(_CaseInsensitiveEnumMeta, str,
     #: Indicates the application package activation mode will use exclusive process.
     EXCLUSIVE_PROCESS = "ExclusiveProcess"
 
-class ServicePlacementPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServicePlacementPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of placement policy for a service fabric service. Following are the possible values.
     """
 
@@ -291,7 +324,7 @@ class ServicePlacementPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     #: replicas of a particular partition of the service should be placed atomically. The value is 4.
     NON_PARTIALLY_PLACE_SERVICE = "NonPartiallyPlaceService"
 
-class ServiceScalingMechanismKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceScalingMechanismKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates the ways that a service can be partitioned.
     """
 
@@ -302,18 +335,18 @@ class ServiceScalingMechanismKind(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     #: The value is 1.
     ADD_REMOVE_INCREMENTAL_NAMED_PARTITION = "AddRemoveIncrementalNamedPartition"
 
-class ServiceScalingTriggerKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceScalingTriggerKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates the ways that a service can be partitioned.
     """
 
     #: Represents a scaling trigger related to an average load of a metric/resource of a partition.
     #: The value is 0.
-    AVERAGE_PARTITION_LOAD = "AveragePartitionLoad"
+    AVERAGE_PARTITION_LOAD_TRIGGER = "AveragePartitionLoadTrigger"
     #: Represents a scaling policy related to an average load of a metric/resource of a service. The
     #: value is 1.
-    AVERAGE_SERVICE_LOAD = "AverageServiceLoad"
+    AVERAGE_SERVICE_LOAD_TRIGGER = "AverageServiceLoadTrigger"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Sku Name.
     """
 

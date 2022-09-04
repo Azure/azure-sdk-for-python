@@ -14,6 +14,9 @@ from ._operations import RelationshipOperations
 from ._operations import TypesOperations
 from ._operations import CollectionOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'EntityOperations',
     'GlossaryOperations',
@@ -23,3 +26,5 @@ __all__ = [
     'TypesOperations',
     'CollectionOperations',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

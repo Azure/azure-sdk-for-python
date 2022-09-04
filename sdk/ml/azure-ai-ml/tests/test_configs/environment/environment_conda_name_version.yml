@@ -1,0 +1,4 @@
+conda_file: environment_files/environment.yml
+image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+name: my-env
+version: 1

@@ -6,406 +6,212 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AS2AcknowledgementConnectionSettings
-    from ._models_py3 import AS2AgreementContent
-    from ._models_py3 import AS2EnvelopeSettings
-    from ._models_py3 import AS2ErrorSettings
-    from ._models_py3 import AS2MdnSettings
-    from ._models_py3 import AS2MessageConnectionSettings
-    from ._models_py3 import AS2OneWayAgreement
-    from ._models_py3 import AS2ProtocolSettings
-    from ._models_py3 import AS2SecuritySettings
-    from ._models_py3 import AS2ValidationSettings
-    from ._models_py3 import AgreementContent
-    from ._models_py3 import ApiDeploymentParameterMetadata
-    from ._models_py3 import ApiDeploymentParameterMetadataSet
-    from ._models_py3 import ApiOperation
-    from ._models_py3 import ApiOperationAnnotation
-    from ._models_py3 import ApiOperationListResult
-    from ._models_py3 import ApiOperationPropertiesDefinition
-    from ._models_py3 import ApiReference
-    from ._models_py3 import ApiResourceBackendService
-    from ._models_py3 import ApiResourceDefinitions
-    from ._models_py3 import ApiResourceGeneralInformation
-    from ._models_py3 import ApiResourceMetadata
-    from ._models_py3 import ApiResourcePolicies
-    from ._models_py3 import ApiResourceProperties
-    from ._models_py3 import ArtifactContentPropertiesDefinition
-    from ._models_py3 import ArtifactProperties
-    from ._models_py3 import AssemblyCollection
-    from ._models_py3 import AssemblyDefinition
-    from ._models_py3 import AssemblyProperties
-    from ._models_py3 import AzureResourceErrorInfo
-    from ._models_py3 import B2BPartnerContent
-    from ._models_py3 import BatchConfiguration
-    from ._models_py3 import BatchConfigurationCollection
-    from ._models_py3 import BatchConfigurationProperties
-    from ._models_py3 import BatchReleaseCriteria
-    from ._models_py3 import BusinessIdentity
-    from ._models_py3 import CallbackUrl
-    from ._models_py3 import ContentHash
-    from ._models_py3 import ContentLink
-    from ._models_py3 import Correlation
-    from ._models_py3 import EdifactAcknowledgementSettings
-    from ._models_py3 import EdifactAgreementContent
-    from ._models_py3 import EdifactDelimiterOverride
-    from ._models_py3 import EdifactEnvelopeOverride
-    from ._models_py3 import EdifactEnvelopeSettings
-    from ._models_py3 import EdifactFramingSettings
-    from ._models_py3 import EdifactMessageFilter
-    from ._models_py3 import EdifactMessageIdentifier
-    from ._models_py3 import EdifactOneWayAgreement
-    from ._models_py3 import EdifactProcessingSettings
-    from ._models_py3 import EdifactProtocolSettings
-    from ._models_py3 import EdifactSchemaReference
-    from ._models_py3 import EdifactValidationOverride
-    from ._models_py3 import EdifactValidationSettings
-    from ._models_py3 import ErrorInfo
-    from ._models_py3 import ErrorProperties
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Expression
-    from ._models_py3 import ExpressionRoot
-    from ._models_py3 import ExpressionTraces
-    from ._models_py3 import ExtendedErrorInfo
-    from ._models_py3 import FlowAccessControlConfiguration
-    from ._models_py3 import FlowAccessControlConfigurationPolicy
-    from ._models_py3 import FlowEndpoints
-    from ._models_py3 import FlowEndpointsConfiguration
-    from ._models_py3 import GenerateUpgradedDefinitionParameters
-    from ._models_py3 import GetCallbackUrlParameters
-    from ._models_py3 import IntegrationAccount
-    from ._models_py3 import IntegrationAccountAgreement
-    from ._models_py3 import IntegrationAccountAgreementFilter
-    from ._models_py3 import IntegrationAccountAgreementListResult
-    from ._models_py3 import IntegrationAccountCertificate
-    from ._models_py3 import IntegrationAccountCertificateListResult
-    from ._models_py3 import IntegrationAccountListResult
-    from ._models_py3 import IntegrationAccountMap
-    from ._models_py3 import IntegrationAccountMapFilter
-    from ._models_py3 import IntegrationAccountMapListResult
-    from ._models_py3 import IntegrationAccountMapPropertiesParametersSchema
-    from ._models_py3 import IntegrationAccountPartner
-    from ._models_py3 import IntegrationAccountPartnerFilter
-    from ._models_py3 import IntegrationAccountPartnerListResult
-    from ._models_py3 import IntegrationAccountSchema
-    from ._models_py3 import IntegrationAccountSchemaFilter
-    from ._models_py3 import IntegrationAccountSchemaListResult
-    from ._models_py3 import IntegrationAccountSession
-    from ._models_py3 import IntegrationAccountSessionFilter
-    from ._models_py3 import IntegrationAccountSessionListResult
-    from ._models_py3 import IntegrationAccountSku
-    from ._models_py3 import IntegrationServiceEnvironmenEncryptionConfiguration
-    from ._models_py3 import IntegrationServiceEnvironmenEncryptionKeyReference
-    from ._models_py3 import IntegrationServiceEnvironment
-    from ._models_py3 import IntegrationServiceEnvironmentAccessEndpoint
-    from ._models_py3 import IntegrationServiceEnvironmentListResult
-    from ._models_py3 import IntegrationServiceEnvironmentNetworkDependency
-    from ._models_py3 import IntegrationServiceEnvironmentNetworkDependencyHealth
-    from ._models_py3 import IntegrationServiceEnvironmentNetworkEndpoint
-    from ._models_py3 import IntegrationServiceEnvironmentProperties
-    from ._models_py3 import IntegrationServiceEnvironmentSku
-    from ._models_py3 import IntegrationServiceEnvironmentSkuCapacity
-    from ._models_py3 import IntegrationServiceEnvironmentSkuDefinition
-    from ._models_py3 import IntegrationServiceEnvironmentSkuDefinitionSku
-    from ._models_py3 import IntegrationServiceEnvironmentSkuList
-    from ._models_py3 import IntegrationServiceEnvironmentSubnetNetworkHealth
-    from ._models_py3 import IpAddress
-    from ._models_py3 import IpAddressRange
-    from ._models_py3 import JsonSchema
-    from ._models_py3 import KeyVaultKey
-    from ._models_py3 import KeyVaultKeyAttributes
-    from ._models_py3 import KeyVaultKeyCollection
-    from ._models_py3 import KeyVaultKeyReference
-    from ._models_py3 import KeyVaultKeyReferenceKeyVault
-    from ._models_py3 import KeyVaultReference
-    from ._models_py3 import ListKeyVaultKeysDefinition
-    from ._models_py3 import ManagedApi
-    from ._models_py3 import ManagedApiListResult
-    from ._models_py3 import NetworkConfiguration
-    from ._models_py3 import OpenAuthenticationAccessPolicies
-    from ._models_py3 import OpenAuthenticationAccessPolicy
-    from ._models_py3 import OpenAuthenticationPolicyClaim
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationResult
-    from ._models_py3 import OperationResultProperties
-    from ._models_py3 import PartnerContent
-    from ._models_py3 import RecurrenceSchedule
-    from ._models_py3 import RecurrenceScheduleOccurrence
-    from ._models_py3 import RegenerateActionParameter
-    from ._models_py3 import RepetitionIndex
-    from ._models_py3 import Request
-    from ._models_py3 import RequestHistory
-    from ._models_py3 import RequestHistoryListResult
-    from ._models_py3 import RequestHistoryProperties
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceReference
-    from ._models_py3 import Response
-    from ._models_py3 import RetryHistory
-    from ._models_py3 import RunActionCorrelation
-    from ._models_py3 import RunCorrelation
-    from ._models_py3 import SetTriggerStateActionDefinition
-    from ._models_py3 import Sku
-    from ._models_py3 import SubResource
-    from ._models_py3 import SwaggerCustomDynamicList
-    from ._models_py3 import SwaggerCustomDynamicProperties
-    from ._models_py3 import SwaggerCustomDynamicSchema
-    from ._models_py3 import SwaggerCustomDynamicTree
-    from ._models_py3 import SwaggerCustomDynamicTreeCommand
-    from ._models_py3 import SwaggerCustomDynamicTreeParameter
-    from ._models_py3 import SwaggerCustomDynamicTreeSettings
-    from ._models_py3 import SwaggerExternalDocumentation
-    from ._models_py3 import SwaggerSchema
-    from ._models_py3 import SwaggerXml
-    from ._models_py3 import TrackingEvent
-    from ._models_py3 import TrackingEventErrorInfo
-    from ._models_py3 import TrackingEventsDefinition
-    from ._models_py3 import Workflow
-    from ._models_py3 import WorkflowFilter
-    from ._models_py3 import WorkflowListResult
-    from ._models_py3 import WorkflowOutputParameter
-    from ._models_py3 import WorkflowParameter
-    from ._models_py3 import WorkflowReference
-    from ._models_py3 import WorkflowRun
-    from ._models_py3 import WorkflowRunAction
-    from ._models_py3 import WorkflowRunActionFilter
-    from ._models_py3 import WorkflowRunActionListResult
-    from ._models_py3 import WorkflowRunActionRepetitionDefinition
-    from ._models_py3 import WorkflowRunActionRepetitionDefinitionCollection
-    from ._models_py3 import WorkflowRunActionRepetitionProperties
-    from ._models_py3 import WorkflowRunFilter
-    from ._models_py3 import WorkflowRunListResult
-    from ._models_py3 import WorkflowRunTrigger
-    from ._models_py3 import WorkflowTrigger
-    from ._models_py3 import WorkflowTriggerCallbackUrl
-    from ._models_py3 import WorkflowTriggerFilter
-    from ._models_py3 import WorkflowTriggerHistory
-    from ._models_py3 import WorkflowTriggerHistoryFilter
-    from ._models_py3 import WorkflowTriggerHistoryListResult
-    from ._models_py3 import WorkflowTriggerListCallbackUrlQueries
-    from ._models_py3 import WorkflowTriggerListResult
-    from ._models_py3 import WorkflowTriggerRecurrence
-    from ._models_py3 import WorkflowTriggerReference
-    from ._models_py3 import WorkflowVersion
-    from ._models_py3 import WorkflowVersionListResult
-    from ._models_py3 import WsdlService
-    from ._models_py3 import X12AcknowledgementSettings
-    from ._models_py3 import X12AgreementContent
-    from ._models_py3 import X12DelimiterOverrides
-    from ._models_py3 import X12EnvelopeOverride
-    from ._models_py3 import X12EnvelopeSettings
-    from ._models_py3 import X12FramingSettings
-    from ._models_py3 import X12MessageFilter
-    from ._models_py3 import X12MessageIdentifier
-    from ._models_py3 import X12OneWayAgreement
-    from ._models_py3 import X12ProcessingSettings
-    from ._models_py3 import X12ProtocolSettings
-    from ._models_py3 import X12SchemaReference
-    from ._models_py3 import X12SecuritySettings
-    from ._models_py3 import X12ValidationOverride
-    from ._models_py3 import X12ValidationSettings
-except (SyntaxError, ImportError):
-    from ._models import AS2AcknowledgementConnectionSettings  # type: ignore
-    from ._models import AS2AgreementContent  # type: ignore
-    from ._models import AS2EnvelopeSettings  # type: ignore
-    from ._models import AS2ErrorSettings  # type: ignore
-    from ._models import AS2MdnSettings  # type: ignore
-    from ._models import AS2MessageConnectionSettings  # type: ignore
-    from ._models import AS2OneWayAgreement  # type: ignore
-    from ._models import AS2ProtocolSettings  # type: ignore
-    from ._models import AS2SecuritySettings  # type: ignore
-    from ._models import AS2ValidationSettings  # type: ignore
-    from ._models import AgreementContent  # type: ignore
-    from ._models import ApiDeploymentParameterMetadata  # type: ignore
-    from ._models import ApiDeploymentParameterMetadataSet  # type: ignore
-    from ._models import ApiOperation  # type: ignore
-    from ._models import ApiOperationAnnotation  # type: ignore
-    from ._models import ApiOperationListResult  # type: ignore
-    from ._models import ApiOperationPropertiesDefinition  # type: ignore
-    from ._models import ApiReference  # type: ignore
-    from ._models import ApiResourceBackendService  # type: ignore
-    from ._models import ApiResourceDefinitions  # type: ignore
-    from ._models import ApiResourceGeneralInformation  # type: ignore
-    from ._models import ApiResourceMetadata  # type: ignore
-    from ._models import ApiResourcePolicies  # type: ignore
-    from ._models import ApiResourceProperties  # type: ignore
-    from ._models import ArtifactContentPropertiesDefinition  # type: ignore
-    from ._models import ArtifactProperties  # type: ignore
-    from ._models import AssemblyCollection  # type: ignore
-    from ._models import AssemblyDefinition  # type: ignore
-    from ._models import AssemblyProperties  # type: ignore
-    from ._models import AzureResourceErrorInfo  # type: ignore
-    from ._models import B2BPartnerContent  # type: ignore
-    from ._models import BatchConfiguration  # type: ignore
-    from ._models import BatchConfigurationCollection  # type: ignore
-    from ._models import BatchConfigurationProperties  # type: ignore
-    from ._models import BatchReleaseCriteria  # type: ignore
-    from ._models import BusinessIdentity  # type: ignore
-    from ._models import CallbackUrl  # type: ignore
-    from ._models import ContentHash  # type: ignore
-    from ._models import ContentLink  # type: ignore
-    from ._models import Correlation  # type: ignore
-    from ._models import EdifactAcknowledgementSettings  # type: ignore
-    from ._models import EdifactAgreementContent  # type: ignore
-    from ._models import EdifactDelimiterOverride  # type: ignore
-    from ._models import EdifactEnvelopeOverride  # type: ignore
-    from ._models import EdifactEnvelopeSettings  # type: ignore
-    from ._models import EdifactFramingSettings  # type: ignore
-    from ._models import EdifactMessageFilter  # type: ignore
-    from ._models import EdifactMessageIdentifier  # type: ignore
-    from ._models import EdifactOneWayAgreement  # type: ignore
-    from ._models import EdifactProcessingSettings  # type: ignore
-    from ._models import EdifactProtocolSettings  # type: ignore
-    from ._models import EdifactSchemaReference  # type: ignore
-    from ._models import EdifactValidationOverride  # type: ignore
-    from ._models import EdifactValidationSettings  # type: ignore
-    from ._models import ErrorInfo  # type: ignore
-    from ._models import ErrorProperties  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Expression  # type: ignore
-    from ._models import ExpressionRoot  # type: ignore
-    from ._models import ExpressionTraces  # type: ignore
-    from ._models import ExtendedErrorInfo  # type: ignore
-    from ._models import FlowAccessControlConfiguration  # type: ignore
-    from ._models import FlowAccessControlConfigurationPolicy  # type: ignore
-    from ._models import FlowEndpoints  # type: ignore
-    from ._models import FlowEndpointsConfiguration  # type: ignore
-    from ._models import GenerateUpgradedDefinitionParameters  # type: ignore
-    from ._models import GetCallbackUrlParameters  # type: ignore
-    from ._models import IntegrationAccount  # type: ignore
-    from ._models import IntegrationAccountAgreement  # type: ignore
-    from ._models import IntegrationAccountAgreementFilter  # type: ignore
-    from ._models import IntegrationAccountAgreementListResult  # type: ignore
-    from ._models import IntegrationAccountCertificate  # type: ignore
-    from ._models import IntegrationAccountCertificateListResult  # type: ignore
-    from ._models import IntegrationAccountListResult  # type: ignore
-    from ._models import IntegrationAccountMap  # type: ignore
-    from ._models import IntegrationAccountMapFilter  # type: ignore
-    from ._models import IntegrationAccountMapListResult  # type: ignore
-    from ._models import IntegrationAccountMapPropertiesParametersSchema  # type: ignore
-    from ._models import IntegrationAccountPartner  # type: ignore
-    from ._models import IntegrationAccountPartnerFilter  # type: ignore
-    from ._models import IntegrationAccountPartnerListResult  # type: ignore
-    from ._models import IntegrationAccountSchema  # type: ignore
-    from ._models import IntegrationAccountSchemaFilter  # type: ignore
-    from ._models import IntegrationAccountSchemaListResult  # type: ignore
-    from ._models import IntegrationAccountSession  # type: ignore
-    from ._models import IntegrationAccountSessionFilter  # type: ignore
-    from ._models import IntegrationAccountSessionListResult  # type: ignore
-    from ._models import IntegrationAccountSku  # type: ignore
-    from ._models import IntegrationServiceEnvironmenEncryptionConfiguration  # type: ignore
-    from ._models import IntegrationServiceEnvironmenEncryptionKeyReference  # type: ignore
-    from ._models import IntegrationServiceEnvironment  # type: ignore
-    from ._models import IntegrationServiceEnvironmentAccessEndpoint  # type: ignore
-    from ._models import IntegrationServiceEnvironmentListResult  # type: ignore
-    from ._models import IntegrationServiceEnvironmentNetworkDependency  # type: ignore
-    from ._models import IntegrationServiceEnvironmentNetworkDependencyHealth  # type: ignore
-    from ._models import IntegrationServiceEnvironmentNetworkEndpoint  # type: ignore
-    from ._models import IntegrationServiceEnvironmentProperties  # type: ignore
-    from ._models import IntegrationServiceEnvironmentSku  # type: ignore
-    from ._models import IntegrationServiceEnvironmentSkuCapacity  # type: ignore
-    from ._models import IntegrationServiceEnvironmentSkuDefinition  # type: ignore
-    from ._models import IntegrationServiceEnvironmentSkuDefinitionSku  # type: ignore
-    from ._models import IntegrationServiceEnvironmentSkuList  # type: ignore
-    from ._models import IntegrationServiceEnvironmentSubnetNetworkHealth  # type: ignore
-    from ._models import IpAddress  # type: ignore
-    from ._models import IpAddressRange  # type: ignore
-    from ._models import JsonSchema  # type: ignore
-    from ._models import KeyVaultKey  # type: ignore
-    from ._models import KeyVaultKeyAttributes  # type: ignore
-    from ._models import KeyVaultKeyCollection  # type: ignore
-    from ._models import KeyVaultKeyReference  # type: ignore
-    from ._models import KeyVaultKeyReferenceKeyVault  # type: ignore
-    from ._models import KeyVaultReference  # type: ignore
-    from ._models import ListKeyVaultKeysDefinition  # type: ignore
-    from ._models import ManagedApi  # type: ignore
-    from ._models import ManagedApiListResult  # type: ignore
-    from ._models import NetworkConfiguration  # type: ignore
-    from ._models import OpenAuthenticationAccessPolicies  # type: ignore
-    from ._models import OpenAuthenticationAccessPolicy  # type: ignore
-    from ._models import OpenAuthenticationPolicyClaim  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationResult  # type: ignore
-    from ._models import OperationResultProperties  # type: ignore
-    from ._models import PartnerContent  # type: ignore
-    from ._models import RecurrenceSchedule  # type: ignore
-    from ._models import RecurrenceScheduleOccurrence  # type: ignore
-    from ._models import RegenerateActionParameter  # type: ignore
-    from ._models import RepetitionIndex  # type: ignore
-    from ._models import Request  # type: ignore
-    from ._models import RequestHistory  # type: ignore
-    from ._models import RequestHistoryListResult  # type: ignore
-    from ._models import RequestHistoryProperties  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceReference  # type: ignore
-    from ._models import Response  # type: ignore
-    from ._models import RetryHistory  # type: ignore
-    from ._models import RunActionCorrelation  # type: ignore
-    from ._models import RunCorrelation  # type: ignore
-    from ._models import SetTriggerStateActionDefinition  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import SwaggerCustomDynamicList  # type: ignore
-    from ._models import SwaggerCustomDynamicProperties  # type: ignore
-    from ._models import SwaggerCustomDynamicSchema  # type: ignore
-    from ._models import SwaggerCustomDynamicTree  # type: ignore
-    from ._models import SwaggerCustomDynamicTreeCommand  # type: ignore
-    from ._models import SwaggerCustomDynamicTreeParameter  # type: ignore
-    from ._models import SwaggerCustomDynamicTreeSettings  # type: ignore
-    from ._models import SwaggerExternalDocumentation  # type: ignore
-    from ._models import SwaggerSchema  # type: ignore
-    from ._models import SwaggerXml  # type: ignore
-    from ._models import TrackingEvent  # type: ignore
-    from ._models import TrackingEventErrorInfo  # type: ignore
-    from ._models import TrackingEventsDefinition  # type: ignore
-    from ._models import Workflow  # type: ignore
-    from ._models import WorkflowFilter  # type: ignore
-    from ._models import WorkflowListResult  # type: ignore
-    from ._models import WorkflowOutputParameter  # type: ignore
-    from ._models import WorkflowParameter  # type: ignore
-    from ._models import WorkflowReference  # type: ignore
-    from ._models import WorkflowRun  # type: ignore
-    from ._models import WorkflowRunAction  # type: ignore
-    from ._models import WorkflowRunActionFilter  # type: ignore
-    from ._models import WorkflowRunActionListResult  # type: ignore
-    from ._models import WorkflowRunActionRepetitionDefinition  # type: ignore
-    from ._models import WorkflowRunActionRepetitionDefinitionCollection  # type: ignore
-    from ._models import WorkflowRunActionRepetitionProperties  # type: ignore
-    from ._models import WorkflowRunFilter  # type: ignore
-    from ._models import WorkflowRunListResult  # type: ignore
-    from ._models import WorkflowRunTrigger  # type: ignore
-    from ._models import WorkflowTrigger  # type: ignore
-    from ._models import WorkflowTriggerCallbackUrl  # type: ignore
-    from ._models import WorkflowTriggerFilter  # type: ignore
-    from ._models import WorkflowTriggerHistory  # type: ignore
-    from ._models import WorkflowTriggerHistoryFilter  # type: ignore
-    from ._models import WorkflowTriggerHistoryListResult  # type: ignore
-    from ._models import WorkflowTriggerListCallbackUrlQueries  # type: ignore
-    from ._models import WorkflowTriggerListResult  # type: ignore
-    from ._models import WorkflowTriggerRecurrence  # type: ignore
-    from ._models import WorkflowTriggerReference  # type: ignore
-    from ._models import WorkflowVersion  # type: ignore
-    from ._models import WorkflowVersionListResult  # type: ignore
-    from ._models import WsdlService  # type: ignore
-    from ._models import X12AcknowledgementSettings  # type: ignore
-    from ._models import X12AgreementContent  # type: ignore
-    from ._models import X12DelimiterOverrides  # type: ignore
-    from ._models import X12EnvelopeOverride  # type: ignore
-    from ._models import X12EnvelopeSettings  # type: ignore
-    from ._models import X12FramingSettings  # type: ignore
-    from ._models import X12MessageFilter  # type: ignore
-    from ._models import X12MessageIdentifier  # type: ignore
-    from ._models import X12OneWayAgreement  # type: ignore
-    from ._models import X12ProcessingSettings  # type: ignore
-    from ._models import X12ProtocolSettings  # type: ignore
-    from ._models import X12SchemaReference  # type: ignore
-    from ._models import X12SecuritySettings  # type: ignore
-    from ._models import X12ValidationOverride  # type: ignore
-    from ._models import X12ValidationSettings  # type: ignore
+from ._models_py3 import AS2AcknowledgementConnectionSettings
+from ._models_py3 import AS2AgreementContent
+from ._models_py3 import AS2EnvelopeSettings
+from ._models_py3 import AS2ErrorSettings
+from ._models_py3 import AS2MdnSettings
+from ._models_py3 import AS2MessageConnectionSettings
+from ._models_py3 import AS2OneWayAgreement
+from ._models_py3 import AS2ProtocolSettings
+from ._models_py3 import AS2SecuritySettings
+from ._models_py3 import AS2ValidationSettings
+from ._models_py3 import AgreementContent
+from ._models_py3 import ApiDeploymentParameterMetadata
+from ._models_py3 import ApiDeploymentParameterMetadataSet
+from ._models_py3 import ApiOperation
+from ._models_py3 import ApiOperationAnnotation
+from ._models_py3 import ApiOperationListResult
+from ._models_py3 import ApiOperationPropertiesDefinition
+from ._models_py3 import ApiReference
+from ._models_py3 import ApiResourceBackendService
+from ._models_py3 import ApiResourceDefinitions
+from ._models_py3 import ApiResourceGeneralInformation
+from ._models_py3 import ApiResourceMetadata
+from ._models_py3 import ApiResourcePolicies
+from ._models_py3 import ApiResourceProperties
+from ._models_py3 import ArtifactContentPropertiesDefinition
+from ._models_py3 import ArtifactProperties
+from ._models_py3 import AssemblyCollection
+from ._models_py3 import AssemblyDefinition
+from ._models_py3 import AssemblyProperties
+from ._models_py3 import AzureResourceErrorInfo
+from ._models_py3 import B2BPartnerContent
+from ._models_py3 import BatchConfiguration
+from ._models_py3 import BatchConfigurationCollection
+from ._models_py3 import BatchConfigurationProperties
+from ._models_py3 import BatchReleaseCriteria
+from ._models_py3 import BusinessIdentity
+from ._models_py3 import CallbackUrl
+from ._models_py3 import ContentHash
+from ._models_py3 import ContentLink
+from ._models_py3 import Correlation
+from ._models_py3 import EdifactAcknowledgementSettings
+from ._models_py3 import EdifactAgreementContent
+from ._models_py3 import EdifactDelimiterOverride
+from ._models_py3 import EdifactEnvelopeOverride
+from ._models_py3 import EdifactEnvelopeSettings
+from ._models_py3 import EdifactFramingSettings
+from ._models_py3 import EdifactMessageFilter
+from ._models_py3 import EdifactMessageIdentifier
+from ._models_py3 import EdifactOneWayAgreement
+from ._models_py3 import EdifactProcessingSettings
+from ._models_py3 import EdifactProtocolSettings
+from ._models_py3 import EdifactSchemaReference
+from ._models_py3 import EdifactValidationOverride
+from ._models_py3 import EdifactValidationSettings
+from ._models_py3 import ErrorInfo
+from ._models_py3 import ErrorProperties
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Expression
+from ._models_py3 import ExpressionRoot
+from ._models_py3 import ExpressionTraces
+from ._models_py3 import ExtendedErrorInfo
+from ._models_py3 import FlowAccessControlConfiguration
+from ._models_py3 import FlowAccessControlConfigurationPolicy
+from ._models_py3 import FlowEndpoints
+from ._models_py3 import FlowEndpointsConfiguration
+from ._models_py3 import GenerateUpgradedDefinitionParameters
+from ._models_py3 import GetCallbackUrlParameters
+from ._models_py3 import IntegrationAccount
+from ._models_py3 import IntegrationAccountAgreement
+from ._models_py3 import IntegrationAccountAgreementFilter
+from ._models_py3 import IntegrationAccountAgreementListResult
+from ._models_py3 import IntegrationAccountCertificate
+from ._models_py3 import IntegrationAccountCertificateListResult
+from ._models_py3 import IntegrationAccountListResult
+from ._models_py3 import IntegrationAccountMap
+from ._models_py3 import IntegrationAccountMapFilter
+from ._models_py3 import IntegrationAccountMapListResult
+from ._models_py3 import IntegrationAccountMapPropertiesParametersSchema
+from ._models_py3 import IntegrationAccountPartner
+from ._models_py3 import IntegrationAccountPartnerFilter
+from ._models_py3 import IntegrationAccountPartnerListResult
+from ._models_py3 import IntegrationAccountSchema
+from ._models_py3 import IntegrationAccountSchemaFilter
+from ._models_py3 import IntegrationAccountSchemaListResult
+from ._models_py3 import IntegrationAccountSession
+from ._models_py3 import IntegrationAccountSessionFilter
+from ._models_py3 import IntegrationAccountSessionListResult
+from ._models_py3 import IntegrationAccountSku
+from ._models_py3 import IntegrationServiceEnvironmenEncryptionConfiguration
+from ._models_py3 import IntegrationServiceEnvironmenEncryptionKeyReference
+from ._models_py3 import IntegrationServiceEnvironment
+from ._models_py3 import IntegrationServiceEnvironmentAccessEndpoint
+from ._models_py3 import IntegrationServiceEnvironmentListResult
+from ._models_py3 import IntegrationServiceEnvironmentManagedApi
+from ._models_py3 import IntegrationServiceEnvironmentManagedApiDeploymentParameters
+from ._models_py3 import IntegrationServiceEnvironmentManagedApiListResult
+from ._models_py3 import IntegrationServiceEnvironmentManagedApiProperties
+from ._models_py3 import IntegrationServiceEnvironmentNetworkDependency
+from ._models_py3 import IntegrationServiceEnvironmentNetworkDependencyHealth
+from ._models_py3 import IntegrationServiceEnvironmentNetworkEndpoint
+from ._models_py3 import IntegrationServiceEnvironmentProperties
+from ._models_py3 import IntegrationServiceEnvironmentSku
+from ._models_py3 import IntegrationServiceEnvironmentSkuCapacity
+from ._models_py3 import IntegrationServiceEnvironmentSkuDefinition
+from ._models_py3 import IntegrationServiceEnvironmentSkuDefinitionSku
+from ._models_py3 import IntegrationServiceEnvironmentSkuList
+from ._models_py3 import IntegrationServiceEnvironmentSubnetNetworkHealth
+from ._models_py3 import IpAddress
+from ._models_py3 import IpAddressRange
+from ._models_py3 import JsonSchema
+from ._models_py3 import KeyVaultKey
+from ._models_py3 import KeyVaultKeyAttributes
+from ._models_py3 import KeyVaultKeyCollection
+from ._models_py3 import KeyVaultKeyReference
+from ._models_py3 import KeyVaultKeyReferenceKeyVault
+from ._models_py3 import KeyVaultReference
+from ._models_py3 import ListKeyVaultKeysDefinition
+from ._models_py3 import ManagedApi
+from ._models_py3 import ManagedApiListResult
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import NetworkConfiguration
+from ._models_py3 import OpenAuthenticationAccessPolicies
+from ._models_py3 import OpenAuthenticationAccessPolicy
+from ._models_py3 import OpenAuthenticationPolicyClaim
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationResult
+from ._models_py3 import OperationResultProperties
+from ._models_py3 import PartnerContent
+from ._models_py3 import RecurrenceSchedule
+from ._models_py3 import RecurrenceScheduleOccurrence
+from ._models_py3 import RegenerateActionParameter
+from ._models_py3 import RepetitionIndex
+from ._models_py3 import Request
+from ._models_py3 import RequestHistory
+from ._models_py3 import RequestHistoryListResult
+from ._models_py3 import RequestHistoryProperties
+from ._models_py3 import Resource
+from ._models_py3 import ResourceReference
+from ._models_py3 import Response
+from ._models_py3 import RetryHistory
+from ._models_py3 import RunActionCorrelation
+from ._models_py3 import RunCorrelation
+from ._models_py3 import SetTriggerStateActionDefinition
+from ._models_py3 import Sku
+from ._models_py3 import SubResource
+from ._models_py3 import SwaggerCustomDynamicList
+from ._models_py3 import SwaggerCustomDynamicProperties
+from ._models_py3 import SwaggerCustomDynamicSchema
+from ._models_py3 import SwaggerCustomDynamicTree
+from ._models_py3 import SwaggerCustomDynamicTreeCommand
+from ._models_py3 import SwaggerCustomDynamicTreeParameter
+from ._models_py3 import SwaggerCustomDynamicTreeSettings
+from ._models_py3 import SwaggerExternalDocumentation
+from ._models_py3 import SwaggerSchema
+from ._models_py3 import SwaggerXml
+from ._models_py3 import TrackingEvent
+from ._models_py3 import TrackingEventErrorInfo
+from ._models_py3 import TrackingEventsDefinition
+from ._models_py3 import UserAssignedIdentity
+from ._models_py3 import Workflow
+from ._models_py3 import WorkflowFilter
+from ._models_py3 import WorkflowListResult
+from ._models_py3 import WorkflowOutputParameter
+from ._models_py3 import WorkflowParameter
+from ._models_py3 import WorkflowReference
+from ._models_py3 import WorkflowRun
+from ._models_py3 import WorkflowRunAction
+from ._models_py3 import WorkflowRunActionFilter
+from ._models_py3 import WorkflowRunActionListResult
+from ._models_py3 import WorkflowRunActionRepetitionDefinition
+from ._models_py3 import WorkflowRunActionRepetitionDefinitionCollection
+from ._models_py3 import WorkflowRunActionRepetitionProperties
+from ._models_py3 import WorkflowRunFilter
+from ._models_py3 import WorkflowRunListResult
+from ._models_py3 import WorkflowRunTrigger
+from ._models_py3 import WorkflowTrigger
+from ._models_py3 import WorkflowTriggerCallbackUrl
+from ._models_py3 import WorkflowTriggerFilter
+from ._models_py3 import WorkflowTriggerHistory
+from ._models_py3 import WorkflowTriggerHistoryFilter
+from ._models_py3 import WorkflowTriggerHistoryListResult
+from ._models_py3 import WorkflowTriggerListCallbackUrlQueries
+from ._models_py3 import WorkflowTriggerListResult
+from ._models_py3 import WorkflowTriggerRecurrence
+from ._models_py3 import WorkflowTriggerReference
+from ._models_py3 import WorkflowVersion
+from ._models_py3 import WorkflowVersionListResult
+from ._models_py3 import WsdlService
+from ._models_py3 import X12AcknowledgementSettings
+from ._models_py3 import X12AgreementContent
+from ._models_py3 import X12DelimiterOverrides
+from ._models_py3 import X12EnvelopeOverride
+from ._models_py3 import X12EnvelopeSettings
+from ._models_py3 import X12FramingSettings
+from ._models_py3 import X12MessageFilter
+from ._models_py3 import X12MessageIdentifier
+from ._models_py3 import X12OneWayAgreement
+from ._models_py3 import X12ProcessingSettings
+from ._models_py3 import X12ProtocolSettings
+from ._models_py3 import X12SchemaReference
+from ._models_py3 import X12SecuritySettings
+from ._models_py3 import X12ValidationOverride
+from ._models_py3 import X12ValidationSettings
+
 
 from ._logic_management_client_enums import (
     AgreementType,
@@ -429,6 +235,7 @@ from ._logic_management_client_enums import (
     IntegrationServiceEnvironmentSkuName,
     IntegrationServiceEnvironmentSkuScaleType,
     KeyType,
+    ManagedServiceIdentityType,
     MapType,
     MessageFilterType,
     OpenAuthenticationProviderType,
@@ -549,6 +356,10 @@ __all__ = [
     'IntegrationServiceEnvironment',
     'IntegrationServiceEnvironmentAccessEndpoint',
     'IntegrationServiceEnvironmentListResult',
+    'IntegrationServiceEnvironmentManagedApi',
+    'IntegrationServiceEnvironmentManagedApiDeploymentParameters',
+    'IntegrationServiceEnvironmentManagedApiListResult',
+    'IntegrationServiceEnvironmentManagedApiProperties',
     'IntegrationServiceEnvironmentNetworkDependency',
     'IntegrationServiceEnvironmentNetworkDependencyHealth',
     'IntegrationServiceEnvironmentNetworkEndpoint',
@@ -571,6 +382,7 @@ __all__ = [
     'ListKeyVaultKeysDefinition',
     'ManagedApi',
     'ManagedApiListResult',
+    'ManagedServiceIdentity',
     'NetworkConfiguration',
     'OpenAuthenticationAccessPolicies',
     'OpenAuthenticationAccessPolicy',
@@ -611,6 +423,7 @@ __all__ = [
     'TrackingEvent',
     'TrackingEventErrorInfo',
     'TrackingEventsDefinition',
+    'UserAssignedIdentity',
     'Workflow',
     'WorkflowFilter',
     'WorkflowListResult',
@@ -676,6 +489,7 @@ __all__ = [
     'IntegrationServiceEnvironmentSkuName',
     'IntegrationServiceEnvironmentSkuScaleType',
     'KeyType',
+    'ManagedServiceIdentityType',
     'MapType',
     'MessageFilterType',
     'OpenAuthenticationProviderType',

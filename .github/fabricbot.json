@@ -12,7 +12,6 @@
             {
               "name": "isAction",
               "parameters": {
-                "action": "opened"
               }
             },
             {
@@ -1545,7 +1544,8 @@
               "Automation"
             ],
             "mentionees": [
-              "jaspkaur28"
+              "jaspkaur28",
+              "omairabdullah"
             ]
           },
           {
@@ -1916,7 +1916,20 @@
             ],
             "mentionees": [
               "simorenoh",
-              "gahl-levy"
+              "gahl-levy",
+              "pjohari-ms",
+              "JericHunter"
+            ]
+          },
+          {
+            "labels": [
+              "Client",
+              "Cosmos"
+            ],
+            "mentionees": [
+              "simorenoh",
+              "gahl-levy",
+              "JericHunter"
             ]
           },
           {
@@ -2270,7 +2283,8 @@
               "Machine Learning"
             ],
             "mentionees": [
-              "azureml-github"
+              "azureml-github",
+              "Azure/azure-ml-sdk"
             ]
           },
           {

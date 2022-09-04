@@ -1,0 +1,32 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoft_samples_command_component_path_input_outputs
+display_name: CommandComponentPathInputOutputs
+description: This is the command component with input/output types of path
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 1
+
+inputs:
+  component_in_file:
+    type: uri_file
+  component_in_folder:
+    type: uri_folder
+  component_in_path: # can be file or folder, the code can handle both
+    type: path
+
+outputs:
+  component_out_file:
+    type: uri_file
+  component_out_folder:
+    type: uri_folder
+
+command: |
+  cp ${{inputs.component_in_file}} ${{outputs.component_out_file}}
+  cp -r ${{inputs.component_in_folder}} ${{outputs.component_out_folder}}
+  echo "${{inputs.component_in_path}} is a path"
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

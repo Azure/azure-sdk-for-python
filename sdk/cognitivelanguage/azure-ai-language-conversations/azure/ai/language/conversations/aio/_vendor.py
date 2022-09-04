@@ -12,13 +12,14 @@ from ._configuration import ConversationAnalysisClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from msrest import Deserializer, Serializer
-
     from azure.core import AsyncPipelineClient
+
+    from .._serialization import Deserializer, Serializer
 
 
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
+
     _client: "AsyncPipelineClient"
     _config: ConversationAnalysisClientConfiguration
     _serialize: "Serializer"

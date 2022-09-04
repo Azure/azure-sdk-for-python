@@ -6,31 +6,28 @@ import logging
 import re
 from typing import Any, Optional, Tuple, Union
 
-from marshmallow import ValidationError
-
+from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import (
+from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
+    ASSET_ID_URI_REGEX_FORMAT,
+    AZUREML_RESOURCE_PROVIDER,
     DATA_ARM_TYPE,
-    DATASET_ARM_TYPE,
     DATASTORE_RESOURCE_ID,
     DATASTORE_SHORT_URI,
-    REGISTRY_URI_REGEX_FORMAT,
-    ASSET_ID_URI_REGEX_FORMAT,
-    NAMED_RESOURCE_ID_FORMAT,
-    AZUREML_RESOURCE_PROVIDER,
-    PROVIDER_RESOURCE_ID_WITH_VERSION,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
+    NAMED_RESOURCE_ID_FORMAT,
+    PROVIDER_RESOURCE_ID_WITH_VERSION,
+    REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
-    AzureMLResourceType,
 )
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
 
 class AMLVersionedArmId(object):
-    """Parser for versioned arm id: e.g. /subscription/.../code/my-code/versions/1
+    """Parser for versioned arm id: e.g. /subscription/.../code/my-
+    code/versions/1.
 
     :param arm_id: the versioned arm id
     :type arm_id: str
@@ -65,6 +62,7 @@ class AMLVersionedArmId(object):
                     raise ValidationException(
                         message=msg.format(arm_id),
                         no_personal_data_message=msg.format("[arm_id]"),
+                        error_type=ValidationErrorType.INVALID_VALUE,
                         error_category=ErrorCategory.USER_ERROR,
                         target=ErrorTarget.ARM_RESOURCE,
                     )
@@ -84,7 +82,8 @@ def get_datastore_arm_id(datastore_name: str = None, operation_scope: OperationS
 
 
 class AMLNamedArmId:
-    """Parser for named arm id (no version): e.g. /subscription/.../compute/goazurego
+    """Parser for named arm id (no version): e.g.
+    /subscription/.../compute/cpu-cluster.
 
     :param arm_id: the named arm id
     :type arm_id: str
@@ -121,6 +120,7 @@ class AMLNamedArmId:
                     raise ValidationException(
                         message=msg.format(arm_id),
                         no_personal_data_message=msg.format("[arm_id]"),
+                        error_type=ValidationErrorType.INVALID_VALUE,
                         error_category=ErrorCategory.USER_ERROR,
                         target=ErrorTarget.ARM_RESOURCE,
                     )
@@ -140,6 +140,7 @@ class AMLAssetId:
             raise ValidationException(
                 message=msg.format(asset_id),
                 no_personal_data_message=msg.format("[asset_id]"),
+                error_type=ValidationErrorType.INVALID_VALUE,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.ASSET,
             )
@@ -152,14 +153,14 @@ class AMLAssetId:
 
 
 class AzureResourceId:
-    """Parser for a non-AzureML ARM Id
+    """Parser for a non-AzureML ARM Id.
 
     :param arm_id: the named arm id
     :type arm_id: str
     :raises ValidationException: the arm id is incorrectly formatted
     """
 
-    REGEX_PATTERN = "^/?subscriptions/([^/]+)/resourceGroups/([" "^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
+    REGEX_PATTERN = "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
 
     def __init__(self, arm_id=None):
         if arm_id:
@@ -172,6 +173,7 @@ class AzureResourceId:
                 raise ValidationException(
                     message=msg.format(arm_id),
                     no_personal_data_message=msg.format("[arm_id]"),
+                    error_type=ValidationErrorType.INVALID_VALUE,
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.ARM_RESOURCE,
                 )
@@ -180,17 +182,18 @@ class AzureResourceId:
             self.resource_group_name = match.group(2)
 
 
-def _parse_endpoint_name_from_deployment_id(id: str) -> str:
+def _parse_endpoint_name_from_deployment_id(deployment_id: str) -> str:
     REGEX_PATTERN = (
         "^/?subscriptions/([^/]+)/resourceGroups/(["
         "^/]+)/providers/Microsoft.MachineLearningServices/workspaces/([^/]+)/([^/]+)/([^/]+)/deployments/([^/]+)"
     )
-    match = re.match(REGEX_PATTERN, id)
+    match = re.match(REGEX_PATTERN, deployment_id)
     if match is None:
         msg = "Invalid Deployment Id {}"
         raise ValidationException(
-            message=msg.format(id),
+            message=msg.format(deployment_id),
             no_personal_data_message=msg.format("[id]"),
+            error_type=ValidationErrorType.INVALID_VALUE,
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.DEPLOYMENT,
         )
@@ -204,9 +207,12 @@ def parse_AzureML_id(name: str) -> Tuple[str, str, str]:
     at_splits = name.rsplit("@", 1)
     if len(at_splits) > 1:
         return at_splits[0], None, name[1]
-    else:
-        colon_splits = name.rsplit(":", 1)
-        return colon_splits[0], None if len(colon_splits) == 1 else colon_splits[1], None
+    colon_splits = name.rsplit(":", 1)
+    return (
+        colon_splits[0],
+        None if len(colon_splits) == 1 else colon_splits[1],
+        None,
+    )
 
 
 def parse_prefixed_name_version(name: str) -> Tuple[str, Optional[str]]:
@@ -220,13 +226,15 @@ def parse_name_version(name: str) -> Tuple[str, Optional[str]]:
         raise ValidationException(
             f"Could not parse {name}. If providing an ARM id, it should start with a '/'.",
             no_personal_data_message=f"Could not parse {name}.",
+            error_type=ValidationErrorType.INVALID_VALUE,
+            error_category=ErrorCategory.USER_ERROR,
+            target=ErrorTarget.ARM_RESOURCE,
         )
     token_list = name.split(":")
     if len(token_list) == 1:
         return name, None
-    else:
-        name, *version = token_list  # type: ignore
-        return name, ":".join(version)
+    name, *version = token_list  # type: ignore
+    return name, ":".join(version)
 
 
 def parse_name_label(name: str) -> Tuple[str, Optional[str]]:
@@ -234,14 +242,16 @@ def parse_name_label(name: str) -> Tuple[str, Optional[str]]:
         raise ValidationException(
             f"Could not parse {name}. If providing an ARM id, it should start with a '/'.",
             no_personal_data_message=f"Could not parse {name}.",
+            error_type=ValidationErrorType.INVALID_VALUE,
+            error_category=ErrorCategory.USER_ERROR,
+            target=ErrorTarget.ARM_RESOURCE,
         )
     token_list = name.rpartition("@")
     if not token_list[1]:  # separator not found
         *_, name = token_list
         return name, None
-    else:
-        name, _, label = token_list
-        return name, label
+    name, _, label = token_list
+    return name, label
 
 
 def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_resource: bool = True) -> bool:
@@ -265,7 +275,10 @@ def is_registry_id_for_resource(name: Any) -> bool:
 
 
 def get_arm_id_with_version(
-    operation_scope: OperationScope, provider_name: str, provider_value: str, provider_version: str
+    operation_scope: OperationScope,
+    provider_name: str,
+    provider_value: str,
+    provider_version: str,
 ):
     return PROVIDER_RESOURCE_ID_WITH_VERSION.format(
         operation_scope.subscription_id,
@@ -281,18 +294,13 @@ def generate_data_arm_id(operation_scope: OperationScope, name: str, version: in
     return get_arm_id_with_version(operation_scope, DATA_ARM_TYPE, name, str(version))
 
 
-def generate_dataset_arm_id(operation_scope: OperationScope, name: str, version: int):
-    return get_arm_id_with_version(operation_scope, DATASET_ARM_TYPE, name, str(version))
-
-
-def remove_aml_prefix(id: Optional[str]) -> Optional[str]:
-    if not id:
+def remove_aml_prefix(resource_id: Optional[str]) -> Optional[str]:
+    if not resource_id:
         return None
 
-    if id.startswith(ARM_ID_PREFIX):
-        return id[len(ARM_ID_PREFIX) :]
-    else:
-        return id
+    if resource_id.startswith(ARM_ID_PREFIX):
+        return resource_id[len(ARM_ID_PREFIX) :]
+    return resource_id
 
 
 def get_resource_name_from_arm_id(resource_id: str) -> str:
@@ -300,10 +308,33 @@ def get_resource_name_from_arm_id(resource_id: str) -> str:
     return AMLNamedArmId(resource_id).asset_name
 
 
-def get_arm_id_object_from_id(resource_id: str) -> Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]:
-    """Attempts to create and return one of: AMLVersionedId, AMLNamedId, AzureResoureId.
-    In the case than an AzureML ARM Id is passed in, either AMLVersionedId or AMLNamedId will be created depending on resource type
-    In the case that a non-AzureML ARM id is passed in, an AzureResourceId will be returned
+def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
+    """Get the resource name from an ARM id.
+
+    return input string if it is not an ARM id.
+    """
+    try:
+        return get_resource_name_from_arm_id(resource_id)
+    except ValidationException:
+        # already a name
+        return resource_id
+    except AttributeError:
+        # None or empty string
+        return resource_id
+    except Exception:  # pylint: disable=broad-except
+        # unexpected error
+        module_logger.warning("Failed to parse resource id: %s", resource_id)
+        return resource_id
+
+
+def get_arm_id_object_from_id(
+    resource_id: str,
+) -> Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]:
+    """Attempts to create and return one of: AMLVersionedId, AMLNamedId,
+    AzureResoureId. In the case than an AzureML ARM Id is passed in, either
+    AMLVersionedId or AMLNamedId will be created depending on resource type In
+    the case that a non-AzureML ARM id is passed in, an AzureResourceId will be
+    returned.
 
     :param resource_id: the ARM Id to parse
     :type arm_id: str
@@ -332,36 +363,16 @@ def get_arm_id_object_from_id(resource_id: str) -> Union[AMLVersionedArmId, AMLN
     raise ValidationException(
         message=msg.format(resource_id),
         no_personal_data_message=msg.format("[resource_id]"),
+        error_type=ValidationErrorType.INVALID_VALUE,
+        error_category=ErrorCategory.USER_ERROR,
         target=ErrorTarget.DEPLOYMENT,
     )
 
 
-def is_arm_id_or_arm_string_or_object(asset: str, azureml_type: str) -> None:
-    if not isinstance(asset, str):
-        return
-
-    if is_ARM_id_for_resource(asset, azureml_type) or is_registry_id_for_resource(asset):
-        return
-    else:
-        if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
-            name, label = parse_name_label(asset)
-            if not label:
-                name, version = parse_prefixed_name_version(asset)
-                if not version:
-                    raise ValidationException(
-                        message="Failed to extract version when parsing asset {} of type {} as arm id. Version must be provided.".format(
-                            asset, azureml_type
-                        ),
-                        no_personal_data_message="[asset]",
-                    )
-    return
-
-
-def remove_datastore_prefix(id: Optional[str]) -> Optional[str]:
-    if not id:
+def remove_datastore_prefix(datastore_id: Optional[str]) -> Optional[str]:
+    if not datastore_id:
         return None
 
-    if id.startswith(DATASTORE_SHORT_URI):
-        return id[len(DATASTORE_SHORT_URI) :]
-    else:
-        return id
+    if datastore_id.startswith(DATASTORE_SHORT_URI):
+        return datastore_id[len(DATASTORE_SHORT_URI) :]
+    return datastore_id

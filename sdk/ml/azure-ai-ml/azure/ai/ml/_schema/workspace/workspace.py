@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, validate
-from azure.ai.ml._schema import NestedField, PathAwareSchema
-from azure.ai.ml._schema.core.fields import ArmStr, StringTransformedEnum
-from azure.ai.ml.constants import PublicNetworkAccess, AzureMLResourceType
+from marshmallow import fields
+
 from azure.ai.ml._schema._utils.utils import validate_arm_str
-from azure.ai.ml._utils.utils import snake_to_pascal
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKeySchema
-from azure.ai.ml._schema.workspace.private_endpoint import PrivateEndpointSchema
+from azure.ai.ml._utils.utils import snake_to_pascal
+from azure.ai.ml.constants._common import PublicNetworkAccess
 
 
 class WorkspaceSchema(PathAwareSchema):
@@ -30,7 +30,6 @@ class WorkspaceSchema(PathAwareSchema):
     mlflow_tracking_uri = fields.Str(dump_only=True)
     image_build_compute = fields.Str()
     public_network_access = StringTransformedEnum(
-        allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED], casing_transform=snake_to_pascal
+        allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
+        casing_transform=snake_to_pascal,
     )
-    softdelete_enable = fields.Bool()
-    allow_recover_softdeleted_workspace = fields.Bool()

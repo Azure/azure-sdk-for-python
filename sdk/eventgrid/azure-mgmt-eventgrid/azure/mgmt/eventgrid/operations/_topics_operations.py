@@ -35,7 +35,7 @@ def build_get_request(
     topic_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -74,7 +74,7 @@ def build_create_or_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -115,7 +115,7 @@ def build_delete_request_initial(
     topic_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}")  # pylint: disable=line-too-long
@@ -148,7 +148,7 @@ def build_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -190,7 +190,7 @@ def build_list_by_subscription_request(
     top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -230,7 +230,7 @@ def build_list_by_resource_group_request(
     top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -269,7 +269,7 @@ def build_list_shared_access_keys_request(
     topic_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -308,7 +308,7 @@ def build_regenerate_key_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -351,7 +351,7 @@ def build_list_event_types_request(
     resource_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -430,7 +430,7 @@ class TopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_request(
@@ -477,7 +477,7 @@ class TopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(topic_info, 'Topic')
@@ -545,7 +545,7 @@ class TopicsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.Topic]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Topic"]
@@ -600,7 +600,7 @@ class TopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -657,7 +657,7 @@ class TopicsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -707,7 +707,7 @@ class TopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(topic_update_parameters, 'TopicUpdateParameters')
@@ -777,7 +777,7 @@ class TopicsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.Topic]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Topic"]
@@ -848,7 +848,7 @@ class TopicsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.TopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicsListResult"]
         error_map = {
@@ -942,7 +942,7 @@ class TopicsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.TopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicsListResult"]
         error_map = {
@@ -1033,7 +1033,7 @@ class TopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_list_shared_access_keys_request(
@@ -1080,7 +1080,7 @@ class TopicsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(regenerate_key_request, 'TopicRegenerateKeyRequest')
@@ -1151,7 +1151,7 @@ class TopicsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.TopicSharedAccessKeys]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicSharedAccessKeys"]
@@ -1221,7 +1221,7 @@ class TopicsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.EventTypesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventTypesListResult"]
         error_map = {

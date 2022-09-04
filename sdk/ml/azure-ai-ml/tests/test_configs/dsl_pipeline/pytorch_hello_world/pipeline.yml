@@ -1,0 +1,13 @@
+type: pipeline
+description: "Prints the environment variables useful for scripts running in a PyTorch training environment"
+
+jobs:
+  pytorch_job:
+    type: command
+    component: file:./component.yml
+    compute: azureml:cpu-cluster
+    resources:
+      instance_count: 2
+    distribution:
+      type: pytorch
+      process_count_per_instance: 1

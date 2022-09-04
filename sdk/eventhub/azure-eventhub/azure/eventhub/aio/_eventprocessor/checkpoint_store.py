@@ -15,7 +15,11 @@ class CheckpointStore(ABC):
 
     @abstractmethod
     async def list_ownership(
-        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the chosen storage service.
 
@@ -87,7 +91,11 @@ class CheckpointStore(ABC):
 
     @abstractmethod
     async def list_checkpoints(
-        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """List the updated checkpoints from the chosen storage service.
 

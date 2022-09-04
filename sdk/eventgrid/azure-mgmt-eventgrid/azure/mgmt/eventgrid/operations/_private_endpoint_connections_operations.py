@@ -32,12 +32,12 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
+    parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
     parent_name: str,
     private_endpoint_connection_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -72,7 +72,7 @@ def build_get_request(
 def build_update_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
+    parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
     parent_name: str,
     private_endpoint_connection_name: str,
     *,
@@ -80,7 +80,7 @@ def build_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -120,12 +120,12 @@ def build_update_request_initial(
 def build_delete_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
+    parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
     parent_name: str,
     private_endpoint_connection_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}")  # pylint: disable=line-too-long
@@ -154,14 +154,14 @@ def build_delete_request_initial(
 def build_list_by_resource_request(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
+    parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
     parent_name: str,
     *,
     filter: Optional[str] = None,
     top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -221,7 +221,7 @@ class PrivateEndpointConnectionsOperations(object):
     def get(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
+        parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
@@ -234,7 +234,7 @@ class PrivateEndpointConnectionsOperations(object):
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\',
          \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.PrivateEndpointConnectionsParentType
         :param parent_name: The name of the parent resource (namely, either, the topic name, domain
          name, or partner namespace name).
         :type parent_name: str
@@ -252,7 +252,7 @@ class PrivateEndpointConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_request(
@@ -291,7 +291,7 @@ class PrivateEndpointConnectionsOperations(object):
     def _update_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
+        parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
@@ -303,7 +303,7 @@ class PrivateEndpointConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
@@ -351,7 +351,7 @@ class PrivateEndpointConnectionsOperations(object):
     def begin_update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
+        parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
@@ -365,7 +365,7 @@ class PrivateEndpointConnectionsOperations(object):
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\',
          \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.PrivateEndpointConnectionsParentType
         :param parent_name: The name of the parent resource (namely, either, the topic name, domain
          name, or partner namespace name).
         :type parent_name: str
@@ -387,7 +387,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
@@ -435,7 +435,7 @@ class PrivateEndpointConnectionsOperations(object):
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
+        parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
@@ -446,7 +446,7 @@ class PrivateEndpointConnectionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -482,7 +482,7 @@ class PrivateEndpointConnectionsOperations(object):
     def begin_delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
+        parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
         parent_name: str,
         private_endpoint_connection_name: str,
         **kwargs: Any
@@ -495,7 +495,7 @@ class PrivateEndpointConnectionsOperations(object):
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\',
          \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.PrivateEndpointConnectionsParentType
         :param parent_name: The name of the parent resource (namely, either, the topic name, domain
          name, or partner namespace name).
         :type parent_name: str
@@ -514,7 +514,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -557,7 +557,7 @@ class PrivateEndpointConnectionsOperations(object):
     def list_by_resource(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
+        parent_type: Union[str, "_models.PrivateEndpointConnectionsParentType"],
         parent_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
@@ -571,7 +571,7 @@ class PrivateEndpointConnectionsOperations(object):
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\',
          \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.PrivateEndpointConnectionsParentType
         :param parent_name: The name of the parent resource (namely, either, the topic name, domain
          name, or partner namespace name).
         :type parent_name: str
@@ -594,7 +594,7 @@ class PrivateEndpointConnectionsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {

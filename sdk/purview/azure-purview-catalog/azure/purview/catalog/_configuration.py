@@ -29,7 +29,7 @@ class PurviewCatalogClientConfiguration(Configuration):  # pylint: disable=too-m
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -41,7 +41,7 @@ class PurviewCatalogClientConfiguration(Configuration):  # pylint: disable=too-m
         **kwargs: Any
     ) -> None:
         super(PurviewCatalogClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

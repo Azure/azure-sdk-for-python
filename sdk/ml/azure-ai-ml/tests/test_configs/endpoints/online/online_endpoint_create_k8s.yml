@@ -1,0 +1,3 @@
+name: k8se2etest
+compute: azureml:inferencecompute
+auth_mode: Key

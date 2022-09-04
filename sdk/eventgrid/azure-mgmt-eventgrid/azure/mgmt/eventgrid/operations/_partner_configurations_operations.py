@@ -34,7 +34,7 @@ def build_get_request(
     resource_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -71,7 +71,7 @@ def build_create_or_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -110,7 +110,7 @@ def build_delete_request_initial(
     resource_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerConfigurations/default")  # pylint: disable=line-too-long
@@ -141,7 +141,7 @@ def build_update_request_initial(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -180,7 +180,7 @@ def build_list_by_resource_group_request(
     resource_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -216,7 +216,7 @@ def build_list_by_subscription_request(
     top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -256,7 +256,7 @@ def build_authorize_partner_request(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -298,7 +298,7 @@ def build_unauthorize_partner_request(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -376,7 +376,7 @@ class PartnerConfigurationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_get_request(
@@ -421,7 +421,7 @@ class PartnerConfigurationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_configuration_info, 'PartnerConfiguration')
@@ -490,7 +490,7 @@ class PartnerConfigurationsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.PartnerConfiguration]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerConfiguration"]
@@ -543,7 +543,7 @@ class PartnerConfigurationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         
         request = build_delete_request_initial(
@@ -596,7 +596,7 @@ class PartnerConfigurationsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -644,7 +644,7 @@ class PartnerConfigurationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_configuration_update_parameters, 'PartnerConfigurationUpdateParameters')
@@ -714,7 +714,7 @@ class PartnerConfigurationsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.PartnerConfiguration]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerConfiguration"]
@@ -775,7 +775,7 @@ class PartnerConfigurationsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.PartnerConfigurationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerConfigurationsListResult"]
         error_map = {
@@ -866,7 +866,7 @@ class PartnerConfigurationsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.PartnerConfigurationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerConfigurationsListResult"]
         error_map = {
@@ -955,7 +955,7 @@ class PartnerConfigurationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_info, 'Partner')
@@ -1018,7 +1018,7 @@ class PartnerConfigurationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-15")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(partner_info, 'Partner')

@@ -1,14 +1,27 @@
 # Release History
 
-## 12.8.1 (Unreleased)
+## 12.10.0 (Unreleased)
 
 ### Features Added
+- Stable release of features from 12.10.0b1.
 
-### Breaking Changes
+## 12.10.0b1 (2022-08-23)
 
-### Bugs Fixed
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
-### Other Changes
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
+## 12.9.0 (2022-07-07)
+
+### Features Added
+- Stable release of features from 12.9.0b1.
+- Added support for progress tracking to `upload_file()` and `download_file()` via a new optional callback, `progress_hook`.
+
+## 12.9.0b1 (2022-06-15)
+
+### Features Added
+- Added support for `file_change_time` to `start_copy_from_url` API
 
 ## 12.8.0 (2022-05-09)
 
