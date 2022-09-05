@@ -102,15 +102,20 @@ The following sections provide several code snippets covering some of the most c
 - [Get Geolocation](#get-geolocation)
 
 ### Get Geolocation
-This service will return the ISO country code for the provided IP address. Developers can use this information  to block or alter certain content based on geographical locations where the application is being viewed from.
+
+This service will return the ISO country code for the provided IP address. Developers can use this information to block or alter certain content based on geographical locations where the application is being viewed from.
 
 ```python
 from azure.maps.geolocation import MapsGeolocationClient
 
-VALID_IP_ADDRESS = "2001:4898:80e8:b::189"
-geolocation_result = client.get_geolocation(ip_address=VALID_IP_ADDRESS)
+BLOCK_COUNTRY_LIST = ['US', 'TW', 'AF', 'AX', 'DL']
+INCOME_IP_ADDRESS = "2001:4898:80e8:b::189"
+geolocation_result = client.get_geolocation(ip_address=INCOME_IP_ADDRESS)
 
-result_country_code = geolocation_result.country_region.iso_code
+result_country_code = geolocation_result.iso_code
+
+if result_country_code in BLOCK_COUNTRY_LIST:
+    raise Exception("These IP address is from forebiden country")
 ```
 
 ## Troubleshooting

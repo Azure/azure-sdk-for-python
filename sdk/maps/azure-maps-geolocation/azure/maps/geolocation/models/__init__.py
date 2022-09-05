@@ -1,11 +1,9 @@
 
-from .._generated.models import (
-    IpAddressToLocationResult,
-    CountryRegion
+from ._models import (
+    IpAddressToLocation
 )
 
 
 __all__ = [
-    'IpAddressToLocationResult',
-    'CountryRegion'
+    'IpAddressToLocation'
 ]

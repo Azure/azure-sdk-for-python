@@ -12,7 +12,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 
 from ._base_client_async import AsyncMapsGeolocationClientBase
 from ..models import (
-    IpAddressToLocationResult
+    IpAddressToLocation
 )
 
 # By default, use the latest supported API version
@@ -41,17 +41,16 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
         self,
         ip_address: str,
         **kwargs: Any
-    ) -> IpAddressToLocationResult:
-        """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
-
+    ) -> IpAddressToLocation:
+        """
         This service will return the ISO country code for the provided IP address. Developers can use
         this information  to block or alter certain content based on geographical locations where the
         application is being viewed from.
 
         :param ip_address: The IP address. Both IPv4 and IPv6 are allowed. Required.
         :type ip_address: str
-        :return: IpAddressToLocationResult
-        :rtype: ~azure.maps.geolocation.models.IpAddressToLocationResult
+        :return: IpAddressToLocation
+        :rtype: ~azure.maps.geolocation.models.IpAddressToLocation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         geolocation_result = await self._geolocation_client.get_location(
@@ -60,4 +59,7 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
             **kwargs
         )
 
-        return geolocation_result
+        return IpAddressToLocation(
+            ip_address=geolocation_result.ip_address,
+            iso_code=geolocation_result.country_region.iso_code
+        )
