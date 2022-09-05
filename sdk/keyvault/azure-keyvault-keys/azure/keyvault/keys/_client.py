@@ -71,7 +71,8 @@ class KeyClient(KeyVaultClientBase):
             HTTP client as this :class:`~azure.keyvault.keys.KeyClient`.
         :rtype: ~azure.keyvault.keys.crypto.CryptographyClient
         """
-        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
+        key_id = _get_key_id(self._vault_url, key_name,
+                             kwargs.get("key_version"))
 
         # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(
@@ -296,7 +297,8 @@ class KeyClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_key = DeletedKey._from_deleted_key_bundle(
-            self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
+            self._client.delete_key(
+                self.vault_url, name, error_map=_error_map, **kwargs)
         )
 
         command = partial(self.get_deleted_key, name=name, **kwargs)
@@ -333,7 +335,8 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", error_map=_error_map, **kwargs)
+        bundle = self._client.get_key(
+            self.vault_url, name, key_version=version or "", error_map=_error_map, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -359,7 +362,8 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = self._client.get_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = self._client.get_deleted_key(
+            self.vault_url, name, error_map=_error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -383,7 +387,8 @@ class KeyClient(KeyVaultClientBase):
         return self._client.get_deleted_keys(
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
-            cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
+            cls=lambda objs: [
+                DeletedKey._from_deleted_key_item(x) for x in objs],
             error_map=_error_map,
             **kwargs
         )
@@ -469,7 +474,8 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs)
+        self._client.purge_deleted_key(
+            vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_key(self, name, **kwargs):
@@ -554,7 +560,8 @@ class KeyClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
-        attributes = self._get_attributes(enabled=enabled, not_before=not_before, expires_on=expires_on)
+        attributes = self._get_attributes(
+            enabled=enabled, not_before=not_before, expires_on=expires_on)
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
@@ -599,7 +606,8 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        backup_result = self._client.backup_key(
+            self.vault_url, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -631,7 +639,8 @@ class KeyClient(KeyVaultClientBase):
         """
         bundle = self._client.restore_key(
             self.vault_url,
-            parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
+            parameters=self._models.KeyRestoreParameters(
+                key_bundle_backup=backup),
             error_map=_error_map,
             **kwargs
         )
@@ -683,7 +692,8 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs)
+        bundle = self._client.import_key(
+            self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -744,7 +754,8 @@ class KeyClient(KeyVaultClientBase):
         if count < 1:
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
-        result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
+        result = self._client.get_random_bytes(
+            vault_base_url=self._vault_url, parameters=parameters, **kwargs)
         return result.value
 
     @distributed_trace
@@ -758,7 +769,8 @@ class KeyClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
         :raises: :class: `~azure.core.exceptions.HttpResponseError`
         """
-        policy = self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
+        policy = self._client.get_key_rotation_policy(
+            vault_base_url=self._vault_url, key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace
@@ -774,7 +786,8 @@ class KeyClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        bundle = self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        bundle = self._client.rotate_key(
+            vault_base_url=self._vault_url, key_name=name, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -800,11 +813,13 @@ class KeyClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)
+        lifetime_actions = kwargs.pop(
+            "lifetime_actions", policy.lifetime_actions)
         if lifetime_actions:
             lifetime_actions = [
                 self._models.LifetimeActions(
-                    action=self._models.LifetimeActionsType(type=action.action),
+                    action=self._models.LifetimeActionsType(
+                        type=action.action),
                     trigger=self._models.LifetimeActionsTrigger(
                         time_after_create=action.time_after_create, time_before_expiry=action.time_before_expiry
                     ),
@@ -812,8 +827,10 @@ class KeyClient(KeyVaultClientBase):
                 for action in lifetime_actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
-        new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions or [], attributes=attributes)
+        attributes = self._models.KeyRotationPolicyAttributes(
+            expiry_time=kwargs.pop("expires_in", policy.expires_in))
+        new_policy = self._models.KeyRotationPolicy(
+            lifetime_actions=lifetime_actions or [], attributes=attributes)
         result = self._client.update_key_rotation_policy(
             vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
         )
