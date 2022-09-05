@@ -1,12 +1,7 @@
 import sys
 import pytest
-try:
-    from unittest.mock import Mock
-except ImportError:  # python < 3.3
-    from mock import Mock  # type: ignore
-
+from unittest.mock import Mock
 from devtools_testutils import AzureTestCase
-from azure.core.pipeline.transport import HttpTransport, HttpResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
 from azure.maps.render.models import LatLon, TilesetID, BoundingBox
