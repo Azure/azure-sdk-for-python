@@ -117,8 +117,10 @@ result = maps_render_client.get_map_attribution(
     tileset_id=TilesetID.MICROSOFT_BASE,
     zoom=6,
     bounds=BoundingBox(
-        bottom_left=(LatLon(42.982261, 24.980233)),
-        top_right=(LatLon(56.526017, 1.355233))
+        south=42.982261,
+        west=24.980233,
+        north=56.526017,
+        east=1.355233
     )
 )
 ```
@@ -158,11 +160,16 @@ This request will provide the static image service renders a user-defined, recta
 using a zoom level from 0 to 20.
 The static image service renders a user-defined,
 rectangular image containing a map section using a zoom level from 0 to 20.
+And also save the result to file as png.
 
 ```python
 from azure.maps.render import MapsRenderClient
 
 result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
+# Save result to file as png
+file = open('result.png', 'wb')
+file.write(next(result))
+file.close()
 ```
 
 ### Get Maps Copyright for World

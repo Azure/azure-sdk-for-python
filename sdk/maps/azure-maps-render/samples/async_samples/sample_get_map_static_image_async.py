@@ -32,6 +32,10 @@ async def get_map_static_image_async():
 
     print("Get map tile result:")
     print(result)
+    # Save result to file as png
+    file = open('result.png', 'wb')
+    file.write(next(result))
+    file.close()
     # [END get_map_static_image_async]
 
 if __name__ == '__main__':

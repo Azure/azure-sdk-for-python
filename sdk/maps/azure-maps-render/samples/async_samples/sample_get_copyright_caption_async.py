@@ -20,15 +20,6 @@ USAGE:
 
 import asyncio
 import os
-import json
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -44,9 +35,6 @@ async def get_copyright_caption_async():
 
     print("Get copyright caption result:")
     print(result)
-    print("------------------------------")
-    print("Get copyright caption result in Json format:")
-    print(to_json(result))
     # [END get_copyright_caption_async]
 
 if __name__ == '__main__':

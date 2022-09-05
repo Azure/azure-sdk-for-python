@@ -13,36 +13,12 @@ from azure.maps.render.models import LatLon, TilesetID, BoundingBox
 
 
 # cSpell:disable
-class MockTransport(HttpTransport):
-    def __init__(self, status_code, body, **kwargs):
-        self.status_code = status_code
-        self.body = body.encode("utf-8-sig") if body != None else None
-        self.kwargs = kwargs
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
-    def close(self):
-        pass
-    def open(self):
-        pass
-    def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
-        response = HttpResponse(request, None)
-        response.status_code = self.status_code
-        response.headers["content-type"] = "application/json"
-        response.body = lambda: self.body
-        for key, val in self.kwargs.items():
-            setattr(response, key, val)
-        return response
-
-def create_mock_client(status_code=0, body=None, **kwargs):
-    return MapsRenderClient(credential= Mock(AzureKeyCredential),
-                        transport=MockTransport(status_code, body, **kwargs))
+def create_mock_client():
+    return MapsRenderClient(
+        credential=Mock(AzureKeyCredential)
+    )
 
 class AzureMapsRenderClientUnitTest(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        super(AzureMapsRenderClientUnitTest, self).__init__(*args, **kwargs)
-
-    def setUp(self):
-        super(AzureMapsRenderClientUnitTest, self).setUp()
 
     def test_get_map_tile_invalid_index_y(self):
         client = create_mock_client()

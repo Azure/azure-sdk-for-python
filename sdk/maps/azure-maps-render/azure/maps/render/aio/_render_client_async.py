@@ -5,21 +5,24 @@
 # ---------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import TYPE_CHECKING, overload, Iterator
+from typing import Iterator, Any, Union
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._base_client_async import AsyncMapsRenderClientBase
 
 from ..models import (
     LatLon,
-    BoundingBox
+    BoundingBox,
+    TilesetID,
+    Copyright,
+    MapTileset,
+    MapAttribution,
+    CopyrightCaption,
+    RasterTileFormat
 )
-
-if TYPE_CHECKING:
-    from typing import Any, List, Union, Optional
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 # By default, use the latest supported API version
@@ -35,10 +38,9 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     """
     def __init__(
         self,
-        credential, # type: Union[AzureKeyCredential, AsyncTokenCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs: Any
+    ) -> None:
         super().__init__(
             credential=credential, **kwargs
         )
@@ -46,13 +48,12 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_map_tile(
         self,
-        tileset_id,  # type: Union[str, TilesetID]
-        tile_index_z, # type: int
-        tile_index_x, # type: int
-        tile_index_y, # type: int
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterator[bytes]
+        tileset_id: Union[str, TilesetID],
+        tile_index_z: int,
+        tile_index_x: int,
+        tile_index_y: int,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
         """The Get Map Tiles API allows users to request map tiles in vector or raster formats typically
         to be integrated into a map control or SDK. Some example tiles that can be requested are Azure
         Maps road tiles, real-time  Weather Radar tiles. By default, Azure Maps uses vector tiles for its web map
@@ -105,10 +106,9 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_map_tileset(
         self,
-        tileset_id,  # type: Union[str, TilesetID]
-        **kwargs # type: Any
-    ):
-        # type: (...) -> models.MapTileset
+        tileset_id: Union[str, TilesetID],
+        **kwargs: Any
+    ) -> MapTileset:
         """The Get Map Tileset API allows users to request metadata for a tileset.
 
         :param tileset_id:
@@ -130,12 +130,11 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_map_attribution(
         self,
-        tileset_id,  # type: Union[str, TilesetID]
-        zoom, #type: int
-        bounds, # type: BoundingBox
-        **kwargs # type: Any
-    ):
-        # type: (...) ->  models.MapAttribution
+        tileset_id: Union[str, TilesetID],
+        zoom: int,
+        bounds: BoundingBox,
+        **kwargs: Any
+    ) -> MapAttribution:
         """The Get Map Attribution API allows users to request map copyright attribution information for a
         section of a tileset.
 
@@ -148,19 +147,19 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             Zoom level for the desired map attribution.
         :type zoom: int
         :param bounds:
-            The string that represents the rectangular area of a bounding box. The bounds
-            parameter is defined by the 4 bounding box coordinates, with WGS84 longitude and latitude of
-            the southwest corner followed by  WGS84 longitude and latitude of the northeast corner.
+            north(top), west(left), south(bottom), east(right)
+            position of the bounding box as float.
+            E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :type bounds: BoundingBox
         :return: MapAttribution
         :rtype: ~azure.maps.render.models.MapAttribution
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         bounds=[
-            bounds.bottom_left.lat,
-            bounds.bottom_left.lon,
-            bounds.top_right.lat,
-            bounds.top_right.lon
+            bounds.south,
+            bounds.west,
+            bounds.north,
+            bounds.east
         ]
 
         return await self._render_client.get_map_attribution(
@@ -173,13 +172,12 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_map_state_tile(
         self,
-        stateset_id,  # type: str
-        tile_index_z, # type: int
-        tile_index_x, # type: int
-        tile_index_y, # type: int
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterator[bytes]
+        stateset_id: str,
+        tile_index_z: int,
+        tile_index_x: int,
+        tile_index_y: int,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
         """Fetches state tiles in vector format typically to be integrated into indoor maps module of map
         control or SDK.
 
@@ -211,9 +209,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_copyright_caption(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.CopyrightCaption"
+        **kwargs: Any
+    ) -> CopyrightCaption:
         """Copyrights API is designed to serve copyright information for Render Tile
         service. In addition to basic copyright for the whole map, API is serving
         specific groups of copyrights for some countries.
@@ -232,10 +229,9 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_map_static_image(
         self,
-        img_format, # type Union[str, "models.RasterTileFormat"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterator[bytes]
+        img_format: Union[str, RasterTileFormat],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
         """ The static image service renders a user-defined, rectangular image containing a map section
         using a zoom level from 0 to 20. The static image service renders a user-defined, rectangular
         image containing a map section using a zoom level from 0 to 20. The supported resolution range
@@ -260,9 +256,10 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :keyword center:
             Coordinates of the center point.
         :paramtype center: Latlon
-        :keyword bounding_box_private:
-            Bounding box.
-        :paramtype bounding_box_private: BoundingBox
+        :keyword BoundingBox bounding_box_private:
+            north(top), west(left), south(bottom), east(right)
+            position of the bounding box as float.
+            E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :keyword height:
             Height of the resulting image in pixels. Range is 1 to 8192.
         :paramtype height: int
@@ -288,23 +285,34 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _center=kwargs.pop("center", None)
+        if _center is not None:
+            _center = f"{_center[0]}, {_center[1]}"
+
+        _bbox = kwargs.pop("bounding_box_private", None)
+        if _bbox is not None:
+            _bbox = f"{_bbox.south}, {_bbox.west}, {_bbox.north}, {_bbox.east}"
+
         return await self._render_client.get_map_static_image(
             format=img_format,
+            center=_center,
+            bounding_box_private=_bbox,
             **kwargs
         )
 
     @distributed_trace_async
     async def get_copyright_from_bounding_box(
         self,
-        bounding_box, #type: BoundingBox
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Copyright"
+        bounding_box: BoundingBox,
+        **kwargs: Any
+    ) -> Copyright:
         """Returns copyright information for a given bounding box. Bounding-box requests should specify
         the minimum and maximum longitude and latitude (EPSG-3857) coordinates.
 
         :param bounding_box:
-            Position of the south_west and north_east as boundingbox type.
+            north(top), west(left), south(bottom), east(right)
+            position of the bounding box as float.
+            E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :type: BoundingBox
         :keyword include_text:
             True or False to exclude textual data from response. Only images and
@@ -318,20 +326,19 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
 
         return await self._render_client.get_copyright_from_bounding_box(
             include_text= "yes" if _include_text else "no",
-            south_west=(bounding_box.bottom_left.lat,bounding_box.bottom_left.lon),
-            north_east=(bounding_box.top_right.lat,bounding_box.top_right.lon),
+            south_west=(bounding_box.south,bounding_box.west),
+            north_east=(bounding_box.north,bounding_box.east),
             **kwargs
         )
 
     @distributed_trace_async
     async def get_copyright_for_tile(
         self,
-        tile_index_z, # type: int
-        tile_index_x, # type: int
-        tile_index_y, # type: int
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Copyright"
+        tile_index_z: int,
+        tile_index_x: int,
+        tile_index_y: int,
+        **kwargs: Any
+    ) -> Copyright:
         """Copyrights API is designed to serve copyright information for Render Tile  service. In addition
         to basic copyright for the whole map, API is serving  specific groups of copyrights for some
         countries.
@@ -369,9 +376,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_copyright_for_world(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.Copyright"
+        **kwargs: Any
+    ) -> Copyright:
         """Copyrights API is designed to serve copyright information for Render Tile  service. In addition
         to basic copyright for the whole map, API is serving  specific groups of copyrights for some
         countries.

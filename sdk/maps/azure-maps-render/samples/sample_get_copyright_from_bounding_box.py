@@ -18,15 +18,6 @@ USAGE:
 """
 
 import os
-import json
-
-def to_json(self):
-    return json.dumps(
-        self,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=4
-    )
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
@@ -34,19 +25,21 @@ def get_copyright_from_bounding_box():
     # [START get_copyright_from_bounding_box]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render import MapsRenderClient
-    from azure.maps.render.models import BoundingBox, LatLon
+    from azure.maps.render.models import BoundingBox
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_render_client.get_copyright_from_bounding_box(
-        bounding_box=BoundingBox(bottom_left=LatLon(52.41064,4.84228), top_right=LatLon(52.41072,4.84239))
+        bounding_box=BoundingBox(
+            south=42.982261,
+            west=24.980233,
+            north=56.526017,
+            east=1.355233
+        )
     )
 
     print("Get copyright from bounding box result:")
     print(result)
-    print("------------------------------")
-    print("Get copyright from bounding box result in Json format:")
-    print(to_json(result))
     # [END get_copyright_from_bounding_box]
 
 if __name__ == '__main__':

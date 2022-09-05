@@ -5,7 +5,7 @@ from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
-from azure.maps.render.models import LatLon, TilesetID, BoundingBox
+from azure.maps.render.models import TilesetID, BoundingBox
 
 
 # cSpell:disable
@@ -68,7 +68,7 @@ class AzureMapsRenderClientE2ETest(AzureTestCase):
         result = self.client.get_map_attribution(
             tileset_id=TilesetID.MICROSOFT_BASE,
             zoom=6,
-            bounds=BoundingBox(bottom_left=(LatLon(42.982261, 24.980233)), top_right=(LatLon(56.526017, 1.355233)))
+            bounds=BoundingBox(south=42.982261, west=24.980233, north=56.526017, east=1.355233)
         )
         assert len(result.copyrights) > 0
 
@@ -76,7 +76,7 @@ class AzureMapsRenderClientE2ETest(AzureTestCase):
     @pytest.mark.live_test_only
     def test_get_copyright_from_bounding_box(self):
         result = self.client.get_copyright_from_bounding_box(
-            bounding_box=BoundingBox(bottom_left=LatLon(52.41064,4.84228), top_right=LatLon(52.41072,4.84239))
+            bounding_box=BoundingBox(south=42.982261, west=24.980233, north=56.526017, east=1.355233)
         )
         assert len(result.general_copyrights) > 0
         copyrights = result.general_copyrights[0]

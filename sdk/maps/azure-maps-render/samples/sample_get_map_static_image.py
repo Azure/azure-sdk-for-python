@@ -27,10 +27,14 @@ def get_map_static_image():
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
+    result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064, 5.84228))
 
     print("Get map tile result:")
     print(result)
+    # Save result to file as png
+    file = open('result.png', 'wb')
+    file.write(next(result))
+    file.close()
     # [END get_map_static_image]
 
 if __name__ == '__main__':

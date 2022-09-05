@@ -3,13 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, TYPE_CHECKING
+from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from .._generated.aio import RenderClient as _MapsRenderClient
 from .._version import API_VERSION
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -29,10 +28,9 @@ def _authentication_policy(credential):
 class AsyncMapsRenderClientBase:
     def __init__(
         self,
-        credential, #type: Union[AzureKeyCredential, AsyncTokenCredential]
-        **kwargs #type: Any
-    ):
-        # type: (...) -> None
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs: Any
+    ) -> None:
 
         self._maps_client = _MapsRenderClient(
             credential=credential,  # type: ignore

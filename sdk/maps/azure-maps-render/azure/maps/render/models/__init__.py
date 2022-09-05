@@ -8,6 +8,7 @@ from .._generated.models import (
     CopyrightCaption,
     StaticMapLayer,
     Copyright,
+    RasterTileFormat,
     RegionCopyrights,
     RegionCopyrightsCountry
 )
@@ -29,6 +30,7 @@ __all__ = [
     'CopyrightCaption',
     'StaticMapLayer',
     'Copyright',
+    'RasterTileFormat',
     'RegionCopyrights',
     'RegionCopyrightsCountry',
 ]
