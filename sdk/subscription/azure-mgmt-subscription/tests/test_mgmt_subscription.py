@@ -9,8 +9,7 @@ import unittest
 
 import azure.mgmt.subscription
 from azure.mgmt.subscription.models import *
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
-import six
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 
 class TestMgmtSubscription(AzureMgmtRecordedTestCase):
