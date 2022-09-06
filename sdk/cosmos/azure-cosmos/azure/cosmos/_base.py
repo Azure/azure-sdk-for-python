@@ -691,24 +691,23 @@ def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: Union[int, ThroughputProperties], options: Dict[str, Any]) -> Any:
-    offer_throughput = offer
-    request_options = options
+def _set_throughput_options(offer: Union[int, ThroughputProperties], request_options: Dict[str, Any]) -> Any:
+    if offer is not None:
+        try:
+            max_throughput = offer.auto_scale_max_throughput
+            increment_percent = offer.auto_scale_increment_percent
 
-    if offer is None:
-        return
+            if max_throughput:
+                request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer)
+            elif increment_percent:
+                raise ValueError("auto_scale_max_throughput must be supplied in "
+                                 "conjunction with auto_scale_increment_percent")
+            elif offer.offer_throughput:
+                request_options["offerThroughput"] = offer.offer_throughput
 
-    if isinstance(offer, int):
-        request_options["offerThroughput"] = offer_throughput
-
-    max_throughput = offer.auto_scale_max_throughput
-    increment_percent = offer.auto_scale_increment_percent
-
-    if max_throughput:
-        request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer_throughput)
-    elif increment_percent:
-        raise ValueError("auto_scale_max_throughput must be supplied in "
-                         "conjunction with auto_scale_increment_percent")
+        except AttributeError:
+            if isinstance(offer, int):
+                request_options["offerThroughput"] = offer
 
 
 def _deserialize_throughput(throughput: list) -> Any:
