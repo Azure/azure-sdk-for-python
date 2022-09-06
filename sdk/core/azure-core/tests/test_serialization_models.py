@@ -3239,7 +3239,7 @@ class CatComplex(PetComplex):
         ]),
     ]
 )
-def test_complex_inheritance(model: CatComplex):
+def test_complex_inheritance(model):
     assert model.id == model["id"] == 2
     assert model.name == model["name"] == "Siameeee"
     assert model.hates
@@ -3257,3 +3257,31 @@ def test_complex_inheritance(model: CatComplex):
                 DogComplex(id=-1, name="Tomato", food="french fries")]
         }
 
+def test_required_prop_not_passed():
+    class ModelWithRequiredProperty(Model):
+        required_property: int = rest_field(name="requiredProperty")
+
+        @overload
+        def __init__(
+            self,
+            *,
+            required_property: int,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    model = ModelWithRequiredProperty()
+    assert model.required_property is None
+    with pytest.raises(KeyError):
+        model["requiredProperty"]
+
+    model = ModelWithRequiredProperty({})
+    assert model.required_property is None
+    with pytest.raises(KeyError):
+        model["requiredProperty"]
