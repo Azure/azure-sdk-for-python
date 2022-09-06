@@ -3,11 +3,13 @@
 The Azure Cognitive Service for Language is a cloud-based service that provides Natural Language Processing (NLP) features for understanding and analyzing text, and includes the following main features:
 
 - Sentiment Analysis
-- Entity Recognition (Named, Linked, and Personally Identifiable Information (PII) entities)
+- Named Entity Recognition
 - Language Detection
 - Key Phrase Extraction
+- Entity Linking
 - Multiple Analysis
-- Healthcare Entities Analysis
+- Personally Identifiable Information (PII) Detection
+- Text Analytics for Health
 - Custom Named Entity Recognition
 - Custom Text Classification
 
@@ -77,7 +79,7 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics
 ```
 
-> Note that `5.2.X` targets the Azure Cognitive Service for Language APIs. These APIs also include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
+> Note that `5.2.X` targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
 In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
@@ -232,7 +234,7 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that support healthcare analysis or multiple analyses are modeled as long-running operations.
+Methods that support healthcare analysis, custom text analysis, or multiple analyses are modeled as long-running operations.
 The client exposes a `begin_<method-name>` method that returns a poller object. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
@@ -517,7 +519,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is only available with API version v3.1 and newer.
+Note: Healthcare Entities Analysis is only available with API version v3.1 and newer.
 
 ### Multiple Analysis
 
@@ -528,10 +530,10 @@ Note: The Healthcare Entities Analysis service is only available with API versio
 - Linked Entity Recognition
 - Key Phrase Extraction
 - Sentiment Analysis
-- Custom Entity Recognition (see sample [here][recognize_custom_entities_sample])
-- Custom Single Label Classification (see sample [here][single_label_classify_sample])
-- Custom Multi Label Classification (see sample [here][multi_label_classify_sample])
-- Healthcare Entities Analysis (see sample [here][healthcare_action_sample])
+- Custom Entity Recognition
+- Custom Single Label Classification
+- Custom Multi Label Classification
+- Healthcare Entities Analysis
 
 ```python
 from azure.core.credentials import AzureKeyCredential
