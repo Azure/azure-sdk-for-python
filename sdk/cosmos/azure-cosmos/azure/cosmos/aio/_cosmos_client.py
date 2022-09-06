@@ -197,7 +197,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         Create a new database with the given ID (name).
 
         :param str id: ID (name) of the database to create.
-        :keyword int offer_throughput: The provisioned throughput for this offer.
+        :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
