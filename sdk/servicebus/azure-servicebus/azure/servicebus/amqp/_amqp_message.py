@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-# from optparse import Option
 import time
 import uuid
 from datetime import datetime
@@ -20,7 +19,6 @@ from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
 
 class DictMixin(object):
     def __setitem__(self, key: Any, item: Any) -> None:
-        # type: (Any, Any) -> None
         self.__dict__[key] = item
 
     def __getitem__(self, key: Any) -> Any:
