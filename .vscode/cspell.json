@@ -673,6 +673,7 @@
         "NDVI",
         "ndvi",
         "Unhandleable"
+      ]
      },
      {
       "filename": "sdk/mixedreality/azure-mixedreality-authentication/**",
