@@ -33,7 +33,7 @@ def print_message(_logger, message):
     _logger.info("Receiving: {}".format(message))
     _logger.debug("Time to live: {}".format(message.time_to_live))
     _logger.debug("Sequence number: {}".format(message.sequence_number))
-    _logger.debug("Enqueue Sequence numger: {}".format(message.enqueued_sequence_number))
+    _logger.debug("Enqueue Sequence number: {}".format(message.enqueued_sequence_number))
     _logger.debug("Partition Key: {}".format(message.partition_key))
     _logger.debug("Application Properties: {}".format(message.application_properties))
     _logger.debug("Delivery count: {}".format(message.delivery_count))

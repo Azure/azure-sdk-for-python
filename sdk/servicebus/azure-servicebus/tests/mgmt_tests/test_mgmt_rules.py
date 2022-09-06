@@ -36,7 +36,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
         rule_name_3 = 'test_rule_3'
         rule_name_4 = 'test_rule_4'
 
-        correlation_fitler = CorrelationRuleFilter(correlation_id='testcid', properties={
+        correlation_filter = CorrelationRuleFilter(correlation_id='testcid', properties={
             "key_string": "str1",
             "key_int": 2,
             "key_long": INT32_MAX_VALUE + 3,
@@ -59,7 +59,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.create_topic(topic_name)
             mgmt_service.create_subscription(topic_name, subscription_name)
 
-            mgmt_service.create_rule(topic_name, subscription_name, rule_name_1, filter=correlation_fitler, action=sql_rule_action)
+            mgmt_service.create_rule(topic_name, subscription_name, rule_name_1, filter=correlation_filter, action=sql_rule_action)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_1)
             rule_properties = rule_desc.filter.properties
             assert type(rule_desc.filter) == CorrelationRuleFilter
@@ -155,10 +155,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             assert type(rule_desc.filter) == SqlRuleFilter
             assert rule_desc.filter.sql_expression == "Priority = 'low'"
 
-            correlation_fitler = CorrelationRuleFilter(correlation_id='testcid')
+            correlation_filter = CorrelationRuleFilter(correlation_id='testcid')
             sql_rule_action = SqlRuleAction(sql_expression="SET Priority = 'low'")
 
-            rule_desc.filter = correlation_fitler
+            rule_desc.filter = correlation_filter
             rule_desc.action = sql_rule_action
             mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_desc)
 
@@ -302,10 +302,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             assert type(rule_desc.filter) == SqlRuleFilter
             assert rule_desc.filter.sql_expression == "Priority = 'low'"
 
-            correlation_fitler = CorrelationRuleFilter(correlation_id='testcid')
+            correlation_filter = CorrelationRuleFilter(correlation_id='testcid')
             sql_rule_action = SqlRuleAction(sql_expression="SET Priority = 'low'")
 
-            rule_desc.filter = correlation_fitler
+            rule_desc.filter = correlation_filter
             rule_desc.action = sql_rule_action
             rule_desc_dict = dict(rule_desc)
             mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_desc_dict)

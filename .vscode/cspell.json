@@ -25,7 +25,7 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
-
+    
     "sdk/anomalydetector/azure-ai-anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
@@ -81,7 +81,7 @@
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
-    "sdk/servicebus/azure-servicebus/**",
+    
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse-managedprivateendpoints/**",
     "sdk/storage/azure-storage-file-datalake/**",
