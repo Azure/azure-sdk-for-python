@@ -41,14 +41,12 @@ def build_list_request(
     subscription_id: str,
     *,
     restorable_mongodb_database_rid: Optional[str] = None,
-    start_time: Optional[str] = None,
-    end_time: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-08-15"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,10 +68,6 @@ def build_list_request(
         _params["restorableMongodbDatabaseRid"] = _SERIALIZER.query(
             "restorable_mongodb_database_rid", restorable_mongodb_database_rid, "str"
         )
-    if start_time is not None:
-        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "str")
-    if end_time is not None:
-        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -102,13 +96,7 @@ class RestorableMongodbCollectionsOperations:
 
     @distributed_trace
     def list(
-        self,
-        location: str,
-        instance_id: str,
-        restorable_mongodb_database_rid: Optional[str] = None,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
-        **kwargs: Any
+        self, location: str, instance_id: str, restorable_mongodb_database_rid: Optional[str] = None, **kwargs: Any
     ) -> Iterable["_models.RestorableMongodbCollectionGetResult"]:
         """Show the event feed of all mutations done on all the Azure Cosmos DB MongoDB collections under
         a specific database.  This helps in scenario where container was accidentally deleted.  This
@@ -122,10 +110,6 @@ class RestorableMongodbCollectionsOperations:
         :param restorable_mongodb_database_rid: The resource ID of the MongoDB database. Default value
          is None.
         :type restorable_mongodb_database_rid: str
-        :param start_time: Restorable MongoDB collections event feed start time. Default value is None.
-        :type start_time: str
-        :param end_time: Restorable MongoDB collections event feed end time. Default value is None.
-        :type end_time: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RestorableMongodbCollectionGetResult or the result
          of cls(response)
@@ -150,8 +134,6 @@ class RestorableMongodbCollectionsOperations:
                     instance_id=instance_id,
                     subscription_id=self._config.subscription_id,
                     restorable_mongodb_database_rid=restorable_mongodb_database_rid,
-                    start_time=start_time,
-                    end_time=end_time,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,

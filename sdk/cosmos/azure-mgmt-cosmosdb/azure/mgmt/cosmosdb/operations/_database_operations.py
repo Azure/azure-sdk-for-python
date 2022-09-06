@@ -41,7 +41,7 @@ def build_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-08-15"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,7 +84,7 @@ def build_list_usages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-08-15"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -122,7 +122,7 @@ def build_list_metric_definitions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-08-15"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
