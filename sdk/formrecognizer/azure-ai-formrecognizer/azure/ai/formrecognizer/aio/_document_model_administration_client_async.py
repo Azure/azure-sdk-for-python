@@ -242,7 +242,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: A dictionary with values necessary for the copy authorization.
-        :rtype: TargetAuthorization
+        :rtype: ~azure.ai.formrecognizer.TargetAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -274,7 +274,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         target resource's output from calling the :func:`~get_copy_authorization()` method.
 
         :param str model_id: Model identifier of the model to copy to target resource.
-        :param TargetAuthorization target:
+        :param ~azure.ai.formrecognizer.TargetAuthorization target:
             The copy authorization generated from the target resource's call to
             :func:`~get_copy_authorization()`.
         :return: An instance of a AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
