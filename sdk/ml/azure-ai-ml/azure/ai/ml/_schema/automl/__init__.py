@@ -15,4 +15,16 @@ from .table_vertical.table_vertical import AutoMLTableVerticalSchema
 from .table_vertical.table_vertical_limit_settings import AutoMLTableLimitsSchema
 from .training_settings import TrainingSettingsSchema
 
-# nopycln: file
+__all__ = [
+    "AutoMLJobSchema",
+    "AutoMLVerticalSchema",
+    "FeaturizationSettingsSchema",
+    "TableFeaturizationSettingsSchema",
+    "ForecastingSettingsSchema",
+    "AutoMLClassificationSchema",
+    "AutoMLForecastingSchema",
+    "AutoMLRegressionSchema",
+    "AutoMLTableVerticalSchema",
+    "AutoMLTableLimitsSchema",
+    "TrainingSettingsSchema",
+]

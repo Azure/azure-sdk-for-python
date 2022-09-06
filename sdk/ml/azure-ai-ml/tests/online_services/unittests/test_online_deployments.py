@@ -1,26 +1,22 @@
+from lib2to3.pgen2.literals import simple_escapes
 from pathlib import Path
 from typing import Callable
+from unittest.mock import Mock, patch
 
-from unittest.mock import patch, Mock
+import pytest
+from pytest_mock import MockFixture
+from test_utilities.utils import verify_entity_load_and_dump
+
+from azure.ai.ml import load_online_deployment
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._deployment.online_deployment import (
-    OnlineDeployment,
     KubernetesOnlineDeployment,
     ManagedOnlineDeployment,
+    OnlineDeployment,
 )
-import pytest
-
+from azure.ai.ml.operations import OnlineDeploymentOperations, WorkspaceOperations
 from azure.core.polling import LROPoller
-from azure.ai.ml.operations import (
-    OnlineDeploymentOperations,
-    WorkspaceOperations,
-)
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import (
-    AzureMLResourceType,
-)
-from azure.ai.ml import load_online_deployment
-
-from pytest_mock import MockFixture
 
 
 @pytest.fixture()
@@ -152,9 +148,14 @@ class TestOnlineDeploymentOperations:
         mock_create_or_update_online_deployment = mocker.patch.object(
             OnlineDeploymentOperations, "begin_create_or_update", autospec=True
         )
-        online_deployment = load_online_deployment(blue_online_k8s_deployment_yaml)
-        online_deployment.name = rand_compute_name()
-        assert online_deployment.instance_type
+
+        def simple_deployment_validation(online_deployment):
+            online_deployment.name = rand_compute_name()
+            assert online_deployment.instance_type
+
+        online_deployment = verify_entity_load_and_dump(
+            load_online_deployment, simple_deployment_validation, blue_online_k8s_deployment_yaml
+        )[0]
         mock_online_deployment_operations.begin_create_or_update(deployment=online_deployment)
         mock_create_or_update_online_deployment.assert_called_once()
 

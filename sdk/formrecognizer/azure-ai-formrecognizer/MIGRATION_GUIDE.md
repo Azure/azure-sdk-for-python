@@ -31,9 +31,9 @@ New features provided by the `DocumentAnalysisClient` include:
 
 New features provided by the `DocumentModelAdministrationClient` include:
 - Users can now assign their own model IDs and specify a description when building, composing, or copying models.
-- Users can specify the algorithm used to build the custom model through the required `build_mode` parameter on `begin_build_model()`. See more about `build_mode` [here][https://aka.ms/azsdk/formrecognizer/buildmode].
+- Users can specify the algorithm used to build the custom model through the required `build_mode` parameter on `begin_build_document_model()`. See more about `build_mode` [here](https://aka.ms/azsdk/formrecognizer/buildmode).
 - Listing models now includes both prebuilt and custom models.
-- When using `get_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. 
+- When using `get_document_model()`, users can get the field schema (field names and types that the model can extract) for the model they specified, including for prebuilt models. 
 - Ability to get information from model operations that occurred in the last 24 hours.
 
 The table below describes the relationship of each client and its supported API version(s):
@@ -632,11 +632,11 @@ for doc in model.training_documents:
 ```
 
 Train a custom model with `3.2.x`:
-Use `begin_build_model()` to build a custom model. Please note that this method has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes. Additionally, `blob_container_url` is a required keyword-only parameter.
+Use `begin_build_document_model()` to build a custom document model. Please note that this method has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes. Additionally, `blob_container_url` is a required keyword-only parameter.
 
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
-poller = document_model_admin_client.begin_build_model(
+poller = document_model_admin_client.begin_build_document_model(
     "template", blob_container_url=container_sas_url, model_id="my-model-id", description="my model description"
 )
 model = poller.result()

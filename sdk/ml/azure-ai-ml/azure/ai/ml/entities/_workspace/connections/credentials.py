@@ -14,7 +14,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class WorkspaceConnectionCredentials(RestTranslatableMixin):
-    def __init__(self, **kwargs):
+    def __init__(self):
         self.type = None
 
 
@@ -25,8 +25,8 @@ class PatTokenCredentials(WorkspaceConnectionCredentials):
     :type pat: str
     """
 
-    def __init__(self, *, pat: str, **kwargs):
-        super(PatTokenCredentials, self).__init__(**kwargs)
+    def __init__(self, *, pat: str):
+        super().__init__()
         self.type = ConnectionAuthType.PAT
         self.pat = pat
 
@@ -42,9 +42,6 @@ class PatTokenCredentials(WorkspaceConnectionCredentials):
             return NotImplemented
         return self.pat == other.pat
 
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
-
 
 class SasTokenCredentials(WorkspaceConnectionCredentials):
     """Shared Access Signatures Token Credentials.
@@ -53,8 +50,8 @@ class SasTokenCredentials(WorkspaceConnectionCredentials):
     :type sas: str
     """
 
-    def __init__(self, *, sas: str, **kwargs):
-        super(SasTokenCredentials, self).__init__(**kwargs)
+    def __init__(self, *, sas: str):
+        super().__init__()
         self.type = ConnectionAuthType.SAS
         self.sas = sas
 
@@ -69,9 +66,6 @@ class SasTokenCredentials(WorkspaceConnectionCredentials):
         if not isinstance(other, SasTokenCredentials):
             return NotImplemented
         return self.sas == other.sas
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
 
 
 class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
@@ -88,9 +82,8 @@ class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
         *,
         username: str,
         password: str,
-        **kwargs,
     ):
-        super(UsernamePasswordCredentials, self).__init__(**kwargs)
+        super().__init__()
         self.type = ConnectionAuthType.USERNAME_PASSWORD
         self.username = username
         self.password = password
@@ -110,9 +103,6 @@ class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
             return NotImplemented
         return self.username == other.username and self.password == other.password
 
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
-
 
 class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     """Managed Identity Credentials.
@@ -123,8 +113,8 @@ class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     :type resource_id: str
     """
 
-    def __init__(self, *, client_id: str, resource_id: str, **kwargs):
-        super(ManagedIdentityCredentials, self).__init__(**kwargs)
+    def __init__(self, *, client_id: str, resource_id: str):
+        super().__init__()
         self.type = ConnectionAuthType.MANAGED_IDENTITY
         self.client_id = client_id
         # TODO: Check if both client_id and resource_id are required
@@ -136,17 +126,14 @@ class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     @classmethod
     def _from_rest_object(cls, obj: ManagedIdentity) -> "ManagedIdentityCredentials":
         return cls(
-            username=obj.client_id if obj.client_id else None,
-            password=obj.resource_id if obj.resource_id else None,
+            client_id=obj.client_id,
+            resource_id=obj.resource_id,
         )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ManagedIdentityCredentials):
             return NotImplemented
         return self.client_id == other.client_id and self.resource_id == other.resource_id
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
 
 
 class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
@@ -166,9 +153,8 @@ class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
         client_id: str,
         client_secret: str,
         tenant_id: str,
-        **kwargs,
     ):
-        super(ServicePrincipalCredentials, self).__init__(**kwargs)
+        super().__init__()
         self.type = ConnectionAuthType.SERVICE_PRINCIPAL
         self.client_id = client_id
         self.client_secret = client_secret
@@ -197,6 +183,3 @@ class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
             and self.client_secret == other.client_secret
             and self.tenant_id == other.tenant_id
         )
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)

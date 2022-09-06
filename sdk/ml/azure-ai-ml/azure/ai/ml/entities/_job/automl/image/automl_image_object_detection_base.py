@@ -7,15 +7,15 @@
 from typing import Dict, List, Union
 
 from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ImageModelSettingsObjectDetection,
-    ImageVerticalDataSettings,
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.image.automl_image import AutoMLImage
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
 from azure.ai.ml.entities._job.automl.image.image_object_detection_search_space import ImageObjectDetectionSearchSpace
@@ -27,38 +27,37 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         self,
         *,
         task_type: str,
-        data: ImageVerticalDataSettings = None,
         limits: ImageLimitSettings = None,
         sweep: ImageSweepSettings = None,
-        image_model: ImageModelSettingsObjectDetection = None,
+        training_parameters: ImageModelSettingsObjectDetection = None,
         search_space: List[ImageObjectDetectionSearchSpace] = None,
         **kwargs,
     ) -> None:
-        super().__init__(task_type=task_type, data=data, limits=limits, sweep=sweep, **kwargs)
+        super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
 
-        self.image_model = image_model  # Assigning image_model through setter method.
+        self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
         self._search_space = search_space
 
     @property
-    def image_model(self) -> ImageModelSettingsObjectDetection:
-        return self._image_model
+    def training_parameters(self) -> ImageModelSettingsObjectDetection:
+        return self._training_parameters
 
-    @image_model.setter
-    def image_model(self, value: Union[Dict, ImageModelSettingsObjectDetection]) -> None:
+    @training_parameters.setter
+    def training_parameters(self, value: Union[Dict, ImageModelSettingsObjectDetection]) -> None:
         if value is None:
-            self._image_model = None
+            self._training_parameters = None
         elif isinstance(value, ImageModelSettingsObjectDetection):
-            self._image_model = value
-            # set_image_model convert parameter values from snake case str to enum.
+            self._training_parameters = value
+            # set_training_parameters convert parameter values from snake case str to enum.
             # We need to add any future enum parameters in this call to support snake case str.
-            self.set_image_model(
+            self.set_training_parameters(
                 optimizer=value.optimizer,
                 learning_rate_scheduler=value.learning_rate_scheduler,
                 model_size=value.model_size,
                 validation_metric_type=value.validation_metric_type,
             )
         elif value is None:
-            self._image_model = value
+            self._training_parameters = value
         else:
             if not isinstance(value, dict):
                 msg = "Expected a dictionary for model settings."
@@ -68,7 +67,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
                     target=ErrorTarget.AUTOML,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            self.set_image_model(**value)
+            self.set_training_parameters(**value)
 
     @property
     def search_space(self) -> List[ImageObjectDetectionSearchSpace]:
@@ -101,7 +100,8 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def set_image_model(
+    # pylint: disable=too-many-locals
+    def set_training_parameters(
         self,
         *,
         advanced_settings: str = None,
@@ -109,9 +109,8 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         augmentations: str = None,
         beta1: float = None,
         beta2: float = None,
-        checkpoint_dataset_id: str = None,
-        checkpoint_filename: str = None,
         checkpoint_frequency: int = None,
+        checkpoint_model: Input = None,
         checkpoint_run_id: str = None,
         distributed: bool = None,
         early_stopping: bool = None,
@@ -151,7 +150,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         validation_iou_threshold: float = None,
         validation_metric_type: Union[str, ValidationMetricType] = None,
     ) -> None:
-        """Setting Image model parameters for for AutoML Image Object Detection
+        """Setting Image training parameters for for AutoML Image Object Detection
         and Image Instance Segmentation tasks.
 
         :param advanced_settings: Settings for advanced scenarios.
@@ -166,19 +165,11 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :param beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the
          range [0, 1].
         :type beta2: float
-        :param checkpoint_dataset_id: FileDataset id for pretrained checkpoint(s) for incremental
-         training.
-         Make sure to pass checkpoint_filename along with checkpoint_dataset_id.
-         This has been deprecated and will be removed in a future release.
-        :type checkpoint_dataset_id: str
-        :param checkpoint_filename: The pretrained checkpoint filename in FileDataset for incremental
-         training.
-         Make sure to pass checkpoint_dataset_id along with checkpoint_filename.
-         This has been deprecated and will be removed in a future release.
-        :type checkpoint_filename: str
         :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive
          integer.
         :type checkpoint_frequency: int
+        :param checkpoint_model: The pretrained checkpoint model for incremental training.
+        :type checkpoint_model: Input
         :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
          incremental training.
         :type checkpoint_run_id: str
@@ -209,7 +200,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.
+         see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.   # pylint: disable=line-too-long
         :type layers_to_freeze: int
         :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :type learning_rate: float
@@ -303,140 +294,157 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
          be 'none', 'coco', 'voc', or 'coco_voc'.
         :type validation_metric_type: str or ~azure.mgmt.machinelearningservices.models.ValidationMetricType
         """
-        self._image_model = self._image_model or ImageModelSettingsObjectDetection()
+        self._training_parameters = self._training_parameters or ImageModelSettingsObjectDetection()
 
-        self._image_model.advanced_settings = (
-            advanced_settings if advanced_settings is not None else self._image_model.advanced_settings
+        self._training_parameters.advanced_settings = (
+            advanced_settings if advanced_settings is not None else self._training_parameters.advanced_settings
         )
-        self._image_model.ams_gradient = ams_gradient if ams_gradient is not None else self._image_model.ams_gradient
-        self._image_model.augmentations = (
-            augmentations if augmentations is not None else self._image_model.augmentations
+        self._training_parameters.ams_gradient = (
+            ams_gradient if ams_gradient is not None else self._training_parameters.ams_gradient
         )
-        self._image_model.beta1 = beta1 if beta1 is not None else self._image_model.beta1
-        self._image_model.beta2 = beta2 if beta2 is not None else self._image_model.beta2
-        self._image_model.checkpoint_dataset_id = (
-            checkpoint_dataset_id if checkpoint_dataset_id is not None else self._image_model.checkpoint_dataset_id
+        self._training_parameters.augmentations = (
+            augmentations if augmentations is not None else self._training_parameters.augmentations
         )
-        self._image_model.checkpoint_filename = (
-            checkpoint_filename if checkpoint_filename is not None else self._image_model.checkpoint_filename
+        self._training_parameters.beta1 = beta1 if beta1 is not None else self._training_parameters.beta1
+        self._training_parameters.beta2 = beta2 if beta2 is not None else self._training_parameters.beta2
+        self._training_parameters.checkpoint_frequency = (
+            checkpoint_frequency if checkpoint_frequency is not None else self._training_parameters.checkpoint_frequency
         )
-        self._image_model.checkpoint_frequency = (
-            checkpoint_frequency if checkpoint_frequency is not None else self._image_model.checkpoint_frequency
+        self._training_parameters.checkpoint_model = (
+            checkpoint_model if checkpoint_model is not None else self._training_parameters.checkpoint_model
         )
-        self._image_model.checkpoint_run_id = (
-            checkpoint_run_id if checkpoint_run_id is not None else self._image_model.checkpoint_run_id
+        self._training_parameters.checkpoint_run_id = (
+            checkpoint_run_id if checkpoint_run_id is not None else self._training_parameters.checkpoint_run_id
         )
-        self._image_model.distributed = distributed if distributed is not None else self._image_model.distributed
-        self._image_model.early_stopping = (
-            early_stopping if early_stopping is not None else self._image_model.early_stopping
+        self._training_parameters.distributed = (
+            distributed if distributed is not None else self._training_parameters.distributed
         )
-        self._image_model.early_stopping_delay = (
-            early_stopping_delay if early_stopping_delay is not None else self._image_model.early_stopping_delay
+        self._training_parameters.early_stopping = (
+            early_stopping if early_stopping is not None else self._training_parameters.early_stopping
         )
-        self._image_model.early_stopping_patience = (
+        self._training_parameters.early_stopping_delay = (
+            early_stopping_delay if early_stopping_delay is not None else self._training_parameters.early_stopping_delay
+        )
+        self._training_parameters.early_stopping_patience = (
             early_stopping_patience
             if early_stopping_patience is not None
-            else self._image_model.early_stopping_patience
+            else self._training_parameters.early_stopping_patience
         )
-        self._image_model.enable_onnx_normalization = (
+        self._training_parameters.enable_onnx_normalization = (
             enable_onnx_normalization
             if enable_onnx_normalization is not None
-            else self._image_model.enable_onnx_normalization
+            else self._training_parameters.enable_onnx_normalization
         )
-        self._image_model.evaluation_frequency = (
-            evaluation_frequency if evaluation_frequency is not None else self._image_model.evaluation_frequency
+        self._training_parameters.evaluation_frequency = (
+            evaluation_frequency if evaluation_frequency is not None else self._training_parameters.evaluation_frequency
         )
-        self._image_model.gradient_accumulation_step = (
+        self._training_parameters.gradient_accumulation_step = (
             gradient_accumulation_step
             if gradient_accumulation_step is not None
-            else self._image_model.gradient_accumulation_step
+            else self._training_parameters.gradient_accumulation_step
         )
-        self._image_model.layers_to_freeze = (
-            layers_to_freeze if layers_to_freeze is not None else self._image_model.layers_to_freeze
+        self._training_parameters.layers_to_freeze = (
+            layers_to_freeze if layers_to_freeze is not None else self._training_parameters.layers_to_freeze
         )
-        self._image_model.learning_rate = (
-            learning_rate if learning_rate is not None else self._image_model.learning_rate
+        self._training_parameters.learning_rate = (
+            learning_rate if learning_rate is not None else self._training_parameters.learning_rate
         )
-        self._image_model.learning_rate_scheduler = (
+        self._training_parameters.learning_rate_scheduler = (
             LearningRateScheduler[camel_to_snake(learning_rate_scheduler)]
             if learning_rate_scheduler is not None
-            else self._image_model.learning_rate_scheduler
+            else self._training_parameters.learning_rate_scheduler
         )
-        self._image_model.model_name = model_name if model_name is not None else self._image_model.model_name
-        self._image_model.momentum = momentum if momentum is not None else self._image_model.momentum
-        self._image_model.nesterov = nesterov if nesterov is not None else self._image_model.nesterov
-        self._image_model.number_of_epochs = (
-            number_of_epochs if number_of_epochs is not None else self._image_model.number_of_epochs
+        self._training_parameters.model_name = (
+            model_name if model_name is not None else self._training_parameters.model_name
         )
-        self._image_model.number_of_workers = (
-            number_of_workers if number_of_workers is not None else self._image_model.number_of_workers
+        self._training_parameters.momentum = momentum if momentum is not None else self._training_parameters.momentum
+        self._training_parameters.nesterov = nesterov if nesterov is not None else self._training_parameters.nesterov
+        self._training_parameters.number_of_epochs = (
+            number_of_epochs if number_of_epochs is not None else self._training_parameters.number_of_epochs
         )
-        self._image_model.optimizer = (
-            StochasticOptimizer[camel_to_snake(optimizer)] if optimizer is not None else self._image_model.optimizer
+        self._training_parameters.number_of_workers = (
+            number_of_workers if number_of_workers is not None else self._training_parameters.number_of_workers
         )
-        self._image_model.random_seed = random_seed if random_seed is not None else self._image_model.random_seed
-        self._image_model.step_lr_gamma = (
-            step_lr_gamma if step_lr_gamma is not None else self._image_model.step_lr_gamma
+        self._training_parameters.optimizer = (
+            StochasticOptimizer[camel_to_snake(optimizer)]
+            if optimizer is not None
+            else self._training_parameters.optimizer
         )
-        self._image_model.step_lr_step_size = (
-            step_lr_step_size if step_lr_step_size is not None else self._image_model.step_lr_step_size
+        self._training_parameters.random_seed = (
+            random_seed if random_seed is not None else self._training_parameters.random_seed
         )
-        self._image_model.training_batch_size = (
-            training_batch_size if training_batch_size is not None else self._image_model.training_batch_size
+        self._training_parameters.step_lr_gamma = (
+            step_lr_gamma if step_lr_gamma is not None else self._training_parameters.step_lr_gamma
         )
-        self._image_model.validation_batch_size = (
-            validation_batch_size if validation_batch_size is not None else self._image_model.validation_batch_size
+        self._training_parameters.step_lr_step_size = (
+            step_lr_step_size if step_lr_step_size is not None else self._training_parameters.step_lr_step_size
         )
-        self._image_model.warmup_cosine_lr_cycles = (
+        self._training_parameters.training_batch_size = (
+            training_batch_size if training_batch_size is not None else self._training_parameters.training_batch_size
+        )
+        self._training_parameters.validation_batch_size = (
+            validation_batch_size
+            if validation_batch_size is not None
+            else self._training_parameters.validation_batch_size
+        )
+        self._training_parameters.warmup_cosine_lr_cycles = (
             warmup_cosine_lr_cycles
             if warmup_cosine_lr_cycles is not None
-            else self._image_model.warmup_cosine_lr_cycles
+            else self._training_parameters.warmup_cosine_lr_cycles
         )
-        self._image_model.warmup_cosine_lr_warmup_epochs = (
+        self._training_parameters.warmup_cosine_lr_warmup_epochs = (
             warmup_cosine_lr_warmup_epochs
             if warmup_cosine_lr_warmup_epochs is not None
-            else self._image_model.warmup_cosine_lr_warmup_epochs
+            else self._training_parameters.warmup_cosine_lr_warmup_epochs
         )
-        self._image_model.weight_decay = weight_decay if weight_decay is not None else self._image_model.weight_decay
-        self._image_model.box_detections_per_image = (
+        self._training_parameters.weight_decay = (
+            weight_decay if weight_decay is not None else self._training_parameters.weight_decay
+        )
+        self._training_parameters.box_detections_per_image = (
             box_detections_per_image
             if box_detections_per_image is not None
-            else self._image_model.box_detections_per_image
+            else self._training_parameters.box_detections_per_image
         )
-        self._image_model.box_score_threshold = (
-            box_score_threshold if box_score_threshold is not None else self._image_model.box_score_threshold
+        self._training_parameters.box_score_threshold = (
+            box_score_threshold if box_score_threshold is not None else self._training_parameters.box_score_threshold
         )
-        self._image_model.image_size = image_size if image_size is not None else self._image_model.image_size
-        self._image_model.max_size = max_size if max_size is not None else self._image_model.max_size
-        self._image_model.min_size = min_size if min_size is not None else self._image_model.min_size
-        self._image_model.model_size = (
-            ModelSize[camel_to_snake(model_size)] if model_size is not None else self._image_model.model_size
+        self._training_parameters.image_size = (
+            image_size if image_size is not None else self._training_parameters.image_size
         )
-        self._image_model.multi_scale = multi_scale if multi_scale is not None else self._image_model.multi_scale
-        self._image_model.nms_iou_threshold = (
-            nms_iou_threshold if nms_iou_threshold is not None else self._image_model.nms_iou_threshold
+        self._training_parameters.max_size = max_size if max_size is not None else self._training_parameters.max_size
+        self._training_parameters.min_size = min_size if min_size is not None else self._training_parameters.min_size
+        self._training_parameters.model_size = (
+            ModelSize[camel_to_snake(model_size)] if model_size is not None else self._training_parameters.model_size
         )
-        self._image_model.tile_grid_size = (
-            tile_grid_size if tile_grid_size is not None else self._image_model.tile_grid_size
+        self._training_parameters.multi_scale = (
+            multi_scale if multi_scale is not None else self._training_parameters.multi_scale
         )
-        self._image_model.tile_overlap_ratio = (
-            tile_overlap_ratio if tile_overlap_ratio is not None else self._image_model.tile_overlap_ratio
+        self._training_parameters.nms_iou_threshold = (
+            nms_iou_threshold if nms_iou_threshold is not None else self._training_parameters.nms_iou_threshold
         )
-        self._image_model.tile_predictions_nms_threshold = (
+        self._training_parameters.tile_grid_size = (
+            tile_grid_size if tile_grid_size is not None else self._training_parameters.tile_grid_size
+        )
+        self._training_parameters.tile_overlap_ratio = (
+            tile_overlap_ratio if tile_overlap_ratio is not None else self._training_parameters.tile_overlap_ratio
+        )
+        self._training_parameters.tile_predictions_nms_threshold = (
             tile_predictions_nms_threshold
             if tile_predictions_nms_threshold is not None
-            else self._image_model.tile_predictions_nms_threshold
+            else self._training_parameters.tile_predictions_nms_threshold
         )
-        self._image_model.validation_iou_threshold = (
+        self._training_parameters.validation_iou_threshold = (
             validation_iou_threshold
             if validation_iou_threshold is not None
-            else self._image_model.validation_iou_threshold
+            else self._training_parameters.validation_iou_threshold
         )
-        self._image_model.validation_metric_type = (
+        self._training_parameters.validation_metric_type = (
             ValidationMetricType[camel_to_snake(validation_metric_type)]
             if validation_metric_type is not None
-            else self._image_model.validation_metric_type
+            else self._training_parameters.validation_metric_type
         )
+
+    # pylint: enable=too-many-locals
 
     def extend_search_space(
         self,
@@ -445,8 +453,8 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         """Add search space for AutoML Image Object Detection and Image
         Instance Segmentation tasks.
 
-        :param value: specify either an instance of ImageObjectDetectionSearchSpace or list of ImageObjectDetectionSearchSpace for searching through the parameter space
-        :type value: ~azure.ai.ml.entities._job.automl.image.image_object_detection_search_space.ImageObjectDetectionSearchSpace or List(~azure.ai.ml.entities._job.automl.image.image_object_detection_search_space.ImageObjectDetectionSearchSpace)
+        :param value: Search through the parameter space
+        :type value: Union[ImageObjectDetectionSearchSpace, List[ImageObjectDetectionSearchSpace]]
         """
         self._search_space = self._search_space or []
 
@@ -474,7 +482,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         if not super().__eq__(other):
             return False
 
-        return self._image_model == other._image_model and self._search_space == other._search_space
+        return self._training_parameters == other._training_parameters and self._search_space == other._search_space
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)

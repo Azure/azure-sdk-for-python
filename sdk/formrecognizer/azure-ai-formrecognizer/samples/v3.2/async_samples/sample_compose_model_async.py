@@ -54,16 +54,16 @@ async def sample_compose_model_async():
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_model_admin_client:
-        supplies_poller = await document_model_admin_client.begin_build_model(
+        supplies_poller = await document_model_admin_client.begin_build_document_model(
             ModelBuildMode.TEMPLATE, blob_container_url=po_supplies, description="Purchase order-Office supplies"
         )
-        equipment_poller = await document_model_admin_client.begin_build_model(
+        equipment_poller = await document_model_admin_client.begin_build_document_model(
             ModelBuildMode.TEMPLATE, blob_container_url=po_equipment, description="Purchase order-Office Equipment"
         )
-        furniture_poller = await document_model_admin_client.begin_build_model(
+        furniture_poller = await document_model_admin_client.begin_build_document_model(
             ModelBuildMode.TEMPLATE, blob_container_url=po_furniture, description="Purchase order-Furniture"
         )
-        cleaning_supplies_poller = await document_model_admin_client.begin_build_model(
+        cleaning_supplies_poller = await document_model_admin_client.begin_build_document_model(
             ModelBuildMode.TEMPLATE, blob_container_url=po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
         )
         supplies_model = await supplies_poller.result()
@@ -78,7 +78,7 @@ async def sample_compose_model_async():
             cleaning_supplies_model.model_id
         ]
 
-        poller = await document_model_admin_client.begin_compose_model(
+        poller = await document_model_admin_client.begin_compose_document_model(
             purchase_order_models, description="Office Supplies Composed Model"
         )
         model = await poller.result()

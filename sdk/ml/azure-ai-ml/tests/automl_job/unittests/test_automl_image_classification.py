@@ -3,28 +3,22 @@
 # ---------------------------------------------------------
 
 import pytest
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    MLTableJobInput,
-    ClassificationPrimaryMetrics,
-    SamplingAlgorithmType,
-    UserIdentity,
-    StochasticOptimizer,
-    LearningRateScheduler,
-    ImageModelSettingsClassification,
-)
-from azure.ai.ml.automl import image_classification
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.sweep import (
-    BanditPolicy,
-    Choice,
-    Uniform,
-)
 
-from azure.ai.ml.entities._job.automl.image import (
-    ImageClassificationJob,
-    ImageClassificationSearchSpace,
+from azure.ai.ml import UserIdentity
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+    ClassificationPrimaryMetrics,
+    ImageModelSettingsClassification,
+    LearningRateScheduler,
+    MLTableJobInput,
+    SamplingAlgorithmType,
+    StochasticOptimizer,
 )
+from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml.automl import image_classification
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl.image import ImageClassificationJob, ImageClassificationSearchSpace
+from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
 @pytest.mark.unittest
@@ -53,14 +47,14 @@ class TestAutoMLImageClassification:
             # image_classification_job.limits = {"timeout": 60, "max_trials": 2, "max_concurrent_trials": 1}
             image_classification_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
-        # image_classification_job.image_model = {
+        # image_classification_job.training_parameters = {
         #     "checkpoint_frequency": 1,
         #     "early_stopping": True,
         #     "early_stopping_delay": 2,
         #     "early_stopping_patience": 2,
         #     "evaluation_frequency": 1,
         # }
-        image_classification_job.set_image_model(
+        image_classification_job.set_training_parameters(
             checkpoint_frequency=1,
             early_stopping=True,
             early_stopping_delay=2,
@@ -111,7 +105,7 @@ class TestAutoMLImageClassification:
 
         # check the rest object
         rest_obj = image_classification_job._to_rest_object()
-        assert rest_obj.properties.identity == identity
+        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
 
         def _check_data_type(data, expected_type, expected_path, msg):
             if expected_type == MLTableJobInput:
@@ -121,12 +115,8 @@ class TestAutoMLImageClassification:
                 assert data.type == AssetTypes.MLTABLE, "{} data type not set correctly".format(msg)
                 assert data.path == expected_path, "{} data path not set correctly".format(msg)
 
-        _check_data_type(
-            rest_obj.properties.task_details.data_settings.training_data.data, MLTableJobInput, None, "Training"
-        )
-        _check_data_type(
-            rest_obj.properties.task_details.data_settings.validation_data.data, MLTableJobInput, None, "Validation"
-        )
+        _check_data_type(rest_obj.properties.task_details.training_data, MLTableJobInput, None, "Training")
+        _check_data_type(rest_obj.properties.task_details.validation_data, MLTableJobInput, None, "Validation")
 
         original_obj = ImageClassificationJob._from_rest_object(rest_obj)
         assert image_classification_job == original_obj, "Conversion to/from rest object failed"
@@ -136,8 +126,8 @@ class TestAutoMLImageClassification:
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"
         assert original_obj.identity == identity
         # check if the original job inputs were restored
-        _check_data_type(original_obj._data.training_data.data, Input, "https://foo/bar/train.csv", "Training")
-        _check_data_type(original_obj._data.validation_data.data, Input, "https://foo/bar/valid.csv", "Validation")
+        _check_data_type(original_obj.training_data, Input, "https://foo/bar/train.csv", "Training")
+        _check_data_type(original_obj.validation_data, Input, "https://foo/bar/valid.csv", "Validation")
 
     @pytest.mark.parametrize(
         "settings, expected",
@@ -148,30 +138,30 @@ class TestAutoMLImageClassification:
         ],
         ids=["snake case", "camel case", "none values"],
     )
-    def test_set_image_model_with_valid_values(self, settings, expected):
+    def test_image_set_training_parameters_with_valid_values(self, settings, expected):
         image_classification_job = image_classification(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="label",
         )  # type: ImageClassificationJob
-        image_classification_job.set_image_model(
+        image_classification_job.set_training_parameters(
             optimizer=settings[0],
             learning_rate_scheduler=settings[1],
         )
-        assert image_classification_job.image_model.optimizer == expected[0]
-        assert image_classification_job.image_model.learning_rate_scheduler == expected[1]
+        assert image_classification_job.training_parameters.optimizer == expected[0]
+        assert image_classification_job.training_parameters.learning_rate_scheduler == expected[1]
 
     @pytest.mark.parametrize(
         "settings, expected",
         [(("adamW", None), pytest.raises(KeyError)), ((None, "Warmup_Cosine"), pytest.raises(KeyError))],
         ids=["optimizer_invalid", "learning_rate_scheduler_invalid"],
     )
-    def test_set_image_model_with_invalid_values(self, settings, expected):
+    def test_image_set_training_parameters_with_invalid_values(self, settings, expected):
         with expected:
             image_classification_job = image_classification(
                 training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
                 target_column_name="label",
             )  # type: ImageClassificationJob
-            image_classification_job.set_image_model(optimizer=settings[0], learning_rate_scheduler=settings[1])
+            image_classification_job.set_training_parameters(optimizer=settings[0], learning_rate_scheduler=settings[1])
 
     @pytest.mark.parametrize(
         "settings, expected",
@@ -188,7 +178,7 @@ class TestAutoMLImageClassification:
         ],
         ids=["snake case", "camel case", "none values"],
     )
-    def test_set_image_model_with_settings_object(self, settings, expected):
+    def test_image_set_training_parameters_with_settings_object(self, settings, expected):
         image_model_settings = ImageModelSettingsClassification(
             optimizer=settings[0], learning_rate_scheduler=settings[1]
         )
@@ -196,8 +186,8 @@ class TestAutoMLImageClassification:
         image_classification_job = image_classification(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="label",
-            image_model=image_model_settings,
+            training_parameters=image_model_settings,
         )  # type: ImageClassificationJob
 
-        assert image_classification_job.image_model.optimizer == expected[0]
-        assert image_classification_job.image_model.learning_rate_scheduler == expected[1]
+        assert image_classification_job.training_parameters.optimizer == expected[0]
+        assert image_classification_job.training_parameters.learning_rate_scheduler == expected[1]

@@ -81,7 +81,7 @@ Please see the samples [here][v3.0.0-samples-tag].
 1. Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
 2. Clone or download this sample repository
@@ -142,14 +142,14 @@ what you can do with the Azure Form Recognizer client library.
 [sample_copy_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_copy_model_to_async.py
 [sample_get_words_on_document_line]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_get_words_on_document_line.py
 [sample_get_words_on_document_line_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_get_words_on_document_line_async.py
-[sample_get_elements_with_spans]: https://aka.ms/azsdk/python/formrecognizer/spansamplesync
-[sample_get_elements_with_spans_async]: https://aka.ms/azsdk/python/formrecognizer/spansampleasync
 [sample_convert_to_and_from_dict_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_convert_to_and_from_dict.py
 [sample_convert_to_and_from_dict_async_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_convert_to_and_from_dict_async.py
 [sample_analyze_read]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_read.py
 [sample_analyze_read_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_read_async.py
 [sample_analyze_tax_us_w2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_tax_us_w2.py
 [sample_analyze_tax_us_w2_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_tax_us_w2_async.py
+[sample_get_elements_with_spans]: https://aka.ms/azsdk/python/formrecognizer/spansamplesync
+[sample_get_elements_with_spans_async]: https://aka.ms/azsdk/python/formrecognizer/spansampleasync
 
 <!-- V3.1 links -->
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.1/sample_authentication.py

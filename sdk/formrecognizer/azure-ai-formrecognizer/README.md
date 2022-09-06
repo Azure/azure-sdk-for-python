@@ -5,7 +5,7 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs in addition to general layout from documents.
 - Read - Read page information and detected languages from documents.
-- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents) using prebuilt models.
+- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
@@ -25,7 +25,7 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
 > Note: This version of the client library defaults to the `2022-08-31` version of the service.
@@ -34,7 +34,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0 - Latest GA release | 2.0, 2.1, 2022-08-31
+|3.2.0 - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
 |3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -169,7 +169,7 @@ More information about analyzing documents, including supported features, locale
 - Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModelDetails` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
-- Listing document model operations or getting a specific model operation created within the last 24 hours.
+- Listing operations or getting a specific model operation created within the last 24 hours.
 - Copying a custom model from one Form Recognizer resource to another.
 
 Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
@@ -421,7 +421,7 @@ credential = AzureKeyCredential("<api_key>")
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
-poller = document_model_admin_client.begin_build_model(
+poller = document_model_admin_client.begin_build_document_model(
     # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
     build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
 )
@@ -524,7 +524,7 @@ print("Our account has {} custom models, and we can have at most {} custom model
 ))
 
 # Here we get a paged list of all of our models
-models = document_model_admin_client.list_models()
+models = document_model_admin_client.list_document_models()
 print("We have models with the following ids: {}".format(
     ", ".join([m.model_id for m in models])
 ))
@@ -532,16 +532,16 @@ print("We have models with the following ids: {}".format(
 # Replace with the custom model ID from the "Build a model" sample
 model_id = "<model_id from the Build a Model sample>"
 
-custom_model = document_model_admin_client.get_model(model_id=model_id)
+custom_model = document_model_admin_client.get_document_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Description: {}".format(custom_model.description))
 print("Model created on: {}\n".format(custom_model.created_on))
 
 # Finally, we will delete this model by ID
-document_model_admin_client.delete_model(model_id=custom_model.model_id)
+document_model_admin_client.delete_document_model(model_id=custom_model.model_id)
 
 try:
-    document_model_admin_client.get_model(model_id=custom_model.model_id)
+    document_model_admin_client.get_document_model(model_id=custom_model.model_id)
 except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
@@ -596,7 +596,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_portal]: https://ms.portal.azure.com/
-[regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=azure-applied-ai-services
+[regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=form-recognizer
 [FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
