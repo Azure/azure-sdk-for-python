@@ -302,7 +302,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             inner_recv_cnt += 1
                             receiver.complete_message(sub_msg)
                             if inner_recv_cnt == 5:
-                                time.sleep(15)  # innner finish receiving first 5 messages then sleep until lock expiration
+                                time.sleep(15)  # inner finish receiving first 5 messages then sleep until lock expiration
                                 break
                     assert outter_recv_cnt == 1
                     outter_recv_cnt = 0
@@ -1565,7 +1565,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         for message in messages:
                             receiver.complete_message(message)
                 else:
-                    raise Exception("Failed to receive schdeduled message.")
+                    raise Exception("Failed to receive scheduled message.")
             
 
     @pytest.mark.liveTest
@@ -1590,8 +1590,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message_id_b = uuid.uuid4()
                 message_b = ServiceBusMessage(content)
                 message_b.message_id = message_id_b
-                message_arry = [message_a, message_b]
-                for message in message_arry:
+                message_array = [message_a, message_b]
+                for message in message_array:
                     message.application_properties = {'key': 'value'}
                     message.subject = 'label'
                     message.content_type = 'application/text'
@@ -1599,7 +1599,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.to = 'to'
                     message.reply_to = 'reply_to'
 
-                sender.send_messages(message_arry)
+                sender.send_messages(message_array)
 
                 received_messages = []
                 for message in receiver._get_streaming_message_iter(max_wait_time=5):
@@ -1634,7 +1634,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         for message in messages:
                             receiver.complete_message(message)
                 else:
-                    raise Exception("Failed to receive schdeduled message.")
+                    raise Exception("Failed to receive scheduled message.")
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2553,7 +2553,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         for m in messages:
                             receiver.complete_message(m)
                 else:
-                    raise Exception("Failed to receive schdeduled message.")
+                    raise Exception("Failed to receive scheduled message.")
 
             # send list of dicts
             with sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20) as receiver:
@@ -2576,7 +2576,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         for m in messages:
                             receiver.complete_message(m)
                 else:
-                    raise Exception("Failed to receive schdeduled message.")                    
+                    raise Exception("Failed to receive scheduled message.")                    
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

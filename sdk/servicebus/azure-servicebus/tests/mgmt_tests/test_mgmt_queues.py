@@ -172,7 +172,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_queue_delete_negtive(self, servicebus_namespace_connection_string):
+    def test_mgmt_queue_delete_negative(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         mgmt_service.create_queue("test_queue")

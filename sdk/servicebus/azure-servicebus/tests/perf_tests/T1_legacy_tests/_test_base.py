@@ -80,7 +80,7 @@ class _QueueTest(_ServiceTest):
 
     async def setup(self):
         await super().setup()
-        # In T1, these operations check for the existance of the queue
+        # In T1, these operations check for the existence of the queue
         # so must be created during setup, rather than in the constructor.
         self.queue_client = self.service_client.get_queue(self.queue_name)
         self.async_queue_client = self.async_service_client.get_queue(self.queue_name)
