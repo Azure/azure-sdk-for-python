@@ -74,7 +74,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.11.0",
         "cryptography>=2.5",
-        "msal<2.0.0,>=1.19.0",
+        "msal<2.0.0,>=1.20.0b1",
         "msal-extensions<2.0.0,>=0.3.0",
         "six>=1.12.0",
     ],
