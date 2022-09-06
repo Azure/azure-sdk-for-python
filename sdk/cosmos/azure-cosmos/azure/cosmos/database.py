@@ -170,7 +170,7 @@ class DatabaseProxy(object):
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
         :param offer_throughput: The provisioned throughput for this offer.
-        :param type offer_throughput: int or ~azure.cosmos.ThroughputProperties.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
