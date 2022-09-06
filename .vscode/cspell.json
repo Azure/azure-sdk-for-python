@@ -59,7 +59,6 @@
     "sdk/core/azure-core/**",
     "sdk/cosmos/azure-cosmos/**",
     "sdk/core/azure-servicemanagement-legacy/**",
-    "sdk/deviceupdate/azure-iot-deviceupdate/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventgrid/azure-eventgrid/**",
@@ -673,6 +672,18 @@
       "words": [
         "Ijoi",
         "Iiwid"
+      ]
+    },
+    {
+      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
+      "words": [
+        "wday",
+        "mday",
+        "unflattened",
+        "deseralize",
+        "astimezone",
+        "ctxt",
+        "Nify"
       ]
     }
   ],
