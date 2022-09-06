@@ -198,7 +198,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param str id: ID (name) of the database to create.
         :keyword int offer_throughput: The provisioned throughput for this offer.
-        :keyword type offer_throughput: int or ~azure.cosmos.ThroughputProperties.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
