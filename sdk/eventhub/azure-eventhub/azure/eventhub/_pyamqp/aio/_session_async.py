@@ -12,7 +12,7 @@ from typing import Optional, Union
 
 from ..constants import (
     INCOMING_WINDOW,
-    OUTGOING_WIDNOW,
+    OUTGOING_WINDOW,
     ConnectionState,
     SessionState,
     SessionTransferState,

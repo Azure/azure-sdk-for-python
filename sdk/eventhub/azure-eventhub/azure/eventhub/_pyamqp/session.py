@@ -11,7 +11,7 @@ import time
 
 from .constants import (
     INCOMING_WINDOW,
-    OUTGOING_WIDNOW,
+    OUTGOING_WINDOW,
     ConnectionState,
     SessionState,
     SessionTransferState,
