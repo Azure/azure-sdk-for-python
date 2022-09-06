@@ -165,6 +165,7 @@ class _AbstractTransport(object):
             self._init_socket(
                 self.socket_settings, self.read_timeout, self.write_timeout,
             )
+            self.sock.settimeout(0.2)
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
@@ -684,7 +685,6 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth
             )
-
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 

@@ -232,7 +232,7 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
         """
         if self._can_read():
             if wait is False:
-                wait = 0.1
+                return self._transport.receive_frame(**kwargs)
             if wait is True:
                 with self._transport.block():
                     return self._transport.receive_frame(**kwargs)
